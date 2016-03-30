@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:title="@string/options_cat_prefs"
+        android:key="prefs"
+        />
+
+    <Preference
+        android:title="@string/options_cat_stealth"
+        android:key="stealth"
+        />
+
+    <Preference
+        android:title="@string/options_cat_remote"
+        android:key="remote"
+        />
+
+    <Preference
+        android:title="@string/options_cat_wallet"
+        android:key="wallet"
+        />
+
+    <Preference
+        android:title="@string/options_cat_networking"
+        android:key="networking"
+        />
+
+    <Preference
+        android:title="@string/options_cat_other"
+        android:key="other"
+        />
+
+</PreferenceScreen>

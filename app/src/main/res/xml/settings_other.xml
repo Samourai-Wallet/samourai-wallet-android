@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:title="@string/options_hash"
+        android:summary="@string/options_hash2"
+        android:key="hash"
+        />
+    <Preference
+        android:title="@string/about_title"
+        android:summary="@string/about_us"
+        android:key="about"
+        />
+
+</PreferenceScreen>

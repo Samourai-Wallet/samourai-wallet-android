@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:title="@string/options_stealth_display"
+        android:summary="@string/options_stealth_display2"
+        android:defaultValue="false"
+        android:key="stealthDisplay"
+        />
+    <Preference
+        android:title="@string/options_remote_pin"
+        android:summary="@string/options_remote_pin2"
+        android:key="remote_pin"
+        />
+
+</PreferenceScreen>

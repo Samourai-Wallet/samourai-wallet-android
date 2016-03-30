@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
+    android:orientation="vertical">
+
+    <ListView
+         android:id="@+id/txList"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:divider="@drawable/list_divider"
+         android:layout_below="@+id/BalanceBar"
+         />
+
+    <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/wallet_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_addButtonColorNormal="#FF14a1fb"
+        fab:fab_addButtonColorPressed="@color/blue_semi_transparent_pressed"
+        fab:fab_addButtonPlusIconColor="@color/white"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
+
+        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+            android:id="@+id/shapeshift"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_receive_shapeshift"
+            fab:fab_colorNormal="#FF7ad5f7"
+            fab:fab_colorPressed="#FF60a8c3"
+            fab:fab_title="@string/shapeshift"
+            />
+
+        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+            android:id="@+id/bip47"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_link_white_24dp"
+            fab:fab_colorNormal="#FF673ab7"
+            fab:fab_colorPressed="#FF512da8"
+            fab:fab_title="@string/action_bip47"
+            />
+
+        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_send_plane"
+            fab:fab_colorNormal="#FFb34d5e"
+            fab:fab_colorPressed="#FF873a47"
+            fab:fab_title="@string/send"
+            />
+
+        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+            android:id="@+id/receive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_receive_qr"
+            fab:fab_colorNormal="#FF51a66b"
+            fab:fab_colorPressed="#FF448b5a"
+            fab:fab_title="@string/receive"
+            />
+
+    </net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu>
+
+</RelativeLayout>

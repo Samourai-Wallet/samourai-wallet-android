@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bip47_init_text1"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:gravity="center_horizontal"
+        android:textAlignment="gravity"
+        android:visibility="gone"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bip47_init_text2"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:gravity="center_horizontal"
+        android:textAlignment="gravity"
+        android:visibility="gone"
+        android:layout_below="@+id/text1"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bip47_init_text3"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:gravity="center_horizontal"
+        android:textAlignment="gravity"
+        android:visibility="gone"
+        android:layout_below="@+id/text2"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        />
+
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        />
+
+    <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/bip47_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_addButtonColorNormal="#FF673ab7"
+        fab:fab_addButtonColorPressed="#FF512da8"
+        fab:fab_addButtonPlusIconColor="@color/white"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
+
+
+
+    <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bip47_partners"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_size="mini"
+        fab:fab_icon="@drawable/ic_loyalty_white_24dp"
+        fab:fab_colorNormal="#FF5c6bc0"
+        fab:fab_colorPressed="#FF3f51b5"
+        fab:fab_title="@string/bip47_partners"
+        />
+    <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
+            android:id="@+id/bip47_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_link_white_24dp"
+            fab:fab_colorNormal="#FF5c6bc0"
+            fab:fab_colorPressed="#FF3f51b5"
+            fab:fab_title="@string/bip47_add1_title"
+        />
+    </net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu>
+
+</RelativeLayout>

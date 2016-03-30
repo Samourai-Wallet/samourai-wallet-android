@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:title="@string/options_VPN"
+        android:summary="@string/options_VPN2"
+        android:key="VPN"
+        />
+    <Preference
+        android:title="@string/options_Tor"
+        android:summary="@string/options_Tor2"
+        android:key="Tor"
+        />
+
+</PreferenceScreen>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@id/BalanceBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/balance"
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp"
+        android:paddingLeft="20dp"
+        android:elevation="10dp"
+        >
+
+        <TextView
+            android:id="@id/BalanceAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="40sp"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
+            />
+
+        <TextView
+            android:id="@id/BalanceUnits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="20sp"
+            android:paddingStart="10dp"
+            android:textAppearance="@android:style/TextAppearance.Material.Title"
+            />
+
+</LinearLayout>
