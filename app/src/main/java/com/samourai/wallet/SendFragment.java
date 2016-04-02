@@ -482,6 +482,9 @@ public class SendFragment extends Fragment {
         btSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                btSend.setClickable(false);
+                btSend.setActivated(false);
+
                 double btc_amount = 0.0;
 
                 try {
@@ -600,15 +603,30 @@ public class SendFragment extends Fragment {
                             }
                             else if((amount + _fee.longValue()) > APIFactory.getInstance(getActivity()).getXpubAmounts().get(AddressFactory.getInstance().account2xpub().get(accountIdx)))    {
 //                                Log.i("SendActivity", "insufficient funds");
-                                Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btSend.setActivated(true);
+                                        btSend.setClickable(true);
+                                        Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 return;
+
                             }
                             else if((amount + _fee.longValue()) > unspentCoinsBundle.getTotalAmount().longValue())	{
                                 UnspentOutputsBundle refreshUnspents = SendFactory.getInstance(getActivity()).supplementRandomizedUnspentOutputPoints(unspentCoinsBundle, BigInteger.valueOf((amount + _fee.longValue() + SamouraiWallet.bDust.longValue()) - unspentCoinsBundle.getTotalAmount().longValue()));
 
                                 if(refreshUnspents == null)    {
 //                                    Log.i("SendActivity", "refreshUnspents == null");
-                                    Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            btSend.setActivated(true);
+                                            btSend.setClickable(true);
+                                            Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                     return;
                                 }
 
@@ -624,7 +642,14 @@ public class SendFragment extends Fragment {
                             final Pair<Transaction, Long> pair = SendFactory.getInstance(getActivity()).phase2(accountIdx, unspentCoinsBundle.getOutputs(), receivers, fee, spendType.getProgress());
                             if(pair == null) {
 //                                Log.i("SendActivity", "pair == null");
-                                Toast.makeText(getActivity(), R.string.error_creating_tx, Toast.LENGTH_SHORT).show();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btSend.setActivated(true);
+                                        btSend.setClickable(true);
+                                        Toast.makeText(getActivity(), R.string.error_creating_tx, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 return;
                             }
 
@@ -676,7 +701,7 @@ public class SendFragment extends Fragment {
                             builder.setMessage(msg);
                             builder.setCancelable(false);
                             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
+                                public void onClick(final DialogInterface dialog, int whichButton) {
 
                                     final ProgressDialog progress = new ProgressDialog(getActivity());
                                     progress.setCancelable(false);
@@ -696,8 +721,11 @@ public class SendFragment extends Fragment {
                                                     Toast.makeText(getActivity(), R.string.tx_ok, Toast.LENGTH_SHORT).show();
                                                     APIFactory.getInstance(getActivity()).setXpubBalance(APIFactory.getInstance(getActivity()).getXpubBalance() - (_amount + fee.longValue()));
 
+                                                    btSend.setActivated(true);
+                                                    btSend.setClickable(true);
                                                     edAddress.setText("");
                                                     edAmountBTC.setText("");
+
                                                 }
                                             });
                                             if (progress != null && progress.isShowing()) {
@@ -735,9 +763,12 @@ public class SendFragment extends Fragment {
                                         }
 
                                         public void onFail() {
+
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    btSend.setActivated(true);
+                                                    btSend.setClickable(true);
                                                     Toast.makeText(getActivity(), R.string.tx_ko, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -753,8 +784,17 @@ public class SendFragment extends Fragment {
                                 }
                             });
                             builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
+                                public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            btSend.setActivated(true);
+                                            btSend.setClickable(true);
+                                            dialog.dismiss();
+                                        }
+                                    });
+
                                 }
                             });
 
@@ -763,6 +803,7 @@ public class SendFragment extends Fragment {
 
                         }
                         else {
+                            btSend.setActivated(true);
                             Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
                         }
 
