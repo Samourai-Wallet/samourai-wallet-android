@@ -803,8 +803,14 @@ public class SendFragment extends Fragment {
 
                         }
                         else {
-                            btSend.setActivated(true);
-                            Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btSend.setActivated(true);
+                                    btSend.setClickable(true);
+                                    Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         Looper.loop();
