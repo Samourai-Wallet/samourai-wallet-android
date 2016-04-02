@@ -140,7 +140,7 @@ public class BIP47Activity extends Activity {
                 if (BIP47Meta.getInstance().getLabel(itemValue) != null && BIP47Meta.getInstance().getLabel(itemValue).length() > 0) {
                     msg = BIP47Meta.getInstance().getLabel(itemValue) + ":";
                 }
-                Toast.makeText(getApplicationContext(), msg + "Outgoing status:" + BIP47Meta.getInstance().getOutgoingStatus(itemValue), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), msg + "Outgoing status:" + BIP47Meta.getInstance().getOutgoingStatus(itemValue), Toast.LENGTH_LONG).show();
 
                 if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_NOT_SENT) {
 
