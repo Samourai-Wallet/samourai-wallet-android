@@ -184,7 +184,7 @@ public class FormatsUtil {
 				if(firstByte == 0x02 || firstByte == 0x03){
 					return true;
 				}else{
-					throw new AddressFormatException("invalid format: " + xpub);
+					return false;
 				}
 			}
 		}
@@ -218,7 +218,7 @@ public class FormatsUtil {
 				if(firstByte == 0x02 || firstByte == 0x03){
 					return true;
 				}else{
-					throw new AddressFormatException("invalid format: " + pcode);
+					return false;
 				}
 			}
 		}
