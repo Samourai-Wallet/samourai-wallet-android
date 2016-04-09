@@ -2,6 +2,8 @@ package com.samourai.wallet.util;
 
 import android.util.Patterns;
 
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
@@ -196,31 +198,8 @@ public class FormatsUtil {
 	public boolean isValidPaymentCode(String pcode){
 
 		try {
-			byte[] pcodeBytes = Base58.decodeChecked(pcode);
-
-			ByteBuffer byteBuffer = ByteBuffer.wrap(pcodeBytes);
-			if(byteBuffer.get() != 0x47)   {
-				throw new AddressFormatException("invalid version: " + pcode);
-			}
-			else	{
-
-				byte[] chain = new byte[32];
-				byte[] pub = new byte[33];
-				// type:
-				byteBuffer.get();
-				// feature:
-				byteBuffer.get();
-				byteBuffer.get(pub);
-				byteBuffer.get(chain);
-
-				ByteBuffer pubBytes = ByteBuffer.wrap(pub);
-				int firstByte = pubBytes.get();
-				if(firstByte == 0x02 || firstByte == 0x03){
-					return true;
-				}else{
-					return false;
-				}
-			}
+			PaymentCode paymentCode = new PaymentCode(pcode);
+			return paymentCode.isValid();
 		}
 		catch(Exception e)	{
 			return false;
