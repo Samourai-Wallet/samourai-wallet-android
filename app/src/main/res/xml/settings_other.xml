@@ -7,7 +7,7 @@
         android:key="hash"
         />
     <Preference
-        android:title="@string/about_title"
+        android:title="@string/options_version"
         android:summary="@string/about_us"
         android:key="about"
         />

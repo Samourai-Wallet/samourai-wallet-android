@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
+        android:title="@string/options_cat_wallet"
+        android:key="wallet"
+        />
+
+    <Preference
         android:title="@string/options_cat_prefs"
         android:key="prefs"
         />
@@ -14,11 +19,6 @@
     <Preference
         android:title="@string/options_cat_remote"
         android:key="remote"
-        />
-
-    <Preference
-        android:title="@string/options_cat_wallet"
-        android:key="wallet"
         />
 
     <Preference

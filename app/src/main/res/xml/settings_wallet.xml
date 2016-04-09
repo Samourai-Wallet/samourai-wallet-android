@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:title="@string/options_autosave_backup"
+        android:summary="@string/options_autosave_backup2"
+        android:defaultValue="true"
+        android:key="autoBackup"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_scramble_pin"
+        android:summary="@string/options_scramble_pin2"
+        android:defaultValue="true"
+        android:key="scramblePin"
+        />
+
     <Preference
         android:title="@string/options_mnemonic"
         android:summary="@string/options_mnemonic2"
@@ -11,27 +25,17 @@
         android:summary="@string/options_xpub2"
         android:key="xpub"
         />
-    <Preference
-        android:title="@string/options_wipe"
-        android:summary="@string/options_wipe2"
-        android:key="wipe"
-        />
-    <CheckBoxPreference
-        android:title="@string/options_scramble_pin"
-        android:summary="@string/options_scramble_pin2"
-        android:defaultValue="true"
-        android:key="scramblePin"
-        />
+
     <Preference
         android:title="@string/options_change_pin"
         android:summary="@string/options_change_pin2"
         android:key="change_pin"
         />
-    <CheckBoxPreference
-        android:title="@string/options_autosave_backup"
-        android:summary="@string/options_autosave_backup2"
-        android:defaultValue="true"
-        android:key="autoBackup"
+
+    <Preference
+        android:title="@string/options_wipe"
+        android:summary="@string/options_wipe2"
+        android:key="wipe"
         />
 
 </PreferenceScreen>
