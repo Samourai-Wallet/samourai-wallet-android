@@ -223,7 +223,7 @@ public class MainActivity2 extends Activity {
                         return true;
                     }
                 });
-                wv.loadUrl("http://samouraiwallet.com/changelog.html");
+                wv.loadUrl("http://samouraiwallet.com/changelog/alpha3.html");
                 alert.setView(wv);
                 alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                     @Override
