@@ -111,6 +111,9 @@ public class SendNotifTxFactory	{
 
         HashMap<String,List<String>> unspentOutputs = APIFactory.getInstance(context).getUnspentOuts();
         List<String> data = unspentOutputs.get(xpub);
+        if(data == null)    {
+            return null;
+        }
         froms = new HashMap<String,String>();
         for(String f : data) {
             if(f != null) {
