@@ -419,7 +419,7 @@ public class BIP47Activity extends Activity {
 
     private void refreshList()  {
 
-        Set<String> _pcodes = BIP47Meta.getInstance().getLabels();
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels();
 
         //
         // check for own payment code
