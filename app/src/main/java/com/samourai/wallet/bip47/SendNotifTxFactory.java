@@ -65,7 +65,7 @@ public class SendNotifTxFactory	{
 
     public static final BigInteger _bNotifTxTotalAmount = _bFee.add(_bSWFee).add(_bNotifTxValue);
 
-    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3KjbSUUbC4emCtnnrz4XXfZ6XimJBYvEQk";
+    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3B5qvzDeJdn8XA4o9B4mtt5kevyZnJc7Fa";
 
     private static SendNotifTxFactory instance = null;
     private static Context context = null;
