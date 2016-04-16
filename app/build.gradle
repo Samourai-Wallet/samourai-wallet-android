@@ -8,8 +8,8 @@ android {
         applicationId "com.samourai.wallet"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 22
-        versionName "0.75"
+        versionCode 23
+        versionName "0.76"
         multiDexEnabled true
     }
     buildTypes {

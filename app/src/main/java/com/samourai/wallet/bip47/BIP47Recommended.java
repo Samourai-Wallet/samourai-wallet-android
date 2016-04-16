@@ -60,7 +60,7 @@ public class BIP47Recommended extends Activity {
         recommended = new ArrayList<Recommended>();
         Recommended r1 = new Recommended();
         r1.label = "Samourai Donations";
-        r1.pcode = "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAhs";
+        r1.pcode = "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh";
         recommended.add(r1);
         Recommended r2 = new Recommended();
         r2.label = "OBPP Donations";

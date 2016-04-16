@@ -55,8 +55,8 @@ public class ZBarScannerActivity extends Activity implements Camera.PreviewCallb
 
 	public void setupScanner() {
 		mScanner = new ImageScanner();
-		mScanner.setConfig(0, Config.X_DENSITY, 3);
-		mScanner.setConfig(0, Config.Y_DENSITY, 3);
+		mScanner.setConfig(0, Config.X_DENSITY, 1);
+		mScanner.setConfig(0, Config.Y_DENSITY, 1);
 
 		int[] symbols = getIntent().getIntArrayExtra(SCAN_MODES);
 		if (symbols != null) {
