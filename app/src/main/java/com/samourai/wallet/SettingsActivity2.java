@@ -58,6 +58,8 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
+    private boolean steathActivating = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -106,7 +108,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 cbPref1.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-                        final ComponentName component = new ComponentName(getApplicationContext().getPackageName(), "com.samourai.wallet.MainActivity");
+                        final ComponentName component = new ComponentName(getApplicationContext().getPackageName(), "com.samourai.wallet.Launcher");
 
                         if (component != null) {
 
@@ -128,13 +130,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                             //@Override
                                             public void onClick(DialogInterface dialog, int which) {
+
+                                                steathActivating = true;
+
                                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, true);
 
                                                 stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
                                                 startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
 
-                                                AppUtil.getInstance(SettingsActivity2.this).restartApp();
+                                                try {
+                                                    HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+                                                } catch (Exception e) {
+                                                    ;
+                                                }
+
                                             }
                                         })
                                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -152,89 +162,96 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                Preference remotePinPref = (Preference) findPreference("remote_pin");
+                final Preference remotePinPref = (Preference) findPreference("remote_pin");
                 remotePinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
 
-                        new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.alternative_pin_create)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if(steathActivating)    {
+                            Toast.makeText(SettingsActivity2.this, R.string.alternative_pin_wait, Toast.LENGTH_SHORT).show();
+                        }
+                        else    {
 
-                                        final EditText pin = new EditText(SettingsActivity2.this);
-                                        pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                            new AlertDialog.Builder(SettingsActivity2.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.alternative_pin_create)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                                        new AlertDialog.Builder(SettingsActivity2.this)
-                                                .setTitle(R.string.app_name)
-                                                .setMessage(R.string.pin_5_8)
-                                                .setView(pin)
-                                                .setCancelable(false)
-                                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                            final EditText pin = new EditText(SettingsActivity2.this);
+                                            pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
 
-                                                        final String _pin = pin.getText().toString();
-                                                        if (_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH) {
+                                            new AlertDialog.Builder(SettingsActivity2.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setMessage(R.string.pin_5_8)
+                                                    .setView(pin)
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                            final EditText pin2 = new EditText(SettingsActivity2.this);
-                                                            pin2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                                                            final String _pin = pin.getText().toString();
+                                                            if (_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH) {
 
-                                                            new AlertDialog.Builder(SettingsActivity2.this)
-                                                                    .setTitle(R.string.app_name)
-                                                                    .setMessage(R.string.pin_5_8_confirm)
-                                                                    .setView(pin2)
-                                                                    .setCancelable(false)
-                                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                                                final EditText pin2 = new EditText(SettingsActivity2.this);
+                                                                pin2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
 
-                                                                            String _pin2 = pin2.getText().toString();
-                                                                            if (_pin2 != null && _pin2.equals(_pin)) {
+                                                                new AlertDialog.Builder(SettingsActivity2.this)
+                                                                        .setTitle(R.string.app_name)
+                                                                        .setMessage(R.string.pin_5_8_confirm)
+                                                                        .setView(pin2)
+                                                                        .setCancelable(false)
+                                                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                                                String hash = AccessFactory.getInstance(SettingsActivity2.this).getHash(AccessFactory.getInstance(SettingsActivity2.this).getGUID(), new CharSequenceX(_pin), AESUtil.DefaultPBKDF2Iterations);
-                                                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
-                                                                                AccessFactory.getInstance(SettingsActivity2.this).setPIN2(_pin2);
+                                                                                String _pin2 = pin2.getText().toString();
+                                                                                if (_pin2 != null && _pin2.equals(_pin)) {
 
-                                                                                try {
-                                                                                    HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
-                                                                                } catch (JSONException je) {
-                                                                                    je.printStackTrace();
-                                                                                } catch (IOException ioe) {
-                                                                                    ioe.printStackTrace();
-                                                                                } catch (MnemonicException.MnemonicLengthException mle) {
-                                                                                    mle.printStackTrace();
-                                                                                } finally {
-                                                                                    Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
+                                                                                    String hash = AccessFactory.getInstance(SettingsActivity2.this).getHash(AccessFactory.getInstance(SettingsActivity2.this).getGUID(), new CharSequenceX(_pin), AESUtil.DefaultPBKDF2Iterations);
+                                                                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
+                                                                                    AccessFactory.getInstance(SettingsActivity2.this).setPIN2(_pin2);
+
+                                                                                    try {
+                                                                                        HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+                                                                                    } catch (JSONException je) {
+                                                                                        je.printStackTrace();
+                                                                                    } catch (IOException ioe) {
+                                                                                        ioe.printStackTrace();
+                                                                                    } catch (MnemonicException.MnemonicLengthException mle) {
+                                                                                        mle.printStackTrace();
+                                                                                    } finally {
+                                                                                        Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
+                                                                                    }
+
                                                                                 }
 
                                                                             }
+                                                                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                                                        ;
+                                                                    }
+                                                                }).show();
 
-                                                                        }
-                                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                                    ;
-                                                                }
-                                                            }).show();
+                                                            } else {
+                                                                AccessFactory.getInstance(SettingsActivity2.this).setPIN2("");
+                                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""));
+                                                                Toast.makeText(SettingsActivity2.this, R.string.alternative_pin_deleted, Toast.LENGTH_SHORT).show();
+                                                            }
 
-                                                        } else {
-                                                            AccessFactory.getInstance(SettingsActivity2.this).setPIN2("");
-                                                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""));
-                                                            Toast.makeText(SettingsActivity2.this, R.string.alternative_pin_deleted, Toast.LENGTH_SHORT).show();
                                                         }
+                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    ;
+                                                }
+                                            }).show();
 
-                                                    }
-                                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        }).show();
+                                        }
+                                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            }).show();
 
-                                    }
-                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ;
-                            }
-                        }).show();
+                        }
 
                         return true;
                     }

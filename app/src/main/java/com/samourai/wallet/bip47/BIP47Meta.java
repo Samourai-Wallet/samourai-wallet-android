@@ -13,8 +13,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BIP47Meta {
@@ -85,12 +94,16 @@ public class BIP47Meta {
 
     public String getDisplayLabel(String pcode)   {
         String label = getLabel(pcode);
-        if(label.length() == 0)    {
-            return pcode.substring(0, 12) + "..." + pcode.substring(pcode.length() - 5, pcode.length());
+        if(label.length() == 0 || pcode.equals(label))    {
+            return getAbbreviatedPcode(pcode);
         }
         else    {
             return label;
         }
+    }
+
+    public String getAbbreviatedPcode(String pcode)   {
+        return pcode.substring(0, 12) + "..." + pcode.substring(pcode.length() - 5, pcode.length());
     }
 
     public void setLabel(String pcode, String label)   {
@@ -99,6 +112,51 @@ public class BIP47Meta {
 
     public Set<String> getLabels()    {
         return pcodeLabels.keySet();
+    }
+
+    public Set<String> getSortedByLabels()    {
+
+        SortedSet<String> ret = new TreeSet<String>();
+        ret.addAll(pcodeLabels.keySet());
+
+        ConcurrentHashMap<String, String> labels = pcodeLabels;
+        Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
+
+        return sortedMapAsc.keySet();
+    }
+
+    private static Map<String, String> valueSortByComparator(ConcurrentHashMap<String, String> unsortMap, final boolean order)  {
+
+        List<Map.Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+        Collections.sort(list, new Comparator<Map.Entry<String, String>>() {
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+
+                if(o1.getValue() == null || o1.getValue().length() == 0)    {
+                    o1.setValue(o1.getKey());
+                }
+                if(o2.getValue() == null || o2.getValue().length() == 0)    {
+                    o2.setValue(o2.getKey());
+                }
+
+                if(order) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+                else {
+                    return o2.getValue().compareTo(o1.getValue());
+
+                }
+            }
+        });
+
+        // Maintaining insertion order with the help of LinkedList
+        Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+        for (Map.Entry<String, String> entry : list)    {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 
     public boolean getArchived(String pcode)   {

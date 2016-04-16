@@ -1131,11 +1131,6 @@ public class MainActivity2 extends Activity {
                                     String encrypted = null;
                                     try {
                                         encrypted = AESUtil.encrypt(HD_WalletFactory.getInstance(MainActivity2.this).get().toJSON(MainActivity2.this).toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
-
-                                        if(isExternalStorageWritable() && PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.AUTO_BACKUP, true)) {
-                                            serialize(encrypted);
-                                        }
-
                                     } catch (Exception e) {
                                         Toast.makeText(MainActivity2.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     } finally {
@@ -1228,22 +1223,6 @@ public class MainActivity2 extends Activity {
         }
 
         return false;
-    }
-
-    private synchronized void serialize(String data) throws IOException    {
-
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File newfile = new File(dir, "samourai.txt");
-        newfile.setWritable(true, true);
-        newfile.setReadable(true, true);
-
-        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
-        try {
-            out.write(data);
-        } finally {
-            out.close();
-        }
-
     }
 
 }

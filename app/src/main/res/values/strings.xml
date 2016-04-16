@@ -2,10 +2,10 @@
 <resources>
 
     <string name="code_name">\'Stealthy Crane\'</string>
-    <string name="version_name">0.74a</string>
+    <string name="version_name">0.75</string>
     <string name="app_name">Samourai</string>
 
-    <string name="new_version_message">Welcome to Samourai Alpha 2 \'Stealthy Crane\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
+    <string name="new_version_message">Welcome to Samourai Alpha 2 \'Crafty Cobra\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
@@ -290,6 +290,7 @@
     <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
     <string name="alternative_pin_5_8">Please create a stealth and remote PIN code between 5 and 8 characters. This alternative PIN code will be used for stealth launch and remote SMS commands.</string>
     <string name="alternative_pin_5_8_confirm">Please confirm 5-8 digit stealth and remote PIN</string>
+    <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
 
     <string name="no_edit_BIP21_scan">Bitcoin addresses scanned along with amounts (BIP21) cannot be edited</string>
 
@@ -338,6 +339,8 @@
     <string name="bip47_spend_to_pcode">Send through this payment channel?</string>
     <string name="bip47_partners">Recommended</string>
     <string name="bip47_wait_for_confirmation">Wait for 1 confirmation before sending</string>
+    <string name="bip47_already_has_recommended">This payment code is already in your list.</string>
+    <string name="bip47_recommended">Recommended payment codes</string>
 
     <string name="no_confirmed_outputs_available">No confirmed outputs available. Please try again later.</string>
     <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>

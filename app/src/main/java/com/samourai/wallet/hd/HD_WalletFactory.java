@@ -163,7 +163,7 @@ public class HD_WalletFactory	{
 
     public HD_Wallet get() throws IOException, MnemonicException.MnemonicLengthException {
 
-        if(wallets.size() < 1) {
+        if(wallets == null || wallets.size() < 1) {
             return null;
         }
 
@@ -172,7 +172,7 @@ public class HD_WalletFactory	{
 
     public Wallet getBIP47() throws IOException, MnemonicException.MnemonicLengthException {
 
-        if(wallets.size() < 1) {
+        if(wallets == null || wallets.size() < 1) {
             return null;
         }
 

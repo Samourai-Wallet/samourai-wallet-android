@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +38,8 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+import org.json.JSONException;
+import org.spongycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 public class BIP47Activity extends Activity {
 
     private static final int EDIT_PCODE = 2000;
+    private static final int RECOMMENDED_PCODE = 2001;
     private static final int SCAN_PCODE = 2077;
 
     private SwipeMenuListView listView = null;
@@ -106,6 +108,7 @@ public class BIP47Activity extends Activity {
             @Override
             public void onClick(View arg0) {
 
+                /*
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                         .setTitle(R.string.app_name)
                         .setMessage("Want to see your payment code suggested here? Contact us at wallet@samouraiwallet.com.")
@@ -117,6 +120,10 @@ public class BIP47Activity extends Activity {
                         });
 
                 dlg.show();
+                */
+
+                Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
+                startActivityForResult(intent, RECOMMENDED_PCODE);
 
             }
         });
@@ -328,6 +335,64 @@ public class BIP47Activity extends Activity {
         else if (resultCode == Activity.RESULT_CANCELED && requestCode == EDIT_PCODE) {
             ;
         }
+        else if (resultCode == Activity.RESULT_OK && requestCode == RECOMMENDED_PCODE) {
+
+            if(data.hasExtra("pcode") && data.hasExtra("label"))    {
+
+                String pcode = data.getStringExtra("pcode");
+                String label = data.getStringExtra("label");
+
+                BIP47Meta.getInstance().setLabel(pcode, label);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+
+                        try {
+                            HD_WalletFactory.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            mle.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(DecoderException de) {
+                            de.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(JSONException je) {
+                            je.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(IOException ioe) {
+                            ioe.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(java.lang.NullPointerException npe) {
+                            npe.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        finally {
+                            ;
+                        }
+
+                        Looper.loop();
+
+                    }
+                }).start();
+
+                if(BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT)    {
+
+                    doNotifTx(pcode);
+
+                }
+
+            }
+
+        }
+        else if (resultCode == Activity.RESULT_CANCELED && requestCode == RECOMMENDED_PCODE) {
+            ;
+        }
         else {
             ;
         }
@@ -419,7 +484,7 @@ public class BIP47Activity extends Activity {
 
     private void refreshList()  {
 
-        Set<String> _pcodes = BIP47Meta.getInstance().getLabels();
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels();
 
         //
         // check for own payment code
@@ -722,7 +787,6 @@ public class BIP47Activity extends Activity {
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Log.i("BIP47Activity", "updating list");
                                                 refreshList();
                                                 adapter.notifyDataSetChanged();
                                             }
@@ -742,8 +806,6 @@ public class BIP47Activity extends Activity {
     }
 
     public boolean refreshDisplay()   {
-
-        Log.i("BIP47Activity", "handling message");
 
         boolean changed = false;
 
@@ -807,7 +869,7 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                             BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
@@ -829,7 +891,7 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress sendAddress = BIP47Util.getInstance(BIP47Activity.this).getSendAddress(payment_code, i);
-                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
 //                            BIP47Meta.getInstance().setOutgoingIdx(payment_code.toString(), i);
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), i);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
@@ -875,7 +937,6 @@ public class BIP47Activity extends Activity {
                                         @Override
                                         public void run() {
 
-                                            Log.i("BIP47Activity", "updating list");
                                             refreshList();
                                             adapter.notifyDataSetChanged();
                                         }

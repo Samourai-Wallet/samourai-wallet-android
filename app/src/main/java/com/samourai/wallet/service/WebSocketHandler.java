@@ -365,16 +365,21 @@ public class WebSocketHandler {
     private void startPingTimer(){
 
         pingTimer = new Timer();
-        pingTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (mConnection != null) {
-                    pingPongSuccess = false;
-                    if (mConnection.isOpen()) mConnection.sendPing();
-                    startPongTimer();
+        try {
+            pingTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mConnection != null) {
+                        pingPongSuccess = false;
+                        if (mConnection.isOpen()) mConnection.sendPing();
+                        startPongTimer();
+                    }
                 }
-            }
-        }, pingInterval, pingInterval);
+            }, pingInterval, pingInterval);
+        }
+        catch(IllegalStateException ise) {
+            pingTimer = null;
+        }
     }
 
     private void stopPingTimer(){
