@@ -95,14 +95,14 @@ public class BIP47Meta {
     public String getDisplayLabel(String pcode)   {
         String label = getLabel(pcode);
         if(label.length() == 0 || pcode.equals(label))    {
-            return getAbbreviatedLabel(pcode);
+            return getAbbreviatedPcode(pcode);
         }
         else    {
             return label;
         }
     }
 
-    private String getAbbreviatedLabel(String pcode)   {
+    public String getAbbreviatedPcode(String pcode)   {
         return pcode.substring(0, 12) + "..." + pcode.substring(pcode.length() - 5, pcode.length());
     }
 

@@ -41,6 +41,8 @@ public class WebUtil	{
     public static final String CHAINSO_TX_PREV_OUT_URL = "https://chain.so/api/v2/tx/BTC/";
     public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
 
+    public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";
+
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;
 
