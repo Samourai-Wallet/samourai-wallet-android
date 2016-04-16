@@ -131,7 +131,7 @@ public class BIP47Recommended extends Activity {
             public void run() {
 
                 try {
-                    String response = WebUtil.getInstance(BIP47Recommended.this).getURL(WebUtil.RECOMMENDED_BIP47_URL);
+                    String response = WebUtil.getInstance(null).getURL(WebUtil.RECOMMENDED_BIP47_URL);
                     JSONObject jsonObject = new JSONObject(response);
                     parse(jsonObject);
 
@@ -143,8 +143,8 @@ public class BIP47Recommended extends Activity {
                     });
 
                 }
-                catch(JSONException e) {
-                    ;
+                catch(JSONException je) {
+                    je.printStackTrace();
                 }
                 catch(Exception e) {
                     ;
@@ -164,7 +164,7 @@ public class BIP47Recommended extends Activity {
             recs = obj.getJSONArray("recommended");
         }
         catch(JSONException je) {
-            ;
+            je.printStackTrace();
         }
 
         if(recs != null && recs.length() > 0)    {
@@ -182,7 +182,7 @@ public class BIP47Recommended extends Activity {
                     recommended.add(r);
                 }
                 catch(JSONException je) {
-                    ;
+                    je.printStackTrace();
                 }
 
             }
