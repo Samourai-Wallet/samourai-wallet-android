@@ -290,6 +290,7 @@
     <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
     <string name="alternative_pin_5_8">Please create a stealth and remote PIN code between 5 and 8 characters. This alternative PIN code will be used for stealth launch and remote SMS commands.</string>
     <string name="alternative_pin_5_8_confirm">Please confirm 5-8 digit stealth and remote PIN</string>
+    <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
 
     <string name="no_edit_BIP21_scan">Bitcoin addresses scanned along with amounts (BIP21) cannot be edited</string>
 
