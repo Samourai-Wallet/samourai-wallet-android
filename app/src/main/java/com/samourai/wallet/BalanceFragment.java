@@ -603,11 +603,12 @@ public class BalanceFragment extends Fragment {
                         else    {
                             acc = SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1;
                             txs = APIFactory.getInstance(thisActivity).getXpubTxs().get(HD_WalletFactory.getInstance(getActivity()).get().getAccount(acc).xpubstr());
-                            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                         }
                     }
                     else    {
                         txs = APIFactory.getInstance(thisActivity).getXpubTxs().get(HD_WalletFactory.getInstance(getActivity()).get().getAccount(acc).xpubstr());
+                    }
+                    if(txs != null)    {
                         Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                     }
 
