@@ -505,6 +505,7 @@ public class MainActivity2 extends Activity {
 
                         final EditText passphrase = new EditText(MainActivity2.this);
                         passphrase.setSingleLine(true);
+                        passphrase.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
                                 .setTitle(R.string.app_name)
@@ -558,7 +559,7 @@ public class MainActivity2 extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         final EditText passphrase = new EditText(MainActivity2.this);
-                                        passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                                        passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         passphrase.setHint(R.string.passphrase);
 
                                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
@@ -714,8 +715,10 @@ public class MainActivity2 extends Activity {
 
                                         final EditText mnemonic = new EditText(MainActivity2.this);
                                         mnemonic.setHint(R.string.mnemonic_hex);
+                                        mnemonic.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         final EditText passphrase = new EditText(MainActivity2.this);
                                         passphrase.setHint(R.string.bip39_passphrase);
+                                        passphrase.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         passphrase.setSingleLine(true);
 
                                         LinearLayout restoreLayout = new LinearLayout(MainActivity2.this);
