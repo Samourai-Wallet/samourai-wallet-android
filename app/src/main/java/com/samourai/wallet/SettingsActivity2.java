@@ -1,5 +1,6 @@
 package com.samourai.wallet;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -18,6 +19,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -664,6 +666,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
@@ -682,6 +687,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home) {
+            finish();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void getHDSeed(boolean mnemonic)	{
