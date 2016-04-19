@@ -280,6 +280,7 @@
     <string name="encrypted_backup">Encrypted wallet data</string>
     <string name="decryption_error">There was an error while decrypting your wallet backup. Please try again.</string>
     <string name="restore_wallet_from_backup">Restore wallet from backup</string>
+    <string name="restore_wallet_from_existing_backup">Backup found on device. To restore from existing backup, tap \'OK\', otherwise copy/paste different backup and tap \'OK\'.</string>
 
     <string name="choose_email_client">Choose an Email client:</string>
 
