@@ -73,7 +73,7 @@ public class HD_WalletFactory	{
 
     public static HD_WalletFactory getInstance(Context ctx) {
 
-    	context = ctx;
+        context = ctx;
 
         if (instance == null) {
             wallets = new ArrayList<HD_Wallet>();
@@ -191,10 +191,10 @@ public class HD_WalletFactory	{
 
     public void set(HD_Wallet wallet)	{
 
-    	if(wallet != null)	{
+        if(wallet != null)	{
             wallets.clear();
-        	wallets.add(wallet);
-    	}
+            wallets.add(wallet);
+        }
 
     }
 
@@ -516,10 +516,10 @@ public class HD_WalletFactory	{
                 decrypted = AESUtil.decrypt(sb.toString(), password, AESUtil.DefaultPBKDF2Iterations);
             }
             catch(Exception e) {
-            	return null;
+                return null;
             }
             if(decrypted == null) {
-            	return null;
+                return null;
             }
             node = new JSONObject(decrypted);
         }
@@ -579,7 +579,12 @@ public class HD_WalletFactory	{
 
     private synchronized void serialize(String data) throws IOException    {
 
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + "/samourai");
+        if(!dir.exists())   {
+            dir.mkdirs();
+            dir.setWritable(true, true);
+            dir.setReadable(true, true);
+        }
         File newfile = new File(dir, "samourai.txt");
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
