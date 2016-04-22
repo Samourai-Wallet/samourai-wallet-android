@@ -2,6 +2,7 @@ package com.samourai.wallet.hd;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -579,7 +580,8 @@ public class HD_WalletFactory	{
 
     private synchronized void serialize(String data) throws IOException    {
 
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + "/samourai");
+        String directory = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS;
+        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
         if(!dir.exists())   {
             dir.mkdirs();
             dir.setWritable(true, true);
