@@ -481,7 +481,11 @@ public class APIFactory	{
 //                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
 
                         if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
-                            BIP47Meta.getInstance().setLabel(pcode.toString(), "");
+                            String label = "";
+                            if(BIP47Meta.getInstance().getLabel(pcode.toString()) != null && BIP47Meta.getInstance().getLabel(pcode.toString()).length() > 0)    {
+                                label = BIP47Meta.getInstance().getLabel(pcode.toString());
+                            }
+                            BIP47Meta.getInstance().setLabel(pcode.toString(), label);
                             BIP47Meta.getInstance().setIncomingStatus(hash);
                         }
 
