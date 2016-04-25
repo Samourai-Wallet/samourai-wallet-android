@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -699,7 +700,12 @@ public class BIP47Activity extends Activity {
 
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater)BIP47Activity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.bip47_entry, null);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)    {
+                    view = inflater.inflate(R.layout.bip47_entry, null);
+                }
+                else    {
+                    view = inflater.inflate(R.layout.bip47_entry_compat, null);
+                }
             }
             else    {
                 view = convertView;
@@ -709,14 +715,16 @@ public class BIP47Activity extends Activity {
 
             TextView tvInitial = (TextView)view.findViewById(R.id.Initial);
             tvInitial.setText(strLabel.substring(0, 1).toUpperCase());
-            if(position % 3 == 0)    {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
-            }
-            else if(position % 2 == 1)    {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
-            }
-            else {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)    {
+                if(position % 3 == 0)    {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
+                }
+                else if(position % 2 == 1)    {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
+                }
+                else {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
+                }
             }
 
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
