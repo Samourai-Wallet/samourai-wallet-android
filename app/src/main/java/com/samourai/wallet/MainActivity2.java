@@ -65,10 +65,14 @@ import org.apache.commons.codec.DecoderException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -344,12 +348,12 @@ public class MainActivity2 extends Activity {
 
                                     }
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                Toast.makeText(MainActivity2.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MainActivity2.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
 
-                            }
-                        });
+                                    }
+                                });
                         if(!isFinishing())    {
                             dlg.show();
                         }
@@ -505,6 +509,7 @@ public class MainActivity2 extends Activity {
 
                         final EditText passphrase = new EditText(MainActivity2.this);
                         passphrase.setSingleLine(true);
+                        passphrase.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
                                 .setTitle(R.string.app_name)
@@ -534,13 +539,13 @@ public class MainActivity2 extends Activity {
                                     }
 
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
-                                AppUtil.getInstance(MainActivity2.this).restartApp();
+                                        Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
+                                        AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                            }
-                        });
+                                    }
+                                });
                         if(!isFinishing())    {
                             dlg.show();
                         }
@@ -558,7 +563,7 @@ public class MainActivity2 extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         final EditText passphrase = new EditText(MainActivity2.this);
-                                        passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                                        passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         passphrase.setHint(R.string.passphrase);
 
                                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
@@ -573,6 +578,33 @@ public class MainActivity2 extends Activity {
                                                         if (pw == null || pw.length() < 1) {
                                                             Toast.makeText(MainActivity2.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
                                                             AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                        }
+
+                                                        String directory = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS;
+                                                        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+                                                        File file = new File(dir, "samourai.txt");
+                                                        String encrypted = null;
+                                                        if(file.exists())    {
+
+                                                            StringBuilder sb = new StringBuilder();
+                                                            try {
+                                                                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+                                                                String str = null;
+                                                                while((str = in.readLine()) != null) {
+                                                                    sb.append(str);
+                                                                }
+
+                                                                in.close();
+                                                            }
+                                                            catch(FileNotFoundException fnfe) {
+
+                                                            }
+                                                            catch(IOException ioe) {
+
+                                                            }
+
+                                                            encrypted = sb.toString();
+
                                                         }
 
                                                         final EditText edBackup = new EditText(MainActivity2.this);
@@ -594,11 +626,19 @@ public class MainActivity2 extends Activity {
                                                             }
                                                         };
                                                         edBackup.addTextChangedListener(textWatcher);
+                                                        String message = null;
+                                                        if(encrypted != null)   {
+                                                            edBackup.setText(encrypted);
+                                                            message = getText(R.string.restore_wallet_from_existing_backup).toString();
+                                                        }
+                                                        else    {
+                                                            message = getText(R.string.restore_wallet_from_backup).toString();
+                                                        }
 
                                                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
                                                                 .setTitle(R.string.app_name)
                                                                 .setView(edBackup)
-                                                                .setMessage(R.string.restore_wallet_from_backup)
+                                                                .setMessage(message)
                                                                 .setCancelable(false)
                                                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -685,24 +725,28 @@ public class MainActivity2 extends Activity {
 
                                                                     }
                                                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                                AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                                        AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                                                            }
-                                                        });
+                                                                    }
+                                                                });
                                                         if(!isFinishing())    {
                                                             dlg.show();
                                                         }
 
+
+
+
+
                                                     }
                                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                        AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                                            }
-                                        });
+                                                    }
+                                                });
                                         if(!isFinishing())    {
                                             dlg.show();
                                         }
@@ -714,8 +758,10 @@ public class MainActivity2 extends Activity {
 
                                         final EditText mnemonic = new EditText(MainActivity2.this);
                                         mnemonic.setHint(R.string.mnemonic_hex);
+                                        mnemonic.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         final EditText passphrase = new EditText(MainActivity2.this);
                                         passphrase.setHint(R.string.bip39_passphrase);
+                                        passphrase.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                                         passphrase.setSingleLine(true);
 
                                         LinearLayout restoreLayout = new LinearLayout(MainActivity2.this);
@@ -749,12 +795,12 @@ public class MainActivity2 extends Activity {
 
                                                     }
                                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                        AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                                            }
-                                        });
+                                                    }
+                                                });
                                         if(!isFinishing())    {
                                             dlg.show();
                                         }
@@ -1090,12 +1136,12 @@ public class MainActivity2 extends Activity {
 
                                 }
                             }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
+                                public void onClick(DialogInterface dialog, int whichButton) {
 
-                            ;
+                                    ;
 
-                        }
-                    });
+                                }
+                            });
                     if(!isFinishing())    {
                         dlg.show();
                     }
@@ -1212,17 +1258,6 @@ public class MainActivity2 extends Activity {
             SamouraiWallet.getInstance().setShowTotalBalance(false);
         }
 
-    }
-
-    private boolean isExternalStorageWritable() {
-
-        String state = Environment.getExternalStorageState();
-
-        if(Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-
-        return false;
     }
 
 }

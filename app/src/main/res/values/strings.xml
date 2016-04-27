@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="code_name">\'Stealthy Crane\'</string>
-    <string name="version_name">0.77</string>
+    <string name="code_name">\'Crafty Cobra\'</string>
+    <string name="version_name">0.79</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 2 \'Crafty Cobra\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -280,6 +280,7 @@
     <string name="encrypted_backup">Encrypted wallet data</string>
     <string name="decryption_error">There was an error while decrypting your wallet backup. Please try again.</string>
     <string name="restore_wallet_from_backup">Restore wallet from backup</string>
+    <string name="restore_wallet_from_existing_backup">Backup found on device. To restore from existing backup, tap \'OK\', otherwise copy/paste different backup and tap \'OK\'.</string>
 
     <string name="choose_email_client">Choose an Email client:</string>
 

@@ -1,5 +1,6 @@
 package com.samourai.wallet;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 //import android.util.Log;
 
 import com.samourai.wallet.util.AppUtil;
@@ -24,6 +26,9 @@ public class SettingsActivity extends PreferenceActivity	{
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_root);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Preference prefsPref = (Preference) findPreference("prefs");
         prefsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -108,6 +113,21 @@ public class SettingsActivity extends PreferenceActivity	{
 
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == android.R.id.home) {
+            finish();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

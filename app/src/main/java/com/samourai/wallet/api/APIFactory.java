@@ -40,7 +40,6 @@ public class APIFactory	{
 
     private static long bip47_balance = 0L;
     private static HashMap<String, Long> bip47_amounts = null;
-    private static HashMap<String, String> seenBIP47Tx = null;
 
     private static boolean hasShuffled = false;
 
@@ -62,7 +61,6 @@ public class APIFactory	{
             hasShuffled = false;
             bip47_balance = 0L;
             bip47_amounts = new HashMap<String, Long>();
-            seenBIP47Tx = new HashMap<String, String>();
             instance = new APIFactory();
         }
 
@@ -76,7 +74,6 @@ public class APIFactory	{
         bip47_amounts.clear();
         xpub_txs.clear();
         haveUnspentOuts.clear();
-        seenBIP47Tx.clear();
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs) {
@@ -179,7 +176,12 @@ public class APIFactory	{
                     long move_amount = 0L;
                     long input_amount = 0L;
                     long output_amount = 0L;
+                    long bip47_input_amount = 0L;
+                    long xpub_input_amount = 0L;
+                    long change_output_amount = 0L;
                     boolean hasBIP47Input = false;
+                    boolean hasOnlyBIP47Input = true;
+                    boolean hasChangeOutput = false;
 
                     if(txObj.has("block_height"))  {
                         height = txObj.getLong("block_height");
@@ -209,9 +211,15 @@ public class APIFactory	{
                                     JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
                                     addr = (String)xpubObj.get("m");
                                     input_xpub = addr;
+                                    xpub_input_amount -= prevOutObj.getLong("value");
+                                    hasOnlyBIP47Input = false;
                                 }
-                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr("addr") != null)  {
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)  {
                                     hasBIP47Input = true;
+                                    bip47_input_amount -= prevOutObj.getLong("value");
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) == null)  {
+                                    hasOnlyBIP47Input = false;
                                 }
                                 else  {
                                     _addr = (String)prevOutObj.get("addr");
@@ -229,6 +237,7 @@ public class APIFactory	{
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = (String)xpubObj.get("m");
+                                change_output_amount += outObj.getLong("value");
 
                                 if(outObj.has("spent"))  {
                                     if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
@@ -242,11 +251,6 @@ public class APIFactory	{
                                         }
                                     }
                                 }
-                                path = (String)xpubObj.get("path");
-                                String[] s = path.split("/");
-                                if(s[1].equals("1") && hasBIP47Input)    {
-                                    continue;
-                                }
                                 if(input_xpub != null && !input_xpub.equals(addr))    {
                                     output_xpub = addr;
                                     move_amount = outObj.getLong("value");
@@ -256,6 +260,17 @@ public class APIFactory	{
 //                                _addr = (String)outObj.get("addr");
                             }
                         }
+
+                        if(hasOnlyBIP47Input && !hasChangeOutput)    {
+                            amount = bip47_input_amount;
+                        }
+                        else if(hasBIP47Input)    {
+                            amount = bip47_input_amount + xpub_input_amount + change_output_amount;
+                        }
+                        else    {
+                            ;
+                        }
+
                     }
 
                     if(addr != null)  {
@@ -280,16 +295,13 @@ public class APIFactory	{
                         }
                         else    {
 
-                            if(!seenBIP47Tx.containsKey(hash))    {
-                                Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
 
-                                if(!xpub_txs.containsKey(addr))  {
-                                    xpub_txs.put(addr, new ArrayList<Tx>());
-                                }
-                                xpub_txs.get(addr).add(tx);
-
-                                seenBIP47Tx.put(hash, "");
+                            if(!xpub_txs.containsKey(addr))  {
+                                xpub_txs.put(addr, new ArrayList<Tx>());
                             }
+                            xpub_txs.get(addr).add(tx);
+
                         }
 
                     }
@@ -481,7 +493,11 @@ public class APIFactory	{
 //                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
 
                         if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
-                            BIP47Meta.getInstance().setLabel(pcode.toString(), "");
+                            String label = "";
+                            if(BIP47Meta.getInstance().getLabel(pcode.toString()) != null && BIP47Meta.getInstance().getLabel(pcode.toString()).length() > 0)    {
+                                label = BIP47Meta.getInstance().getLabel(pcode.toString());
+                            }
+                            BIP47Meta.getInstance().setLabel(pcode.toString(), label);
                             BIP47Meta.getInstance().setIncomingStatus(hash);
                         }
 
@@ -619,6 +635,14 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    /*
+
+        parseXPUB ignores tx w/ BIP47 outputs
+        parseXPUB handles BIP47 input amounts
+        parseBIP47 ignores tx w/ BIP47 inputs
+        parseBIP47 handles BIP47 outputs
+
+     */
     public synchronized void initWalletAmounts() {
 
         APIFactory.getInstance(context).reset();
@@ -882,7 +906,6 @@ public class APIFactory	{
                     long ts = 0L;
                     String hash = null;
                     String addr = null;
-                    boolean hasBIP47Input = false;
                     boolean hasBIP47Output = false;
 
                     if(txObj.has("block_height"))  {
@@ -906,10 +929,7 @@ public class APIFactory	{
                             if(inputObj.has("prev_out"))  {
                                 JSONObject prevOutObj = (JSONObject)inputObj.get("prev_out");
                                 if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)   {
-//                                    Log.i("APIFactory", "found input:" + prevOutObj.getString("addr"));
-                                    addr = prevOutObj.getString("addr");
-                                    amount -= prevOutObj.getLong("value");
-                                    hasBIP47Input = true;
+                                    continue;
                                 }
                             }
                         }
@@ -920,32 +940,7 @@ public class APIFactory	{
                         JSONObject outObj = null;
                         for(int j = 0; j < outArray.length(); j++)  {
                             outObj = (JSONObject)outArray.get(j);
-                            if(outObj.has("xpub"))  {
-                                JSONObject xpubObj = (JSONObject)outObj.get("xpub");
-                                addr = (String)xpubObj.get("m");
-                                String path = (String)xpubObj.get("path");
-                                String[] s = path.split("/");
-                                if(s[1].equals("1") && hasBIP47Input)    {
-                                    amount += outObj.getLong("value");
-                                }
-                                //
-                                // collect unspent outputs for each xpub
-                                // store path info in order to generate private key later on
-                                //
-                                if(outObj.has("spent"))  {
-                                    if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
-                                        if(!haveUnspentOuts.containsKey(addr))  {
-                                            List<String> addrs = new ArrayList<String>();
-                                            haveUnspentOuts.put(addr, addrs);
-                                        }
-                                        String data = path + "," + (String)outObj.get("addr");
-                                        if(!haveUnspentOuts.get(addr).contains(data))  {
-                                            haveUnspentOuts.get(addr).add(data);
-                                        }
-                                    }
-                                }
-                            }
-                            else if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
+                            if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
 //                                Log.i("APIFactory", "found output:" + outObj.getString("addr"));
                                 addr = outObj.getString("addr");
                                 amount += outObj.getLong("value");
@@ -957,25 +952,15 @@ public class APIFactory	{
                         }
                     }
 
-                    if(addr != null)  {
-
-//                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
-
-                        if((hasBIP47Output || hasBIP47Input) && !seenBIP47Tx.containsKey(hash))    {
-                            Tx tx = new Tx(hash, addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
-                            if(!xpub_txs.containsKey(account0_xpub))  {
-                                xpub_txs.put(account0_xpub, new ArrayList<Tx>());
-                            }
-                            if(hasBIP47Input || hasBIP47Output && (BIP47Meta.getInstance().getPCode4Addr(addr) != null))    {
-                                tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
-                            }
-                            xpub_txs.get(account0_xpub).add(tx);
-                            seenBIP47Tx.put(hash, "");
+                    if(addr != null && hasBIP47Output)  {
+                        Tx tx = new Tx(hash, addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                        if(!xpub_txs.containsKey(account0_xpub))  {
+                            xpub_txs.put(account0_xpub, new ArrayList<Tx>());
                         }
-                        else    {
-                            ;
+                        if(BIP47Meta.getInstance().getPCode4Addr(addr) != null)    {
+                            tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
                         }
-
+                        xpub_txs.get(account0_xpub).add(tx);
                     }
 
                 }

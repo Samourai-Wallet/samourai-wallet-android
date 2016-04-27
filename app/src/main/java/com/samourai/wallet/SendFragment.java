@@ -952,7 +952,7 @@ public class SendFragment extends Fragment {
                     edAddress.setEnabled(false);
                     edAmountBTC.setEnabled(false);
                     edAmountFiat.setEnabled(false);
-                    Toast.makeText(getActivity(), R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                 }
             }
             catch (NumberFormatException nfe) {
@@ -984,7 +984,7 @@ public class SendFragment extends Fragment {
                     strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(pcode.toString()));
                     edAddress.setEnabled(false);
-                    Toast.makeText(getActivity(), R.string.no_edit_BIP47_address, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), R.string.no_edit_BIP47_address, Toast.LENGTH_SHORT).show();
                 }
                 catch(Exception e) {
                     Toast.makeText(getActivity(), R.string.error_payment_code, Toast.LENGTH_SHORT).show();
