@@ -253,7 +253,8 @@ public class HD_WalletFactory	{
         serialize(get().toJSON(context), password);
 
         // save optional external storage backup
-        if(isExternalStorageWritable() && PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true)) {
+        // encrypted using passphrase; cannot be used for restored wallets that do not use a passphrase
+        if(SamouraiWallet.getInstance().hasPassphrase(context) && isExternalStorageWritable() && PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true)) {
 
             final String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             String encrypted = null;

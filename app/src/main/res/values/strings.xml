@@ -349,5 +349,6 @@
     <string name="invalid_passphrase">Invalid passphrase</string>
     <string name="passphrase">Passphrase</string>
     <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
+    <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
 
 </resources>

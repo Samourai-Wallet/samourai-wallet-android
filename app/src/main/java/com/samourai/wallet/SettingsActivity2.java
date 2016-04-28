@@ -550,18 +550,24 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final CheckBoxPreference cbPref6 = (CheckBoxPreference) findPreference("autoBackup");
-                cbPref6.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(!SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this)) {
+                    cbPref6.setChecked(false);
+                    cbPref6.setEnabled(false);
+                }
+                else    {
+                    cbPref6.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                        public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-                        if (cbPref6.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, false);
-                        } else {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, true);
+                            if (cbPref6.isChecked()) {
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, false);
+                            } else {
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, true);
+                            }
+
+                            return true;
                         }
-
-                        return true;
-                    }
-                });
+                    });
+                }
 
             }
             else if(strBranch.equals("networking"))   {
