@@ -53,19 +53,26 @@ public class BIP47ShowQR extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setTitle(getText(R.string.bip47_setup1_title));
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey("label") && extras.containsKey("pcode"))	{
+            setTitle(extras.getString("label"));
+            addr = extras.getString("pcode");
+        }
+        else    {
+            setTitle(getText(R.string.bip47_setup1_title));
+
+            try {
+                addr = BIP47Util.getInstance(BIP47ShowQR.this).getPaymentCode().toString();
+            }
+            catch(AddressFormatException afe) {
+                ;
+            }
+        }
 
         display = (BIP47ShowQR.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         imgWidth = size.x - 280;
-
-        try {
-            addr = BIP47Util.getInstance(BIP47ShowQR.this).getPaymentCode().toString();
-        }
-        catch(AddressFormatException afe) {
-            ;
-        }
 
         addressLayout = (LinearLayout)findViewById(R.id.receive_address_layout);
         addressLayout.setOnTouchListener(new View.OnTouchListener() {
