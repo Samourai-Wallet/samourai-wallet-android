@@ -43,7 +43,7 @@
     <EditText
         android:id="@+id/pcode"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:inputType="textMultiLine"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
