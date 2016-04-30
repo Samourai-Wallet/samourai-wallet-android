@@ -3,14 +3,17 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
-import com.samourai.wallet.bip47.rpc.Util;
+import com.samourai.wallet.bip47.rpc.SecretPoint;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
-import org.bitcoinj.core.bip47.Wallet;
-import org.bitcoinj.core.bip47.Address;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.params.MainNetParams;
 
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -19,7 +22,7 @@ import java.io.IOException;
 
 public class BIP47Util {
 
-    private static Wallet wallet = null;
+    private static BIP47Wallet wallet = null;
 
     private static Context context = null;
     private static BIP47Util instance = null;
@@ -54,38 +57,45 @@ public class BIP47Util {
         wallet = null;
     }
 
-    public Wallet getWallet() {
+    public BIP47Wallet getWallet() {
         return wallet;
     }
 
-    public Address getNotificationAddress() {
-        return Util.getInstance().getNotificationAddress(wallet);
+    public HD_Address getNotificationAddress() {
+        return wallet.getAccount(0).getNotificationAddress();
     }
 
     public PaymentCode getPaymentCode() throws AddressFormatException   {
-        return Util.getInstance().getPaymentCode(wallet);
+        String payment_code = wallet.getAccount(0).getPaymentCode();
+        return new PaymentCode(payment_code);
     }
 
-    /*
-     Get incoming (receive) address for given index from provided payment code
-     */
     public PaymentAddress getReceiveAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        return Util.getInstance().getReceiveAddress(wallet, pcode, idx);
+        HD_Address address = wallet.getAccount(0).addressAt(idx);
+        return getPaymentAddress(pcode, 0, address);
     }
 
-    /*
-     Get outgoing (send) address for given index to provided payment code
-     */
     public PaymentAddress getSendAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        return Util.getInstance().getSendAddress(wallet, pcode, idx);
+        HD_Address address = wallet.getAccount(0).addressAt(0);
+        return getPaymentAddress(pcode, idx, address);
     }
 
     public byte[] getIncomingMask(byte[] pubkey, byte[] outPoint) throws AddressFormatException, Exception    {
-        return Util.getInstance().getIncomingMask(wallet, pubkey, outPoint);
+
+        HD_Address notifAddress = getNotificationAddress();
+        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), notifAddress.getPrivateKeyString());
+        ECKey inputKey = dpk.getKey();
+        byte[] privkey = inputKey.getPrivKeyBytes();
+        byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
+
+        return mask;
     }
 
-    private PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, Address address) throws AddressFormatException, NotSecp256k1Exception {
-        return Util.getInstance().getPaymentAddress(pcode, idx, address);
+    public PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, HD_Address address) throws AddressFormatException, NotSecp256k1Exception {
+        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), address.getPrivateKeyString());
+        ECKey eckey = dpk.getKey();
+        PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, eckey.getPrivKeyBytes());
+        return paymentAddress;
     }
 
 }

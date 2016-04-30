@@ -647,15 +647,12 @@ public class BIP47Activity extends Activity {
                                 Looper.prepare();
 
                                 PaymentCode payment_code = null;
-                                /*
                                 try {
                                     payment_code = new PaymentCode(pcode);
                                 }
                                 catch (AddressFormatException afe) {
                                     ;
                                 }
-                                */
-                                payment_code = new PaymentCode(pcode);
                                 UnspentOutputsBundle unspentCoinsBundle = SendNotifTxFactory.getInstance(BIP47Activity.this).phase1(0);
                                 if (unspentCoinsBundle == null) {
                                     Toast.makeText(BIP47Activity.this, R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();

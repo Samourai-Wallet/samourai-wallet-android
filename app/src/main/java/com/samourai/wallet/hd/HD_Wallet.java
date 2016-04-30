@@ -37,9 +37,9 @@ public class HD_Wallet {
     private List<String> mWordList = null;
 
     private DeterministicKey mKey = null;
-    private DeterministicKey mRoot = null;
+    protected DeterministicKey mRoot = null;
 
-    private ArrayList<HD_Account> mAccounts = null;
+    protected ArrayList<HD_Account> mAccounts = null;
 
     private NetworkParameters mParams = null;
 

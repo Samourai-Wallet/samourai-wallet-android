@@ -5,23 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.bip47.Wallet;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
-import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -171,20 +169,19 @@ public class HD_WalletFactory	{
         return wallets.get(0);
     }
 
-    public Wallet getBIP47() throws IOException, MnemonicException.MnemonicLengthException {
+    public BIP47Wallet getBIP47() throws IOException, MnemonicException.MnemonicLengthException {
 
         if(wallets == null || wallets.size() < 1) {
             return null;
         }
 
-        HD_Wallet hdw = wallets.get(0);
-        Wallet hdw47 = null;
+        BIP47Wallet hdw47 = null;
         InputStream wis = context.getAssets().open("BIP39/en.txt");
         if (wis != null) {
             String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
-            hdw47 = new Wallet(mc, MainNetParams.get(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+            hdw47 = new BIP47Wallet(47, mc, MainNetParams.get(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
         }
 
         return hdw47;
