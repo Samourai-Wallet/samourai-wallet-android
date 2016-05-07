@@ -18,7 +18,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.core.Wallet;
+//import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -345,7 +345,6 @@ public class SendFactory	{
                     Transaction tx = pair.first;
                     Long priority = pair.second;
 
-                    Wallet wallet = new Wallet(MainNetParams.get());
                     for (TransactionInput input : tx.getInputs()) {
                         byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                         String address = new BitcoinScript(scriptBytes).getAddress().toString();
