@@ -18,7 +18,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-//import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -46,6 +45,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.SecretPoint;
 
 import org.bitcoinj.script.ScriptOpCodes;
+import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.spongycastle.util.encoders.Hex;
@@ -227,29 +227,29 @@ public class SendNotifTxFactory	{
 //                    Log.i("SendFactory tx hash", tx.getHashAsString());
 //                    Log.i("SendFactory tx string", hexString);
 
-                    /*
-                    String response = PushTx.chainSo(hexString);
-                    Log.i("Send response", response);
-                    org.json.JSONObject responseObj = null;
+                    String response = PushTx.getInstance(context).samourai(hexString);
+
                     try {
-                        responseObj = new org.json.JSONObject(response);
-                        Log.i("Send response", responseObj.toString());
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                        if(jsonObject.has("status"))    {
+                            if(jsonObject.getString("status").equals("ok"))    {
+                                opc.onSuccess();
+                                if(sentChange) {
+                                    HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+                                }
 
-                        if(responseObj.has("data") && responseObj.getJSONObject("data").has("txid"))    {
-                            org.json.JSONObject jsonObj = responseObj.getJSONObject("data");
-                            Log.i("tx hash", jsonObj.getString("txid"));
-                            opc.onSuccess();
-                            if(sentChange) {
-                                HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
-                            }
-
-                            BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
-                            Log.i("SendNotifTxFactory", "tx hash:" + jsonObj.getString("txid"));
-                            BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), jsonObj.getString("txid"), BIP47Meta.STATUS_SENT_NO_CFM);
+                                BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
+//                        Log.i("SendNotifTxFactory", "tx hash:" + tx.getHashAsString());
+                                BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), tx.getHashAsString(), BIP47Meta.STATUS_SENT_NO_CFM);
 
 //                            SendAddressUtil.getInstance().add(notifPcode.notificationAddress().toString(), true);
 
-                            HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                                HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                            }
+                            else {
+                                Toast.makeText(context, jsonObject.getString("status"), Toast.LENGTH_SHORT).show();
+                                opc.onFail();
+                            }
                         }
                         else    {
                             Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
@@ -257,28 +257,7 @@ public class SendNotifTxFactory	{
                         }
                     }
                     catch(JSONException je) {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
-                        opc.onFail();
-                    }
-                    */
-
-                    String response = PushTx.getInstance(context).samourai(hexString);
-                    if(response != null && response.contains("Transaction Submitted"))  {
-                        opc.onSuccess();
-                        if(sentChange) {
-                            HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
-                        }
-
-                        BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
-//                        Log.i("SendNotifTxFactory", "tx hash:" + tx.getHashAsString());
-                        BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), tx.getHashAsString(), BIP47Meta.STATUS_SENT_NO_CFM);
-
-//                            SendAddressUtil.getInstance().add(notifPcode.notificationAddress().toString(), true);
-
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-                    }
-                    else    {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 

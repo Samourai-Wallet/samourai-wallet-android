@@ -18,7 +18,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-//import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -39,6 +38,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.Hash;
+import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -223,26 +223,40 @@ public class SendFactory	{
 
 //                    Log.i("SendFactory tx hash", tx.getHashAsString());
 //                    Log.i("SendFactory tx string", hexString);
-                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexString);
+                    String response = PushTx.getInstance(context).samourai(hexString);
 //                    Log.i("Send response", response);
-                    if(response.contains("Transaction Submitted")) {
-                        opc.onSuccess();
-                        if(sentChange) {
-                            for(int i = 0; i < changeAddressesUsed; i++) {
-                                HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+
+                    try {
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                        if(jsonObject.has("status"))    {
+                            if(jsonObject.getString("status").equals("ok"))    {
+                                opc.onSuccess();
+                                if(sentChange) {
+                                    for(int i = 0; i < changeAddressesUsed; i++) {
+                                        HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+                                    }
+                                }
+
+                                for(Iterator<Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
+                                    Entry<String, BigInteger> mapEntry = iterator.next();
+                                    String toAddress = mapEntry.getKey();
+                                    SendAddressUtil.getInstance().add(toAddress, true);
+                                }
+
+                                HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                            }
+                            else {
+                                Toast.makeText(context, jsonObject.getString("status"), Toast.LENGTH_SHORT).show();
+                                opc.onFail();
                             }
                         }
-
-                        for(Iterator<Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
-                            Entry<String, BigInteger> mapEntry = iterator.next();
-                            String toAddress = mapEntry.getKey();
-                            SendAddressUtil.getInstance().add(toAddress, true);
+                        else    {
+                            Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                            opc.onFail();
                         }
-
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                     }
-                    else {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                    catch(JSONException je) {
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 
@@ -371,14 +385,28 @@ public class SendFactory	{
 
 //                    Log.i("SendFactory tx hash", tx.getHashAsString());
 //                    Log.i("SendFactory tx string", hexString);
-                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexString);
+                    String response = PushTx.getInstance(context).samourai(hexString);
 //                    Log.i("Send response", response);
-                    if(response.contains("Transaction Submitted")) {
-                        opc.onSuccess();
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+
+                    try {
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                        if(jsonObject.has("status"))    {
+                            if(jsonObject.getString("status").equals("ok"))    {
+                                opc.onSuccess();
+                                HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                            }
+                            else {
+                                Toast.makeText(context, jsonObject.getString("status"), Toast.LENGTH_SHORT).show();
+                                opc.onFail();
+                            }
+                        }
+                        else    {
+                            Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                            opc.onFail();
+                        }
                     }
-                    else {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                    catch(JSONException je) {
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 
