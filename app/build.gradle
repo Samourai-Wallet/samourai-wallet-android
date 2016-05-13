@@ -8,10 +8,16 @@ android {
         applicationId "com.samourai.wallet"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 26
-        versionName "0.79"
+        versionCode 27
+        versionName "0.80"
         multiDexEnabled true
     }
+    dexOptions
+            {
+                incremental false
+                javaMaxHeapSize "2048M"
+                preDexLibraries = false
+            }
     buildTypes {
         release {
             minifyEnabled false
