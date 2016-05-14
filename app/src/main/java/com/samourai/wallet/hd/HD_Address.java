@@ -34,8 +34,12 @@ public class HD_Address {
         mChildNum = child;
 
         DeterministicKey dk = HDKeyDerivation.deriveChildKey(cKey, new ChildNumber(mChildNum, false));
-        ecKey = new ECKey(dk.getPrivKeyBytes(), dk.getPubKey());
-
+        if(dk.hasPrivKey())    {
+            ecKey = new ECKey(dk.getPrivKeyBytes(), dk.getPubKey());
+        }
+        else    {
+            ecKey = ECKey.fromPublicOnly(dk.getPubKey());
+        }
         long now = Utils.now().getTime() / 1000;
         ecKey.setCreationTimeSeconds(now);
 
@@ -58,6 +62,10 @@ public class HD_Address {
             return null;
         }
 
+    }
+
+    public byte[] getPubKey() {
+        return mPubKey;
     }
 
     public Address getAddress() {

@@ -406,32 +406,38 @@ public class MainActivity2 extends Activity {
             doSweep();
         }
         else if (id == R.id.action_backup) {
-            try {
-                if(HD_WalletFactory.getInstance(MainActivity2.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(MainActivity2.this))    {
-                    doBackup();
-                }
-                else    {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
-                    AlertDialog alert = builder.create();
-
-                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }});
-
-                    if(!isFinishing())    {
-                        alert.show();
+            if(SamouraiWallet.getInstance().hasPassphrase(MainActivity2.this))    {
+                try {
+                    if(HD_WalletFactory.getInstance(MainActivity2.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(MainActivity2.this))    {
+                        doBackup();
                     }
+                    else    {
 
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
+                        AlertDialog alert = builder.create();
+
+                        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }});
+
+                        if(!isFinishing())    {
+                            alert.show();
+                        }
+
+                    }
+                }
+                catch(MnemonicException.MnemonicLengthException mle) {
+                    ;
+                }
+                catch(IOException ioe) {
+                    ;
                 }
             }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                ;
-            }
-            catch(IOException ioe) {
-                ;
+            else    {
+                Toast.makeText(MainActivity2.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
             }
 
         }

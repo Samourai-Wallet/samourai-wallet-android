@@ -734,6 +734,7 @@ public class SendFragment extends Fragment {
 
                                             // increment counter if BIP47 spend
                                             if(strPCode != null && strPCode.length() > 0)    {
+                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
                                                 BIP47Meta.getInstance().inc(strPCode);
 
                                                 SimpleDateFormat sd = new SimpleDateFormat("dd MMM");

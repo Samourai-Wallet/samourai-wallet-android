@@ -36,6 +36,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -43,7 +44,9 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.json.JSONObject;
 
@@ -536,7 +539,7 @@ public class ReceiveFragment extends Fragment {
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(addr, Coin.valueOf(lamount), null, null)));
+                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(MainNetParams.get(), addr), Coin.valueOf(lamount), null, null)));
             }
             else {
                 ivQR.setImageBitmap(generateQRCode(addr));

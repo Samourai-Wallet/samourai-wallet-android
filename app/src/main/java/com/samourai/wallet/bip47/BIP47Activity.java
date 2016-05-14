@@ -190,10 +190,12 @@ public class BIP47Activity extends Activity {
 
                     case 0:
 
+                    {
                         Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
                         intent.putExtra("label", BIP47Meta.getInstance().getLabel(pcodes[position]));
                         intent.putExtra("pcode", pcodes[position]);
                         startActivityForResult(intent, EDIT_PCODE);
+                    }
 
                         break;
 
@@ -204,6 +206,17 @@ public class BIP47Activity extends Activity {
                         break;
 
                     case 2:
+
+                    {
+                        Intent intent = new Intent(BIP47Activity.this, BIP47ShowQR.class);
+                        intent.putExtra("label", BIP47Meta.getInstance().getLabel(pcodes[position]));
+                        intent.putExtra("pcode", pcodes[position]);
+                        startActivity(intent);
+                    }
+
+                        break;
+
+                    case 3:
 
                         // archive
 
@@ -255,6 +268,18 @@ public class BIP47Activity extends Activity {
                 syncItem.setIcon(android.R.drawable.ic_popup_sync);
                 // add to menu
                 menu.addMenuItem(syncItem);
+
+                // create "qr" item
+                SwipeMenuItem qrItem = new SwipeMenuItem(getApplicationContext());
+                // set item background
+                qrItem.setBackground(new ColorDrawable(Color.rgb(0x17, 0x1B, 0x24)));
+                // set item width
+                qrItem.setWidth(180);
+                // set a icon
+                qrItem.setIcon(R.drawable.ic_receive_qr);
+                // add to menu
+                menu.addMenuItem(qrItem);
+
 /*
                 // create "archive" item
                 SwipeMenuItem archiveItem = new SwipeMenuItem(getApplicationContext());
@@ -622,15 +647,12 @@ public class BIP47Activity extends Activity {
                                 Looper.prepare();
 
                                 PaymentCode payment_code = null;
-                                /*
                                 try {
                                     payment_code = new PaymentCode(pcode);
                                 }
                                 catch (AddressFormatException afe) {
                                     ;
                                 }
-                                */
-                                payment_code = new PaymentCode(pcode);
                                 UnspentOutputsBundle unspentCoinsBundle = SendNotifTxFactory.getInstance(BIP47Activity.this).phase1(0);
                                 if (unspentCoinsBundle == null) {
                                     Toast.makeText(BIP47Activity.this, R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();

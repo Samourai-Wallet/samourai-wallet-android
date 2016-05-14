@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'Crafty Cobra\'</string>
-    <string name="version_name">0.79</string>
+    <string name="version_name">0.80</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 2 \'Crafty Cobra\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -349,5 +349,6 @@
     <string name="invalid_passphrase">Invalid passphrase</string>
     <string name="passphrase">Passphrase</string>
     <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
+    <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
 
 </resources>

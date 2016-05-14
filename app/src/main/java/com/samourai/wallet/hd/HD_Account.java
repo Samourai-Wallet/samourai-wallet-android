@@ -16,19 +16,19 @@ import java.nio.ByteBuffer;
 
 public class HD_Account {
 
-    private DeterministicKey aKey = null;
+    protected DeterministicKey aKey = null;
     private String strLabel = null;
-    private int	mAID;
+    protected int	mAID;
     private boolean isArchived = false;
 
     private HD_Chain mReceive = null;
     private HD_Chain mChange = null;
 
-    private String strXPUB = null;
+    protected String strXPUB = null;
 
-    private NetworkParameters mParams = null;
+    protected NetworkParameters mParams = null;
 
-    private HD_Account() { ; }
+    protected HD_Account() { ; }
 
     public HD_Account(NetworkParameters params, DeterministicKey mKey, String label, int child) {
 
@@ -64,7 +64,7 @@ public class HD_Account {
 
     }
 
-    private DeterministicKey createMasterPubKeyFromXPub(String xpubstr) throws AddressFormatException {
+    protected DeterministicKey createMasterPubKeyFromXPub(String xpubstr) throws AddressFormatException {
 
         byte[] xpubBytes = Base58.decodeChecked(xpubstr);
 
