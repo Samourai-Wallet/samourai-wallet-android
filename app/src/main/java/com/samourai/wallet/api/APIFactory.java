@@ -7,6 +7,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -77,6 +78,39 @@ public class APIFactory	{
         xpub_txs.clear();
         haveUnspentOuts.clear();
         seenBIP47Tx.clear();
+    }
+
+    private synchronized void preloadXPUB(String[] xpubs) {
+
+        JSONObject jsonObject = null;
+
+        for(int i = 0; i < xpubs.length; i++)   {
+            if(!PrefsUtil.getInstance(context).getValue(xpubs[i], false))    {
+                try {
+                    StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
+                    url.append("xpub?xpub=");
+                    url.append(xpubs[i]);
+                    String response = WebUtil.getInstance(null).getURL(url.toString());
+//                Log.i("APIFactory", "XPUB response:" + response);
+                    try {
+                        jsonObject = new JSONObject(response);
+                        if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") &&
+                                jsonObject.has("comment") && (jsonObject.getString("comment").equals("added") || jsonObject.getString("comment").equals("duplicate")))    {
+                            PrefsUtil.getInstance(context).setValue(xpubs[i], true);
+                        }
+                    }
+                    catch(JSONException je) {
+                        je.printStackTrace();
+                        jsonObject = null;
+                    }
+                }
+                catch(Exception e) {
+                    jsonObject = null;
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs) {
@@ -643,6 +677,7 @@ public class APIFactory	{
         // bip44 balance and tx
         //
         try {
+            APIFactory.getInstance(context).preloadXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
             APIFactory.getInstance(context).getXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
         }
         catch(IOException ioe) {
