@@ -196,6 +196,7 @@ public class MainActivity2 extends Activity {
         }
         else  {
             SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
             exchangeRateThread();
 
             boolean isDial = false;
@@ -269,6 +270,7 @@ public class MainActivity2 extends Activity {
             TimeOutUtil.getInstance().updatePin();
 
             SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
         }
 
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
