@@ -1,6 +1,8 @@
 package com.samourai.wallet.api;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
 
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -689,6 +691,12 @@ public class APIFactory	{
         finally {
             ;
         }
+
+        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+        intent.putExtra("notfTx", false);
+        intent.putExtra("fetch", false);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
 
     }
 
