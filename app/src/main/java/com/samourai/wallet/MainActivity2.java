@@ -471,6 +471,20 @@ public class MainActivity2 extends Activity {
 
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        try {
+                            HD_WalletFactory.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            ;
+                        }
+                        catch(JSONException je) {
+                            ;
+                        }
+                        catch(IOException ioe) {
+                            ;
+                        }
+
                         AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
                         TimeOutUtil.getInstance().reset();
                         dialog.dismiss();
