@@ -124,7 +124,7 @@ public class BalanceFragment extends Fragment {
                         rbfHash = null;
                     }
 
-                    getActivity().runOnUiThread(new Runnable() {
+                    thisActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             tvBalanceAmount.setText("");
