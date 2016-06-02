@@ -180,6 +180,7 @@ public class HD_Wallet {
             JSONObject meta = new JSONObject();
             meta.put("prev_balance", APIFactory.getInstance(ctx).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("spend_type", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.SPEND_TYPE, 1));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());

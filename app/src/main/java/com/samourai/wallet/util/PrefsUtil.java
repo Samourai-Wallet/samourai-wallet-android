@@ -28,6 +28,7 @@ public class PrefsUtil {
     public static final String TRUSTED_LOCK = "trustedMobileOnly";
 	public static final String SCRAMBLE_PIN = "scramblePin";
 	public static final String AUTO_BACKUP = "autoBackup";
+	public static final String SPEND_TYPE = "spendType";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

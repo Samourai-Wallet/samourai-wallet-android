@@ -330,6 +330,9 @@ public class HD_WalletFactory	{
                 if(meta.has("prev_balance")) {
                     APIFactory.getInstance(context).setXpubBalance(meta.getLong("prev_balance"));
                 }
+                if(meta.has("spend_type")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
+                }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
                 }
