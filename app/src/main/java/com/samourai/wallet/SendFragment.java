@@ -161,10 +161,13 @@ public class SendFragment extends Fragment {
             balance = APIFactory.getInstance(getActivity()).getXpubAmounts().get(HD_WalletFactory.getInstance(getActivity()).get().getAccount(selectedAccount).xpubstr());
         }
         catch(IOException ioe)    {
-            ;
+            balance = 0L;
         }
         catch(MnemonicException.MnemonicLengthException mle)    {
-            ;
+            balance = 0L;
+        }
+        catch(java.lang.NullPointerException npe)    {
+            balance = 0L;
         }
 
         final String strAmount;
