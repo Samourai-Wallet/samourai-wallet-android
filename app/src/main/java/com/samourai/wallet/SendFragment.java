@@ -102,6 +102,8 @@ public class SendFragment extends Fragment {
     private TextView tvSpendType = null;
     private TextView tvSpendTypeDesc = null;
     private SeekBar spendType = null;
+    private String[] spendTypes0 = null;
+    private String[] spendTypes1 = null;
 
     private String strFiat = null;
     private double btc_fx = 286.0;
@@ -412,11 +414,24 @@ public class SendFragment extends Fragment {
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
+        spendTypes0 = new String[3];
+        spendTypes0[0] = getActivity().getString(R.string.spend_type_1);
+        spendTypes0[1] = getActivity().getString(R.string.spend_type_2);
+        spendTypes0[2] = getActivity().getString(R.string.spend_type_3);
+
+        spendTypes1 = new String[3];
+        spendTypes1[0] = getActivity().getString(R.string.spend_type_1_desc);
+        spendTypes1[1] = getActivity().getString(R.string.spend_type_2_desc);
+        spendTypes1[2] = getActivity().getString(R.string.spend_type_3_desc);
+
         tvSpendType = (TextView)rootView.findViewById(R.id.spendType);
         tvSpendTypeDesc = (TextView)rootView.findViewById(R.id.spendTypeDesc);
         spendType = (SeekBar)rootView.findViewById(R.id.seekBar);
         spendType.setMax(2);
         spendType.setProgress(PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1));
+        tvSpendType.setText(spendTypes0[PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1)]);
+        tvSpendTypeDesc.setText(spendTypes1[PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1)]);
+
         spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressChanged = 0;
@@ -432,18 +447,8 @@ public class SendFragment extends Fragment {
 
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                String[] s1 = new String[3];
-                s1[0] = getActivity().getString(R.string.spend_type_1);
-                s1[1] = getActivity().getString(R.string.spend_type_2);
-                s1[2] = getActivity().getString(R.string.spend_type_3);
-
-                String[] s2 = new String[3];
-                s2[0] = getActivity().getString(R.string.spend_type_1_desc);
-                s2[1] = getActivity().getString(R.string.spend_type_2_desc);
-                s2[2] = getActivity().getString(R.string.spend_type_3_desc);
-
-                tvSpendType.setText(s1[progressChanged]);
-                tvSpendTypeDesc.setText(s2[progressChanged]);
+                tvSpendType.setText(spendTypes0[progressChanged]);
+                tvSpendTypeDesc.setText(spendTypes1[progressChanged]);
 
             }
         });
