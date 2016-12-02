@@ -1,19 +1,8 @@
 package com.samourai.wallet.util;
 
-import android.content.Context;
-import android.util.Log;
-
-import org.bitcoinj.crypto.MnemonicException;
-import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.hd.HD_Address;
-import com.samourai.wallet.hd.HD_WalletFactory;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.simple.JSONValue;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 public class SendAddressUtil {

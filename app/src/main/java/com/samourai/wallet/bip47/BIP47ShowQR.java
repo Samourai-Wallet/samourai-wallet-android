@@ -25,7 +25,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.R;
+import com.samourai.R;
 
 import org.bitcoinj.core.AddressFormatException;
 

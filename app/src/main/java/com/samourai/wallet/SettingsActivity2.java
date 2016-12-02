@@ -36,8 +36,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
+import com.samourai.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
@@ -214,13 +216,20 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                                                                     try {
                                                                                         HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
-                                                                                    } catch (JSONException je) {
+                                                                                    }
+                                                                                    catch (JSONException je) {
                                                                                         je.printStackTrace();
-                                                                                    } catch (IOException ioe) {
+                                                                                    }
+                                                                                    catch (IOException ioe) {
                                                                                         ioe.printStackTrace();
-                                                                                    } catch (MnemonicException.MnemonicLengthException mle) {
+                                                                                    }
+                                                                                    catch (MnemonicException.MnemonicLengthException mle) {
                                                                                         mle.printStackTrace();
-                                                                                    } finally {
+                                                                                    }
+                                                                                    catch (DecryptionException de) {
+                                                                                        de.printStackTrace();
+                                                                                    }
+                                                                                    finally {
                                                                                         Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
                                                                                     }
 
@@ -499,6 +508,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                                                         catch (MnemonicException.MnemonicLengthException mle) {
                                                                                                             mle.printStackTrace();
                                                                                                         }
+                                                                                                        catch (DecryptionException de) {
+                                                                                                            de.printStackTrace();
+                                                                                                        }
                                                                                                         finally {
                                                                                                             Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
                                                                                                         }
@@ -651,7 +663,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 Preference aboutPref = (Preference) findPreference("about");
-                aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.code_name) + ", " + getResources().getString(R.string.version_name));
+                aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.version_name));
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         Intent intent = new Intent(SettingsActivity2.this, AboutActivity.class);
@@ -751,12 +763,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
         final String[] accounts;
         if(AddressFactory.getInstance(SettingsActivity2.this).getHighestTxReceiveIdx(SamouraiWallet.MIXING_ACCOUNT) == 0)    {
             accounts = new String[] {
-                    getString(R.string.account_samourai),
+                    getString(R.string.account_Samourai),
             };
         }
         else    {
             accounts = new String[] {
-                    getString(R.string.account_samourai),
+                    getString(R.string.account_Samourai),
                     getString(R.string.account_shuffling),
             };
         }
@@ -847,13 +859,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
                                 dialog.dismiss();
-                                if (which == 2) {
-                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
-                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
-                                    Toast.makeText(SettingsActivity2.this, R.string.bitfinex_fiat, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    getFiat();
-                                }
+                                getFiat();
+
                             }
                         }
                 ).show();

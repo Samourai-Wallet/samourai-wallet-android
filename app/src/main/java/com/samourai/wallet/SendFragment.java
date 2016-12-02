@@ -8,43 +8,49 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Pair;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
-
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
+
+import com.samourai.R;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.send.ChangeMaker;
 import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.send.UnspentOutputsBundle;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.WebUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -52,26 +58,29 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.text.DecimalFormatSymbols;
+import java.util.Map;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.SeekBar;
-
-import net.sourceforge.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.script.Script;
+import org.json.JSONException;
+import org.spongycastle.util.encoders.Hex;
 
 public class SendFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-
-    private static final int SCAN_URI = 2077;
 
     private TextView tvMaxPrompt = null;
     private TextView tvMax = null;
@@ -93,17 +102,17 @@ public class SendFragment extends Fragment {
 
     private EditText edCustomFee = null;
 
-    private final static int FEE_AUTO = 0;
-    private final static int FEE_PRIORITY = 1;
-    private final static int FEE_CUSTOM = 2;
+    private final static int FEE_LOW = 0;
+    private final static int FEE_AUTO = 1;
+    private final static int FEE_PRIORITY = 2;
+    private final static int FEE_CUSTOM = 3;
     private int FEE_TYPE = 0;
     private boolean networkIsStressed = false;
 
-    private TextView tvSpendType = null;
-    private TextView tvSpendTypeDesc = null;
-    private SeekBar spendType = null;
-    private String[] spendTypes0 = null;
-    private String[] spendTypes1 = null;
+    private final static int SPEND_SIMPLE = 0;
+    private final static int SPEND_BIP126 = 1;
+    private int SPEND_TYPE = SPEND_SIMPLE;
+    private Switch spendType = null;
 
     private String strFiat = null;
     private double btc_fx = 286.0;
@@ -130,16 +139,7 @@ public class SendFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = null;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            rootView = inflater.inflate(R.layout.fragment_send, container, false);
-        }
-        else {
-            rootView = inflater.inflate(R.layout.fragment_send_compat, container, false);
-        }
-
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.divider));
-        }
+        rootView = inflater.inflate(R.layout.fragment_send, container, false);
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -242,11 +242,44 @@ public class SendFragment extends Fragment {
                 final int DRAWABLE_RIGHT = 2;
                 //final int DRAWABLE_BOTTOM = 3;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (edAddress.getRight() - edAddress.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        doScan();
-                        return true;
+                if(event.getAction() == MotionEvent.ACTION_UP && event.getRawX() >= (edAddress.getRight() - edAddress.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+
+                    final List<String> entries = new ArrayList<String>();
+                    entries.addAll(BIP47Meta.getInstance().getSortedByLabels(false));
+
+                    final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+                    for(int i = 0; i < entries.size(); i++)   {
+                        arrayAdapter.add(BIP47Meta.getInstance().getDisplayLabel(entries.get(i)));
                     }
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                    dlg.setIcon(R.drawable.ic_launcher);
+                    dlg.setTitle(R.string.app_name);
+
+                    dlg.setAdapter(arrayAdapter,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+//                                    Toast.makeText(getActivity(), BIP47Meta.getInstance().getDisplayLabel(entries.get(which)), Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(), entries.get(which), Toast.LENGTH_SHORT).show();
+
+                                    processPCode(entries.get(which));
+
+                                }
+                            });
+
+                    dlg.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    dlg.show();
+
+                    return true;
                 }
 
                 return false;
@@ -414,74 +447,73 @@ public class SendFragment extends Fragment {
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
-        spendTypes0 = new String[3];
-        spendTypes0[0] = getActivity().getString(R.string.spend_type_1);
-        spendTypes0[1] = getActivity().getString(R.string.spend_type_2);
-        spendTypes0[2] = getActivity().getString(R.string.spend_type_3);
+        SPEND_TYPE = PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 0);
+        spendType = (Switch)rootView.findViewById(R.id.spendType);
+        spendType.setChecked(SPEND_TYPE == 0 ? false : true);
+        spendType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        spendTypes1 = new String[3];
-        spendTypes1[0] = getActivity().getString(R.string.spend_type_1_desc);
-        spendTypes1[1] = getActivity().getString(R.string.spend_type_2_desc);
-        spendTypes1[2] = getActivity().getString(R.string.spend_type_3_desc);
+                if(spendType.isChecked()){
+                    SPEND_TYPE = 1;
+                }
+                else    {
+                    SPEND_TYPE = 0;
+                }
 
-        tvSpendType = (TextView)rootView.findViewById(R.id.spendType);
-        tvSpendTypeDesc = (TextView)rootView.findViewById(R.id.spendTypeDesc);
-        spendType = (SeekBar)rootView.findViewById(R.id.seekBar);
-        spendType.setMax(2);
-        spendType.setProgress(PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1));
-        tvSpendType.setText(spendTypes0[PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1)]);
-        tvSpendTypeDesc.setText(spendTypes1[PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1)]);
-
-        spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            int progressChanged = 0;
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                progressChanged = progress;
-                PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress());
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                ;
-            }
-
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                tvSpendType.setText(spendTypes0[progressChanged]);
-                tvSpendTypeDesc.setText(spendTypes1[progressChanged]);
-
+                PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.SPEND_TYPE, SPEND_TYPE);
             }
         });
 
         tvFeeAmount = (TextView)rootView.findViewById(R.id.feeAmount);
         edCustomFee = (EditText)rootView.findViewById(R.id.customFeeAmount);
-        edCustomFee.setText("0.0001");
+        edCustomFee.setText("0.00015");
         edCustomFee.setVisibility(View.GONE);
 
         btFee = (Button)rootView.findViewById(R.id.fee);
         btFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(FEE_TYPE == FEE_AUTO) {
-                    FEE_TYPE = FEE_PRIORITY;
-                    btFee.setText(getString(R.string.priority_fee));
-                    edCustomFee.setVisibility(View.GONE);
-                    tvFeeAmount.setVisibility(View.VISIBLE);
-                    tvFeeAmount.setText("");
+
+                switch(FEE_TYPE)    {
+                    case FEE_AUTO:
+                        FEE_TYPE = FEE_LOW;
+                        btFee.setText(getString(R.string.low_fee));
+                        edCustomFee.setVisibility(View.GONE);
+                        tvFeeAmount.setVisibility(View.VISIBLE);
+                        tvFeeAmount.setText("");
+                        break;
+                    case FEE_LOW:
+                        FEE_TYPE = FEE_PRIORITY;
+                        btFee.setText(getString(R.string.priority_fee));
+                        edCustomFee.setVisibility(View.GONE);
+                        tvFeeAmount.setVisibility(View.VISIBLE);
+                        tvFeeAmount.setText("");
+                        break;
+                    case FEE_PRIORITY:
+                        /*
+                        FEE_TYPE = FEE_CUSTOM;
+                        btFee.setText(getString(R.string.custom_fee));
+                        tvFeeAmount.setVisibility(View.GONE);
+                        edCustomFee.setVisibility(View.VISIBLE);
+                        edCustomFee.setSelection(edCustomFee.getText().length());
+                        break;
+                        */
+                        FEE_TYPE = FEE_AUTO;
+                        btFee.setText(getString(R.string.auto_fee));
+                        edCustomFee.setVisibility(View.GONE);
+                        tvFeeAmount.setVisibility(View.VISIBLE);
+                        tvFeeAmount.setText("");
+                        break;
+                    case FEE_CUSTOM:
+                    default:
+                        FEE_TYPE = FEE_AUTO;
+                        btFee.setText(getString(R.string.auto_fee));
+                        edCustomFee.setVisibility(View.GONE);
+                        tvFeeAmount.setVisibility(View.VISIBLE);
+                        tvFeeAmount.setText("");
+                        break;
                 }
-                else if(FEE_TYPE == FEE_PRIORITY) {
-                    FEE_TYPE = FEE_CUSTOM;
-                    btFee.setText(getString(R.string.custom_fee));
-                    tvFeeAmount.setVisibility(View.GONE);
-                    edCustomFee.setVisibility(View.VISIBLE);
-                    edCustomFee.setSelection(edCustomFee.getText().length());
-                }
-                else {
-                    FEE_TYPE = FEE_AUTO;
-                    btFee.setText(getString(R.string.auto_fee));
-                    edCustomFee.setVisibility(View.GONE);
-                    tvFeeAmount.setVisibility(View.VISIBLE);
-                    tvFeeAmount.setText("");
-                }
+
             }
         });
 
@@ -494,20 +526,31 @@ public class SendFragment extends Fragment {
                 btSend.setClickable(false);
                 btSend.setActivated(false);
 
+                // store current change index to restore value in case of sending fail
+                int change_index = 0;
+                try {
+                    change_index = HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().getAddrIdx();
+                    Log.d("SendActivity", "storing change index:" + change_index);
+                }
+                catch(IOException ioe) {
+                    ;
+                }
+                catch(MnemonicException.MnemonicLengthException mle) {
+                    ;
+                }
+
                 double btc_amount = 0.0;
 
                 try {
                     btc_amount = NumberFormat.getInstance(new Locale("en", "US")).parse(edAmountBTC.getText().toString().trim()).doubleValue();
 //                    Log.i("SendFragment", "amount entered:" + btc_amount);
-                }
-                catch (NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     btc_amount = 0.0;
-                }
-                catch (ParseException pe) {
+                } catch (ParseException pe) {
                     btc_amount = 0.0;
                 }
 
-                final double dAmount;
+                double dAmount;
                 int unit = PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 switch (unit) {
                     case MonetaryUtil.MICRO_BTC:
@@ -521,314 +564,395 @@ public class SendFragment extends Fragment {
                         break;
                 }
 
-                final long amount = (long)(Math.round(dAmount * 1e8));
+                long amount = (long)(Math.round(dAmount * 1e8));;
 
 //                Log.i("SendActivity", "amount:" + amount);
                 final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
-                final String strPrivacyWarning;
-                if(SendAddressUtil.getInstance().get(address) == 1) {
-                    strPrivacyWarning = getActivity().getResources().getString(R.string.send_privacy_warning) + "\n\n";
+                final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
+                receivers.put(address, BigInteger.valueOf(amount));
+
+                // get all UTXO
+                List<UTXO> utxos = APIFactory.getInstance(getActivity()).getUtxos();
+                final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
+                long totalValueSelected = 0L;
+                long change = 0L;
+                BigInteger fee = null;
+
+                Log.d("SendActivity", "amount:" + amount);
+                Log.d("SendActivity", "balance:" + balance);
+
+                // insufficient funds
+                if(amount > balance)    {
+                    Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    strPrivacyWarning = "";
+                // entire balance (can only be simple spend)
+                else if(amount == balance)    {
+                    // make sure we are using simple spend
+                    SPEND_TYPE = SPEND_SIMPLE;
+
+                    Log.d("SendActivity", "amount == balance");
+                    // take all utxos, deduct fee
+                    selectedUTXO.addAll(utxos);
+
+                    for(UTXO u : selectedUTXO)   {
+                        totalValueSelected += u.getValue();
+                    }
+
+                    Log.d("SendActivity", "balance:" + balance);
+                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
+
+                }
+                else    {
+                    ;
                 }
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
+                switch(FEE_TYPE)    {
+                    case FEE_LOW:
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                        break;
+                    case FEE_PRIORITY:
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                        break;
+                    /*
+                    case FEE_CUSTOM:
+                        String strCustomFee = edCustomFee.getText().toString();
 
-                        //
-                        // pass zero fee as fee is calculated afterwards
-                        //
-                        UnspentOutputsBundle unspentCoinsBundle = SendFactory.getInstance(getActivity()).phase1(accountIdx, BigInteger.valueOf(amount), BigInteger.valueOf(0L));
+                        SuggestedFee suggestedFee = new SuggestedFee();
+                        suggestedFee.setDefaultPerKB();
+                        suggestedFee.setStressed(false);
+                        suggestedFee.setOK(true);
+                        FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+                        break;
+                    */
+                    default:
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                        break;
+                }
 
-                        if(unspentCoinsBundle != null) {
+                org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
+                // if BIP126 try both hetero/alt, if fails change type to SPEND_SIMPLE
+                if(SPEND_TYPE == SPEND_BIP126)   {
 
-//                            Log.i("SendActivity", "unspentCoinsBundle not null");
-//                            Log.i("SendActivity", "unspentCoinsBundle outputs size:" + unspentCoinsBundle.getOutputs().size());
-//                            Log.i("SendActivity", "amount:" + amount);
+                    List<UTXO> _utxos = utxos;
 
-                            HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
-                            receivers.put(address, BigInteger.valueOf(amount));
+                    Collections.shuffle(_utxos);
+                    // hetero
+                    pair = SendFactory.getInstance(getActivity()).heterogeneous(_utxos, BigInteger.valueOf(amount), address);
+                    if(pair == null)    {
+                        Collections.sort(_utxos, new UTXO.UTXOComparator());
+                        // alt
+                        pair = SendFactory.getInstance(getActivity()).altHeterogeneous(_utxos, BigInteger.valueOf(amount), address);
+                    }
 
-                            int nb_outputs = 0;
-                            switch(spendType.getProgress())    {
-                                case ChangeMaker.CHANGE_SAMOURAI:
-                                    nb_outputs = receivers.size() + 2;
-                                    break;
-                                case ChangeMaker.CHANGE_AGGRESSIVE:
-                                    nb_outputs = receivers.size() + 10;
-                                    break;
-                                default:
-                                    nb_outputs = receivers.size() + 1;
-                                    break;
+                    if(pair == null)    {
+                        // can't do BIP126, revert to SPEND_SIMPLE
+                        SPEND_TYPE = SPEND_SIMPLE;
+                    }
+
+                }
+
+                // simple spend (less than balance)
+                if(SPEND_TYPE == SPEND_SIMPLE)    {
+                    List<UTXO> _utxos = utxos;
+
+                    // sort in ascending order by value
+                    Collections.sort(_utxos, new UTXO.UTXOComparator());
+
+                    // get 1 UTXO > than spend
+                    for(UTXO u : _utxos)   {
+                        if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(1, 2).longValue()))    {
+                            selectedUTXO.add(u);
+                            totalValueSelected += u.getValue();
+                            break;
+                        }
+                    }
+
+                    // get smallest UTXOs that > spend
+                    if(selectedUTXO.size() == 0)    {
+                        // sort in descending order by value
+                        Collections.reverse(_utxos);
+                        int selected = 0;
+
+                        for(UTXO u : _utxos)   {
+
+                            selectedUTXO.add(u);
+                            totalValueSelected += u.getValue();
+                            selected++;
+
+                            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()))    {
+                                selectedUTXO.add(u);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                else if(pair != null)    {
+
+                    selectedUTXO.clear();
+                    receivers.clear();
+
+                    long inputAmount = 0L;
+                    long outputAmount = 0L;
+
+                    for(MyTransactionOutPoint outpoint : pair.getLeft())   {
+                        UTXO u = new UTXO();
+                        List<MyTransactionOutPoint> outs = new ArrayList<MyTransactionOutPoint>();
+                        outs.add(outpoint);
+                        u.setOutpoints(outs);
+                        totalValueSelected += u.getValue();
+                        selectedUTXO.add(u);
+                        inputAmount += u.getValue();
+                        Log.d("SendActivity", "input:" + outpoint.getAddress());
+                    }
+
+                    for(TransactionOutput output : pair.getRight())   {
+                        try {
+                            Script script = new Script(output.getScriptBytes());
+                            Log.d("SendActivity", "receiver:" + script.getToAddress(MainNetParams.get()).toString());
+                            receivers.put(script.getToAddress(MainNetParams.get()).toString(), BigInteger.valueOf(output.getValue().longValue()));
+                            outputAmount += output.getValue().longValue();
+                        }
+                        catch(Exception e) {
+                            Toast.makeText(getActivity(), R.string.error_bip126_output, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    change = outputAmount - amount;
+                    fee = BigInteger.valueOf(inputAmount - outputAmount);
+
+                }
+                else    {
+                    Toast.makeText(getActivity(), R.string.cannot_select_utxo, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // do spend here
+                if(selectedUTXO.size() > 0)    {
+
+                    // estimate fee for simple spend, already done if BIP126
+                    if(SPEND_TYPE == SPEND_SIMPLE)    {
+                        fee = FeeUtil.getInstance().estimatedFee(selectedUTXO.size(), 2);
+                    }
+
+                    Log.d("SendActivity", "amount:" + amount);
+                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
+                    Log.d("SendActivity", "fee:" + fee.longValue());
+                    Log.d("SendActivity", "nb inputs:" + selectedUTXO.size());
+                    change = totalValueSelected - (amount + fee.longValue());
+                    Log.d("SendActivity", "change:" + change);
+
+                    if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
+                        Log.d("SendActivity", getActivity().getResources().getString(R.string.dust_amount));
+                        change = 0L;
+                        fee = fee.add(BigInteger.valueOf(change));
+                        amount = totalValueSelected - fee.longValue();
+
+                        Log.d("SendActivity", "fee:" + fee.longValue());
+                        Log.d("SendActivity", "change:" + change);
+                        Log.d("SendActivity", "amount:" + amount);
+                        receivers.put(address, BigInteger.valueOf(amount));
+                    }
+
+                    final long _change = change;
+                    final BigInteger _fee = fee;
+                    final int _change_index = change_index;
+
+                    String dest = null;
+                    if(strPCode != null && strPCode.length() > 0)    {
+                        dest = BIP47Meta.getInstance().getDisplayLabel(strPCode);
+                    }
+                    else    {
+                        dest = address;
+                    }
+
+                    String message = "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
+
+                    final long _amount = amount;
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.app_name);
+                    builder.setMessage(message);
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            final ProgressDialog progress = new ProgressDialog(getActivity());
+                            progress.setCancelable(false);
+                            progress.setTitle(R.string.app_name);
+                            progress.setMessage(getString(R.string.please_wait_sending));
+                            progress.show();
+
+                            List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+                            for(UTXO u : selectedUTXO)   {
+                                outPoints.addAll(u.getOutpoints());
                             }
 
-                            BigInteger _fee = BigInteger.ZERO;
-                            if(FEE_TYPE == FEE_AUTO)    {
-                                _fee = FeeUtil.getInstance().estimatedFee(unspentCoinsBundle.getOutputs().size(), nb_outputs);
-//                                Log.i("SendActivity", "estimatedFee:" + _fee.toString());
-                            }
-                            else if(FEE_TYPE == FEE_PRIORITY)   {
-//                                _fee = _fee.add(SamouraiWallet.bAddPriority);
-                                if(networkIsStressed)    {
-                                    _fee = FeeUtil.getInstance().getStressFee();
+                            // add change
+                            if(_change > 0L)    {
+                                if(SPEND_TYPE == SPEND_SIMPLE)    {
+                                    try {
+                                        String change_address = HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                                        receivers.put(change_address, BigInteger.valueOf(_change));
+                                    }
+                                    catch(IOException ioe) {
+                                        ;
+                                    }
+                                    catch(MnemonicException.MnemonicLengthException mle) {
+                                        ;
+                                    }
+                                }
+                                else if (SPEND_TYPE == SPEND_BIP126)   {
+                                    // do nothing, change addresses included
                                 }
                                 else    {
-                                    _fee = FeeUtil.getInstance().getPriorityFee();
+                                    ;
                                 }
-//                                Log.i("SendActivity", "priorityFee:" + _fee.toString());
                             }
-                            else    {
+                            // make tx
+                            Transaction tx = SendFactory.getInstance(getActivity()).makeTransaction(0, outPoints, receivers, _fee);
+                            if(tx != null)    {
+                                tx = SendFactory.getInstance(getActivity()).signTransaction(tx);
+                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                Log.d("SendActivity", hexTx);
 
-                                double customFee = 0.0;
-                                try {
-                                    customFee = NumberFormat.getInstance(new Locale("en", "US")).parse(edCustomFee.getText().toString().trim()).doubleValue();
-                                }
-                                catch (NumberFormatException | ParseException e) {
-                                    customFee = 0.0001;
-                                }
-
-                                _fee = BigInteger.valueOf((long)(Math.round(customFee * 1e8)));
-//                                Log.i("SendActivity", "customFee:" + _fee.toString());
-
-                            }
-
-                            boolean spendAll = false;
-
-                            if(amount == APIFactory.getInstance(getActivity()).getXpubAmounts().get(AddressFactory.getInstance().account2xpub().get(accountIdx)))	{
-                                if(FEE_TYPE != FEE_CUSTOM)    {
-                                    _fee = FeeUtil.getInstance().estimatedFee(unspentCoinsBundle.getOutputs().size(), nb_outputs);
-//                                    Log.i("SendActivity", "estimatedFee:" + _fee.toString());
-                                }
-                                BigInteger revisedValue = receivers.get(address);
-                                revisedValue = revisedValue.subtract(_fee);
-                                receivers.put(address, revisedValue);
-//                                Log.i("SendActivity", "revised amount:" + revisedValue.toString());
-                                spendAll = true;
-                            }
-                            else if((amount + _fee.longValue()) > APIFactory.getInstance(getActivity()).getXpubAmounts().get(AddressFactory.getInstance().account2xpub().get(accountIdx)))    {
-//                                Log.i("SendActivity", "insufficient funds");
-                                getActivity().runOnUiThread(new Runnable() {
+                                new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        btSend.setActivated(true);
-                                        btSend.setClickable(true);
-                                        Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                return;
 
-                            }
-                            else if((amount + _fee.longValue()) > unspentCoinsBundle.getTotalAmount().longValue())	{
-                                UnspentOutputsBundle refreshUnspents = SendFactory.getInstance(getActivity()).supplementRandomizedUnspentOutputPoints(unspentCoinsBundle, BigInteger.valueOf((amount + _fee.longValue() + SamouraiWallet.bDust.longValue()) - unspentCoinsBundle.getTotalAmount().longValue()));
+                                        Looper.prepare();
 
-                                if(refreshUnspents == null)    {
-//                                    Log.i("SendActivity", "refreshUnspents == null");
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            btSend.setActivated(true);
-                                            btSend.setClickable(true);
-                                            Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    return;
-                                }
+                                        boolean isOK = false;
+                                        String response = null;
+                                        try {
+                                            //response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
+                                            response = PushTx.getInstance(getActivity()).samourai(hexTx);
+                                            Log.d("SendActivity", "pushTx:" + response);
 
-                                unspentCoinsBundle = refreshUnspents;
-
-                            }
-                            else    {
-                                ;
-                            }
-
-                            final BigInteger fee = _fee;
-
-                            final Pair<Transaction, Long> pair = SendFactory.getInstance(getActivity()).phase2(accountIdx, unspentCoinsBundle.getOutputs(), receivers, fee, spendType.getProgress());
-                            if(pair == null) {
-//                                Log.i("SendActivity", "pair == null");
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        btSend.setActivated(true);
-                                        btSend.setClickable(true);
-                                        Toast.makeText(getActivity(), R.string.error_creating_tx, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                return;
-                            }
-
-//                            Log.i("SendActivity", "pair not null");
-
-                            final long _amount;
-                            if(spendAll)    {
-                                _amount = amount - _fee.longValue();
-                            }
-                            else    {
-                                _amount = amount;
-                            }
-
-                            // use estimated fee
-                            BigInteger totalSpend = BigInteger.valueOf(_amount).add(fee);
-                            BigInteger totalChange = unspentCoinsBundle.getTotalAmount().subtract(totalSpend);
-
-                            String strUnitDisplay = "";
-                            if(!getDisplayUnits().equals((String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)]))    {
-                                strUnitDisplay = "Unit amount:" + edAmountBTC.getText().toString().trim() + " " + getDisplayUnits() + "\n\n";
-                            }
-//                            String strSpend = MonetaryUtil.getInstance().getBTCFormat().format(BigInteger.valueOf(_amount).doubleValue() / 1e8) + " BTC" + ", " + "Fee:" + MonetaryUtil.getInstance().getBTCFormat().format(fee.doubleValue() / 1e8) + " BTC" + "\n\n";
-                            String strSpend = "Miners' fee:" + MonetaryUtil.getInstance().getBTCFormat().format(fee.doubleValue() / 1e8) + " BTC" + "\n\n";
-//                            String strCJSimulate = "Inputs:" + ror.getOutputs().size() + ", " + "Change:" + MonetaryUtil.getInstance().getBTCFormat().format(totalChange.doubleValue() / 1e8) + "\n\n";
-//                            String strNbAddresses = "Addresses associated with this spend:" + " " + ror.getNbAddress() + "\n\n";
-                            String strChangeOutputSafe = "";
-                            if(!unspentCoinsBundle.isChangeSafe()) {
-                                strChangeOutputSafe = "Privacy Alert - This transaction contains addresses that have been seen together in a previous transaction." + "\n\n";
-                            }
-                            else {
-                                strChangeOutputSafe = "";
-                            }
-//                            final String msg = strPrivacyWarning + strChangeOutputSafe + strNbAddresses + strUnitDisplay + strSpend + strCJSimulate + getString(R.string.send) + " " + MonetaryUtil.getInstance().getBTCFormat().format(((double)_amount) / 1e8) + " " + getString(R.string.to) + " " + address + " ?";
-
-                            String dest = null;
-                            if(strPCode != null && strPCode.length() > 0)    {
-                                dest = BIP47Meta.getInstance().getDisplayLabel(strPCode);
-                            }
-                            else    {
-                                dest = address;
-                            }
-
-                            final String msg = strPrivacyWarning + strChangeOutputSafe + strUnitDisplay + strSpend + getString(R.string.send) + " " + MonetaryUtil.getInstance().getBTCFormat().format(((double)_amount) / 1e8) + " BTC " + getString(R.string.to) + " " + dest;
-
-                            final UnspentOutputsBundle _unspentCoinsBundle = unspentCoinsBundle;
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle(R.string.app_name);
-                            builder.setMessage(msg);
-                            builder.setCancelable(false);
-                            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(final DialogInterface dialog, int whichButton) {
-
-                                    final ProgressDialog progress = new ProgressDialog(getActivity());
-                                    progress.setCancelable(false);
-                                    progress.setTitle(R.string.app_name);
-                                    progress.setMessage(getString(R.string.please_wait));
-                                    progress.show();
-
-                                    HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
-                                    receivers.put(address, BigInteger.valueOf(amount));
-
-                                    SendFactory.getInstance(getActivity()).phase3(pair, accountIdx, _unspentCoinsBundle.getOutputs(), receivers, fee, new OpCallback() {
-
-                                        public void onSuccess() {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(getActivity(), R.string.tx_ok, Toast.LENGTH_SHORT).show();
-                                                    APIFactory.getInstance(getActivity()).setXpubBalance(APIFactory.getInstance(getActivity()).getXpubBalance() - (_amount + fee.longValue()));
-
-                                                    btSend.setActivated(true);
-                                                    btSend.setClickable(true);
-                                                    edAddress.setText("");
-                                                    edAmountBTC.setText("");
-
+                                            org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                                            if(jsonObject.has("status"))    {
+                                                if(jsonObject.getString("status").equals("ok"))    {
+                                                    isOK = true;
                                                 }
-                                            });
-                                            if (progress != null && progress.isShowing()) {
-                                                progress.dismiss();
                                             }
 
-                                            // increment counter if BIP47 spend
-                                            if(strPCode != null && strPCode.length() > 0)    {
-                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
-                                                BIP47Meta.getInstance().inc(strPCode);
+                                            if(response.contains("Transaction Submitted"))    {
 
-                                                SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
-                                                String strTS = sd.format(System.currentTimeMillis());
-                                                String event = strTS + " " + getActivity().getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
-                                                BIP47Meta.getInstance().setLatestEvent(strPCode, event);
-                                            }
+                                                Toast.makeText(getActivity(), R.string.tx_sent, Toast.LENGTH_SHORT).show();
 
-                                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                            intent.putExtra("notifTx", false);
-                                            intent.putExtra("fetch", true);
-                                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                                if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
+                                                    try {
+                                                        HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().incAddrIdx();
+                                                    }
+                                                    catch(IOException ioe) {
+                                                        ;
+                                                    }
+                                                    catch(MnemonicException.MnemonicLengthException mle) {
+                                                        ;
+                                                    }
+                                                }
 
-                                            View view = getActivity().getCurrentFocus();
-                                            if (view != null) {
-                                                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                                            }
+                                                // increment counter if BIP47 spend
+                                                if(strPCode != null && strPCode.length() > 0)    {
+                                                    BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
+                                                    BIP47Meta.getInstance().inc(strPCode);
 
-                                            if(strPCode != null && strPCode.length() > 0)    {
-                                                AppUtil.getInstance(getActivity()).restartApp();
+                                                    SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
+                                                    String strTS = sd.format(System.currentTimeMillis());
+                                                    String event = strTS + " " + getActivity().getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
+                                                    BIP47Meta.getInstance().setLatestEvent(strPCode, event);
+                                                }
+
+                                                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                                                intent.putExtra("notifTx", false);
+                                                intent.putExtra("fetch", true);
+                                                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+
+                                                View view = getActivity().getCurrentFocus();
+                                                if (view != null) {
+                                                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                                                }
+
+                                                /*
+                                                if(strPCode != null && strPCode.length() > 0)    {
+                                                    AppUtil.getInstance(getActivity()).restartApp();
+                                                }
+                                                else    {
+                                                    getActivity().getFragmentManager().beginTransaction().remove(SendFragment.this).commit();
+                                                }
+                                                */
+
+                                                getActivity().getFragmentManager().beginTransaction().remove(SendFragment.this).commit();
+
                                             }
                                             else    {
-                                                getActivity().getFragmentManager().beginTransaction().remove(SendFragment.this).commit();
+                                                // reset change index upon tx fail
+                                                HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().setAddrIdx(_change_index);
                                             }
-
                                         }
-
-                                        public void onFail() {
-
+                                        catch(Exception e) {
+                                            Log.d("SendActivity", e.getMessage());
+                                        }
+                                        finally {
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     btSend.setActivated(true);
                                                     btSend.setClickable(true);
-                                                    Toast.makeText(getActivity(), R.string.tx_ko, Toast.LENGTH_SHORT).show();
+                                                    progress.dismiss();
+                                                    dialog.dismiss();
                                                 }
                                             });
-
-                                            if (progress != null && progress.isShowing()) {
-                                                progress.dismiss();
-                                            }
-
                                         }
 
-                                    });
+                                        Looper.loop();
 
-                                }
-                            });
-                            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(final DialogInterface dialog, int whichButton) {
+                                    }
+                                }).start();
 
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            btSend.setActivated(true);
-                                            btSend.setClickable(true);
-                                            dialog.dismiss();
-                                        }
-                                    });
-
-                                }
-                            });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                            }
+                            else    {
+                                Log.d("SendActivity", "tx error");
+                            }
 
                         }
-                        else {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btSend.setActivated(true);
-                                    btSend.setClickable(true);
-                                    Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    });
+                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            try {
+                                // reset change index upon 'NO'
+                                HD_WalletFactory.getInstance(getActivity()).get().getAccount(0).getChange().setAddrIdx(_change_index);
+                                Log.d("SendActivity", "resetting change index:" + _change_index);
+                            }
+                            catch(Exception e) {
+                                Log.d("SendActivity", e.getMessage());
+                            }
+                            finally {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btSend.setActivated(true);
+                                        btSend.setClickable(true);
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+
                         }
+                    });
 
-                        Looper.loop();
+                    AlertDialog alert = builder.create();
+                    alert.show();
 
-                    }
-                }).start();
+                }
 
             }
+
         });
 
         if(getArguments() != null)    {
@@ -841,20 +965,6 @@ public class SendFragment extends Fragment {
                 processPCode(strPCode);
             }
         }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FeeUtil.getInstance().update();
-                networkIsStressed = FeeUtil.getInstance().isStressed();
-//                Log.i("SendFragment", "networkIsStressed:" + networkIsStressed);
-
-                if(networkIsStressed)    {
-                    Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }).start();
 
         validateSpend();
 
@@ -890,27 +1000,13 @@ public class SendFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
-        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_URI)	{
-            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
-                String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-                processScan(strResult);
-            }
-        }
-        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_URI)	{
-            ;
-        }
-        else {
-            ;
-        }
+        menu.findItem(R.id.action_settings).setVisible(false);
+        menu.findItem(R.id.action_sweep).setVisible(false);
+        menu.findItem(R.id.action_backup).setVisible(false);
 
-    }
-
-    private void doScan() {
-        Intent intent = new Intent(getActivity(), ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-        startActivityForResult(intent, SCAN_URI);
     }
 
     private void processScan(String data) {

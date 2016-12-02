@@ -1,7 +1,8 @@
 
 package info.guardianproject.onionkit.trust;
 
-import com.samourai.wallet.R;
+import com.samourai.R;
+
 import info.guardianproject.onionkit.proxy.MyThreadSafeClientConnManager;
 import info.guardianproject.onionkit.proxy.SocksProxyClientConnOperator;
 
@@ -18,6 +19,7 @@ import javax.net.ssl.X509TrustManager;
 
 import android.content.Context;
 import android.util.Log;
+
 import ch.boye.httpclientandroidlib.HttpHost;
 import ch.boye.httpclientandroidlib.conn.ClientConnectionOperator;
 import ch.boye.httpclientandroidlib.conn.params.ConnRoutePNames;

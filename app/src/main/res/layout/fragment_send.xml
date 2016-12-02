@@ -3,19 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
     android:orientation="vertical"
+    android:theme="@style/AppTheme"
     android:background="@color/primary_dark">
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView" >
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/toolbar"
+        >
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/primary"
             >
 
             <LinearLayout
@@ -27,13 +30,13 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:id="@+id/toField"
-                android:background="@color/primary">
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="To"
+                    android:textColor="@color/primary_light"
+                    android:text="@string/to"
                     android:id="@+id/to" />
 
                 <EditText
@@ -41,9 +44,11 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/destination"
                     android:layout_gravity="center_horizontal"
-                    android:hint="enter address"
-                    android:drawableRight="@drawable/ic_receive_qr"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:hint="@string/destination"
+                    android:textColorHint="@color/primary_light"
+                    android:drawableRight="@android:drawable/ic_menu_search"
+                    android:textColor="@color/primary_light"
+                    />
 
             </LinearLayout>
 
@@ -59,12 +64,12 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/amountField"
-                android:background="@color/primary">
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/primary_light"
                     android:text="Amount"
                     android:id="@+id/textView3" />
 
@@ -82,17 +87,20 @@
                         android:ems="10"
                         android:id="@+id/amountBTC"
                         android:hint="0.0000"
+                        android:textColorHint="@color/primary_light"
                         android:layout_marginRight="8dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/primary_light"
                         android:maxLength="17"
+                        android:textSize="16sp"
                         />
 
                     <TextView
                         android:layout_weight="3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/primary_light"
                         android:text="BTC-USD"
+                        android:textSize="14sp"
                         android:gravity="center_horizontal"
                         android:textAlignment="gravity"
                         android:id="@+id/fiatSymbol" />
@@ -106,9 +114,11 @@
                         android:ems="10"
                         android:id="@+id/amountFiat"
                         android:hint="0.00"
+                        android:textColorHint="@color/primary_light"
                         android:layout_marginLeft="8dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/primary_light"
                         android:maxLength="17"
+                        android:textSize="16sp"
                         />
 
                 </LinearLayout>
@@ -124,7 +134,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/primary_light"
                         android:layout_marginRight="5dp"
                         android:text="@string/max_available"
                         android:id="@+id/max_prompt"
@@ -133,35 +143,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/primary_light"
                         android:id="@+id/max" />
 
                 </LinearLayout>
 
             </LinearLayout>
-            <!--
-                        <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:background="#1e2228"
-                            android:layout_below="@+id/amountField"
-                            android:gravity="center_horizontal"
-                            android:paddingTop="16dp"
-                            android:paddingBottom="16dp"
-                            android:elevation="1dp"
-                            android:id="@+id/addOutput">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/add_output"
-                                />
-
-                        </LinearLayout>
-            -->
 
             <LinearLayout
                 android:orientation="vertical"
@@ -176,51 +163,27 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true">
 
-                <TextView
+                <Switch
+                    android:id="@+id/spendType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Obfuscation"
-                    android:id="@+id/textView5" />
-
-                <SeekBar
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/seekBar"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:layout_centerVertical="true"
+                    android:layout_below="@+id/para2"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/primary_light"
                     />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/spend_type_2"
-                    android:id="@+id/spendType"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/spend_type_2_desc"
-                    android:id="@+id/spendTypeDesc"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="16dp"
                 android:paddingLeft="16dp"
                 android:paddingBottom="16dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:id="@+id/feeField"
                 android:layout_below="@+id/obfuscationField">
 
@@ -228,13 +191,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Fee"
+                    android:text="@string/fee"
                     android:id="@+id/textView8" />
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:paddingTop="8dp"
                     android:id="@+id/linearLayout6"
                     android:gravity="left">
@@ -252,7 +215,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="0.0000"
+                        android:text="0.00015"
                         android:id="@+id/feeAmount" />
 
                     <EditText
@@ -261,6 +224,7 @@
                         android:inputType="numberDecimal"
                         android:ems="10"
                         android:id="@+id/customFeeAmount"
+                        android:text="0.00015"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         />
 
@@ -278,10 +242,9 @@
         android:layout_height="wrap_content"
         android:text="@string/send"
         android:id="@+id/send"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@color/pinGreen"
         android:elevation="2dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/primary_light"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

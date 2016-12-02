@@ -11,6 +11,7 @@ import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 //import android.util.Log;
 
+import com.samourai.R;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 

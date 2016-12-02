@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="code_name">\'Crafty Cobra\'</string>
-    <string name="version_name">0.81</string>
+    <string name="code_name">\'DD\'</string>
+    <string name="version_name">0.85</string>
     <string name="app_name">Samourai</string>
 
-    <string name="new_version_message">Welcome to Samourai Alpha 2 \'Crafty Cobra\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
+    <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
@@ -28,6 +28,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_sweep">Sweep private key</string>
     <string name="action_bip47">Payment channels</string>
+    <string name="action_unarchive">Activate all archived payment codes</string>
+    <string name="action_sync_all">Sync all payment codes</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="about_us">About Samourai Wallet</string>
@@ -100,6 +102,8 @@
     <string name="you_sent">Sent</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
+    <string name="cannot_select_utxo">Cannot select unspent outputs</string>
+    <string name="error_bip126_output">Error determining output address</string>
 
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="send_payment_code">Send payment code</string>
@@ -148,7 +152,8 @@
 
     <string name="tx_ok">Transaction sent</string>
     <string name="tx_ko">Transaction failed</string>
-    <string name="to">to</string>
+    <string name="to">To</string>
+    <string name="destination">Address or payment channel</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="invalid_tx_attempt">Invalid transaction attempt</string>
@@ -231,9 +236,11 @@
     <string name="create_pin">Create PIN code</string>
     <string name="confirm_pin">Confirm PIN code</string>
 
-    <string name="auto_fee">AUTO</string>
+    <string name="fee">Fee</string>
+    <string name="auto_fee">NORMAL</string>
     <string name="priority_fee">PRIORITY</string>
     <string name="custom_fee">CUSTOM</string>
+    <string name="low_fee">LOW</string>
 
     <string name="spend_type_1">Simple</string>
     <string name="spend_type_2">Samourai</string>
@@ -247,12 +254,12 @@
 
     <string name="error_creating_tx">An error occurred creating the transaction. Please try again.</string>
 
-    <string name="account_samourai">Wallet</string>
+    <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
     <string name="account_public">Public</string>
 
     <string name="max_available">Max. available:</string>
-    <string name="receive2samourai">Receive addresses are only generated for your Samourai account.</string>
+    <string name="receive2Samourai">Receive addresses are only generated for your Samourai account.</string>
     <string name="generate_receive_yes">Yes, generate address</string>
 
     <string name="network_stresses">Bitcoin Network undergoing stress conditions. We recommend priority fee.</string>
@@ -266,7 +273,7 @@
     <string name="received_bitcoin">Received Bitcoin</string>
     <string name="sent_bitcoin">Sent Bitcoin</string>
     <string name="received">Received</string>
-    <string name="sent">Sent</string>
+    <string name="sent">Transaction sent</string>
     <string name="total">Total</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
@@ -342,6 +349,9 @@
     <string name="bip47_wait_for_confirmation">Wait for 1 confirmation before sending</string>
     <string name="bip47_already_has_recommended">This payment code is already in your list.</string>
     <string name="bip47_recommended">Recommended payment codes</string>
+    <string name="bip47_sign">Sign message</string>
+    <string name="bip47_sign_text1">Sign message using BIP47 notification address private key?</string>
+    <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
 
     <string name="no_confirmed_outputs_available">No confirmed outputs available. Please try again later.</string>
     <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>
@@ -353,5 +363,10 @@
 
     <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
     <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+
+    <string name="cannot_recognize_privkey">Cannot recognize private key</string>
+    <string name="cannot_sweep_privkey">Error sweeping private key</string>
+    <string name="cannot_find_unspents">Unspents list is empty</string>
+    <string name="please_wait_sending">Sending transaction, please wait.</string>
 
 </resources>

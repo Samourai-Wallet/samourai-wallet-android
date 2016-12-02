@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -37,6 +36,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
+import com.samourai.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -133,12 +133,7 @@ public class ReceiveFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = null;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            rootView = inflater.inflate(R.layout.fragment_receive, container, false);
-        }
-        else {
-            rootView = inflater.inflate(R.layout.fragment_receive_compat, container, false);
-        }
+        rootView = inflater.inflate(R.layout.fragment_receive, container, false);
 
         rootView.setFilterTouchesWhenObscured(true);
 
@@ -425,6 +420,7 @@ public class ReceiveFragment extends Fragment {
         menu.findItem(R.id.action_settings).setVisible(false);
         menu.findItem(R.id.action_sweep).setVisible(false);
         menu.findItem(R.id.action_backup).setVisible(false);
+        menu.findItem(R.id.action_scan_qr).setVisible(false);
 
         MenuItem itemShare = menu.findItem(R.id.action_share_receive).setVisible(true);
         itemShare.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

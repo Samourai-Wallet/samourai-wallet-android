@@ -19,10 +19,8 @@ import com.samourai.wallet.util.SMSSender;
 import org.apache.commons.codec.DecoderException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 public class SMSReceiver extends BroadcastReceiver {

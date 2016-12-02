@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -43,6 +43,11 @@ import org.json.JSONException;
 import org.spongycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -52,15 +57,18 @@ import java.util.TimerTask;
 import com.samourai.wallet.OpCallback;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.UnspentOutputsBundle;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.wallet.R;
+import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.R;
 
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -80,6 +88,7 @@ public class BIP47Activity extends Activity {
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
     private FloatingActionButton actionPartners = null;
+    private FloatingActionButton actionSign = null;
 
     private Timer timer = null;
     private Handler handler = null;
@@ -126,6 +135,14 @@ public class BIP47Activity extends Activity {
                 Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
                 startActivityForResult(intent, RECOMMENDED_PCODE);
 
+            }
+        });
+
+        actionSign = (FloatingActionButton)findViewById(R.id.bip47_sign);
+        actionSign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                doSign();
             }
         });
 
@@ -219,6 +236,9 @@ public class BIP47Activity extends Activity {
                     case 3:
 
                         // archive
+                        BIP47Meta.getInstance().setArchived(pcodes[position], true);
+                        refreshList();
+                        adapter.notifyDataSetChanged();
 
                         break;
 
@@ -280,18 +300,17 @@ public class BIP47Activity extends Activity {
                 // add to menu
                 menu.addMenuItem(qrItem);
 
-/*
-                // create "archive" item
+                // create "qr" item
                 SwipeMenuItem archiveItem = new SwipeMenuItem(getApplicationContext());
                 // set item background
                 archiveItem.setBackground(new ColorDrawable(Color.rgb(0x17, 0x1B, 0x24)));
                 // set item width
                 archiveItem.setWidth(180);
                 // set a icon
-                archiveItem.setIcon(android.R.drawable.ic_popup_sync);
+                archiveItem.setIcon(android.R.drawable.ic_media_pause);
                 // add to menu
-                menu.addMenuItem(syncItem);
-*/
+                menu.addMenuItem(archiveItem);
+
             }
         };
 
@@ -398,6 +417,10 @@ public class BIP47Activity extends Activity {
                             npe.printStackTrace();
                             Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                         }
+                        catch(DecryptionException de) {
+                            de.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
                         finally {
                             ;
                         }
@@ -442,6 +465,12 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_show_qr) {
             Intent intent = new Intent(BIP47Activity.this, BIP47ShowQR.class);
             startActivity(intent);
+        }
+        else if(id == R.id.action_unarchive) {
+            doUnArchive();
+        }
+        else if(id == R.id.action_sync_all) {
+            doSyncAll();
         }
         else {
             ;
@@ -508,9 +537,121 @@ public class BIP47Activity extends Activity {
 
     }
 
+    private void doSign() {
+
+        String strDate = new Date(System.currentTimeMillis()).toLocaleString();
+        String message = BIP47Activity.this.getString(R.string.bip47_sign_text2) + " " + strDate;
+
+        final EditText etMessage = new EditText(BIP47Activity.this);
+        etMessage.setHint(message);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                .setTitle(R.string.bip47_sign)
+                .setMessage(R.string.bip47_sign_text1)
+                .setView(etMessage)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        String strSignedMessage = null;
+                        String result = etMessage.getText().toString();
+                        if(result == null || result.length() == 0)    {
+                            String strDate = new Date(System.currentTimeMillis()).toLocaleString();
+                            String message = BIP47Activity.this.getString(R.string.bip47_sign_text2) + " " + strDate;
+                            strSignedMessage = MessageSignUtil.getInstance().signMessageArmored(BIP47Util.getInstance(BIP47Activity.this).getNotificationAddress().getECKey(), message);
+                        }
+                        else    {
+                            strSignedMessage = MessageSignUtil.getInstance().signMessageArmored(BIP47Util.getInstance(BIP47Activity.this).getNotificationAddress().getECKey(), result);
+                        }
+
+                        TextView showText = new TextView(BIP47Activity.this);
+                        showText.setText(strSignedMessage);
+                        showText.setTextIsSelectable(true);
+                        showText.setPadding(40, 10, 40, 10);
+                        showText.setTextSize(18.0f);
+                        new AlertDialog.Builder(BIP47Activity.this)
+                                .setTitle(R.string.app_name)
+                                .setView(showText)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                    }
+                                }).show();
+
+                    }
+
+                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+        dlg.show();
+
+    }
+
+    private void doUnArchive()  {
+
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(true);
+
+        //
+        // check for own payment code
+        //
+        try {
+            if (_pcodes.contains(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString())) {
+                _pcodes.remove(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
+                BIP47Meta.getInstance().remove(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
+            }
+        } catch (AddressFormatException afe) {
+            ;
+        }
+
+        for (String pcode : _pcodes) {
+            BIP47Meta.getInstance().setArchived(pcode, false);
+        }
+
+        pcodes = new String[_pcodes.size()];
+        int i = 0;
+        for (String pcode : _pcodes) {
+            pcodes[i] = pcode;
+            ++i;
+        }
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    private void doSyncAll()  {
+
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
+
+        //
+        // check for own payment code
+        //
+        try {
+            if (_pcodes.contains(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString())) {
+                _pcodes.remove(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
+                BIP47Meta.getInstance().remove(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
+            }
+        } catch (AddressFormatException afe) {
+            ;
+        }
+
+        for (String pcode : _pcodes) {
+            doSync(pcode);
+        }
+
+        adapter.notifyDataSetChanged();
+
+    }
+
     private void refreshList()  {
 
-        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels();
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
         //
         // check for own payment code
@@ -526,8 +667,8 @@ public class BIP47Activity extends Activity {
 
         pcodes = new String[_pcodes.size()];
         int i = 0;
-        for (String s : _pcodes) {
-            pcodes[i] = s;
+        for (String pcode : _pcodes) {
+            pcodes[i] = pcode;
             ++i;
         }
 
@@ -722,12 +863,7 @@ public class BIP47Activity extends Activity {
 
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater)BIP47Activity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)    {
-                    view = inflater.inflate(R.layout.bip47_entry, null);
-                }
-                else    {
-                    view = inflater.inflate(R.layout.bip47_entry_compat, null);
-                }
+                view = inflater.inflate(R.layout.bip47_entry, null);
             }
             else    {
                 view = convertView;
@@ -737,16 +873,14 @@ public class BIP47Activity extends Activity {
 
             TextView tvInitial = (TextView)view.findViewById(R.id.Initial);
             tvInitial.setText(strLabel.substring(0, 1).toUpperCase());
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)    {
-                if(position % 3 == 0)    {
-                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
-                }
-                else if(position % 2 == 1)    {
-                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
-                }
-                else {
-                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
-                }
+            if(position % 3 == 0)    {
+                tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
+            }
+            else if(position % 2 == 1)    {
+                tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
+            }
+            else {
+                tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
             }
 
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
@@ -944,7 +1078,31 @@ public class BIP47Activity extends Activity {
                     LocalBroadcastManager.getInstance(BIP47Activity.this).sendBroadcast(intent);
 
                 }
-                catch(Exception e) {
+                catch(IOException ioe) {
+                    ;
+                }
+                catch(JSONException je) {
+                    ;
+                }
+                catch(DecryptionException de) {
+                    ;
+                }
+                catch(NotSecp256k1Exception nse) {
+                    ;
+                }
+                catch(InvalidKeySpecException ikse) {
+                    ;
+                }
+                catch(InvalidKeyException ike) {
+                    ;
+                }
+                catch(NoSuchAlgorithmException nsae) {
+                    ;
+                }
+                catch(NoSuchProviderException nspe) {
+                    ;
+                }
+                catch(MnemonicException.MnemonicLengthException mle) {
                     ;
                 }
 

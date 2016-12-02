@@ -15,13 +15,9 @@ public class ExchangeRateFactory	{
 
     private static String strDataLBC = null;
     private static String strDataBTCe = null;
-    private static String strDataBFX = null;
-    private static String strDataBTCAvg = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
-    private static HashMap<String,Double> fxRatesBFX = null;
-    private static HashMap<String,Double> fxRatesBTCAvg = null;
 //    private static HashMap<String,String> fxSymbols = null;
 
     private static ExchangeRateFactory instance = null;
@@ -47,8 +43,6 @@ public class ExchangeRateFactory	{
     private static String[] exchangeLabels = {
             "LocalBitcoins.com",
             "BTC-e",
-            "Bitfinex",
-            "Bitcoin Average"
     };
 
     private ExchangeRateFactory()	 { ; }
@@ -60,8 +54,6 @@ public class ExchangeRateFactory	{
         if(instance == null)	 {
             fxRatesLBC = new HashMap<String,Double>();
             fxRatesBTCe = new HashMap<String,Double>();
-            fxRatesBFX = new HashMap<String,Double>();
-            fxRatesBTCAvg = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
 
             instance = new ExchangeRateFactory();
@@ -75,12 +67,6 @@ public class ExchangeRateFactory	{
         HashMap<String,Double> fxRates = null;
         if(fxSel == 1)	 {
             fxRates = fxRatesBTCe;
-        }
-        else if(fxSel == 2)	 {
-            fxRates = fxRatesBFX;
-        }
-        else if(fxSel == 3)	 {
-            fxRates = fxRatesBTCAvg;
         }
         else	 {
             fxRates = fxRatesLBC;
@@ -119,14 +105,6 @@ public class ExchangeRateFactory	{
         strDataBTCe = data;
     }
 
-    public void setDataBFX(String data)	 {
-        strDataBFX = data;
-    }
-
-    public void setDataAVG(String data)	 {
-        strDataBTCAvg = data;
-    }
-
     public void parseLBC()	 {
         for(int i = 0; i < currencies.length; i++)	 {
             getLBC(currencies[i]);
@@ -144,18 +122,6 @@ public class ExchangeRateFactory	{
             else	 {
                 getBTCe(currencies[i]);
             }
-        }
-    }
-
-    public void parseBFX()	 {
-        for(int i = 0; i < currencies.length; i++)	 {
-            getBFX("USD");
-        }
-    }
-
-    public void parseAVG()	 {
-        for(int i = 0; i < currencies.length; i++)	 {
-            getAVG(currencies[i]);
         }
     }
 
@@ -201,43 +167,6 @@ public class ExchangeRateFactory	{
             }
         } catch (JSONException je) {
             fxRatesBTCe.put(currency, Double.valueOf(-1.0));
-//            fxSymbols.put(currency, null);
-        }
-    }
-
-    private void getBFX(String currency)	 {
-        try {
-            JSONObject jsonObject = new JSONObject(strDataBFX);
-            if(jsonObject != null)	{
-                double avg_price = 0.0;
-                if(jsonObject.has("last_price"))	{
-                    avg_price = jsonObject.getDouble("last_price");
-                }
-                fxRatesBFX.put(currency, Double.valueOf(avg_price));
-//                Log.i("ExchangeRateFactory", "BFX:" + currency + " " + Double.valueOf(avg_price));
-            }
-        } catch (JSONException je) {
-            fxRatesBFX.put(currency, Double.valueOf(-1.0));
-//            fxSymbols.put(currency, null);
-        }
-    }
-
-    private void getAVG(String currency)	 {
-        try {
-            JSONObject jsonObject = new JSONObject(strDataBTCAvg);
-            if(jsonObject != null)	{
-                JSONObject jsonCurr = jsonObject.getJSONObject(currency);
-                if(jsonCurr != null)	{
-                    double last_price = 0.0;
-                    if(jsonCurr.has("last"))	{
-                        last_price = jsonCurr.getDouble("last");
-                    }
-                    fxRatesBTCAvg.put(currency, Double.valueOf(last_price));
-//                    Log.i("ExchangeRateFactory", "LBC:" + currency + " " + Double.valueOf(avg_price));
-                }
-            }
-        } catch (JSONException je) {
-            fxRatesBTCAvg.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
         }
     }

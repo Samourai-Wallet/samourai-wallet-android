@@ -13,9 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,12 +37,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
 
+import com.samourai.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.*;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -86,7 +86,6 @@ public class BalanceFragment extends Fragment {
     private FloatingActionsMenu ibQuickSend = null;
     private FloatingActionButton actionReceive = null;
     private FloatingActionButton actionSend = null;
-    private FloatingActionButton actionShapeShift = null;
     private FloatingActionButton actionBIP47 = null;
 
     private boolean isBTC = true;
@@ -112,6 +111,8 @@ public class BalanceFragment extends Fragment {
             if(ACTION_INTENT.equals(intent.getAction())) {
 
                 if(isAdded())    {
+
+                    thisActivity = getActivity();
 
                     final boolean notifTx = intent.getBooleanExtra("notifTx", false);
                     final boolean fetch = intent.getBooleanExtra("fetch", false);
@@ -143,6 +144,9 @@ public class BalanceFragment extends Fragment {
                                     ;
                                 }
                                 catch(IOException ioe) {
+                                    ;
+                                }
+                                catch(DecryptionException de) {
                                     ;
                                 }
 
@@ -186,21 +190,11 @@ public class BalanceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_balance, container, false);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            rootView.setBackgroundColor(getActivity().getResources().getColor(R.color.divider));
-        }
-
         rootView.setFilterTouchesWhenObscured(true);
 
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-        thisActivity = getActivity();
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tvBalanceBar = (LinearLayout)inflater.inflate(R.layout.balance_layout, container, false);
-        } else {
-            tvBalanceBar = (LinearLayout)inflater.inflate(R.layout.balance_layout, null, false);
-        }
+        tvBalanceBar = (LinearLayout)inflater.inflate(R.layout.balance_layout, container, false);
         tvBalanceBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -241,7 +235,7 @@ public class BalanceFragment extends Fragment {
 
                     new AlertDialog.Builder(thisActivity)
                             .setTitle(R.string.app_name)
-                            .setMessage(R.string.receive2samourai)
+                            .setMessage(R.string.receive2Samourai)
                             .setCancelable(false)
                             .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -264,15 +258,6 @@ public class BalanceFragment extends Fragment {
             }
         });
 
-        actionShapeShift = (FloatingActionButton)rootView.findViewById(R.id.shapeshift);
-        actionShapeShift.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                Intent intent = new Intent(getActivity(), ShapeShiftActivity.class);
-                startActivity(intent);
-            }
-        });
-
         actionBIP47 = (FloatingActionButton)rootView.findViewById(R.id.bip47);
         actionBIP47.setOnClickListener(new OnClickListener() {
             @Override
@@ -282,6 +267,8 @@ public class BalanceFragment extends Fragment {
             }
         });
 
+        txs = new ArrayList<Tx>();
+        txStates = new HashMap<String, Boolean>();
         txList = (ListView)rootView.findViewById(R.id.txList);
         txAdapter = new TransactionAdapter();
         txList.setAdapter(txAdapter);
@@ -319,10 +306,6 @@ public class BalanceFragment extends Fragment {
 
             }
         });
-
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            txList.setDivider(new ColorDrawable(R.color.divider));
-        }
 
         return rootView;
     }
@@ -365,6 +348,9 @@ public class BalanceFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if(activity != null)    {
+            thisActivity = activity;
+        }
         ((MainActivity2) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
@@ -430,12 +416,7 @@ public class BalanceFragment extends Fragment {
                     view = tvBalanceBar;
                 }
                 else {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        view = inflater.inflate(R.layout.tx_layout_simple, parent, false);
-                    }
-                    else {
-                        view = inflater.inflate(R.layout.tx_layout_simple_compat, parent, false);
-                    }
+                    view = inflater.inflate(R.layout.tx_layout_simple, parent, false);
                 }
             }
             else {
@@ -591,7 +572,7 @@ public class BalanceFragment extends Fragment {
                 // TBD: check on lookahead/lookbehind for all incoming payment codes
                 //
                 if(fetch || txs.size() == 0)    {
-                    APIFactory.getInstance(thisActivity).initWalletAmounts();
+                    APIFactory.getInstance(thisActivity).initWallet();
                 }
 
                 try {

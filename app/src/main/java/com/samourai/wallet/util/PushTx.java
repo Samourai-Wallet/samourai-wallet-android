@@ -49,7 +49,7 @@ public class PushTx {
     public String samourai(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.SAMOURAI_API + "pushtx", "tx=" + hexString);
+            String response = WebUtil.getInstance(null).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
 //        Log.i("Send response", response);
             return response;
         }

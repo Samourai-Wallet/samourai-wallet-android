@@ -3,21 +3,15 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
-        applicationId "com.samourai.wallet"
-        minSdkVersion 14
+        applicationId 'com.samourai.wallet'
+        minSdkVersion 21
         targetSdkVersion 21
-        versionCode 28
-        versionName "0.81"
+        versionCode 29
+        versionName "0.82"
+        // Enabling multidex support.
         multiDexEnabled true
     }
-    dexOptions
-            {
-                incremental false
-                javaMaxHeapSize "2048M"
-                preDexLibraries = false
-            }
     buildTypes {
         release {
             minifyEnabled false
@@ -31,21 +25,38 @@ android {
         abortOnError false
     }
     packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:multidex:1.0.0'
     compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
-    compile files('libs/httpclientandroidlib-1.2.1.jar')
-    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.neovisionaries:nv-websocket-client:1.9'
-    compile 'com.android.support:multidex:1.0.0'
-    compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.baoyz.swipemenulistview:library:1.2.1'
-    compile files('libs/bitcoinj-core-0.14.jar')
+    compile 'org.apache.httpcomponents:httpclient:4.5'
+    compile 'com.googlecode.json-simple:json-simple:1.1'
+    compile 'org.json:json:20140107'
+    compile 'commons-io:commons-io:2.5'
+    compile 'commons-codec:commons-codec:1.4'
+    compile 'org.apache.commons:commons-lang3:3.3'
+    compile 'com.google.guava:guava:16.0.1'
+    compile 'org.bitcoinj:bitcoinj-core:0.14.3'
+    compile 'org.bouncycastle:bcprov-jdk15on:1.55'
+    compile 'com.madgag.spongycastle:core:1.54.0.0'
+    compile 'com.madgag.spongycastle:prov:1.54.0.0'
+    compile('com.google.zxing:core:3.3.0') {
+        transitive = true
+    }
 }

@@ -23,7 +23,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
-import com.samourai.wallet.R;
+import com.samourai.R;
 
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;
@@ -132,7 +132,7 @@ public class WebSocketHandler {
 
                 Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                 intent.putExtra("rbf", rbfHash);
-                intent.putExtra("notfTx", false);
+                intent.putExtra("notifTx", false);
                 intent.putExtra("fetch", true);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -165,6 +165,7 @@ public class WebSocketHandler {
             try {
 
                 mConnection = new WebSocketFactory()
+//                        .createSocket("wss://api.samouraiwallet.com/v1/inv")
                         .createSocket("wss://ws.blockchain.info/inv")
                         .addHeader("Origin", "https://blockchain.info").recreate()
                         .addListener(new WebSocketAdapter() {
@@ -343,7 +344,8 @@ public class WebSocketHandler {
                                     else {
                                         ;
                                     }
-                                } catch (Exception e) {
+                                }
+                                catch (Exception e) {
                                     e.printStackTrace();
                                 }
 

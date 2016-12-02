@@ -14,7 +14,7 @@ import com.samourai.wallet.receivers.SMSReceiver;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SMSSender;
-import com.samourai.wallet.R;
+import com.samourai.R;
 
 import java.util.ArrayList;
 import java.util.List;

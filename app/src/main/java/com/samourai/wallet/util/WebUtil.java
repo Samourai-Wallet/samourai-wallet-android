@@ -21,13 +21,16 @@ public class WebUtil	{
 
     public static final String BLOCKCHAIN_DOMAIN = "https://blockchain.info/";
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
-    public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/status";
+    public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/v1/status";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
     public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String AVG_EXCHANGE_URL = "https://api.bitcoinaverage.com/ticker/global/all";
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
+
+    //    public static final String DYNAMIC_FEE_URL = "https://api.blockchain.info/fees";
+    public static final String DYNAMIC_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
 
     public static final String BTCX_FEE_URL = "http://bitcoinexchangerate.org/fees";
 

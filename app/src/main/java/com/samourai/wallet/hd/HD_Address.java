@@ -11,8 +11,6 @@ import org.bitcoinj.crypto.HDKeyDerivation;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 public class HD_Address {
 
     private int mChildNum;
@@ -70,6 +68,10 @@ public class HD_Address {
 
     public Address getAddress() {
         return ecKey.toAddress(mParams);
+    }
+
+    public ECKey getECKey() {
+        return ecKey;
     }
 
     public HD_Account getAccount() {

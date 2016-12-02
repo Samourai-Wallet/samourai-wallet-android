@@ -3,6 +3,8 @@ package com.samourai.wallet;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.samourai.R;
+
 public class AboutActivity extends Activity {
 
     @Override

@@ -18,7 +18,7 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.R;
+import com.samourai.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

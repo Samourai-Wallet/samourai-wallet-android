@@ -18,11 +18,13 @@ import android.widget.Toast;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
+
+import com.samourai.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -31,10 +33,8 @@ import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class PinEntryActivity extends Activity {
 
@@ -491,6 +491,9 @@ public class PinEntryActivity extends Activity {
                         }
                         catch (IOException ioe) {
                             ioe.printStackTrace();
+                        }
+                        catch (DecryptionException de) {
+                            de.printStackTrace();
                         }
                         finally {
                             ;
