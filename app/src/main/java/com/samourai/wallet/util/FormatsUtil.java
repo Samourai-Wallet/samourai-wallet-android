@@ -11,6 +11,7 @@ import org.bitcoinj.core.WrongNetworkException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.bitcoinj.uri.BitcoinURIParseException;
+import org.spongycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
@@ -204,6 +205,19 @@ public class FormatsUtil {
 		catch(Exception e)	{
 			return false;
 		}
+	}
+
+	public boolean isValidBIP47OpReturn(String op_return){
+
+		byte[] buf = Hex.decode(op_return);
+
+		if(buf.length == 80 && buf[0] == 0x00 && buf[1] == 0x00 && buf[2] == 0x00 && buf[3] == 0x00 && buf[4] == 0x00 && buf[5] == 0x00 && buf[6] == 0x00)    {
+			return true;
+		}
+		else    {
+			return false;
+		}
+
 	}
 
 }

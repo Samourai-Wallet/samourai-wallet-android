@@ -20,7 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.samourai.wallet.R;
+import com.samourai.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

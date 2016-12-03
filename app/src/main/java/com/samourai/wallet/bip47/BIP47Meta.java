@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BIP47Meta {
@@ -114,14 +111,24 @@ public class BIP47Meta {
         return pcodeLabels.keySet();
     }
 
-    public Set<String> getSortedByLabels()    {
+    public Set<String> getSortedByLabels(boolean includeArchived)    {
 
-        SortedSet<String> ret = new TreeSet<String>();
-        ret.addAll(pcodeLabels.keySet());
+        ConcurrentHashMap<String, String> labels = null;
 
-        ConcurrentHashMap<String, String> labels = pcodeLabels;
+        if(includeArchived)    {
+            labels = pcodeLabels;
+        }
+        else    {
+            labels = new ConcurrentHashMap<String, String>();
+            for(String key : pcodeLabels.keySet())   {
+                if(!BIP47Meta.getInstance().getArchived(key))    {
+                    labels.put(key, pcodeLabels.get(key));
+                }
+            }
+
+        }
+
         Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
-
         return sortedMapAsc.keySet();
     }
 
@@ -193,18 +200,6 @@ public class BIP47Meta {
 
     public void setOutgoingIdx(String pcode, int idx)   {
         pcodeOutgoingIdxs.put(pcode, idx);
-    }
-
-    public String[] getIncomingAddresses()  {
-
-        ArrayList<String> addrs = new ArrayList<String>();
-        for(ConcurrentHashMap<String,Integer> map : pcodeIncomingIdxs.values())   {
-            addrs.addAll(map.keySet());
-        }
-
-        String[] s = addrs.toArray(new String[addrs.size()]);
-
-        return s;
     }
 
     public String[] getIncomingAddresses(boolean includeArchived)  {

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 //import android.util.Log;
 
 import org.bitcoinj.core.AddressFormatException;
@@ -21,6 +20,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.crypto.AESUtil;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -45,8 +45,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -238,12 +238,15 @@ public class HD_WalletFactory	{
             catch(JSONException je) {
                 je.printStackTrace();
             }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
 
         }
 
     }
 
-    public void saveWalletToJSON(CharSequenceX password) throws MnemonicException.MnemonicLengthException, IOException, JSONException {
+    public void saveWalletToJSON(CharSequenceX password) throws MnemonicException.MnemonicLengthException, IOException, JSONException, DecryptionException, UnsupportedEncodingException {
 //        Log.i("HD_WalletFactory", get().toJSON().toString());
 
         // save payload
@@ -259,9 +262,11 @@ public class HD_WalletFactory	{
                 encrypted = AESUtil.encrypt(HD_WalletFactory.getInstance(context).get().toJSON(context).toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
                 serialize(encrypted);
 
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
 //            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            } finally {
+            }
+            finally {
                 if (encrypted == null) {
 //                Toast.makeText(context, R.string.encryption_error, Toast.LENGTH_SHORT).show();
                     return;
@@ -324,7 +329,6 @@ public class HD_WalletFactory	{
 
             if(meta != null) {
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 
                 if(meta.has("prev_balance")) {
@@ -451,7 +455,7 @@ public class HD_WalletFactory	{
         return walletfile.exists();
     }
 
-    private synchronized void serialize(JSONObject jsonobj, CharSequenceX password) throws IOException, JSONException {
+    private synchronized void serialize(JSONObject jsonobj, CharSequenceX password) throws IOException, JSONException, DecryptionException, UnsupportedEncodingException {
 
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File newfile = new File(dir, strFilename);
@@ -461,10 +465,6 @@ public class HD_WalletFactory	{
         tmpfile.setWritable(true, true);
         bakfile.setWritable(true, true);
 
-        // serialize to byte array.
-        String jsonstr = jsonobj.toString(4);
-        byte[] cleartextBytes = jsonstr.getBytes(Charset.forName("UTF-8"));
-
         // prepare tmp file.
         if(tmpfile.exists()) {
             tmpfile.delete();
@@ -472,6 +472,7 @@ public class HD_WalletFactory	{
         }
 
         String data = null;
+        String jsonstr = jsonobj.toString(4);
         if(password != null) {
             data = AESUtil.encrypt(jsonstr, password, AESUtil.DefaultPBKDF2Iterations);
         }

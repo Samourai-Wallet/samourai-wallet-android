@@ -5,7 +5,6 @@ import android.content.Context;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.Utils;
 import org.bitcoinj.crypto.MnemonicException;
 
 import java.io.IOException;

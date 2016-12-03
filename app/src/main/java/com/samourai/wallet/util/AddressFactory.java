@@ -1,15 +1,14 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.receivers.InterceptOutgoingReceiver;
 
 import org.json.JSONException;
 
@@ -87,6 +86,10 @@ public class AddressFactory {
         }
         catch(MnemonicException.MnemonicLengthException mle)	{
             mle.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch(DecryptionException de)	{
+            de.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
 

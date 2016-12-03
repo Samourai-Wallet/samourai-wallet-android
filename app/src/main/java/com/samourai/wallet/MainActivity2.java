@@ -20,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,27 +36,34 @@ import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+
+import com.samourai.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.pinning.SSLVerifierThreadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.ExchangeRateFactory;
-import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.PrivateKeyFactory;
+import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -64,31 +72,26 @@ import net.sourceforge.zbar.Symbol;
 import org.apache.commons.codec.DecoderException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.Hex;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity2 extends Activity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
+    private final static int SCAN_QR = 2012;
 
     private ProgressDialog progress = null;
 
     private CharSequence mTitle;
-
-    private boolean isInForeground = false;
-
-    private static final String MIME_TEXT_PLAIN = "text/plain";
-    private static final int MESSAGE_SENT = 1;
 
     /** An array of strings to populate dropdown list */
     private static String[] account_selections = null;
@@ -195,8 +198,8 @@ public class MainActivity2 extends Activity {
 
         }
         else  {
-            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
-            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
+//            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+//            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
             exchangeRateThread();
 
             boolean isDial = false;
@@ -269,8 +272,8 @@ public class MainActivity2 extends Activity {
         else {
             TimeOutUtil.getInstance().updatePin();
 
-            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
-            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
+//            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+//            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
         }
 
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
@@ -316,17 +319,23 @@ public class MainActivity2 extends Activity {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
+                PrivKeyReader privKeyReader = null;
+
                 String format = null;
                 try	{
-                    format = PrivateKeyFactory.getInstance().getFormat(strResult);
+                    privKeyReader = new PrivKeyReader(new CharSequenceX(strResult), null);
+                    format = privKeyReader.getFormat();
                 }
                 catch(Exception e)	{
-                    ;
+                    Toast.makeText(MainActivity2.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 if(format != null)	{
 
-                    if(format.equals(PrivateKeyFactory.BIP38))	{
+                    if(format.equals(PrivKeyReader.BIP38))	{
+
+                        final PrivKeyReader pvr = privKeyReader;
 
                         final EditText password38 = new EditText(MainActivity2.this);
 
@@ -340,13 +349,43 @@ public class MainActivity2 extends Activity {
 
                                         String password = password38.getText().toString();
 
-                                        progress = new ProgressDialog(MainActivity2.this);
+                                        ProgressDialog progress = new ProgressDialog(MainActivity2.this);
                                         progress.setCancelable(false);
                                         progress.setTitle(R.string.app_name);
                                         progress.setMessage(getString(R.string.decrypting_bip38));
                                         progress.show();
 
-                                        bip38Thread(strResult, password);
+                                        boolean keyDecoded = false;
+
+                                        try {
+                                            BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), strResult);
+                                            final ECKey ecKey = bip38.decrypt(password);
+                                            if(ecKey != null && ecKey.hasPrivKey()) {
+
+                                                if(progress != null && progress.isShowing())    {
+                                                    progress.cancel();
+                                                }
+
+                                                pvr.setPassword(new CharSequenceX(password));
+                                                keyDecoded = true;
+
+                                                Toast.makeText(MainActivity2.this, pvr.getFormat(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(MainActivity2.this, pvr.getKey().toAddress(MainNetParams.get()).toString(), Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }
+                                        catch(Exception e) {
+                                            e.printStackTrace();
+                                            Toast.makeText(MainActivity2.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        if(progress != null && progress.isShowing())    {
+                                            progress.cancel();
+                                        }
+
+                                        if(keyDecoded)    {
+                                            doSweep(pvr);
+                                        }
 
                                     }
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -361,8 +400,11 @@ public class MainActivity2 extends Activity {
                         }
 
                     }
-                    else	{
-                        doSweep(strResult);
+                    else if(privKeyReader != null)	{
+                        doSweep(privKeyReader);
+                    }
+                    else    {
+                        ;
                     }
 
                 }
@@ -370,6 +412,24 @@ public class MainActivity2 extends Activity {
             }
         }
         else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_COLD_STORAGE)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_QR)	{
+
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                FragmentManager fragmentManager = getFragmentManager();
+                Bundle bundle = new Bundle();
+                bundle.putString("uri", strResult);
+                SendFragment sendFragment = SendFragment.newInstance(2);
+                sendFragment.setArguments(bundle);
+                fragmentManager.beginTransaction().replace(R.id.container, sendFragment).commit();
+
+            }
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR)	{
             ;
         }
         else {
@@ -443,6 +503,9 @@ public class MainActivity2 extends Activity {
             }
 
         }
+        else if (id == R.id.action_scan_qr) {
+            doScan();
+        }
         else {
             ;
         }
@@ -484,6 +547,9 @@ public class MainActivity2 extends Activity {
                         catch(IOException ioe) {
                             ;
                         }
+                        catch(DecryptionException de) {
+                            ;
+                        }
 
                         AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
                         TimeOutUtil.getInstance().reset();
@@ -510,6 +576,12 @@ public class MainActivity2 extends Activity {
         }
 
         return false;
+    }
+
+    private void doScan() {
+        Intent intent = new Intent(MainActivity2.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_QR);
     }
 
     private void doSettings()	{
@@ -732,6 +804,10 @@ public class MainActivity2 extends Activity {
                                                                                     npe.printStackTrace();
                                                                                     Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                                                                                 }
+                                                                                catch(DecryptionException de) {
+                                                                                    de.printStackTrace();
+                                                                                    Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                                                }
                                                                                 finally {
                                                                                     if (progress != null && progress.isShowing()) {
                                                                                         progress.dismiss();
@@ -756,10 +832,6 @@ public class MainActivity2 extends Activity {
                                                         if(!isFinishing())    {
                                                             dlg.show();
                                                         }
-
-
-
-
 
                                                     }
                                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -958,26 +1030,6 @@ public class MainActivity2 extends Activity {
                     e.printStackTrace();
                 }
 
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.AVG_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataAVG(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseAVG();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -1006,7 +1058,7 @@ public class MainActivity2 extends Activity {
                 public void run() {
                     Looper.prepare();
 
-                    APIFactory.getInstance(MainActivity2.this).initWalletAmounts();
+                    APIFactory.getInstance(MainActivity2.this).initWallet();
 
                     if (progress != null && progress.isShowing()) {
                         progress.dismiss();
@@ -1066,7 +1118,7 @@ public class MainActivity2 extends Activity {
         startActivityForResult(intent, SCAN_COLD_STORAGE);
     }
 
-    private void bip38Thread(final String data, final String password) {
+    private void doSweep(final PrivKeyReader privKeyReader)  {
 
         new Thread(new Runnable() {
             @Override
@@ -1075,20 +1127,90 @@ public class MainActivity2 extends Activity {
                 Looper.prepare();
 
                 try {
-                    BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), data);
-                    final ECKey ecKey = bip38.decrypt(password);
-                    if(ecKey != null && ecKey.hasPrivKey()) {
-                        doSweep(ecKey.getPrivateKeyEncoded(MainNetParams.get()).toString());
+
+                    if(privKeyReader == null || privKeyReader.getKey() == null || !privKeyReader.getKey().hasPrivKey())    {
+                        Toast.makeText(MainActivity2.this, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
+                        return;
                     }
+
+                    String address = privKeyReader.getKey().toAddress(MainNetParams.get()).toString();
+                    UTXO utxo = APIFactory.getInstance(MainActivity2.this).getUnspentOutputsForSweep(address);
+                    if(utxo != null)    {
+
+                        long total_value = 0L;
+                        final List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                        for(MyTransactionOutPoint outpoint : outpoints)   {
+                            total_value += outpoint.getValue().longValue();
+                        }
+
+                        final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
+
+                        final long amount = total_value - fee.longValue();
+                        Log.d("MainActivity2", "Total value:" + total_value);
+                        Log.d("MainActivity2", "Amount:" + amount);
+                        Log.d("MainActivity2", "Fee:" + fee.toString());
+
+                        String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity2.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(false);
+                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                final ProgressDialog progress = new ProgressDialog(MainActivity2.this);
+                                progress.setCancelable(false);
+                                progress.setTitle(R.string.app_name);
+                                progress.setMessage(getString(R.string.please_wait_sending));
+                                progress.show();
+
+                                String receive_address = AddressFactory.getInstance(MainActivity2.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                                final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
+                                receivers.put(receive_address, BigInteger.valueOf(amount));
+                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(MainActivity2.this).makeTransaction(0, outpoints, receivers, fee);
+
+                                tx = SendFactory.getInstance(MainActivity2.this).signTransactionForSweep(tx, privKeyReader);
+                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                Log.d("MainActivity2", hexTx);
+
+                                try {
+                                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
+                                    Log.d("MainActivity2", "pushTx:" + response);
+                                    if(response.contains("Transaction Submitted"))    {
+                                        Toast.makeText(MainActivity2.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                    }
+                                    else    {
+                                        Toast.makeText(MainActivity2.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                catch(Exception e) {
+                                    Toast.makeText(MainActivity2.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                }
+
+                                if(progress != null && progress.isShowing())    {
+                                    progress.dismiss();
+                                }
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                    }
+                    else    {
+                        Toast.makeText(MainActivity2.this, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
+                    }
+
                 }
                 catch(Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(MainActivity2.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
-                }
-
-                if (progress != null && progress.isShowing()) {
-                    progress.dismiss();
-                    progress = null;
+                    Toast.makeText(MainActivity2.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
                 }
 
                 Looper.loop();
@@ -1096,84 +1218,6 @@ public class MainActivity2 extends Activity {
             }
         }).start();
 
-    }
-
-    private void doSweep(String data) {
-
-        ECKey ecKey = null;
-        try {
-            String keyFormat = PrivateKeyFactory.getInstance().getFormat(data);
-            ecKey = PrivateKeyFactory.getInstance().getKey(keyFormat, data);
-//            Log.i("sweep", ecKey.toAddress(MainNetParams.get()).toString());
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        final ECKey _ecKey = ecKey;
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                final BigInteger bValue = SendFactory.getInstance(MainActivity2.this).sweep(_ecKey);
-
-                if(bValue.compareTo(BigInteger.valueOf((long)(0.0001 * 1e8))) == 1) {
-
-                    AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(getString(R.string.sweep_address_for) + " " + MonetaryUtil.getInstance().getBTCFormat().format(bValue.doubleValue() / 1e8) + " BTC?")
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    //
-                                    //
-                                    //
-                                    SendFactory.getInstance(MainActivity2.this).sweep(_ecKey, bValue.subtract(BigInteger.valueOf((long)(0.0001 * 1e8))), BigInteger.valueOf((long)(0.0001 * 1e8)), new OpCallback() {
-
-                                        public void onSuccess() {
-                                            MainActivity2.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(MainActivity2.this, R.string.sweep_ok, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-
-                                        public void onFail() {
-                                            MainActivity2.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(MainActivity2.this, R.string.sweep_ko, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-
-                                    });
-                                    //
-                                    //
-                                    //
-
-                                }
-                            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    ;
-
-                                }
-                            });
-                    if(!isFinishing())    {
-                        dlg.show();
-                    }
-
-                }
-
-                Looper.loop();
-
-            }
-        }).start();
     }
 
     private void doBackup() {
@@ -1192,7 +1236,17 @@ public class MainActivity2 extends Activity {
 
                                     try {
                                         HD_WalletFactory.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
-                                    } catch (Exception e) {
+                                    }
+                                    catch (IOException ioe) {
+                                        ;
+                                    }
+                                    catch (JSONException je) {
+                                        ;
+                                    }
+                                    catch (DecryptionException de) {
+                                        ;
+                                    }
+                                    catch (MnemonicException.MnemonicLengthException mle) {
                                         ;
                                     }
 
@@ -1262,16 +1316,11 @@ public class MainActivity2 extends Activity {
 
         account_selections = new String[] {
                 getString(R.string.total),
-                getString(R.string.account_samourai),
+                getString(R.string.account_Samourai),
                 getString(R.string.account_shuffling),
         };
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, account_selections);
-        }
-        else    {
-            adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.spinner_dropdown, account_selections);
-        }
+        adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, account_selections);
 
         if(account_selections.length > 1)    {
             SamouraiWallet.getInstance().setShowTotalBalance(true);

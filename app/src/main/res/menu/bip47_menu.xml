@@ -5,4 +5,14 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_receive_qr"
         />
+    <item android:id="@+id/action_unarchive"
+        android:title="@string/action_unarchive"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/action_sync_all"
+        android:title="@string/action_sync_all"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
 </menu>

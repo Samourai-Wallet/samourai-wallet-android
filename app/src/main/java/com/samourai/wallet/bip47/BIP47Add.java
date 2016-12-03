@@ -13,11 +13,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.R;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
@@ -113,7 +114,12 @@ public class BIP47Add extends Activity {
                             npe.printStackTrace();
                             Toast.makeText(BIP47Add.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                         }
+                        catch(DecryptionException de) {
+                            de.printStackTrace();
+                            Toast.makeText(BIP47Add.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
                         finally {
+                            ;
                         }
 
                         Looper.loop();

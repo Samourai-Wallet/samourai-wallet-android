@@ -30,17 +30,6 @@
         android:layout_marginEnd="16dp">
 
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/shapeshift"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_receive_shapeshift"
-            fab:fab_colorNormal="#FF7ad5f7"
-            fab:fab_colorPressed="#FF60a8c3"
-            fab:fab_title="@string/shapeshift"
-            />
-
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/bip47"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
