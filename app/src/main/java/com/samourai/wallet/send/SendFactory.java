@@ -12,7 +12,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.widget.Toast;
-import android.util.Log;
+//import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -94,25 +94,25 @@ public class SendFactory	{
                 try {
                     String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
                     if(path != null)    {
-                        Log.i("SendFactory", "unspent path:" + path);
+//                        Log.i("SendFactory", "unspent path:" + path);
                         String[] s = path.split("/");
                         HD_Address hd_address = AddressFactory.getInstance(context).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                        Log.i("SendFactory", "unspent address:" + hd_address.getAddressString());
+//                        Log.i("SendFactory", "unspent address:" + hd_address.getAddressString());
                         String strPrivKey = hd_address.getPrivateKeyString();
                         DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
                         ecKey = pk.getKey();
-                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                     }
                     else    {
 //                        Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
 //                        Log.i("looking up:", "" + address);
                         String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                        Log.i("pcode from address:", pcode);
+//                        Log.i("pcode from address:", pcode);
                         int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                        Log.i("idx from address:", "" + idx);
+//                        Log.i("idx from address:", "" + idx);
                         PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
                         ecKey = addr.getReceiveECKey();
-                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                     }
                 } catch (AddressFormatException afe) {
                     afe.printStackTrace();
@@ -123,7 +123,8 @@ public class SendFactory	{
                     keyBag.put(input.getOutpoint().toString(), ecKey);
                 }
                 else {
-                    Log.i("ECKey error", "cannot process private key");
+                    throw new RuntimeException("ECKey error: cannot process private key");
+//                    Log.i("ECKey error", "cannot process private key");
                 }
             }
             catch(ScriptException se) {
@@ -165,7 +166,7 @@ public class SendFactory	{
                 try {
                     DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privKeyReader.getKey().getPrivateKeyAsWiF(MainNetParams.get()));
                     ecKey = pk.getKey();
-                    Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                    Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                 } catch (AddressFormatException afe) {
                     afe.printStackTrace();
                     continue;
@@ -175,7 +176,8 @@ public class SendFactory	{
                     keyBag.put(input.getOutpoint().toString(), ecKey);
                 }
                 else {
-                    Log.i("ECKey error", "cannot process private key");
+                    Toast.makeText(context, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
+//                    Log.i("ECKey error", "cannot process private key");
                 }
             }
             catch(ScriptException se) {
@@ -328,11 +330,11 @@ public class SendFactory	{
         for(UTXO output : outputs)   {
             total_wallet += output.getValue();
         }
-        System.out.println("total wallet amount:" + total_wallet);
-        System.out.println("spend amount:" + spendAmount.toString());
+//        System.out.println("total wallet amount:" + total_wallet);
+//        System.out.println("spend amount:" + spendAmount.toString());
 
         if(spendAmount.longValue() > (total_wallet / 2L))    {
-            System.out.println("spend amount larger than 50% of total amount available");
+//            System.out.println("spend amount larger than 50% of total amount available");
             return null;
         }
 
@@ -373,33 +375,32 @@ public class SendFactory	{
         }
 
         //
-        System.out.println("total amount (spend + fee):" + totalAmount.toString());
-        System.out.println("total value selected:" + totalValue.toString());
-        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
-        System.out.println("total change:" + totalChange.toString());
-        System.out.println("output scripts:" + output_scripts);
-        System.out.println("selected outputs:" + selectedOutputs.size());
+//        System.out.println("total amount (spend + fee):" + totalAmount.toString());
+//        System.out.println("total value selected:" + totalValue.toString());
+//        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
+//        System.out.println("total change:" + totalChange.toString());
+//        System.out.println("output scripts:" + output_scripts);
+//        System.out.println("selected outputs:" + selectedOutputs.size());
 //        System.out.println("tx size:" + txSize);
 //        System.out.println("fixed fee:" + fixedFee);
-        System.out.println("fee:" + biFee.toString());
+//        System.out.println("fee:" + biFee.toString());
         //
 
         if(totalValue.compareTo(totalAmount) < 0)    {
-            System.out.println("Insufficient funds");
+//            System.out.println("Insufficient funds");
             return null;
         }
 
         if(output_scripts < 3)    {
-            System.out.println("Need at least 3 output scripts");
+//            System.out.println("Need at least 3 output scripts");
             return null;
         }
 
-        for (MyTransactionOutPoint selected : selectedOutputs) {
-            System.out.println("selected value:" + selected.getValue());
-        }
+//        for (MyTransactionOutPoint selected : selectedOutputs) {
+//            System.out.println("selected value:" + selected.getValue());
+//        }
 
         ret.getLeft().addAll(selectedOutputs);
-        List<TransactionOutput> txOutputs = new ArrayList<TransactionOutput>();
 
         check_total += biFee.longValue();
 
@@ -415,12 +416,12 @@ public class SendFactory	{
         int remainingOutputs = output_scripts;
         if(spendAmount.compareTo(BigInteger.valueOf(_pct)) <= 0)    {
 
-            System.out.println("spend not part of pair");
+//            System.out.println("spend not part of pair");
 
             //
-            System.out.println("pair part:" + _pct);
-            System.out.println("pair part:" + _pct);
-            System.out.println("spend:" + spendAmount.toString());
+//            System.out.println("pair part:" + _pct);
+//            System.out.println("pair part:" + _pct);
+//            System.out.println("spend:" + spendAmount.toString());
             //
 
             try {
@@ -455,7 +456,7 @@ public class SendFactory	{
                 return null;
             }
             else if(remainingOutputs == 0)    {
-                System.out.println("updating pair parts");
+//                System.out.println("updating pair parts");
                 long part1 = _pct + remainder.divide(BigInteger.valueOf(2L)).longValue();
                 txOut1.setValue(Coin.valueOf(_pct + remainder.divide(BigInteger.valueOf(2L)).longValue()));
                 remainder = remainder.subtract(remainder.divide(BigInteger.valueOf(2L)));
@@ -463,9 +464,9 @@ public class SendFactory	{
                 txOut2.setValue(Coin.valueOf(_pct + remainder.longValue()));
                 remainder = remainder.subtract(remainder);
                 //
-                System.out.println("part1:" + part1);
-                System.out.println("part2:" + part2);
-                System.out.println("remainder:" + remainder.toString());
+//                System.out.println("part1:" + part1);
+//                System.out.println("part2:" + part2);
+//                System.out.println("remainder:" + remainder.toString());
                 //
                 check_total += part1;
                 check_total += part2;
@@ -481,17 +482,17 @@ public class SendFactory	{
 
         }
         else    {
-            System.out.println("spend part of pair");
+//            System.out.println("spend part of pair");
 
             try {
-                System.out.println("spend:" + spendAmount.toString());
+//                System.out.println("spend:" + spendAmount.toString());
                 // spend address here
-                Log.d("SendFactory", address + ":" + org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), address));
+//                Log.d("SendFactory", address + ":" + org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), address));
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), address));
-                Log.d("SendFactory", address + ":" + outputScript.getToAddress(MainNetParams.get()));
+//                Log.d("SendFactory", address + ":" + outputScript.getToAddress(MainNetParams.get()));
                 txOutSpend = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
 
-                System.out.println("pair part:" + spendAmount.toString());
+//                System.out.println("pair part:" + spendAmount.toString());
                 // change address here
                 changeAddress = getChangeAddress();
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), changeAddress));
@@ -514,12 +515,12 @@ public class SendFactory	{
 
         }
 
-        System.out.println("remainder for change:" + remainder.toString());
+//        System.out.println("remainder for change:" + remainder.toString());
 
         if(remainingOutputs > 0)    {
             BigInteger remainderPart = remainder.divide(BigInteger.valueOf(remainingOutputs));
             if(remainderPart.compareTo(SamouraiWallet.bDust) < 0)    {
-                System.out.println("dust amounts for change");
+//                System.out.println("dust amounts for change");
                 return null;
             }
 
@@ -557,8 +558,8 @@ public class SendFactory	{
             }
         }
 
-        System.out.println("remainder after processing:" + remainder.toString());
-        System.out.println("output amount processed:" + check_total);
+//        System.out.println("remainder after processing:" + remainder.toString());
+//        System.out.println("output amount processed:" + check_total);
 
         long inValue = 0L;
         for(MyTransactionOutPoint outpoint : ret.getLeft())   {
@@ -569,8 +570,8 @@ public class SendFactory	{
             outValue += tOut.getValue().longValue();
         }
         outValue += biFee.longValue();
-        System.out.println("inputs:" + inValue);
-        System.out.println("outputs:" + outValue);
+//        System.out.println("inputs:" + inValue);
+//        System.out.println("outputs:" + outValue);
 
         assert(inValue == outValue);
 
@@ -593,11 +594,11 @@ public class SendFactory	{
         for(UTXO output : outputs)   {
             total_wallet += output.getValue();
         }
-        System.out.println("total wallet amount:" + total_wallet);
-        System.out.println("spend amount:" + spendAmount.toString());
+//        System.out.println("total wallet amount:" + total_wallet);
+//        System.out.println("spend amount:" + spendAmount.toString());
 
         if(spendAmount.longValue() > (total_wallet / 2L))    {
-            System.out.println("spend amount larger than 50% of total amount available");
+//            System.out.println("spend amount larger than 50% of total amount available");
             return null;
         }
 
@@ -621,28 +622,27 @@ public class SendFactory	{
         }
 
         //
-        System.out.println("total amount (spend + fee):" + totalAmount.add(biFee).toString());
-        System.out.println("total value selected:" + totalValue.toString());
-        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
-        System.out.println("total change:" + totalChange.toString());
-        System.out.println("output scripts:" + NB_OUTPUTS);
-        System.out.println("selected outputs:" + selectedOutputs.size());
+//        System.out.println("total amount (spend + fee):" + totalAmount.add(biFee).toString());
+//        System.out.println("total value selected:" + totalValue.toString());
+//        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
+//        System.out.println("total change:" + totalChange.toString());
+//        System.out.println("output scripts:" + NB_OUTPUTS);
+//        System.out.println("selected outputs:" + selectedOutputs.size());
 //        System.out.println("tx size:" + txSize);
 //        System.out.println("fixed fee:" + fixedFee);
-        System.out.println("fee:" + biFee.toString());
+//        System.out.println("fee:" + biFee.toString());
         //
 
         if(totalValue.compareTo(totalAmount) < 0)    {
-            System.out.println("Insufficient funds");
+//            System.out.println("Insufficient funds");
             return null;
         }
 
-        for (MyTransactionOutPoint selected : selectedOutputs) {
-            System.out.println("selected value:" + selected.getValue());
-        }
+//        for (MyTransactionOutPoint selected : selectedOutputs) {
+//            System.out.println("selected value:" + selected.getValue());
+//        }
 
         ret.getLeft().addAll(selectedOutputs);
-        List<TransactionOutput> txOutputs = new ArrayList<TransactionOutput>();
 
         check_total += biFee.longValue();
 
@@ -654,7 +654,7 @@ public class SendFactory	{
         Script outputScript = null;
         String changeAddress = null;
 
-        System.out.println("spend:" + spendAmount.toString());
+//        System.out.println("spend:" + spendAmount.toString());
         try {
             // spend address here
             outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), address));
@@ -672,7 +672,7 @@ public class SendFactory	{
         check_total += spendAmount.longValue();
         remainder = remainder.subtract(spendAmount);
         remainder = remainder.subtract(spendAmount);
-        System.out.println("change:" + remainder.toString());
+//        System.out.println("change:" + remainder.toString());
         try {
             // change address here
             changeAddress = getChangeAddress();
@@ -691,8 +691,8 @@ public class SendFactory	{
         ret.getRight().add(txChange);
 
         //
-        System.out.println("remainder after processing:" + remainder.toString());
-        System.out.println("output amount processed:" + check_total);
+//        System.out.println("remainder after processing:" + remainder.toString());
+//        System.out.println("output amount processed:" + check_total);
         //
 
         long inValue = 0L;
@@ -704,8 +704,8 @@ public class SendFactory	{
             outValue += tOut.getValue().longValue();
         }
         outValue += biFee.longValue();
-        System.out.println("inputs:" + inValue);
-        System.out.println("outputs:" + outValue);
+//        System.out.println("inputs:" + inValue);
+//        System.out.println("outputs:" + outValue);
 
         assert(inValue == outValue);
 
