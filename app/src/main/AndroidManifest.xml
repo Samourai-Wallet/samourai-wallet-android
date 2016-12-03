@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.samourai"
-    android:versionCode="31"
-    android:versionName="@string/version_name"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.samourai">
 
     <uses-sdk
         android:minSdkVersion="21"
