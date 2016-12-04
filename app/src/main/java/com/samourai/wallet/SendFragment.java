@@ -824,7 +824,7 @@ public class SendFragment extends Fragment {
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(getActivity()).signTransaction(tx);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                Log.d("SendActivity", hexTx);
+//                                Log.d("SendActivity", hexTx);
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -837,7 +837,7 @@ public class SendFragment extends Fragment {
                                         try {
                                             //response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
                                             response = PushTx.getInstance(getActivity()).samourai(hexTx);
-                                            Log.d("SendActivity", "pushTx:" + response);
+//                                            Log.d("SendActivity", "pushTx:" + response);
 
                                             org.json.JSONObject jsonObject = new org.json.JSONObject(response);
                                             if(jsonObject.has("status"))    {
@@ -846,7 +846,7 @@ public class SendFragment extends Fragment {
                                                 }
                                             }
 
-                                            if(response.contains("Transaction Submitted"))    {
+                                            if(isOK)    {
 
                                                 Toast.makeText(getActivity(), R.string.tx_sent, Toast.LENGTH_SHORT).show();
 
