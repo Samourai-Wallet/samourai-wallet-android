@@ -1030,6 +1030,16 @@ public class MainActivity2 extends Activity {
                     e.printStackTrace();
                 }
 
+                response = null;
+                try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.AVG_EXCHANGE_URL);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCAvg(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCAvg();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
