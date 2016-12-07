@@ -24,7 +24,7 @@ import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.AddressFormatException;

@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 public class OrbotHelper {
 

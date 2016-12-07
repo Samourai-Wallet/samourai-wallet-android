@@ -18,7 +18,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;

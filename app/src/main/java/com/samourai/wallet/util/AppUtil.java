@@ -13,7 +13,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.prng.PRNGFixes;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,7 +2,7 @@ package com.samourai.wallet.util;
 
 import android.content.Context;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

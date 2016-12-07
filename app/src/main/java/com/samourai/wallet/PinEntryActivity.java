@@ -19,7 +19,7 @@ import android.widget.Toast;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;

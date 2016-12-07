@@ -26,7 +26,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;

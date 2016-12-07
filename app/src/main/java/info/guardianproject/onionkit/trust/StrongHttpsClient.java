@@ -1,7 +1,7 @@
 
 package info.guardianproject.onionkit.trust;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import info.guardianproject.onionkit.proxy.MyThreadSafeClientConnManager;
 import info.guardianproject.onionkit.proxy.SocksProxyClientConnOperator;

@@ -43,7 +43,7 @@ import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.SecretPoint;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.bitcoinj.script.ScriptOpCodes;
 import org.json.JSONException;

@@ -23,7 +23,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.samourai">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.samourai.wallet">
 
     <uses-sdk
         android:minSdkVersion="21"
@@ -39,7 +39,7 @@
         </activity>
 
         <activity-alias
-            android:name="wallet.Launcher"
+            android:name=".Launcher"
             android:targetActivity="com.samourai.wallet.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

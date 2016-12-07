@@ -22,7 +22,7 @@ package info.guardianproject.onionkit.trust;
 import android.content.Context;
 import android.util.Log;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 
 import org.spongycastle.asn1.ASN1OctetString;
 import org.spongycastle.asn1.ASN1Primitive;

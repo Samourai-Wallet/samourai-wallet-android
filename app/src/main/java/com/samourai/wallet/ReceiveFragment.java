@@ -36,7 +36,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
-import com.samourai.R;
+import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
