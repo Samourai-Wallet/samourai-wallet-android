@@ -18,6 +18,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +38,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -58,6 +62,7 @@ import org.json.JSONException;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
+import net.sourceforge.zbar.Symbol;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -67,6 +72,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BalanceActivity extends Activity {
+
+    private final static int SCAN_QR = 2012;
 
     private ProgressDialog progress = null;
 
@@ -321,6 +328,65 @@ public class BalanceActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_settings).setVisible(false);
+        menu.findItem(R.id.action_sweep).setVisible(false);
+        menu.findItem(R.id.action_backup).setVisible(false);
+        menu.findItem(R.id.action_refresh).setVisible(false);
+        menu.findItem(R.id.action_share_receive).setVisible(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_scan_qr) {
+            doScan();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_QR)	{
+
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                intent.putExtra("uri", strResult);
+                startActivity(intent);
+
+            }
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR)	{
+            ;
+        }
+        else {
+            ;
+        }
+
+    }
+
+    private void doScan() {
+        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_QR);
     }
 
     private class TransactionAdapter extends BaseAdapter {
