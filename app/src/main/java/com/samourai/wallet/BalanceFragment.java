@@ -218,8 +218,8 @@ public class BalanceFragment extends Fragment {
             @Override
             public void onClick(View arg0) {
 
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.container, SendFragment.newInstance(2)).addToBackStack("Send").commit();
+                Intent intent = new Intent(getActivity(), SendActivity.class);
+                startActivity(intent);
 
             }
         });
@@ -239,8 +239,8 @@ public class BalanceFragment extends Fragment {
                             .setCancelable(false)
                             .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    FragmentManager fragmentManager = getFragmentManager();
-                                    fragmentManager.beginTransaction().add(R.id.container, ReceiveFragment.newInstance(1)).addToBackStack("Receive").commit();
+                                    Intent intent = new Intent(getActivity(), ReceiveActivity.class);
+                                    startActivity(intent);
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -251,8 +251,8 @@ public class BalanceFragment extends Fragment {
 
                 }
                 else    {
-                    FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().add(R.id.container, ReceiveFragment.newInstance(1)).addToBackStack("Receive").commit();
+                    Intent intent = new Intent(getActivity(), ReceiveActivity.class);
+                    startActivity(intent);
                 }
 
             }

@@ -420,12 +420,9 @@ public class MainActivity2 extends Activity {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
-                FragmentManager fragmentManager = getFragmentManager();
-                Bundle bundle = new Bundle();
-                bundle.putString("uri", strResult);
-                SendFragment sendFragment = SendFragment.newInstance(2);
-                sendFragment.setArguments(bundle);
-                fragmentManager.beginTransaction().replace(R.id.container, sendFragment).commit();
+                Intent intent = new Intent(MainActivity2.this, SendActivity.class);
+                intent.putExtra("uri", strResult);
+                startActivity(intent);
 
             }
         }
@@ -1075,14 +1072,10 @@ public class MainActivity2 extends Activity {
                         progress = null;
                     }
 
-                    TimeOutUtil.getInstance().updatePin();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("uri", strUri);
-                    bundle.putString("pcode", strPCode);
-                    SendFragment sendFragment = SendFragment.newInstance(2);
-                    sendFragment.setArguments(bundle);
-                    fragmentManager.beginTransaction().replace(R.id.container, sendFragment).commit();
+                    Intent intent = new Intent(MainActivity2.this, SendActivity.class);
+                    intent.putExtra("uri", strUri);
+                    intent.putExtra("pcode", strPCode);
+                    startActivity(intent);
 
                     Looper.loop();
 
