@@ -160,13 +160,10 @@ public class MainActivity2 extends Activity {
                     SamouraiWallet.getInstance().setShowTotalBalance(false);
                 }
                 if(loadedBalanceFragment)    {
-                    BalanceFragment balanceFragment = BalanceFragment.newInstance(4);
-                    Bundle args = new Bundle();
-                    args.putBoolean("notifTx", false);
-                    args.putBoolean("fetch", false);
-                    balanceFragment.setArguments(args);
-                    FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.container, balanceFragment).commit();
+                    Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
+                    intent.putExtra("notifTx", false);
+                    intent.putExtra("fetch", false);
+                    startActivity(intent);
                 }
 
                 return false;
@@ -517,8 +514,9 @@ public class MainActivity2 extends Activity {
 
             if(getFragmentManager().getBackStackEntryCount() == 0 && !loadedBalanceFragment) {
                 loadedBalanceFragment = true;
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, BalanceFragment.newInstance(4)).commit();
+
+                Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
+                startActivity(intent);
             }
             else if(getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack();
@@ -1100,13 +1098,10 @@ public class MainActivity2 extends Activity {
             TimeOutUtil.getInstance().updatePin();
             loadedBalanceFragment = true;
 
-            BalanceFragment balanceFragment = BalanceFragment.newInstance(4);
-            Bundle args = new Bundle();
-            args.putBoolean("notifTx", true);
-            args.putBoolean("fetch", true);
-            balanceFragment.setArguments(args);
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, balanceFragment).commit();
+            Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
+            intent.putExtra("notifTx", true);
+            intent.putExtra("fetch", true);
+            startActivity(intent);
         }
         else {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
