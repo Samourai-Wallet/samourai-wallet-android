@@ -476,6 +476,10 @@ public class SendFactory	{
                 ;
             }
 
+            if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOut2.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
+                return null;
+            }
+
             ret.getRight().add(txOut1);
             ret.getRight().add(txOut2);
             ret.getRight().add(txOutSpend);
@@ -509,6 +513,10 @@ public class SendFactory	{
             remainder = remainder.subtract(spendAmount);
 
             remainingOutputs -= 2;  // remainingOutputs >= 1 as we selected minimum 3 outputs above
+
+            if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
+                return null;
+            }
 
             ret.getRight().add(txOut1);
             ret.getRight().add(txOutSpend);
@@ -685,6 +693,10 @@ public class SendFactory	{
 
         check_total += remainder.longValue();
         remainder = remainder.subtract(remainder);
+
+        if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txChange.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
+            return null;
+        }
 
         ret.getRight().add(txOut1);
         ret.getRight().add(txOutSpend);
