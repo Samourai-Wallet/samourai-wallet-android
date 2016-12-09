@@ -29,9 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 //import android.util.Log;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
-
 import org.bitcoinj.crypto.MnemonicException;
 
 import com.samourai.wallet.access.AccessFactory;
@@ -50,8 +47,6 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.WebUtil;
-
-import net.sourceforge.zbar.Symbol;
 
 import org.apache.commons.codec.DecoderException;
 import org.json.JSONException;
