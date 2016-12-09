@@ -98,6 +98,7 @@
 
     <string name="tx_receive">Received</string>
     <string name="tx_sent">Transaction sent</string>
+    <string name="tx_failed">Error sending transaction</string>
     <string name="you_received">Received</string>
     <string name="you_sent">Sent</string>
     <string name="send">Send</string>

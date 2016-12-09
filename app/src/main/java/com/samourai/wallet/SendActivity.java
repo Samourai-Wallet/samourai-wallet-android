@@ -865,25 +865,18 @@ public class SendActivity extends Activity {
                                                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                                                 }
 
-                                                /*
-                                                if(strPCode != null && strPCode.length() > 0)    {
-                                                    AppUtil.getInstance(SendActivity.this).restartApp();
-                                                }
-                                                else    {
-                                                    SendActivity.this.getFragmentManager().beginTransaction().remove(SendFragment.this).commit();
-                                                }
-                                                */
-
                                                 SendActivity.this.finish();
 
                                             }
                                             else    {
+                                                Toast.makeText(SendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                 // reset change index upon tx fail
                                                 HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
                                             }
                                         }
                                         catch(Exception e) {
                                             Log.d("SendActivity", e.getMessage());
+                                            Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                         finally {
                                             SendActivity.this.runOnUiThread(new Runnable() {
@@ -905,6 +898,7 @@ public class SendActivity extends Activity {
                             }
                             else    {
                                 Log.d("SendActivity", "tx error");
+                                Toast.makeText(SendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
                             }
 
                         }
