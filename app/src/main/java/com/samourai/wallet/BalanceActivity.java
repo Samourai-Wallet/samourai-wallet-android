@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnticipateInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +39,8 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -46,8 +51,13 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.*;
+import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -55,16 +65,22 @@ import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TypefaceUtil;
+import com.samourai.wallet.util.WebUtil;
 
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
+import org.spongycastle.util.encoders.Hex;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 import net.sourceforge.zbar.Symbol;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +89,7 @@ import java.util.List;
 
 public class BalanceActivity extends Activity {
 
+    private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
 
     private ProgressDialog progress = null;
@@ -333,9 +350,6 @@ public class BalanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.findItem(R.id.action_settings).setVisible(false);
-        menu.findItem(R.id.action_sweep).setVisible(false);
-        menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         return super.onCreateOptionsMenu(menu);
@@ -349,7 +363,49 @@ public class BalanceActivity extends Activity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
-        if (id == R.id.action_scan_qr) {
+        if (id == R.id.action_settings) {
+            doSettings();
+        }
+        else if (id == R.id.action_sweep) {
+            doSweep();
+        }
+        else if (id == R.id.action_backup) {
+
+            if(SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this))    {
+                try {
+                    if(HD_WalletFactory.getInstance(BalanceActivity.this).get() != null && SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this))    {
+                        doBackup();
+                    }
+                    else    {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage(R.string.passphrase_needed_for_backup).setCancelable(false);
+                        AlertDialog alert = builder.create();
+
+                        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }});
+
+                        if(!isFinishing())    {
+                            alert.show();
+                        }
+
+                    }
+                }
+                catch(MnemonicException.MnemonicLengthException mle) {
+                    ;
+                }
+                catch(IOException ioe) {
+                    ;
+                }
+            }
+            else    {
+                Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        else if (id == R.id.action_scan_qr) {
             doScan();
         }
         else {
@@ -362,7 +418,108 @@ public class BalanceActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_QR)	{
+        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_COLD_STORAGE)	{
+
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                PrivKeyReader privKeyReader = null;
+
+                String format = null;
+                try	{
+                    privKeyReader = new PrivKeyReader(new CharSequenceX(strResult), null);
+                    format = privKeyReader.getFormat();
+                }
+                catch(Exception e)	{
+                    Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(format != null)	{
+
+                    if(format.equals(PrivKeyReader.BIP38))	{
+
+                        final PrivKeyReader pvr = privKeyReader;
+
+                        final EditText password38 = new EditText(BalanceActivity.this);
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.bip38_pw)
+                                .setView(password38)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        String password = password38.getText().toString();
+
+                                        ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
+                                        progress.setCancelable(false);
+                                        progress.setTitle(R.string.app_name);
+                                        progress.setMessage(getString(R.string.decrypting_bip38));
+                                        progress.show();
+
+                                        boolean keyDecoded = false;
+
+                                        try {
+                                            BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), strResult);
+                                            final ECKey ecKey = bip38.decrypt(password);
+                                            if(ecKey != null && ecKey.hasPrivKey()) {
+
+                                                if(progress != null && progress.isShowing())    {
+                                                    progress.cancel();
+                                                }
+
+                                                pvr.setPassword(new CharSequenceX(password));
+                                                keyDecoded = true;
+
+                                                Toast.makeText(BalanceActivity.this, pvr.getFormat(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(BalanceActivity.this, pvr.getKey().toAddress(MainNetParams.get()).toString(), Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }
+                                        catch(Exception e) {
+                                            e.printStackTrace();
+                                            Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        if(progress != null && progress.isShowing())    {
+                                            progress.cancel();
+                                        }
+
+                                        if(keyDecoded)    {
+                                            doSweep(pvr);
+                                        }
+
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+                    else if(privKeyReader != null)	{
+                        doSweep(privKeyReader);
+                    }
+                    else    {
+                        ;
+                    }
+
+                }
+
+            }
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_COLD_STORAGE)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_QR)	{
 
             if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
 
@@ -383,10 +540,250 @@ public class BalanceActivity extends Activity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
+            AlertDialog alert = builder.create();
+
+            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    try {
+                        HD_WalletFactory.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                    }
+                    catch(MnemonicException.MnemonicLengthException mle) {
+                        ;
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+                    catch(IOException ioe) {
+                        ;
+                    }
+                    catch(DecryptionException de) {
+                        ;
+                    }
+
+                    AccessFactory.getInstance(BalanceActivity.this).setIsLoggedIn(false);
+                    TimeOutUtil.getInstance().reset();
+                    dialog.dismiss();
+                    moveTaskToBack(true);
+                }});
+
+            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+
+            if(!isFinishing())    {
+                alert.show();
+            }
+
+            return true;
+        }
+        else	{
+            ;
+        }
+
+        return false;
+    }
+
     private void doScan() {
         Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_QR);
+    }
+
+    private void doSettings()	{
+        TimeOutUtil.getInstance().updatePin();
+        Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void doSweep()	{
+        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_COLD_STORAGE);
+    }
+
+    private void doSweep(final PrivKeyReader privKeyReader)  {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                try {
+
+                    if(privKeyReader == null || privKeyReader.getKey() == null || !privKeyReader.getKey().hasPrivKey())    {
+                        Toast.makeText(BalanceActivity.this, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String address = privKeyReader.getKey().toAddress(MainNetParams.get()).toString();
+                    UTXO utxo = APIFactory.getInstance(BalanceActivity.this).getUnspentOutputsForSweep(address);
+                    if(utxo != null)    {
+
+                        long total_value = 0L;
+                        final List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                        for(MyTransactionOutPoint outpoint : outpoints)   {
+                            total_value += outpoint.getValue().longValue();
+                        }
+
+                        final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
+
+                        final long amount = total_value - fee.longValue();
+                        Log.d("BalanceActivity", "Total value:" + total_value);
+                        Log.d("BalanceActivity", "Amount:" + amount);
+                        Log.d("BalanceActivity", "Fee:" + fee.toString());
+
+                        String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(false);
+                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                final ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
+                                progress.setCancelable(false);
+                                progress.setTitle(R.string.app_name);
+                                progress.setMessage(getString(R.string.please_wait_sending));
+                                progress.show();
+
+                                String receive_address = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                                final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
+                                receivers.put(receive_address, BigInteger.valueOf(amount));
+                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outpoints, receivers, fee);
+
+                                tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
+                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                Log.d("BalanceActivity", hexTx);
+
+                                try {
+                                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
+                                    Log.d("BalanceActivity", "pushTx:" + response);
+                                    if(response.contains("Transaction Submitted"))    {
+                                        Toast.makeText(BalanceActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                    }
+                                    else    {
+                                        Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                catch(Exception e) {
+                                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                }
+
+                                if(progress != null && progress.isShowing())    {
+                                    progress.dismiss();
+                                }
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                    }
+                    else    {
+                        Toast.makeText(BalanceActivity.this, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch(Exception e) {
+                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                }
+
+                Looper.loop();
+
+            }
+        }).start();
+
+    }
+
+    private void doBackup() {
+
+        try {
+            final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
+
+            final String[] export_methods = new String[2];
+            export_methods[0] = getString(R.string.export_to_clipboard);
+            export_methods[1] = getString(R.string.export_to_email);
+
+            new AlertDialog.Builder(BalanceActivity.this)
+                    .setTitle(R.string.options_export)
+                    .setSingleChoiceItems(export_methods, 0, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    try {
+                                        HD_WalletFactory.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                                    }
+                                    catch (IOException ioe) {
+                                        ;
+                                    }
+                                    catch (JSONException je) {
+                                        ;
+                                    }
+                                    catch (DecryptionException de) {
+                                        ;
+                                    }
+                                    catch (MnemonicException.MnemonicLengthException mle) {
+                                        ;
+                                    }
+
+                                    String encrypted = null;
+                                    try {
+                                        encrypted = AESUtil.encrypt(HD_WalletFactory.getInstance(BalanceActivity.this).get().toJSON(BalanceActivity.this).toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                                    } catch (Exception e) {
+                                        Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    } finally {
+                                        if (encrypted == null) {
+                                            Toast.makeText(BalanceActivity.this, R.string.encryption_error, Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                    }
+
+                                    if (which == 0) {
+                                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                        android.content.ClipData clip = null;
+                                        clip = android.content.ClipData.newPlainText("Wallet backup", encrypted);
+                                        clipboard.setPrimaryClip(clip);
+                                        Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Intent email = new Intent(Intent.ACTION_SEND);
+                                        email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
+                                        email.putExtra(Intent.EXTRA_TEXT, encrypted);
+                                        email.setType("message/rfc822");
+                                        startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
+                                    }
+
+                                    dialog.dismiss();
+                                }
+                            }
+                    ).show();
+
+        }
+        catch(IOException ioe) {
+            ioe.printStackTrace();
+            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch(MnemonicException.MnemonicLengthException mle) {
+            mle.printStackTrace();
+            Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private class TransactionAdapter extends BaseAdapter {
@@ -652,7 +1049,7 @@ public class BalanceActivity extends Activity {
                 PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.FIRST_RUN, false);
 
                 if(notifTx)    {
-                    Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+                    Intent intent = new Intent("com.samourai.wallet.BalanceActivity.RESTART_SERVICE");
                     LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
                 }
 
