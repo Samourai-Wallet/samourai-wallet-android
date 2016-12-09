@@ -568,10 +568,10 @@ public class BalanceActivity extends Activity {
                         ;
                     }
 
-                    AccessFactory.getInstance(BalanceActivity.this).setIsLoggedIn(false);
-                    TimeOutUtil.getInstance().reset();
-                    dialog.dismiss();
-                    moveTaskToBack(true);
+                    Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    BalanceActivity.this.startActivity(intent);
+
                 }});
 
             alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {

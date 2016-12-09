@@ -266,59 +266,6 @@ public class MainActivity2 extends Activity {
         super.onDestroy();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
-            AlertDialog alert = builder.create();
-
-            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-
-                    try {
-                        HD_WalletFactory.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
-                    }
-                    catch(MnemonicException.MnemonicLengthException mle) {
-                        ;
-                    }
-                    catch(JSONException je) {
-                        ;
-                    }
-                    catch(IOException ioe) {
-                        ;
-                    }
-                    catch(DecryptionException de) {
-                        ;
-                    }
-
-                    AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-                    TimeOutUtil.getInstance().reset();
-                    dialog.dismiss();
-                    moveTaskToBack(true);
-                }});
-
-            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
-
-            if(!isFinishing())    {
-                alert.show();
-            }
-
-            return true;
-        }
-        else	{
-            ;
-        }
-
-        return false;
-    }
-
     private void initDialog()	{
 
         AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
