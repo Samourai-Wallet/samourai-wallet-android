@@ -67,15 +67,13 @@ public class APIFactory	{
     private static long xpub_balance = 0L;
     private static HashMap<String, Long> xpub_amounts = null;
     private static HashMap<String,List<Tx>> xpub_txs = null;
-//    private static HashMap<String,List<String>> haveUnspentOuts = null;
+    private static HashMap<String,Integer> unspentAccounts = null;
     private static HashMap<String,String> unspentPaths = null;
     private static HashMap<String,UTXO> utxos = null;
 
     private static long bip47_balance = 0L;
     private static HashMap<String, Long> bip47_amounts = null;
     private static HashMap<String, String> seenBIP47Tx = null;
-
-    private static boolean hasShuffled = false;
 
     private static APIFactory instance = null;
 
@@ -93,11 +91,11 @@ public class APIFactory	{
             xpub_amounts = new HashMap<String, Long>();
             xpub_txs = new HashMap<String,List<Tx>>();
             xpub_balance = 0L;
-            hasShuffled = false;
             bip47_balance = 0L;
             bip47_amounts = new HashMap<String, Long>();
             seenBIP47Tx = new HashMap<String, String>();
             unspentPaths = new HashMap<String, String>();
+            unspentAccounts = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
             instance = new APIFactory();
         }
@@ -113,10 +111,11 @@ public class APIFactory	{
         xpub_txs.clear();
         seenBIP47Tx.clear();
         unspentPaths = new HashMap<String, String>();
+        unspentAccounts = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
     }
 
-    private synchronized JSONObject getXPUB(String[] xpubs) {
+    private synchronized JSONObject _getXPUB(String[] xpubs) {
 
         JSONObject jsonObject  = null;
 
@@ -130,16 +129,11 @@ public class APIFactory	{
 //                Log.i("APIFactory", "XPUB:" + url.toString());
                 String response = WebUtil.getInstance(null).getURL(url.toString());
 
-                /*
-                 * using POST
-                 *
-                StringBuilder args = new StringBuilder();
-                args.append("active=");
-                args.append(xpubs[i]);
-                String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
-                 *
-                 *
-                 */
+                // use POST
+//                StringBuilder args = new StringBuilder();
+//                args.append("active=");
+//                args.append(xpubs[i]);
+//                String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
 
 //                Log.i("APIFactory", "XPUB response:" + response);
                 try {
@@ -173,6 +167,48 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    private synchronized JSONObject getXPUB(String[] xpubs) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+//                StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
+            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
+//                url.append("v1/multiaddr?active=");
+            url.append("multiaddr?active=");
+            url.append(StringUtils.join(xpubs, "|"));
+                Log.i("APIFactory", "XPUB:" + url.toString());
+            String response = WebUtil.getInstance(null).getURL(url.toString());
+
+            // use POST
+//                StringBuilder args = new StringBuilder();
+//                args.append("active=");
+//                args.append(xpubs[i]);
+//                String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
+
+//                Log.i("APIFactory", "XPUB response:" + response);
+            try {
+                jsonObject = new JSONObject(response);
+                xpub_txs.put(xpubs[0], new ArrayList<Tx>());
+                if(parseXPUB(jsonObject))    {
+                    serialize(strXPUBFilename, response);
+                }
+                long amount0 = getXpubBalance();
+                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), amount0 + bip47_balance);
+            }
+            catch(JSONException je) {
+                je.printStackTrace();
+                jsonObject = null;
+            }
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     //
     // process all XPUB txs not having any BIP47 inputs. Use 'result' as total value.
     // process all BIP47 inputs as deductions to 'result' amount
@@ -181,14 +217,14 @@ public class APIFactory	{
     private synchronized boolean parseXPUB(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
-/*
+
             if(jsonObject.has("wallet"))  {
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
                 if(walletObj.has("final_balance"))  {
                     xpub_balance = walletObj.getLong("final_balance");
                 }
             }
-*/
+
             long latest_block = 0L;
 
             if(jsonObject.has("info"))  {
@@ -207,9 +243,6 @@ public class APIFactory	{
                 JSONObject addrObj = null;
                 for(int i = 0; i < addressesArray.length(); i++)  {
                     addrObj = (JSONObject)addressesArray.get(i);
-                    if(i == 1 && addrObj.has("n_tx") && addrObj.getInt("n_tx") > 0)  {
-                        hasShuffled = true;
-                    }
                     if(addrObj.has("final_balance") && addrObj.has("address"))  {
                         xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
                         AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.getInt("account_index"));
@@ -690,7 +723,13 @@ public class APIFactory	{
 
                     if(outDict.containsKey("xpub"))    {
                         org.json.simple.JSONObject xpubObj = (org.json.simple.JSONObject)outDict.get("xpub");
-                        unspentPaths.put(address, (String)xpubObj.get("path"));
+                        String path = (String)xpubObj.get("path");
+                        String m = (String)xpubObj.get("m");
+                        Log.d("APIFactory", "unspent:" + address + "," + path);
+                        Log.d("APIFactory", "m:" + m);
+                        Log.d("APIFactory", "account no.:" + AddressFactory.getInstance(context).xpub2account().get(m));
+                        unspentPaths.put(address, path);
+                        unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
                     }
                     else    {
                         Log.d("APIFactory", "no path found for:" + address);
@@ -1000,7 +1039,10 @@ public class APIFactory	{
         try {
 //            APIFactory.getInstance(context).preloadXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
             APIFactory.getInstance(context).getXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
-            getUnspentOutputs(HD_WalletFactory.getInstance(context).get().getXPUBs(), false);
+            String[] s = new String[2];
+            s[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
+            s[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
+            getUnspentOutputs(s, false);
             getDynamicFees();
         }
         catch(IOException ioe) {
@@ -1384,11 +1426,15 @@ public class APIFactory	{
         return xpub_txs;
     }
 
-    public static HashMap<String, String> getUnspentPaths() {
+    public HashMap<String, String> getUnspentPaths() {
         return unspentPaths;
     }
 
-    public static List<UTXO> getUtxos() {
+    public HashMap<String, Integer> getUnspentAccounts() {
+        return unspentAccounts;
+    }
+
+    public List<UTXO> getUtxos() {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
         unspents.addAll(utxos.values());
@@ -1396,7 +1442,7 @@ public class APIFactory	{
 
     }
 
-    public static void setUtxos(HashMap<String, UTXO> utxos) {
+    public void setUtxos(HashMap<String, UTXO> utxos) {
         APIFactory.utxos = utxos;
     }
 

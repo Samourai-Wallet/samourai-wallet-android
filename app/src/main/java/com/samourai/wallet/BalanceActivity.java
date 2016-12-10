@@ -319,6 +319,7 @@ public class BalanceActivity extends Activity {
 
         BalanceActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
+        /*
         Bundle extras = getIntent().getExtras();
         if(extras != null)    {
             boolean doRefreshTx = extras.getBoolean("notifTx");
@@ -329,6 +330,10 @@ public class BalanceActivity extends Activity {
                 refresh(false);
             }
         }
+        */
+
+        refresh(true);
+        displayBalance();
 
     }
 
