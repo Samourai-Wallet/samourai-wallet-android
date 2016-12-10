@@ -115,58 +115,6 @@ public class APIFactory	{
         utxos = new HashMap<String, UTXO>();
     }
 
-    private synchronized JSONObject _getXPUB(String[] xpubs) {
-
-        JSONObject jsonObject  = null;
-
-        for(int i = 0; i < xpubs.length; i++)   {
-            try {
-//                StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
-                StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-//                url.append("v1/multiaddr?active=");
-                url.append("multiaddr?active=");
-                url.append(xpubs[i]);
-//                Log.i("APIFactory", "XPUB:" + url.toString());
-                String response = WebUtil.getInstance(null).getURL(url.toString());
-
-                // use POST
-//                StringBuilder args = new StringBuilder();
-//                args.append("active=");
-//                args.append(xpubs[i]);
-//                String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
-
-//                Log.i("APIFactory", "XPUB response:" + response);
-                try {
-                    jsonObject = new JSONObject(response);
-                    if(!HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr().equals(xpubs[i]))    {
-                        xpub_txs.put(xpubs[i], new ArrayList<Tx>());
-                    }
-                    if(parseXPUB(jsonObject))    {
-                        serialize(strXPUBFilename, response);
-                    }
-                    if(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr().equals(xpubs[i]))    {
-                        long amount0 = xpub_amounts.get(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr());
-                        xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), amount0 + bip47_balance);
-                    }
-                }
-                catch(JSONException je) {
-                    je.printStackTrace();
-                    jsonObject = null;
-                }
-            }
-            catch(Exception e) {
-                jsonObject = null;
-                e.printStackTrace();
-            }
-        }
-
-        for(String xpub : xpub_amounts.keySet())   {
-            xpub_balance += xpub_amounts.get(xpub);
-        }
-
-        return jsonObject;
-    }
-
     private synchronized JSONObject getXPUB(String[] xpubs) {
 
         JSONObject jsonObject  = null;
@@ -1055,11 +1003,6 @@ public class APIFactory	{
             ;
         }
 
-        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-        intent.putExtra("notfTx", false);
-        intent.putExtra("fetch", false);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
     }
 
     private synchronized void initFromCache() {
@@ -1108,11 +1051,6 @@ public class APIFactory	{
         catch(IOException ioe) {
             ;
         }
-
-        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-        intent.putExtra("notfTx", false);
-        intent.putExtra("fetch", false);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
     }
 
