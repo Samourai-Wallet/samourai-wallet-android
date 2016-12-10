@@ -969,39 +969,6 @@ public class BalanceActivity extends Activity {
 
                 Looper.prepare();
 
-                if(notifTx)    {
-                    //
-                    // check for incoming payment code notification tx
-                    //
-                    try {
-                        PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
-                        APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
-//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
-//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                    }
-                    catch (AddressFormatException afe) {
-                        afe.printStackTrace();
-                        Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                    }
-
-                    //
-                    // check on outgoing payment code notification tx
-                    //
-                    List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
-//                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
-                    for(Pair<String,String> pair : outgoingUnconfirmed)   {
-//                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
-//                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
-                        int confirmations = APIFactory.getInstance(BalanceActivity.this).getNotifTxConfirmations(pair.getRight());
-                        if(confirmations > 0)    {
-                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
-                        }
-                        if(confirmations == -1)    {
-                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
-                        }
-                    }
-                }
-
                 //
                 // TBD: check on lookahead/lookbehind for all incoming payment codes
                 //
@@ -1056,6 +1023,37 @@ public class BalanceActivity extends Activity {
                 PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.FIRST_RUN, false);
 
                 if(notifTx)    {
+                    //
+                    // check for incoming payment code notification tx
+                    //
+                    try {
+                        PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
+                        APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
+//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
+                    }
+                    catch (AddressFormatException afe) {
+                        afe.printStackTrace();
+                        Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                    }
+
+                    //
+                    // check on outgoing payment code notification tx
+                    //
+                    List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
+//                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
+                    for(Pair<String,String> pair : outgoingUnconfirmed)   {
+//                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
+//                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
+                        int confirmations = APIFactory.getInstance(BalanceActivity.this).getNotifTxConfirmations(pair.getRight());
+                        if(confirmations > 0)    {
+                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
+                        }
+                        if(confirmations == -1)    {
+                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
+                        }
+                    }
+
                     Intent intent = new Intent("com.samourai.wallet.BalanceActivity.RESTART_SERVICE");
                     LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
                 }
@@ -1217,26 +1215,6 @@ public class BalanceActivity extends Activity {
         animation.setRepeatCount(0);
         animation.setInterpolator(new AnticipateInterpolator());
         animation.start();
-    }
-
-    private void refresh(boolean notifTx)  {
-
-        if(refreshed % 2 == 0)    {
-
-            refreshed++;
-
-            try {
-                if(HD_WalletFactory.getInstance(BalanceActivity.this).get() != null)    {
-                    refreshTx(notifTx, false);
-                }
-            }
-            catch(IOException ioe) {
-                ;
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                ;
-            }
-        }
     }
 
     private void doExplorerView(String strHash)   {
