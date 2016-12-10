@@ -3,7 +3,6 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 //import android.util.Log;
@@ -199,44 +198,27 @@ public class SendNotifTxFactory	{
 //                        Log.i("address from script", address);
                         ECKey ecKey = null;
                         try {
-                            /*
-                            String privStr = null;
-                            String path = froms.get(address);
-                            if(path == null)    {
-                                String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                                PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
-                                ecKey = addr.getReceiveECKey();
-                            }
-                            else    {
-                                String[] s = path.split("/");
-                                HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                                privStr = hd_address.getPrivateKeyString();
-                                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
-                                ecKey = pk.getKey();
-                            }
-                            */
                             String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
                             if(path != null)    {
-                                Log.i("SendNotifTxFactory", "unspent path:" + path);
+//                                Log.i("SendNotifTxFactory", "unspent path:" + path);
                                 String[] s = path.split("/");
                                 HD_Address hd_address = AddressFactory.getInstance(context).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                                Log.i("SendNotifTxFactory", "unspent address:" + hd_address.getAddressString());
+//                                Log.i("SendNotifTxFactory", "unspent address:" + hd_address.getAddressString());
                                 String strPrivKey = hd_address.getPrivateKeyString();
                                 DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
                                 ecKey = pk.getKey();
-                                Log.i("SendNotifTxFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                                Log.i("SendNotifTxFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                             }
                             else    {
 //                        Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
 //                        Log.i("looking up:", "" + address);
                                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                                Log.i("pcode from address:", pcode);
+//                                Log.i("pcode from address:", pcode);
                                 int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                                Log.i("idx from address:", "" + idx);
+//                                Log.i("idx from address:", "" + idx);
                                 PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
                                 ecKey = addr.getReceiveECKey();
-                                Log.i("SendNotifTxFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                                Log.i("SendNotifTxFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                             }
 
                         } catch (AddressFormatException afe) {
