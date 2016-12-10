@@ -58,7 +58,9 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DateUtil;
@@ -324,20 +326,9 @@ public class BalanceActivity extends Activity {
 
         BalanceActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-        /*
-        Bundle extras = getIntent().getExtras();
-        if(extras != null)    {
-            boolean doRefreshTx = extras.getBoolean("notifTx");
-            if(doRefreshTx)    {
-                refresh(true);
-            }
-            else    {
-                refresh(false);
-            }
+        if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
-        */
-
-//        refreshTx(false, true);
 
     }
 
@@ -355,6 +346,10 @@ public class BalanceActivity extends Activity {
     public void onDestroy() {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
+
+        if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
 
         super.onDestroy();
     }
