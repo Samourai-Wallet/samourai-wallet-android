@@ -227,6 +227,9 @@ public class BIP47Meta {
         ArrayList<String> addrs = new ArrayList<String>();
         while(it.hasNext())   {
             String pcode = it.next();
+            if(pcodeArchived.get(pcode) != null && pcodeArchived.get(pcode) == false)    {
+                continue;
+            }
             int idx = getIncomingIdx(pcode);
 
 //            Log.i("APIFactory", "idx:" + idx + " , " + pcode);
