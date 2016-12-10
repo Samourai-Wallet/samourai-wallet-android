@@ -852,6 +852,8 @@ public class SendActivity extends Activity {
                                                     String strTS = sd.format(System.currentTimeMillis());
                                                     String event = strTS + " " + SendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
                                                     BIP47Meta.getInstance().setLatestEvent(strPCode, event);
+
+                                                    strPCode = null;
                                                 }
 
                                                 Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
@@ -1103,12 +1105,10 @@ public class SendActivity extends Activity {
                     PaymentCode pcode = new PaymentCode(data);
                     PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(data));
 
-//                    edAddress.setText(paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
-
                     strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
+                    strPCode = pcode.toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(pcode.toString()));
                     edAddress.setEnabled(false);
-//                    Toast.makeText(SendActivity.this, R.string.no_edit_BIP47_address, Toast.LENGTH_SHORT).show();
                 }
                 catch(Exception e) {
                     Toast.makeText(SendActivity.this, R.string.error_payment_code, Toast.LENGTH_SHORT).show();
