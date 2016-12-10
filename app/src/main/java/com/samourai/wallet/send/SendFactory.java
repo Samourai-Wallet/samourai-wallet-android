@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -89,31 +88,31 @@ public class SendFactory	{
             try {
                 byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                 String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
-                Log.i("address from script", address);
+//                Log.i("address from script", address);
                 ECKey ecKey = null;
                 try {
                     String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
                     if(path != null)    {
-                        Log.i("SendFactory", "unspent path:" + path);
+//                        Log.i("SendFactory", "unspent path:" + path);
                         String[] s = path.split("/");
                         int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
                         HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                        Log.i("SendFactory", "unspent address:" + hd_address.getAddressString());
+//                        Log.i("SendFactory", "unspent address:" + hd_address.getAddressString());
                         String strPrivKey = hd_address.getPrivateKeyString();
                         DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
                         ecKey = pk.getKey();
-                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                     }
                     else    {
-                        Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
-                        Log.i("looking up:", "" + address);
+//                        Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
+//                        Log.i("looking up:", "" + address);
                         String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                        Log.i("pcode from address:", pcode);
+//                        Log.i("pcode from address:", pcode);
                         int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                        Log.i("idx from address:", "" + idx);
+//                        Log.i("idx from address:", "" + idx);
                         PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
                         ecKey = addr.getReceiveECKey();
-                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
                     }
                 } catch (AddressFormatException afe) {
                     afe.printStackTrace();
