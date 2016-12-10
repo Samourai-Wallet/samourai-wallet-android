@@ -52,15 +52,6 @@ public class WebSocketService extends Service {
         //
         BIP47Meta.getInstance().pruneIncoming();
 
-        /*
-        try {
-            HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-        }
-        catch(Exception e) {
-            ;
-        }
-        */
-
         try {
             xpubs = new String[]{ HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).xpubstr() };
             addrs = BIP47Meta.getInstance().getIncomingLookAhead(context);
