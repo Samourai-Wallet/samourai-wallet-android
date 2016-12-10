@@ -263,8 +263,8 @@ public class SendNotifTxFactory	{
                         throw new Exception(context.getString(R.string.tx_length_error));
                     }
 
-                    Log.i("SendFactory tx hash", tx.getHashAsString());
-                    Log.i("SendFactory tx string", hexString);
+//                    Log.i("SendFactory tx hash", tx.getHashAsString());
+//                    Log.i("SendFactory tx string", hexString);
 
                     String response = PushTx.getInstance(context).samourai(hexString);
 
