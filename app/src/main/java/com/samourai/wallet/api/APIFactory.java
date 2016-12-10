@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-//import android.util.Log;
 
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
@@ -125,7 +122,7 @@ public class APIFactory	{
 //                url.append("v1/multiaddr?active=");
             url.append("multiaddr?active=");
             url.append(StringUtils.join(xpubs, "|"));
-                Log.i("APIFactory", "XPUB:" + url.toString());
+//                Log.i("APIFactory", "XPUB:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
 
             // use POST
@@ -613,9 +610,9 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
             url.append("unspent?active=");
             url.append(StringUtils.join(xpubs, "|"));
-            Log.i("APIFactory", "unspent outputs:" + url.toString());
+//            Log.i("APIFactory", "unspent outputs:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-            Log.i("APIFactory", "unspent outputs response:" + response);
+//            Log.i("APIFactory", "unspent outputs response:" + response);
             if(parseUnspentOutputs(response, clear))    {
                 serialize(strUnspentsFilename, response);
             }
@@ -645,7 +642,7 @@ public class APIFactory	{
                 return false;
             }
 
-            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
+//            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
 
             for (Map<String, Object> outDict : outputsRoot) {
 
@@ -673,14 +670,14 @@ public class APIFactory	{
                         org.json.simple.JSONObject xpubObj = (org.json.simple.JSONObject)outDict.get("xpub");
                         String path = (String)xpubObj.get("path");
                         String m = (String)xpubObj.get("m");
-                        Log.d("APIFactory", "unspent:" + address + "," + path);
-                        Log.d("APIFactory", "m:" + m);
-                        Log.d("APIFactory", "account no.:" + AddressFactory.getInstance(context).xpub2account().get(m));
+//                        Log.d("APIFactory", "unspent:" + address + "," + path);
+//                        Log.d("APIFactory", "m:" + m);
+//                        Log.d("APIFactory", "account no.:" + AddressFactory.getInstance(context).xpub2account().get(m));
                         unspentPaths.put(address, path);
                         unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
                     }
                     else    {
-                        Log.d("APIFactory", "no path found for:" + address);
+//                        Log.d("APIFactory", "no path found for:" + address);
                     }
 
                     // Construct the output
@@ -738,9 +735,9 @@ public class APIFactory	{
 
         try {
             StringBuilder url = new StringBuilder(WebUtil.DYNAMIC_FEE_URL);
-            Log.i("APIFactory", "Dynamic fees:" + url.toString());
+//            Log.i("APIFactory", "Dynamic fees:" + url.toString());
             String response = WebUtil.getInstance(context).getURL(url.toString());
-            Log.i("APIFactory", "Dynamic fees response:" + response);
+//            Log.i("APIFactory", "Dynamic fees response:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 if(parseDynamicFees(jsonObject))    {
@@ -799,62 +796,9 @@ public class APIFactory	{
             if(suggestedFees.size() > 0)    {
                 FeeUtil.getInstance().setEstimatedFees(suggestedFees);
 
-                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
-                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
-                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
-            }
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-
-    private synchronized boolean _parseDynamicFees(JSONObject jsonObject) throws JSONException  {
-
-        if(jsonObject != null)  {
-
-            //
-            // blockchain.info API
-            //
-            SuggestedFee suggestedFee = new SuggestedFee();
-            if(jsonObject.has("default"))    {
-                JSONObject defaultJson = jsonObject.getJSONObject("default");
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(defaultJson.getLong("fee")));
-                suggestedFee.setStressed(defaultJson.getBoolean("surge"));
-                suggestedFee.setOK(true);
-
-                FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-                Log.d("APIFactory", "set suggested fee:" + suggestedFee.getDefaultPerKB().toString());
-            }
-
-            if(jsonObject.has("estimate"))    {
-
-                JSONArray estimateArray = jsonObject.getJSONArray("estimate");
-
-                List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
-                for(int i = 0; i < estimateArray.length(); i++){
-                    JSONObject estimateJson = estimateArray.getJSONObject(i);
-                    SuggestedFee suggested = new SuggestedFee();
-                    suggested.setDefaultPerKB(BigInteger.valueOf(estimateJson.getLong("fee")));
-                    suggested.setStressed(estimateJson.getBoolean("surge"));
-                    suggested.setOK(estimateJson.getBoolean("ok"));
-                    suggestedFees.add(suggested);
-                }
-
-                if(suggestedFees.size() > 0)    {
-                    FeeUtil.getInstance().setEstimatedFees(suggestedFees);
-
-                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-                    FeeUtil.getInstance().setHighFee(suggestedFees.get(0));
-                    FeeUtil.getInstance().setLowFee(suggestedFees.get(suggestedFees.size() - 1));
-
-                    Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
-                    Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
-                    Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
-                }
+//                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
+//                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
+//                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
             }
 
             return true;
@@ -942,6 +886,8 @@ public class APIFactory	{
 
     public synchronized void initWallet()    {
 
+        Log.i("APIFactory", "initWallet()");
+
         initFromCache();
 
         initWalletAmounts();
@@ -966,11 +912,11 @@ public class APIFactory	{
             }
             if(addressStrings.size() > 0)    {
                 String[] s = addressStrings.toArray(new String[0]);
-                Log.i("APIFactory", addressStrings.toString());
+//                Log.i("APIFactory", addressStrings.toString());
                 getUnspentOutputs(s, true);
             }
             else    {
-                Log.i("APIFactory", "no BIP47 unspents found");
+//                Log.i("APIFactory", "no BIP47 unspents found");
             }
 
         }
@@ -1404,9 +1350,9 @@ public class APIFactory	{
         try {
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
             url.append("unspent?active=" + address);
-            Log.i("APIFactory", "unspent outputs:" + url.toString());
+//            Log.i("APIFactory", "unspent outputs:" + url.toString());
             response = WebUtil.getInstance(context).getURL(url.toString());
-            Log.i("APIFactory", "unspent outputs response:" + response);
+//            Log.i("APIFactory", "unspent outputs response:" + response);
             return parseUnspentOutputsForSweep(response);
         }
         catch(Exception e) {
@@ -1431,8 +1377,7 @@ public class APIFactory	{
                 return null;
             }
 
-            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
-
+//            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
 
             for (Map<String, Object> outDict : outputsRoot) {
 
