@@ -308,14 +308,19 @@ public class BalanceActivity extends Activity {
             }
         });
 
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+
+        refreshTx(false, true);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        IntentFilter filter = new IntentFilter(ACTION_INTENT);
-        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+//        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+//        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
         BalanceActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
@@ -332,8 +337,7 @@ public class BalanceActivity extends Activity {
         }
         */
 
-        refresh(true);
-        displayBalance();
+//        refreshTx(false, true);
 
     }
 
@@ -341,7 +345,7 @@ public class BalanceActivity extends Activity {
     public void onPause() {
         super.onPause();
 
-        LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
+//        LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
 
         ibQuickSend.collapse();
 
@@ -349,6 +353,9 @@ public class BalanceActivity extends Activity {
 
     @Override
     public void onDestroy() {
+
+        LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
+
         super.onDestroy();
     }
 
