@@ -602,7 +602,7 @@ public class APIFactory	{
         return 0;
     }
 
-    public synchronized JSONObject getUnspentOutputs(String[] xpubs, boolean clear) {
+    public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
 
         JSONObject jsonObject  = null;
 
@@ -613,7 +613,7 @@ public class APIFactory	{
 //            Log.i("APIFactory", "unspent outputs:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "unspent outputs response:" + response);
-            if(parseUnspentOutputs(response, clear))    {
+            if(parseUnspentOutputs(response))    {
                 serialize(strUnspentsFilename, response);
             }
         }
@@ -625,13 +625,9 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized boolean parseUnspentOutputs(String unspents, boolean clear)   {
+    private synchronized boolean parseUnspentOutputs(String unspents)   {
 
         if(unspents != null)    {
-
-            if(clear)    {
-                utxos.clear();
-            }
 
             Map<String, Object> root = (Map<String, Object>)JSONValue.parse(unspents);
             if(root == null)    {
@@ -655,16 +651,17 @@ public class APIFactory	{
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
                 BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
-//            System.out.println("value:" + value);
+            System.out.println("value:" + value);
                 String script = (String)outDict.get("script");
                 byte[] scriptBytes = Hex.decode(script);
-//            System.out.println("script:" + (String)outDict.get("script"));
+            System.out.println("script:" + (String)outDict.get("script"));
                 int confirmations = ((Number)outDict.get("confirmations")).intValue();
-//            System.out.println("confirmations:" + confirmations);
+            System.out.println("confirmations:" + confirmations);
 
                 try {
 //                    String address = new BitcoinScript(scriptBytes).getAddress().toString();
                     String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
+                    System.out.println("address:" + address);
 
                     if(outDict.containsKey("xpub"))    {
                         org.json.simple.JSONObject xpubObj = (org.json.simple.JSONObject)outDict.get("xpub");
@@ -913,7 +910,7 @@ public class APIFactory	{
             if(addressStrings.size() > 0)    {
                 String[] s = addressStrings.toArray(new String[0]);
 //                Log.i("APIFactory", addressStrings.toString());
-                getUnspentOutputs(s, true);
+                getUnspentOutputs(s);
             }
             else    {
 //                Log.i("APIFactory", "no BIP47 unspents found");
@@ -936,7 +933,7 @@ public class APIFactory	{
             String[] s = new String[2];
             s[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
             s[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
-            getUnspentOutputs(s, false);
+            getUnspentOutputs(s);
             getDynamicFees();
         }
         catch(IOException ioe) {
@@ -988,7 +985,7 @@ public class APIFactory	{
         try {
             strJSON = deserialize(strUnspentsFilename);
             if(strJSON != null)    {
-                parseUnspentOutputs(strJSON, false);
+                parseUnspentOutputs(strJSON);
             }
         }
         catch(JSONException je) {

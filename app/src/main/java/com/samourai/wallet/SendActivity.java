@@ -45,6 +45,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.util.WebUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -670,7 +671,6 @@ public class SendActivity extends Activity {
                             selected++;
 
                             if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()))    {
-                                selectedUTXO.add(u);
                                 break;
                             }
                         }
@@ -800,12 +800,17 @@ public class SendActivity extends Activity {
                                     ;
                                 }
                             }
+
+                            for(MyTransactionOutPoint o : outPoints)   {
+                                Log.d("SendActivity", o.getTxHash().toString() + ":" + o.getTxOutputN());
+                            }
+
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers, _fee);
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-//                                Log.d("SendActivity", hexTx);
+                                Log.d("SendActivity", hexTx);
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -816,9 +821,10 @@ public class SendActivity extends Activity {
                                         boolean isOK = false;
                                         String response = null;
                                         try {
-                                            //response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-                                            response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
+//                                            response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
 //                                            Log.d("SendActivity", "pushTx:" + response);
+                                            response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
+                                            Log.d("SendActivity", "pushTx:" + response);
 
                                             org.json.JSONObject jsonObject = new org.json.JSONObject(response);
                                             if(jsonObject.has("status"))    {
@@ -828,7 +834,6 @@ public class SendActivity extends Activity {
                                             }
 
                                             if(isOK)    {
-
                                                 Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
 
                                                 if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {

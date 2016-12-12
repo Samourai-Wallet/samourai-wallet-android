@@ -247,7 +247,6 @@ public class SendFactory	{
 
         List<MyTransactionInput> inputs = new ArrayList<MyTransactionInput>();
         for(MyTransactionOutPoint outPoint : unspent) {
-
             Script script = new Script(outPoint.getScriptBytes());
 
             if(script.getScriptType() == Script.ScriptType.NO_TYPE) {
