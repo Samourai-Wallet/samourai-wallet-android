@@ -137,6 +137,8 @@
 
         <service android:enabled="true" android:name="com.samourai.wallet.service.WebSocketService" />
 
+        <service android:enabled="true" android:name="com.samourai.wallet.service.SamouraiService" />
+
         <receiver android:name="com.samourai.wallet.receivers.BootIntentReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
