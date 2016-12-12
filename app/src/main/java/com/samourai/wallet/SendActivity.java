@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -519,7 +518,7 @@ public class SendActivity extends Activity {
                 int change_index = 0;
                 try {
                     change_index = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
-                    Log.d("SendActivity", "storing change index:" + change_index);
+//                    Log.d("SendActivity", "storing change index:" + change_index);
                 }
                 catch(IOException ioe) {
                     ;
@@ -569,8 +568,8 @@ public class SendActivity extends Activity {
                 long change = 0L;
                 BigInteger fee = null;
 
-                Log.d("SendActivity", "amount:" + amount);
-                Log.d("SendActivity", "balance:" + balance);
+//                Log.d("SendActivity", "amount:" + amount);
+//                Log.d("SendActivity", "balance:" + balance);
 
                 // insufficient funds
                 if(amount > balance)    {
@@ -581,7 +580,7 @@ public class SendActivity extends Activity {
                     // make sure we are using simple spend
                     SPEND_TYPE = SPEND_SIMPLE;
 
-                    Log.d("SendActivity", "amount == balance");
+//                    Log.d("SendActivity", "amount == balance");
                     // take all utxos, deduct fee
                     selectedUTXO.addAll(utxos);
 
@@ -589,8 +588,8 @@ public class SendActivity extends Activity {
                         totalValueSelected += u.getValue();
                     }
 
-                    Log.d("SendActivity", "balance:" + balance);
-                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
+//                    Log.d("SendActivity", "balance:" + balance);
+//                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
 
                 }
                 else    {
@@ -693,13 +692,13 @@ public class SendActivity extends Activity {
                         totalValueSelected += u.getValue();
                         selectedUTXO.add(u);
                         inputAmount += u.getValue();
-                        Log.d("SendActivity", "input:" + outpoint.getAddress());
+//                        Log.d("SendActivity", "input:" + outpoint.getAddress());
                     }
 
                     for(TransactionOutput output : pair.getRight())   {
                         try {
                             Script script = new Script(output.getScriptBytes());
-                            Log.d("SendActivity", "receiver:" + script.getToAddress(MainNetParams.get()).toString());
+//                            Log.d("SendActivity", "receiver:" + script.getToAddress(MainNetParams.get()).toString());
                             receivers.put(script.getToAddress(MainNetParams.get()).toString(), BigInteger.valueOf(output.getValue().longValue()));
                             outputAmount += output.getValue().longValue();
                         }
@@ -726,22 +725,22 @@ public class SendActivity extends Activity {
                         fee = FeeUtil.getInstance().estimatedFee(selectedUTXO.size(), 2);
                     }
 
-                    Log.d("SendActivity", "amount:" + amount);
-                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
-                    Log.d("SendActivity", "fee:" + fee.longValue());
-                    Log.d("SendActivity", "nb inputs:" + selectedUTXO.size());
+//                    Log.d("SendActivity", "amount:" + amount);
+//                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
+//                    Log.d("SendActivity", "fee:" + fee.longValue());
+//                    Log.d("SendActivity", "nb inputs:" + selectedUTXO.size());
                     change = totalValueSelected - (amount + fee.longValue());
-                    Log.d("SendActivity", "change:" + change);
+//                    Log.d("SendActivity", "change:" + change);
 
                     if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
-                        Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
+//                        Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
                         change = 0L;
                         fee = fee.add(BigInteger.valueOf(change));
                         amount = totalValueSelected - fee.longValue();
 
-                        Log.d("SendActivity", "fee:" + fee.longValue());
-                        Log.d("SendActivity", "change:" + change);
-                        Log.d("SendActivity", "amount:" + amount);
+//                        Log.d("SendActivity", "fee:" + fee.longValue());
+//                        Log.d("SendActivity", "change:" + change);
+//                        Log.d("SendActivity", "amount:" + amount);
                         receivers.put(address, BigInteger.valueOf(amount));
                     }
 
@@ -801,16 +800,12 @@ public class SendActivity extends Activity {
                                 }
                             }
 
-                            for(MyTransactionOutPoint o : outPoints)   {
-                                Log.d("SendActivity", o.getTxHash().toString() + ":" + o.getTxOutputN());
-                            }
-
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers, _fee);
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                Log.d("SendActivity", hexTx);
+//                                Log.d("SendActivity", hexTx);
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -824,7 +819,7 @@ public class SendActivity extends Activity {
 //                                            response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
 //                                            Log.d("SendActivity", "pushTx:" + response);
                                             response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
-                                            Log.d("SendActivity", "pushTx:" + response);
+//                                            Log.d("SendActivity", "pushTx:" + response);
 
                                             org.json.JSONObject jsonObject = new org.json.JSONObject(response);
                                             if(jsonObject.has("status"))    {
@@ -882,7 +877,7 @@ public class SendActivity extends Activity {
                                             }
                                         }
                                         catch(Exception e) {
-                                            Log.d("SendActivity", e.getMessage());
+//                                            Log.d("SendActivity", e.getMessage());
                                             Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                         finally {
@@ -904,7 +899,7 @@ public class SendActivity extends Activity {
 
                             }
                             else    {
-                                Log.d("SendActivity", "tx error");
+//                                Log.d("SendActivity", "tx error");
                                 Toast.makeText(SendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
                             }
 
@@ -916,10 +911,11 @@ public class SendActivity extends Activity {
                             try {
                                 // reset change index upon 'NO'
                                 HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
-                                Log.d("SendActivity", "resetting change index:" + _change_index);
+//                                Log.d("SendActivity", "resetting change index:" + _change_index);
                             }
                             catch(Exception e) {
-                                Log.d("SendActivity", e.getMessage());
+//                                Log.d("SendActivity", e.getMessage());
+                                Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             finally {
                                 SendActivity.this.runOnUiThread(new Runnable() {

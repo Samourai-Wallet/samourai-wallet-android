@@ -651,17 +651,17 @@ public class APIFactory	{
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
                 BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
-            System.out.println("value:" + value);
+//            System.out.println("value:" + value);
                 String script = (String)outDict.get("script");
                 byte[] scriptBytes = Hex.decode(script);
-            System.out.println("script:" + (String)outDict.get("script"));
+//            System.out.println("script:" + (String)outDict.get("script"));
                 int confirmations = ((Number)outDict.get("confirmations")).intValue();
-            System.out.println("confirmations:" + confirmations);
+//            System.out.println("confirmations:" + confirmations);
 
                 try {
 //                    String address = new BitcoinScript(scriptBytes).getAddress().toString();
                     String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
-                    System.out.println("address:" + address);
+//                    System.out.println("address:" + address);
 
                     if(outDict.containsKey("xpub"))    {
                         org.json.simple.JSONObject xpubObj = (org.json.simple.JSONObject)outDict.get("xpub");
