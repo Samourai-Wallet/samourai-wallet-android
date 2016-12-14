@@ -734,10 +734,9 @@ public class SendActivity extends Activity {
                     change = totalValueSelected - (amount + fee.longValue());
 //                    Log.d("SendActivity", "change:" + change);
 
+                    boolean changeIsDust = false;
                     if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
 
-
-//                        Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
                         change = 0L;
                         fee = fee.add(BigInteger.valueOf(change));
                         amount = totalValueSelected - fee.longValue();
@@ -747,37 +746,7 @@ public class SendActivity extends Activity {
 //                        Log.d("SendActivity", "amount:" + amount);
                         receivers.put(address, BigInteger.valueOf(amount));
 
-                        /*
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.change_is_dust)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.dust_to_fee, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        //Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
-                                        change = 0L;
-                                        fee = fee.add(BigInteger.valueOf(change));
-                                        amount = totalValueSelected - fee.longValue();
-
-//                        Log.d("SendActivity", "fee:" + fee.longValue());
-//                        Log.d("SendActivity", "change:" + change);
-//                        Log.d("SendActivity", "amount:" + amount);
-                                        receivers.put(address, BigInteger.valueOf(amount));
-
-                                    }
-                                }).setNegativeButton(R.string.start_over, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-
-
-
-                                    }
-                                });
-
-                        dlg.show();
-                         */
-
+                        changeIsDust = true;
 
                     }
 
@@ -793,15 +762,23 @@ public class SendActivity extends Activity {
                         dest = address;
                     }
 
-                    final String strPrivacyWarning;
+                    String strPrivacyWarning = null;
                     if(SendAddressUtil.getInstance().get(address) == 1) {
-                        strPrivacyWarning = getResources().getString(R.string.send_privacy_warning) + "\n\n";
+                        strPrivacyWarning = getString(R.string.send_privacy_warning) + "\n\n";
                     }
                     else {
                         strPrivacyWarning = "";
                     }
 
-                    String message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
+                    String strChangeIsDust = null;
+                    if(changeIsDust)    {
+                        strChangeIsDust = getString(R.string.change_is_dust) + "\n\n";
+                    }
+                    else    {
+                        strChangeIsDust = "";
+                    }
+
+                    String message = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
 
                     final long _amount = amount;
 
