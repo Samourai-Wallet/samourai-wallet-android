@@ -220,6 +220,7 @@ public class BalanceActivity extends Activity {
             public void onClick(View arg0) {
 
                 Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                intent.putExtra("via_menu", true);
                 startActivity(intent);
 
             }
