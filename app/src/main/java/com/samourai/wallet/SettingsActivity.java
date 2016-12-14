@@ -104,15 +104,7 @@ public class SettingsActivity extends PreferenceActivity	{
 
         AppUtil.getInstance(SettingsActivity.this).setIsInForeground(true);
 
-        if(TimeOutUtil.getInstance().isTimedOut()) {
-            Intent intent = new Intent(SettingsActivity.this, PinEntryActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else {
-            TimeOutUtil.getInstance().updatePin();
-
-        }
+        AppUtil.getInstance(SettingsActivity.this).checkTimeOut();
 
     }
 

@@ -372,4 +372,8 @@
     <string name="bip126">Spend using BIP126</string>
     <string name="nonbip126">Use normal BIP44 spend</string>
 
+    <string name="change_is_dust">The change from this transaction is a dust amount. Add change amount to miner\'s fee and spend or start over?</string>
+    <string name="dust_to_fee">Add change to fee</string>
+    <string name="start_over">Start over</string>
+
 </resources>

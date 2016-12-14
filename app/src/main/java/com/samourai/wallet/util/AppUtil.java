@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
 
+import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -186,6 +187,15 @@ public class AppUtil {
                 Toast.makeText(context, R.string.cannot_launch_app, Toast.LENGTH_SHORT).show();
                 System.exit(0);
             }
+        }
+    }
+
+    public void checkTimeOut()   {
+        if(TimeOutUtil.getInstance().isTimedOut())    {
+            AppUtil.getInstance(context).restartApp();
+        }
+        else    {
+            TimeOutUtil.getInstance().updatePin();
         }
     }
 

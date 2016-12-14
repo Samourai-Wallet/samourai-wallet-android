@@ -369,6 +369,8 @@ public class ReceiveActivity extends Activity {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(ReceiveActivity.this).registerReceiver(receiver, filter);
 
+        AppUtil.getInstance(ReceiveActivity.this).checkTimeOut();
+
     }
 
     @Override

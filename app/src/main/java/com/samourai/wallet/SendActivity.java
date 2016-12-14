@@ -39,11 +39,13 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 
 import java.io.IOException;
@@ -733,6 +735,8 @@ public class SendActivity extends Activity {
 //                    Log.d("SendActivity", "change:" + change);
 
                     if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
+
+
 //                        Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
                         change = 0L;
                         fee = fee.add(BigInteger.valueOf(change));
@@ -742,6 +746,39 @@ public class SendActivity extends Activity {
 //                        Log.d("SendActivity", "change:" + change);
 //                        Log.d("SendActivity", "amount:" + amount);
                         receivers.put(address, BigInteger.valueOf(amount));
+
+                        /*
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.change_is_dust)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.dust_to_fee, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        //Log.d("SendActivity", SendActivity.this.getResources().getString(R.string.dust_amount));
+                                        change = 0L;
+                                        fee = fee.add(BigInteger.valueOf(change));
+                                        amount = totalValueSelected - fee.longValue();
+
+//                        Log.d("SendActivity", "fee:" + fee.longValue());
+//                        Log.d("SendActivity", "change:" + change);
+//                        Log.d("SendActivity", "amount:" + amount);
+                                        receivers.put(address, BigInteger.valueOf(amount));
+
+                                    }
+                                }).setNegativeButton(R.string.start_over, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+
+
+
+                                    }
+                                });
+
+                        dlg.show();
+                         */
+
+
                     }
 
                     final long _change = change;
@@ -756,7 +793,15 @@ public class SendActivity extends Activity {
                         dest = address;
                     }
 
-                    String message = "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
+                    final String strPrivacyWarning;
+                    if(SendAddressUtil.getInstance().get(address) == 1) {
+                        strPrivacyWarning = getResources().getString(R.string.send_privacy_warning) + "\n\n";
+                    }
+                    else {
+                        strPrivacyWarning = "";
+                    }
+
+                    String message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
 
                     final long _amount = amount;
 
@@ -855,6 +900,8 @@ public class SendActivity extends Activity {
 
                                                     strPCode = null;
                                                 }
+
+                                                SendAddressUtil.getInstance().add(address, true);
 
                                                 Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                                                 intent.putExtra("notifTx", false);
@@ -959,6 +1006,7 @@ public class SendActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        AppUtil.getInstance(SendActivity.this).checkTimeOut();
     }
 
     @Override
