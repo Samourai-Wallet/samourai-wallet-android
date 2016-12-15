@@ -645,9 +645,9 @@ public class BalanceActivity extends Activity {
                         final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
 
                         final long amount = total_value - fee.longValue();
-                        Log.d("BalanceActivity", "Total value:" + total_value);
-                        Log.d("BalanceActivity", "Amount:" + amount);
-                        Log.d("BalanceActivity", "Fee:" + fee.toString());
+//                        Log.d("BalanceActivity", "Total value:" + total_value);
+//                        Log.d("BalanceActivity", "Amount:" + amount);
+//                        Log.d("BalanceActivity", "Fee:" + fee.toString());
 
                         String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
 
@@ -671,7 +671,7 @@ public class BalanceActivity extends Activity {
 
                                 tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                Log.d("BalanceActivity", hexTx);
+//                                Log.d("BalanceActivity", hexTx);
 
                                 try {
                                     String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
