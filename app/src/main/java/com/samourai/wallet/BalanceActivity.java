@@ -310,12 +310,10 @@ public class BalanceActivity extends Activity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i("BalanceActivity", "onRefresh");
 
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("BalanceActivity", "runnable");
                         refreshTx(false, true, true);
                     }
                 });
