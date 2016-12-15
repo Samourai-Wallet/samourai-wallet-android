@@ -5,6 +5,11 @@
     android:theme="@style/AppTheme"
     android:orientation="vertical">
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <ListView
         android:id="@+id/txList"
         android:layout_width="match_parent"
@@ -12,6 +17,8 @@
         android:divider="@drawable/list_divider"
         android:layout_below="@+id/BalanceBar"
         />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/wallet_menu"

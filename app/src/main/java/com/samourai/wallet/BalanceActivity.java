@@ -1,7 +1,6 @@
 package com.samourai.wallet;
 
 import android.animation.ObjectAnimator;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -94,8 +94,6 @@ public class BalanceActivity extends Activity {
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
 
-    private ProgressDialog progress = null;
-
     private LinearLayout tvBalanceBar = null;
     private TextView tvBalanceAmount = null;
     private TextView tvBalanceUnits = null;
@@ -104,6 +102,7 @@ public class BalanceActivity extends Activity {
     private List<Tx> txs = null;
     private HashMap<String, Boolean> txStates = null;
     private TransactionAdapter txAdapter = null;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
 
     private FloatingActionsMenu ibQuickSend = null;
     private FloatingActionButton actionReceive = null;
@@ -111,8 +110,6 @@ public class BalanceActivity extends Activity {
     private FloatingActionButton actionBIP47 = null;
 
     private boolean isBTC = true;
-
-    private int refreshed = 0;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
 
@@ -138,7 +135,7 @@ public class BalanceActivity extends Activity {
                     public void run() {
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
-                        refreshTx(notifTx, fetch);
+                        refreshTx(notifTx, fetch, false);
 
                         if(BalanceActivity.this != null)    {
 
@@ -309,10 +306,31 @@ public class BalanceActivity extends Activity {
             }
         });
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i("BalanceActivity", "onRefresh");
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i("BalanceActivity", "runnable");
+                        refreshTx(false, true, true);
+                    }
+                });
+
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        refreshTx(false, true);
+        refreshTx(false, true, false);
 
     }
 
@@ -958,7 +976,7 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void refreshTx(final boolean notifTx, final boolean fetch) {
+    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
         final Handler handler = new Handler();
 
@@ -1012,6 +1030,9 @@ public class BalanceActivity extends Activity {
 
                 handler.post(new Runnable() {
                     public void run() {
+                        if(dragged)    {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
                         displayBalance();
