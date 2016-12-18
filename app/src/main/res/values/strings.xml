@@ -77,7 +77,7 @@
     <string name="options_hash2">Get SHA-256 hash of this installed APK file (can be copied to clipboard).</string>
     <string name="options_VPN">VPN</string>
     <string name="options_VPN2">Launch OpenVPN for Android.</string>
-    <string name="options_Tor">Tor</string>
+    <string name="options_Tor">Route via Tor?</string>
     <string name="options_Tor2">Launch Orbot (Tor).</string>
     <string name="options_export">Export wallet backup</string>
     <string name="options_export2">Export wallet and metadata.</string>
@@ -373,5 +373,8 @@
     <string name="nonbip126">Use normal BIP44 spend</string>
 
     <string name="change_is_dust">The change from this transaction is a dust amount and is being added to the miner\'s fee.</string>
+
+    <string name="tor_routing_on">Samourai is routing via Tor.</string>
+    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
 
 </resources>
