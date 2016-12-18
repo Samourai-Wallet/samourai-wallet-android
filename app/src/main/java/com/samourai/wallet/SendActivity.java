@@ -1016,6 +1016,7 @@ public class SendActivity extends Activity {
         menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_tor).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

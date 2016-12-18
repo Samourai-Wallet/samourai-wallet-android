@@ -369,6 +369,8 @@ public class BalanceActivity extends Activity {
             startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
 
+        invalidateOptionsMenu();
+
     }
 
     @Override
@@ -398,6 +400,9 @@ public class BalanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
+            menu.findItem(R.id.action_tor).setVisible(false);
+        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         return super.onCreateOptionsMenu(menu);
@@ -416,6 +421,24 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_sweep) {
             doSweep();
+        }
+        else if (id == R.id.action_tor) {
+
+            if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
+                ;
+            }
+            else if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())    {
+                item.setIcon(R.drawable.tor_off);
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+            }
+            else    {
+                OrbotHelper.requestStartTor(BalanceActivity.this);
+                item.setIcon(R.drawable.tor_on);
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(true);
+            }
+
+            return true;
+
         }
         else if (id == R.id.action_backup) {
 

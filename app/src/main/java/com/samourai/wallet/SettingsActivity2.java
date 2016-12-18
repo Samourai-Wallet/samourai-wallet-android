@@ -604,7 +604,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final Preference torPref = (Preference) findPreference("Tor");
-                if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
+                if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
+                    torPref.setSummary(R.string.tor_install);
+                }
+                else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
                     torPref.setSummary(R.string.tor_routing_on);
                 }
                 else    {
@@ -614,21 +617,33 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public boolean onPreferenceClick(Preference preference) {
 
                         if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
-                            Intent intent = OrbotHelper.getOrbotInstallIntent(SettingsActivity2.this);
-                            startActivity(intent);
+
+                            new AlertDialog.Builder(SettingsActivity2.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.you_must_have_orbot)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            Intent intent = OrbotHelper.getOrbotInstallIntent(SettingsActivity2.this);
+                                            startActivity(intent);
+
+                                        }
+                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            }).show();
+
+                        }
+                        else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
+                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
+                            torPref.setSummary(R.string.tor_routing_off);
                         }
                         else    {
                             OrbotHelper.requestStartTor(SettingsActivity2.this);
-
-                            if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
-                                TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
-                                torPref.setSummary(R.string.tor_routing_off);
-                            }
-                            else    {
-                                TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
-                                torPref.setSummary(R.string.tor_routing_on);
-                            }
-
+                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
+                            torPref.setSummary(R.string.tor_routing_on);
                         }
 
                         return true;
