@@ -620,15 +620,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         }
                         else    {
                             OrbotHelper.requestStartTor(SettingsActivity2.this);
-                        }
 
-                        if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
-                            torPref.setSummary(R.string.tor_routing_off);
-                        }
-                        else    {
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
-                            torPref.setSummary(R.string.tor_routing_on);
+                            if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
+                                TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
+                                torPref.setSummary(R.string.tor_routing_off);
+                            }
+                            else    {
+                                TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
+                                torPref.setSummary(R.string.tor_routing_on);
+                            }
+
                         }
 
                         /*
