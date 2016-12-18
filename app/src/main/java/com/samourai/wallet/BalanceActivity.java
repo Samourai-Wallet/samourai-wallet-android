@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -69,6 +70,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -88,6 +90,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class BalanceActivity extends Activity {
 
@@ -112,7 +116,6 @@ public class BalanceActivity extends Activity {
     private boolean isBTC = true;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
-
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -182,6 +185,24 @@ public class BalanceActivity extends Activity {
 
             }
 
+        }
+    };
+
+    protected BroadcastReceiver torStatusReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.i("BalanceActivity", "torStatusReceiver onReceive()");
+
+            if (OrbotHelper.ACTION_STATUS.equals(intent.getAction())) {
+
+                boolean enabled = (intent.getStringExtra(OrbotHelper.EXTRA_STATUS).equals(OrbotHelper.STATUS_ON));
+                Log.i("BalanceActivity", "status:" + enabled);
+
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(enabled);
+
+            }
         }
     };
 
@@ -328,6 +349,9 @@ public class BalanceActivity extends Activity {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
+        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
+
         refreshTx(false, true, false);
 
     }
@@ -361,6 +385,8 @@ public class BalanceActivity extends Activity {
     public void onDestroy() {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
+
+        unregisterReceiver(torStatusReceiver);
 
         if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
