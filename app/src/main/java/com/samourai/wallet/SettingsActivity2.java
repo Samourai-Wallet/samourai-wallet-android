@@ -19,7 +19,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -631,13 +630,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             }
 
                         }
-
-                        /*
-                        Log.d("SettingsActivity2", "Orbot running:" + TorUtil.getInstance(SettingsActivity2.this).orbotIsRunning());
-                        if(!TorUtil.getInstance(SettingsActivity2.this).orbotIsRunning())    {
-                            startActivity(OrbotHelper.getShowOrbotStartIntent());
-                        }
-                        */
 
                         return true;
                     }
