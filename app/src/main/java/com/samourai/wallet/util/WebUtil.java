@@ -212,7 +212,7 @@ public class WebUtil	{
             return result.substring(idx);
         }
         else    {
-            return null;
+            return result;
         }
 
     }
