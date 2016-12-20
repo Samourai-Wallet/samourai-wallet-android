@@ -58,7 +58,6 @@ dependencies {
     compile 'com.madgag.spongycastle:prov:1.54.0.0'
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-okhttp3:2.0.0-alpha1'
-    compile files('libs/httpclientandroidlib-1.2.1.jar')
     compile('com.google.zxing:core:3.3.0') {
         transitive = true
     }
