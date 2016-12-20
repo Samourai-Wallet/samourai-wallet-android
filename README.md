@@ -4,11 +4,23 @@
 
 Import as Android Studio project. Should build "as is".
 
+### BIP44:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki), extends [bitcoinj](https://bitcoinj.github.io/).
+
 ### BIP47:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier.
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier. Extends BIP44 implentation (above).
 
 [Generic source code for BIP47.](https://github.com/SamouraiDev/BIP47_RPC)
+
+### BIP69:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
+
+### BIP126:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
 ### License:
 
