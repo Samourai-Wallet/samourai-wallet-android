@@ -10,7 +10,7 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 ### BIP47:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier. Extends BIP44 implentation (above).
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier. Extends BIP44 implementation (above).
 
 [Generic source code for BIP47.](https://github.com/SamouraiDev/BIP47_RPC)
 
