@@ -1,7 +1,6 @@
 package com.samourai.wallet;
 
 import android.animation.ObjectAnimator;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -69,6 +70,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -89,12 +91,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+
 public class BalanceActivity extends Activity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
-
-    private ProgressDialog progress = null;
 
     private LinearLayout tvBalanceBar = null;
     private TextView tvBalanceAmount = null;
@@ -104,6 +106,7 @@ public class BalanceActivity extends Activity {
     private List<Tx> txs = null;
     private HashMap<String, Boolean> txStates = null;
     private TransactionAdapter txAdapter = null;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
 
     private FloatingActionsMenu ibQuickSend = null;
     private FloatingActionButton actionReceive = null;
@@ -112,10 +115,7 @@ public class BalanceActivity extends Activity {
 
     private boolean isBTC = true;
 
-    private int refreshed = 0;
-
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
-
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -138,7 +138,7 @@ public class BalanceActivity extends Activity {
                     public void run() {
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
-                        refreshTx(notifTx, fetch);
+                        refreshTx(notifTx, fetch, false);
 
                         if(BalanceActivity.this != null)    {
 
@@ -188,6 +188,24 @@ public class BalanceActivity extends Activity {
         }
     };
 
+    protected BroadcastReceiver torStatusReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.i("BalanceActivity", "torStatusReceiver onReceive()");
+
+            if (OrbotHelper.ACTION_STATUS.equals(intent.getAction())) {
+
+                boolean enabled = (intent.getStringExtra(OrbotHelper.EXTRA_STATUS).equals(OrbotHelper.STATUS_ON));
+                Log.i("BalanceActivity", "status:" + enabled);
+
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(enabled);
+
+            }
+        }
+    };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
@@ -220,6 +238,7 @@ public class BalanceActivity extends Activity {
             public void onClick(View arg0) {
 
                 Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                intent.putExtra("via_menu", true);
                 startActivity(intent);
 
             }
@@ -308,10 +327,32 @@ public class BalanceActivity extends Activity {
             }
         });
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshTx(false, true, true);
+                    }
+                });
+
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        refreshTx(false, true);
+        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
+
+        refreshTx(false, true, false);
 
     }
 
@@ -327,6 +368,8 @@ public class BalanceActivity extends Activity {
         if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
+
+        invalidateOptionsMenu();
 
     }
 
@@ -345,6 +388,8 @@ public class BalanceActivity extends Activity {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
 
+        unregisterReceiver(torStatusReceiver);
+
         if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
@@ -355,6 +400,9 @@ public class BalanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
+            menu.findItem(R.id.action_tor).setVisible(false);
+        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         return super.onCreateOptionsMenu(menu);
@@ -373,6 +421,24 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_sweep) {
             doSweep();
+        }
+        else if (id == R.id.action_tor) {
+
+            if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
+                ;
+            }
+            else if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())    {
+                item.setIcon(R.drawable.tor_off);
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+            }
+            else    {
+                OrbotHelper.requestStartTor(BalanceActivity.this);
+                item.setIcon(R.drawable.tor_on);
+                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(true);
+            }
+
+            return true;
+
         }
         else if (id == R.id.action_backup) {
 
@@ -644,9 +710,9 @@ public class BalanceActivity extends Activity {
                         final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
 
                         final long amount = total_value - fee.longValue();
-                        Log.d("BalanceActivity", "Total value:" + total_value);
-                        Log.d("BalanceActivity", "Amount:" + amount);
-                        Log.d("BalanceActivity", "Fee:" + fee.toString());
+//                        Log.d("BalanceActivity", "Total value:" + total_value);
+//                        Log.d("BalanceActivity", "Amount:" + amount);
+//                        Log.d("BalanceActivity", "Fee:" + fee.toString());
 
                         String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
 
@@ -670,7 +736,7 @@ public class BalanceActivity extends Activity {
 
                                 tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                Log.d("BalanceActivity", hexTx);
+//                                Log.d("BalanceActivity", hexTx);
 
                                 try {
                                     String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
@@ -957,7 +1023,7 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void refreshTx(final boolean notifTx, final boolean fetch) {
+    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
         final Handler handler = new Handler();
 
@@ -1011,6 +1077,9 @@ public class BalanceActivity extends Activity {
 
                 handler.post(new Runnable() {
                     public void run() {
+                        if(dragged)    {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
                         displayBalance();

@@ -51,14 +51,14 @@ import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
-import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.util.TorUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
@@ -603,16 +603,47 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                Preference torPref = (Preference) findPreference("Tor");
+                final Preference torPref = (Preference) findPreference("Tor");
+                if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
+                    torPref.setSummary(R.string.tor_install);
+                }
+                else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
+                    torPref.setSummary(R.string.tor_routing_on);
+                }
+                else    {
+                    torPref.setSummary(R.string.tor_routing_off);
+                }
                 torPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        OrbotHelper oc = new OrbotHelper(SettingsActivity2.this);
-                        if (!oc.isOrbotInstalled()) {
-                            oc.promptToInstall(SettingsActivity2.this);
-                        } else if (!oc.isOrbotRunning()) {
-                            oc.requestOrbotStart(SettingsActivity2.this);
-                        } else {
-                            ;
+
+                        if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
+
+                            new AlertDialog.Builder(SettingsActivity2.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.you_must_have_orbot)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            Intent intent = OrbotHelper.getOrbotInstallIntent(SettingsActivity2.this);
+                                            startActivity(intent);
+
+                                        }
+                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            }).show();
+
+                        }
+                        else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
+                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
+                            torPref.setSummary(R.string.tor_routing_off);
+                        }
+                        else    {
+                            OrbotHelper.requestStartTor(SettingsActivity2.this);
+                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
+                            torPref.setSummary(R.string.tor_routing_on);
                         }
 
                         return true;

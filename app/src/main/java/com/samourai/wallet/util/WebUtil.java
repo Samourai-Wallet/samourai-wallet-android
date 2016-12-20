@@ -1,21 +1,33 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
+import android.util.Log;
 //import android.util.Log;
+
+import com.samourai.wallet.R;
+import com.samourai.wallet.SettingsActivity2;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
-import info.guardianproject.onionkit.trust.StrongHttpsClient;
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.client.StrongHttpsClient;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class WebUtil	{
 
@@ -122,14 +134,15 @@ public class WebUtil	{
             return _getURL(URL);
         }
         else    {
-            OrbotHelper oc = new OrbotHelper(context.getApplicationContext());
-
-            if(!oc.isOrbotRunning())  {
-                return _getURL(URL);
-            }
-            else  {
+            //if(TorUtil.getInstance(context).orbotIsRunning())    {
+            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
+            if(TorUtil.getInstance(context).statusFromBroadcast())    {
                 return tor_getURL(URL);
             }
+            else    {
+                return _getURL(URL);
+            }
+
         }
 
     }
@@ -171,15 +184,11 @@ public class WebUtil	{
     }
 
     private String tor_getURL(String URL) throws Exception {
-        /*
-                throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException,
-                KeyStoreException, CertificateException, IOException
 
-         */
+        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
-        StrongHttpsClient httpclient = new StrongHttpsClient(context.getApplicationContext());
-
-        httpclient.useProxy(true, StrongHttpsClient.TYPE_HTTP, "127.0.0.1", 8118);
+        httpclient.useProxy(true, StrongHttpsClient.TYPE_SOCKS, "127.0.0.1", 9050);
+//        httpclient.useProxy(true, StrongHttpsClient.TYPE_HTTP, "127.0.0.1", 8118);
 
         HttpGet httpget = new HttpGet(URL);
         HttpResponse response = httpclient.execute(httpget);
@@ -189,15 +198,23 @@ public class WebUtil	{
 
         InputStream is = response.getEntity().getContent();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
         String line = null;
-        while((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)  {
             sb.append(line);
         }
 
-//        Log.i("WebUtil", sb.toString());
-//        Log.i("WebUtil", sb.toString().substring(sb.length() - 10));
-        return sb.toString();
+        httpclient.close();
+
+        String result = sb.toString();
+//        Log.d("WebUtil", "result via Tor:" + result);
+        int idx = result.indexOf("{");
+        if(idx != -1)    {
+            return result.substring(idx);
+        }
+        else    {
+            return result;
+        }
+
     }
 
 }

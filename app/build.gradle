@@ -7,8 +7,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 36
-        versionName "0.90.01"
+        versionCode 38
+        versionName "0.90.03"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -56,6 +56,9 @@ dependencies {
     compile 'org.bouncycastle:bcprov-jdk15on:1.55'
     compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile 'com.madgag.spongycastle:prov:1.54.0.0'
+    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    compile 'info.guardianproject.netcipher:netcipher-okhttp3:2.0.0-alpha1'
+    compile files('libs/httpclientandroidlib-1.2.1.jar')
     compile('com.google.zxing:core:3.3.0') {
         transitive = true
     }

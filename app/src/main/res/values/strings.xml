@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.90.01</string>
+    <string name="version_name">0.90.03</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -77,7 +77,7 @@
     <string name="options_hash2">Get SHA-256 hash of this installed APK file (can be copied to clipboard).</string>
     <string name="options_VPN">VPN</string>
     <string name="options_VPN2">Launch OpenVPN for Android.</string>
-    <string name="options_Tor">Tor</string>
+    <string name="options_Tor">Route via Tor?</string>
     <string name="options_Tor2">Launch Orbot (Tor).</string>
     <string name="options_export">Export wallet backup</string>
     <string name="options_export2">Export wallet and metadata.</string>
@@ -373,5 +373,9 @@
     <string name="nonbip126">Use normal BIP44 spend</string>
 
     <string name="change_is_dust">The change from this transaction is a dust amount and is being added to the miner\'s fee.</string>
+
+    <string name="tor_routing_on">Samourai is routing via Tor.</string>
+    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
+    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
 
 </resources>

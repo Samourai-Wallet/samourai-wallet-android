@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -121,9 +122,9 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
 //                url.append("v1/multiaddr?active=");
             url.append("multiaddr?active=");
-            url.append(StringUtils.join(xpubs, "|"));
+            url.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
 //                Log.i("APIFactory", "XPUB:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
+            String response = WebUtil.getInstance(context).getURL(url.toString());
 
             // use POST
 //                StringBuilder args = new StringBuilder();
@@ -609,9 +610,9 @@ public class APIFactory	{
         try {
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
             url.append("unspent?active=");
-            url.append(StringUtils.join(xpubs, "|"));
+            url.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
 //            Log.i("APIFactory", "unspent outputs:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
+            String response = WebUtil.getInstance(context).getURL(url.toString());
 //            Log.i("APIFactory", "unspent outputs response:" + response);
             if(parseUnspentOutputs(response))    {
                 serialize(strUnspentsFilename, response);
@@ -715,7 +716,7 @@ public class APIFactory	{
             url.append(addr);
             url.append("?format=json");
 
-            String response = WebUtil.getInstance(null).getURL(url.toString());
+            String response = WebUtil.getInstance(context).getURL(url.toString());
             jsonObject = new JSONObject(response);
         }
         catch(Exception e) {
@@ -733,7 +734,7 @@ public class APIFactory	{
         try {
             StringBuilder url = new StringBuilder(WebUtil.DYNAMIC_FEE_URL);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
-            String response = WebUtil.getInstance(context).getURL(url.toString());
+            String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
             try {
                 jsonObject = new JSONObject(response);
@@ -1003,7 +1004,7 @@ public class APIFactory	{
 
         StringBuilder args = new StringBuilder();
         args.append("active=");
-        args.append(StringUtils.join(addresses, "|"));
+        args.append(StringUtils.join(addresses, URLEncoder.encode("|")));
         if(simple) {
             args.append("&simple=true");
         }
@@ -1014,7 +1015,7 @@ public class APIFactory	{
         try {
 //            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
 //            String response = WebUtil.getInstance(null).postURL(WebUtil.SAMOURAI_API + "v1/multiaddr?", args.toString());
-            String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
+            String response = WebUtil.getInstance(context).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
 //            Log.i("APIFactory", "BIP47 multiaddr:" + response);
             jsonObject = new JSONObject(response);
             parseBIP47(jsonObject);
@@ -1035,11 +1036,11 @@ public class APIFactory	{
 //        StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
         StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
         url.append("multiaddr?active=");
-        url.append(StringUtils.join(addresses, "|"));
+        url.append(StringUtils.join(addresses, URLEncoder.encode("|")));
 
         try {
 //            Log.i("APIFactory", "BIP47 multiaddr:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
+            String response = WebUtil.getInstance(context).getURL(url.toString());
 //            Log.i("APIFactory", "BIP47 multiaddr:" + response);
             jsonObject = new JSONObject(response);
 
@@ -1099,11 +1100,11 @@ public class APIFactory	{
 //        StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
         StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
         url.append("multiaddr?active=");
-        url.append(StringUtils.join(addresses, "|"));
+        url.append(StringUtils.join(addresses, URLEncoder.encode("|")));
 
         try {
 //            Log.i("APIFactory", "BIP47 multiaddr:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
+            String response = WebUtil.getInstance(context).getURL(url.toString());
 //            Log.i("APIFactory", "BIP47 multiaddr:" + response);
             jsonObject = new JSONObject(response);
 

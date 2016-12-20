@@ -118,6 +118,8 @@ public class SendActivity extends Activity {
 
     private String strPCode = null;
 
+    private boolean bViaMenu = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -891,7 +893,14 @@ public class SendActivity extends Activity {
                                                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                                                 }
 
-                                                SendActivity.this.finish();
+                                                if(bViaMenu)    {
+                                                    SendActivity.this.finish();
+                                                }
+                                                else    {
+                                                    Intent _intent = new Intent(SendActivity.this, BalanceActivity.class);
+                                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                    startActivity(_intent);
+                                                }
 
                                             }
                                             else    {
@@ -966,6 +975,7 @@ public class SendActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)    {
+            bViaMenu = extras.getBoolean("via_menu", false);
             String strUri = extras.getString("uri");
             strPCode = extras.getString("pcode");
             if(strUri != null && strUri.length() > 0)    {
@@ -1006,6 +1016,7 @@ public class SendActivity extends Activity {
         menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_tor).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

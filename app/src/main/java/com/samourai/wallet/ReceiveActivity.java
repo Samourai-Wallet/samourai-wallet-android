@@ -394,6 +394,7 @@ public class ReceiveActivity extends Activity {
         menu.findItem(R.id.action_sweep).setVisible(false);
         menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_scan_qr).setVisible(false);
+        menu.findItem(R.id.action_tor).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
