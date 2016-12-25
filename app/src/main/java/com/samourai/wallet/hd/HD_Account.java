@@ -17,7 +17,7 @@ public class HD_Account {
 
     protected DeterministicKey aKey = null;
     private String strLabel = null;
-    protected int	mAID;
+    protected int mAID;
     private boolean isArchived = false;
 
     private HD_Chain mReceive = null;
@@ -42,8 +42,8 @@ public class HD_Account {
 
         strXPUB = aKey.serializePubB58(MainNetParams.get());
 
-        mReceive = new HD_Chain(mParams, aKey, true, 1);
-        mChange = new HD_Chain(mParams, aKey, false, 1);
+        mReceive = new HD_Chain(mParams, aKey, true);
+        mChange = new HD_Chain(mParams, aKey, false);
 
     }
 
@@ -58,8 +58,8 @@ public class HD_Account {
 
         strXPUB = xpub;
 
-        mReceive = new HD_Chain(mParams, aKey, true, 10);
-        mChange = new HD_Chain(mParams, aKey, false, 10);
+        mReceive = new HD_Chain(mParams, aKey, true);
+        mChange = new HD_Chain(mParams, aKey, false);
 
     }
 
@@ -114,10 +114,6 @@ public class HD_Account {
 
     public HD_Chain getChain(int idx) {
         return (idx == 0) ? mReceive : mChange;
-    }
-
-    public int size() {
-        return mReceive.length() + mChange.length();
     }
 
     public JSONObject toJSON() {

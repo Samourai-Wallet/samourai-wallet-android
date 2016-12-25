@@ -129,16 +129,6 @@ public class HD_Wallet {
         mAccounts.add(new HD_Account(mParams, mRoot, strName, mAccounts.size()));
     }
 
-    public int size() {
-
-        int sz = 0;
-        for(HD_Account acct : mAccounts) {
-            sz += acct.size();
-        }
-
-        return sz;
-    }
-
     public String[] getXPUBs() {
 
         String[] ret = new String[mAccounts.size()];
