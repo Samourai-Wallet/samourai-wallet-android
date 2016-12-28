@@ -369,8 +369,6 @@ public class BalanceActivity extends Activity {
             startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
 
-        invalidateOptionsMenu();
-
     }
 
     @Override
