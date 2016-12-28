@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
@@ -87,7 +88,9 @@ public class WebUtil	{
             Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
             if(TorUtil.getInstance(context).statusFromBroadcast())    {
                 if(urlParameters.startsWith("tx="))    {
-                    return tor_postURL(request, urlParameters.substring(3));
+                    HashMap<String,String> args = new HashMap<String,String>();
+                    args.put("tx", urlParameters.substring(3));
+                    return tor_postURL(request, args);
                 }
                 else    {
                     return tor_postURL(request + urlParameters);
@@ -279,7 +282,7 @@ public class WebUtil	{
 
     }
 
-    private String tor_postURL(String URL, String tx) throws Exception {
+    private String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
 
         Log.d("WebUtil", URL);
 
@@ -295,8 +298,9 @@ public class WebUtil	{
         httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
 
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.add(new BasicNameValuePair("tx", tx));
-
+        for(String key : args.keySet())   {
+            urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+        }
         httppost.setEntity(new UrlEncodedFormEntity(urlParameters));
 
         HttpResponse response = httpclient.execute(httppost);
