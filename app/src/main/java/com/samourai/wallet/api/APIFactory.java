@@ -118,6 +118,7 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
+            /*
 //                StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
 //                url.append("v1/multiaddr?active=");
@@ -125,13 +126,13 @@ public class APIFactory	{
             url.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
 //                Log.i("APIFactory", "XPUB:" + url.toString());
             String response = WebUtil.getInstance(context).getURL(url.toString());
+            */
 
             // use POST
-//                StringBuilder args = new StringBuilder();
-//                args.append("active=");
-//                args.append(xpubs[i]);
-//                String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
-
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                String response = WebUtil.getInstance(context).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
 //                Log.i("APIFactory", "XPUB response:" + response);
             try {
                 jsonObject = new JSONObject(response);
