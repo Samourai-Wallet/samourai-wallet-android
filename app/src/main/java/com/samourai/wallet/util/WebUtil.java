@@ -5,29 +5,26 @@ import android.util.Log;
 //import android.util.Log;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.SettingsActivity2;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.Proxy;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.NameValuePair;
+import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
+import ch.boye.httpclientandroidlib.client.methods.HttpPost;
+import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.netcipher.client.StrongHttpsClient;
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class WebUtil	{
 
@@ -54,6 +51,15 @@ public class WebUtil	{
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;
 
+    private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
+    private static final String strProxyIP = "127.0.0.1";
+    private static final int proxyPort = 9050;
+    /* HTTP Proxy:
+    private static final String strProxyType = StrongHttpsClient.TYPE_HTTP;
+    private static final String strProxyIP = "127.0.0.1";
+    private static final int strProxyPort = 8118;
+    */
+
     private static WebUtil instance = null;
     private static Context context = null;
 
@@ -74,7 +80,24 @@ public class WebUtil	{
 
     public String postURL(String request, String urlParameters) throws Exception {
 
-        return postURL(null, request, urlParameters);
+        if(context == null) {
+            return postURL(null, request, urlParameters);
+        }
+        else    {
+            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
+            if(TorUtil.getInstance(context).statusFromBroadcast())    {
+                if(urlParameters.startsWith("tx="))    {
+                    return tor_postURL(request, urlParameters.substring(3));
+                }
+                else    {
+                    return tor_postURL(request + urlParameters);
+                }
+            }
+            else    {
+                return postURL(null, request, urlParameters);
+            }
+
+        }
 
     }
 
@@ -187,8 +210,7 @@ public class WebUtil	{
 
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
-        httpclient.useProxy(true, StrongHttpsClient.TYPE_SOCKS, "127.0.0.1", 9050);
-//        httpclient.useProxy(true, StrongHttpsClient.TYPE_HTTP, "127.0.0.1", 8118);
+        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
 
         HttpGet httpget = new HttpGet(URL);
         HttpResponse response = httpclient.execute(httpget);
@@ -206,7 +228,93 @@ public class WebUtil	{
         httpclient.close();
 
         String result = sb.toString();
-//        Log.d("WebUtil", "result via Tor:" + result);
+//        Log.d("WebUtil", "GET result via Tor:" + result);
+        int idx = result.indexOf("{");
+        if(idx != -1)    {
+            return result.substring(idx);
+        }
+        else    {
+            return result;
+        }
+
+    }
+
+    private String tor_postURL(String URL) throws Exception {
+
+        Log.d("WebUtil", URL);
+
+        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
+
+        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
+
+        HttpPost httppost = new HttpPost(new URI(URL));
+        httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httppost.setHeader("charset", "utf-8");
+        httppost.setHeader("Accept", "application/json");
+//        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+        httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+        HttpResponse response = httpclient.execute(httppost);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(response.getStatusLine()).append("\n\n");
+
+        InputStream is = response.getEntity().getContent();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        while ((line = br.readLine()) != null)  {
+            sb.append(line);
+        }
+
+        httpclient.close();
+
+        String result = sb.toString();
+//        Log.d("WebUtil", "POST result via Tor:" + result);
+        int idx = result.indexOf("{");
+        if(idx != -1)    {
+            return result.substring(idx);
+        }
+        else    {
+            return result;
+        }
+
+    }
+
+    private String tor_postURL(String URL, String tx) throws Exception {
+
+        Log.d("WebUtil", URL);
+
+        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
+
+        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
+
+        HttpPost httppost = new HttpPost(new URI(URL));
+        httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httppost.setHeader("charset", "utf-8");
+        httppost.setHeader("Accept", "application/json");
+//        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+        httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new BasicNameValuePair("tx", tx));
+
+        httppost.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+        HttpResponse response = httpclient.execute(httppost);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(response.getStatusLine()).append("\n\n");
+
+        InputStream is = response.getEntity().getContent();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        while ((line = br.readLine()) != null)  {
+            sb.append(line);
+        }
+
+        httpclient.close();
+
+        String result = sb.toString();
+//        Log.d("WebUtil", "POST result via Tor:" + result);
         int idx = result.indexOf("{");
         if(idx != -1)    {
             return result.substring(idx);
