@@ -26,6 +26,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
 import org.apache.commons.codec.DecoderException;
@@ -388,6 +389,15 @@ public class HD_WalletFactory	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.TRUSTED_LOCK, meta.getBoolean("use_trusted"));
                     editor.putBoolean("trustedLock", meta.getBoolean("use_trusted"));
                     editor.commit();
+                }
+                if(meta.has("check_sim")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CHECK_SIM, meta.getBoolean("check_sim"));
+                    editor.putBoolean("sim_switch", meta.getBoolean("check_sim"));
+                    editor.commit();
+
+                    if(meta.getBoolean("check_sim"))    {
+                        SIMUtil.getInstance(context).setStoredSIM();
+                    }
                 }
                 if (meta.has("fiat")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_FIAT, (String)meta.get("fiat"));
