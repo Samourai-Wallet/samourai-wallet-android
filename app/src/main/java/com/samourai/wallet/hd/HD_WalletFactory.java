@@ -535,7 +535,7 @@ public class HD_WalletFactory	{
             long length = file.length();
             SecureRandom random = new SecureRandom();
             RandomAccessFile raf = new RandomAccessFile(file, "rws");
-            for(int i = 0; i < 100; i++) {
+            for(int i = 0; i < 10; i++) {
                 raf.seek(0);
                 raf.getFilePointer();
                 byte[] data = new byte[64];
