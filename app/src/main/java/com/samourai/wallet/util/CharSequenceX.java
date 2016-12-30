@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class CharSequenceX implements CharSequence {
 
     private char[] chars;
-    private int rounds = 100;
+    private int rounds = 10;
 
     private CharSequenceX(CharSequence charSequence, int start, int end) {
         zap();
@@ -41,8 +41,8 @@ public class CharSequenceX implements CharSequence {
     }
 
     public void setRounds(int rounds) {
-        if(rounds < 100) {
-            this.rounds = 100;
+        if(rounds < 10) {
+            this.rounds = 10;
         }
         else {
             this.rounds = rounds;
