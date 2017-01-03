@@ -93,7 +93,7 @@ public class WebUtil	{
                     return tor_postURL(request, args);
                 }
                 else    {
-                    return tor_postURL(request + urlParameters);
+                    return tor_postURL(request + urlParameters, null);
                 }
             }
             else    {
@@ -242,46 +242,6 @@ public class WebUtil	{
 
     }
 
-    private String tor_postURL(String URL) throws Exception {
-
-        Log.d("WebUtil", URL);
-
-        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
-
-        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
-
-        HttpPost httppost = new HttpPost(new URI(URL));
-        httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-        httppost.setHeader("charset", "utf-8");
-        httppost.setHeader("Accept", "application/json");
-//        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-        httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-        HttpResponse response = httpclient.execute(httppost);
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(response.getStatusLine()).append("\n\n");
-
-        InputStream is = response.getEntity().getContent();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
-        while ((line = br.readLine()) != null)  {
-            sb.append(line);
-        }
-
-        httpclient.close();
-
-        String result = sb.toString();
-//        Log.d("WebUtil", "POST result via Tor:" + result);
-        int idx = result.indexOf("{");
-        if(idx != -1)    {
-            return result.substring(idx);
-        }
-        else    {
-            return result;
-        }
-
-    }
-
     private String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
 
         Log.d("WebUtil", URL);
@@ -297,11 +257,13 @@ public class WebUtil	{
 //        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
         httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
 
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        for(String key : args.keySet())   {
-            urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+        if(args != null)    {
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            for(String key : args.keySet())   {
+                urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+            }
+            httppost.setEntity(new UrlEncodedFormEntity(urlParameters));
         }
-        httppost.setEntity(new UrlEncodedFormEntity(urlParameters));
 
         HttpResponse response = httpclient.execute(httppost);
 
