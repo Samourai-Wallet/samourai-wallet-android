@@ -14,6 +14,8 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 [Generic source code for BIP47.](https://github.com/SamouraiDev/BIP47_RPC)
 
+[BIP47 test vectors](https://gist.github.com/SamouraiDev/6aad669604c5930864bd)
+
 ### BIP69:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.

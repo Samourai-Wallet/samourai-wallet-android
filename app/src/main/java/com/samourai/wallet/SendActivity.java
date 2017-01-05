@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -1058,6 +1059,29 @@ public class SendActivity extends Activity {
             ;
         }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if(bViaMenu)    {
+                SendActivity.this.finish();
+            }
+            else    {
+                Intent _intent = new Intent(SendActivity.this, BalanceActivity.class);
+                _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(_intent);
+            }
+
+            return true;
+        }
+        else	{
+            ;
+        }
+
+        return false;
     }
 
     private void doScan() {

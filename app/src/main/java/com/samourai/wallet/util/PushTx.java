@@ -2,6 +2,8 @@ package com.samourai.wallet.util;
 
 import android.content.Context;
 
+import java.net.URLEncoder;
+
 public class PushTx {
 
     private static PushTx instance = null;
@@ -49,7 +51,7 @@ public class PushTx {
     public String samourai(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
+            String response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
 //        Log.i("Send response", response);
             return response;
         }

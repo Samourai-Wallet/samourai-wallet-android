@@ -129,16 +129,6 @@ public class HD_Wallet {
         mAccounts.add(new HD_Account(mParams, mRoot, strName, mAccounts.size()));
     }
 
-    public int size() {
-
-        int sz = 0;
-        for(HD_Account acct : mAccounts) {
-            sz += acct.size();
-        }
-
-        return sz;
-    }
-
     public String[] getXPUBs() {
 
         String[] ret = new String[mAccounts.size()];
@@ -189,6 +179,7 @@ public class HD_Wallet {
             meta.put("auto_backup", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.AUTO_BACKUP, true));
             meta.put("remote", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.ACCEPT_REMOTE, false));
             meta.put("use_trusted", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.TRUSTED_LOCK, false));
+            meta.put("check_sim", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CHECK_SIM, false));
             meta.put("fiat", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT, "USD"));
             meta.put("fiat_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
             meta.put("fx", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
