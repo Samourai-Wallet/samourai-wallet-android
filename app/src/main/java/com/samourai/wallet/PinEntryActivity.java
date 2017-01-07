@@ -25,6 +25,7 @@ import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -348,7 +349,7 @@ public class PinEntryActivity extends Activity {
                     AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
 
                     try {
-                        HD_WalletFactory.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
+                        PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
 
                         if (progress != null && progress.isShowing()) {
                             progress.dismiss();
@@ -473,7 +474,7 @@ public class PinEntryActivity extends Activity {
                         }
 
                         try {
-                            HD_WalletFactory.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
+                            PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
                             AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
 
                             if(create) {

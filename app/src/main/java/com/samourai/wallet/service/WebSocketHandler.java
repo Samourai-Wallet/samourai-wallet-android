@@ -20,6 +20,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
@@ -309,7 +310,7 @@ public class WebSocketHandler {
                                                             }
                                                         }
 
-                                                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                                                        PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
 
                                                         addrs = _addrs.toArray(new String[_addrs.size()]);
 

@@ -41,6 +41,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -144,7 +145,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
 
                                                 try {
-                                                    HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+                                                    PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
                                                 } catch (Exception e) {
                                                     ;
                                                 }
@@ -215,7 +216,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                                     AccessFactory.getInstance(SettingsActivity2.this).setPIN2(_pin2);
 
                                                                                     try {
-                                                                                        HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+                                                                                        PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
                                                                                     }
                                                                                     catch (JSONException je) {
                                                                                         je.printStackTrace();
@@ -497,7 +498,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                                                         AccessFactory.getInstance(SettingsActivity2.this).setPIN(_pin2);
 
                                                                                                         try {
-                                                                                                            HD_WalletFactory.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + _pin));
+                                                                                                            PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + _pin));
                                                                                                         }
                                                                                                         catch(JSONException je) {
                                                                                                             je.printStackTrace();
