@@ -17,6 +17,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -158,6 +159,7 @@ public class PayloadUtil	{
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
+            meta.put("ricochet", RicochetMeta.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -299,6 +301,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("pin2")) {
                     AccessFactory.getInstance().setPIN2((String) meta.get("pin2"));
+                }
+                if(meta.has("ricochet")) {
+                    RicochetMeta.getInstance().fromJSON((JSONObject) meta.get("ricochet"));
                 }
 
                 if(meta.has("units")) {
