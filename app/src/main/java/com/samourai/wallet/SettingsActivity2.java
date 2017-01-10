@@ -895,7 +895,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
         final int fxSel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
 
         final String[] currencies;
-        if(fxSel == 1)	{
+        if(fxSel == 0) {
+            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsLBC();
+        }
+        else if(fxSel == 1) {
             currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsBTCe();
         }
         else	{

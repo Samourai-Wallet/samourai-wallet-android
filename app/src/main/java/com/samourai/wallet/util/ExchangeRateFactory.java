@@ -25,7 +25,7 @@ public class ExchangeRateFactory	{
     private static ExchangeRateFactory instance = null;
 
     private static String[] currencies = {
-            "CNY", "EUR", "GBP", "RUB", "USD"
+            "CNY", "EUR", "GBP", "KES", "NGN", "RUB", "USD", "ZAR"
     };
 
     private static String[] currencyLabels = {
@@ -34,6 +34,17 @@ public class ExchangeRateFactory	{
             "British Pound Sterling - GBP",
             "Chinese Yuan - CNY",
             "Russian Rouble - RUB"
+    };
+
+    private static String[] currencyLabelsLBC = {
+            "United States Dollar - USD",
+            "Euro - EUR",
+            "British Pound Sterling - GBP",
+            "Chinese Yuan - CNY",
+            "Russian Rouble - RUB",
+            "Kenyan Shilling - KES",
+            "Nigerian Naira - NGN",
+            "South African Rand - ZAR"
     };
 
     private static String[] currencyLabelsBTCe = {
@@ -94,6 +105,10 @@ public class ExchangeRateFactory	{
 
     public String[] getCurrencyLabels()	 {
         return currencyLabels;
+    }
+
+    public String[] getCurrencyLabelsLBC() {
+        return currencyLabelsLBC;
     }
 
     public String[] getCurrencyLabelsBTCe()	 {
