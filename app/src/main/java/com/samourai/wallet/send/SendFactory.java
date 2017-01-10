@@ -260,12 +260,12 @@ public class SendFactory	{
         //
         // deterministically sort inputs and outputs, see BIP69 (OBPP)
         //
-        Collections.sort(inputs, new InputComparator());
+        Collections.sort(inputs, new BIP69InputComparator());
         for(TransactionInput input : inputs) {
             tx.addInput(input);
         }
 
-        Collections.sort(outputs, new OutputComparator());
+        Collections.sort(outputs, new BIP69OutputComparator());
         for(TransactionOutput to : outputs) {
             tx.addOutput(to);
         }
@@ -740,7 +740,7 @@ public class SendFactory	{
         return null;
     }
 
-    private class InputComparator implements Comparator<MyTransactionInput> {
+    private class BIP69InputComparator implements Comparator<MyTransactionInput> {
 
         public int compare(MyTransactionInput i1, MyTransactionInput i2) {
 
@@ -785,7 +785,7 @@ public class SendFactory	{
 
     }
 
-    private class OutputComparator implements Comparator<TransactionOutput> {
+    private class BIP69OutputComparator implements Comparator<TransactionOutput> {
 
         public int compare(TransactionOutput o1, TransactionOutput o2) {
 
