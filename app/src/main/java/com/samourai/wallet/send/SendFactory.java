@@ -64,13 +64,13 @@ public class SendFactory	{
         return instance;
     }
 
-    public Transaction makeTransaction(final int accountIdx, final List<MyTransactionOutPoint> unspent, final HashMap<String, BigInteger> receivers, final BigInteger fee) {
+    public Transaction makeTransaction(final int accountIdx, final List<MyTransactionOutPoint> unspent, final HashMap<String, BigInteger> receivers) {
 
         Transaction tx = null;
 
         try {
             int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
-            tx = makeTransaction(accountIdx, unspent, receivers, fee, changeIdx);
+            tx = makeTransaction(accountIdx, receivers, unspent);
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -207,7 +207,7 @@ public class SendFactory	{
     /*
     Used by spends
      */
-    private Transaction makeTransaction(int accountIdx, List<MyTransactionOutPoint> unspent, HashMap<String, BigInteger> receivers, BigInteger fee, int changeIdx) throws Exception {
+    private Transaction makeTransaction(int accountIdx, HashMap<String, BigInteger> receivers, List<MyTransactionOutPoint> unspent) throws Exception {
 
         BigInteger amount = BigInteger.ZERO;
         for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
