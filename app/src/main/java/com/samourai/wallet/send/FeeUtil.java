@@ -121,6 +121,16 @@ public class FeeUtil  {
 
     }
 
+    public BigInteger estimatedFee(int inputs, int outputs, BigInteger feePerKb)   {
+        int size = estimatedSize(inputs, outputs);
+        return calculateFee(size, feePerKb);
+    }
+
+    public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
+        double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
+        return BigInteger.valueOf((long)fee);
+    }
+
     // use unsigned tx here
     private static long getPriority(Transaction tx, List<MyTransactionOutPoint> outputs)   {
         long priority = 0L;
@@ -133,16 +143,6 @@ public class FeeUtil  {
         long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
         priority /= estimatedSize;
         return priority;
-    }
-
-    private BigInteger estimatedFee(int inputs, int outputs, BigInteger feePerKb)   {
-        int size = estimatedSize(inputs, outputs);
-        return calculateFee(size, feePerKb);
-    }
-
-    private BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
-        double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
-        return BigInteger.valueOf((long)fee);
     }
 
 }
