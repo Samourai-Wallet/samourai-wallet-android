@@ -159,7 +159,7 @@ public class PayloadUtil	{
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
-            meta.put("ricochet", RicochetMeta.getInstance().toJSON());
+            meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -303,7 +303,7 @@ public class PayloadUtil	{
                     AccessFactory.getInstance().setPIN2((String) meta.get("pin2"));
                 }
                 if(meta.has("ricochet")) {
-                    RicochetMeta.getInstance().fromJSON((JSONObject) meta.get("ricochet"));
+                    RicochetMeta.getInstance(context).fromJSON((JSONObject) meta.get("ricochet"));
                 }
 
                 if(meta.has("units")) {
