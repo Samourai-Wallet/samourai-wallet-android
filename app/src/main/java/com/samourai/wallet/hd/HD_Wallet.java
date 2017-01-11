@@ -124,6 +124,10 @@ public class HD_Wallet {
         return mAccounts.get(accountId);
     }
 
+    public HD_Account getAccountAt(int accountIdx) {
+        return new HD_Account(mParams, mRoot, "", accountIdx);
+    }
+
     public void addAccount() {
         String strName = String.format("Account %d", mAccounts.size());
         mAccounts.add(new HD_Account(mParams, mRoot, strName, mAccounts.size()));
