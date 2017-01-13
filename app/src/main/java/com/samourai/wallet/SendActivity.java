@@ -36,6 +36,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -71,6 +72,7 @@ import net.sourceforge.zbar.Symbol;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 public class SendActivity extends Activity {
@@ -672,7 +674,7 @@ public class SendActivity extends Activity {
 
                             selectedUTXO.add(u);
                             totalValueSelected += u.getValue();
-                            selected++;
+                            selected += u.getOutpoints().size();
 
                             if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()))    {
                                 break;
@@ -826,7 +828,7 @@ public class SendActivity extends Activity {
                             }
 
                             // make tx
-                            Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers, _fee);
+                            Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
