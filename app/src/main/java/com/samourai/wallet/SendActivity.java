@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -48,7 +48,6 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.WebUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -100,18 +99,20 @@ public class SendActivity extends Activity {
     private EditText edCustomFee = null;
 
     private final static int FEE_LOW = 0;
-    private final static int FEE_AUTO = 1;
+    private final static int FEE_NORMAL = 1;
     private final static int FEE_PRIORITY = 2;
-    private final static int FEE_CUSTOM = 3;
+//    private final static int FEE_CUSTOM = 3;
     private int FEE_TYPE = 0;
-    private boolean networkIsStressed = false;
 
     private final static int SPEND_SIMPLE = 0;
     private final static int SPEND_BIP126 = 1;
+    private final static int SPEND_RICOCHET = 3;
     private int SPEND_TYPE = SPEND_SIMPLE;
-    private Switch spendType = null;
-
+    private TextView tvSpendType = null;
+    private SeekBar spendType = null;
+    private String[] spendTypes0 = null;
     private String strFiat = null;
+
     private double btc_fx = 286.0;
     private TextView tvFiatSymbol = null;
 
@@ -434,29 +435,35 @@ public class SendActivity extends Activity {
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, 0);
-        if(SPEND_TYPE == 0)    {
-            ((TextView)findViewById(R.id.bip126)).setText(R.string.nonbip126);
-        }
-        else    {
-            ((TextView)findViewById(R.id.bip126)).setText(R.string.bip126);
-        }
-        spendType = (Switch)findViewById(R.id.spendType);
-        spendType.setChecked(SPEND_TYPE == 0 ? false : true);
-        spendType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        spendTypes0 = new String[3];
+        spendTypes0[0] = getString(R.string.spend_type_1);
+        spendTypes0[1] = getString(R.string.spend_type_2);
+        spendTypes0[2] = getString(R.string.spend_type_3);
 
-                if(spendType.isChecked()){
-                    SPEND_TYPE = 1;
-                    ((TextView)findViewById(R.id.bip126)).setText(R.string.bip126);
-                }
-                else    {
-                    SPEND_TYPE = 0;
-                    ((TextView)findViewById(R.id.bip126)).setText(R.string.nonbip126);
-                }
+        tvSpendType = (TextView)findViewById(R.id.spendType);
+        spendType = (SeekBar)findViewById(R.id.seekBar);
+        spendType.setMax(2);
+        spendType.setProgress(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, 1));
+        tvSpendType.setText(spendTypes0[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, 1)]);
 
-                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_TYPE);
+        spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int progressChanged = 0;
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
+                progressChanged = progress;
+                SPEND_TYPE = progress;
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress() > 1 ? 1 : spendType.getProgress());
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                ;
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                tvSpendType.setText(spendTypes0[progressChanged]);
+
             }
         });
 
@@ -465,12 +472,14 @@ public class SendActivity extends Activity {
         edCustomFee.setText("0.00015");
         edCustomFee.setVisibility(View.GONE);
 
+        FEE_TYPE = FEE_NORMAL;
+
         btFee = (Button)findViewById(R.id.fee);
         btFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 switch(FEE_TYPE)    {
-                    case FEE_AUTO:
+                    case FEE_NORMAL:
                         FEE_TYPE = FEE_LOW;
                         btFee.setText(getString(R.string.low_fee));
                         edCustomFee.setVisibility(View.GONE);
@@ -493,15 +502,15 @@ public class SendActivity extends Activity {
                         edCustomFee.setSelection(edCustomFee.getText().length());
                         break;
                         */
-                        FEE_TYPE = FEE_AUTO;
+                        FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
                         tvFeeAmount.setText("");
                         break;
-                    case FEE_CUSTOM:
+//                    case FEE_CUSTOM:
                     default:
-                        FEE_TYPE = FEE_AUTO;
+                        FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
@@ -520,6 +529,8 @@ public class SendActivity extends Activity {
 
                 btSend.setClickable(false);
                 btSend.setActivated(false);
+
+                SPEND_TYPE = spendType.getProgress();
 
                 // store current change index to restore value in case of sending fail
                 int change_index = 0;
@@ -627,8 +638,16 @@ public class SendActivity extends Activity {
                 }
 
                 org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
+                if(SPEND_TYPE == SPEND_RICOCHET)    {
+
+//                    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode) {
+
+
+                    JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), strDestinationBTCAddress, 4, strPCode);
+
+                }
                 // if BIP126 try both hetero/alt, if fails change type to SPEND_SIMPLE
-                if(SPEND_TYPE == SPEND_BIP126)   {
+                else if(SPEND_TYPE == SPEND_BIP126)   {
 
                     List<UTXO> _utxos = utxos;
 

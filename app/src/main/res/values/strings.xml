@@ -243,13 +243,15 @@
     <string name="custom_fee">CUSTOM</string>
     <string name="low_fee">LOW</string>
 
-    <string name="spend_type_1">Simple</string>
-    <string name="spend_type_2">Samourai</string>
-    <string name="spend_type_3">Aggressive</string>
+    <string name="obfuscation">Obfuscation</string>
+
+    <string name="spend_type_1">Simple - No address reuse. One change address.</string>
+    <string name="spend_type_2">Samourai - No address reuse. BIP126, if possible.</string>
+    <string name="spend_type_3">Ricochet - 4 hop spend.</string>
 
     <string name="spend_type_1_desc">Normal Send - No address reuse. One change address</string>
-    <string name="spend_type_2_desc">Samourai Send - No address reuse. Decoy change address(es).</string>
-    <string name="spend_type_3_desc">CoinJoin Simulation - If possible, this transaction will be indistinguishable from a CoinJoin transaction.</string>
+    <string name="spend_type_2_desc">Samourai Send - No address reuse. BIP126, if possible.</string>
+    <string name="spend_type_3_desc">Ricochet - 4 hop spend.</string>
 
     <string name="add_output">Add Output</string>
 
