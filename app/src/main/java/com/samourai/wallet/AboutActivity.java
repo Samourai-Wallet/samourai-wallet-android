@@ -10,7 +10,7 @@ public class AboutActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.about);
+        setContentView(R.layout.activity_about);
         setTitle("Samourai, v" + getResources().getString(R.string.version_name));
     }
 
