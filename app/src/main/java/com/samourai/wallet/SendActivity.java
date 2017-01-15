@@ -459,7 +459,7 @@ public class SendActivity extends Activity {
                 SPEND_TYPE = progress;
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress() > 1 ? 1 : spendType.getProgress());
 
-                if(BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM)    {
+                if(progress == 2 && BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM)    {
 
                     AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                             .setTitle(R.string.app_name)
