@@ -109,7 +109,6 @@ public class RicochetActivity extends Activity {
                             isOK = true;
                         }
 
-//                        isOK = true;
                         if(isOK)    {
                             strProgressTitle = RicochetActivity.this.getText(R.string.ricochet_hop).toString() + " " + i;
                             strProgressMessage = RicochetActivity.this.getText(R.string.ricochet_hopping).toString() + " " + dests[i];
