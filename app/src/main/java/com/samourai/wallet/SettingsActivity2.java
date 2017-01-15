@@ -7,7 +7,9 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +21,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 
 import org.bitcoinj.crypto.MnemonicException;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 
 import com.google.zxing.BarcodeFormat;
@@ -54,10 +58,16 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.TorUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.List;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -688,6 +698,71 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                     }).show();
                         } catch (Exception e) {
                             ;
+                        }
+
+                        return true;
+                    }
+                });
+
+                Preference certifPref = (Preference) findPreference("certif");
+                certifPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+
+                        try {
+
+                            StringBuilder sb = new StringBuilder();
+
+                            final PackageManager packageManager = SettingsActivity2.this.getPackageManager();
+
+                            PackageInfo pkgInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                            final String strName = pkgInfo.applicationInfo.loadLabel(packageManager).toString();
+                            final String strVendor = pkgInfo.packageName;
+
+                            sb.append(strName + " / " + strVendor + "\n");
+
+                            final Signature[] arrSignatures = pkgInfo.signatures;
+                            if(arrSignatures != null)    {
+                                for (final Signature sig : arrSignatures) {
+
+                                    final byte[] rawCert = sig.toByteArray();
+                                    InputStream certStream = new ByteArrayInputStream(rawCert);
+
+                                    try {
+                                        CertificateFactory certFactory = CertificateFactory.getInstance("X509");
+                                        X509Certificate x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
+
+                                        /*
+                                        sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
+                                        sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
+                                        sb.append("Certificate serial number: " + x509Cert.getSerialNumber());
+                                        */
+                                        sb.append("Certificate signature: " + Hex.toHexString(x509Cert.getSignature()));
+
+                                    }
+                                    catch (CertificateException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            TextView showText = new TextView(SettingsActivity2.this);
+                            showText.setText(sb.toString());
+                            showText.setTextIsSelectable(true);
+                            showText.setPadding(40, 10, 40, 10);
+                            showText.setTextSize(18.0f);
+                            new AlertDialog.Builder(SettingsActivity2.this)
+                                    .setTitle(R.string.app_name)
+                                    .setView(showText)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    }).show();
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
                         }
 
                         return true;
