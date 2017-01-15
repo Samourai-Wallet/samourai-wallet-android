@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -71,12 +73,14 @@ import net.sourceforge.zbar.Symbol;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 public class SendActivity extends Activity {
 
     private final static int SCAN_QR = 2012;
+    private final static int RICOCHET = 2013;
 
     private TextView tvMaxPrompt = null;
     private TextView tvMax = null;
@@ -106,7 +110,7 @@ public class SendActivity extends Activity {
 
     private final static int SPEND_SIMPLE = 0;
     private final static int SPEND_BIP126 = 1;
-    private final static int SPEND_RICOCHET = 3;
+    private final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_SIMPLE;
     private TextView tvSpendType = null;
     private SeekBar spendType = null;
@@ -454,6 +458,36 @@ public class SendActivity extends Activity {
                 progressChanged = progress;
                 SPEND_TYPE = progress;
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress() > 1 ? 1 : spendType.getProgress());
+
+                if(BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM)    {
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.ricochet_fee_via_bip47)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    dialog.dismiss();
+
+                                    Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
+                                    startActivity(intent);
+
+                                }
+
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    dialog.dismiss();
+
+                                }
+                            });
+                    if(!isFinishing())    {
+                        dlg.show();
+                    }
+
+                }
+
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -640,11 +674,61 @@ public class SendActivity extends Activity {
                 org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
                 if(SPEND_TYPE == SPEND_RICOCHET)    {
 
-//                    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode) {
+                    boolean samouraiFeeViaBIP47 = false;
+                    if(BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM)    {
+                        samouraiFeeViaBIP47 = true;
+                    }
 
+                    final JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
+                    if(jObj != null)    {
 
-                    JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), strDestinationBTCAddress, 4, strPCode);
+                        try {
+                            long totalAmount = jObj.getLong("total_spend");
+                            if(totalAmount > balance)    {
+                                Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
+                            String msg = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
+
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(msg)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            RicochetMeta.getInstance(SendActivity.this).empty();
+                                            RicochetMeta.getInstance(SendActivity.this).add(jObj);
+
+                                            dialog.dismiss();
+
+                                            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+                                            startActivityForResult(intent, RICOCHET);
+
+                                        }
+
+                                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            dialog.dismiss();
+
+                                        }
+                                    });
+                            if(!isFinishing())    {
+                                dlg.show();
+                            }
+
+                            return;
+
+                        }
+                        catch(JSONException je) {
+                            return;
+                        }
+
+                    }
+
+                    return;
                 }
                 // if BIP126 try both hetero/alt, if fails change type to SPEND_SIMPLE
                 else if(SPEND_TYPE == SPEND_BIP126)   {
@@ -1074,6 +1158,12 @@ public class SendActivity extends Activity {
             }
         }
         else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == RICOCHET)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == RICOCHET)	{
             ;
         }
         else {
