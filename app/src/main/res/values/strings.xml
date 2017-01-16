@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.91</string>
+    <string name="version_name">0.92</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -390,5 +390,9 @@
     <string name="ricochet_spend3">(includes 0.001 BTC fee to Samourai and miners\' fees)?</string>
 
     <string name="ricochet_fee_via_bip47">Ricochet spends will cost a 0.001 BTC fee to Samourai. For improved privacy you can pay this fee via our BIP47 payment code. Before spending via Ricochet, would you like to open a BIP47 payment channel to Samourai?</string>
+
+    <string name="action_ricochet_script">Display Ricochet script</string>
+    <string name="action_ricochet_replay">Resend Ricochet</string>
+    <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
 
 </resources>
