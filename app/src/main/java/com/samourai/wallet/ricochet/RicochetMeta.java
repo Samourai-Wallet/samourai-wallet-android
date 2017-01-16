@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Coin;
@@ -59,7 +58,7 @@ public class RicochetMeta {
     private static RicochetMeta instance = null;
 
     private static int index = 0;
-    private static Queue<JSONObject> fifo = null;
+    private static LinkedList<JSONObject> fifo = null;
 
     private static Context context = null;
 
@@ -109,9 +108,7 @@ public class RicochetMeta {
     }
 
     public void empty()   {
-        while(!fifo.isEmpty())    {
-            fifo.remove();
-        }
+        fifo.clear();
     }
 
     public int size()   {
