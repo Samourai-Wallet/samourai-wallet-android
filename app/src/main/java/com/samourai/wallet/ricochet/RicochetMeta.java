@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.Iterable;
 import org.spongycastle.util.encoders.Hex;
 
 //import android.util.Log;
@@ -75,6 +77,10 @@ public class RicochetMeta {
         }
 
         return instance;
+    }
+
+    public Iterator<JSONObject> getIterator() {
+        return fifo.iterator();
     }
 
     public LinkedList<JSONObject> getQueue() {
@@ -136,8 +142,9 @@ public class RicochetMeta {
             jsonPayload.put("index", index);
 
             JSONArray array = new JSONArray();
-            while(!fifo.isEmpty())   {
-                JSONObject obj = fifo.remove();
+            Iterator<JSONObject> itr = getIterator();
+            while(itr.hasNext()){
+                JSONObject obj = itr.next();
                 array.put(obj);
             }
             jsonPayload.put("queue", array);
@@ -162,6 +169,8 @@ public class RicochetMeta {
                 index = jsonPayload.getInt("index");
             }
             if(jsonPayload.has("queue"))    {
+
+                fifo.clear();
 
                 JSONArray array = jsonPayload.getJSONArray("queue");
                 for(int i = 0; i < array.length(); i++) {
