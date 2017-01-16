@@ -1,9 +1,15 @@
 package com.samourai.wallet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.util.Log;
 
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -40,11 +46,13 @@ public class RicochetActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ricochet);
 
-        JSONObject jObj = RicochetMeta.getInstance(RicochetActivity.this).peek();
-        Log.d("RicochetActivity", jObj.toString());
-        strJSON = jObj.toString();
+        if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
+            JSONObject jObj = RicochetMeta.getInstance(RicochetActivity.this).peek();
+            Log.d("RicochetActivity", jObj.toString());
+            strJSON = jObj.toString();
 
-        new RicochetTask().execute(new String[]{ strJSON });
+            new RicochetTask().execute(new String[]{ strJSON });
+        }
 
     }
 
@@ -61,6 +69,31 @@ public class RicochetActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.ricochet, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_show_script) {
+            doShowScript();
+        }
+        else if (id == R.id.action_replay_script) {
+            doReplayScript();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class RicochetTask extends AsyncTask<String, Void, String> {
@@ -144,7 +177,7 @@ public class RicochetActivity extends Activity {
                                     PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
                                     String strAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
                                     BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
-                                    BIP47Meta.getInstance().inc(strPCode);
+                                    BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
                                 }
 
                             }
@@ -213,6 +246,59 @@ public class RicochetActivity extends Activity {
             progress.setMessage(strProgressMessage);
 
         }
+    }
+
+    private void doReplayScript() {
+
+        if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
+
+            new AlertDialog.Builder(RicochetActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.ricochet_replay)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            new RicochetTask().execute(new String[]{ strJSON });
+
+                        }
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    ;
+                }
+            }).show();
+
+        }
+        else    {
+            Toast.makeText(RicochetActivity.this, R.string.no_ricochet_replay, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doShowScript() {
+
+        if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
+
+            TextView showText = new TextView(RicochetActivity.this);
+            showText.setText(strJSON);
+            showText.setTextIsSelectable(true);
+            showText.setPadding(40, 10, 40, 10);
+            showText.setTextSize(18.0f);
+            new AlertDialog.Builder(RicochetActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setView(showText)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ;
+                        }
+                    }).show();
+
+        }
+        else    {
+            Toast.makeText(RicochetActivity.this, R.string.no_ricochet_display, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }
