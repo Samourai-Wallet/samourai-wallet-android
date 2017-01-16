@@ -374,7 +374,7 @@
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
     <string name="cannot_find_unspents">Unspents list is empty</string>
     <string name="please_wait_sending">Sending transaction, please wait.</string>
-    <string name="please_wait_ricochet">Ricocheting your hops, please wait.</string>
+    <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
     <string name="bip126">Spend using BIP126</string>
     <string name="nonbip126">Use normal BIP44 spend</string>
 
