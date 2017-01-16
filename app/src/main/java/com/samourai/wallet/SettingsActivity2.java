@@ -703,7 +703,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
-
+/*
                 Preference certifPref = (Preference) findPreference("certif");
                 certifPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -731,11 +731,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         CertificateFactory certFactory = CertificateFactory.getInstance("X509");
                                         X509Certificate x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
 
-                                        /*
-                                        sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
-                                        sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
-                                        sb.append("Certificate serial number: " + x509Cert.getSerialNumber());
-                                        */
+//                                        sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
+//                                        sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
+//                                        sb.append("Certificate serial number: " + x509Cert.getSerialNumber());
+
                                         sb.append("Certificate signature: " + Hex.toHexString(x509Cert.getSignature()));
 
                                     }
@@ -768,7 +767,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
-
+*/
                 Preference aboutPref = (Preference) findPreference("about");
                 aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.version_name));
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
