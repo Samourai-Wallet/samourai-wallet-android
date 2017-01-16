@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -111,10 +111,10 @@ public class SendActivity extends Activity {
     private final static int SPEND_SIMPLE = 0;
     private final static int SPEND_BIP126 = 1;
     private final static int SPEND_RICOCHET = 2;
-    private int SPEND_TYPE = SPEND_SIMPLE;
-    private TextView tvSpendType = null;
-    private SeekBar spendType = null;
-    private String[] spendTypes0 = null;
+    private int SPEND_TYPE = SPEND_BIP126;
+    private CheckBox cbSpendType = null;
+    private CheckBox cbRicochet = null;
+
     private String strFiat = null;
 
     private double btc_fx = 286.0;
@@ -439,66 +439,69 @@ public class SendActivity extends Activity {
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
-        spendTypes0 = new String[3];
-        spendTypes0[0] = getString(R.string.spend_type_1);
-        spendTypes0[1] = getString(R.string.spend_type_2);
-        spendTypes0[2] = getString(R.string.spend_type_3);
+        cbSpendType = (CheckBox)findViewById(R.id.simple);
+        cbSpendType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        tvSpendType = (TextView)findViewById(R.id.spendType);
-        spendType = (SeekBar)findViewById(R.id.seekBar);
-        spendType.setMax(2);
-        spendType.setProgress(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, 1));
-        tvSpendType.setText(spendTypes0[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, 1)]);
+                CheckBox cb = (CheckBox)v;
 
-        spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            int progressChanged = 0;
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
-                progressChanged = progress;
-                SPEND_TYPE = progress;
-                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress() > 1 ? 1 : spendType.getProgress());
-
-                if(progress == 2 && BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM)    {
-
-                    AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(R.string.ricochet_fee_via_bip47)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    dialog.dismiss();
-
-                                    Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
-                                    startActivity(intent);
-
-                                }
-
-                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    dialog.dismiss();
-
-                                }
-                            });
-                    if(!isFinishing())    {
-                        dlg.show();
-                    }
-
+                if(cbRicochet.isChecked()) {
+                    SPEND_TYPE = SPEND_RICOCHET;
+                }
+                else    {
+                    SPEND_TYPE = cb.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
                 }
 
             }
 
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                ;
+        });
+
+        cbRicochet = (CheckBox)findViewById(R.id.ricochet);
+        cbRicochet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (((CheckBox) v).isChecked()) {
+
+                    SPEND_TYPE = SPEND_RICOCHET;
+
+                    if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM) {
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.ricochet_fee_via_bip47)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
+                                        startActivity(intent);
+
+                                    }
+
+                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+
+                }
+                else    {
+                    SPEND_TYPE = cbSpendType.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
+                }
+
             }
 
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                tvSpendType.setText(spendTypes0[progressChanged]);
-
-            }
         });
 
         tvFeeAmount = (TextView)findViewById(R.id.feeAmount);
@@ -563,8 +566,6 @@ public class SendActivity extends Activity {
 
                 btSend.setClickable(false);
                 btSend.setActivated(false);
-
-                SPEND_TYPE = spendType.getProgress();
 
                 // store current change index to restore value in case of sending fail
                 int change_index = 0;

@@ -248,13 +248,14 @@
     <string name="obfuscation">Obfuscation</string>
 
     <string name="spend_type_1">Simple - No address reuse. One change address.</string>
+<!--
     <string name="spend_type_2">Samourai - No address reuse. BIP126, if possible.</string>
     <string name="spend_type_3">Ricochet - 4 hop spend.</string>
 
     <string name="spend_type_1_desc">Normal Send - No address reuse. One change address</string>
     <string name="spend_type_2_desc">Samourai Send - No address reuse. BIP126, if possible.</string>
     <string name="spend_type_3_desc">Ricochet - 4 hop spend.</string>
-
+-->
     <string name="add_output">Add Output</string>
 
     <string name="error_creating_tx">An error occurred creating the transaction. Please try again.</string>
@@ -392,6 +393,7 @@
     <string name="ricochet_fee_via_bip47">Ricochet spends will cost a 0.001 BTC fee to Samourai. For improved privacy you can pay this fee via our BIP47 payment code. Before spending via Ricochet, would you like to open a BIP47 payment channel to Samourai?</string>
 
     <string name="action_ricochet">Ricochet</string>
+    <string name="ricochet">Ricochet - send spend via 4 hops</string>
     <string name="action_ricochet_script">Display Ricochet script</string>
     <string name="action_ricochet_replay">Resend Ricochet</string>
     <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
