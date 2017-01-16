@@ -728,6 +728,27 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    public synchronized JSONObject getTxInfo(String hash) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
+            url.append("tx/");
+            url.append(hash);
+            url.append("?format=json");
+
+            String response = WebUtil.getInstance(context).getURL(url.toString());
+            jsonObject = new JSONObject(response);
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     public synchronized JSONObject getDynamicFees() {
 
         JSONObject jsonObject  = null;
