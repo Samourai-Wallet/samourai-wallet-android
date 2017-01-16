@@ -77,6 +77,10 @@ public class RicochetMeta {
         return instance;
     }
 
+    public LinkedList<JSONObject> getQueue() {
+        return fifo;
+    }
+
     public int getIndex() {
         return index;
     }
@@ -92,6 +96,15 @@ public class RicochetMeta {
     public JSONObject peek()   {
         if(!fifo.isEmpty())    {
             return fifo.peek();
+        }
+        else    {
+            return null;
+        }
+    }
+
+    public JSONObject get(int pos)   {
+        if(!fifo.isEmpty() && pos < fifo.size())    {
+            return fifo.get(pos);
         }
         else    {
             return null;
