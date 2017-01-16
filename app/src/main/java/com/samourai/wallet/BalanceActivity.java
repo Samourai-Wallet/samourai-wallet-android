@@ -403,6 +403,7 @@ public class BalanceActivity extends Activity {
         }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_ricochet).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

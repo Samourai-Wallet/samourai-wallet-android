@@ -698,7 +698,6 @@ public class SendActivity extends Activity {
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
 
-                                            RicochetMeta.getInstance(SendActivity.this).empty();
                                             RicochetMeta.getInstance(SendActivity.this).add(jObj);
 
                                             dialog.dismiss();
@@ -1136,6 +1135,10 @@ public class SendActivity extends Activity {
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_scan_qr) {
             doScan();
+        }
+        else if (id == R.id.action_ricochet) {
+            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+            startActivity(intent);
         }
         else {
             ;
