@@ -114,6 +114,10 @@ public class RicochetMeta {
         }
     }
 
+    public int size()   {
+        return fifo.size();
+    }
+
     public JSONObject toJSON() {
 
         JSONObject jsonPayload = new JSONObject();
@@ -166,7 +170,7 @@ public class RicochetMeta {
 
     public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47) {
 
-        setIndex(0);
+        setIndex(5000001);
 
         JSONObject jObj = new JSONObject();
 
