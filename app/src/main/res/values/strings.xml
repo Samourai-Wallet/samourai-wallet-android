@@ -90,6 +90,10 @@
     <string name="options_version">Version</string>
     <string name="options_certif">Signing certificate</string>
     <string name="options_certif2">View certificate used to sign this app.</string>
+    <string name="options_txs">Transactions</string>
+    <string name="options_txs2">Transaction settings.</string>
+    <string name="options_bip126">Spend using BIP126</string>
+    <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
 
     <string name="select_currency">Select currency</string>
 

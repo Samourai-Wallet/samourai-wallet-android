@@ -503,6 +503,8 @@ public class SendActivity extends Activity {
             }
         });
 
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+
         tvFeeAmount = (TextView)findViewById(R.id.feeAmount);
         edCustomFee = (EditText)findViewById(R.id.customFeeAmount);
         edCustomFee.setText("0.00015");

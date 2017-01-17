@@ -12,6 +12,11 @@
         />
 
     <Preference
+        android:title="@string/options_txs"
+        android:key="txs"
+        />
+
+    <Preference
         android:title="@string/options_cat_stealth"
         android:key="stealth"
         />

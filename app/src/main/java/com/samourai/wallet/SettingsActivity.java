@@ -41,6 +41,16 @@ public class SettingsActivity extends PreferenceActivity	{
             }
         });
 
+        Preference txsPref = (Preference) findPreference("txs");
+        txsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
+                intent.putExtra("branch", "txs");
+                startActivity(intent);
+                return true;
+            }
+        });
+
         Preference stealthPref = (Preference) findPreference("stealth");
         stealthPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {

@@ -116,6 +116,25 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
             }
+            else if(strBranch.equals("txs"))   {
+                addPreferencesFromResource(R.xml.settings_txs);
+
+                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
+                cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref7.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_SIMPLE);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126);
+                        }
+
+                        return true;
+                    }
+                });
+
+            }
             else if(strBranch.equals("stealth"))   {
                 addPreferencesFromResource(R.xml.settings_stealth);
 
@@ -135,7 +154,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
 
                                 AppUtil.getInstance(SettingsActivity2.this).restartApp();
-                            } else {
+                            }
+                            else {
 
                                 String strMsg = SettingsActivity2.this.getString(R.string.options_stealth_display2);
 
@@ -296,7 +316,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
                             startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                        } else {
+                        }
+                        else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, true);
 
                             stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
@@ -312,7 +333,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref3.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.TRUSTED_LOCK, false);
-                        } else {
+                        }
+                        else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.TRUSTED_LOCK, true);
                         }
 
@@ -325,7 +347,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref4.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CHECK_SIM, false);
-                        } else {
+                        }
+                        else {
                             SIMUtil.getInstance(SettingsActivity2.this).setStoredSIM();
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CHECK_SIM, true);
                         }
@@ -344,10 +367,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ALERT_MOBILE_NO, s);
                                 cbPref3.setEnabled(true);
                                 cbPref4.setEnabled(true);
-                            } else {
+                            }
+                            else {
                                 Toast.makeText(SettingsActivity2.this, "Use international dialing format. Ex.:'+447385555555'", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
+                        }
+                        else {
                             cbPref3.setEnabled(false);
                             cbPref3.setChecked(false);
                             cbPref4.setEnabled(false);
@@ -433,7 +458,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref5.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SCRAMBLE_PIN, false);
-                        } else {
+                        }
+                        else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SCRAMBLE_PIN, true);
                         }
 
@@ -583,7 +609,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             if (cbPref6.isChecked()) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, false);
-                            } else {
+                            }
+                            else {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, true);
                             }
 
@@ -883,10 +910,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 String xpub = null;
                                 try {
                                     xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(which).xpubstr();
-                                } catch (IOException ioe) {
+                                }
+                                catch (IOException ioe) {
                                     ioe.printStackTrace();
                                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                                } catch (MnemonicException.MnemonicLengthException mle) {
+                                }
+                                catch (MnemonicException.MnemonicLengthException mle) {
                                     mle.printStackTrace();
                                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
                                 }
@@ -896,7 +925,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
                                 try {
                                     bitmap = qrCodeEncoder.encodeAsBitmap();
-                                } catch (WriterException e) {
+                                }
+                                catch (WriterException e) {
                                     e.printStackTrace();
                                 }
                                 showQR.setImageBitmap(bitmap);
@@ -985,7 +1015,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 String selectedCurrency = null;
                                 if (currencies[which].substring(currencies[which].length() - 3).equals("RUR")) {
                                     selectedCurrency = "RUB";
-                                } else {
+                                }
+                                else {
                                     selectedCurrency = currencies[which].substring(currencies[which].length() - 3);
                                 }
 
