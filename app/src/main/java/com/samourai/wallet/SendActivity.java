@@ -110,11 +110,11 @@ public class SendActivity extends Activity {
 //    private final static int FEE_CUSTOM = 3;
     private int FEE_TYPE = 0;
 
-    private final static int SPEND_SIMPLE = 0;
-    private final static int SPEND_BIP126 = 1;
-    private final static int SPEND_RICOCHET = 2;
+    public final static int SPEND_SIMPLE = 0;
+    public final static int SPEND_BIP126 = 1;
+    public final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BIP126;
-    private CheckBox cbSpendType = null;
+//    private CheckBox cbSpendType = null;
     private Switch swRicochet = null;
 
     private String strFiat = null;
@@ -440,7 +440,7 @@ public class SendActivity extends Activity {
             }
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
-
+/*
         cbSpendType = (CheckBox)findViewById(R.id.simple);
         cbSpendType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -458,7 +458,7 @@ public class SendActivity extends Activity {
             }
 
         });
-
+*/
         swRicochet = (Switch)findViewById(R.id.ricochet);
         swRicochet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -497,7 +497,7 @@ public class SendActivity extends Activity {
                     }
                 }
                 else    {
-                    SPEND_TYPE = cbSpendType.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
+                    SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
                 }
 
             }

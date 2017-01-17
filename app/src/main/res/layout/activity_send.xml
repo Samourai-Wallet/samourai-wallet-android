@@ -148,7 +148,7 @@
                 </LinearLayout>
 
             </LinearLayout>
-
+<!--
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -169,7 +169,7 @@
                     android:text="@string/spend_type_1" />
 
             </LinearLayout>
-
+-->
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -179,7 +179,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:id="@+id/ricochetField"
-                android:layout_below="@+id/obfuscationField"
+                android:layout_below="@+id/toField"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true">
 
