@@ -183,7 +183,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true">
 
-                <CheckBox
+                <Switch
                     android:id="@+id/ricochet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

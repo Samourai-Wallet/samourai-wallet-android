@@ -19,8 +19,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -113,7 +115,7 @@ public class SendActivity extends Activity {
     private final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BIP126;
     private CheckBox cbSpendType = null;
-    private CheckBox cbRicochet = null;
+    private Switch swRicochet = null;
 
     private String strFiat = null;
 
@@ -446,7 +448,7 @@ public class SendActivity extends Activity {
 
                 CheckBox cb = (CheckBox)v;
 
-                if(cbRicochet.isChecked()) {
+                if(swRicochet.isChecked()) {
                     SPEND_TYPE = SPEND_RICOCHET;
                 }
                 else    {
@@ -457,13 +459,12 @@ public class SendActivity extends Activity {
 
         });
 
-        cbRicochet = (CheckBox)findViewById(R.id.ricochet);
-        cbRicochet.setOnClickListener(new View.OnClickListener() {
+        swRicochet = (Switch)findViewById(R.id.ricochet);
+        swRicochet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (((CheckBox) v).isChecked()) {
-
+                if(isChecked)    {
                     SPEND_TYPE = SPEND_RICOCHET;
 
                     if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM) {
@@ -494,14 +495,12 @@ public class SendActivity extends Activity {
                         }
 
                     }
-
                 }
                 else    {
                     SPEND_TYPE = cbSpendType.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
                 }
 
             }
-
         });
 
         tvFeeAmount = (TextView)findViewById(R.id.feeAmount);
