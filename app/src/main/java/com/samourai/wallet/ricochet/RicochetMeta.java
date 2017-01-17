@@ -42,7 +42,6 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.Iterable;
 import org.spongycastle.util.encoders.Hex;
 
 //import android.util.Log;
@@ -188,8 +187,6 @@ public class RicochetMeta {
     }
 
     public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47) {
-
-        setIndex(5000001);
 
         JSONObject jObj = new JSONObject();
 
