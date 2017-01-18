@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -268,6 +269,10 @@ public class RicochetActivity extends Activity {
             }
 
             Toast.makeText(RicochetActivity.this, R.string.ricochet_broadcast, Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(RicochetActivity.this, BalanceActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
 
         }
 
