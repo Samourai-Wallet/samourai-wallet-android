@@ -60,6 +60,7 @@ public class RicochetMeta {
 
     private static int index = 0;
     private static LinkedList<JSONObject> fifo = null;
+    private static JSONObject lastRicochet = null;
 
     private static Context context = null;
 
@@ -133,12 +134,24 @@ public class RicochetMeta {
         return fifo.size();
     }
 
+    public JSONObject getLastRicochet() {
+        return lastRicochet;
+    }
+
+    public void setLastRicochet(JSONObject lastRicochet) {
+        RicochetMeta.lastRicochet = lastRicochet;
+    }
+
     public JSONObject toJSON() {
 
         JSONObject jsonPayload = new JSONObject();
         try {
 
             jsonPayload.put("index", index);
+
+            if(lastRicochet != null)    {
+                jsonPayload.put("last_ricochet", lastRicochet);
+            }
 
             JSONArray array = new JSONArray();
             Iterator<JSONObject> itr = getIterator();
@@ -166,6 +179,9 @@ public class RicochetMeta {
 
             if(jsonPayload.has("index"))    {
                 index = jsonPayload.getInt("index");
+            }
+            if(jsonPayload.has("last_ricochet"))    {
+                lastRicochet = jsonPayload.getJSONObject("last_ricochet");
             }
             if(jsonPayload.has("queue"))    {
 

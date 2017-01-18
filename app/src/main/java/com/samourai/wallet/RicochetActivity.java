@@ -182,6 +182,9 @@ public class RicochetActivity extends Activity {
                                     publishProgress();
 
                                     if(i == (txs.length - 1))    {
+
+                                        RicochetMeta.getInstance(RicochetActivity.this).setLastRicochet(jObj);
+
                                         //
                                         // increment change address
                                         //
@@ -315,10 +318,10 @@ public class RicochetActivity extends Activity {
 
     private void doShowScript() {
 
-        if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
+        if(RicochetMeta.getInstance(RicochetActivity.this).getLastRicochet() != null)    {
 
             TextView showText = new TextView(RicochetActivity.this);
-            showText.setText(RicochetMeta.getInstance(RicochetActivity.this).peek().toString());
+            showText.setText(RicochetMeta.getInstance(RicochetActivity.this).getLastRicochet().toString());
             showText.setTextIsSelectable(true);
             showText.setPadding(40, 10, 40, 10);
             showText.setTextSize(18.0f);
