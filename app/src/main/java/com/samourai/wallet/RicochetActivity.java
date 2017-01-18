@@ -267,6 +267,8 @@ public class RicochetActivity extends Activity {
                 progress.dismiss();
             }
 
+            Toast.makeText(RicochetActivity.this, R.string.ricochet_broadcast, Toast.LENGTH_SHORT).show();
+
         }
 
         @Override

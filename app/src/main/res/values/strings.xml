@@ -403,5 +403,6 @@
     <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
     <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
     <string name="no_ricochet_display">There is no Ricochet script to display.</string>
+    <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
 
 </resources>
