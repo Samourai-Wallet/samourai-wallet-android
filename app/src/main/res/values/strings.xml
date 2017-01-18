@@ -397,7 +397,7 @@
     <string name="ricochet_fee_via_bip47">Ricochet spends will cost a 0.001 BTC fee to Samourai. For improved privacy you can pay this fee via our BIP47 payment code. Before spending via Ricochet, would you like to open a BIP47 payment channel to Samourai?</string>
 
     <string name="action_ricochet">Ricochet</string>
-    <string name="ricochet">Ricochet - send spend via 4 hops</string>
+    <string name="ricochet">Ricochet - send with 4 hops</string>
     <string name="action_ricochet_script">Display Ricochet script</string>
     <string name="action_ricochet_replay">Resend Ricochet</string>
     <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
