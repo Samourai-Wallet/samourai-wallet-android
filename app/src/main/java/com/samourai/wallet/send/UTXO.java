@@ -37,6 +37,7 @@ public class UTXO {
         return value;
     }
 
+    // sorts in descending order by amount
     public static class UTXOComparator implements Comparator<UTXO> {
 
         public int compare(UTXO o1, UTXO o2) {

@@ -18,10 +18,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -751,6 +749,9 @@ public class SendActivity extends Activity {
                     }
 
                 }
+                else    {
+                    ;
+                }
 
                 // simple spend (less than balance)
                 if(SPEND_TYPE == SPEND_SIMPLE)    {
@@ -758,29 +759,44 @@ public class SendActivity extends Activity {
 
                     // sort in ascending order by value
                     Collections.sort(_utxos, new UTXO.UTXOComparator());
+                    Collections.reverse(_utxos);
 
-                    // get 1 UTXO > than spend
+                    // get smallest 1 UTXO > than spend + fee + dust
                     for(UTXO u : _utxos)   {
                         if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(1, 2).longValue()))    {
                             selectedUTXO.add(u);
                             totalValueSelected += u.getValue();
+//                            Log.d("SendActivity", "spend type:" + SPEND_TYPE);
+//                            Log.d("SendActivity", "single output");
+//                            Log.d("SendActivity", "amount:" + amount);
+//                            Log.d("SendActivity", "value selected:" + u.getValue());
+//                            Log.d("SendActivity", "total value selected:" + totalValueSelected);
+//                            Log.d("SendActivity", "nb inputs:" + u.getOutpoints().size());
                             break;
                         }
                     }
 
-                    // get smallest UTXOs that > spend
                     if(selectedUTXO.size() == 0)    {
                         // sort in descending order by value
-                        Collections.reverse(_utxos);
+                        Collections.sort(_utxos, new UTXO.UTXOComparator());
                         int selected = 0;
 
+                        // get largest UTXOs > than spend + fee + dust
                         for(UTXO u : _utxos)   {
 
                             selectedUTXO.add(u);
                             totalValueSelected += u.getValue();
                             selected += u.getOutpoints().size();
 
+//                            Log.d("SendActivity", "value selected:" + u.getValue());
+//                            Log.d("SendActivity", "total value selected/threshold:" + totalValueSelected + "/" + (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()));
+
                             if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()))    {
+//                                Log.d("SendActivity", "spend type:" + SPEND_TYPE);
+//                                Log.d("SendActivity", "multiple outputs");
+//                                Log.d("SendActivity", "amount:" + amount);
+//                                Log.d("SendActivity", "total value selected:" + totalValueSelected);
+//                                Log.d("SendActivity", "nb inputs:" + selected);
                                 break;
                             }
                         }
@@ -803,13 +819,11 @@ public class SendActivity extends Activity {
                         totalValueSelected += u.getValue();
                         selectedUTXO.add(u);
                         inputAmount += u.getValue();
-//                        Log.d("SendActivity", "input:" + outpoint.getAddress());
                     }
 
                     for(TransactionOutput output : pair.getRight())   {
                         try {
                             Script script = new Script(output.getScriptBytes());
-//                            Log.d("SendActivity", "receiver:" + script.getToAddress(MainNetParams.get()).toString());
                             receivers.put(script.getToAddress(MainNetParams.get()).toString(), BigInteger.valueOf(output.getValue().longValue()));
                             outputAmount += output.getValue().longValue();
                         }
@@ -836,10 +850,12 @@ public class SendActivity extends Activity {
                         fee = FeeUtil.getInstance().estimatedFee(selectedUTXO.size(), 2);
                     }
 
+//                    Log.d("SendActivity", "spend type:" + SPEND_TYPE);
 //                    Log.d("SendActivity", "amount:" + amount);
 //                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
 //                    Log.d("SendActivity", "fee:" + fee.longValue());
 //                    Log.d("SendActivity", "nb inputs:" + selectedUTXO.size());
+
                     change = totalValueSelected - (amount + fee.longValue());
 //                    Log.d("SendActivity", "change:" + change);
 
