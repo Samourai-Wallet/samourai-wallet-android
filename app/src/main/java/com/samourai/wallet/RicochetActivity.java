@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
+//import android.util.Log;
 
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -155,10 +155,10 @@ public class RicochetActivity extends Activity {
                             int seq = jSeq.getInt("seq");
                             assert(seq == i);
                             String tx = jSeq.getString("tx");
-                            Log.d("RicochetActivity", "seq:" + seq + ":" + tx);
+//                            Log.d("RicochetActivity", "seq:" + seq + ":" + tx);
                             txs[i] = tx;
                             String dest = jSeq.getString("destination");
-                            Log.d("RicochetActivity", "seq:" + seq + ":" + dest);
+//                            Log.d("RicochetActivity", "seq:" + seq + ":" + dest);
                             dests[i] = dest;
                         }
 
@@ -171,7 +171,7 @@ public class RicochetActivity extends Activity {
                                 isOK = false;
 
                                 String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i]);
-                                Log.d("RicochetActivity", "pushTx:" + response);
+//                                Log.d("RicochetActivity", "pushTx:" + response);
                                 JSONObject jsonObject = new JSONObject(response);
                                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                                     isOK = true;

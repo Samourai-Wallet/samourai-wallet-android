@@ -1,7 +1,7 @@
 package com.samourai.wallet.ricochet;
 
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
@@ -43,8 +43,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
-
-//import android.util.Log;
 
 public class RicochetMeta {
 
@@ -235,13 +233,13 @@ public class RicochetMeta {
             for(UTXO u : utxos)   {
                 totalValueSelected += u.getValue();
             }
-            Log.d("RicochetMeta", "totalValueSelected (return):" + totalValueSelected);
+//            Log.d("RicochetMeta", "totalValueSelected (return):" + totalValueSelected);
 
             // hop0 'leaves' wallet, change returned to wallet
             BigInteger hop0 = biSpend.add(biSamouraiFee).add(biFeePerHop.multiply(BigInteger.valueOf((long) nbHops)));
 //            BigInteger hop0Fee = FeeUtil.getInstance().calculateFee(hop0sz, biFeePerKB);
             BigInteger hop0Fee = pair.getRight();
-            Log.d("RicochetMeta", "hop0Fee (return):" + hop0Fee.longValue());
+//            Log.d("RicochetMeta", "hop0Fee (return):" + hop0Fee.longValue());
 
             Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47);
             if(txHop0 == null)    {
@@ -280,7 +278,7 @@ public class RicochetMeta {
                 _hop++;
                 BigInteger hopx = biSpend.add(biFeePerHop.multiply(BigInteger.valueOf((long) i)));
 
-                Log.d("RicochetMeta", "doing hop:" + _hop);
+//                Log.d("RicochetMeta", "doing hop:" + _hop);
                 txHop = getHopTx(prevTxHash, prevTxN, scriptPubKey, prevIndex, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination);
                 if(txHop == null)    {
                     return null;
@@ -336,8 +334,7 @@ public class RicochetMeta {
             address = HD_WalletFactory.getInstance(context).get().getAccountAt(RICOCHET_ACCOUNT).getChain(0).getAddressAt(idx).getAddressString();
 
             String privkey = HD_WalletFactory.getInstance(context).get().getAccountAt(RICOCHET_ACCOUNT).getChain(0).getAddressAt(idx).getPrivateKeyString();
-            Log.d("RicochetMeta", "getDestinationAddress address:" + address);
-//            Log.d("RicochetMeta", "getDestinationAddress privkey:" + privkey);
+//            Log.d("RicochetMeta", "getDestinationAddress address:" + address);
 
         }
         catch(IOException ioe) {
@@ -395,12 +392,12 @@ public class RicochetMeta {
             unspent.addAll(u.getOutpoints());
         }
 
-        Log.d("RicochetMeta", "spendAmount:" + spendAmount);
-        Log.d("RicochetMeta", "fee:" + fee);
-        Log.d("RicochetMeta", "totalValueSelected:" + totalValueSelected);
+//        Log.d("RicochetMeta", "spendAmount:" + spendAmount);
+//        Log.d("RicochetMeta", "fee:" + fee);
+//        Log.d("RicochetMeta", "totalValueSelected:" + totalValueSelected);
 
         long changeAmount = totalValueSelected - (spendAmount + fee);
-        Log.d("RicochetMeta", "changeAmount:" + changeAmount);
+//        Log.d("RicochetMeta", "changeAmount:" + changeAmount);
         HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
 
         if(changeAmount > 0L)    {
@@ -449,8 +446,7 @@ public class RicochetMeta {
         try {
             address = HD_WalletFactory.getInstance(context).get().getAccountAt(RICOCHET_ACCOUNT).getChain(0).getAddressAt(prevIndex);
             ECKey ecKey = address.getECKey();
-            Log.d("RicochetMeta", "getHopTx address:" + ecKey.toAddress(MainNetParams.get()).toString());
-//            Log.d("RicochetMeta", "getHopTx privkey:" + ecKey.getPrivateKeyAsWiF(MainNetParams.get()));
+//            Log.d("RicochetMeta", "getHopTx address:" + ecKey.toAddress(MainNetParams.get()).toString());
 
             byte[] hashBytes = Hex.decode(prevTxHash);
             Sha256Hash txHash = new Sha256Hash(hashBytes);
