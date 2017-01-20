@@ -457,6 +457,12 @@ public class SendActivity extends Activity {
 
         });
 */
+
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+        if(SPEND_TYPE > SPEND_BIP126)    {
+            SPEND_TYPE = SPEND_BIP126;
+        }
+
         swRicochet = (Switch)findViewById(R.id.ricochet);
         swRicochet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -500,8 +506,6 @@ public class SendActivity extends Activity {
 
             }
         });
-
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
 
         tvFeeAmount = (TextView)findViewById(R.id.feeAmount);
         edCustomFee = (EditText)findViewById(R.id.customFeeAmount);
