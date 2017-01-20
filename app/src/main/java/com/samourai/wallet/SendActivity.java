@@ -461,6 +461,7 @@ public class SendActivity extends Activity {
         SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
         if(SPEND_TYPE > SPEND_BIP126)    {
             SPEND_TYPE = SPEND_BIP126;
+            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
         }
 
         swRicochet = (Switch)findViewById(R.id.ricochet);
