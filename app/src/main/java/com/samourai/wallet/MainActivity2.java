@@ -37,6 +37,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
@@ -225,7 +226,7 @@ public class MainActivity2 extends Activity {
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
 
         if(TimeOutUtil.getInstance().isTimedOut()) {
-            if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !HD_WalletFactory.getInstance(MainActivity2.this).walletFileExists()) {
+            if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
                 AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
                 initDialog();
             }
@@ -451,13 +452,13 @@ public class MainActivity2 extends Activity {
                                                                                 try {
 
                                                                                     JSONObject json = new JSONObject(decryptedPayload);
-                                                                                    HD_Wallet hdw = HD_WalletFactory.getInstance(MainActivity2.this).restoreWalletfromJSON(json);
+                                                                                    HD_Wallet hdw = PayloadUtil.getInstance(MainActivity2.this).restoreWalletfromJSON(json);
                                                                                     HD_WalletFactory.getInstance(MainActivity2.this).set(hdw);
                                                                                     String guid = AccessFactory.getInstance(MainActivity2.this).createGUID();
                                                                                     String hash = AccessFactory.getInstance(MainActivity2.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
                                                                                     PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.ACCESS_HASH, hash);
                                                                                     PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
-                                                                                    HD_WalletFactory.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
+                                                                                    PayloadUtil.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
 
                                                                                 }
                                                                                 catch(MnemonicException.MnemonicLengthException mle) {
@@ -626,7 +627,7 @@ public class MainActivity2 extends Activity {
                 Looper.prepare();
 
                 try {
-                    HD_WalletFactory.getInstance(MainActivity2.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + pin));
+                    PayloadUtil.getInstance(MainActivity2.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + pin));
 
                     if (progress != null && progress.isShowing()) {
                         progress.dismiss();
@@ -762,7 +763,7 @@ public class MainActivity2 extends Activity {
             }).start();
 
         }
-        else if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !HD_WalletFactory.getInstance(MainActivity2.this).walletFileExists()) {
+        else if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             initDialog();
         }
@@ -793,7 +794,7 @@ public class MainActivity2 extends Activity {
 
     public void doAccountSelection() {
 
-        if(!HD_WalletFactory.getInstance(MainActivity2.this).walletFileExists())    {
+        if(!PayloadUtil.getInstance(MainActivity2.this).walletFileExists())    {
             return;
         }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:title="@string/options_bip126"
+        android:summary="@string/options_bip126_2"
+        android:defaultValue="true"
+        android:key="bip126"
+        />
+
+</PreferenceScreen>

@@ -32,6 +32,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UnspentOutputsBundle;
@@ -68,7 +69,7 @@ public class SendNotifTxFactory	{
 
     public static final BigInteger _bNotifTxTotalAmount = _bFee.add(_bSWFee).add(_bNotifTxValue);
 
-    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3Pof32GmAoSpUfzPiCWTu3y7Ni9qxM7Hvc";
+    public static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3Pof32GmAoSpUfzPiCWTu3y7Ni9qxM7Hvc";
 
     private static SendNotifTxFactory instance = null;
     private static Context context = null;
@@ -265,7 +266,7 @@ public class SendNotifTxFactory	{
 
 //                            SendAddressUtil.getInstance().add(notifPcode.notificationAddress().toString(), true);
 
-                                HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                                PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                             }
                             else {
                                 Toast.makeText(context, jsonObject.getString("status"), Toast.LENGTH_SHORT).show();

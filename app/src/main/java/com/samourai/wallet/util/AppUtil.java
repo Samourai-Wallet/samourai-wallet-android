@@ -13,6 +13,7 @@ import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
 
@@ -45,14 +46,8 @@ public class AppUtil {
 		context = ctx;
 		
 		if(instance == null) {
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                strReceiveQRFilename = context.getCacheDir() + File.separator + "qr.png";
-                strBackupFilename = context.getCacheDir() + File.separator + "backup.asc";
-            }
-            else {
-                strReceiveQRFilename = context.getExternalCacheDir() + File.separator + "qr.png";
-                strBackupFilename = context.getCacheDir() + File.separator + "backup.asc";
-            }
+            strReceiveQRFilename = context.getExternalCacheDir() + File.separator + "qr.png";
+            strBackupFilename = context.getCacheDir() + File.separator + "backup.asc";
 			instance = new AppUtil();
 		}
 		
@@ -62,7 +57,7 @@ public class AppUtil {
 	public void wipeApp() {
 
         try {
-            HD_WalletFactory.getInstance(context).wipe();
+            PayloadUtil.getInstance(context).wipe();
         }
         catch(IOException ioe) {
             ioe.printStackTrace();

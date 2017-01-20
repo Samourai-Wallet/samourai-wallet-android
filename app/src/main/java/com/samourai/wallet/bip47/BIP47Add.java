@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.R;
@@ -92,7 +93,7 @@ public class BIP47Add extends Activity {
                         Looper.prepare();
 
                         try {
-                            HD_WalletFactory.getInstance(BIP47Add.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Add.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                            PayloadUtil.getInstance(BIP47Add.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Add.this).getGUID() + AccessFactory.getInstance().getPIN()));
                         }
                         catch(MnemonicException.MnemonicLengthException mle) {
                             mle.printStackTrace();

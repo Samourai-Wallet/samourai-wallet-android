@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.91</string>
+    <string name="version_name">0.92.01</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -88,6 +88,12 @@
     <string name="options_autosave_backup">Autosave backup to device storage</string>
     <string name="options_autosave_backup2">Periodically save passphrase encrypted backup to device storage.</string>
     <string name="options_version">Version</string>
+    <string name="options_certif">Signing certificate</string>
+    <string name="options_certif2">View certificate used to sign this app.</string>
+    <string name="options_txs">Transactions</string>
+    <string name="options_txs2">Transaction settings.</string>
+    <string name="options_bip126">Spend using BIP126</string>
+    <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
 
     <string name="select_currency">Select currency</string>
 
@@ -243,14 +249,17 @@
     <string name="custom_fee">CUSTOM</string>
     <string name="low_fee">LOW</string>
 
-    <string name="spend_type_1">Simple</string>
-    <string name="spend_type_2">Samourai</string>
-    <string name="spend_type_3">Aggressive</string>
+    <string name="obfuscation">Obfuscation</string>
+
+    <string name="spend_type_1">Simple - No address reuse. One change address.</string>
+<!--
+    <string name="spend_type_2">Samourai - No address reuse. BIP126, if possible.</string>
+    <string name="spend_type_3">Ricochet - 4 hop spend.</string>
 
     <string name="spend_type_1_desc">Normal Send - No address reuse. One change address</string>
-    <string name="spend_type_2_desc">Samourai Send - No address reuse. Decoy change address(es).</string>
-    <string name="spend_type_3_desc">CoinJoin Simulation - If possible, this transaction will be indistinguishable from a CoinJoin transaction.</string>
-
+    <string name="spend_type_2_desc">Samourai Send - No address reuse. BIP126, if possible.</string>
+    <string name="spend_type_3_desc">Ricochet - 4 hop spend.</string>
+-->
     <string name="add_output">Add Output</string>
 
     <string name="error_creating_tx">An error occurred creating the transaction. Please try again.</string>
@@ -369,6 +378,7 @@
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
     <string name="cannot_find_unspents">Unspents list is empty</string>
     <string name="please_wait_sending">Sending transaction, please wait.</string>
+    <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
     <string name="bip126">Spend using BIP126</string>
     <string name="nonbip126">Use normal BIP44 spend</string>
 
@@ -377,5 +387,22 @@
     <string name="tor_routing_on">Samourai is routing via Tor.</string>
     <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
     <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+
+    <string name="ricochet_hop">Ricochet Hop</string>
+    <string name="ricochet_hopping">Ricocheted to</string>
+    <string name="ricochet_spend1">Ricochet spend to</string>
+    <string name="ricochet_spend2">for a total amount of</string>
+    <string name="ricochet_spend3">(includes 0.001 BTC fee to Samourai and miners\' fees)?</string>
+
+    <string name="ricochet_fee_via_bip47">Ricochet spends will cost a 0.001 BTC fee to Samourai. For improved privacy you can pay this fee via our BIP47 payment code. Before spending via Ricochet, would you like to open a BIP47 payment channel to Samourai?</string>
+
+    <string name="action_ricochet">Ricochet</string>
+    <string name="ricochet">Ricochet - send with 4 hops</string>
+    <string name="action_ricochet_script">Display Ricochet script</string>
+    <string name="action_ricochet_replay">Resend Ricochet</string>
+    <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
+    <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
+    <string name="no_ricochet_display">There is no Ricochet script to display.</string>
+    <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
 
 </resources>

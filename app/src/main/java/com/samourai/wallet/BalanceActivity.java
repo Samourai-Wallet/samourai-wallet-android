@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -55,6 +54,7 @@ import com.samourai.wallet.bip47.rpc.*;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -143,7 +143,7 @@ public class BalanceActivity extends Activity {
                         if(BalanceActivity.this != null)    {
 
                             try {
-                                HD_WalletFactory.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
                             }
                             catch(MnemonicException.MnemonicLengthException mle) {
                                 ;
@@ -403,6 +403,7 @@ public class BalanceActivity extends Activity {
         }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_ricochet).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -622,7 +623,7 @@ public class BalanceActivity extends Activity {
                 public void onClick(DialogInterface dialog, int id) {
 
                     try {
-                        HD_WalletFactory.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
                     }
                     catch(MnemonicException.MnemonicLengthException mle) {
                         ;
@@ -643,7 +644,7 @@ public class BalanceActivity extends Activity {
 
                 }});
 
-            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();
                 }
@@ -730,7 +731,7 @@ public class BalanceActivity extends Activity {
                                 String receive_address = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
                                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                                 receivers.put(receive_address, BigInteger.valueOf(amount));
-                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outpoints, receivers, fee);
+                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outpoints, receivers);
 
                                 tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
@@ -797,7 +798,7 @@ public class BalanceActivity extends Activity {
                                 public void onClick(DialogInterface dialog, int which) {
 
                                     try {
-                                        HD_WalletFactory.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
                                     }
                                     catch (IOException ioe) {
                                         ;
@@ -814,7 +815,7 @@ public class BalanceActivity extends Activity {
 
                                     String encrypted = null;
                                     try {
-                                        encrypted = AESUtil.encrypt(HD_WalletFactory.getInstance(BalanceActivity.this).get().toJSON(BalanceActivity.this).toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
+                                        encrypted = AESUtil.encrypt(PayloadUtil.getInstance(BalanceActivity.this).getPayload().toString(), new CharSequenceX(passphrase), AESUtil.DefaultPBKDF2Iterations);
                                     } catch (Exception e) {
                                         Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     } finally {

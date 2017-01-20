@@ -124,6 +124,10 @@ public class HD_Wallet {
         return mAccounts.get(accountId);
     }
 
+    public HD_Account getAccountAt(int accountIdx) {
+        return new HD_Account(mParams, mRoot, "", accountIdx);
+    }
+
     public void addAccount() {
         String strName = String.format("Account %d", mAccounts.size());
         mAccounts.add(new HD_Account(mParams, mRoot, strName, mAccounts.size()));
@@ -138,62 +142,6 @@ public class HD_Wallet {
         }
 
         return ret;
-    }
-
-    public JSONObject toJSON(Context ctx) {
-        try {
-            JSONObject wallet = new JSONObject();
-
-            if(mSeed != null) {
-                wallet.put("seed", org.spongycastle.util.encoders.Hex.toHexString(mSeed));
-                wallet.put("passphrase", strPassphrase);
-//                obj.put("mnemonic", getMnemonic());
-            }
-
-            JSONArray accts = new JSONArray();
-            for(HD_Account acct : mAccounts) {
-                accts.put(acct.toJSON());
-            }
-            wallet.put("accounts", accts);
-
-            //
-            // can remove ???
-            //
-            /*
-            obj.put("receiveIdx", mAccounts.get(0).getReceive().getAddrIdx());
-            obj.put("changeIdx", mAccounts.get(0).getChange().getAddrIdx());
-            */
-
-            JSONObject meta = new JSONObject();
-            meta.put("prev_balance", APIFactory.getInstance(ctx).getXpubBalance());
-            meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
-            meta.put("spend_type", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.SPEND_TYPE, 1));
-            meta.put("bip47", BIP47Meta.getInstance().toJSON());
-            meta.put("pin", AccessFactory.getInstance().getPIN());
-            meta.put("pin2", AccessFactory.getInstance().getPIN2());
-
-            meta.put("units", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.BTC_UNITS, 0));
-            meta.put("explorer", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
-            meta.put("trusted_no", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
-            meta.put("scramble_pin", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.SCRAMBLE_PIN, false));
-            meta.put("auto_backup", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.AUTO_BACKUP, true));
-            meta.put("remote", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.ACCEPT_REMOTE, false));
-            meta.put("use_trusted", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.TRUSTED_LOCK, false));
-            meta.put("check_sim", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CHECK_SIM, false));
-            meta.put("fiat", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT, "USD"));
-            meta.put("fiat_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
-            meta.put("fx", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
-            meta.put("fx_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
-
-            JSONObject obj = new JSONObject();
-            obj.put("wallet", wallet);
-            obj.put("meta", meta);
-
-            return obj;
-        }
-        catch(JSONException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
 }

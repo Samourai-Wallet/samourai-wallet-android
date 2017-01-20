@@ -62,6 +62,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.UnspentOutputsBundle;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -341,7 +342,7 @@ public class BIP47Activity extends Activity {
         killTimer();
 
         try {
-            HD_WalletFactory.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
+            PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
         }
         catch(Exception e) {
             ;
@@ -395,7 +396,7 @@ public class BIP47Activity extends Activity {
                         Looper.prepare();
 
                         try {
-                            HD_WalletFactory.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                            PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
                         }
                         catch(MnemonicException.MnemonicLengthException mle) {
                             mle.printStackTrace();
@@ -1072,7 +1073,7 @@ public class BIP47Activity extends Activity {
 
                     BIP47Meta.getInstance().pruneIncoming();
 
-                    HD_WalletFactory.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
+                    PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
 
                     Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                     LocalBroadcastManager.getInstance(BIP47Activity.this).sendBroadcast(intent);

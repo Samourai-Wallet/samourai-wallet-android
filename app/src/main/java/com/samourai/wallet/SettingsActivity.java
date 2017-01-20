@@ -20,10 +20,6 @@ public class SettingsActivity extends PreferenceActivity	{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            setTheme(android.R.style.Theme_Holo);
-        }
-
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings_root);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -36,6 +32,16 @@ public class SettingsActivity extends PreferenceActivity	{
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
                 intent.putExtra("branch", "prefs");
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        Preference txsPref = (Preference) findPreference("txs");
+        txsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
+                intent.putExtra("branch", "txs");
                 startActivity(intent);
                 return true;
             }

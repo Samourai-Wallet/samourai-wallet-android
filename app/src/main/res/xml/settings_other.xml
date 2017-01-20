@@ -6,6 +6,13 @@
         android:summary="@string/options_hash2"
         android:key="hash"
         />
+<!--
+    <Preference
+        android:title="@string/options_certif"
+        android:summary="@string/options_certif2"
+        android:key="certif"
+        />
+-->
     <Preference
         android:title="@string/options_version"
         android:summary="@string/about_us"

@@ -57,8 +57,8 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="16dp"
                 android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:layout_below="@+id/toField"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -148,38 +148,46 @@
                 </LinearLayout>
 
             </LinearLayout>
-
+<!--
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="16dp"
                 android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:id="@+id/obfuscationField"
                 android:layout_below="@+id/addOutput"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true">
 
-                <Switch
-                    android:id="@+id/spendType"
+                <CheckBox
+                    android:id="@+id/simple"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Obfuscation"
-                    android:layout_centerVertical="true"
-                    android:layout_below="@+id/para2"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="@color/primary_light"
-                    />
+                    android:text="@string/spend_type_1" />
 
-                <TextView
+            </LinearLayout>
+-->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:id="@+id/ricochetField"
+                android:layout_below="@+id/toField"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <Switch
+                    android:id="@+id/ricochet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/bip126"
-                    android:id="@+id/bip126"
-                    />
+                    android:text="@string/ricochet" />
 
             </LinearLayout>
 
@@ -189,25 +197,30 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="16dp"
                 android:paddingLeft="16dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 android:layout_alignParentLeft="true"
                 android:id="@+id/feeField"
-                android:layout_below="@+id/obfuscationField">
+                android:layout_below="@+id/ricochetField">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="@string/fee"
-                    android:id="@+id/textView8" />
+                    android:id="@+id/textView8"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    />
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
                     android:id="@+id/linearLayout6"
-                    android:gravity="left">
+                    android:gravity="left"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    >
 
                     <Button
                         style="?android:attr/buttonStyleSmall"

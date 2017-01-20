@@ -11,6 +11,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -111,7 +112,7 @@ public class SMSReceiver extends BroadcastReceiver {
             if(!HD_WalletFactory.getInstance(context).holding())	{
 
                 try {
-                    HD_WalletFactory.getInstance(context).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + pin));
+                    PayloadUtil.getInstance(context).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + pin));
                 }
                 catch (MnemonicException.MnemonicLengthException mle) {
                     mle.printStackTrace();

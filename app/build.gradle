@@ -7,8 +7,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 39
-        versionName "0.91"
+        versionCode 41
+        versionName "0.92.01"
         // Enabling multidex support.
         multiDexEnabled true
     }
