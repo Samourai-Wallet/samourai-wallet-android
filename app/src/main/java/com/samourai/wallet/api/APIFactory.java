@@ -457,7 +457,7 @@ public class APIFactory	{
                     for(int i = 0; i < txArray.length(); i++)  {
                         txObj = (JSONObject)txArray.get(i);
 
-                        if(!txObj.has("block_height") || (txObj.has("confirmations") && txObj.getLong("confirmations") < 1L))    {
+                        if(!txObj.has("confirmations") || (txObj.has("confirmations") && txObj.getLong("confirmations") < 1L))    {
                             return;
                         }
 
