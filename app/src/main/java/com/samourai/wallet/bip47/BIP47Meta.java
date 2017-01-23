@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BIP47Meta {
 
     public static final String strSamouraiDonationPCode = "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh";
+    public static final String strSamouraiDonationMeta = "?title=Samourai Donations&desc=Donate to help fund development of Samourai Bitcoin Wallet&user=K6tS2X8";
 
     public static final int INCOMING_LOOKAHEAD = 3;
     public static final int OUTGOING_LOOKAHEAD = 3;
