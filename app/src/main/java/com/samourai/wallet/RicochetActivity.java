@@ -46,6 +46,8 @@ public class RicochetActivity extends Activity {
 
     private final static long SLEEP_DELAY = 10L * 1000L;
 
+    private boolean broadcastOK = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,6 +186,8 @@ public class RicochetActivity extends Activity {
 
                                     if(i == (txs.length - 1))    {
 
+                                        broadcastOK = true;
+
                                         RicochetMeta.getInstance(RicochetActivity.this).setLastRicochet(jObj);
 
                                         //
@@ -268,11 +272,44 @@ public class RicochetActivity extends Activity {
                 progress.dismiss();
             }
 
-            Toast.makeText(RicochetActivity.this, R.string.ricochet_broadcast, Toast.LENGTH_SHORT).show();
+            if(broadcastOK)    {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(RicochetActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.ricochet_broadcast)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
 
-            Intent intent = new Intent(RicochetActivity.this, BalanceActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+                                Intent intent = new Intent(RicochetActivity.this, BalanceActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
+
+                            }
+                        });
+                if(!isFinishing())    {
+                    dlg.show();
+                }
+            }
+            else    {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(RicochetActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.ricochet_broadcast)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                RicochetActivity.this.recreate();
+
+                            }
+                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        });
+                if(!isFinishing())    {
+                    dlg.show();
+                }
+            }
 
         }
 
