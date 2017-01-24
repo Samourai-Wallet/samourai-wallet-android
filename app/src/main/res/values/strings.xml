@@ -339,7 +339,6 @@
     <string name="alias">Alias</string>
     <string name="label">Label</string>
     <string name="next">Next</string>
-    <string name="close">Close</string>
     <string name="confirm">Confirm</string>
     <string name="payment_code">Payment code</string>
     <string name="payment_channel_init">Notification transaction sent. Your payment channel is being created.</string>
