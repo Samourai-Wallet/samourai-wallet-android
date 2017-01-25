@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(strUri != null)    {
             intent.putExtra("uri", strUri);
-            Log.i("MainActivity", "uri to MainActivity2");
         }
         genesis = true;
         startActivity(intent);
