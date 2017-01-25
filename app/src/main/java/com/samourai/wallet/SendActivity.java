@@ -1326,8 +1326,6 @@ public class SendActivity extends Activity {
                     meta = meta.substring(1);
                 }
 
-                Log.d("SendActivity", meta);
-
                 Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
                 intent.putExtra("pcode", pcode);
                 intent.putExtra("meta", meta);
