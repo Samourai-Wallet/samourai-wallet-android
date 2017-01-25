@@ -172,9 +172,34 @@ public class BIP47Activity extends Activity {
 
                     doNotifTx(itemValue);
 
-                } else if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_SENT_NO_CFM) {
-                    Toast.makeText(BIP47Activity.this, R.string.bip47_wait_for_confirmation, Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_SENT_NO_CFM) {
+
+//                    Toast.makeText(BIP47Activity.this, R.string.bip47_wait_for_confirmation, Toast.LENGTH_SHORT).show();
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.bip47_wait_for_confirmation_or_retry)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    doNotifTx(itemValue);
+
+                                }
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            });
+                    if(!isFinishing())    {
+                        dlg.show();
+                    }
+
+
+
+                }
+                else {
 
                     AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                             .setTitle(R.string.app_name)
