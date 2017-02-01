@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.util.TimeOutUtil;
+
 public class MainActivity extends Activity {
 
     private static boolean genesis = false;
