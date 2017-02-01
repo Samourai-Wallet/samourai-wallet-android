@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.util.TimeOutUtil;
+
 public class MainActivity extends Activity {
 
     private static boolean genesis = false;
@@ -42,7 +45,6 @@ public class MainActivity extends Activity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(strUri != null)    {
             intent.putExtra("uri", strUri);
-            Log.i("MainActivity", "uri to MainActivity2");
         }
         genesis = true;
         startActivity(intent);

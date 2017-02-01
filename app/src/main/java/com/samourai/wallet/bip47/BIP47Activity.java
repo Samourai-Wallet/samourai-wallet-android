@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +44,8 @@ import org.json.JSONException;
 import org.spongycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -50,10 +53,12 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.google.common.base.Splitter;
 import com.samourai.wallet.OpCallback;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -172,9 +177,34 @@ public class BIP47Activity extends Activity {
 
                     doNotifTx(itemValue);
 
-                } else if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_SENT_NO_CFM) {
-                    Toast.makeText(BIP47Activity.this, R.string.bip47_wait_for_confirmation, Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_SENT_NO_CFM) {
+
+//                    Toast.makeText(BIP47Activity.this, R.string.bip47_wait_for_confirmation, Toast.LENGTH_SHORT).show();
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.bip47_wait_for_confirmation_or_retry)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    doNotifTx(itemValue);
+
+                                }
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            });
+                    if(!isFinishing())    {
+                        dlg.show();
+                    }
+
+
+
+                }
+                else {
 
                     AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                             .setTitle(R.string.app_name)
@@ -319,6 +349,32 @@ public class BIP47Activity extends Activity {
         listView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
 
         doTimer();
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey("pcode") && extras.containsKey("meta"))	{
+            String pcode = extras.getString("pcode");
+            String meta = extras.getString("meta");
+
+            String _meta = null;
+            try {
+                _meta = URLDecoder.decode(meta, "UTF-8");
+            }
+            catch(UnsupportedEncodingException uee) {
+                ;
+            }
+
+            // catch exception here
+            Map<String, String> map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+
+            Log.d("BIP47Activity", map.get("title"));
+
+            Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
+            intent.putExtra("pcode", pcode);
+            intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
+            startActivityForResult(intent, EDIT_PCODE);
+
+        }
+
 
     }
 

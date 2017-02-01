@@ -64,7 +64,7 @@ import java.util.Map;
 public class SendNotifTxFactory	{
 
     public static final BigInteger _bNotifTxValue = SamouraiWallet.bDust;
-    public static final BigInteger _bFee = BigInteger.valueOf(Coin.parseCoin("0.00015").longValue());
+    public static final BigInteger _bFee = BigInteger.valueOf(Coin.parseCoin("0.000225").longValue());
     public static final BigInteger _bSWFee = SamouraiWallet.bFee;
 
     public static final BigInteger _bNotifTxTotalAmount = _bFee.add(_bSWFee).add(_bNotifTxValue);

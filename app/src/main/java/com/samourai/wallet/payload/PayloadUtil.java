@@ -83,7 +83,7 @@ public class PayloadUtil	{
         return false;
     }
 
-    public void wipe() throws IOException	{
+    public synchronized void wipe() throws IOException	{
 
         BIP47Util.getInstance(context).reset();
         BIP47Meta.getInstance().clear();
@@ -192,7 +192,7 @@ public class PayloadUtil	{
         }
     }
 
-    public void saveWalletToJSON(CharSequenceX password) throws MnemonicException.MnemonicLengthException, IOException, JSONException, DecryptionException, UnsupportedEncodingException {
+    public synchronized void saveWalletToJSON(CharSequenceX password) throws MnemonicException.MnemonicLengthException, IOException, JSONException, DecryptionException, UnsupportedEncodingException {
 //        Log.i("PayloadUtil", get().toJSON().toString());
 
         // save payload
@@ -222,7 +222,7 @@ public class PayloadUtil	{
 
     }
 
-    public HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
+    public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
 
 //        Log.i("PayloadUtil", obj.toString());
 
@@ -385,7 +385,7 @@ public class PayloadUtil	{
         return hdw;
     }
 
-    public HD_Wallet restoreWalletfromJSON(CharSequenceX password) throws DecoderException, MnemonicException.MnemonicLengthException {
+    public synchronized HD_Wallet restoreWalletfromJSON(CharSequenceX password) throws DecoderException, MnemonicException.MnemonicLengthException {
 
         JSONObject obj = null;
         try {
@@ -409,7 +409,7 @@ public class PayloadUtil	{
         return restoreWalletfromJSON(obj);
     }
 
-    public boolean walletFileExists()  {
+    public synchronized boolean walletFileExists()  {
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File walletfile = new File(dir, strFilename);
         return walletfile.exists();

@@ -129,10 +129,10 @@ public class APIFactory	{
             */
 
             // use POST
-                StringBuilder args = new StringBuilder();
-                args.append("active=");
-                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                String response = WebUtil.getInstance(context).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
+            StringBuilder args = new StringBuilder();
+            args.append("active=");
+            args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+            String response = WebUtil.getInstance(context).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
 //                Log.i("APIFactory", "XPUB response:" + response);
             try {
                 jsonObject = new JSONObject(response);
@@ -326,7 +326,7 @@ public class APIFactory	{
         return false;
 
     }
-
+/*
     public JSONObject getNotifAddress(String addr) {
 
         JSONObject jsonObject  = null;
@@ -386,6 +386,7 @@ public class APIFactory	{
         }
 
     }
+*/
 
     public JSONObject getNotifTx(String hash, String addr) {
 
@@ -412,6 +413,71 @@ public class APIFactory	{
         }
 
         return jsonObject;
+    }
+
+    public JSONObject getNotifAddress(String addr) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+            StringBuilder url = new StringBuilder(WebUtil.CHAINSO_GET_RECEIVE_TX_URL);
+            url.append(addr);
+//            Log.i("APIFactory", "Notif address:" + url.toString());
+            String response = WebUtil.getInstance(null).getURL(url.toString());
+//            Log.i("APIFactory", "Notif address:" + response);
+            try {
+                jsonObject = new JSONObject(response);
+                parseNotifAddress(jsonObject, addr);
+            }
+            catch(JSONException je) {
+                je.printStackTrace();
+                jsonObject = null;
+            }
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public void parseNotifAddress(JSONObject jsonObject, String addr) throws JSONException  {
+
+        if(jsonObject != null)  {
+
+            if(jsonObject.has("status") && jsonObject.getString("status").equals("success") && jsonObject.has("data"))  {
+
+                JSONObject dataObj = jsonObject.getJSONObject("data");
+
+                if(dataObj.has("txs"))    {
+
+                    JSONArray txArray = dataObj.getJSONArray("txs");
+                    JSONObject txObj = null;
+                    for(int i = 0; i < txArray.length(); i++)  {
+                        txObj = (JSONObject)txArray.get(i);
+
+                        if(!txObj.has("confirmations") || (txObj.has("confirmations") && txObj.getLong("confirmations") < 1L))    {
+                            return;
+                        }
+
+                        String hash = null;
+
+                        if(txObj.has("txid"))  {
+                            hash = (String)txObj.get("txid");
+                            if(BIP47Meta.getInstance().getIncomingStatus(hash) == null)    {
+                                getNotifTx(hash, addr);
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
     }
 
     public void parseNotifTx(JSONObject jsonObject, String addr, String hash) throws JSONException  {

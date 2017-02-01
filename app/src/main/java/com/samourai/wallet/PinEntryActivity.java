@@ -88,7 +88,6 @@ public class PinEntryActivity extends Activity {
         strUri = PrefsUtil.getInstance(PinEntryActivity.this).getValue("SCHEMED_URI", "");
         if(strUri.length() > 0)    {
             PrefsUtil.getInstance(PinEntryActivity.this).setValue("SCHEMED_URI", "");
-            Log.i("PinEntryActivity", strUri);
         }
         else{
             strUri = null;

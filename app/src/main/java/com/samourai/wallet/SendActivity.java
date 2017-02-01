@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -256,7 +257,7 @@ public class SendActivity extends Activity {
 //                                    Toast.makeText(SendActivity.this, BIP47Meta.getInstance().getDisplayLabel(entries.get(which)), Toast.LENGTH_SHORT).show();
 //                                    Toast.makeText(SendActivity.this, entries.get(which), Toast.LENGTH_SHORT).show();
 
-                                    processPCode(entries.get(which));
+                                    processPCode(entries.get(which), null);
 
                                 }
                             });
@@ -461,6 +462,7 @@ public class SendActivity extends Activity {
         SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
         if(SPEND_TYPE > SPEND_BIP126)    {
             SPEND_TYPE = SPEND_BIP126;
+            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
         }
 
         swRicochet = (Switch)findViewById(R.id.ricochet);
@@ -482,7 +484,12 @@ public class SendActivity extends Activity {
 
                                         dialog.dismiss();
 
+//                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
+//                                        startActivity(intent);
+
                                         Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
+                                        intent.putExtra("pcode", BIP47Meta.strSamouraiDonationPCode);
+                                        intent.putExtra("meta", BIP47Meta.strSamouraiDonationMeta);
                                         startActivity(intent);
 
                                     }
@@ -1109,7 +1116,7 @@ public class SendActivity extends Activity {
                 processScan(strUri);
             }
             if(strPCode != null && strPCode.length() > 0)    {
-                processPCode(strPCode);
+                processPCode(strPCode, null);
             }
         }
 
@@ -1229,16 +1236,8 @@ public class SendActivity extends Activity {
     private void processScan(String data) {
 
         if(FormatsUtil.getInstance().isValidPaymentCode(data))	{
-            processPCode(data);
+            processPCode(data, null);
             return;
-        }
-
-        if(data.indexOf("?") != -1) {
-            String pcode = data.substring(0, data.indexOf("?"));
-            if(FormatsUtil.getInstance().isValidPaymentCode(pcode)) {
-                processPCode(data);
-                return;
-            }
         }
 
         if(FormatsUtil.getInstance().isBitcoinUri(data))	{
@@ -1286,6 +1285,15 @@ public class SendActivity extends Activity {
         else if(FormatsUtil.getInstance().isValidBitcoinAddress(data))	{
             edAddress.setText(data);
         }
+        else if(data.indexOf("?") != -1)   {
+            String pcode = data.substring(0, data.indexOf("?"));
+            if(pcode.startsWith("bitcoin:"))    {
+                pcode = pcode.substring(8);
+            }
+            if(FormatsUtil.getInstance().isValidPaymentCode(pcode)) {
+                processPCode(pcode, data.substring(data.indexOf("?")));
+            }
+        }
         else	{
             Toast.makeText(SendActivity.this, R.string.scan_error, Toast.LENGTH_SHORT).show();
         }
@@ -1293,18 +1301,18 @@ public class SendActivity extends Activity {
         validateSpend();
     }
 
-    private void processPCode(String data) {
+    private void processPCode(String pcode, String meta) {
 
-        if(FormatsUtil.getInstance().isValidPaymentCode(data))	{
+        if(FormatsUtil.getInstance().isValidPaymentCode(pcode))	{
 
-            if(BIP47Meta.getInstance().getOutgoingStatus(data) == BIP47Meta.STATUS_SENT_CFM)    {
+            if(BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_CFM)    {
                 try {
-                    PaymentCode pcode = new PaymentCode(data);
-                    PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(data));
+                    PaymentCode _pcode = new PaymentCode(pcode);
+                    PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(_pcode, BIP47Meta.getInstance().getOutgoingIdx(pcode));
 
                     strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
-                    strPCode = pcode.toString();
-                    edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(pcode.toString()));
+                    strPCode = _pcode.toString();
+                    edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     edAddress.setEnabled(false);
                 }
                 catch(Exception e) {
@@ -1312,7 +1320,16 @@ public class SendActivity extends Activity {
                 }
             }
             else    {
-                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
+
+                if(meta.startsWith("?") && meta.length() > 1)    {
+                    meta = meta.substring(1);
+                }
+
+                Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
+                intent.putExtra("pcode", pcode);
+                intent.putExtra("meta", meta);
+                startActivity(intent);
             }
 
         }
