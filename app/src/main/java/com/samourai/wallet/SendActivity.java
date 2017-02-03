@@ -745,11 +745,13 @@ public class SendActivity extends Activity {
 
                     List<UTXO> _utxos = utxos;
 
-                    Collections.shuffle(_utxos);
+                    //Collections.shuffle(_utxos);
+                    // sort in descending order by value
+                    Collections.sort(_utxos, new UTXO.UTXOComparator());
                     // hetero
                     pair = SendFactory.getInstance(SendActivity.this).heterogeneous(_utxos, BigInteger.valueOf(amount), address);
                     if(pair == null)    {
-                        Collections.sort(_utxos, new UTXO.UTXOComparator());
+                        //Collections.sort(_utxos, new UTXO.UTXOComparator());
                         // alt
                         pair = SendFactory.getInstance(SendActivity.this).altHeterogeneous(_utxos, BigInteger.valueOf(amount), address);
                     }
@@ -1150,6 +1152,7 @@ public class SendActivity extends Activity {
         menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_utxo).setVisible(false);
         menu.findItem(R.id.action_tor).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
