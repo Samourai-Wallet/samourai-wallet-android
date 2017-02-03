@@ -34,6 +34,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         />
+    <item android:id="@+id/action_utxo"
+        android:title="@string/options_utxo"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
     <item android:id="@+id/action_ricochet"
         android:title="@string/action_ricochet"
         android:orderInCategory="100"

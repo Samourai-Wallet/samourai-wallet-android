@@ -94,6 +94,7 @@
     <string name="options_txs2">Transaction settings.</string>
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
+    <string name="options_utxo">Show unspent outputs</string>
 
     <string name="select_currency">Select currency</string>
 
@@ -406,5 +407,7 @@
     <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
     <string name="no_ricochet_display">There is no Ricochet script to display.</string>
     <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
+
+    <string name="utxos">Unspent outputs</string>
 
 </resources>
