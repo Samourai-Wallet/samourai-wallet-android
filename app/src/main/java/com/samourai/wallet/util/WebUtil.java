@@ -50,6 +50,8 @@ public class WebUtil	{
 
     public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";
 
+    public static final String PAYMENTCODE_IO_SEARCH = "https://paymentcode.io/api/v1/search/";
+
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;
 
