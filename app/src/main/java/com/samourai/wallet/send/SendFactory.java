@@ -740,7 +740,7 @@ public class SendFactory	{
         return null;
     }
 
-    private class BIP69InputComparator implements Comparator<MyTransactionInput> {
+    public static class BIP69InputComparator implements Comparator<MyTransactionInput> {
 
         public int compare(MyTransactionInput i1, MyTransactionInput i2) {
 
@@ -785,7 +785,7 @@ public class SendFactory	{
 
     }
 
-    private class BIP69OutputComparator implements Comparator<TransactionOutput> {
+    public static class BIP69OutputComparator implements Comparator<TransactionOutput> {
 
         public int compare(TransactionOutput o1, TransactionOutput o2) {
 
