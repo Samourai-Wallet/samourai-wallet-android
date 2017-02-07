@@ -1325,13 +1325,15 @@ public class SendActivity extends Activity {
             else    {
 //                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
 
-                if(meta.startsWith("?") && meta.length() > 1)    {
+                if(meta != null && meta.startsWith("?") && meta.length() > 1)    {
                     meta = meta.substring(1);
                 }
 
                 Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
                 intent.putExtra("pcode", pcode);
-                intent.putExtra("meta", meta);
+                if(meta != null && meta.length() > 0)    {
+                    intent.putExtra("meta", meta);
+                }
                 startActivity(intent);
             }
 
