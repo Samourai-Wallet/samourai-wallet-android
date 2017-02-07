@@ -1289,6 +1289,7 @@ public class SendActivity extends Activity {
             edAddress.setText(data);
         }
         else if(data.indexOf("?") != -1)   {
+
             String pcode = data.substring(0, data.indexOf("?"));
             if(pcode.startsWith("bitcoin:"))    {
                 pcode = pcode.substring(8);

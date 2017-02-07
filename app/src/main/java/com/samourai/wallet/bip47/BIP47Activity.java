@@ -376,25 +376,32 @@ public class BIP47Activity extends Activity {
         doTimer();
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.containsKey("pcode") && extras.containsKey("meta"))	{
+        if(extras != null && extras.containsKey("pcode"))	{
             String pcode = extras.getString("pcode");
-            String meta = extras.getString("meta");
+            String meta = null;
+            if(extras.containsKey("meta"))    {
+                meta = extras.getString("meta");
+            }
 
             String _meta = null;
             try {
-                _meta = URLDecoder.decode(meta, "UTF-8");
+                Map<String, String> map = new HashMap<String,String>();
+                if(meta != null && meta.length() > 0)    {
+                    _meta = URLDecoder.decode(meta, "UTF-8");
+                    map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                }
+
+                Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
+                intent.putExtra("pcode", pcode);
+                intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
+                startActivityForResult(intent, EDIT_PCODE);
             }
             catch(UnsupportedEncodingException uee) {
                 ;
             }
-
-            // catch exception here
-            Map<String, String> map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
-
-            Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
-            intent.putExtra("pcode", pcode);
-            intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
-            startActivityForResult(intent, EDIT_PCODE);
+            catch(Exception e) {
+                ;
+            }
 
         }
 
@@ -567,6 +574,8 @@ public class BIP47Activity extends Activity {
     }
 
     private void processScan(String data) {
+
+        Log.d("BIP47Activity", "processScan:" + data);
 
         if(data.startsWith("bitcoin:") && data.length() > 8)    {
             data = data.substring(8);
