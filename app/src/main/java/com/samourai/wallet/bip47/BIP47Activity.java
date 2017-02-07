@@ -575,8 +575,6 @@ public class BIP47Activity extends Activity {
 
     private void processScan(String data) {
 
-        Log.d("BIP47Activity", "processScan:" + data);
-
         if(data.startsWith("bitcoin:") && data.length() > 8)    {
             data = data.substring(8);
         }
@@ -1537,6 +1535,7 @@ public class BIP47Activity extends Activity {
                     if(obj.has("user-avatar"))    {
                         String avatarUrl = obj.getString("user-avatar");
                         meta[i] = avatarUrl;
+                        publishProgress();
                     }
 
                 }
@@ -1551,6 +1550,12 @@ public class BIP47Activity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             adapter.notifyDataSetChanged();
+        }
+
+        protected void onProgressUpdate(String... progress) {
+
+            adapter.notifyDataSetChanged();
+
         }
 
     }
