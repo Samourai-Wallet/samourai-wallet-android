@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -36,15 +38,22 @@ import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
 import net.sourceforge.zbar.Symbol;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -52,6 +61,8 @@ import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,15 +71,25 @@ import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
 import com.samourai.wallet.OpCallback;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.bip47.rpc.SecretPoint;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionInput;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UnspentOutputsBundle;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
@@ -80,6 +101,9 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.util.WebUtil;
+import com.squareup.picasso.Picasso;
 
 public class BIP47Activity extends Activity {
 
@@ -90,6 +114,7 @@ public class BIP47Activity extends Activity {
     private SwipeMenuListView listView = null;
     BIP47EntryAdapter adapter = null;
     private String[] pcodes = null;
+    private String[] meta = null;
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
@@ -366,15 +391,12 @@ public class BIP47Activity extends Activity {
             // catch exception here
             Map<String, String> map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
 
-            Log.d("BIP47Activity", map.get("title"));
-
             Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
             intent.putExtra("pcode", pcode);
             intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
             startActivityForResult(intent, EDIT_PCODE);
 
         }
-
 
     }
 
@@ -389,6 +411,8 @@ public class BIP47Activity extends Activity {
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        new PaymentCodeMetaTask().execute("");
 
     }
 
@@ -928,7 +952,7 @@ public class BIP47Activity extends Activity {
 
             String strLabel = BIP47Meta.getInstance().getDisplayLabel(pcodes[position]);
 
-            TextView tvInitial = (TextView)view.findViewById(R.id.Initial);
+            final TextView tvInitial = (TextView)view.findViewById(R.id.Initial);
             tvInitial.setText(strLabel.substring(0, 1).toUpperCase());
             if(position % 3 == 0)    {
                 tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
@@ -938,6 +962,15 @@ public class BIP47Activity extends Activity {
             }
             else {
                 tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
+            }
+
+            final ImageView ivAvatar = (ImageView)view.findViewById(R.id.Avatar);
+            ivAvatar.setVisibility(View.GONE);
+
+            if(meta[position] != null && meta[position].length() > 0)    {
+                Picasso.with(BIP47Activity.this).load(meta[position]).into(ivAvatar);
+                tvInitial.setVisibility(View.GONE);
+                ivAvatar.setVisibility(View.VISIBLE);
             }
 
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
@@ -1196,6 +1229,44 @@ public class BIP47Activity extends Activity {
 
             }
         }).start();
+
+    }
+
+    private class PaymentCodeMetaTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            meta = new String[pcodes.length];
+        }
+
+        @Override
+        protected String doInBackground(String... s) {
+
+            for(int i = 0; i < pcodes.length; i++)  {
+                String result = null;
+                String url = WebUtil.PAYMENTCODE_IO_SEARCH + pcodes[i];
+                try {
+                    result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
+
+                    JSONObject obj = new JSONObject(result);
+                    if(obj.has("user-avatar"))    {
+                        String avatarUrl = obj.getString("user-avatar");
+                        meta[i] = avatarUrl;
+                    }
+
+                }
+                catch(Exception e) {
+                    ;
+                }
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            adapter.notifyDataSetChanged();
+        }
 
     }
 

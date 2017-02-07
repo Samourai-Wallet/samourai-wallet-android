@@ -199,10 +199,8 @@ public class BIP47Add extends Activity {
 
             String result = null;
             String url = WebUtil.PAYMENTCODE_IO_SEARCH + s[0];
-            Log.d("BIP47Add", url);
             try {
                 result = WebUtil.getInstance(BIP47Add.this).getURL(url);
-                Log.d("BIP47Add", result);
 
                 JSONObject obj = new JSONObject(result);
                 if(obj.has("title"))    {
