@@ -227,7 +227,7 @@ public class SendFactory	{
                 throw new Exception(context.getString(R.string.dust_amount));
             }
 */
-            if(value == null || value.compareTo(BigInteger.ZERO) <= 0) {
+            if(value == null || (value.compareTo(BigInteger.ZERO) <= 0 && !FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))) {
                 throw new Exception(context.getString(R.string.invalid_amount));
             }
 
