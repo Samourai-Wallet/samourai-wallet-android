@@ -410,4 +410,10 @@
 
     <string name="utxos">Unspent outputs</string>
 
+    <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
+    <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
+    <string name="bip47_bad_outpoint">Bad outpoint used for masking payment code</string>
+
+    <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
+
 </resources>
