@@ -234,7 +234,7 @@ public class SendFactory	{
             TransactionOutput output = null;
             Script toOutputScript = null;
             if(!FormatsUtil.getInstance().isValidBitcoinAddress(toAddress) && FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))    {
-                toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(toAddress.getBytes()).build();
+                toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(Hex.decode(toAddress)).build();
                 output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(0L), toOutputScript.getProgram());
             }
             else    {
