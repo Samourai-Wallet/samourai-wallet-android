@@ -38,6 +38,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
@@ -76,6 +77,7 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
 
 public class SendActivity extends Activity {
@@ -981,11 +983,17 @@ public class SendActivity extends Activity {
                                             response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
 //                                            Log.d("SendActivity", "pushTx:" + response);
 
-                                            org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("status"))    {
-                                                if(jsonObject.getString("status").equals("ok"))    {
-                                                    isOK = true;
+                                            if(response != null)    {
+                                                org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if(jsonObject.has("status"))    {
+                                                    if(jsonObject.getString("status").equals("ok"))    {
+                                                        isOK = true;
+                                                    }
                                                 }
+                                            }
+                                            else    {
+                                                Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                                return;
                                             }
 
                                             if(isOK)    {
@@ -1045,9 +1053,17 @@ public class SendActivity extends Activity {
                                                 HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
                                             }
                                         }
-                                        catch(Exception e) {
-//                                            Log.d("SendActivity", e.getMessage());
-                                            Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        catch(JSONException je) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(DecoderException de) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(IOException ioe) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                         finally {
                                             SendActivity.this.runOnUiThread(new Runnable() {
