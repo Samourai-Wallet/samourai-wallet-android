@@ -88,7 +88,6 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.send.UnspentOutputsBundle;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -225,8 +224,6 @@ public class BIP47Activity extends Activity {
                     if(!isFinishing())    {
                         dlg.show();
                     }
-
-
 
                 }
                 else {
@@ -940,8 +937,7 @@ public class BIP47Activity extends Activity {
         //
         // total amount to spend including fee
         //
-        amount += fee.longValue();
-        if(amount >= balance)    {
+        if((amount + fee.longValue()) >= balance)    {
             Toast.makeText(BIP47Activity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
         }
 
@@ -997,18 +993,15 @@ public class BIP47Activity extends Activity {
         }
 
         if(outPoint == null)    {
-
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_identify_outpoint, Toast.LENGTH_SHORT).show();
             return;
         }
 
         byte[] op_return = null;
+        //
+        // get private key corresponding to outpoint
+        //
         try {
-            //
-            // get private key corresponding to outpoint
-            //
             Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
             String address = inputScript.getToAddress(MainNetParams.get()).toString();
             ECKey ecKey = null;
@@ -1032,12 +1025,11 @@ public class BIP47Activity extends Activity {
             // use outpoint for payload masking
             //
             byte[] privkey = ecKey.getPrivKeyBytes();
-//        byte[] pubkey = notifPcode.notificationAddress().getPubKey();
             byte[] pubkey = payment_code.notificationAddress().getPubKey();
             byte[] outpoint = outPoint.bitcoinSerialize();
 //                Log.i("BIP47Activity", "outpoint:" + Hex.toHexString(outpoint));
 //                Log.i("BIP47Activity", "payer shared secret:" + Hex.toHexString(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes()));
-            byte[] mask = payment_code.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outpoint);
+            byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outpoint);
 //                Log.i("BIP47Activity", "mask:" + Hex.toHexString(mask));
 //                Log.i("BIP47Activity", "mask length:" + mask.length);
 //                Log.i("BIP47Activity", "payload0:" + Hex.toHexString(BIP47Util.getInstance(context).getPaymentCode().getPayload()));
@@ -1045,33 +1037,23 @@ public class BIP47Activity extends Activity {
 //                Log.i("BIP47Activity", "payload1:" + Hex.toHexString(op_return));
         }
         catch(NotSecp256k1Exception ns) {
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, ns.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
         catch(InvalidKeyException ike) {
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, ike.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
         catch(InvalidKeySpecException ikse) {
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, ikse.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
         catch(NoSuchAlgorithmException nsae) {
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, nsae.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
         catch(NoSuchProviderException nspe) {
-            //
-            // error toast here
-            //
+            Toast.makeText(BIP47Activity.this, nspe.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1080,30 +1062,40 @@ public class BIP47Activity extends Activity {
         receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
         receivers.put(SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
-        final long change = totalValueSelected - amount;
+        final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
             try {
                 String change_address = HD_WalletFactory.getInstance(BIP47Activity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(BIP47Activity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
                 receivers.put(change_address, BigInteger.valueOf(change));
             }
             catch(IOException ioe) {
-                //
-                // error toast here
-                //
+                Toast.makeText(BIP47Activity.this, ioe.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
             catch(MnemonicException.MnemonicLengthException mle) {
-                //
-                // error toast here
-                //
+                Toast.makeText(BIP47Activity.this, mle.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
+        Log.d("BIP47Activity", "outpoints:" + outpoints.size());
+        Log.d("BIP47Activity", "totalValueSelected:" + BigInteger.valueOf(totalValueSelected).toString());
+        Log.d("BIP47Activity", "amount:" + BigInteger.valueOf(amount).toString());
+        Log.d("BIP47Activity", "change:" + BigInteger.valueOf(change).toString());
+        Log.d("BIP47Activity", "fee:" + fee.toString());
+
+        if(change < 0L)    {
+            Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final MyTransactionOutPoint _outPoint = outPoint;
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
         String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " BTC ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
+        strNotifTxMsg += "\n";
+        strNotifTxMsg += "(" + MonetaryUtil.getInstance().getBTCFormat().format(((double) fee.longValue()) / 1e8) + " BTC miner's fee).";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                 .setTitle(R.string.bip47_setup4_title)
@@ -1118,27 +1110,45 @@ public class BIP47Activity extends Activity {
                                 Looper.prepare();
 
                                 Transaction tx = SendFactory.getInstance(BIP47Activity.this).makeTransaction(0, outpoints, receivers);
-
                                 if(tx != null)    {
+
+                                    String input0hash = tx.getInput(0L).getOutpoint().getHash().toString();
+                                    Log.d("BIP47Activity", "input0 hash:" + input0hash);
+                                    Log.d("BIP47Activity", "_outPoint hash:" + _outPoint.getTxHash().toString());
+                                    int input0index = (int)tx.getInput(0L).getOutpoint().getIndex();
+                                    Log.d("BIP47Activity", "input0 index:" + input0index);
+                                    Log.d("BIP47Activity", "_outPoint index:" + _outPoint.getTxOutputN());
+                                    if(!input0hash.equals(_outPoint.getTxHash().toString()) || input0index != _outPoint.getTxOutputN())    {
+                                        Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
                                     tx = SendFactory.getInstance(BIP47Activity.this).signTransaction(tx);
                                     final String hexTx = new String(org.spongycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
-//                                Log.d("SendActivity", hexTx);
+                                    Log.d("SendActivity", tx.getHashAsString());
+                                    Log.d("SendActivity", hexTx);
 
                                     boolean isOK = false;
                                     String response = null;
-
                                     try {
                                         response = PushTx.getInstance(BIP47Activity.this).samourai(hexTx);
-//                                            Log.d("SendActivity", "pushTx:" + response);
+                                        Log.d("SendActivity", "pushTx:" + response);
 
-                                        org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                        if(jsonObject.has("status"))    {
-                                            if(jsonObject.getString("status").equals("ok"))    {
-                                                isOK = true;
+                                        if(response != null)    {
+                                            org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                                            if(jsonObject.has("status"))    {
+                                                if(jsonObject.getString("status").equals("ok"))    {
+                                                    isOK = true;
+                                                }
                                             }
+                                        }
+                                        else    {
+                                            Toast.makeText(BIP47Activity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
 
                                         if(isOK)    {
+                                            Toast.makeText(BIP47Activity.this, R.string.payment_channel_init, Toast.LENGTH_SHORT).show();
                                             //
                                             // set outgoing index for payment code to 0
                                             //
@@ -1164,7 +1174,8 @@ public class BIP47Activity extends Activity {
                                                 }
                                             }
 
-                                            Toast.makeText(BIP47Activity.this, R.string.payment_channel_init, Toast.LENGTH_SHORT).show();
+                                            PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
+
                                         }
                                         else    {
                                             Toast.makeText(BIP47Activity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
@@ -1172,9 +1183,23 @@ public class BIP47Activity extends Activity {
 
                                     }
                                     catch(JSONException je) {
-                                        //
-                                        // error toast here
-                                        //
+                                        Toast.makeText(BIP47Activity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    catch(MnemonicException.MnemonicLengthException mle) {
+                                        Toast.makeText(BIP47Activity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    catch(DecoderException de) {
+                                        Toast.makeText(BIP47Activity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    catch(IOException ioe) {
+                                        Toast.makeText(BIP47Activity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    catch(DecryptionException de) {
+                                        Toast.makeText(BIP47Activity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
                                         return;
                                     }
 
