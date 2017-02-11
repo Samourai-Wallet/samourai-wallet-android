@@ -130,6 +130,29 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference trustedNodePref = (Preference) findPreference("trustedNode");
+                trustedNodePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getTrustedNode();
+                        return true;
+                    }
+                });
+
+                final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
+                cbPref8.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref8.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
+                        }
+
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("stealth"))   {
                 addPreferencesFromResource(R.xml.settings_stealth);
@@ -1040,6 +1063,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         }
                 ).show();
 
+    }
+
+    private void getTrustedNode()	{
+        ;
     }
 
 }

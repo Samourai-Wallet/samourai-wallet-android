@@ -24,6 +24,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.TrustedNodeUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.bitcoinj.core.NetworkParameters;
@@ -161,6 +162,7 @@ public class PayloadUtil	{
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
+            meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -174,6 +176,7 @@ public class PayloadUtil	{
             meta.put("fiat_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
+            meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -308,6 +311,9 @@ public class PayloadUtil	{
                 if(meta.has("ricochet")) {
                     RicochetMeta.getInstance(context).fromJSON((JSONObject) meta.get("ricochet"));
                 }
+                if(meta.has("trusted_node")) {
+                    TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
+                }
 
                 if(meta.has("units")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BTC_UNITS, meta.getInt("units"));
@@ -360,6 +366,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("fx_sel")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, meta.getInt("fx_sel"));
+                }
+                if(meta.has("use_trusted_node")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
                 }
 
                 /*

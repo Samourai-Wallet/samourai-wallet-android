@@ -95,6 +95,10 @@
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
+    <string name="options_trusted_node">Trusted node</string>
+    <string name="options_trusted_node2">Specify your own trusted node for broadcasting transactions.</string>
+    <string name="options_use_trusted_node">Use trusted node</string>
+    <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
 
     <string name="select_currency">Select currency</string>
 
