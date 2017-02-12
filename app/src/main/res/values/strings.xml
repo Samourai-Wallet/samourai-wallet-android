@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.92.04</string>
+    <string name="version_name">0.92.10</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -94,6 +94,7 @@
     <string name="options_txs2">Transaction settings.</string>
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
+    <string name="options_utxo">Show unspent outputs</string>
 
     <string name="select_currency">Select currency</string>
 
@@ -406,5 +407,13 @@
     <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
     <string name="no_ricochet_display">There is no Ricochet script to display.</string>
     <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
+
+    <string name="utxos">Unspent outputs</string>
+
+    <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
+    <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
+    <string name="bip47_bad_outpoint">Bad outpoint used for masking payment code</string>
+
+    <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
 
 </resources>

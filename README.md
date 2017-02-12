@@ -2,7 +2,7 @@
 
 ### Build:
 
-Import as Android Studio project. Should build "as is".
+Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
 
 ### BIP44:
 

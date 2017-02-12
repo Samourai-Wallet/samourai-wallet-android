@@ -38,6 +38,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
@@ -76,6 +77,7 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
 
 public class SendActivity extends Activity {
@@ -745,11 +747,13 @@ public class SendActivity extends Activity {
 
                     List<UTXO> _utxos = utxos;
 
-                    Collections.shuffle(_utxos);
+                    //Collections.shuffle(_utxos);
+                    // sort in descending order by value
+                    Collections.sort(_utxos, new UTXO.UTXOComparator());
                     // hetero
                     pair = SendFactory.getInstance(SendActivity.this).heterogeneous(_utxos, BigInteger.valueOf(amount), address);
                     if(pair == null)    {
-                        Collections.sort(_utxos, new UTXO.UTXOComparator());
+                        //Collections.sort(_utxos, new UTXO.UTXOComparator());
                         // alt
                         pair = SendFactory.getInstance(SendActivity.this).altHeterogeneous(_utxos, BigInteger.valueOf(amount), address);
                     }
@@ -979,11 +983,17 @@ public class SendActivity extends Activity {
                                             response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
 //                                            Log.d("SendActivity", "pushTx:" + response);
 
-                                            org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("status"))    {
-                                                if(jsonObject.getString("status").equals("ok"))    {
-                                                    isOK = true;
+                                            if(response != null)    {
+                                                org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if(jsonObject.has("status"))    {
+                                                    if(jsonObject.getString("status").equals("ok"))    {
+                                                        isOK = true;
+                                                    }
                                                 }
+                                            }
+                                            else    {
+                                                Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                                return;
                                             }
 
                                             if(isOK)    {
@@ -1043,9 +1053,17 @@ public class SendActivity extends Activity {
                                                 HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
                                             }
                                         }
-                                        catch(Exception e) {
-//                                            Log.d("SendActivity", e.getMessage());
-                                            Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        catch(JSONException je) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(DecoderException de) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(IOException ioe) {
+                                            Toast.makeText(SendActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                         finally {
                                             SendActivity.this.runOnUiThread(new Runnable() {
@@ -1150,6 +1168,7 @@ public class SendActivity extends Activity {
         menu.findItem(R.id.action_backup).setVisible(false);
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
+        menu.findItem(R.id.action_utxo).setVisible(false);
         menu.findItem(R.id.action_tor).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
@@ -1286,6 +1305,7 @@ public class SendActivity extends Activity {
             edAddress.setText(data);
         }
         else if(data.indexOf("?") != -1)   {
+
             String pcode = data.substring(0, data.indexOf("?"));
             if(pcode.startsWith("bitcoin:"))    {
                 pcode = pcode.substring(8);
@@ -1322,13 +1342,15 @@ public class SendActivity extends Activity {
             else    {
 //                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
 
-                if(meta.startsWith("?") && meta.length() > 1)    {
+                if(meta != null && meta.startsWith("?") && meta.length() > 1)    {
                     meta = meta.substring(1);
                 }
 
                 Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
                 intent.putExtra("pcode", pcode);
-                intent.putExtra("meta", meta);
+                if(meta != null && meta.length() > 0)    {
+                    intent.putExtra("meta", meta);
+                }
                 startActivity(intent);
             }
 

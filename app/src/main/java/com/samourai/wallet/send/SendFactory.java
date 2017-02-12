@@ -227,14 +227,14 @@ public class SendFactory	{
                 throw new Exception(context.getString(R.string.dust_amount));
             }
 */
-            if(value == null || value.compareTo(BigInteger.ZERO) <= 0) {
+            if(value == null || (value.compareTo(BigInteger.ZERO) <= 0 && !FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))) {
                 throw new Exception(context.getString(R.string.invalid_amount));
             }
 
             TransactionOutput output = null;
             Script toOutputScript = null;
             if(!FormatsUtil.getInstance().isValidBitcoinAddress(toAddress) && FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))    {
-                toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(toAddress.getBytes()).build();
+                toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(Hex.decode(toAddress)).build();
                 output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(0L), toOutputScript.getProgram());
             }
             else    {
@@ -740,7 +740,7 @@ public class SendFactory	{
         return null;
     }
 
-    private class BIP69InputComparator implements Comparator<MyTransactionInput> {
+    public static class BIP69InputComparator implements Comparator<MyTransactionInput> {
 
         public int compare(MyTransactionInput i1, MyTransactionInput i2) {
 
@@ -785,7 +785,7 @@ public class SendFactory	{
 
     }
 
-    private class BIP69OutputComparator implements Comparator<TransactionOutput> {
+    public static class BIP69OutputComparator implements Comparator<TransactionOutput> {
 
         public int compare(TransactionOutput o1, TransactionOutput o2) {
 

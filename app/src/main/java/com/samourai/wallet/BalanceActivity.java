@@ -421,6 +421,9 @@ public class BalanceActivity extends Activity {
         else if (id == R.id.action_sweep) {
             doSweep();
         }
+        else if (id == R.id.action_utxo) {
+            doUTXO();
+        }
         else if (id == R.id.action_tor) {
 
             if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
@@ -672,6 +675,11 @@ public class BalanceActivity extends Activity {
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void doUTXO()	{
+        Intent intent = new Intent(BalanceActivity.this, UTXOActivity.class);
         startActivity(intent);
     }
 
@@ -1287,7 +1295,7 @@ public class BalanceActivity extends Activity {
 
         if(strHash != null) {
             int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerUrls()[sel];
+            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strHash));
             startActivity(browserIntent);

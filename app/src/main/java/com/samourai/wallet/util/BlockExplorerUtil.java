@@ -3,7 +3,8 @@ package com.samourai.wallet.util;
 public class BlockExplorerUtil {
 
     private static CharSequence[] blockExplorers = { "Blocktrail", "Blockchain", "Blockr.io", "SoChain", "Blockexplorer.com" };
-    private static CharSequence[] blockExplorerUrls = { "https://www.blocktrail.com/BTC/tx/", "https://blockchain.info/tx/", "https://btc.blockr.io/tx/info/", "https://chain.so/tx/BTC/", "https://blockexplorer.com/tx/" };
+    private static CharSequence[] blockExplorerTxUrls = { "https://www.blocktrail.com/BTC/tx/", "https://blockchain.info/tx/", "https://btc.blockr.io/tx/info/", "https://chain.so/tx/BTC/", "https://blockexplorer.com/tx/" };
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.blocktrail.com/BTC/address/", "https://blockchain.info/address/", "https://btc.blockr.io/address/info/", "https://chain.so/address/BTC/", "https://blockexplorer.com/address/" };
 
     public static final int SOCHAIN = 0;
     public static final int BLOCKTRAIL = 1;
@@ -28,8 +29,12 @@ public class BlockExplorerUtil {
         return blockExplorers;
     }
 
-    public CharSequence[] getBlockExplorerUrls() {
-        return blockExplorerUrls;
+    public CharSequence[] getBlockExplorerTxUrls() {
+        return blockExplorerTxUrls;
+    }
+
+    public CharSequence[] getBlockExplorerAddressUrls() {
+        return blockExplorerAddressUrls;
     }
 
 }

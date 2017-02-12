@@ -29,6 +29,16 @@
             android:textAlignment="gravity"
             />
 
+        <ImageView
+            android:id="@+id/Avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
+            android:scaleType="fitXY"
+            />
+
     </LinearLayout>
 
     <LinearLayout

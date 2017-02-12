@@ -192,8 +192,8 @@ public class APIFactory	{
                     addrObj = (JSONObject)addressesArray.get(i);
                     if(addrObj.has("final_balance") && addrObj.has("address"))  {
                         xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
-                        AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.getInt("account_index"));
-                        AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.getInt("change_index"));
+                        AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                        AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                     }
                 }
             }

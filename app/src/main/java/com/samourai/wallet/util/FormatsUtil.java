@@ -211,7 +211,7 @@ public class FormatsUtil {
 
 		byte[] buf = Hex.decode(op_return);
 
-		if(buf.length == 80 && buf[0] == 0x00 && buf[1] == 0x00 && buf[2] == 0x00 && buf[3] == 0x00 && buf[4] == 0x00 && buf[5] == 0x00 && buf[6] == 0x00)    {
+		if(buf.length == 80 && buf[0] == 0x01 && buf[1] == 0x00 && (buf[2] == 0x02 || buf[2] == 0x03))    {
 			return true;
 		}
 		else    {
