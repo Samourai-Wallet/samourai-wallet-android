@@ -13,9 +13,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-//import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,6 +27,7 @@ public class JSONRPC {
     private static final String COMMAND_GET_BALANCE = "getbalance";
     private static final String COMMAND_GET_INFO = "getinfo";
     private static final String COMMAND_GET_BLOCKCOUNT = "getblockcount";
+    private static final String COMMAND_PUSHTX = "sendrawtransaction";
 
     private String user = null;
     private CharSequenceX password = null;
@@ -145,9 +143,9 @@ public class JSONRPC {
         return ((JSONObject)json.get("result")).toString();
     }
 
-    public String getBlockCountAsString() {
+    public long getBlockCountAsLong() {
         JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKCOUNT, null);
-        return ((JSONObject)json.get("result")).toString();
+        return (long)json.get("result");
     }
 
 }
