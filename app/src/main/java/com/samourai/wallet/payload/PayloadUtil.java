@@ -24,12 +24,14 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.TrustedNodeUtil;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 
 import org.apache.commons.codec.DecoderException;
+
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
