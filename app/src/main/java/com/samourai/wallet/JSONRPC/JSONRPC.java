@@ -1,7 +1,5 @@
 package com.samourai.wallet.JSONRPC;
 
-import com.samourai.wallet.util.CharSequenceX;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +20,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.samourai.wallet.util.CharSequenceX;
+
 public class JSONRPC {
 
     private static final String COMMAND_GET_BALANCE = "getbalance";
@@ -32,7 +32,7 @@ public class JSONRPC {
     private String user = null;
     private CharSequenceX password = null;
     private String node = null;
-    private int port = 8332;
+    private int port = TrustedNodeUtil.DEFAULT_PORT;
 
     public JSONRPC()    {
         ;

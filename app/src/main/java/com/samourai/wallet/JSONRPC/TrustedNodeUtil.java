@@ -1,9 +1,5 @@
 package com.samourai.wallet.JSONRPC;
 
-import android.content.Context;
-import android.os.Looper;
-import android.util.Log;
-
 import com.samourai.wallet.util.CharSequenceX;
 
 import org.json.JSONException;
@@ -11,8 +7,10 @@ import org.json.JSONObject;
 
 public class TrustedNodeUtil {
 
+    public static final int DEFAULT_PORT = 8332;
+
     private static String node = null;
-    private static int port = 8332;
+    private static int port = DEFAULT_PORT;
     private static String user = null;
     private static CharSequenceX password = null;
 
@@ -34,6 +32,13 @@ public class TrustedNodeUtil {
         TrustedNodeUtil.password = password;
         TrustedNodeUtil.node = node;
         TrustedNodeUtil.port = port;
+    }
+
+    public void reset() {
+        TrustedNodeUtil.user = null;
+        TrustedNodeUtil.password = null;
+        TrustedNodeUtil.node = null;
+        TrustedNodeUtil.port = TrustedNodeUtil.DEFAULT_PORT;
     }
 
     public String getNode() {
@@ -91,9 +96,13 @@ public class TrustedNodeUtil {
         JSONObject jsonPayload = new JSONObject();
         try {
 
-            jsonPayload.put("node", node);
+            if(node != null)    {
+                jsonPayload.put("node", node);
+            }
             jsonPayload.put("port", port);
-            jsonPayload.put("user", user);
+            if(user != null)    {
+                jsonPayload.put("user", user);
+            }
             if(password != null)    {
                 jsonPayload.put("password", password.toString());
             }
@@ -130,25 +139,6 @@ public class TrustedNodeUtil {
         catch(JSONException ex) {
             throw new RuntimeException(ex);
         }
-
-    }
-
-    public void getInfo(final Context context)  {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                JSONRPC jsonrpc = new JSONRPC(user, password, node, port);
-                Log.d("TrustedNodeUtil", "getinfo:" + jsonrpc.getInfoAsString());
-                Log.d("TrustedNodeUtil", "getblockcount:" + jsonrpc.getBlockCountAsLong());
-
-                Looper.loop();
-
-            }
-        }).start();
 
     }
 

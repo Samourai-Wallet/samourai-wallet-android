@@ -34,12 +34,15 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -1066,7 +1069,100 @@ public class SettingsActivity2 extends PreferenceActivity	{
     }
 
     private void getTrustedNode()	{
-        ;
+
+        final EditText edNode = new EditText(SettingsActivity2.this);
+        edNode.setHint(R.string.trusted_node_ip_hint);
+        edNode.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edNode.setText(TrustedNodeUtil.getInstance().getNode() == null ? "" : TrustedNodeUtil.getInstance().getNode());
+        final EditText edPort = new EditText(SettingsActivity2.this);
+        edPort.setHint(Integer.toString(TrustedNodeUtil.DEFAULT_PORT));
+        edPort.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_NUMBER);
+        edPort.setText(TrustedNodeUtil.getInstance().getPort() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : Integer.toString(TrustedNodeUtil.getInstance().getPort()));
+        final EditText edUser = new EditText(SettingsActivity2.this);
+        edUser.setHint(R.string.trusted_node_user_hint);
+        edUser.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edUser.setText(TrustedNodeUtil.getInstance().getUser() == null ? "" : TrustedNodeUtil.getInstance().getUser());
+        final EditText edPassword = new EditText(SettingsActivity2.this);
+        edPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        edPassword.setSingleLine(true);
+        edPassword.setText(TrustedNodeUtil.getInstance().getPassword() == null ? "" : TrustedNodeUtil.getInstance().getPassword());
+
+        LinearLayout restoreLayout = new LinearLayout(SettingsActivity2.this);
+        restoreLayout.setOrientation(LinearLayout.VERTICAL);
+        restoreLayout.addView(edNode);
+        restoreLayout.addView(edPort);
+        restoreLayout.addView(edUser);
+        restoreLayout.addView(edPassword);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.trusted_node)
+                .setView(restoreLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        final String node = edNode.getText().toString();
+                        final String port = edPort.getText().toString();
+                        final String user = edUser.getText().toString();
+                        final String password = edPassword.getText().toString();
+
+                        if(node != null && node.length() > 0 &&
+                                port != null && port.length() > 0 &&
+                                user != null && user.length() > 0 &&
+                                password != null && password.length() > 0
+                                )    {
+
+                            TrustedNodeUtil.getInstance().setParams(user, new CharSequenceX(password), node, Integer.parseInt(port));
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Looper.prepare();
+
+                                    JSONRPC jsonrpc = new JSONRPC(user, new CharSequenceX(password), node, Integer.parseInt(port));
+                                    String result = jsonrpc.getInfoAsString();
+                                    Log.d("TrustedNodeUtil", "getinfo:" + result);
+
+                                    try {
+                                        JSONObject obj = new JSONObject(result);
+                                        if(obj != null && obj.has("version"))   {
+                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getString("version"), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    catch(JSONException je) {
+                                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    Looper.loop();
+
+                                }
+                            }).start();
+
+                        }
+                        else if((node == null || node.length() == 0) &&
+                                (port == null || port.length() == 0) &&
+                                (user == null || user.length() == 0) &&
+                                (password == null || password.length() == 0))   {
+
+                            TrustedNodeUtil.getInstance().reset();
+
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
     }
 
 }
