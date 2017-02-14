@@ -16,9 +16,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.samourai.wallet.util.CharSequenceX;
 
@@ -77,22 +77,26 @@ public class JSONRPC {
         this.port = port;
     }
 
-    private org.json.simple.JSONObject invokeRPC(String id, String method, List<String> params) {
+    private JSONObject invokeRPC(String id, String method, List<String> params) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
-        org.json.simple.JSONObject json = new JSONObject();
-        json.put("id", id);
-        json.put("method", method);
-        if (null != params) {
-            JSONArray array = new JSONArray();
-            array.addAll(params);
-            json.put("params", params);
-        }
         JSONObject responseJsonObj = null;
         try {
+
+            JSONObject json = new JSONObject();
+            json.put("id", id);
+            json.put("method", method);
+            if (null != params) {
+                JSONArray array = new JSONArray();
+                for(String p : params)   {
+                    array.put(p);
+                }
+                json.put("params", params);
+            }
+
             httpclient.getCredentialsProvider().setCredentials(new AuthScope(node, port), new UsernamePasswordCredentials(user, password.toString()));
-            StringEntity myEntity = new StringEntity(json.toJSONString());
+            StringEntity myEntity = new StringEntity(json.toString());
             System.out.println(json.toString());
             HttpPost httppost = new HttpPost("http://" + node + ":" + port);
             httppost.setEntity(myEntity);
@@ -105,8 +109,9 @@ public class JSONRPC {
             if (entity != null) {
                 System.out.println("Response content length: " + entity.getContentLength());
             }
-            JSONParser parser = new JSONParser();
-            responseJsonObj = (JSONObject)parser.parse(EntityUtils.toString(entity));
+
+            responseJsonObj = new JSONObject(EntityUtils.toString(entity));
+
         }
         catch (ClientProtocolException e) {
             e.printStackTrace();
@@ -117,7 +122,7 @@ public class JSONRPC {
         catch (ParseException e) {
             e.printStackTrace();
         }
-        catch (org.json.simple.parser.ParseException e) {
+        catch (JSONException e) {
             e.printStackTrace();
         }
         finally {
@@ -130,22 +135,42 @@ public class JSONRPC {
     public Double getBalance(String account) {
         String[] params = { account };
         JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_BALANCE, Arrays.asList(params));
-        return (Double)json.get("result");
+        try {
+             return json.getDouble("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
     }
 
     public JSONObject getInfo() {
         JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
-        return (JSONObject)json.get("result");
+        try {
+            return json.getJSONObject("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
     }
 
     public String getInfoAsString() {
         JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
-        return ((JSONObject)json.get("result")).toString();
+        try {
+            return json.getString("result").toString();
+        }
+        catch(JSONException je) {
+            return null;
+        }
     }
 
     public long getBlockCountAsLong() {
         JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKCOUNT, null);
-        return (long)json.get("result");
+        try {
+            return json.getLong("result");
+        }
+        catch(JSONException je) {
+            return -1L;
+        }
     }
 
 }
