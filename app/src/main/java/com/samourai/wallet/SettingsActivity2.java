@@ -1131,6 +1131,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
                                             Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getString("version"), Toast.LENGTH_SHORT).show();
                                         }
+                                        else    {
+                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     catch(JSONException je) {
                                         Toast.makeText(SettingsActivity2.this, R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
