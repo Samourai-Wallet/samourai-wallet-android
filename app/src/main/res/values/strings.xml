@@ -432,5 +432,6 @@
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
+    <string name="trusted_node_not_core_131">Samourai Wallet is tested to support Bitcoin Core 0.13.1 and over.</string>
 
 </resources>

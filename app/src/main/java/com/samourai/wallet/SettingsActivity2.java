@@ -1132,7 +1132,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         JSONObject obj = new JSONObject(result);
                                         if(obj != null && obj.has("version"))   {
                                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
-                                            Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getString("version"), Toast.LENGTH_SHORT).show();
+                                            if(obj.getInt("version") < 130100)    {
+                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
+                                            }
+                                            else    {
+                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                         else    {
                                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
