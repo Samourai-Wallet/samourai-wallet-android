@@ -1136,7 +1136,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
                                             }
                                             else    {
-                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         else    {
