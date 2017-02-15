@@ -27,6 +27,7 @@ public class JSONRPC {
 
     private static final String COMMAND_GET_BALANCE = "getbalance";
     private static final String COMMAND_GET_INFO = "getinfo";
+    private static final String COMMAND_GET_NETWORK_INFO = "getnetworkinfo";
     private static final String COMMAND_GET_BLOCKCOUNT = "getblockcount";
     private static final String COMMAND_PUSHTX = "sendrawtransaction";
 
@@ -101,6 +102,26 @@ public class JSONRPC {
 
     public String getInfoAsString() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
+        try {
+            return json.getString("result").toString();
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public JSONObject getNetworkInfo() {
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_NETWORK_INFO, null);
+        try {
+            return json.getJSONObject("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public String getNetworkInfoAsString() {
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_NETWORK_INFO, null);
         try {
             return json.getString("result").toString();
         }

@@ -1125,18 +1125,18 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                     Looper.prepare();
 
                                     JSONRPC jsonrpc = new JSONRPC(user, new CharSequenceX(password), node, Integer.parseInt(port));
-                                    String result = jsonrpc.getInfoAsString();
-                                    Log.d("TrustedNodeUtil", "getinfo:" + result);
+                                    String result = jsonrpc.getNetworkInfoAsString();
+                                    Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
 
                                     try {
                                         JSONObject obj = new JSONObject(result);
-                                        if(obj != null && obj.has("version"))   {
+                                        if(obj != null && obj.has("version") && obj.has("subversion"))   {
                                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
-                                            if(obj.getInt("version") < 130100)    {
+                                            if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
                                                 Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
                                             }
                                             else    {
-                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         else    {
