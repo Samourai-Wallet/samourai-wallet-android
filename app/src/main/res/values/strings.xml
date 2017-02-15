@@ -431,5 +431,6 @@
     <string name="trusted_node_ok">Trusted node is set up successfully.</string>
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
+    <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
 
 </resources>

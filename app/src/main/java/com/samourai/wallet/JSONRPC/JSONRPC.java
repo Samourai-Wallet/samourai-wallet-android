@@ -1,8 +1,8 @@
 package com.samourai.wallet.JSONRPC;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 import org.apache.http.HttpEntity;
@@ -15,12 +15,13 @@ import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.samourai.wallet.util.CharSequenceX;
+
+import android.util.Log;
 
 public class JSONRPC {
 
@@ -77,7 +78,56 @@ public class JSONRPC {
         this.port = port;
     }
 
-    private JSONObject invokeRPC(String id, String method, List<String> params) {
+    public Double getBalance(String account) {
+        String[] params = { account };
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BALANCE, null);
+        try {
+             return json.getDouble("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public JSONObject getInfo() {
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
+        try {
+            return json.getJSONObject("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public String getInfoAsString() {
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
+        try {
+            return json.getString("result").toString();
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public long getBlockCountAsLong() {
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKCOUNT, null);
+        try {
+            return json.getLong("result");
+        }
+        catch(JSONException je) {
+            return -1L;
+        }
+    }
+
+    public JSONObject pushTx(String hexTx) {
+        JSONArray array = new JSONArray();
+        array.put(hexTx);
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_PUSHTX, array);
+        Log.d("JSONRPC", "response:" + json.toString());
+        return json;
+    }
+
+    private JSONObject doRPC(String id, String method, JSONArray params) {
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
 
@@ -87,30 +137,40 @@ public class JSONRPC {
             JSONObject json = new JSONObject();
             json.put("id", id);
             json.put("method", method);
-            if (null != params) {
-                JSONArray array = new JSONArray();
-                for(String p : params)   {
-                    array.put(p);
-                }
+            if (null != params && params.length() > 0) {
                 json.put("params", params);
             }
 
             httpclient.getCredentialsProvider().setCredentials(new AuthScope(node, port), new UsernamePasswordCredentials(user, password.toString()));
             StringEntity myEntity = new StringEntity(json.toString());
-            System.out.println(json.toString());
+            Log.d("JSONRPC", json.toString());
             HttpPost httppost = new HttpPost("http://" + node + ":" + port);
             httppost.setEntity(myEntity);
 
-            System.out.println("executing request" + httppost.getRequestLine());
+            Log.d("JSONRPC", "Request:" + httppost.getRequestLine());
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity entity = response.getEntity();
+            Log.d("JSONRPC", response.getStatusLine().toString());
+//            Log.d("JSONRPC", entity == null ? "entity is null" : "entity is not null, content length:" + entity.getContentLength());
 
-            System.out.println(response.getStatusLine());
-            if (entity != null) {
-                System.out.println("Response content length: " + entity.getContentLength());
+            String inputLine = null;
+            String result = "";
+            BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            try {
+                while ((inputLine = br.readLine()) != null) {
+                    result += inputLine;
+                }
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            responseJsonObj = new JSONObject(EntityUtils.toString(entity));
+            if(result.length() > 0)    {
+                responseJsonObj = new JSONObject(result);
+            }
+            else    {
+                return null;
+            }
 
         }
         catch (ClientProtocolException e) {
@@ -130,47 +190,6 @@ public class JSONRPC {
         }
 
         return responseJsonObj;
-    }
-
-    public Double getBalance(String account) {
-        String[] params = { account };
-        JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_BALANCE, Arrays.asList(params));
-        try {
-             return json.getDouble("result");
-        }
-        catch(JSONException je) {
-            return null;
-        }
-    }
-
-    public JSONObject getInfo() {
-        JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
-        try {
-            return json.getJSONObject("result");
-        }
-        catch(JSONException je) {
-            return null;
-        }
-    }
-
-    public String getInfoAsString() {
-        JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
-        try {
-            return json.getString("result").toString();
-        }
-        catch(JSONException je) {
-            return null;
-        }
-    }
-
-    public long getBlockCountAsLong() {
-        JSONObject json = invokeRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKCOUNT, null);
-        try {
-            return json.getLong("result");
-        }
-        catch(JSONException je) {
-            return -1L;
-        }
     }
 
 }

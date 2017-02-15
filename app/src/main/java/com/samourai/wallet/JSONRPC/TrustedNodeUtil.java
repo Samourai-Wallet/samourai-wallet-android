@@ -41,6 +41,10 @@ public class TrustedNodeUtil {
         TrustedNodeUtil.port = TrustedNodeUtil.DEFAULT_PORT;
     }
 
+    public boolean isSet() {
+        return (TrustedNodeUtil.user != null && TrustedNodeUtil.password != null && TrustedNodeUtil.node != null);
+    }
+
     public String getNode() {
         return node;
     }

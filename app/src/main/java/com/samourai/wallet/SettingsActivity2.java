@@ -148,8 +148,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         if (cbPref8.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
                         }
-                        else    {
+                        else if(TrustedNodeUtil.getInstance().isSet())    {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
                         }
 
                         return true;

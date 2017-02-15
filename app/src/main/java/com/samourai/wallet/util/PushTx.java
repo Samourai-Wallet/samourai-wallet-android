@@ -1,6 +1,10 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 
 import java.net.URLEncoder;
 
@@ -26,7 +30,6 @@ public class PushTx {
 
         try {
             String response = WebUtil.getInstance(null).postURL(WebUtil.CHAINSO_PUSHTX_URL, "tx_hex=" + hexString);
-//        Log.i("Send response", response);
             return response;
         }
         catch(Exception e) {
@@ -39,7 +42,6 @@ public class PushTx {
 
         try {
             String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexString);
-//        Log.i("Send response", response);
             return response;
         }
         catch(Exception e) {
@@ -52,7 +54,19 @@ public class PushTx {
 
         try {
             String response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
-//        Log.i("Send response", response);
+            return response;
+        }
+        catch(Exception e) {
+            return null;
+        }
+
+    }
+
+    public String trustedNode(String hexString) {
+
+        try {
+            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
+            String response = jsonrpc.pushTx(hexString).toString();
             return response;
         }
         catch(Exception e) {

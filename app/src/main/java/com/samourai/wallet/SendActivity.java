@@ -978,22 +978,32 @@ public class SendActivity extends Activity {
                                         boolean isOK = false;
                                         String response = null;
                                         try {
-//                                            response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-//                                            Log.d("SendActivity", "pushTx:" + response);
-                                            response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
-//                                            Log.d("SendActivity", "pushTx:" + response);
+                                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
+                                                response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
 
-                                            if(response != null)    {
-                                                org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if(jsonObject.has("status"))    {
-                                                    if(jsonObject.getString("status").equals("ok"))    {
-                                                        isOK = true;
+                                                if(response != null)    {
+                                                    JSONObject jsonObject = new org.json.JSONObject(response);
+                                                    if(jsonObject.has("status"))    {
+                                                        if(jsonObject.getString("status").equals("ok"))    {
+                                                            isOK = true;
+                                                        }
                                                     }
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                             else    {
-                                                Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                                return;
+                                                response = PushTx.getInstance(SendActivity.this).trustedNode(hexTx);
+                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if(jsonObject.has("result"))    {
+                                                    if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
+                                                        isOK = true;
+                                                    }
+                                                    else    {
+                                                        Toast.makeText(SendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
                                             }
 
                                             if(isOK)    {
