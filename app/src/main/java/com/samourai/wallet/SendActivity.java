@@ -1007,7 +1007,12 @@ public class SendActivity extends Activity {
                                             }
 
                                             if(isOK)    {
-                                                Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
+                                                    Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
 
                                                 if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
                                                     try {
