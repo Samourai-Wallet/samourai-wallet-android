@@ -24,6 +24,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.api.TxAuxUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.bitcoinj.core.NetworkParameters;
@@ -161,6 +162,7 @@ public class PayloadUtil	{
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
+            meta.put("tx_aux", TxAuxUtil.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -307,6 +309,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("ricochet")) {
                     RicochetMeta.getInstance(context).fromJSON((JSONObject) meta.get("ricochet"));
+                }
+                if(meta.has("tx_aux")) {
+                    TxAuxUtil.getInstance().fromJSON((JSONObject) meta.get("tx_aux"));
                 }
 
                 if(meta.has("units")) {
