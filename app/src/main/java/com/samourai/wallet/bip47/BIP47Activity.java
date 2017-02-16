@@ -307,7 +307,7 @@ public class BIP47Activity extends Activity {
                 int outgoing = BIP47Meta.getInstance().getOutgoingIdx(pcodes[position]);
                 int incoming = BIP47Meta.getInstance().getIncomingIdx(pcodes[position]);
 
-                Toast.makeText(BIP47Activity.this, pcodes[position], Toast.LENGTH_SHORT).show();
+//                Toast.makeText(BIP47Activity.this, pcodes[position], Toast.LENGTH_SHORT).show();
                 Toast.makeText(BIP47Activity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
 
                 return true;
