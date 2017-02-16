@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +69,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
-import com.samourai.wallet.OpCallback;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -114,6 +112,7 @@ public class BIP47Activity extends Activity {
     BIP47EntryAdapter adapter = null;
     private String[] pcodes = null;
     private String[] meta = null;
+    private String[] labels = null;
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
@@ -1281,6 +1280,12 @@ public class BIP47Activity extends Activity {
                 ivAvatar.setVisibility(View.VISIBLE);
             }
 
+            if((strLabel == null || strLabel.length() == 0 || FormatsUtil.getInstance().isValidPaymentCode(strLabel) &&
+                    (labels[position] != null && labels[position].length() > 0)))    {
+                strLabel = labels[position];
+                BIP47Meta.getInstance().setLabel(pcodes[position], labels[position]);
+            }
+
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
             tvLabel.setText(strLabel);
 
@@ -1545,6 +1550,7 @@ public class BIP47Activity extends Activity {
         @Override
         protected void onPreExecute() {
             meta = new String[pcodes.length];
+            labels = new String[pcodes.length];
         }
 
         @Override
@@ -1561,6 +1567,10 @@ public class BIP47Activity extends Activity {
                         String avatarUrl = obj.getString("user-avatar");
                         meta[i] = avatarUrl;
                         publishProgress();
+                    }
+                    if(obj.has("title"))    {
+                        String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
+                        labels[i] = label;
                     }
 
                 }
