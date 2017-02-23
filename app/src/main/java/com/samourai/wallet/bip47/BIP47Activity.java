@@ -180,8 +180,6 @@ public class BIP47Activity extends Activity {
         handler = new Handler();
         refreshList();
 
-        setDisplay();
-
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -408,14 +406,6 @@ public class BIP47Activity extends Activity {
         super.onResume();
 
         refreshList();
-
-        setDisplay();
-
-        adapter = new BIP47EntryAdapter();
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        new PaymentCodeMetaTask().execute("");
 
     }
 
@@ -755,6 +745,14 @@ public class BIP47Activity extends Activity {
             pcodes[i] = pcode;
             ++i;
         }
+
+        setDisplay();
+
+        adapter = new BIP47EntryAdapter();
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        new PaymentCodeMetaTask().execute("");
 
     }
 
@@ -1566,12 +1564,12 @@ public class BIP47Activity extends Activity {
                     if(obj.has("user-avatar"))    {
                         String avatarUrl = obj.getString("user-avatar");
                         meta[i] = avatarUrl;
-                        publishProgress();
                     }
                     if(obj.has("title"))    {
                         String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
                         labels[i] = label;
                     }
+                    publishProgress();
 
                 }
                 catch(Exception e) {
