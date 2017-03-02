@@ -293,7 +293,7 @@ public class RicochetActivity extends Activity {
             else    {
                 AlertDialog.Builder dlg = new AlertDialog.Builder(RicochetActivity.this)
                         .setTitle(R.string.app_name)
-                        .setMessage(R.string.ricochet_broadcast)
+                        .setMessage(R.string.ricochet_not_broadcast_replay)
                         .setCancelable(false)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
