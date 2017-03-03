@@ -25,6 +25,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,16 +49,14 @@ public class WebSocketHandler {
     private final long pongTimeout = 5000L;
     private boolean pingPongSuccess = false;
 
-    private static String[] xpubs = null;
     private static String[] addrs = null;
 
     private static final long RBF_THRESHOLD = 4294967295L;
 
     private static Context context = null;
 
-    public WebSocketHandler(Context ctx, String[] xpubs, String[] addrs) {
+    public WebSocketHandler(Context ctx, String[] addrs) {
         this.context = ctx;
-        this.xpubs = xpubs;
         this.addrs = addrs;
     }
 
@@ -76,14 +76,6 @@ public class WebSocketHandler {
     public synchronized void subscribe() {
 
         send("{\"op\":\"blocks_sub\"}");
-//        Log.i("WebSocketHandler", "{\"op\":\"blocks_sub\"}");
-
-        for(int i = 0; i < xpubs.length; i++) {
-            if(xpubs[i] != null && xpubs[i].length() > 0) {
-                send("{\"op\":\"xpub_sub\", \"xpub\":\""+ xpubs[i] + "\"}");
-//                Log.i("WebSocketHandler", "{\"op\":\"xpub_sub\",\"xpub\":\"" + xpubs[i] + "\"}");
-            }
-        }
 
         for(int i = 0; i < addrs.length; i++) {
             if(addrs[i] != null && addrs[i].length() > 0) {
@@ -264,13 +256,7 @@ public class WebSocketHandler {
                                                 if (outObj.has("value")) {
                                                     value = outObj.getLong("value");
                                                 }
-                                                if (outObj.has("xpub")) {
-                                                    total_value += value;
-                                                    if (outObj.has("addr")) {
-                                                        out_addr = outObj.getString("addr");
-                                                    }
-                                                }
-                                                else if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
+                                                if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
 //                                                    Log.i("WebSocketHandler", "received from " + out_addr);
@@ -317,6 +303,10 @@ public class WebSocketHandler {
                                                         start();
 
                                                     }
+                                                }
+                                                else if(outObj.has("addr") && ReceiveLookAtUtil.getInstance().contains(outObj.getString("addr")))   {
+                                                    total_value += value;
+                                                    out_addr = outObj.getString("addr");
                                                 }
                                                 else    {
                                                     ;

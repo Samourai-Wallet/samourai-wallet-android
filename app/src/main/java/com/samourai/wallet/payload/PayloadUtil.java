@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 //import android.util.Log;
 
+import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -22,6 +23,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
@@ -165,6 +167,7 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
+            meta.put("receives", ReceiveLookAtUtil.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -315,6 +318,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
+                }
+                if(meta.has("receives")) {
+                    ReceiveLookAtUtil.getInstance().fromJSON((JSONArray) meta.get("receives"));
                 }
 
                 if(meta.has("units")) {
