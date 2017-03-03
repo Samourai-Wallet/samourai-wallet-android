@@ -52,9 +52,7 @@ public class WebSocketService extends Service {
             mle.printStackTrace();
         }
 
-        if(addrSubs == null)    {
-            addrSubs = ReceiveLookAtUtil.getInstance().getReceives();
-        }
+        addrSubs = ReceiveLookAtUtil.getInstance().getReceives();
 
         //
         // prune BIP47 lookbehind
