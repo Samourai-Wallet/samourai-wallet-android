@@ -49,7 +49,7 @@ public class WebSocketHandler {
     private final long pongTimeout = 5000L;
     private boolean pingPongSuccess = false;
 
-    private static String[] addrs = null;
+    private String[] addrs = null;
 
     private static final long RBF_THRESHOLD = 4294967295L;
 
