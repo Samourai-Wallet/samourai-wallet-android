@@ -11,6 +11,7 @@ public class Tx {
     private String strPaymentCode = null;
     private double amount = 0.0;
     private long confirmations = 0L;
+    private long block_height = -1L;
     private long ts = 0L;
 
     public Tx(String hash, String address, double amount, long date, long confirmations) {
@@ -19,6 +20,7 @@ public class Tx {
         this.amount = amount;
         this.ts = date;
         this.confirmations = confirmations;
+        this.block_height = -1L;
         this.strPaymentCode = null;
     }
 
@@ -28,6 +30,17 @@ public class Tx {
         this.amount = amount;
         this.ts = date;
         this.confirmations = confirmations;
+        this.block_height = -1L;
+        this.strPaymentCode = pcode;
+    }
+
+    public Tx(String hash, String address, double amount, long date, long confirmations, long block_height, String pcode) {
+        this.strHash = hash;
+        this.strAddress = address;
+        this.amount = amount;
+        this.ts = date;
+        this.confirmations = 0;
+        this.block_height = -1L;
         this.strPaymentCode = pcode;
     }
 
@@ -75,6 +88,14 @@ public class Tx {
         this.confirmations = confirmations;
     }
 
+    public long getBlockHeight() {
+        return block_height;
+    }
+
+    public void setBlockHeight(long height) {
+        this.block_height = height;
+    }
+
     public double getAmount() {
         return amount;
     }
@@ -109,6 +130,7 @@ public class Tx {
             }
             obj.put("amount", amount);
             obj.put("confirmations", confirmations);
+            obj.put("block_height", block_height);
             obj.put("ts", ts);
         }
         catch(JSONException je) {
@@ -139,6 +161,9 @@ public class Tx {
             }
             if(jsonObj.has("confirmations"))    {
                 confirmations = jsonObj.getLong("confirmations");
+            }
+            if(jsonObj.has("block_height"))    {
+                block_height = jsonObj.getLong("block_height");
             }
             if(jsonObj.has("ts"))    {
                 ts = jsonObj.getLong("ts");

@@ -15,6 +15,8 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.api.TxAuxUtil;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -283,6 +285,9 @@ public class WebSocketHandler {
                                                         String strTS = sd.format(ts * 1000L);
                                                         String event = strTS + " " + context.getString(R.string.received) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
                                                         BIP47Meta.getInstance().setLatestEvent(pcode, event);
+
+                                                        Tx _tx = new Tx(hash, out_addr, (((double)(value)) / 1e8), System.currentTimeMillis() / 1000L, 0L, -1L, pcode);
+                                                        TxAuxUtil.getInstance().put(_tx);
 
                                                         List<String> _addrs = new ArrayList<String>();
 
