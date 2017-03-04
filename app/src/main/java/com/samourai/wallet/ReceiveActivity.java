@@ -528,10 +528,15 @@ public class ReceiveActivity extends Activity {
 
         ReceiveLookAtUtil.getInstance().add(addr);
 
-        if(AppUtil.getInstance(ReceiveActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-            stopService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
-        }
-        startService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(AppUtil.getInstance(ReceiveActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                    stopService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+                }
+                startService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+            }
+        }).start();
 
     }
 
