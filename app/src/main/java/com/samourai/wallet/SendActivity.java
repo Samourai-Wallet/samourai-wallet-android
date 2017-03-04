@@ -33,6 +33,8 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.api.TxAuxUtil;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
@@ -79,6 +81,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
+
+import static java.lang.System.currentTimeMillis;
 
 public class SendActivity extends Activity {
 
@@ -935,7 +939,7 @@ public class SendActivity extends Activity {
                             progress.setMessage(getString(R.string.please_wait_sending));
                             progress.show();
 
-                            List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+                            final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
                             for(UTXO u : selectedUTXO)   {
                                 outPoints.addAll(u.getOutpoints());
                             }
@@ -968,6 +972,8 @@ public class SendActivity extends Activity {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("SendActivity", hexTx);
+
+                                final String strTxHash = tx.getHashAsString();
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -1026,15 +1032,25 @@ public class SendActivity extends Activity {
                                                     }
                                                 }
 
+                                                // spent BIP47 UTXO?
+                                                Tx _tx = new Tx(strTxHash, strDestinationBTCAddress, ((double)(_amount + _fee.longValue()) / 1e8) * -1.0, System.currentTimeMillis() / 1000L, 0L, -1L, null);
+                                                if(hasBIP47UTXO(outPoints))    {
+                                                    TxAuxUtil.getInstance().put(_tx);
+                                                }
+
                                                 // increment counter if BIP47 spend
                                                 if(strPCode != null && strPCode.length() > 0)    {
                                                     BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
                                                     BIP47Meta.getInstance().inc(strPCode);
 
                                                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
-                                                    String strTS = sd.format(System.currentTimeMillis());
+                                                    String strTS = sd.format(currentTimeMillis());
                                                     String event = strTS + " " + SendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
                                                     BIP47Meta.getInstance().setLatestEvent(strPCode, event);
+
+                                                    // spent to BIP47? If so, update _tx object created above
+                                                    _tx.setPaymentCode(strPCode);
+                                                    TxAuxUtil.getInstance().put(_tx);
 
                                                     strPCode = null;
                                                 }
@@ -1441,6 +1457,21 @@ public class SendActivity extends Activity {
 
         return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
 
+    }
+
+    private boolean hasBIP47UTXO(List<MyTransactionOutPoint> outPoints)    {
+
+        List<String> addrs = BIP47Meta.getInstance().getUnspentAddresses(SendActivity.this, BIP47Util.getInstance(SendActivity.this).getWallet().getAccount(0).getPaymentCode());
+
+        for(MyTransactionOutPoint o : outPoints)   {
+
+            if(addrs.contains(o.getAddress()))    {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
 }
