@@ -32,6 +32,7 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.api.TxAuxUtil;
@@ -984,7 +985,24 @@ public class SendActivity extends Activity {
                                         boolean isOK = false;
                                         String response = null;
                                         try {
-                                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
+                                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+                                                if(TrustedNodeUtil.getInstance().isSet())    {
+                                                    response = PushTx.getInstance(SendActivity.this).trustedNode(hexTx);
+                                                    JSONObject jsonObject = new org.json.JSONObject(response);
+                                                    if(jsonObject.has("result"))    {
+                                                        if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
+                                                            isOK = true;
+                                                        }
+                                                        else    {
+                                                            Toast.makeText(SendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            else    {
                                                 response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
 
                                                 if(response != null)    {
@@ -997,18 +1015,6 @@ public class SendActivity extends Activity {
                                                 }
                                                 else    {
                                                     Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                            else    {
-                                                response = PushTx.getInstance(SendActivity.this).trustedNode(hexTx);
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if(jsonObject.has("result"))    {
-                                                    if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
-                                                        isOK = true;
-                                                    }
-                                                    else    {
-                                                        Toast.makeText(SendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                    }
                                                 }
                                             }
 
