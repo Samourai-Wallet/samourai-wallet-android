@@ -179,6 +179,13 @@ public class BIP47Activity extends Activity {
             }
         });
 
+        if(meta == null)    {
+            meta = new HashMap<String,String>();
+        }
+        if(bitmaps == null)    {
+            bitmaps = new HashMap<String,Bitmap>();
+        }
+
         listView = (SwipeMenuListView) findViewById(R.id.list);
 
         handler = new Handler();
