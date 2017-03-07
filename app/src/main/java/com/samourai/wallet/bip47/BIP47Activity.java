@@ -1325,7 +1325,10 @@ public class BIP47Activity extends Activity {
 
                         String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
 
-                        if((strLabel == null || strLabel.length() == 0 || FormatsUtil.getInstance().isValidPaymentCode(strLabel) &&
+                        if((BIP47Meta.getInstance().getLabel(pcodes[position]) == null ||
+                                BIP47Meta.getInstance().getLabel(pcodes[position]).length() == 0 ||
+                                FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcodes[position]))
+                                &&
                                 (label != null && label.length() > 0)))    {
                             strLabel = label;
                             BIP47Meta.getInstance().setLabel(pcodes[position], strLabel);
