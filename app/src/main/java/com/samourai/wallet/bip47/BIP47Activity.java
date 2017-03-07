@@ -1280,6 +1280,9 @@ public class BIP47Activity extends Activity {
                 tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
             }
 
+            final TextView tvLabel = (TextView)view.findViewById(R.id.Label);
+            tvLabel.setText(strLabel);
+
             final ImageView ivAvatar = (ImageView)view.findViewById(R.id.Avatar);
             ivAvatar.setVisibility(View.GONE);
 
@@ -1326,6 +1329,7 @@ public class BIP47Activity extends Activity {
                                 (label != null && label.length() > 0)))    {
                             strLabel = label;
                             BIP47Meta.getInstance().setLabel(pcodes[position], strLabel);
+                            tvLabel.setText(strLabel);
                         }
 
                     }
@@ -1335,9 +1339,6 @@ public class BIP47Activity extends Activity {
                     ;
                 }
             }
-
-            TextView tvLabel = (TextView)view.findViewById(R.id.Label);
-            tvLabel.setText(strLabel);
 
             TextView tvLatest = (TextView)view.findViewById(R.id.Latest);
             String strLatest = "";
