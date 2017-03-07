@@ -7,8 +7,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -100,7 +102,9 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.WebUtil;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class BIP47Activity extends Activity {
 
@@ -111,8 +115,8 @@ public class BIP47Activity extends Activity {
     private SwipeMenuListView listView = null;
     BIP47EntryAdapter adapter = null;
     private String[] pcodes = null;
-    private String[] meta = null;
-    private String[] labels = null;
+    private static HashMap<String,String> meta = null;
+    private static HashMap<String,Bitmap> bitmaps = null;
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
@@ -1272,16 +1276,57 @@ public class BIP47Activity extends Activity {
             final ImageView ivAvatar = (ImageView)view.findViewById(R.id.Avatar);
             ivAvatar.setVisibility(View.GONE);
 
-            if(meta[position] != null && meta[position].length() > 0)    {
-                Picasso.with(BIP47Activity.this).load(meta[position]).into(ivAvatar);
-                tvInitial.setVisibility(View.GONE);
-                ivAvatar.setVisibility(View.VISIBLE);
-            }
+            if(meta.containsKey(pcodes[position]))    {
+                try {
 
-            if((strLabel == null || strLabel.length() == 0 || FormatsUtil.getInstance().isValidPaymentCode(strLabel) &&
-                    (labels[position] != null && labels[position].length() > 0)))    {
-                strLabel = labels[position];
-                BIP47Meta.getInstance().setLabel(pcodes[position], labels[position]);
+                    JSONObject obj = new JSONObject(meta.get(pcodes[position]));
+
+                    if(obj.has("user-avatar"))    {
+
+                        String avatarUrl = obj.getString("user-avatar");
+
+                        if(bitmaps.containsKey(pcodes[position]))    {
+                            ivAvatar.setImageBitmap(bitmaps.get(pcodes[position]));
+                        }
+                        else    {
+                            Picasso.with(BIP47Activity.this)
+                                    .load(avatarUrl)
+                                    .into(new Target() {
+                                        @Override
+                                        public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                                            ivAvatar.setImageBitmap(bitmap);
+                                            bitmaps.put(pcodes[position], bitmap);
+                                        }
+
+                                        @Override
+                                        public void onPrepareLoad(Drawable placeHolderDrawable) {}
+
+                                        @Override
+                                        public void onBitmapFailed(Drawable errorDrawable) {}
+                                    });
+                        }
+
+                        tvInitial.setVisibility(View.GONE);
+                        ivAvatar.setVisibility(View.VISIBLE);
+
+                    }
+
+                    if(obj.has("title"))    {
+
+                        String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
+
+                        if((strLabel == null || strLabel.length() == 0 || FormatsUtil.getInstance().isValidPaymentCode(strLabel) &&
+                                (label != null && label.length() > 0)))    {
+                            strLabel = label;
+                            BIP47Meta.getInstance().setLabel(pcodes[position], strLabel);
+                        }
+
+                    }
+
+                }
+                catch(JSONException je) {
+                    ;
+                }
             }
 
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
@@ -1547,8 +1592,12 @@ public class BIP47Activity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            meta = new String[pcodes.length];
-            labels = new String[pcodes.length];
+            if(meta == null)    {
+                meta = new HashMap<String,String>();
+            }
+            if(bitmaps == null)    {
+                bitmaps = new HashMap<String,Bitmap>();
+            }
         }
 
         @Override
@@ -1561,15 +1610,9 @@ public class BIP47Activity extends Activity {
                     result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
 
                     JSONObject obj = new JSONObject(result);
-                    if(obj.has("user-avatar"))    {
-                        String avatarUrl = obj.getString("user-avatar");
-                        meta[i] = avatarUrl;
+                    if(!meta.containsKey(pcodes[i]))    {
+                        meta.put(pcodes[i], obj.toString());
                     }
-                    if(obj.has("title"))    {
-                        String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
-                        labels[i] = label;
-                    }
-                    publishProgress();
 
                 }
                 catch(Exception e) {
@@ -1587,7 +1630,7 @@ public class BIP47Activity extends Activity {
 
         protected void onProgressUpdate(String... progress) {
 
-            adapter.notifyDataSetChanged();
+            refreshList();
 
         }
 
