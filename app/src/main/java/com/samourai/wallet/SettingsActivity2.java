@@ -1078,7 +1078,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         edNode.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         edNode.setText(TrustedNodeUtil.getInstance().getNode() == null ? "" : TrustedNodeUtil.getInstance().getNode());
         final EditText edPort = new EditText(SettingsActivity2.this);
-        edPort.setHint(Integer.toString(TrustedNodeUtil.DEFAULT_PORT));
+        edPort.setHint(R.string.trusted_node_port_hint);
         edPort.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_NUMBER);
         edPort.setText(TrustedNodeUtil.getInstance().getPort() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : Integer.toString(TrustedNodeUtil.getInstance().getPort()));
         final EditText edUser = new EditText(SettingsActivity2.this);
@@ -1086,6 +1086,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         edUser.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         edUser.setText(TrustedNodeUtil.getInstance().getUser() == null ? "" : TrustedNodeUtil.getInstance().getUser());
         final EditText edPassword = new EditText(SettingsActivity2.this);
+        edPassword.setHint(R.string.trusted_node_password_hint);
         edPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         edPassword.setSingleLine(true);
         edPassword.setText(TrustedNodeUtil.getInstance().getPassword() == null ? "" : TrustedNodeUtil.getInstance().getPassword());
@@ -1106,7 +1107,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         final String node = edNode.getText().toString();
-                        final String port = edPort.getText().toString();
+                        final String port = edPort.getText().toString().length() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : edPort.getText().toString();
                         final String user = edUser.getText().toString();
                         final String password = edPassword.getText().toString();
 
