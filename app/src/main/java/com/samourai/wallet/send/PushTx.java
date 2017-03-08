@@ -1,12 +1,10 @@
-package com.samourai.wallet.util;
+package com.samourai.wallet.send;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-
-import java.net.URLEncoder;
+import com.samourai.wallet.util.WebUtil;
 
 public class PushTx {
 

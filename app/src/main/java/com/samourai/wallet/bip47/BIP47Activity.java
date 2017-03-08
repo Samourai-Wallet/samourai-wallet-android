@@ -100,9 +100,8 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.util.WebUtil;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

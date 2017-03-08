@@ -24,7 +24,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.send.PushTx;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
