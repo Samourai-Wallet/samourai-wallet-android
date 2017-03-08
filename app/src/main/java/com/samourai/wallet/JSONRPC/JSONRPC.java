@@ -82,6 +82,9 @@ public class JSONRPC {
     public Double getBalance(String account) {
         String[] params = { account };
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BALANCE, null);
+        if(json == null)    {
+            return null;
+        }
         try {
              return json.getDouble("result");
         }
@@ -92,6 +95,9 @@ public class JSONRPC {
 
     public JSONObject getInfo() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
+        if(json == null)    {
+            return null;
+        }
         try {
             return json.getJSONObject("result");
         }
@@ -101,17 +107,25 @@ public class JSONRPC {
     }
 
     public String getInfoAsString() {
-        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_INFO, null);
-        try {
-            return json.getString("result").toString();
-        }
-        catch(JSONException je) {
+        JSONObject json = getInfo();
+        if(json == null)    {
             return null;
+        }
+        else    {
+            try {
+                return json.getString("result").toString();
+            }
+            catch(JSONException je) {
+                return null;
+            }
         }
     }
 
     public JSONObject getNetworkInfo() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_NETWORK_INFO, null);
+        if(json == null)    {
+            return null;
+        }
         try {
             return json.getJSONObject("result");
         }
@@ -122,6 +136,9 @@ public class JSONRPC {
 
     public String getNetworkInfoAsString() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_NETWORK_INFO, null);
+        if(json == null)    {
+            return null;
+        }
         try {
             return json.getString("result").toString();
         }
@@ -132,6 +149,9 @@ public class JSONRPC {
 
     public long getBlockCountAsLong() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKCOUNT, null);
+        if(json == null)    {
+            return -1L;
+        }
         try {
             return json.getLong("result");
         }
@@ -173,6 +193,9 @@ public class JSONRPC {
             HttpEntity entity = response.getEntity();
             Log.d("JSONRPC", response.getStatusLine().toString());
 //            Log.d("JSONRPC", entity == null ? "entity is null" : "entity is not null, content length:" + entity.getContentLength());
+            if(response.getStatusLine().getStatusCode() != 200)    {
+                return null;
+            }
 
             String inputLine = null;
             String result = "";

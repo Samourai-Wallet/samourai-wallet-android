@@ -435,5 +435,6 @@
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
     <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
+    <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
 
 </resources>

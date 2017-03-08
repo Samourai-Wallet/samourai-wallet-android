@@ -142,6 +142,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
+                if(TrustedNodeUtil.getInstance().isSet())    {
+                    cbPref8.setEnabled(true);
+                }
+                else    {
+                    cbPref8.setEnabled(false);
+                }
                 cbPref8.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
@@ -153,6 +159,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         }
                         else    {
                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                            cbPref8.setEnabled(false);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
                         }
 
                         return true;
@@ -1129,23 +1137,32 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                     String result = jsonrpc.getNetworkInfoAsString();
                                     Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
 
-                                    try {
-                                        JSONObject obj = new JSONObject(result);
-                                        if(obj != null && obj.has("version") && obj.has("subversion"))   {
-                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
-                                            if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
-                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
+                                    if(result != null)    {
+                                        try {
+                                            JSONObject obj = new JSONObject(result);
+                                            if(obj != null && obj.has("version") && obj.has("subversion"))   {
+                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
+                                                final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
+                                                if(TrustedNodeUtil.getInstance().isSet())    {
+                                                    cbPref8.setEnabled(true);
+                                                }
+                                                if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
+                                                    Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
+                                                }
+                                                else    {
+                                                    Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                                                }
                                             }
                                             else    {
-                                                Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                        else    {
-                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
+                                        catch(JSONException je) {
+                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
                                         }
                                     }
-                                    catch(JSONException je) {
-                                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
+                                    else    {
+                                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
                                     }
 
                                     Looper.loop();
