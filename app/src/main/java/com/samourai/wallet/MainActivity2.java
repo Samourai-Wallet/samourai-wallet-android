@@ -351,7 +351,7 @@ public class MainActivity2 extends Activity {
                                                             AppUtil.getInstance(MainActivity2.this).restartApp();
                                                         }
 
-                                                        String directory = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS;
+                                                        String directory = Environment.DIRECTORY_DOCUMENTS;
                                                         File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
                                                         File file = new File(dir, "samourai.txt");
                                                         String encrypted = null;

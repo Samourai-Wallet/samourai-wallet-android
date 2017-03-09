@@ -564,7 +564,7 @@ public class PayloadUtil	{
 
     private synchronized void serialize(String data) throws IOException    {
 
-        String directory = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? Environment.DIRECTORY_DOCUMENTS : Environment.DIRECTORY_DOWNLOADS;
+        String directory = Environment.DIRECTORY_DOCUMENTS;
         File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
         if(!dir.exists())   {
             dir.mkdirs();
