@@ -437,4 +437,9 @@
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
 
+    <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
+    <string name="refresh_tx">Retrieved transactions and balance.</string>
+    <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
+    <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
+
 </resources>
