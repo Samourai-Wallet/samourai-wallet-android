@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -1032,110 +1033,7 @@ public class BalanceActivity extends Activity {
 
     private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                //
-                // TBD: check on lookahead/lookbehind for all incoming payment codes
-                //
-                if(fetch || txs.size() == 0)    {
-                    APIFactory.getInstance(BalanceActivity.this).initWallet();
-                }
-
-                try {
-                    int acc = 0;
-                    if(SamouraiWallet.getInstance().getShowTotalBalance())    {
-                        if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0)    {
-                            txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-                        }
-                        else    {
-                            acc = SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1;
-                            txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                        }
-                    }
-                    else    {
-                        txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                    }
-                    if(txs != null)    {
-                        Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
-                    }
-
-                    if(AddressFactory.getInstance().getHighestTxReceiveIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().getAddrIdx()) {
-                        HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestTxReceiveIdx(acc));
-                    }
-                    if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().getAddrIdx()) {
-                        HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
-                    }
-                }
-                catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }
-                catch(MnemonicException.MnemonicLengthException mle) {
-                    mle.printStackTrace();
-                }
-                finally {
-                    ;
-                }
-
-                handler.post(new Runnable() {
-                    public void run() {
-                        if(dragged)    {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        tvBalanceAmount.setText("");
-                        tvBalanceUnits.setText("");
-                        displayBalance();
-                        txAdapter.notifyDataSetChanged();
-                    }
-                });
-
-                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.FIRST_RUN, false);
-
-                if(notifTx)    {
-                    //
-                    // check for incoming payment code notification tx
-                    //
-                    try {
-                        PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
-                        APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
-//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
-//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                    }
-                    catch (AddressFormatException afe) {
-                        afe.printStackTrace();
-                        Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                    }
-
-                    //
-                    // check on outgoing payment code notification tx
-                    //
-                    List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
-//                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
-                    for(Pair<String,String> pair : outgoingUnconfirmed)   {
-//                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
-//                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
-                        int confirmations = APIFactory.getInstance(BalanceActivity.this).getNotifTxConfirmations(pair.getRight());
-                        if(confirmations > 0)    {
-                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
-                        }
-                        if(confirmations == -1)    {
-                            BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
-                        }
-                    }
-
-                    Intent intent = new Intent("com.samourai.wallet.BalanceActivity.RESTART_SERVICE");
-                    LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
-                }
-
-                Looper.loop();
-
-            }
-        }).start();
+        new RefreshTask(dragged).execute(notifTx ? "1" : "0", fetch ? "1" : "0");
 
     }
 
@@ -1302,5 +1200,173 @@ public class BalanceActivity extends Activity {
         }
 
     }
+
+    private class RefreshTask extends AsyncTask<String, Void, String> {
+
+        private String strProgressTitle = null;
+        private String strProgressMessage = null;
+
+        ProgressDialog progress = null;
+        Handler handler = null;
+        private boolean dragged = false;
+
+        public RefreshTask(boolean dragged) {
+            super();
+            handler = new Handler();
+            this.dragged = dragged;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            final boolean notifTx = params[0].equals("1") ? true : false;
+            final boolean fetch = params[1].equals("1") ? true : false;
+
+            //
+            // TBD: check on lookahead/lookbehind for all incoming payment codes
+            //
+            if(fetch || txs.size() == 0)    {
+                APIFactory.getInstance(BalanceActivity.this).initWallet();
+            }
+
+            try {
+                int acc = 0;
+                if(SamouraiWallet.getInstance().getShowTotalBalance())    {
+                    if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0)    {
+                        txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
+                    }
+                    else    {
+                        acc = SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1;
+                        txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
+                    }
+                }
+                else    {
+                    txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
+                }
+                if(txs != null)    {
+                    Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
+                }
+
+                if(AddressFactory.getInstance().getHighestTxReceiveIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().getAddrIdx()) {
+                    HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestTxReceiveIdx(acc));
+                }
+                if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().getAddrIdx()) {
+                    HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
+                }
+            }
+            catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
+            catch(MnemonicException.MnemonicLengthException mle) {
+                mle.printStackTrace();
+            }
+            finally {
+                ;
+            }
+
+            if(!dragged)    {
+                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx).toString();
+                publishProgress();
+            }
+
+            handler.post(new Runnable() {
+                public void run() {
+                    if(dragged)    {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                    tvBalanceAmount.setText("");
+                    tvBalanceUnits.setText("");
+                    displayBalance();
+                    txAdapter.notifyDataSetChanged();
+                }
+            });
+
+            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.FIRST_RUN, false);
+
+            if(notifTx)    {
+                //
+                // check for incoming payment code notification tx
+                //
+                try {
+                    PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
+                    APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
+//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
+                }
+                catch (AddressFormatException afe) {
+                    afe.printStackTrace();
+                    Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                }
+
+                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_incoming_notif_tx).toString();
+                publishProgress();
+
+                //
+                // check on outgoing payment code notification tx
+                //
+                List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
+//                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
+                for(Pair<String,String> pair : outgoingUnconfirmed)   {
+//                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
+//                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
+                    int confirmations = APIFactory.getInstance(BalanceActivity.this).getNotifTxConfirmations(pair.getRight());
+                    if(confirmations > 0)    {
+                        BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
+                    }
+                    if(confirmations == -1)    {
+                        BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
+                    }
+                }
+
+                if(!dragged)    {
+                    strProgressMessage = BalanceActivity.this.getText(R.string.refresh_outgoing_notif_tx).toString();
+                    publishProgress();
+                }
+
+                Intent intent = new Intent("com.samourai.wallet.BalanceActivity.RESTART_SERVICE");
+                LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(!dragged)    {
+                if(progress != null && progress.isShowing())    {
+                    progress.dismiss();
+                }
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            if(!dragged)    {
+                strProgressTitle = BalanceActivity.this.getText(R.string.app_name).toString();
+                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx_pre).toString();
+
+                progress = new ProgressDialog(BalanceActivity.this);
+                progress.setCancelable(false);
+                progress.setTitle(strProgressTitle);
+                progress.setMessage(strProgressMessage);
+                progress.show();
+            }
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+
+            if(!dragged)    {
+                progress.setTitle(strProgressTitle);
+                progress.setMessage(strProgressMessage);
+            }
+
+        }
+    }
+
 
 }
