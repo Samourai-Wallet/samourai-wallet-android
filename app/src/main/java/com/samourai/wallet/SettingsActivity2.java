@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -142,7 +143,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
-                if(TrustedNodeUtil.getInstance().isSet())    {
+                if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
                     cbPref8.setEnabled(true);
                 }
                 else    {
@@ -154,7 +155,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         if (cbPref8.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
                         }
-                        else if(TrustedNodeUtil.getInstance().isSet())    {
+                        else if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
                         }
                         else    {
@@ -1127,48 +1128,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             TrustedNodeUtil.getInstance().setParams(user, new CharSequenceX(password), node, Integer.parseInt(port));
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
+                            new TrustedNodeTask().execute(user, password, node, port);
 
-                                    Looper.prepare();
-
-                                    JSONRPC jsonrpc = new JSONRPC(user, new CharSequenceX(password), node, Integer.parseInt(port));
-                                    String result = jsonrpc.getNetworkInfoAsString();
-                                    Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
-
-                                    if(result != null)    {
-                                        try {
-                                            JSONObject obj = new JSONObject(result);
-                                            if(obj != null && obj.has("version") && obj.has("subversion"))   {
-                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
-                                                final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
-                                                if(TrustedNodeUtil.getInstance().isSet())    {
-                                                    cbPref8.setEnabled(true);
-                                                }
-                                                if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
-                                                    Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else    {
-                                                    Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                            else    {
-                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                        catch(JSONException je) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                    else    {
-                                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    Looper.loop();
-
-                                }
-                            }).start();
+                            dialog.dismiss();
 
                         }
                         else if((node == null || node.length() == 0) &&
@@ -1186,12 +1148,83 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        ;
+                        dialog.dismiss();
                     }
                 });
         if(!isFinishing())    {
             dlg.show();
         }
+    }
+
+    private class TrustedNodeTask extends AsyncTask<String, Void, String> {
+
+        private boolean isOK = false;
+        private CheckBoxPreference cbPref8 = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Looper.prepare();
+
+            JSONRPC jsonrpc = new JSONRPC(params[0], new CharSequenceX(params[1]), params[2], Integer.parseInt(params[3]));
+            String result = jsonrpc.getNetworkInfoAsString();
+            Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
+
+            if(result != null)    {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    if(obj != null && obj.has("version") && obj.has("subversion"))   {
+                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
+                        if(TrustedNodeUtil.getInstance().isSet())    {
+                            isOK = true;
+                        }
+                        if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else    {
+                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch(Exception e) {
+                    Toast.makeText(SettingsActivity2.this, e.getMessage() + "\n" + R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+            else    {
+                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
+            }
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(isOK)    {
+                cbPref8.setEnabled(true);
+                TrustedNodeUtil.getInstance().setValidated(true);
+            }
+            else    {
+                cbPref8.setChecked(false);
+                cbPref8.setEnabled(false);
+                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                TrustedNodeUtil.getInstance().setValidated(false);
+            }
+
+            SettingsActivity2.this.recreate();
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            cbPref8 = (CheckBoxPreference)SettingsActivity2.this.findPreference("useTrustedNode");
+        }
+
     }
 
 }

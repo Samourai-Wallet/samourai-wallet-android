@@ -13,6 +13,7 @@ public class TrustedNodeUtil {
     private static int port = DEFAULT_PORT;
     private static String user = null;
     private static CharSequenceX password = null;
+    private static boolean validated = false;
 
     private static TrustedNodeUtil instance = null;
 
@@ -43,6 +44,14 @@ public class TrustedNodeUtil {
 
     public boolean isSet() {
         return (TrustedNodeUtil.user != null && TrustedNodeUtil.password != null && TrustedNodeUtil.node != null);
+    }
+
+    public boolean isValidated() {
+        return validated;
+    }
+
+    public void setValidated(boolean validated) {
+        TrustedNodeUtil.validated = validated;
     }
 
     public String getNode() {
@@ -110,6 +119,7 @@ public class TrustedNodeUtil {
             if(password != null)    {
                 jsonPayload.put("password", password.toString());
             }
+            jsonPayload.put("validated", validated);
 
         }
         catch(JSONException je) {
@@ -137,6 +147,10 @@ public class TrustedNodeUtil {
 
             if(jsonPayload.has("password")) {
                 password = new CharSequenceX(jsonPayload.getString("password"));
+            }
+
+            if(jsonPayload.has("validated")) {
+                validated = jsonPayload.getBoolean("validated");
             }
 
         }
