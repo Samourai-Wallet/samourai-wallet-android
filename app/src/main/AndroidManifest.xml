@@ -127,7 +127,7 @@
             >
         </activity>
 
-        <activity android:name="com.samourai.wallet.RicochetActivity"
+        <activity android:name="com.samourai.wallet.ricochet.RicochetActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >

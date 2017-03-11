@@ -1,4 +1,4 @@
-package com.samourai.wallet;
+package com.samourai.wallet.ricochet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
+import com.samourai.wallet.BalanceActivity;
+import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -22,7 +24,6 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
-import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.send.PushTx;
 
