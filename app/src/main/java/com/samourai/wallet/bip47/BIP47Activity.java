@@ -7,15 +7,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +71,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
-import com.samourai.wallet.OpCallback;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -100,9 +100,10 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.util.WebUtil;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class BIP47Activity extends Activity {
 
@@ -113,7 +114,8 @@ public class BIP47Activity extends Activity {
     private SwipeMenuListView listView = null;
     BIP47EntryAdapter adapter = null;
     private String[] pcodes = null;
-    private String[] meta = null;
+    private static HashMap<String,String> meta = null;
+    private static HashMap<String,Bitmap> bitmaps = null;
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
@@ -176,12 +178,17 @@ public class BIP47Activity extends Activity {
             }
         });
 
+        if(meta == null)    {
+            meta = new HashMap<String,String>();
+        }
+        if(bitmaps == null)    {
+            bitmaps = new HashMap<String,Bitmap>();
+        }
+
         listView = (SwipeMenuListView) findViewById(R.id.list);
 
         handler = new Handler();
         refreshList();
-
-        setDisplay();
 
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
@@ -308,7 +315,7 @@ public class BIP47Activity extends Activity {
                 int outgoing = BIP47Meta.getInstance().getOutgoingIdx(pcodes[position]);
                 int incoming = BIP47Meta.getInstance().getIncomingIdx(pcodes[position]);
 
-                Toast.makeText(BIP47Activity.this, pcodes[position], Toast.LENGTH_SHORT).show();
+//                Toast.makeText(BIP47Activity.this, pcodes[position], Toast.LENGTH_SHORT).show();
                 Toast.makeText(BIP47Activity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
 
                 return true;
@@ -409,14 +416,6 @@ public class BIP47Activity extends Activity {
         super.onResume();
 
         refreshList();
-
-        setDisplay();
-
-        adapter = new BIP47EntryAdapter();
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        new PaymentCodeMetaTask().execute("");
 
     }
 
@@ -756,6 +755,14 @@ public class BIP47Activity extends Activity {
             pcodes[i] = pcode;
             ++i;
         }
+
+        setDisplay();
+
+        adapter = new BIP47EntryAdapter();
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        new PaymentCodeMetaTask().execute("");
 
     }
 
@@ -1272,17 +1279,68 @@ public class BIP47Activity extends Activity {
                 tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
             }
 
+            final TextView tvLabel = (TextView)view.findViewById(R.id.Label);
+            tvLabel.setText(strLabel);
+
             final ImageView ivAvatar = (ImageView)view.findViewById(R.id.Avatar);
             ivAvatar.setVisibility(View.GONE);
 
-            if(meta[position] != null && meta[position].length() > 0)    {
-                Picasso.with(BIP47Activity.this).load(meta[position]).into(ivAvatar);
-                tvInitial.setVisibility(View.GONE);
-                ivAvatar.setVisibility(View.VISIBLE);
-            }
+            if(meta.containsKey(pcodes[position]))    {
+                try {
 
-            TextView tvLabel = (TextView)view.findViewById(R.id.Label);
-            tvLabel.setText(strLabel);
+                    JSONObject obj = new JSONObject(meta.get(pcodes[position]));
+
+                    if(obj.has("user-avatar"))    {
+
+                        String avatarUrl = obj.getString("user-avatar");
+
+                        if(bitmaps.containsKey(pcodes[position]))    {
+                            ivAvatar.setImageBitmap(bitmaps.get(pcodes[position]));
+                        }
+                        else    {
+                            Picasso.with(BIP47Activity.this)
+                                    .load(avatarUrl)
+                                    .into(new Target() {
+                                        @Override
+                                        public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                                            ivAvatar.setImageBitmap(bitmap);
+                                            bitmaps.put(pcodes[position], bitmap);
+                                        }
+
+                                        @Override
+                                        public void onPrepareLoad(Drawable placeHolderDrawable) {}
+
+                                        @Override
+                                        public void onBitmapFailed(Drawable errorDrawable) {}
+                                    });
+                        }
+
+                        tvInitial.setVisibility(View.GONE);
+                        ivAvatar.setVisibility(View.VISIBLE);
+
+                    }
+
+                    if(obj.has("title"))    {
+
+                        String label = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
+
+                        if((BIP47Meta.getInstance().getLabel(pcodes[position]) == null ||
+                                BIP47Meta.getInstance().getLabel(pcodes[position]).length() == 0 ||
+                                FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcodes[position]))
+                                &&
+                                (label != null && label.length() > 0)))    {
+                            strLabel = label;
+                            BIP47Meta.getInstance().setLabel(pcodes[position], strLabel);
+                            tvLabel.setText(strLabel);
+                        }
+
+                    }
+
+                }
+                catch(JSONException je) {
+                    ;
+                }
+            }
 
             TextView tvLatest = (TextView)view.findViewById(R.id.Latest);
             String strLatest = "";
@@ -1544,7 +1602,12 @@ public class BIP47Activity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            meta = new String[pcodes.length];
+            if(meta == null)    {
+                meta = new HashMap<String,String>();
+            }
+            if(bitmaps == null)    {
+                bitmaps = new HashMap<String,Bitmap>();
+            }
         }
 
         @Override
@@ -1557,10 +1620,8 @@ public class BIP47Activity extends Activity {
                     result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
 
                     JSONObject obj = new JSONObject(result);
-                    if(obj.has("user-avatar"))    {
-                        String avatarUrl = obj.getString("user-avatar");
-                        meta[i] = avatarUrl;
-                        publishProgress();
+                    if(!meta.containsKey(pcodes[i]))    {
+                        meta.put(pcodes[i], obj.toString());
                     }
 
                 }
@@ -1579,7 +1640,7 @@ public class BIP47Activity extends Activity {
 
         protected void onProgressUpdate(String... progress) {
 
-            adapter.notifyDataSetChanged();
+            refreshList();
 
         }
 

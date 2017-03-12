@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 //import android.util.Log;
@@ -24,8 +28,9 @@ public class WebSocketService extends Service {
     private static final long checkIfNotConnectedDelay = 15000L;
     private WebSocketHandler webSocketHandler = null;
     private final Handler handler = new Handler();
-    private String[] xpubs = null;
     private String[] addrs = null;
+
+    public static List<String> addrSubs = null;
 
     @Override
     public void onCreate() {
@@ -47,23 +52,25 @@ public class WebSocketService extends Service {
             mle.printStackTrace();
         }
 
+        addrSubs = ReceiveLookAtUtil.getInstance().getReceives();
+
         //
         // prune BIP47 lookbehind
         //
         BIP47Meta.getInstance().pruneIncoming();
 
-        try {
-            xpubs = new String[]{ HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).xpubstr() };
+        if(addrSubs.size() < 1)    {
             addrs = BIP47Meta.getInstance().getIncomingLookAhead(context);
-            webSocketHandler = new WebSocketHandler(WebSocketService.this, xpubs, addrs);
-            connectToWebsocketIfNotConnected();
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
+        else    {
+            String[] bip47 = BIP47Meta.getInstance().getIncomingLookAhead(context);
+            String[] _addrs = addrSubs.toArray(new String[addrSubs.size()]);
+            addrs = new String[bip47.length + _addrs.length];
+            System.arraycopy(bip47, 0, addrs, 0, bip47.length);
+            System.arraycopy(_addrs, 0, addrs, bip47.length, _addrs.length);
         }
-        catch(MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-        }
+        webSocketHandler = new WebSocketHandler(WebSocketService.this, addrs);
+        connectToWebsocketIfNotConnected();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override

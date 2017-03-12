@@ -40,6 +40,14 @@ Samourai indicates whether or not connections are being routed via Tor Socks5 pr
 
 All development goes in 'develop' branch - do not submit pull requests to 'master'.
 
-### Contact:
+### Dev contact:
 
 [PGP](http://pgp.mit.edu/pks/lookup?op=get&search=0x72B5BACDFEDF39D7)
+
+### What we do:
+
+[Samourai HQ](http://samouraiwallet.com)
+
+[Paymentcode.io](http://paymentcode.io)
+
+[Segwit activation tracker](http://segw.it)

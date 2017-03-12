@@ -1355,6 +1355,13 @@ public class APIFactory	{
 
 //                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
 
+                        if(hasBIP47Output)    {
+                            Tx tx = new Tx(hash, addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
+                            tx.setBlockHeight(height);
+                            TxAuxUtil.getInstance().put(tx);
+                        }
+                        /*
                         if(hasBIP47Output && !seenBIP47Tx.containsKey(hash))    {
                             Tx tx = new Tx(hash, addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
                             if(hasBIP47Output && (BIP47Meta.getInstance().getPCode4Addr(addr) != null))    {
@@ -1366,6 +1373,7 @@ public class APIFactory	{
                             xpub_txs.get(account0_xpub).add(tx);
                             seenBIP47Tx.put(hash, "");
                         }
+                        */
                         else    {
                             ;
                         }
@@ -1421,8 +1429,14 @@ public class APIFactory	{
         List<Tx> ret = new ArrayList<Tx>();
         for(String key : xpub_txs.keySet())  {
             List<Tx> txs = xpub_txs.get(key);
-            ret.addAll(txs);
+            for(Tx tx : txs)   {
+                if(!TxAuxUtil.getInstance().getTxs().containsKey(tx.getHash()))    {
+                    ret.add(tx);
+                }
+            }
         }
+
+        ret.addAll(TxAuxUtil.getInstance().getTxs().values());
 
         Collections.sort(ret, new TxMostRecentDateComparator());
 

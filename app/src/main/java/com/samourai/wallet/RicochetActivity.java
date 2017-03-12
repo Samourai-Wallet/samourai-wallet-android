@@ -24,7 +24,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.send.PushTx;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
@@ -293,7 +293,7 @@ public class RicochetActivity extends Activity {
             else    {
                 AlertDialog.Builder dlg = new AlertDialog.Builder(RicochetActivity.this)
                         .setTitle(R.string.app_name)
-                        .setMessage(R.string.ricochet_broadcast)
+                        .setMessage(R.string.ricochet_not_broadcast_replay)
                         .setCancelable(false)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {

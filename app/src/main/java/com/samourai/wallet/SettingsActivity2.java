@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -34,12 +35,15 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -124,6 +128,40 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         }
                         else    {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126);
+                        }
+
+                        return true;
+                    }
+                });
+
+                Preference trustedNodePref = (Preference) findPreference("trustedNode");
+                trustedNodePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getTrustedNode();
+                        return true;
+                    }
+                });
+
+                final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
+                if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
+                    cbPref8.setEnabled(true);
+                }
+                else    {
+                    cbPref8.setEnabled(false);
+                }
+                cbPref8.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref8.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                        }
+                        else if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                            cbPref8.setEnabled(false);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
                         }
 
                         return true;
@@ -1039,6 +1077,153 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             }
                         }
                 ).show();
+
+    }
+
+    private void getTrustedNode()	{
+
+        final EditText edNode = new EditText(SettingsActivity2.this);
+        edNode.setHint(R.string.trusted_node_ip_hint);
+        edNode.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edNode.setText(TrustedNodeUtil.getInstance().getNode() == null ? "" : TrustedNodeUtil.getInstance().getNode());
+        final EditText edPort = new EditText(SettingsActivity2.this);
+        edPort.setHint(R.string.trusted_node_port_hint);
+        edPort.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_NUMBER);
+        edPort.setText(TrustedNodeUtil.getInstance().getPort() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : Integer.toString(TrustedNodeUtil.getInstance().getPort()));
+        final EditText edUser = new EditText(SettingsActivity2.this);
+        edUser.setHint(R.string.trusted_node_user_hint);
+        edUser.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        edUser.setText(TrustedNodeUtil.getInstance().getUser() == null ? "" : TrustedNodeUtil.getInstance().getUser());
+        final EditText edPassword = new EditText(SettingsActivity2.this);
+        edPassword.setHint(R.string.trusted_node_password_hint);
+        edPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        edPassword.setSingleLine(true);
+        edPassword.setText(TrustedNodeUtil.getInstance().getPassword() == null ? "" : TrustedNodeUtil.getInstance().getPassword());
+
+        LinearLayout restoreLayout = new LinearLayout(SettingsActivity2.this);
+        restoreLayout.setOrientation(LinearLayout.VERTICAL);
+        restoreLayout.addView(edNode);
+        restoreLayout.addView(edPort);
+        restoreLayout.addView(edUser);
+        restoreLayout.addView(edPassword);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.trusted_node)
+                .setView(restoreLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        final String node = edNode.getText().toString();
+                        final String port = edPort.getText().toString().length() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : edPort.getText().toString();
+                        final String user = edUser.getText().toString();
+                        final String password = edPassword.getText().toString();
+
+                        if(node != null && node.length() > 0 &&
+                                port != null && port.length() > 0 &&
+                                user != null && user.length() > 0 &&
+                                password != null && password.length() > 0
+                                )    {
+
+                            TrustedNodeUtil.getInstance().setParams(user, new CharSequenceX(password), node, Integer.parseInt(port));
+
+                            new TrustedNodeTask().execute(user, password, node, port);
+
+                            dialog.dismiss();
+
+                        }
+                        else if((node == null || node.length() == 0) &&
+                                (port == null || port.length() == 0) &&
+                                (user == null || user.length() == 0) &&
+                                (password == null || password.length() == 0))   {
+
+                            TrustedNodeUtil.getInstance().reset();
+
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+    }
+
+    private class TrustedNodeTask extends AsyncTask<String, Void, String> {
+
+        private boolean isOK = false;
+        private CheckBoxPreference cbPref8 = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Looper.prepare();
+
+            JSONRPC jsonrpc = new JSONRPC(params[0], new CharSequenceX(params[1]), params[2], Integer.parseInt(params[3]));
+            String result = jsonrpc.getNetworkInfoAsString();
+            Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
+
+            if(result != null)    {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    if(obj != null && obj.has("version") && obj.has("subversion"))   {
+                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
+                        if(TrustedNodeUtil.getInstance().isSet())    {
+                            isOK = true;
+                        }
+                        if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
+                        }
+                        else    {
+                            Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else    {
+                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch(Exception e) {
+                    Toast.makeText(SettingsActivity2.this, e.getMessage() + "\n" + R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+            else    {
+                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
+            }
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(isOK)    {
+                cbPref8.setEnabled(true);
+                TrustedNodeUtil.getInstance().setValidated(true);
+            }
+            else    {
+                cbPref8.setChecked(false);
+                cbPref8.setEnabled(false);
+                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                TrustedNodeUtil.getInstance().setValidated(false);
+            }
+
+            SettingsActivity2.this.recreate();
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            cbPref8 = (CheckBoxPreference)SettingsActivity2.this.findPreference("useTrustedNode");
+        }
 
     }
 

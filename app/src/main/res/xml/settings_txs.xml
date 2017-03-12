@@ -8,4 +8,17 @@
         android:key="bip126"
         />
 
+    <Preference
+        android:title="@string/options_trusted_node"
+        android:summary="@string/options_trusted_node2"
+        android:key="trustedNode"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_use_trusted_node"
+        android:summary="@string/options_use_trusted_node2"
+        android:defaultValue="false"
+        android:key="useTrustedNode"
+        />
+
 </PreferenceScreen>

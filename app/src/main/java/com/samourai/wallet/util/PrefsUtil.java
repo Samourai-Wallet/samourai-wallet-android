@@ -29,6 +29,8 @@ public class PrefsUtil {
 	public static final String SCRAMBLE_PIN = "scramblePin";
 	public static final String AUTO_BACKUP = "autoBackup";
 	public static final String SPEND_TYPE = "spendType";
+	public static final String TRUSTED_NODE = "trustedNode";
+	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

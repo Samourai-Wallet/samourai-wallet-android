@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.92.10</string>
+    <string name="version_name">0.92.20</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -95,6 +95,10 @@
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
+    <string name="options_trusted_node">Trusted node</string>
+    <string name="options_trusted_node2">Specify your own trusted node for broadcasting transactions.</string>
+    <string name="options_use_trusted_node">Use trusted node</string>
+    <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
 
     <string name="select_currency">Select currency</string>
 
@@ -415,5 +419,27 @@
     <string name="bip47_bad_outpoint">Bad outpoint used for masking payment code</string>
 
     <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
+
+    <string name="trusted_node">Trusted node</string>
+    <string name="trusted_node_user">User name</string>
+    <string name="trusted_node_ip">Node</string>
+    <string name="trusted_node_port">Port</string>
+    <string name="trusted_node_user_hint">rpc user name</string>
+    <string name="trusted_node_ip_hint">IP address</string>
+    <string name="trusted_node_port_hint">Port (8332 default)</string>
+    <string name="trusted_node_password_hint">rpc user password</string>
+    <string name="trusted_node_not_valid">Please supply valid info for your trusted node.</string>
+    <string name="trusted_node_ok">Trusted node is set up successfully.</string>
+    <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
+    <string name="trusted_node_error">Error reaching proposed trusted node.</string>
+    <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
+    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
+    <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
+    <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
+
+    <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
+    <string name="refresh_tx">Retrieved transactions and balance.</string>
+    <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
+    <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
 
 </resources>

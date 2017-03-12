@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,13 +31,15 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.api.TxAuxUtil;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
@@ -50,7 +51,7 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.PushTx;
+import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.util.SendAddressUtil;
 
 import java.io.IOException;
@@ -79,6 +80,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
+
+import static java.lang.System.currentTimeMillis;
 
 public class SendActivity extends Activity {
 
@@ -935,7 +938,7 @@ public class SendActivity extends Activity {
                             progress.setMessage(getString(R.string.please_wait_sending));
                             progress.show();
 
-                            List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+                            final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
                             for(UTXO u : selectedUTXO)   {
                                 outPoints.addAll(u.getOutpoints());
                             }
@@ -969,6 +972,8 @@ public class SendActivity extends Activity {
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("SendActivity", hexTx);
 
+                                final String strTxHash = tx.getHashAsString();
+
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -978,26 +983,46 @@ public class SendActivity extends Activity {
                                         boolean isOK = false;
                                         String response = null;
                                         try {
-//                                            response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-//                                            Log.d("SendActivity", "pushTx:" + response);
-                                            response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
-//                                            Log.d("SendActivity", "pushTx:" + response);
-
-                                            if(response != null)    {
-                                                org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if(jsonObject.has("status"))    {
-                                                    if(jsonObject.getString("status").equals("ok"))    {
-                                                        isOK = true;
+                                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+                                                if(TrustedNodeUtil.getInstance().isSet())    {
+                                                    response = PushTx.getInstance(SendActivity.this).trustedNode(hexTx);
+                                                    JSONObject jsonObject = new org.json.JSONObject(response);
+                                                    if(jsonObject.has("result"))    {
+                                                        if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
+                                                            isOK = true;
+                                                        }
+                                                        else    {
+                                                            Toast.makeText(SendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                        }
                                                     }
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                             else    {
-                                                Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                                return;
+                                                response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
+
+                                                if(response != null)    {
+                                                    JSONObject jsonObject = new org.json.JSONObject(response);
+                                                    if(jsonObject.has("status"))    {
+                                                        if(jsonObject.getString("status").equals("ok"))    {
+                                                            isOK = true;
+                                                        }
+                                                    }
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                                }
                                             }
 
                                             if(isOK)    {
-                                                Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
+                                                    Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
 
                                                 if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
                                                     try {
@@ -1011,15 +1036,25 @@ public class SendActivity extends Activity {
                                                     }
                                                 }
 
+                                                // spent BIP47 UTXO?
+                                                Tx _tx = new Tx(strTxHash, strDestinationBTCAddress, ((double)(_amount + _fee.longValue()) / 1e8) * -1.0, System.currentTimeMillis() / 1000L, 0L, -1L, null);
+                                                if(hasBIP47UTXO(outPoints))    {
+                                                    TxAuxUtil.getInstance().put(_tx);
+                                                }
+
                                                 // increment counter if BIP47 spend
                                                 if(strPCode != null && strPCode.length() > 0)    {
                                                     BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
                                                     BIP47Meta.getInstance().inc(strPCode);
 
                                                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
-                                                    String strTS = sd.format(System.currentTimeMillis());
+                                                    String strTS = sd.format(currentTimeMillis());
                                                     String event = strTS + " " + SendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
                                                     BIP47Meta.getInstance().setLatestEvent(strPCode, event);
+
+                                                    // spent to BIP47? If so, update _tx object created above
+                                                    _tx.setPaymentCode(strPCode);
+                                                    TxAuxUtil.getInstance().put(_tx);
 
                                                     strPCode = null;
                                                 }
@@ -1426,6 +1461,21 @@ public class SendActivity extends Activity {
 
         return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
 
+    }
+
+    private boolean hasBIP47UTXO(List<MyTransactionOutPoint> outPoints)    {
+
+        List<String> addrs = BIP47Meta.getInstance().getUnspentAddresses(SendActivity.this, BIP47Util.getInstance(SendActivity.this).getWallet().getAccount(0).getPaymentCode());
+
+        for(MyTransactionOutPoint o : outPoints)   {
+
+            if(addrs.contains(o.getAddress()))    {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
 }

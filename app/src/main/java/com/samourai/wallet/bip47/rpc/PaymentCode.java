@@ -148,11 +148,17 @@ public class PaymentCode {
 
         byte[] chain = new byte[CHAIN_LEN];
         byte[] pub = new byte[PUBLIC_KEY_X_LEN + PUBLIC_KEY_Y_LEN];
+
         // type:
         bb.get();
         // features:
         bb.get();
+
         bb.get(pub);
+        if(pub[0] != 0x02 && pub[0] != 0x03)   {
+            throw new AddressFormatException("invalid public key");
+        }
+
         bb.get(chain);
 
         return Pair.of(pub, chain);

@@ -34,11 +34,14 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.service.WebSocketHandler;
+import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -522,6 +525,19 @@ public class ReceiveActivity extends Activity {
 
         tvAddress.setText(addr);
         checkPrevUse();
+
+        ReceiveLookAtUtil.getInstance().add(addr);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(AppUtil.getInstance(ReceiveActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                    stopService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+                }
+                startService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+            }
+        }).start();
+
     }
 
     private Bitmap generateQRCode(String uri) {
