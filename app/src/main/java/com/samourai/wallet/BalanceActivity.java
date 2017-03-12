@@ -43,6 +43,7 @@ import android.widget.Toast;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -348,10 +349,10 @@ public class BalanceActivity extends Activity {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                             if(tx.getAmount() < 0.0)    {
-                                Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
+                                doRBF(tx);
                             }
                             else    {
-                                Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
+                                doCPFP(tx);
                             }
 
                         }
@@ -1241,6 +1242,23 @@ public class BalanceActivity extends Activity {
             startActivity(browserIntent);
         }
 
+    }
+
+    private void doRBF(Tx tx) {
+        // get hash
+        // retrieve serialized tx
+        // recalc fee
+        // add utxo(s), if necessary
+        // re-spend
+        Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
+    }
+
+    private void doCPFP(Tx tx) {
+        // get hash
+        // get tx
+        // match amounts to find output
+        // spend utxo
+        Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
     }
 
     private class RefreshTask extends AsyncTask<String, Void, String> {
