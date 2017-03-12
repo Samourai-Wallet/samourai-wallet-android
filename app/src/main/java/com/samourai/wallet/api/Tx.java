@@ -13,6 +13,7 @@ public class Tx {
     private long confirmations = 0L;
     private long block_height = -1L;
     private long ts = 0L;
+    private boolean isRBF = false;
 
     public Tx(String hash, String address, double amount, long date, long confirmations) {
         this.strHash = hash;
@@ -112,6 +113,14 @@ public class Tx {
         this.strPaymentCode = pcode;
     }
 
+    public boolean isRBF() {
+        return isRBF;
+    }
+
+    public void setRBF(boolean rbf) {
+        isRBF = rbf;
+    }
+
     public JSONObject toJSON()  {
 
         JSONObject obj = new JSONObject();
@@ -132,6 +141,7 @@ public class Tx {
             obj.put("confirmations", confirmations);
             obj.put("block_height", block_height);
             obj.put("ts", ts);
+            obj.put("rbf", isRBF);
         }
         catch(JSONException je) {
             ;
@@ -167,6 +177,9 @@ public class Tx {
             }
             if(jsonObj.has("ts"))    {
                 ts = jsonObj.getLong("ts");
+            }
+            if(jsonObj.has("rbf"))    {
+                isRBF = jsonObj.getBoolean("rbf");
             }
 
         }
