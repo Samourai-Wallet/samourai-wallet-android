@@ -19,9 +19,11 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -70,6 +72,7 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.util.RBFUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
@@ -303,7 +306,7 @@ public class BalanceActivity extends Activity {
 
                 long viewId = view.getId();
                 View v = (View)view.getParent();
-                Tx tx = txs.get(position - 1);
+                final Tx tx = txs.get(position - 1);
                 ImageView ivTxStatus = (ImageView)v.findViewById(R.id.TransactionStatus);
                 TextView tvConfirmationCount = (TextView)v.findViewById(R.id.ConfirmationCount);
 
@@ -321,7 +324,46 @@ public class BalanceActivity extends Activity {
                 }
                 else {
 
-                    doExplorerView(tx.getHash());
+                    String message = getString(R.string.options_unconfirmed_tx);
+                    String option = null;
+
+                    // RBF
+                    if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash()))    {
+                        option = getString(R.string.options_rbf);
+                    }
+                    // CPFP
+                    else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
+                        option = getString(R.string.options_cpfp);
+                    }
+                    else    {
+                        doExplorerView(tx.getHash());
+                        return;
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                    builder.setTitle(R.string.app_name);
+                    builder.setMessage(message);
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(option, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            if(tx.getAmount() < 0.0)    {
+                                Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
+                            }
+                            else    {
+                                Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+                    builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+                            doExplorerView(tx.getHash());
+                        }
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
 
                 }
 
