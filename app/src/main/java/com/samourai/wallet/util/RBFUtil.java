@@ -36,11 +36,11 @@ public class RBFUtil {
             this.changeAddrs = changeAddrs;
         }
 
-        public void add(String addr)   {
+        public void addChangeAddr(String addr)   {
             changeAddrs.add(addr);
         }
 
-        public boolean contains(String addr)   {
+        public boolean containsChangeAddr(String addr)   {
             return changeAddrs.contains(addr);
         }
 
@@ -125,6 +125,14 @@ public class RBFUtil {
         }
 
         return instance;
+    }
+
+    public void add(RBFSpend rbf)    {
+        rbfs.put(rbf.getHash(), rbf);
+    }
+
+    public boolean contains(String hash)   {
+        return rbfs.containsKey(hash);
     }
 
     public JSONArray toJSON() {
