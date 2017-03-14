@@ -1349,7 +1349,7 @@ public class BalanceActivity extends Activity {
                 strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx_pre).toString();
 
                 progress = new ProgressDialog(BalanceActivity.this);
-                progress.setCancelable(false);
+                progress.setCancelable(true);
                 progress.setTitle(strProgressTitle);
                 progress.setMessage(strProgressMessage);
                 progress.show();
