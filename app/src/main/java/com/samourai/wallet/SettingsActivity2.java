@@ -1174,16 +1174,19 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 try {
                     JSONObject obj = new JSONObject(result);
                     if(obj != null && obj.has("version") && obj.has("subversion"))   {
-                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ok, Toast.LENGTH_SHORT).show();
-                        if(TrustedNodeUtil.getInstance().isSet())    {
-                            isOK = true;
+
+                        if(obj.getString("subversion").contains("Bitcoin XT") || obj.getString("subversion").contains("Classic") || obj.getString("subversion").contains("BitcoinUnlimited") || )    {
+                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_breaks_consensus, Toast.LENGTH_SHORT).show();
                         }
-                        if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))    {
+                        else if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))   {
+                            isOK = true;
                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
                         }
                         else    {
+                            isOK = true;
                             Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
                         }
+
                     }
                     else    {
                         Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();

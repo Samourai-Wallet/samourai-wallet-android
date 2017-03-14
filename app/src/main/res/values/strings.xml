@@ -436,6 +436,7 @@
     <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
+    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
 
     <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
     <string name="refresh_tx">Retrieved transactions and balance.</string>
