@@ -393,7 +393,7 @@ public class BalanceActivity extends Activity {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+//        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
         refreshTx(false, true, false);
@@ -445,9 +445,17 @@ public class BalanceActivity extends Activity {
         if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
             menu.findItem(R.id.action_tor).setVisible(false);
         }
+        else if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())   {
+            OrbotHelper.requestStartTor(BalanceActivity.this);
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+        }
+        else    {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
