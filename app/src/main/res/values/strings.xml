@@ -443,4 +443,9 @@
     <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
     <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
 
+    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
+    <string name="options_block_explorer">View in block explorer</string>
+    <string name="options_rbf">Use replace-by-fee (RBF)</string>
+    <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
+
 </resources>
