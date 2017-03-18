@@ -325,6 +325,8 @@ public class BalanceActivity extends Activity {
                 }
                 else {
 
+                    /*
+
                     String message = getString(R.string.options_unconfirmed_tx);
                     String option = null;
 
@@ -365,6 +367,10 @@ public class BalanceActivity extends Activity {
 
                     AlertDialog alert = builder.create();
                     alert.show();
+
+                    */
+
+                    doExplorerView(tx.getHash());
 
                 }
 
