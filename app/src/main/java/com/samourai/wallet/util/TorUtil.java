@@ -40,7 +40,7 @@ public class TorUtil {
     }
 
     public void setStatusFromBroadcast(boolean status) {
-        this.statusFromBroadcast = status;
+        statusFromBroadcast = status;
     }
 
     public boolean orbotIsRunning() {
@@ -60,14 +60,10 @@ public class TorUtil {
             ;
         }
 
-//        Log.i("BIP47Meta", jsonPayload.toString());
-
         return jsonPayload;
     }
 
     public void fromJSON(JSONObject jsonPayload) {
-
-//        Log.i("BIP47Meta", jsonPayload.toString());
 
         try {
 

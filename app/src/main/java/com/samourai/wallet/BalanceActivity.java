@@ -78,6 +78,7 @@ import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.subgraph.orchid.Tor;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
@@ -326,7 +327,6 @@ public class BalanceActivity extends Activity {
                 else {
 
                     /*
-
                     String message = getString(R.string.options_unconfirmed_tx);
                     String option = null;
 
@@ -367,7 +367,6 @@ public class BalanceActivity extends Activity {
 
                     AlertDialog alert = builder.create();
                     alert.show();
-
                     */
 
                     doExplorerView(tx.getHash());
@@ -412,6 +411,10 @@ public class BalanceActivity extends Activity {
 
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+
+        if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())    {
+            OrbotHelper.requestStartTor(BalanceActivity.this);
+        }
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 

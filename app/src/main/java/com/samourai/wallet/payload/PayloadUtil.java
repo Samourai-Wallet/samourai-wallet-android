@@ -173,7 +173,7 @@ public class PayloadUtil	{
             meta.put("receives", ReceiveLookAtUtil.getInstance().toJSON());
             meta.put("tx_aux", TxAuxUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
-//            meta.put("tor", TorUtil.getInstance(context).toJSON());
+            meta.put("tor", TorUtil.getInstance(context).toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -334,11 +334,9 @@ public class PayloadUtil	{
                 if(meta.has("rbfs")) {
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
-                /*
                 if(meta.has("tor")) {
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
-                */
 
                 if(meta.has("units")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BTC_UNITS, meta.getInt("units"));
