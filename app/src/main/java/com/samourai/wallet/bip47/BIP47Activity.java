@@ -623,58 +623,10 @@ public class BIP47Activity extends Activity {
 
     private void doSign() {
 
-        String strDate = new Date(System.currentTimeMillis()).toLocaleString();
-        String message = BIP47Activity.this.getString(R.string.bip47_sign_text2) + " " + strDate;
-
-        final EditText etMessage = new EditText(BIP47Activity.this);
-        etMessage.setHint(message);
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
-                .setTitle(R.string.bip47_sign)
-                .setMessage(R.string.bip47_sign_text1)
-                .setView(etMessage)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                        String strSignedMessage = null;
-                        String result = etMessage.getText().toString();
-                        if(result == null || result.length() == 0)    {
-                            String strDate = new Date(System.currentTimeMillis()).toLocaleString();
-                            String message = BIP47Activity.this.getString(R.string.bip47_sign_text2) + " " + strDate;
-                            strSignedMessage = MessageSignUtil.getInstance().signMessageArmored(BIP47Util.getInstance(BIP47Activity.this).getNotificationAddress().getECKey(), message);
-                        }
-                        else    {
-                            strSignedMessage = MessageSignUtil.getInstance().signMessageArmored(BIP47Util.getInstance(BIP47Activity.this).getNotificationAddress().getECKey(), result);
-                        }
-
-                        TextView showText = new TextView(BIP47Activity.this);
-                        showText.setText(strSignedMessage);
-                        showText.setTextIsSelectable(true);
-                        showText.setPadding(40, 10, 40, 10);
-                        showText.setTextSize(18.0f);
-                        new AlertDialog.Builder(BIP47Activity.this)
-                                .setTitle(R.string.app_name)
-                                .setView(showText)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                    }
-                                }).show();
-
-                    }
-
-                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                });
-
-        dlg.show();
+        MessageSignUtil.getInstance(BIP47Activity.this).doSign(BIP47Activity.this.getString(R.string.bip47_sign),
+                BIP47Activity.this.getString(R.string.bip47_sign_text1),
+                BIP47Activity.this.getString(R.string.bip47_sign_text2),
+                BIP47Util.getInstance(BIP47Activity.this).getNotificationAddress().getECKey());
 
     }
 

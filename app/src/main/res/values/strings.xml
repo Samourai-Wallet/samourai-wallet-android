@@ -448,4 +448,6 @@
     <string name="options_rbf">Use replace-by-fee (RBF)</string>
     <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
 
+    <string name="options_sign">Sign message</string>
+
 </resources>
