@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.92.20</string>
+    <string name="version_name">0.92.22</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -436,6 +436,7 @@
     <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
+    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
 
     <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
     <string name="refresh_tx">Retrieved transactions and balance.</string>
