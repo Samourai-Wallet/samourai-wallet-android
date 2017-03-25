@@ -17,7 +17,6 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -36,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 import org.spongycastle.util.encoders.Hex;
+
+import static org.spongycastle.util.Arrays.reverse;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -724,10 +725,7 @@ public class APIFactory	{
             for (Map<String, Object> outDict : outputsRoot) {
 
                 byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-
-                Hash hash = new Hash(hashBytes);
-                hash.reverse();
-                Sha256Hash txHash = new Sha256Hash(hash.getBytes());
+                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
 
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
@@ -1495,10 +1493,7 @@ public class APIFactory	{
             for (Map<String, Object> outDict : outputsRoot) {
 
                 byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-
-                Hash hash = new Hash(hashBytes);
-                hash.reverse();
-                Sha256Hash txHash = new Sha256Hash(hash.getBytes());
+                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
 
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.params.MainNetParams;
 import org.spongycastle.util.encoders.Hex;
@@ -79,9 +80,9 @@ public class PrivKeyReader {
             byte[] testBytes = null;
             String data = strPrivKey.toString() + "?";
             try {
-                Hash hash = new Hash(MessageDigest.getInstance("SHA-256").digest(data.getBytes("UTF-8")));
-                testBytes = hash.getBytes();
-            } catch (Exception e) {
+                testBytes = Sha256Hash.hash(data.getBytes("UTF-8"));
+            }
+            catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -128,9 +129,9 @@ public class PrivKeyReader {
         else if(format.equals(MINI)) {
 
             try {
-                Hash hash = new Hash(MessageDigest.getInstance("SHA-256").digest(strPrivKey.toString().getBytes("UTF-8")));
+                byte[] hash = Sha256Hash.hash(strPrivKey.toString().getBytes("UTF-8"));
                 // assume uncompressed
-                return decodeHexPK(hash.toString(), false);
+                return decodeHexPK(Hex.toHexString(hash), false);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
