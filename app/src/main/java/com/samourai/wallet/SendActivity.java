@@ -1344,6 +1344,10 @@ public class SendActivity extends Activity {
         else if(data.indexOf("?") != -1)   {
 
             String pcode = data.substring(0, data.indexOf("?"));
+            // not valid BIP21 but seen often enough
+            if(pcode.startsWith("bitcoin://"))    {
+                pcode = pcode.substring(10);
+            }
             if(pcode.startsWith("bitcoin:"))    {
                 pcode = pcode.substring(8);
             }
