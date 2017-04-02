@@ -450,4 +450,6 @@
 
     <string name="options_sign">Sign message</string>
 
+    <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
+
 </resources>

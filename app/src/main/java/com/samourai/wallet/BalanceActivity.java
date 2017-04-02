@@ -18,12 +18,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,17 +35,19 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.util.Log;
+import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.PoW;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -73,16 +72,15 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
-import com.samourai.wallet.util.RBFUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
 import com.samourai.wallet.util.WebUtil;
-import com.subgraph.orchid.Tor;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
@@ -132,11 +130,18 @@ public class BalanceActivity extends Activity {
                 final boolean fetch = intent.getBooleanExtra("fetch", false);
 
                 final String rbfHash;
+                final String blkHash;
                 if(intent.hasExtra("rbf"))    {
                     rbfHash = intent.getStringExtra("rbf");
                 }
                 else    {
                     rbfHash = null;
+                }
+                if(intent.hasExtra("hash"))    {
+                    blkHash = intent.getStringExtra("hash");
+                }
+                else    {
+                    blkHash = null;
                 }
 
                 BalanceActivity.this.runOnUiThread(new Runnable() {
@@ -188,6 +193,18 @@ public class BalanceActivity extends Activity {
 
                     }
                 });
+
+                if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
+
+                    BalanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new PoWTask().execute(blkHash);
+                        }
+
+                    });
+
+                }
 
             }
 
@@ -1446,5 +1463,52 @@ public class BalanceActivity extends Activity {
         }
     }
 
+    private class PoWTask extends AsyncTask<String, Void, String> {
+
+        private boolean isOK = true;
+        private String strBlockHash = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            strBlockHash = params[0];
+
+            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
+            JSONObject jsonObj = jsonrpc.getBlock(strBlockHash);
+            PoW pow = new PoW(strBlockHash);
+            if(jsonObj != null && !pow.check(jsonObj))    {
+                isOK = false;
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(!isOK)    {
+
+                new AlertDialog.Builder(BalanceActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(getString(R.string.trusted_node_pow_failed) + "\n" + "Block hash:" + strBlockHash)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                dialog.dismiss();
+
+                            }
+                        }).show();
+
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ;
+        }
+
+    }
 
 }
