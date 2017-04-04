@@ -93,6 +93,9 @@ public class PoW {
             hash = Hex.toHexString(reverse(Sha256Hash.hashTwice(buf)));
             Log.i("PoW", "hash:" + hash);
         }
+        catch(org.spongycastle.util.encoders.DecoderException de) {
+            return null;
+        }
         catch(JSONException je) {
             return null;
         }
