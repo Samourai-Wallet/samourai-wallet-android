@@ -94,6 +94,7 @@ public class PoW {
             Log.i("PoW", "hash:" + hash);
         }
         catch(org.spongycastle.util.encoders.DecoderException de) {
+            de.printStackTrace();
             return null;
         }
         catch(JSONException je) {
