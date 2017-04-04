@@ -1475,9 +1475,17 @@ public class BalanceActivity extends Activity {
 
             JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
             JSONObject jsonObj = jsonrpc.getBlock(strBlockHash);
-            PoW pow = new PoW(strBlockHash);
-            if(jsonObj != null && !pow.check(jsonObj))    {
-                isOK = false;
+            if(jsonObj != null && jsonObj.has("hash"))    {
+                PoW pow = new PoW(strBlockHash);
+                String hash = pow.calcHash(jsonObj);
+                if(hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase()))    {
+                    if(!pow.check(jsonObj, hash))    {
+                        isOK = false;
+                    }
+                }
+                else    {
+                    isOK = false;
+                }
             }
 
             return "OK";

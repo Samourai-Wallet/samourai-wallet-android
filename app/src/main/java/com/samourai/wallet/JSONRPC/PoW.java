@@ -104,9 +104,7 @@ public class PoW {
     // Prove the block was as difficult to make as it claims to be.
     // Check value of difficultyTarget to prevent and attack that might have us read a different chain.
     //
-    public boolean check(JSONObject resultObj) {
-
-        String hash = calcHash(resultObj);
+    public boolean check(JSONObject resultObj, String hash) {
 
         try {
 
