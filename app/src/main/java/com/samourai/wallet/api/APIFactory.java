@@ -17,7 +17,6 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -36,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 import org.spongycastle.util.encoders.Hex;
+
+import static org.spongycastle.util.Arrays.reverse;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -72,6 +73,9 @@ public class APIFactory	{
     private static long bip47_balance = 0L;
     private static HashMap<String, Long> bip47_amounts = null;
     private static HashMap<String, String> seenBIP47Tx = null;
+
+    private static long latest_block_height = -1L;
+    private static String latest_block_hash = null;
 
     private static APIFactory instance = null;
 
@@ -172,14 +176,15 @@ public class APIFactory	{
                 }
             }
 
-            long latest_block = 0L;
-
             if(jsonObject.has("info"))  {
                 JSONObject infoObj = (JSONObject)jsonObject.get("info");
                 if(infoObj.has("latest_block"))  {
                     JSONObject blockObj = (JSONObject)infoObj.get("latest_block");
                     if(blockObj.has("height"))  {
-                        latest_block = blockObj.getLong("height");
+                        latest_block_height = blockObj.getLong("height");
+                    }
+                    if(blockObj.has("hash"))  {
+                        latest_block_hash = blockObj.getString("hash");
                     }
                 }
             }
@@ -285,13 +290,13 @@ public class APIFactory	{
                         //
                         if(input_xpub != null && output_xpub != null && !input_xpub.equals(output_xpub))    {
 
-                            Tx tx = new Tx(hash, output_xpub, (move_amount + Math.abs(input_amount - output_amount)) * -1.0, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx tx = new Tx(hash, output_xpub, (move_amount + Math.abs(input_amount - output_amount)) * -1.0, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
                             if(!xpub_txs.containsKey(input_xpub))  {
                                 xpub_txs.put(input_xpub, new ArrayList<Tx>());
                             }
                             xpub_txs.get(input_xpub).add(tx);
 
-                            Tx _tx = new Tx(hash, input_xpub, move_amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx _tx = new Tx(hash, input_xpub, move_amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
                             if(!xpub_txs.containsKey(output_xpub))  {
                                 xpub_txs.put(output_xpub, new ArrayList<Tx>());
                             }
@@ -301,7 +306,7 @@ public class APIFactory	{
                         else    {
 
                             if(!seenBIP47Tx.containsKey(hash))    {
-                                Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                                Tx tx = new Tx(hash, _addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
                                 if(_addr != null && BIP47Meta.getInstance().getPCode4Addr(_addr) != null)    {
                                     tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(_addr));
                                 }
@@ -326,6 +331,15 @@ public class APIFactory	{
         return false;
 
     }
+
+    public long getLatestBlockHeight()  {
+        return latest_block_height;
+    }
+
+    public String getLatestBlockHash()  {
+        return latest_block_hash;
+    }
+
 /*
     public JSONObject getNotifAddress(String addr) {
 
@@ -711,10 +725,7 @@ public class APIFactory	{
             for (Map<String, Object> outDict : outputsRoot) {
 
                 byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-
-                Hash hash = new Hash(hashBytes);
-                hash.reverse();
-                Sha256Hash txHash = new Sha256Hash(hash.getBytes());
+                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
 
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
@@ -1482,10 +1493,7 @@ public class APIFactory	{
             for (Map<String, Object> outDict : outputsRoot) {
 
                 byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-
-                Hash hash = new Hash(hashBytes);
-                hash.reverse();
-                Sha256Hash txHash = new Sha256Hash(hash.getBytes());
+                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
 
                 int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);

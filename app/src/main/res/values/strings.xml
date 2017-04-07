@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'DD\'</string>
-    <string name="version_name">0.92.22</string>
+    <string name="version_name">0.92.31</string>
     <string name="app_name">Samourai</string>
 
     <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
@@ -442,5 +442,14 @@
     <string name="refresh_tx">Retrieved transactions and balance.</string>
     <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
     <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
+
+    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
+    <string name="options_block_explorer">View in block explorer</string>
+    <string name="options_rbf">Use replace-by-fee (RBF)</string>
+    <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
+
+    <string name="options_sign">Sign message</string>
+
+    <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
 
 </resources>

@@ -3,6 +3,9 @@ package com.samourai.wallet.util;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -16,7 +19,7 @@ public class TorUtil {
     private static Context context = null;
     private static TorUtil instance = null;
 
-    private boolean statusFromBroadcast = false;
+    private static boolean statusFromBroadcast = false;
 
     private TorUtil()   { ; }
 
@@ -37,11 +40,42 @@ public class TorUtil {
     }
 
     public void setStatusFromBroadcast(boolean status) {
-        this.statusFromBroadcast = status;
+        statusFromBroadcast = status;
     }
 
     public boolean orbotIsRunning() {
         return (getPID() != -1);
+    }
+
+    public JSONObject toJSON() {
+
+        JSONObject jsonPayload = new JSONObject();
+
+        try {
+
+            jsonPayload.put("active", statusFromBroadcast);
+
+        }
+        catch(JSONException je) {
+            ;
+        }
+
+        return jsonPayload;
+    }
+
+    public void fromJSON(JSONObject jsonPayload) {
+
+        try {
+
+            if(jsonPayload.has("active"))    {
+                statusFromBroadcast = jsonPayload.getBoolean("active");
+            }
+
+        }
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
     private int getPID() {

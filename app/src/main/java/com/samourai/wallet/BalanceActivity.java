@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,7 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.util.Log;
+import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
@@ -46,6 +45,9 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.PoW;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -78,6 +80,7 @@ import com.samourai.wallet.util.WebUtil;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
@@ -127,11 +130,18 @@ public class BalanceActivity extends Activity {
                 final boolean fetch = intent.getBooleanExtra("fetch", false);
 
                 final String rbfHash;
+                final String blkHash;
                 if(intent.hasExtra("rbf"))    {
                     rbfHash = intent.getStringExtra("rbf");
                 }
                 else    {
                     rbfHash = null;
+                }
+                if(intent.hasExtra("hash"))    {
+                    blkHash = intent.getStringExtra("hash");
+                }
+                else    {
+                    blkHash = null;
                 }
 
                 BalanceActivity.this.runOnUiThread(new Runnable() {
@@ -183,6 +193,18 @@ public class BalanceActivity extends Activity {
 
                     }
                 });
+
+                if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
+
+                    BalanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new PoWTask().execute(blkHash);
+                        }
+
+                    });
+
+                }
 
             }
 
@@ -303,7 +325,7 @@ public class BalanceActivity extends Activity {
 
                 long viewId = view.getId();
                 View v = (View)view.getParent();
-                Tx tx = txs.get(position - 1);
+                final Tx tx = txs.get(position - 1);
                 ImageView ivTxStatus = (ImageView)v.findViewById(R.id.TransactionStatus);
                 TextView tvConfirmationCount = (TextView)v.findViewById(R.id.ConfirmationCount);
 
@@ -320,6 +342,49 @@ public class BalanceActivity extends Activity {
 
                 }
                 else {
+
+                    /*
+                    String message = getString(R.string.options_unconfirmed_tx);
+                    String option = null;
+
+                    // RBF
+                    if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash()))    {
+                        option = getString(R.string.options_rbf);
+                    }
+                    // CPFP
+                    else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
+                        option = getString(R.string.options_cpfp);
+                    }
+                    else    {
+                        doExplorerView(tx.getHash());
+                        return;
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                    builder.setTitle(R.string.app_name);
+                    builder.setMessage(message);
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(option, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            if(tx.getAmount() < 0.0)    {
+                                doRBF(tx);
+                            }
+                            else    {
+                                doCPFP(tx);
+                            }
+
+                        }
+                    });
+                    builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+                            doExplorerView(tx.getHash());
+                        }
+                    });
+
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    */
 
                     doExplorerView(tx.getHash());
 
@@ -350,7 +415,7 @@ public class BalanceActivity extends Activity {
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+//        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
         refreshTx(false, true, false);
@@ -363,6 +428,10 @@ public class BalanceActivity extends Activity {
 
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+
+        if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())    {
+            OrbotHelper.requestStartTor(BalanceActivity.this);
+        }
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
@@ -402,9 +471,18 @@ public class BalanceActivity extends Activity {
         if(!OrbotHelper.isOrbotInstalled(BalanceActivity.this))    {
             menu.findItem(R.id.action_tor).setVisible(false);
         }
+        else if(TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast())   {
+            OrbotHelper.requestStartTor(BalanceActivity.this);
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+        }
+        else    {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
+        menu.findItem(R.id.action_sign).setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1201,6 +1279,23 @@ public class BalanceActivity extends Activity {
 
     }
 
+    private void doRBF(Tx tx) {
+        // get hash
+        // retrieve serialized tx
+        // recalc fee
+        // add utxo(s), if necessary
+        // re-spend
+        Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
+    }
+
+    private void doCPFP(Tx tx) {
+        // get hash
+        // get tx
+        // match amounts to find output
+        // spend utxo
+        Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
+    }
+
     private class RefreshTask extends AsyncTask<String, Void, String> {
 
         private String strProgressTitle = null;
@@ -1368,5 +1463,60 @@ public class BalanceActivity extends Activity {
         }
     }
 
+    private class PoWTask extends AsyncTask<String, Void, String> {
+
+        private boolean isOK = true;
+        private String strBlockHash = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            strBlockHash = params[0];
+
+            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
+            JSONObject jsonObj = jsonrpc.getBlock(strBlockHash);
+            if(jsonObj != null && jsonObj.has("hash"))    {
+                PoW pow = new PoW(strBlockHash);
+                String hash = pow.calcHash(jsonObj);
+                if(hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase()))    {
+                    if(!pow.check(jsonObj, hash))    {
+                        isOK = false;
+                    }
+                }
+                else    {
+                    isOK = false;
+                }
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(!isOK)    {
+
+                new AlertDialog.Builder(BalanceActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(getString(R.string.trusted_node_pow_failed) + "\n" + "Block hash:" + strBlockHash)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                dialog.dismiss();
+
+                            }
+                        }).show();
+
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ;
+        }
+
+    }
 
 }

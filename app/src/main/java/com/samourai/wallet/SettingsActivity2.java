@@ -57,7 +57,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
-import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -742,7 +741,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             }
                             ;
                             byte[] hval = md.digest();
-                            String hash = new Hash(hval).toString();
+                            String hash = Hex.toHexString(hval);
 
                             TextView showText = new TextView(SettingsActivity2.this);
                             showText.setText(hash);

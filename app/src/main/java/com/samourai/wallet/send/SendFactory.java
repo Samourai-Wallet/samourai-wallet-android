@@ -23,7 +23,6 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.Hash;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.R;
@@ -748,10 +747,8 @@ public class SendFactory	{
             final int EQUAL = 0;
             final int AFTER = 1;
 
-            Hash hash1 = new Hash(Hex.decode(i1.getTxHash()));
-            Hash hash2 = new Hash(Hex.decode(i2.getTxHash()));
-            byte[] h1 = hash1.getBytes();
-            byte[] h2 = hash2.getBytes();
+            byte[] h1 = Hex.decode(i1.getTxHash());
+            byte[] h2 = Hex.decode(i2.getTxHash());
 
             int pos = 0;
             while(pos < h1.length && pos < h2.length)    {

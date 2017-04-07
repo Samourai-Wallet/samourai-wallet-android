@@ -30,6 +30,7 @@ import info.guardianproject.netcipher.client.StrongHttpsClient;
 public class WebUtil	{
 
     public static final String BLOCKCHAIN_DOMAIN = "https://blockchain.info/";
+    public static final String BLOCKCHAIN_DOMAIN_TOR = "https://blockchainbdgpzk.onion/";
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/v1/status";
 
@@ -214,6 +215,10 @@ public class WebUtil	{
 
     private String tor_getURL(String URL) throws Exception {
 
+        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
+            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
+        }
+
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
         httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
@@ -248,6 +253,10 @@ public class WebUtil	{
     private String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
 
         Log.d("WebUtil", URL);
+
+        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
+            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
+        }
 
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 

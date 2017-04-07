@@ -400,6 +400,7 @@ public class ReceiveActivity extends Activity {
         menu.findItem(R.id.action_utxo).setVisible(false);
         menu.findItem(R.id.action_tor).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
+        menu.findItem(R.id.action_sign).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

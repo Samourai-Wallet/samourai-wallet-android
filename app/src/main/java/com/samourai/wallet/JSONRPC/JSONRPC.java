@@ -30,6 +30,7 @@ public class JSONRPC {
     private static final String COMMAND_GET_NETWORK_INFO = "getnetworkinfo";
     private static final String COMMAND_GET_BLOCKCOUNT = "getblockcount";
     private static final String COMMAND_PUSHTX = "sendrawtransaction";
+    private static final String COMMAND_GET_BLOCK = "getblock";
 
     private String user = null;
     private CharSequenceX password = null;
@@ -121,6 +122,37 @@ public class JSONRPC {
         }
     }
 
+    public JSONObject getBlock(String hash) {
+        JSONArray array = new JSONArray();
+        array.put(hash);
+        array.put(true);
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCK, array);
+        if(json == null)    {
+            return null;
+        }
+        try {
+            return json.getJSONObject("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public String getBlockAsString(String hash) {
+        JSONObject json = getBlock(hash);
+        if(json == null)    {
+            return null;
+        }
+        else    {
+            try {
+                return json.getString("result").toString();
+            }
+            catch(JSONException je) {
+                return null;
+            }
+        }
+    }
+
     public JSONObject getNetworkInfo() {
         JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_NETWORK_INFO, null);
         if(json == null)    {
@@ -198,19 +230,19 @@ public class JSONRPC {
             }
 
             String inputLine = null;
-            String result = "";
+            StringBuilder sb = new StringBuilder();
             BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             try {
                 while ((inputLine = br.readLine()) != null) {
-                    result += inputLine;
+                    sb.append(inputLine);
                 }
                 br.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if(result.length() > 0)    {
-                responseJsonObj = new JSONObject(result);
+            if(sb.length() > 0)    {
+                responseJsonObj = new JSONObject(sb.toString());
             }
             else    {
                 return null;

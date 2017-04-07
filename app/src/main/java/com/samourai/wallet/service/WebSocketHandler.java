@@ -119,7 +119,7 @@ public class WebSocketHandler {
         new ConnectionTask().execute();
     }
 
-    private void updateBalance(final String rbfHash)    {
+    private void updateBalance(final String rbfHash, final String blkHash)    {
         new Thread() {
             public void run() {
 
@@ -129,6 +129,7 @@ public class WebSocketHandler {
                 intent.putExtra("rbf", rbfHash);
                 intent.putExtra("notifTx", false);
                 intent.putExtra("fetch", true);
+                intent.putExtra("hash", blkHash);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 Looper.loop();
@@ -191,8 +192,18 @@ public class WebSocketHandler {
 
                                     String op = (String) jsonObject.get("op");
 
-                                    if(op.equals("block"))    {
-                                        updateBalance(null);
+                                    if(op.equals("block") && jsonObject.has("x"))    {
+
+                                        JSONObject objX = (JSONObject) jsonObject.get("x");
+
+                                        String hash = null;
+
+                                        if (objX.has("hash")) {
+                                            hash = objX.getString("hash");
+                                        }
+
+                                        updateBalance(null, hash);
+
                                         return;
                                     }
 
@@ -330,7 +341,7 @@ public class WebSocketHandler {
                                             NotificationsFactory.getInstance(context).setNotification(title, marquee, text, R.drawable.ic_launcher, MainActivity2.class, 1000);
                                         }
 
-                                        updateBalance(isRBF ? hash : null);
+                                        updateBalance(isRBF ? hash : null, null);
 
                                         if(out_addr != null)    {
                                             updateReceive(out_addr);
