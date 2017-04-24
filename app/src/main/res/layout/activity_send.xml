@@ -9,7 +9,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView"
         android:layout_below="@+id/toolbar"
         >
 
@@ -35,8 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_light"
-                    android:text="@string/to"
-                    android:id="@+id/to" />
+                    android:text="@string/to" />
 
                 <EditText
                     android:layout_width="match_parent"
@@ -61,16 +59,13 @@
                 android:paddingBottom="8dp"
                 android:layout_below="@+id/toField"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/amountField"
-                >
+                android:layout_alignParentStart="true">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_light"
-                    android:text="Amount"
-                    android:id="@+id/textView3" />
+                    android:text="Amount" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -199,7 +194,6 @@
                 android:paddingLeft="16dp"
                 android:paddingBottom="8dp"
                 android:layout_alignParentLeft="true"
-                android:id="@+id/feeField"
                 android:layout_below="@+id/ricochetField">
 
                 <TextView
@@ -207,7 +201,6 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="@string/fee"
-                    android:id="@+id/textView8"
                     android:layout_gravity="center_horizontal|center_vertical"
                     />
 
@@ -217,7 +210,6 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="8dp"
                     android:paddingLeft="8dp"
-                    android:id="@+id/linearLayout6"
                     android:gravity="left"
                     android:layout_gravity="center_horizontal|center_vertical"
                     >

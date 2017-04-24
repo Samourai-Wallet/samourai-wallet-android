@@ -1,39 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="code_name">\'DD\'</string>
     <string name="version_name">0.92.31</string>
     <string name="app_name">Samourai</string>
-
-    <string name="new_version_message">Welcome to Samourai Alpha 1 \'DD\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
     <string name="creating_wallet">Creating wallet. Please wait...</string>
     <string name="restoring_wallet">Restoring wallet. Please wait...</string>
-    <string name="syncing">Syncing with network. Please wait...</string>
     <string name="decrypting_bip38">Decrypting BIP38 password. Please wait...</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_send">Send</string>
-    <string name="action_stealth_send">Stealth send</string>
-    <string name="action_receive">Receive</string>
-    <string name="action_tx">Transactions</string>
     <string name="action_settings">Settings</string>
     <string name="action_sweep">Sweep private key</string>
     <string name="action_bip47">Payment channels</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="about_us">About Samourai Wallet</string>
-    <string name="about_title">About us</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -47,10 +31,6 @@
 
     <string name="options_mnemonic">Show mnemonic</string>
     <string name="options_mnemonic2">Show mnemonic for this wallet.</string>
-    <string name="options_hexseed">Show hex seed</string>
-    <string name="options_hexseed2">Show hex seed for this wallet.</string>
-    <string name="options_passphrase">Show BIP39 passphrase</string>
-    <string name="options_passphrase2">Show BIP39 passphrase for this wallet.</string>
     <string name="options_xpub">Show XPUB</string>
     <string name="options_xpub2">Show extended public key for an account.</string>
     <string name="options_wipe">Secure erase wallet</string>
@@ -63,8 +43,6 @@
     <string name="options_remote_commands2">Allow remote commands via SMS.</string>
     <string name="options_currency">Street price</string>
     <string name="options_currency2">Choose your exchange and local fiat currency.</string>
-    <string name="options_exchange">Bitcoin exchange</string>
-    <string name="options_exchange2">Bitcoin exchange for obtaining fiat price.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">The block explorer used to view transaction details.</string>
     <string name="options_sim_switch">SIM switch defense</string>
@@ -80,7 +58,6 @@
     <string name="options_Tor">Route via Tor?</string>
     <string name="options_Tor2">Launch Orbot (Tor).</string>
     <string name="options_export">Export wallet backup</string>
-    <string name="options_export2">Export wallet and metadata.</string>
     <string name="options_change_pin">Change PIN</string>
     <string name="options_change_pin2">Define a new PIN.</string>
     <string name="options_remote_pin">Stealth launch and remote PIN</string>
@@ -88,10 +65,7 @@
     <string name="options_autosave_backup">Autosave backup to device storage</string>
     <string name="options_autosave_backup2">Periodically save passphrase encrypted backup to device storage.</string>
     <string name="options_version">Version</string>
-    <string name="options_certif">Signing certificate</string>
-    <string name="options_certif2">View certificate used to sign this app.</string>
     <string name="options_txs">Transactions</string>
-    <string name="options_txs2">Transaction settings.</string>
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
@@ -100,14 +74,9 @@
     <string name="options_use_trusted_node">Use trusted node</string>
     <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
 
-    <string name="select_currency">Select currency</string>
-
     <string name="timeline_today">Today</string>
-    <string name="timeline_yesterday">Yesterday</string>
     <string name="timeline_older">Older</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="tx_receive">Received</string>
     <string name="tx_sent">Transaction sent</string>
     <string name="tx_failed">Error sending transaction</string>
     <string name="you_received">Received</string>
@@ -149,27 +118,15 @@
     <string name="wallet_restored_ok">Wallet restored OK.</string>
     <string name="wallet_restored_ko">Error restoring wallet.</string>
 
-    <string name="sweep_address_for">Sweep address for</string>
-    <string name="sweep_ok">Address swept OK</string>
-    <string name="sweep_ko">Sweep address failed</string>
-
     <string name="address_used_previously">You have used this address before! Reusing addresses may result in a loss of privacy.</string>
 
-    <string name="send_or_receive">Send or receive?</string>
-    <string name="scan_or_manual">Scan QR code or enter manually?</string>
     <string name="scan">Scan</string>
-    <string name="manual">Manual</string>
-    <string name="amount_to_send">Amount to send</string>
-    <string name="send_to">Send to (BTC address)</string>
     <string name="scan_error">Scan error</string>
 
-    <string name="tx_ok">Transaction sent</string>
-    <string name="tx_ko">Transaction failed</string>
     <string name="to">To</string>
     <string name="destination">Address or payment channel</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
-    <string name="invalid_tx_attempt">Invalid transaction attempt</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
 
@@ -178,71 +135,17 @@
     <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
     <string name="wallet_erased">Wallet erased from device.</string>
 
-    <string name="bitfinex_fiat">USD used for Bitfinex fiat price.</string>
-
     <string name="send_privacy_warning">Privacy warning: be aware that you have already sent funds to this address.</string>
 
-    <string name="enter_xpub">Enter your XPUB.</string>
-    <string name="xpub_error">There was an error creating a wallet from your XPUB. Please try again.</string>
-    <string name="xpub_absent">There is no XPUB for creating a wallet. Go to settings to configure Sentinel.</string>
-
     <string name="securely_wiping_wait">Securely wiping wallet. Please wait.</string>
-
-    <string name="btc_address">Bitcoin Address</string>
-    <string name="send_btc">Send Bitcoin</string>
-    <string name="shapeshift">ShapeShift</string>
-
-    <string name="dust_change">Transaction returns dust amount as change.</string>
-    <string name="dust_amount">Transaction spends dust amount.</string>
 
     <string name="options_scramble_pin">Scramble PIN Screen</string>
     <string name="options_scramble_pin2">Use scrambled numerical pad to enter your wallet. </string>
 
-    <string name="warning_weak_crypto">WARNING: This service uses a certificate with WEAK cryptography. Please tell the administrator to upgrade.</string>
-
-    <string name="warning_pinned_cert_mismatch">"Provided Certificate Does Not Match PINNED Certifcate: "</string>
-
-    <string name="error_signature_chain_verification_failed">"signature chain verification failed of "</string>
-
-    <string name="error_could_not_find_cert_issuer_certificate_in_chain">"Could not find cert issuer certificate in chain: "</string>
-
-    <string name="error_could_not_find_root_ca_issuer_certificate_in_chain">Could not find Root CA issuer certificate in chain</string>
-
-    <string name="could_not_find_self_signed_certificate_in_chain">Could not find self-signed certificate in chain</string>
-
-    <string name="error_domain_check_failed">Domain check failed</string>
-
-    <string name="error_does_not_contain_">" does not contain "</string>
-
-    <string name="error_problem_access_local_root_ca_store">problem access local ROOT CA store</string>
-
-    <string name="install_orbot_">Install Orbot?</string>
-
-    <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
-
     <string name="you_must_have_orbot">You must have Orbot installed and activated to proxy traffic through it. Would you like to install it from Google Play?</string>
 
-    <string name="always">Always</string>
-
-    <string name="start_orbot_">Start Orbot?</string>
-
-    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot doesn\'t appear to be running. Would you like to start it up and connect to Tor?</string>
-
-    <string name="secure_connection_active_">Secure Connection Active:</string>
-
-    <string name="getting_market_info">Getting latest ShapeShift market info. Please wait.</string>
-    <string name="getting_trade_info">Getting latest ShapeShift info for this trade. Please wait.</string>
-    <string name="error_getting_market_info">Error getting latest ShapeShift market info.</string>
-    <string name="error_getting_trade_info">Error getting trade info.</string>
-    <string name="send_address_to_clipboard">Copy this send address to the clipboard? If copied, it may be visible to other applications.</string>
-    <string name="select_cryptocurrency">select a cryptocurrency</string>
-    <string name="limit">Limit:</string>
-    <string name="minimum">Minimum:</string>
-
-    <string name="ssl_hostname_invalid">We are unable to validate the hostname of the SSL certificate. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
     <string name="ssl_pinning_invalid">SSL certificate pinning has failed. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
     <string name="ssl_no_connection">We are unable to connect to the host to verify the SSL certificate. Please verify your network connection and device before continuing.</string>
-    <string name="dialog_continue">Continue</string>
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
 
@@ -252,13 +155,9 @@
     <string name="fee">Fee</string>
     <string name="auto_fee">NORMAL</string>
     <string name="priority_fee">PRIORITY</string>
-    <string name="custom_fee">CUSTOM</string>
     <string name="low_fee">LOW</string>
 
-    <string name="obfuscation">Obfuscation</string>
-
-    <string name="spend_type_1">Simple - No address reuse. One change address.</string>
-<!--
+    <!--
     <string name="spend_type_2">Samourai - No address reuse. BIP126, if possible.</string>
     <string name="spend_type_3">Ricochet - 4 hop spend.</string>
 
@@ -266,37 +165,23 @@
     <string name="spend_type_2_desc">Samourai Send - No address reuse. BIP126, if possible.</string>
     <string name="spend_type_3_desc">Ricochet - 4 hop spend.</string>
 -->
-    <string name="add_output">Add Output</string>
-
-    <string name="error_creating_tx">An error occurred creating the transaction. Please try again.</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
-    <string name="account_public">Public</string>
 
     <string name="max_available">Max. available:</string>
     <string name="receive2Samourai">Receive addresses are only generated for your Samourai account.</string>
     <string name="generate_receive_yes">Yes, generate address</string>
 
-    <string name="network_stresses">Bitcoin Network undergoing stress conditions. We recommend priority fee.</string>
-
     <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
-    <string name="change_log">Open changelog</string>
-
     <string name="select_account">Select account</string>
-    <string name="show_balance">Show balance</string>
     <string name="received_bitcoin">Received Bitcoin</string>
-    <string name="sent_bitcoin">Sent Bitcoin</string>
     <string name="received">Received</string>
     <string name="sent">Transaction sent</string>
     <string name="total">Total</string>
-    <string name="password">Password</string>
-    <string name="confirm_password">Confirm password</string>
-    <string name="invalid_password">Please use a password containing at least 6 characters.</string>
     <string name="export_to_clipboard">Export to clipboard</string>
     <string name="export_to_email">Export to email</string>
-    <string name="error_password">The proposed passwords do not match. Please try again.</string>
     <string name="encryption_error">There was an error while encrypting your wallet backup. Please try again.</string>
     <string name="import_backup">From backup</string>
     <string name="import_mnemonic">Mnemonic/seed</string>
@@ -312,19 +197,10 @@
     <string name="success_change_pin">PIN changed</string>
     <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
     <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
-    <string name="alternative_pin_5_8">Please create a stealth and remote PIN code between 5 and 8 characters. This alternative PIN code will be used for stealth launch and remote SMS commands.</string>
-    <string name="alternative_pin_5_8_confirm">Please confirm 5-8 digit stealth and remote PIN</string>
     <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
 
-    <string name="no_edit_BIP21_scan">Bitcoin addresses scanned along with amounts (BIP21) cannot be edited</string>
-
-    <string name="bip47_payment_code">payment code</string>
     <string name="invalid_payment_code">Invalid payment code</string>
     <string name="error_payment_code">Error generating payment code</string>
-    <string name="no_edit_BIP47_address">Bitcoin addresses derived from payment codes cannot be edited</string>
-
-    <string name="options_bip47">Show payment code</string>
-    <string name="options_bip472">Show payment code (can be copied to clipboard).</string>
 
     <string name="bip47_setup1_title">Your Payment Code</string>
     <string name="bip47_setup1_text">Your payment code is reusable and unique to your wallet. Press the QR code icon in the top right to share your payment code.\n\nWhen your payment code is added a payment channel will be opened allowing payments into your wallet at anytime.</string>
@@ -338,10 +214,7 @@
     <string name="bip47_add1_title">New payment channel</string>
     <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
 
-    <string name="bip47_add2_title">New payment channel</string>
-
     <string name="paste">Paste</string>
-    <string name="alias">Alias</string>
     <string name="label">Label</string>
     <string name="next">Next</string>
     <string name="confirm">Confirm</string>
@@ -361,7 +234,6 @@
     <string name="bip47_cannot_scan_own_pcode">Cannot scan your own payment code</string>
     <string name="bip47_spend_to_pcode">Send through this payment channel?</string>
     <string name="bip47_partners">Recommended</string>
-    <string name="bip47_wait_for_confirmation">Wait for 1 confirmation before sending</string>
     <string name="bip47_already_has_recommended">This payment code is already in your list.</string>
     <string name="bip47_recommended">Recommended payment codes</string>
     <string name="bip47_sign">Sign message</string>
@@ -369,7 +241,6 @@
     <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
     <string name="bip47_wait_for_confirmation_or_retry">This payment channel is waiting for 1 confirmation before sending is activated. Would you like to discard the previous attempt and resend a notification?></string>
 
-    <string name="no_confirmed_outputs_available">No confirmed outputs available. Please try again later.</string>
     <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>
 
     <string name="invalid_passphrase">Invalid passphrase</string>
@@ -385,8 +256,6 @@
     <string name="cannot_find_unspents">Unspents list is empty</string>
     <string name="please_wait_sending">Sending transaction, please wait.</string>
     <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
-    <string name="bip126">Spend using BIP126</string>
-    <string name="nonbip126">Use normal BIP44 spend</string>
 
     <string name="change_is_dust">The change from this transaction is a dust amount and is being added to the miner\'s fee.</string>
 
@@ -412,24 +281,17 @@
     <string name="no_ricochet_display">There is no Ricochet script to display.</string>
     <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
 
-    <string name="utxos">Unspent outputs</string>
-
     <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
     <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
-    <string name="bip47_bad_outpoint">Bad outpoint used for masking payment code</string>
 
     <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
 
     <string name="trusted_node">Trusted node</string>
-    <string name="trusted_node_user">User name</string>
-    <string name="trusted_node_ip">Node</string>
-    <string name="trusted_node_port">Port</string>
     <string name="trusted_node_user_hint">rpc user name</string>
     <string name="trusted_node_ip_hint">IP address</string>
     <string name="trusted_node_port_hint">Port (8332 default)</string>
     <string name="trusted_node_password_hint">rpc user password</string>
     <string name="trusted_node_not_valid">Please supply valid info for your trusted node.</string>
-    <string name="trusted_node_ok">Trusted node is set up successfully.</string>
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
@@ -443,8 +305,6 @@
     <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
     <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
 
-    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
-    <string name="options_block_explorer">View in block explorer</string>
     <string name="options_rbf">Use replace-by-fee (RBF)</string>
     <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
 

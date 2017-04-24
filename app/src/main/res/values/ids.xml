@@ -3,17 +3,12 @@
     <item name="BalanceAmount" type="id"/>
     <item name="BalanceUnits" type="id"/>
 
-    <item name="TransactionScroll" type="id"/>
     <item name="TransactionsToday" type="id" />
-    <item name="TransactionsOlder" type="id" />
 
     <item name="TodayLabel" type="id" />
-    <item name="OlderLabel" type="id" />
 
     <item name="TransactionContainer" type="id"/>
     <item name="TransactionStatus" type="id" />
-    <item name="TransactionAddress" type="id" />
     <item name="TransactionDetails" type="id" />
 
-    <item name="my_recycler_view" type="id"/>
 </resources>
