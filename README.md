@@ -4,6 +4,10 @@
 
 Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
 
+### Features:
+
+[Samourai Wallet features list](https://gist.github.com/SamouraiDev/f4ce0f423fc09fea307be81b3dfafe48)
+
 ### BIP44:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki), extends [bitcoinj](https://bitcoinj.github.io/).
