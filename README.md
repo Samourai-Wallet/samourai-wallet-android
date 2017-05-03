@@ -1,12 +1,12 @@
 # Samourai Wallet
 
-### Build:
-
-Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
-
 ### Features:
 
 [Samourai Wallet features list](https://gist.github.com/SamouraiDev/f4ce0f423fc09fea307be81b3dfafe48)
+
+### Build:
+
+Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
 
 ### BIP44:
 
