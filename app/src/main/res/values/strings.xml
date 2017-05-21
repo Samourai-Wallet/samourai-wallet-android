@@ -312,4 +312,14 @@
 
     <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
 
+    <string name="options_fees">Show current miners\' fees</string>
+    <string name="current_fee_selection">Your fee selection is set to:</string>
+    <string name="current_hi_fee_value">Current high fee:</string>
+    <string name="current_mid_fee_value">Current normal fee:</string>
+    <string name="current_lo_fee_value">Current low fee:</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">Set your custom fee in sat/b.</string>
+    <string name="custom_fee_too_low">Custom fee is set too low.</string>
+    <string name="custom_fee_too_high">Custom fee is set too high.</string>
+
 </resources>
