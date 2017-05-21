@@ -1515,7 +1515,7 @@ public class SendActivity extends Activity {
                             suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
                             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
                             tvCurrentFeePrompt.setText(getCurrentFeeSetting());
-                            btFee.setText("");
+                            btFee.setText("             ");
                         }
 
                         dialog.dismiss();

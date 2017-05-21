@@ -214,15 +214,20 @@
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/auto_fee"
                         android:id="@+id/fee"
                         android:layout_marginRight="20dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:layout_gravity="left|center_vertical"
+                        android:gravity="left|center_vertical"
+                        />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
                         android:layout_height="wrap_content"
                         android:textColor="@color/primary_light"
                         android:layout_marginRight="5dp"
