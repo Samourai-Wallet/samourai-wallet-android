@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -91,6 +93,7 @@ public class SendActivity extends Activity {
 
     private TextView tvMaxPrompt = null;
     private TextView tvMax = null;
+    private TextView tvCurrentFeePrompt = null;
     private long balance = 0L;
 
     private EditText edAddress = null;
@@ -112,14 +115,14 @@ public class SendActivity extends Activity {
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
     private final static int FEE_PRIORITY = 2;
-//    private final static int FEE_CUSTOM = 3;
+    private final static int FEE_CUSTOM = 3;
     private int FEE_TYPE = 0;
 
     public final static int SPEND_SIMPLE = 0;
     public final static int SPEND_BIP126 = 1;
     public final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BIP126;
-//    private CheckBox cbSpendType = null;
+    //    private CheckBox cbSpendType = null;
     private Switch swRicochet = null;
 
     private String strFiat = null;
@@ -202,6 +205,15 @@ public class SendActivity extends Activity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 edAmountBTC.setText(strAmount);
+                return false;
+            }
+        });
+
+        tvCurrentFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
+        tvCurrentFeePrompt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                doCustomFee();
                 return false;
             }
         });
@@ -525,9 +537,30 @@ public class SendActivity extends Activity {
         edCustomFee.setText("0.00015");
         edCustomFee.setVisibility(View.GONE);
 
-        FEE_TYPE = FEE_NORMAL;
-
         btFee = (Button)findViewById(R.id.fee);
+        FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
+
+        switch(FEE_TYPE)    {
+            case FEE_NORMAL:
+                btFee.setText(getString(R.string.auto_fee));
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                break;
+            case FEE_LOW:
+                btFee.setText(getString(R.string.low_fee));
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                break;
+            case FEE_PRIORITY:
+                btFee.setText(getString(R.string.priority_fee));
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                break;
+            default:
+                btFee.setText(getString(R.string.auto_fee));
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                break;
+        }
+
+        tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+
         btFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -538,6 +571,7 @@ public class SendActivity extends Activity {
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
                         tvFeeAmount.setText("");
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                         break;
                     case FEE_LOW:
                         FEE_TYPE = FEE_PRIORITY;
@@ -545,31 +579,29 @@ public class SendActivity extends Activity {
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
                         tvFeeAmount.setText("");
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                         break;
                     case FEE_PRIORITY:
-                        /*
-                        FEE_TYPE = FEE_CUSTOM;
-                        btFee.setText(getString(R.string.custom_fee));
-                        tvFeeAmount.setVisibility(View.GONE);
-                        edCustomFee.setVisibility(View.VISIBLE);
-                        edCustomFee.setSelection(edCustomFee.getText().length());
-                        break;
-                        */
                         FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
                         tvFeeAmount.setText("");
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                         break;
-//                    case FEE_CUSTOM:
+                    case FEE_CUSTOM:
                     default:
                         FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
                         edCustomFee.setVisibility(View.GONE);
                         tvFeeAmount.setVisibility(View.VISIBLE);
                         tvFeeAmount.setText("");
+                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                         break;
                 }
+
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_TYPE == FEE_CUSTOM ? FEE_NORMAL : FEE_TYPE);
+                tvCurrentFeePrompt.setText(getCurrentFeeSetting());
 
             }
         });
@@ -663,29 +695,6 @@ public class SendActivity extends Activity {
                 }
                 else    {
                     ;
-                }
-
-                switch(FEE_TYPE)    {
-                    case FEE_LOW:
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                        break;
-                    case FEE_PRIORITY:
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                        break;
-                    /*
-                    case FEE_CUSTOM:
-                        String strCustomFee = edCustomFee.getText().toString();
-
-                        SuggestedFee suggestedFee = new SuggestedFee();
-                        suggestedFee.setDefaultPerKB();
-                        suggestedFee.setStressed(false);
-                        suggestedFee.setOK(true);
-                        FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-                        break;
-                    */
-                    default:
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                        break;
                 }
 
                 org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
@@ -1482,6 +1491,67 @@ public class SendActivity extends Activity {
         }
 
         return false;
+    }
+
+    private String getCurrentFeeSetting()   {
+        return getText(R.string.current_fee_selection) + "\n" + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+    }
+
+    private void doCustomFee()   {
+
+        long sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+        final long sanityValue = (long)(sanitySat * 1.25);
+
+        final EditText etCustomFee = new EditText(SendActivity.this);
+        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etCustomFee.setText(Long.toString((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L)));
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.set_sat)
+                .setView(etCustomFee)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        String strCustomFee = etCustomFee.getText().toString();
+                        long customValue = 0L;
+                        try {
+                            customValue = Long.valueOf(strCustomFee);
+                        }
+                        catch(Exception e) {
+                            Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if(customValue < 100)    {
+                            Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
+                        }
+                        else if(customValue > sanityValue)   {
+                            Toast.makeText(SendActivity.this, R.string.custom_fee_too_high, Toast.LENGTH_SHORT).show();
+                        }
+                        else    {
+                            SuggestedFee suggestedFee = new SuggestedFee();
+                            suggestedFee.setStressed(false);
+                            suggestedFee.setOK(true);
+                            suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
+                            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+                            tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+                            btFee.setText("");
+                        }
+
+                        dialog.dismiss();
+
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
     }
 
 }
