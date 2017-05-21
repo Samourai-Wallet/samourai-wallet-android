@@ -108,9 +108,6 @@ public class SendActivity extends Activity {
     private String defaultSeparator = null;
 
     private Button btFee = null;
-    private TextView tvFeeAmount = null;
-
-    private EditText edCustomFee = null;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
@@ -532,11 +529,6 @@ public class SendActivity extends Activity {
             }
         });
 
-        tvFeeAmount = (TextView)findViewById(R.id.feeAmount);
-        edCustomFee = (EditText)findViewById(R.id.customFeeAmount);
-        edCustomFee.setText("0.00015");
-        edCustomFee.setVisibility(View.GONE);
-
         btFee = (Button)findViewById(R.id.fee);
         FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
@@ -568,34 +560,22 @@ public class SendActivity extends Activity {
                     case FEE_NORMAL:
                         FEE_TYPE = FEE_LOW;
                         btFee.setText(getString(R.string.low_fee));
-                        edCustomFee.setVisibility(View.GONE);
-                        tvFeeAmount.setVisibility(View.VISIBLE);
-                        tvFeeAmount.setText("");
                         FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                         break;
                     case FEE_LOW:
                         FEE_TYPE = FEE_PRIORITY;
                         btFee.setText(getString(R.string.priority_fee));
-                        edCustomFee.setVisibility(View.GONE);
-                        tvFeeAmount.setVisibility(View.VISIBLE);
-                        tvFeeAmount.setText("");
                         FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                         break;
                     case FEE_PRIORITY:
                         FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
-                        edCustomFee.setVisibility(View.GONE);
-                        tvFeeAmount.setVisibility(View.VISIBLE);
-                        tvFeeAmount.setText("");
                         FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                         break;
                     case FEE_CUSTOM:
                     default:
                         FEE_TYPE = FEE_NORMAL;
                         btFee.setText(getString(R.string.auto_fee));
-                        edCustomFee.setVisibility(View.GONE);
-                        tvFeeAmount.setVisibility(View.VISIBLE);
-                        tvFeeAmount.setText("");
                         FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                         break;
                 }
@@ -605,8 +585,6 @@ public class SendActivity extends Activity {
 
             }
         });
-
-        tvFeeAmount.setText("");
 
         btSend = (Button)findViewById(R.id.send);
         btSend.setOnClickListener(new View.OnClickListener() {
