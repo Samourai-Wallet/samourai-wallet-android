@@ -772,13 +772,13 @@ public class BalanceActivity extends Activity {
         SuggestedFee normalFee = FeeUtil.getInstance().getNormalFee();
         SuggestedFee lowFee = FeeUtil.getInstance().getLowFee();
 
-        String message = getText(R.string.current_fee_selection) + " " + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+        String message = getText(R.string.current_fee_selection) + " " + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
         message += "\n";
-        message += getText(R.string.current_hi_fee_value) + " " + (highFee.getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+        message += getText(R.string.current_hi_fee_value) + " " + (highFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
         message += "\n";
-        message += getText(R.string.current_mid_fee_value) + " " + (normalFee.getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+        message += getText(R.string.current_mid_fee_value) + " " + (normalFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
         message += "\n";
-        message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+        message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
