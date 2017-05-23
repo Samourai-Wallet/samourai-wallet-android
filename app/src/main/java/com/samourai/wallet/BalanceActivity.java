@@ -63,6 +63,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -80,9 +81,12 @@ import com.samourai.wallet.util.WebUtil;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.core.Transaction;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
+import org.spongycastle.util.encoders.DecoderException;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
@@ -344,10 +348,9 @@ public class BalanceActivity extends Activity {
                 }
                 else {
 
-                    /*
                     String message = getString(R.string.options_unconfirmed_tx);
-                    String option = null;
 
+                    /*
                     // RBF
                     if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash()))    {
                         option = getString(R.string.options_rbf);
@@ -360,34 +363,34 @@ public class BalanceActivity extends Activity {
                         doExplorerView(tx.getHash());
                         return;
                     }
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
-                    builder.setTitle(R.string.app_name);
-                    builder.setMessage(message);
-                    builder.setCancelable(true);
-                    builder.setPositiveButton(option, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
-
-                            if(tx.getAmount() < 0.0)    {
-                                doRBF(tx);
-                            }
-                            else    {
-                                doCPFP(tx);
-                            }
-
-                        }
-                    });
-                    builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
-                            doExplorerView(tx.getHash());
-                        }
-                    });
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
                     */
 
-                    doExplorerView(tx.getHash());
+                    // CPFP
+                    if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                new CPFPTask().execute(tx.getHash());
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                doExplorerView(tx.getHash());
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                    else    {
+                        doExplorerView(tx.getHash());
+                        return;
+                    }
 
                 }
 
@@ -1550,6 +1553,283 @@ public class BalanceActivity extends Activity {
         @Override
         protected void onPreExecute() {
             ;
+        }
+
+    }
+
+    private class CPFPTask extends AsyncTask<String, Void, String> {
+
+        List<UTXO> utxos = null;
+
+        @Override
+        protected void onPreExecute() {
+            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Looper.prepare();
+
+            Log.d("BalanceActivity", "hash:" + params[0]);
+
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            if(txObj.has("inputs") && txObj.has("out"))    {
+                try {
+                    JSONArray inputs = txObj.getJSONArray("inputs");
+                    JSONArray outputs = txObj.getJSONArray("out");
+
+                    SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
+                    FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
+
+                    long total_inputs = 0L;
+                    long total_outputs = 0L;
+                    long fee = 0L;
+
+                    UTXO utxo = null;
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        JSONObject obj = inputs.getJSONObject(i);
+                        if(obj.has("prev_out"))    {
+                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                            if(objPrev.has("value"))    {
+                                total_inputs += objPrev.getLong("value");
+                            }
+                        }
+                    }
+
+                    for(int i = 0; i < outputs.length(); i++)   {
+                        JSONObject obj = outputs.getJSONObject(i);
+                        if(obj.has("value"))    {
+                            total_outputs += obj.getLong("value");
+
+                            String addr = obj.getString("addr");
+                            Log.d("BalanceActivity", "checking address:" + addr);
+                            if(utxo == null)    {
+                                utxo = getUTXO(addr);
+                            }
+                        }
+                    }
+
+                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
+                    boolean feeWarning = false;
+                    fee = total_inputs - total_outputs;
+                    if(fee > estimatedFee.longValue())    {
+                        feeWarning = true;
+                    }
+
+                    Log.d("BalanceActivity", "total inputs:" + total_inputs);
+                    Log.d("BalanceActivity", "total outputs:" + total_outputs);
+                    Log.d("BalanceActivity", "fee:" + fee);
+                    Log.d("BalanceActivity", "estimated fee:" + estimatedFee.longValue());
+                    Log.d("BalanceActivity", "fee warning:" + feeWarning);
+                    if(utxo != null)    {
+                        Log.d("BalanceActivity", "utxo found");
+
+                        List<UTXO> selectedUTXO = new ArrayList<UTXO>();
+                        selectedUTXO.add(utxo);
+                        int selected = utxo.getOutpoints().size();
+
+                        long remainingFee = (estimatedFee.longValue() > fee) ? estimatedFee.longValue() - fee : 0L;
+                        Log.d("BalanceActivity", "remaining fee:" + remainingFee);
+                        int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
+                        Log.d("BalanceActivity", "receive index:" + receiveIdx);
+                        String ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        Log.d("BalanceActivity", "receive address:" + ownReceiveAddr);
+
+                        long totalAmount = utxo.getValue();
+                        Log.d("BalanceActivity", "amount before fee:" + totalAmount);
+                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                        Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
+
+                        if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                            Log.d("BalanceActivity", "selecting additional utxo");
+                            Collections.sort(utxos, new UTXO.UTXOComparator());
+                            for(UTXO _utxo : utxos)   {
+                                totalAmount += _utxo.getValue();
+                                selectedUTXO.add(_utxo);
+                                selected += _utxo.getOutpoints().size();
+                                cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                                if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                                    break;
+                                }
+                            }
+                            if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                                Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                return "KO";
+                            }
+                        }
+
+                        cpfpFee.add(BigInteger.valueOf(remainingFee));
+                        Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
+
+                        final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
+                        for(UTXO u : selectedUTXO)   {
+                            outPoints.addAll(u.getOutpoints());
+                        }
+
+                        long _totalAmount = 0L;
+                        for(MyTransactionOutPoint outpoint : outPoints)   {
+                            _totalAmount += outpoint.getValue().longValue();
+                        }
+                        Log.d("BalanceActivity", "checked total amount:" + _totalAmount);
+                        assert(_totalAmount == totalAmount);
+
+                        long amount = totalAmount - cpfpFee.longValue();
+                        Log.d("BalanceActivity", "amount after fee:" + amount);
+                        final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
+                        receivers.put(ownReceiveAddr, BigInteger.valueOf(amount));
+
+                        String message = "";
+                        if(feeWarning)  {
+                            message += BalanceActivity.this.getString(R.string.cpfp_not_necessary);
+                            message += "\n\n";
+                        }
+
+                        message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " BTC";
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(message)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
+                                        if(tx != null)    {
+                                            tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
+                                            final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                            Log.d("BalanceActivity", hexTx);
+
+                                            final String strTxHash = tx.getHashAsString();
+                                            Log.d("BalanceActivity", strTxHash);
+
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+
+//                                                    Looper.prepare();
+
+                                                    boolean isOK = false;
+                                                    try {
+
+                                                        isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
+
+                                                        if(isOK)    {
+                                                            /*
+                                                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                                                            intent.putExtra("notifTx", false);
+                                                            intent.putExtra("fetch", true);
+                                                            LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
+                                                            */
+
+                                                            refreshTx(false, true, false);
+
+                                                        }
+                                                        else    {
+                                                            // reset receive index upon tx fail
+                                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                        }
+                                                    }
+                                                    catch(MnemonicException.MnemonicLengthException mle) {
+                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    catch(DecoderException de) {
+                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    catch(IOException ioe) {
+                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    finally {
+                                                        ;
+                                                    }
+
+//                                                    Looper.loop();
+
+                                                }
+                                            }).start();
+
+                                        }
+
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        try {
+                                            // reset receive index upon tx fail
+                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                        }
+                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                            Toast.makeText(BalanceActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(DecoderException de) {
+                                            Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(IOException ioe) {
+                                            Toast.makeText(BalanceActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        finally {
+                                            dialog.dismiss();
+                                        }
+
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+
+                }
+                catch(JSONException je) {
+                    Toast.makeText(BalanceActivity.this, "cpfp:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            else    {
+                Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+            }
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            ;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            ;
+        }
+
+        private UTXO getUTXO(String address)    {
+
+            UTXO ret = null;
+            int idx = -1;
+
+            for(int i = 0; i < utxos.size(); i++)  {
+                UTXO utxo = utxos.get(i);
+                Log.d("BalanceActivity", "utxo address:" + utxo.getOutpoints().get(0).getAddress());
+                if(utxo.getOutpoints().get(0).getAddress().equals(address))    {
+                    ret = utxo;
+                    idx = i;
+                    break;
+                }
+            }
+
+            if(ret != null)    {
+                utxos.remove(idx);
+                return ret;
+            }
+
+            return null;
         }
 
     }
