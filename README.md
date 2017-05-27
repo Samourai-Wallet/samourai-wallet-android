@@ -28,6 +28,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
+### BIP173:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
+
 ### Ricochet:
 
 Samourai implementation of multi-hop spend designed to outrun the baying pack of #KYCRunningDogs.
