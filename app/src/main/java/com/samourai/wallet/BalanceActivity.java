@@ -74,6 +74,7 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
@@ -1149,7 +1150,8 @@ public class BalanceActivity extends Activity {
 
     private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
-        new RefreshTask(dragged).execute(notifTx ? "1" : "0", fetch ? "1" : "0");
+        RefreshTask refreshTask = new RefreshTask(dragged);
+        refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
 
     }
 
@@ -1345,12 +1347,33 @@ public class BalanceActivity extends Activity {
 
         public RefreshTask(boolean dragged) {
             super();
+            Log.d("BalanceActivity", "RefreshTask, dragged==" + dragged);
             handler = new Handler();
             this.dragged = dragged;
         }
 
         @Override
+        protected void onPreExecute() {
+
+            Log.d("BalanceActivity", "RefreshTask.preExecute()");
+
+            if(!dragged)    {
+                strProgressTitle = BalanceActivity.this.getText(R.string.app_name).toString();
+                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx_pre).toString();
+
+                progress = new ProgressDialog(BalanceActivity.this);
+                progress.setCancelable(true);
+                progress.setTitle(strProgressTitle);
+                progress.setMessage(strProgressMessage);
+                progress.show();
+            }
+
+        }
+
+        @Override
         protected String doInBackground(String... params) {
+
+            Log.d("BalanceActivity", "doInBackground()");
 
             final boolean notifTx = params[0].equals("1") ? true : false;
             final boolean fetch = params[1].equals("1") ? true : false;
@@ -1359,6 +1382,7 @@ public class BalanceActivity extends Activity {
             // TBD: check on lookahead/lookbehind for all incoming payment codes
             //
             if(fetch || txs.size() == 0)    {
+                Log.d("BalanceActivity", "initWallet()");
                 APIFactory.getInstance(BalanceActivity.this).initWallet();
             }
 
@@ -1377,6 +1401,7 @@ public class BalanceActivity extends Activity {
                     txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
                 }
                 if(txs != null)    {
+                    Log.d("BalanceActivity", "txs != null");
                     Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                 }
 
@@ -1475,22 +1500,6 @@ public class BalanceActivity extends Activity {
         }
 
         @Override
-        protected void onPreExecute() {
-
-            if(!dragged)    {
-                strProgressTitle = BalanceActivity.this.getText(R.string.app_name).toString();
-                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx_pre).toString();
-
-                progress = new ProgressDialog(BalanceActivity.this);
-                progress.setCancelable(true);
-                progress.setTitle(strProgressTitle);
-                progress.setMessage(strProgressMessage);
-                progress.show();
-            }
-
-        }
-
-        @Override
         protected void onProgressUpdate(Void... values) {
 
             if(!dragged)    {
@@ -1559,10 +1568,12 @@ public class BalanceActivity extends Activity {
 
     private class CPFPTask extends AsyncTask<String, Void, String> {
 
-        List<UTXO> utxos = null;
+        private List<UTXO> utxos = null;
+        private Handler handler = null;
 
         @Override
         protected void onPreExecute() {
+            handler = new Handler();
             utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
         }
 
@@ -1636,7 +1647,7 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "remaining fee:" + remainingFee);
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
-                        String ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        final String ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
                         Log.d("BalanceActivity", "receive address:" + ownReceiveAddr);
 
                         long totalAmount = utxo.getValue();
@@ -1657,7 +1668,11 @@ public class BalanceActivity extends Activity {
                                 }
                             }
                             if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
-                                Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 return "KO";
                             }
                         }
@@ -1697,20 +1712,21 @@ public class BalanceActivity extends Activity {
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                        Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
-                                        if(tx != null)    {
-                                            tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
-                                            final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                            Log.d("BalanceActivity", hexTx);
+                                                ReceiveLookAtUtil.getInstance().add(ownReceiveAddr);
 
-                                            final String strTxHash = tx.getHashAsString();
-                                            Log.d("BalanceActivity", strTxHash);
+                                                if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                                                    stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+                                                }
+                                                startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
 
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
+                                                Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
+                                                if(tx != null)    {
+                                                    tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
+                                                    final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                                    Log.d("BalanceActivity", hexTx);
 
-//                                                    Looper.prepare();
+                                                    final String strTxHash = tx.getHashAsString();
+                                                    Log.d("BalanceActivity", strTxHash);
 
                                                     boolean isOK = false;
                                                     try {
@@ -1718,14 +1734,16 @@ public class BalanceActivity extends Activity {
                                                         isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
 
                                                         if(isOK)    {
-                                                            /*
-                                                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                                            intent.putExtra("notifTx", false);
-                                                            intent.putExtra("fetch", true);
-                                                            LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
-                                                            */
 
-                                                            refreshTx(false, true, false);
+                                                            handler.post(new Runnable() {
+                                                                public void run() {
+                                                                    Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
+
+                                                                    Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
+                                                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                                    startActivity(_intent);
+                                                                }
+                                                            });
 
                                                         }
                                                         else    {
@@ -1734,25 +1752,18 @@ public class BalanceActivity extends Activity {
                                                             HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                         }
                                                     }
-                                                    catch(MnemonicException.MnemonicLengthException mle) {
-                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    catch(DecoderException de) {
-                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    catch(IOException ioe) {
-                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                                        handler.post(new Runnable() {
+                                                            public void run() {
+                                                                Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
                                                     }
                                                     finally {
                                                         ;
                                                     }
 
-//                                                    Looper.loop();
-
                                                 }
-                                            }).start();
-
-                                        }
 
                                     }
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1763,14 +1774,12 @@ public class BalanceActivity extends Activity {
                                             int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
                                             HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                         }
-                                        catch(MnemonicException.MnemonicLengthException mle) {
-                                            Toast.makeText(BalanceActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch(DecoderException de) {
-                                            Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch(IOException ioe) {
-                                            Toast.makeText(BalanceActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+                                        catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                            handler.post(new Runnable() {
+                                                public void run() {
+                                                    Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         }
                                         finally {
                                             dialog.dismiss();
@@ -1785,8 +1794,12 @@ public class BalanceActivity extends Activity {
                     }
 
                 }
-                catch(JSONException je) {
-                    Toast.makeText(BalanceActivity.this, "cpfp:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                catch(final JSONException je) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast.makeText(BalanceActivity.this, "cpfp:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             }
