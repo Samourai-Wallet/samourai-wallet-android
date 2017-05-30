@@ -46,6 +46,7 @@ import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
@@ -55,6 +56,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
 import java.io.IOException;
@@ -957,6 +959,7 @@ public class SendActivity extends Activity {
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
+                                final Transaction _tx = tx;
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("SendActivity", hexTx);
 
@@ -1022,6 +1025,17 @@ public class SendActivity extends Activity {
                                                     catch(MnemonicException.MnemonicLengthException mle) {
                                                         ;
                                                     }
+                                                }
+
+                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
+                                                    List<String> changeAddr = new ArrayList<String>();
+                                                    for(TransactionOutput out : _tx.getOutputs())   {
+                                                        if(!address.equals(out.getAddressFromP2PKHScript(MainNetParams.get()).toString()))  {
+                                                            changeAddr.add(out.getAddressFromP2PKHScript(MainNetParams.get()).toString());
+                                                        }
+                                                    }
+                                                    RBFSpend rbf = new RBFSpend(strTxHash, changeAddr, hexTx);
+                                                    RBFUtil.getInstance().add(rbf);
                                                 }
 
                                                 // spent BIP47 UTXO?
