@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.92.32</string>
+    <string name="version_name">0.92.33</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -308,6 +308,14 @@
     <string name="options_rbf">Use replace-by-fee (RBF)</string>
     <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
 
+    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
+    <string name="options_block_explorer">View transaction</string>
+    <string name="options_bump_fee">Increase tx fee</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
+    <string name="cpfp_not_necessary">Be advised that child-pays-for-parent may not be necessary for this transaction.</string>
+    <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
+
     <string name="options_sign">Sign message</string>
 
     <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
@@ -321,5 +329,8 @@
     <string name="set_sat">Set your custom fee in sat/b.</string>
     <string name="custom_fee_too_low">Custom fee is set too low.</string>
     <string name="custom_fee_too_high">Custom fee is set too high.</string>
+
+    <string name="cpfp_spent">CPFP transaction sent.</string>
+    <string name="rbf_spent">RBF transaction sent.</string>
 
 </resources>
