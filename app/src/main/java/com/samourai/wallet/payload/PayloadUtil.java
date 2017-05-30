@@ -2,12 +2,10 @@ package com.samourai.wallet.payload;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 //import android.util.Log;
 
-import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -23,7 +21,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.RBFUtil;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
