@@ -24,6 +24,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
 
+### BIP125:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
+
 ### BIP126:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
