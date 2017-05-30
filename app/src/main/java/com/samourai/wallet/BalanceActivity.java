@@ -74,6 +74,7 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.util.RBFUtil;
 import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
@@ -351,23 +352,30 @@ public class BalanceActivity extends Activity {
 
                     String message = getString(R.string.options_unconfirmed_tx);
 
-                    /*
                     // RBF
                     if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash()))    {
-                        option = getString(R.string.options_rbf);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                new RBFTask().execute(tx.getHash());
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                doExplorerView(tx.getHash());
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
                     }
                     // CPFP
                     else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
-                        option = getString(R.string.options_cpfp);
-                    }
-                    else    {
-                        doExplorerView(tx.getHash());
-                        return;
-                    }
-                    */
-
-                    // CPFP
-                    if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
                         AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
                         builder.setTitle(R.string.app_name);
                         builder.setMessage(message);
@@ -1319,23 +1327,6 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void doRBF(Tx tx) {
-        // get hash
-        // retrieve serialized tx
-        // recalc fee
-        // add utxo(s), if necessary
-        // re-spend
-        Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
-    }
-
-    private void doCPFP(Tx tx) {
-        // get hash
-        // get tx
-        // match amounts to find output
-        // spend utxo
-        Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
-    }
-
     private class RefreshTask extends AsyncTask<String, Void, String> {
 
         private String strProgressTitle = null;
@@ -1843,6 +1834,41 @@ public class BalanceActivity extends Activity {
             }
 
             return null;
+        }
+
+    }
+
+    private class RBFTask extends AsyncTask<String, Void, String> {
+
+        private List<UTXO> utxos = null;
+        private Handler handler = null;
+
+        @Override
+        protected void onPreExecute() {
+            handler = new Handler();
+            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Looper.prepare();
+
+            Log.d("BalanceActivity", "hash:" + params[0]);
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            ;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            ;
         }
 
     }
