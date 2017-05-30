@@ -138,7 +138,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 cbPref9.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-                        if (cbPref7.isChecked()) {
+                        if (cbPref9.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.RBF_OPT_IN, false);
                         }
                         else    {
