@@ -73,6 +73,8 @@
     <string name="options_trusted_node2">Specify your own trusted node for broadcasting transactions.</string>
     <string name="options_use_trusted_node">Use trusted node</string>
     <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
+    <string name="options_rbf0">Spend using RBF (replace-by-fee)</string>
+    <string name="options_rbf0_2">Spends will use RBF (replace-by-fee) to enable fee bumping.</string>
 
     <string name="timeline_today">Today</string>
     <string name="timeline_older">Older</string>
@@ -304,9 +306,6 @@
     <string name="refresh_tx">Retrieved transactions and balance.</string>
     <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
     <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
-
-    <string name="options_rbf">Use replace-by-fee (RBF)</string>
-    <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
 
     <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
     <string name="options_block_explorer">View transaction</string>
