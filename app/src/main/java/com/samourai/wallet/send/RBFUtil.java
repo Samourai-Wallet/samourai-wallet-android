@@ -4,9 +4,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
 public class RBFUtil {
+
+    //
+    // A transaction is considered to have opted in to allowing replacement of itself
+    // if any of its inputs have an nSequence number less than (0xffffffff - 1)
+    //
+    public static final long RBF_THRESHOLD = BigInteger.valueOf(0xffffffffL).subtract(BigInteger.ONE).longValue();
 
     private static RBFUtil instance = null;
     private static HashMap<String,RBFSpend> rbfs = null;
