@@ -30,6 +30,10 @@ public class RBFUtil {
         return instance;
     }
 
+    public RBFSpend get(String hash)    {
+        return rbfs.get(hash);
+    }
+
     public void add(RBFSpend rbf)    {
         rbfs.put(rbf.getHash(), rbf);
     }
