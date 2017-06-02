@@ -26,7 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -957,6 +959,33 @@ public class SendActivity extends Activity {
 
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
+
+                            final RBFSpend rbf;
+                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
+
+                                rbf = new RBFSpend();
+
+                                for(TransactionInput input : tx.getInputs())    {
+
+                                    String _addr = input.getScriptSig().getToAddress(MainNetParams.get()).toString();
+
+                                    String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
+                                    if(path != null)    {
+                                        rbf.addKey(path);
+                                    }
+                                    else    {
+                                        String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
+                                        int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
+                                        rbf.addKey(pcode + "/" + idx);
+                                    }
+
+                                }
+
+                            }
+                            else    {
+                                rbf = null;
+                            }
+
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                                 final Transaction _tx = tx;
@@ -1028,13 +1057,16 @@ public class SendActivity extends Activity {
                                                 }
 
                                                 if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
-                                                    List<String> changeAddr = new ArrayList<String>();
+
                                                     for(TransactionOutput out : _tx.getOutputs())   {
                                                         if(!address.equals(out.getAddressFromP2PKHScript(MainNetParams.get()).toString()))  {
-                                                            changeAddr.add(out.getAddressFromP2PKHScript(MainNetParams.get()).toString());
+                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(MainNetParams.get()).toString());
                                                         }
                                                     }
-                                                    RBFSpend rbf = new RBFSpend(strTxHash, changeAddr, hexTx);
+
+                                                    rbf.setHash(strTxHash);
+                                                    rbf.setSerializedTx(hexTx);
+
                                                     RBFUtil.getInstance().add(rbf);
                                                 }
 
