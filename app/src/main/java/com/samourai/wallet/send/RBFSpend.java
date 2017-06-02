@@ -12,15 +12,18 @@ public class RBFSpend    {
     private String strHash = null;
     private List<String> changeAddrs = null;
     private String strSerializedTx = null;
+    private List<String> keyBag = null;
 
-    public RBFSpend(String strHash, List<String> changeAddrs, String strSerializedTx)  {
+    public RBFSpend(String strHash, List<String> changeAddrs, String strSerializedTx, List<String> keyBag)  {
         this.strHash = strHash;
         this.changeAddrs = changeAddrs;
         this.strSerializedTx = strSerializedTx;
+        this.keyBag = keyBag;
     }
 
     public RBFSpend()  {
         changeAddrs = new ArrayList<String>();
+        keyBag = new ArrayList<String>();
     }
 
     public String getHash() {
@@ -47,12 +50,28 @@ public class RBFSpend    {
         return changeAddrs.contains(addr);
     }
 
+    public void addKey(String key)   {
+        keyBag.add(key);
+    }
+
+    public boolean containsKey(String key)   {
+        return keyBag.contains(key);
+    }
+
     public String getSerializedTx() {
         return strSerializedTx;
     }
 
     public void setSerializedTx(String strSerializedTx) {
         this.strSerializedTx = strSerializedTx;
+    }
+
+    public List<String> getKeyBag() {
+        return keyBag;
+    }
+
+    public void setKeyBag(List<String> keyBag) {
+        this.keyBag = keyBag;
     }
 
     public JSONObject toJSON() {
@@ -67,6 +86,14 @@ public class RBFSpend    {
             }
 
             jsonPayload.put("change_addresses", array);
+
+            array = new JSONArray();
+
+            for(String k : keyBag)   {
+                array.put(k);
+            }
+
+            jsonPayload.put("key_bag", array);
 
             if(strHash != null)    {
                 jsonPayload.put("hash", strHash);
@@ -94,6 +121,16 @@ public class RBFSpend    {
 
                 for(int i = 0; i < array.length(); i++)   {
                     changeAddrs.add((String)array.get(i));
+                }
+
+            }
+
+            if(jsonPayload.has("key_bag"))    {
+
+                JSONArray array = jsonPayload.getJSONArray("key_bag");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    keyBag.add((String)array.get(i));
                 }
 
             }
