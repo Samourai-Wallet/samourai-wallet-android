@@ -967,7 +967,10 @@ public class SendActivity extends Activity {
 
                                 for(TransactionInput input : tx.getInputs())    {
 
-                                    String _addr = input.getScriptSig().getToAddress(MainNetParams.get()).toString();
+                                    String _addr = input.getConnectedOutput().getAddressFromP2PKHScript(MainNetParams.get()).toString();
+                                    if(_addr == null)    {
+                                        _addr = input.getConnectedOutput().getAddressFromP2SH(MainNetParams.get()).toString();
+                                    }
 
                                     String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
                                     if(path != null)    {
