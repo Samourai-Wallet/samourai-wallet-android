@@ -38,6 +38,14 @@ public class RBFUtil {
         rbfs.put(rbf.getHash(), rbf);
     }
 
+    public void remove(RBFSpend rbf)    {
+        rbfs.remove(rbf.getHash());
+    }
+
+    public void remove(String hash)    {
+        rbfs.remove(hash);
+    }
+
     public boolean contains(String hash)   {
         return rbfs.containsKey(hash);
     }
