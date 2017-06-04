@@ -13,6 +13,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
@@ -317,6 +318,10 @@ public class APIFactory	{
 
                                 seenBIP47Tx.put(hash, "");
                             }
+                        }
+
+                        if(height > 0L && RBFUtil.getInstance().contains(hash))    {
+                            RBFUtil.getInstance().remove(hash);
                         }
 
                     }
@@ -1387,6 +1392,10 @@ public class APIFactory	{
                         */
                         else    {
                             ;
+                        }
+
+                        if(height > 0L && RBFUtil.getInstance().contains(hash))    {
+                            RBFUtil.getInstance().remove(hash);
                         }
 
                     }
