@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RBFSpend    {
@@ -12,9 +13,9 @@ public class RBFSpend    {
     private String strHash = null;
     private List<String> changeAddrs = null;
     private String strSerializedTx = null;
-    private List<String> keyBag = null;
+    private HashMap<String,String> keyBag = null;
 
-    public RBFSpend(String strHash, List<String> changeAddrs, String strSerializedTx, List<String> keyBag)  {
+    public RBFSpend(String strHash, List<String> changeAddrs, String strSerializedTx, HashMap<String,String> keyBag)  {
         this.strHash = strHash;
         this.changeAddrs = changeAddrs;
         this.strSerializedTx = strSerializedTx;
@@ -23,7 +24,7 @@ public class RBFSpend    {
 
     public RBFSpend()  {
         changeAddrs = new ArrayList<String>();
-        keyBag = new ArrayList<String>();
+        keyBag = new HashMap<String,String>();
     }
 
     public String getHash() {
@@ -50,12 +51,12 @@ public class RBFSpend    {
         return changeAddrs.contains(addr);
     }
 
-    public void addKey(String key)   {
-        keyBag.add(key);
+    public void addKey(String outpoint, String path)   {
+        keyBag.put(outpoint, path);
     }
 
-    public boolean containsKey(String key)   {
-        return keyBag.contains(key);
+    public boolean containsKey(String outpoint)   {
+        return keyBag.containsKey(outpoint);
     }
 
     public String getSerializedTx() {
@@ -66,11 +67,11 @@ public class RBFSpend    {
         this.strSerializedTx = strSerializedTx;
     }
 
-    public List<String> getKeyBag() {
+    public HashMap<String,String> getKeyBag() {
         return keyBag;
     }
 
-    public void setKeyBag(List<String> keyBag) {
+    public void setKeyBag(HashMap<String,String> keyBag) {
         this.keyBag = keyBag;
     }
 
@@ -89,8 +90,11 @@ public class RBFSpend    {
 
             array = new JSONArray();
 
-            for(String k : keyBag)   {
-                array.put(k);
+            for(String outpoint : keyBag.keySet())   {
+                JSONObject jobj = new JSONObject();
+                jobj.put("outpoint", outpoint);
+                jobj.put("path", keyBag.get(outpoint));
+                array.put(jobj);
             }
 
             jsonPayload.put("key_bag", array);
@@ -130,7 +134,8 @@ public class RBFSpend    {
                 JSONArray array = jsonPayload.getJSONArray("key_bag");
 
                 for(int i = 0; i < array.length(); i++)   {
-                    keyBag.add((String)array.get(i));
+                    JSONObject jobj = (JSONObject) array.get(i);
+                    keyBag.put(jobj.getString("outpoint"), jobj.getString("path"));
                 }
 
             }
