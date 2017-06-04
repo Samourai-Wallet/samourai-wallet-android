@@ -971,12 +971,12 @@ public class SendActivity extends Activity {
 
                                     String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
                                     if(path != null)    {
-                                        rbf.addKey(path);
+                                        rbf.addKey(input.getOutpoint().toString(), path);
                                     }
                                     else    {
                                         String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
                                         int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
-                                        rbf.addKey(pcode + "/" + idx);
+                                        rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
                                     }
 
                                 }
