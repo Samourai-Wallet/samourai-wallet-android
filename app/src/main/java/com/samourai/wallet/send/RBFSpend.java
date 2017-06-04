@@ -11,6 +11,7 @@ import java.util.List;
 public class RBFSpend    {
 
     private String strHash = null;
+    private String strPrevHash = null;
     private List<String> changeAddrs = null;
     private String strSerializedTx = null;
     private HashMap<String,String> keyBag = null;
@@ -33,6 +34,14 @@ public class RBFSpend    {
 
     public void setHash(String strHash) {
         this.strHash = strHash;
+    }
+
+    public String getPrevHash() {
+        return strPrevHash;
+    }
+
+    public void setPrevHash(String strPrevHash) {
+        this.strPrevHash = strPrevHash;
     }
 
     public List<String> getChangeAddrs() {
@@ -103,6 +112,10 @@ public class RBFSpend    {
                 jsonPayload.put("hash", strHash);
             }
 
+            if(strPrevHash != null)    {
+                jsonPayload.put("prev_hash", strPrevHash);
+            }
+
             if(strSerializedTx != null)    {
                 jsonPayload.put("tx", strSerializedTx);
             }
@@ -142,6 +155,10 @@ public class RBFSpend    {
 
             if(jsonPayload.has("hash"))    {
                 strHash = jsonPayload.getString("hash");
+            }
+
+            if(jsonPayload.has("prev_hash"))    {
+                strPrevHash = jsonPayload.getString("prev_hash");
             }
 
             if(jsonPayload.has("tx"))    {
