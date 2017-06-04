@@ -42,6 +42,10 @@ public class RBFUtil {
         return rbfs.containsKey(hash);
     }
 
+    public void clear()    {
+        rbfs.clear();
+    }
+
     public JSONArray toJSON() {
 
         JSONArray array = new JSONArray();
