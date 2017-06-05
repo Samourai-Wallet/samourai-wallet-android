@@ -40,12 +40,18 @@ public class RBFUtil {
 
     public void remove(RBFSpend rbf)   {
         if(rbf != null && rbfs.containsKey(rbf.getHash()))  {
+            if(rbf.getPrevHash() != null && rbfs.containsKey(rbf.getPrevHash()))    {
+                rbfs.remove(rbf.getPrevHash());
+            }
             rbfs.remove(rbf.getHash());
         }
     }
 
     public void remove(String hash)    {
         if(hash != null && rbfs.containsKey(hash))  {
+            if(rbfs.get(hash).getPrevHash() != null && rbfs.containsKey(rbfs.get(hash).getPrevHash()))    {
+                rbfs.remove(get(hash).getPrevHash());
+            }
             rbfs.remove(hash);
         }
     }

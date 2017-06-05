@@ -321,7 +321,6 @@ public class APIFactory	{
                         }
 
                         if(height > 0L)    {
-                            RBFUtil.getInstance().remove(RBFUtil.getInstance().get(hash).getPrevHash());
                             RBFUtil.getInstance().remove(hash);
                         }
 
@@ -1396,7 +1395,6 @@ public class APIFactory	{
                         }
 
                         if(height > 0L)    {
-                            RBFUtil.getInstance().remove(RBFUtil.getInstance().get(hash).getPrevHash());
                             RBFUtil.getInstance().remove(hash);
                         }
 
