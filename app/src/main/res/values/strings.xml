@@ -312,7 +312,7 @@
     <string name="options_bump_fee">Increase tx fee</string>
 
     <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
-    <string name="cpfp_not_necessary">Be advised that child-pays-for-parent may not be necessary for this transaction.</string>
+    <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>
     <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
 
     <string name="options_sign">Sign message</string>
@@ -331,5 +331,7 @@
 
     <string name="cpfp_spent">CPFP transaction sent.</string>
     <string name="rbf_spent">RBF transaction sent.</string>
+    <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
+    <string name="cannot_create_change_output">Cannot create change output.</string>
 
 </resources>
