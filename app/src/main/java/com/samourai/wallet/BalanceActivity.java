@@ -386,8 +386,31 @@ public class BalanceActivity extends Activity {
                         AlertDialog alert = builder.create();
                         alert.show();
                     }
-                    // CPFP
+                    // CPFP receive
                     else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                CPFPTask CPFPTask = new CPFPTask();
+                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                doExplorerView(tx.getHash());
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                    // CPFP spend
+                    else if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0)   {
                         AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
                         builder.setTitle(R.string.app_name);
                         builder.setMessage(message);
@@ -1806,6 +1829,13 @@ public class BalanceActivity extends Activity {
                         }
 
                     }
+                    else    {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Toast.makeText(BalanceActivity.this, R.string.cannot_create_cpfp, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
                 }
                 catch(final JSONException je) {
@@ -1818,7 +1848,11 @@ public class BalanceActivity extends Activity {
 
             }
             else    {
-                Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+                handler.post(new Runnable() {
+                    public void run() {
+                        Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             Looper.loop();

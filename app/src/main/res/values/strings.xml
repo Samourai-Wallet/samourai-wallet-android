@@ -333,5 +333,6 @@
     <string name="rbf_spent">RBF transaction sent.</string>
     <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
     <string name="cannot_create_change_output">Cannot create change output.</string>
+    <string name="cannot_create_cpfp">Cannot create CPFP transaction.</string>
 
 </resources>
