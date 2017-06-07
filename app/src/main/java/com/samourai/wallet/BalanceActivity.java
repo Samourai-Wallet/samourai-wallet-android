@@ -1934,6 +1934,7 @@ public class BalanceActivity extends Activity {
                     long total_outputs = 0L;
                     long fee = 0L;
                     long total_change = 0L;
+                    List<String> selfAddresses = new ArrayList<String>();
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
@@ -1951,6 +1952,7 @@ public class BalanceActivity extends Activity {
                             total_outputs += obj.getLong("value");
 
                             String _addr = obj.getString("addr");
+                            selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
                                 total_change += obj.getLong("value");
                             }
@@ -1973,7 +1975,8 @@ public class BalanceActivity extends Activity {
                     Log.d("BalanceActivity", "fee warning:" + feeWarning);
                     Log.d("BalanceActivity", "remaining fee:" + remainingFee);
 
-                    List<TransactionOutput> txOutputs = tx.getOutputs();
+                    List<TransactionOutput> txOutputs = new ArrayList<TransactionOutput>();
+                    txOutputs.addAll(tx.getOutputs());
 
                     long remainder = remainingFee;
                     if(total_change > remainder)    {
@@ -2020,6 +2023,7 @@ public class BalanceActivity extends Activity {
                             // do not select utxo that are change outputs in current rbf tx
                             //
                             boolean isChange = false;
+                            boolean isSelf = false;
                             for(MyTransactionOutPoint outpoint : _utxo.getOutpoints())  {
                                 if(rbf.containsChangeAddr(outpoint.getAddress()))    {
                                     Log.d("BalanceActivity", "is change:" + outpoint.getAddress());
@@ -2027,8 +2031,14 @@ public class BalanceActivity extends Activity {
                                     isChange = true;
                                     break;
                                 }
+                                if(selfAddresses.contains(outpoint.getAddress()))    {
+                                    Log.d("BalanceActivity", "is self:" + outpoint.getAddress());
+                                    Log.d("BalanceActivity", "is self:" + outpoint.getValue().longValue());
+                                    isSelf = true;
+                                    break;
+                                }
                             }
-                            if(isChange)    {
+                            if(isChange || isSelf)    {
                                 continue;
                             }
 
