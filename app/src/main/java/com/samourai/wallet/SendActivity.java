@@ -961,7 +961,7 @@ public class SendActivity extends Activity {
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
 
                             final RBFSpend rbf;
-                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
+                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
                                 rbf = new RBFSpend();
 
@@ -1059,7 +1059,7 @@ public class SendActivity extends Activity {
                                                     }
                                                 }
 
-                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
+                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
                                                         if(!address.equals(out.getAddressFromP2PKHScript(MainNetParams.get()).toString()))  {

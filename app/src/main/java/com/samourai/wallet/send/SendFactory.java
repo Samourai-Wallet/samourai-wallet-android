@@ -256,7 +256,7 @@ public class SendFactory	{
             }
 
             MyTransactionInput input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
-            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, true) == true)    {
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
                 input.setSequenceNumber(nSequence);
                 nSequence++;
             }
