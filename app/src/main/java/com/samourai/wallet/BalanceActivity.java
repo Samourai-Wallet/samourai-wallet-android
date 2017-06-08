@@ -2067,6 +2067,7 @@ public class BalanceActivity extends Activity {
                             Log.d("BalanceActivity", "extra change:" + extraChange);
                         }
 
+                        boolean addedChangeOutput = false;
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
@@ -2076,10 +2077,12 @@ public class BalanceActivity extends Activity {
                                 Script toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), change_address));
                                 TransactionOutput output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
                                 txOutputs.add(output);
+                                addedChangeOutput = true;
                             }
                             catch(MnemonicException.MnemonicLengthException | IOException e) {
                                 handler.post(new Runnable() {
                                     public void run() {
+                                        Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         Toast.makeText(BalanceActivity.this, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -2095,9 +2098,20 @@ public class BalanceActivity extends Activity {
                                     Log.d("BalanceActivity", "before extra:" + output.getValue().longValue());
                                     output.setValue(Coin.valueOf(extraChange + output.getValue().longValue()));
                                     Log.d("BalanceActivity", "after extra:" + output.getValue().longValue());
+                                    addedChangeOutput = true;
                                     break;
                                 }
                             }
+                        }
+
+                        // sanity check
+                        if(extraChange > 0L && !addedChangeOutput)    {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(BalanceActivity.this, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return "KO";
                         }
 
                         //
