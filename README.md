@@ -6,7 +6,7 @@
 
 ### Build:
 
-Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
+Import as Android Studio project. Should build "as is". PGP signed tagged releases correspond to builds that were issued via Google Play.
 
 ### BIP44:
 
