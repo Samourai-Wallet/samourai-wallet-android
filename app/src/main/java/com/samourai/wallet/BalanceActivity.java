@@ -1368,8 +1368,8 @@ public class BalanceActivity extends Activity {
         private String strProgressTitle = null;
         private String strProgressMessage = null;
 
-        ProgressDialog progress = null;
-        Handler handler = null;
+        private ProgressDialog progress = null;
+        private Handler handler = null;
         private boolean dragged = false;
 
         public RefreshTask(boolean dragged) {
