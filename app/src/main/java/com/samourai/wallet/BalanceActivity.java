@@ -1689,11 +1689,11 @@ public class BalanceActivity extends Activity {
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
                                 cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
-                                if(totalAmount > (cpfpFee.longValue() + remainingFee)) {
+                                if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
                             }
-                            if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                            if(totalAmount < (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
