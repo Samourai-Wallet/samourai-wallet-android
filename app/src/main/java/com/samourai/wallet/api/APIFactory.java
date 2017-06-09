@@ -196,7 +196,7 @@ public class APIFactory	{
                 JSONObject addrObj = null;
                 for(int i = 0; i < addressesArray.length(); i++)  {
                     addrObj = (JSONObject)addressesArray.get(i);
-                    if(addrObj.has("final_balance") && addrObj.has("address"))  {
+                    if(addrObj != null && addrObj.has("final_balance") && addrObj.has("address"))  {
                         xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
                         AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                         AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
