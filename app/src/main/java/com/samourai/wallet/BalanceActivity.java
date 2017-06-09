@@ -1689,7 +1689,7 @@ public class BalanceActivity extends Activity {
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
                                 cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
-                                if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                                if(totalAmount >= (cpfpFee.longValue() + remainingFee)) {
                                     break;
                                 }
                             }
