@@ -110,7 +110,7 @@
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
     <string name="bip39_passphrase">BIP39 passphrase</string>
-    <string name="mnemonic_hex">Mnemonic or hex seed</string>
+    <string name="mnemonic_hex">Mnemonic or hex entropy</string>
     <string name="pin_enter">Enter PIN code</string>
     <string name="please_wait">Please wait...</string>
     <string name="random_key_error">Random key error</string>
@@ -310,6 +310,9 @@
     <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
     <string name="options_block_explorer">View transaction</string>
     <string name="options_bump_fee">Increase tx fee</string>
+    <string name="options_privkey">Show private key</string>
+
+    <string name="prompt_privkey_or_explorer">Display private key for this bitcoin address? If so, display with caution. Otherwise, choose to view transaction in block explorer.</string>
 
     <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
     <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>
