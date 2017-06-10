@@ -26,7 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -46,6 +48,7 @@ import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
@@ -55,6 +58,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
 import java.io.IOException;
@@ -955,8 +959,39 @@ public class SendActivity extends Activity {
 
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
+
+                            final RBFSpend rbf;
+                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+
+                                rbf = new RBFSpend();
+
+                                for(TransactionInput input : tx.getInputs())    {
+
+                                    String _addr = input.getConnectedOutput().getAddressFromP2PKHScript(MainNetParams.get()).toString();
+                                    if(_addr == null)    {
+                                        _addr = input.getConnectedOutput().getAddressFromP2SH(MainNetParams.get()).toString();
+                                    }
+
+                                    String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
+                                    if(path != null)    {
+                                        rbf.addKey(input.getOutpoint().toString(), path);
+                                    }
+                                    else    {
+                                        String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
+                                        int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
+                                        rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
+                                    }
+
+                                }
+
+                            }
+                            else    {
+                                rbf = null;
+                            }
+
                             if(tx != null)    {
                                 tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
+                                final Transaction _tx = tx;
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("SendActivity", hexTx);
 
@@ -1022,6 +1057,20 @@ public class SendActivity extends Activity {
                                                     catch(MnemonicException.MnemonicLengthException mle) {
                                                         ;
                                                     }
+                                                }
+
+                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+
+                                                    for(TransactionOutput out : _tx.getOutputs())   {
+                                                        if(!address.equals(out.getAddressFromP2PKHScript(MainNetParams.get()).toString()))  {
+                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(MainNetParams.get()).toString());
+                                                        }
+                                                    }
+
+                                                    rbf.setHash(strTxHash);
+                                                    rbf.setSerializedTx(hexTx);
+
+                                                    RBFUtil.getInstance().add(rbf);
                                                 }
 
                                                 // spent BIP47 UTXO?

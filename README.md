@@ -6,7 +6,7 @@
 
 ### Build:
 
-Import as Android Studio project. Should build "as is". Tagged releases correspond to builds that were issued via Google Play.
+Import as Android Studio project. Should build "as is". PGP signed tagged releases correspond to builds that were issued via Google Play.
 
 ### BIP44:
 
@@ -23,6 +23,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 ### BIP69:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
+
+### BIP125:
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
 
 ### BIP126:
 

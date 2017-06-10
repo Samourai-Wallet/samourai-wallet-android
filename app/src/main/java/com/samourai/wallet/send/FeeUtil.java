@@ -9,7 +9,7 @@ import org.bitcoinj.core.Transaction;
 public class FeeUtil  {
 
     private static final int ESTIMATED_INPUT_LEN = 148; // compressed key
-    private static final int ESTIMATED_OUTPUT_LEN = 34;
+    private static final int ESTIMATED_OUTPUT_LEN = 33;
 
     private static SuggestedFee suggestedFee = null;
     private static SuggestedFee highFee = null;

@@ -8,6 +8,13 @@
         android:key="bip126"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_rbf0"
+        android:summary="@string/options_rbf0_2"
+        android:defaultValue="false"
+        android:key="rbf"
+        />
+
     <Preference
         android:title="@string/options_trusted_node"
         android:summary="@string/options_trusted_node2"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.92.33</string>
+    <string name="version_name">0.92.35</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -73,6 +73,8 @@
     <string name="options_trusted_node2">Specify your own trusted node for broadcasting transactions.</string>
     <string name="options_use_trusted_node">Use trusted node</string>
     <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
+    <string name="options_rbf0">Spend using RBF (replace-by-fee)</string>
+    <string name="options_rbf0_2">Spends will use RBF (replace-by-fee) to enable fee bumping.</string>
 
     <string name="timeline_today">Today</string>
     <string name="timeline_older">Older</string>
@@ -305,15 +307,12 @@
     <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
     <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
 
-    <string name="options_rbf">Use replace-by-fee (RBF)</string>
-    <string name="options_cpfp">Use child-pays-for-parent (CPFP)</string>
-
     <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
     <string name="options_block_explorer">View transaction</string>
     <string name="options_bump_fee">Increase tx fee</string>
 
     <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
-    <string name="cpfp_not_necessary">Be advised that child-pays-for-parent may not be necessary for this transaction.</string>
+    <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>
     <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
 
     <string name="options_sign">Sign message</string>
@@ -332,5 +331,8 @@
 
     <string name="cpfp_spent">CPFP transaction sent.</string>
     <string name="rbf_spent">RBF transaction sent.</string>
+    <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
+    <string name="cannot_create_change_output">Cannot create change output.</string>
+    <string name="cannot_create_cpfp">Cannot create CPFP transaction.</string>
 
 </resources>

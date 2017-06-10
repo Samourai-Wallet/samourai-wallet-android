@@ -23,6 +23,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.R;
@@ -208,6 +209,8 @@ public class SendFactory	{
      */
     private Transaction makeTransaction(int accountIdx, HashMap<String, BigInteger> receivers, List<MyTransactionOutPoint> unspent) throws Exception {
 
+        long nSequence = 1L;
+
         BigInteger amount = BigInteger.ZERO;
         for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();
@@ -253,6 +256,10 @@ public class SendFactory	{
             }
 
             MyTransactionInput input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+                input.setSequenceNumber(nSequence);
+                nSequence++;
+            }
             inputs.add(input);
         }
 

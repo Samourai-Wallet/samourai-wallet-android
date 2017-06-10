@@ -38,8 +38,13 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.ScriptException;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -56,10 +61,14 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.*;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.RBFSpend;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
@@ -81,8 +90,11 @@ import com.samourai.wallet.util.TypefaceUtil;
 import com.samourai.wallet.util.WebUtil;
 
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -351,23 +363,8 @@ public class BalanceActivity extends Activity {
 
                     String message = getString(R.string.options_unconfirmed_tx);
 
-                    /*
                     // RBF
                     if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash()))    {
-                        option = getString(R.string.options_rbf);
-                    }
-                    // CPFP
-                    else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
-                        option = getString(R.string.options_cpfp);
-                    }
-                    else    {
-                        doExplorerView(tx.getHash());
-                        return;
-                    }
-                    */
-
-                    // CPFP
-                    if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
                         AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
                         builder.setTitle(R.string.app_name);
                         builder.setMessage(message);
@@ -375,7 +372,54 @@ public class BalanceActivity extends Activity {
                         builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                new CPFPTask().execute(tx.getHash());
+                                RBFTask RBFTask = new RBFTask();
+                                RBFTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                doExplorerView(tx.getHash());
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                    // CPFP receive
+                    else if(tx.getConfirmations() < 1 && tx.getAmount() >= 0.0)   {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                CPFPTask CPFPTask = new CPFPTask();
+                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+
+                            }
+                        });
+                        builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                doExplorerView(tx.getHash());
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                    // CPFP spend
+                    else if(tx.getConfirmations() < 1 && tx.getAmount() < 0.0)   {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage(message);
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                CPFPTask CPFPTask = new CPFPTask();
+                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
 
                             }
                         });
@@ -1319,23 +1363,6 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void doRBF(Tx tx) {
-        // get hash
-        // retrieve serialized tx
-        // recalc fee
-        // add utxo(s), if necessary
-        // re-spend
-        Toast.makeText(BalanceActivity.this, R.string.options_rbf, Toast.LENGTH_SHORT).show();
-    }
-
-    private void doCPFP(Tx tx) {
-        // get hash
-        // get tx
-        // match amounts to find output
-        // spend utxo
-        Toast.makeText(BalanceActivity.this, R.string.options_cpfp, Toast.LENGTH_SHORT).show();
-    }
-
     private class RefreshTask extends AsyncTask<String, Void, String> {
 
         private String strProgressTitle = null;
@@ -1401,7 +1428,6 @@ public class BalanceActivity extends Activity {
                     txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
                 }
                 if(txs != null)    {
-                    Log.d("BalanceActivity", "txs != null");
                     Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                 }
 
@@ -1663,7 +1689,7 @@ public class BalanceActivity extends Activity {
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
                                 cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
-                                if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                                if(totalAmount >= (cpfpFee.longValue() + remainingFee)) {
                                     break;
                                 }
                             }
@@ -1694,15 +1720,20 @@ public class BalanceActivity extends Activity {
 
                         long amount = totalAmount - cpfpFee.longValue();
                         Log.d("BalanceActivity", "amount after fee:" + amount);
+
+                        if(amount < SamouraiWallet.bDust.longValue())    {
+                            Log.d("BalanceActivity", "dust output");
+                            Toast.makeText(BalanceActivity.this, R.string.cannot_output_dust, Toast.LENGTH_SHORT).show();
+                        }
+
                         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                         receivers.put(ownReceiveAddr, BigInteger.valueOf(amount));
 
                         String message = "";
                         if(feeWarning)  {
-                            message += BalanceActivity.this.getString(R.string.cpfp_not_necessary);
+                            message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
                             message += "\n\n";
                         }
-
                         message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " BTC";
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
@@ -1747,6 +1778,12 @@ public class BalanceActivity extends Activity {
 
                                                         }
                                                         else    {
+                                                            handler.post(new Runnable() {
+                                                                public void run() {
+                                                                    Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+
                                                             // reset receive index upon tx fail
                                                             int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
                                                             HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
@@ -1777,7 +1814,7 @@ public class BalanceActivity extends Activity {
                                         catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
                                             handler.post(new Runnable() {
                                                 public void run() {
-                                                    Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
@@ -1792,6 +1829,13 @@ public class BalanceActivity extends Activity {
                         }
 
                     }
+                    else    {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Toast.makeText(BalanceActivity.this, R.string.cannot_create_cpfp, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
                 }
                 catch(final JSONException je) {
@@ -1804,7 +1848,11 @@ public class BalanceActivity extends Activity {
 
             }
             else    {
-                Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+                handler.post(new Runnable() {
+                    public void run() {
+                        Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             Looper.loop();
@@ -1843,6 +1891,450 @@ public class BalanceActivity extends Activity {
             }
 
             return null;
+        }
+
+    }
+
+    private class RBFTask extends AsyncTask<String, Void, String> {
+
+        private List<UTXO> utxos = null;
+        private Handler handler = null;
+        private RBFSpend rbf = null;
+
+        @Override
+        protected void onPreExecute() {
+            handler = new Handler();
+            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+        }
+
+        @Override
+        protected String doInBackground(final String... params) {
+
+            Looper.prepare();
+
+            Log.d("BalanceActivity", "hash:" + params[0]);
+
+            rbf = RBFUtil.getInstance().get(params[0]);
+            Log.d("BalanceActivity", "rbf:" + ((rbf == null) ? "null" : "not null"));
+            final Transaction tx = new Transaction(MainNetParams.get(), Hex.decode(rbf.getSerializedTx()));
+            Log.d("BalanceActivity", "tx serialized:" + rbf.getSerializedTx());
+            Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
+            Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            if(tx != null && txObj.has("inputs") && txObj.has("out"))    {
+                try {
+                    JSONArray inputs = txObj.getJSONArray("inputs");
+                    JSONArray outputs = txObj.getJSONArray("out");
+
+                    SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
+                    FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(tx.getInputs().size(), tx.getOutputs().size());
+
+                    long total_inputs = 0L;
+                    long total_outputs = 0L;
+                    long fee = 0L;
+                    long total_change = 0L;
+                    List<String> selfAddresses = new ArrayList<String>();
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        JSONObject obj = inputs.getJSONObject(i);
+                        if(obj.has("prev_out"))    {
+                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                            if(objPrev.has("value"))    {
+                                total_inputs += objPrev.getLong("value");
+                            }
+                        }
+                    }
+
+                    for(int i = 0; i < outputs.length(); i++)   {
+                        JSONObject obj = outputs.getJSONObject(i);
+                        if(obj.has("value"))    {
+                            total_outputs += obj.getLong("value");
+
+                            String _addr = obj.getString("addr");
+                            selfAddresses.add(_addr);
+                            if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
+                                total_change += obj.getLong("value");
+                            }
+                        }
+                    }
+
+                    boolean feeWarning = false;
+                    fee = total_inputs - total_outputs;
+                    if(fee > estimatedFee.longValue())    {
+                        feeWarning = true;
+                    }
+
+                    long remainingFee = (estimatedFee.longValue() > fee) ? estimatedFee.longValue() - fee : 0L;
+
+                    Log.d("BalanceActivity", "total inputs:" + total_inputs);
+                    Log.d("BalanceActivity", "total outputs:" + total_outputs);
+                    Log.d("BalanceActivity", "total change:" + total_change);
+                    Log.d("BalanceActivity", "fee:" + fee);
+                    Log.d("BalanceActivity", "estimated fee:" + estimatedFee.longValue());
+                    Log.d("BalanceActivity", "fee warning:" + feeWarning);
+                    Log.d("BalanceActivity", "remaining fee:" + remainingFee);
+
+                    List<TransactionOutput> txOutputs = new ArrayList<TransactionOutput>();
+                    txOutputs.addAll(tx.getOutputs());
+
+                    long remainder = remainingFee;
+                    if(total_change > remainder)    {
+                        for(TransactionOutput output : txOutputs)   {
+                            if(rbf.getChangeAddrs().contains(output.getAddressFromP2PKHScript(MainNetParams.get()).toString()))    {
+                                if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
+                                    output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
+                                    remainder = 0L;
+                                    break;
+                                }
+                                else    {
+                                    remainder -= output.getValue().longValue();
+                                    output.setValue(Coin.valueOf(0L));      // output will be discarded later
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    //
+                    // original inputs are not modified
+                    //
+                    List<MyTransactionInput> _inputs = new ArrayList<MyTransactionInput>();
+                    List<TransactionInput> txInputs = tx.getInputs();
+                    for(TransactionInput input : txInputs) {
+                        MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
+                        _input.setSequenceNumber(1L);
+                        _inputs.add(_input);
+                        Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
+                    }
+
+                    if(remainder > 0L)    {
+                        List<UTXO> selectedUTXO = new ArrayList<UTXO>();
+                        long selectedAmount = 0L;
+                        int selected = 0;
+                        long _remainingFee = remainder;
+                        Collections.sort(utxos, new UTXO.UTXOComparator());
+                        for(UTXO _utxo : utxos)   {
+
+                            Log.d("BalanceActivity", "utxo value:" + _utxo.getValue());
+
+                            //
+                            // do not select utxo that are change outputs in current rbf tx
+                            //
+                            boolean isChange = false;
+                            boolean isSelf = false;
+                            for(MyTransactionOutPoint outpoint : _utxo.getOutpoints())  {
+                                if(rbf.containsChangeAddr(outpoint.getAddress()))    {
+                                    Log.d("BalanceActivity", "is change:" + outpoint.getAddress());
+                                    Log.d("BalanceActivity", "is change:" + outpoint.getValue().longValue());
+                                    isChange = true;
+                                    break;
+                                }
+                                if(selfAddresses.contains(outpoint.getAddress()))    {
+                                    Log.d("BalanceActivity", "is self:" + outpoint.getAddress());
+                                    Log.d("BalanceActivity", "is self:" + outpoint.getValue().longValue());
+                                    isSelf = true;
+                                    break;
+                                }
+                            }
+                            if(isChange || isSelf)    {
+                                continue;
+                            }
+
+                            selectedUTXO.add(_utxo);
+                            selected += _utxo.getOutpoints().size();
+                            Log.d("BalanceActivity", "selected utxo:" + selected);
+                            selectedAmount += _utxo.getValue();
+                            Log.d("BalanceActivity", "selected utxo value:" + _utxo.getValue());
+                            _remainingFee = FeeUtil.getInstance().estimatedFee(inputs.length() + selected, outputs.length() == 1 ? 2 : outputs.length()).longValue();
+                            Log.d("BalanceActivity", "_remaining fee:" + _remainingFee);
+                            if(selectedAmount >= (_remainingFee + SamouraiWallet.bDust.longValue())) {
+                                break;
+                            }
+                        }
+                        long extraChange = 0L;
+                        if(selectedAmount < (_remainingFee + SamouraiWallet.bDust.longValue())) {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return "KO";
+                        }
+                        else    {
+                            extraChange = selectedAmount - _remainingFee;
+                            Log.d("BalanceActivity", "extra change:" + extraChange);
+                        }
+
+                        boolean addedChangeOutput = false;
+                        // parent tx didn't have change output
+                        if(outputs.length() == 1 && extraChange > 0L)    {
+                            try {
+                                int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
+                                String change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
+
+                                Script toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), change_address));
+                                TransactionOutput output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
+                                txOutputs.add(output);
+                                addedChangeOutput = true;
+                            }
+                            catch(MnemonicException.MnemonicLengthException | IOException e) {
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(BalanceActivity.this, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return "KO";
+                            }
+
+                        }
+                        // parent tx had change output
+                        else    {
+                            for(TransactionOutput output : txOutputs)   {
+                                Log.d("BalanceActivity", "checking for change:" + output.getAddressFromP2PKHScript(MainNetParams.get()).toString());
+                                if(rbf.containsChangeAddr(output.getAddressFromP2PKHScript(MainNetParams.get()).toString()))    {
+                                    Log.d("BalanceActivity", "before extra:" + output.getValue().longValue());
+                                    output.setValue(Coin.valueOf(extraChange + output.getValue().longValue()));
+                                    Log.d("BalanceActivity", "after extra:" + output.getValue().longValue());
+                                    addedChangeOutput = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // sanity check
+                        if(extraChange > 0L && !addedChangeOutput)    {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(BalanceActivity.this, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return "KO";
+                        }
+
+                        //
+                        // update keyBag w/ any new paths
+                        //
+                        final HashMap<String,String> keyBag = rbf.getKeyBag();
+                        for(UTXO _utxo : selectedUTXO)    {
+
+                            for(MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
+
+                                MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
+                                _input.setSequenceNumber(1L);
+                                _inputs.add(_input);
+                                Log.d("BalanceActivity", "add selected outpoint:" + _input.getOutpoint().toString());
+
+                                String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(outpoint.getAddress());
+                                if(path != null)    {
+                                    rbf.addKey(outpoint.toString(), path);
+                                }
+                                else    {
+                                    String pcode = BIP47Meta.getInstance().getPCode4Addr(outpoint.getAddress());
+                                    int idx = BIP47Meta.getInstance().getIdx4Addr(outpoint.getAddress());
+                                    rbf.addKey(outpoint.toString(), pcode + "/" + idx);
+                                }
+
+                            }
+
+                        }
+                        rbf.setKeyBag(keyBag);
+
+                    }
+
+                    //
+                    // BIP69 sort of outputs/inputs
+                    //
+                    final Transaction _tx = new Transaction(MainNetParams.get());
+                    List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
+                    _txOutputs.addAll(txOutputs);
+                    Collections.sort(_txOutputs, new SendFactory.BIP69OutputComparator());
+                    for(TransactionOutput to : _txOutputs) {
+                        // zero value outputs discarded here
+                        if(to.getValue().longValue() > 0L)    {
+                            _tx.addOutput(to);
+                        }
+                    }
+
+                    List<MyTransactionInput> __inputs = new ArrayList<MyTransactionInput>();
+                    __inputs.addAll(_inputs);
+                    Collections.sort(__inputs, new SendFactory.BIP69InputComparator());
+                    for(TransactionInput input : __inputs) {
+                        _tx.addInput(input);
+                    }
+
+                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
+                    String message = "";
+                    if(feeWarning)  {
+                        message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
+                        message += "\n\n";
+                    }
+                    message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " BTC";
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(message)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    Transaction __tx = signTx(_tx);
+                                    final String hexTx = new String(Hex.encode(__tx.bitcoinSerialize()));
+                                    Log.d("BalanceActivity", hexTx);
+
+                                    final String strTxHash = __tx.getHashAsString();
+                                    Log.d("BalanceActivity", strTxHash);
+
+                                    if(__tx != null)    {
+
+                                        boolean isOK = false;
+                                        try {
+
+                                            isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
+
+                                            if(isOK)    {
+
+                                                handler.post(new Runnable() {
+                                                    public void run() {
+                                                        Toast.makeText(BalanceActivity.this, R.string.rbf_spent, Toast.LENGTH_SHORT).show();
+
+                                                        RBFSpend _rbf = rbf;    // includes updated 'keyBag'
+                                                        _rbf.setSerializedTx(hexTx);
+                                                        _rbf.setHash(strTxHash);
+                                                        _rbf.setPrevHash(params[0]);
+                                                        RBFUtil.getInstance().add(_rbf);
+
+                                                        Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
+                                                        _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                        startActivity(_intent);
+                                                    }
+                                                });
+
+                                            }
+                                            else    {
+
+                                                handler.post(new Runnable() {
+                                                    public void run() {
+                                                        Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                            }
+                                        }
+                                        catch(final DecoderException de) {
+                                            handler.post(new Runnable() {
+                                                public void run() {
+                                                    Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                        finally {
+                                            ;
+                                        }
+
+                                    }
+
+                                }
+                            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    dialog.dismiss();
+
+                                }
+                            });
+                    if(!isFinishing())    {
+                        dlg.show();
+                    }
+
+                }
+                catch(final JSONException je) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast.makeText(BalanceActivity.this, "rbf:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+            }
+            else    {
+                Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
+            }
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            ;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            ;
+        }
+
+        private Transaction signTx(Transaction tx)    {
+
+            HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
+
+            HashMap<String,String> keys = rbf.getKeyBag();
+            for(String outpoint : keys.keySet())   {
+
+                ECKey ecKey = null;
+
+                String[] s = keys.get(outpoint).split("/");
+                if(s.length == 3)    {
+                    HD_Address hd_address = AddressFactory.getInstance(BalanceActivity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                    String strPrivKey = hd_address.getPrivateKeyString();
+                    DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
+                    ecKey = pk.getKey();
+                }
+                else if(s.length == 2)    {
+                    try {
+                        PaymentAddress address = BIP47Util.getInstance(BalanceActivity.this).getReceiveAddress(new PaymentCode(s[0]), Integer.parseInt(s[1]));
+                        ecKey = address.getReceiveECKey();
+                    }
+                    catch(Exception e) {
+                        ;
+                    }
+                }
+                else    {
+                    ;
+                }
+
+                Log.i("BalanceActivity", "outpoint:" + outpoint);
+                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(MainNetParams.get()).toString());
+
+                if(ecKey != null) {
+                    keyBag.put(outpoint, ecKey);
+                }
+                else {
+                    throw new RuntimeException("ECKey error: cannot process private key");
+//                    Log.i("ECKey error", "cannot process private key");
+                }
+
+            }
+
+            List<TransactionInput> inputs = tx.getInputs();
+            for (int i = 0; i < inputs.size(); i++) {
+
+                ECKey ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
+                Log.i("BalanceActivity", "sign outpoint:" + inputs.get(i).getOutpoint().toString());
+                Log.i("BalanceActivity", "ECKey address from keyBag:" + ecKey.toAddress(MainNetParams.get()).toString());
+
+                Log.i("BalanceActivity", "script:" + ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())));
+                Log.i("BalanceActivity", "script:" + Hex.toHexString(ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())).getProgram()));
+                TransactionSignature sig = tx.calculateSignature(i, ecKey, ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())).getProgram(), Transaction.SigHash.ALL, false);
+                tx.getInput(i).setScriptSig(ScriptBuilder.createInputScript(sig, ecKey));
+
+            }
+
+            return tx;
         }
 
     }
