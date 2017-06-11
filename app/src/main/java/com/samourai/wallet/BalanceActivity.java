@@ -1612,11 +1612,13 @@ public class BalanceActivity extends Activity {
 
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
             if(txObj.has("inputs") && txObj.has("out"))    {
+
+                final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
+
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("out");
 
-                    SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                     BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
 
@@ -1697,6 +1699,7 @@ public class BalanceActivity extends Activity {
                                         Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                                     }
                                 });
+                                FeeUtil.getInstance().setSuggestedFee(suggestedFee);
                                 return "KO";
                             }
                         }
@@ -1768,6 +1771,8 @@ public class BalanceActivity extends Activity {
                                                                 public void run() {
                                                                     Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
 
+                                                                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
                                                                     Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
                                                                     _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                                                     startActivity(_intent);
@@ -1835,8 +1840,6 @@ public class BalanceActivity extends Activity {
                         });
                     }
 
-                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-
                 }
                 catch(final JSONException je) {
                     handler.post(new Runnable() {
@@ -1845,6 +1848,8 @@ public class BalanceActivity extends Activity {
                         }
                     });
                 }
+
+                FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
             }
             else    {
