@@ -1649,8 +1649,6 @@ public class BalanceActivity extends Activity {
                         }
                     }
 
-                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
                     if(fee > estimatedFee.longValue())    {
@@ -1836,6 +1834,8 @@ public class BalanceActivity extends Activity {
                             }
                         });
                     }
+
+                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
                 }
                 catch(final JSONException je) {
