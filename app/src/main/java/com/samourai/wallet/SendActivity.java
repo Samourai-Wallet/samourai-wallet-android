@@ -1551,7 +1551,7 @@ public class SendActivity extends Activity {
                             return;
                         }
 
-                        if(customValue < 50)    {
+                        if(customValue < 25)    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {
