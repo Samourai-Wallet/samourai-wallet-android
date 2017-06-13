@@ -1704,7 +1704,7 @@ public class BalanceActivity extends Activity {
                             }
                         }
 
-                        cpfpFee.add(BigInteger.valueOf(remainingFee));
+                        cpfpFee = cpfpFee.add(BigInteger.valueOf(remainingFee));
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
 
                         final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
