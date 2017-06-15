@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.92.35</string>
+    <string name="version_name">0.92.37</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -105,12 +105,13 @@
     <string name="bip38_pw">BIP38 password</string>
     <string name="bip38_pw_error">BIP38 password error</string>
     <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+    <string name="bip39_restore">Enter your mnemonic (or hex entropy) and, if necessary, your BIP39 passphrase. If you do not use a BIP39 passphrase, leave it blank.</string>
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
     <string name="bip39_passphrase">BIP39 passphrase</string>
-    <string name="mnemonic_hex">Mnemonic or hex seed</string>
+    <string name="mnemonic_hex">Mnemonic or hex entropy</string>
     <string name="pin_enter">Enter PIN code</string>
     <string name="please_wait">Please wait...</string>
     <string name="random_key_error">Random key error</string>
@@ -310,6 +311,9 @@
     <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
     <string name="options_block_explorer">View transaction</string>
     <string name="options_bump_fee">Increase tx fee</string>
+    <string name="options_privkey">Show private key</string>
+
+    <string name="prompt_privkey_or_explorer">Display private key for this bitcoin address? If so, display with caution. Otherwise, choose to view transaction in block explorer.</string>
 
     <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
     <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>

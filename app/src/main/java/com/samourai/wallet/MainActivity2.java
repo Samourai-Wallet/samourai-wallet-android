@@ -542,7 +542,7 @@ public class MainActivity2 extends Activity {
 
                                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
                                                 .setTitle(R.string.app_name)
-                                                .setMessage(R.string.bip39_safe)
+                                                .setMessage(R.string.bip39_restore)
                                                 .setView(restoreLayout)
                                                 .setCancelable(false)
                                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

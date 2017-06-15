@@ -1368,8 +1368,8 @@ public class BalanceActivity extends Activity {
         private String strProgressTitle = null;
         private String strProgressMessage = null;
 
-        ProgressDialog progress = null;
-        Handler handler = null;
+        private ProgressDialog progress = null;
+        private Handler handler = null;
         private boolean dragged = false;
 
         public RefreshTask(boolean dragged) {
@@ -1612,11 +1612,13 @@ public class BalanceActivity extends Activity {
 
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
             if(txObj.has("inputs") && txObj.has("out"))    {
+
+                final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
+
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("out");
 
-                    SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                     BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
 
@@ -1648,8 +1650,6 @@ public class BalanceActivity extends Activity {
                             }
                         }
                     }
-
-                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
@@ -1689,21 +1689,22 @@ public class BalanceActivity extends Activity {
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
                                 cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
-                                if(totalAmount >= (cpfpFee.longValue() + remainingFee)) {
+                                if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
                             }
-                            if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                            if(totalAmount < (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                                     }
                                 });
+                                FeeUtil.getInstance().setSuggestedFee(suggestedFee);
                                 return "KO";
                             }
                         }
 
-                        cpfpFee.add(BigInteger.valueOf(remainingFee));
+                        cpfpFee = cpfpFee.add(BigInteger.valueOf(remainingFee));
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
 
                         final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
@@ -1769,6 +1770,8 @@ public class BalanceActivity extends Activity {
                                                             handler.post(new Runnable() {
                                                                 public void run() {
                                                                     Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
+
+                                                                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
                                                                     Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
                                                                     _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1845,6 +1848,8 @@ public class BalanceActivity extends Activity {
                         }
                     });
                 }
+
+                FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
             }
             else    {

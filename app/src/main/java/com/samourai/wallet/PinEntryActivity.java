@@ -24,6 +24,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
@@ -348,10 +349,17 @@ public class PinEntryActivity extends Activity {
                     AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
 
                     try {
-                        PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
+                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
 
                         if (progress != null && progress.isShowing()) {
                             progress.dismiss();
+                        }
+
+                        if(hdw == null) {
+                            Toast.makeText(PinEntryActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         }
 
                         AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
