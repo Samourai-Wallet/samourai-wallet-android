@@ -142,6 +142,19 @@ public class ExchangeRateFactory	{
         }
     }
 
+    public double getBitcoinAveragePrice(String currency)	 {
+
+        HashMap<String,Double> fxRates = fxRatesBTCAvg;
+
+        if(fxRates.get(currency) != null && fxRates.get(currency) > 0.0)	 {
+            PrefsUtil.getInstance(context).setValue("CANNED_" + currency, Double.toString(fxRates.get(currency)));
+            return fxRates.get(currency);
+        }
+        else	 {
+            return Double.parseDouble(PrefsUtil.getInstance(context).getValue("CANNED_" + currency, "0.0"));
+        }
+    }
+
     private void getLBC(String currency)	 {
         try {
             JSONObject jsonObject = new JSONObject(strDataLBC);
