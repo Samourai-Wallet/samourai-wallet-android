@@ -15,6 +15,7 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -90,35 +91,7 @@ public class SendFactory	{
                 String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
 //                Log.i("address from script", address);
                 ECKey ecKey = null;
-                try {
-                    String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
-                    if(path != null)    {
-//                        Log.i("SendFactory", "unspent path:" + path);
-                        String[] s = path.split("/");
-                        int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
-                        HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-//                        Log.i("SendFactory", "unspent address:" + hd_address.getAddressString());
-                        String strPrivKey = hd_address.getPrivateKeyString();
-                        DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
-                        ecKey = pk.getKey();
-//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
-                    }
-                    else    {
-//                        Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
-//                        Log.i("looking up:", "" + address);
-                        String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-//                        Log.i("pcode from address:", pcode);
-                        int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-//                        Log.i("idx from address:", "" + idx);
-                        PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
-                        ecKey = addr.getReceiveECKey();
-//                        Log.i("SendFactory", "ECKey address:" + ecKey.toAddress(MainNetParams.get()).toString());
-                    }
-                } catch (AddressFormatException afe) {
-                    afe.printStackTrace();
-                    continue;
-                }
-
+                ecKey = getPrivKey(address);
                 if(ecKey != null) {
                     keyBag.put(input.getOutpoint().toString(), ecKey);
                 }
@@ -744,6 +717,34 @@ public class SendFactory	{
         }
 
         return null;
+    }
+
+    public static ECKey getPrivKey(String address)    {
+
+        ECKey ecKey = null;
+
+        try {
+            String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
+            if(path != null)    {
+                String[] s = path.split("/");
+                int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
+                HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                String strPrivKey = hd_address.getPrivateKeyString();
+                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
+                ecKey = pk.getKey();
+            }
+            else    {
+                String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
+                ecKey = addr.getReceiveECKey();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return ecKey;
     }
 
     public static class BIP69InputComparator implements Comparator<MyTransactionInput> {
