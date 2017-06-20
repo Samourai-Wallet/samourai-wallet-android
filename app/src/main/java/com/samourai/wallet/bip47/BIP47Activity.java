@@ -835,7 +835,7 @@ public class BIP47Activity extends Activity {
         //
         // calc btc fee from USD Samourai fee
         //
-        double btc_fx = ExchangeRateFactory.getInstance(BIP47Activity.this).getBitcoinAveragePrice("USD");
+        double btc_fx = ExchangeRateFactory.getInstance(BIP47Activity.this).getBitfinexPrice("USD");
         BigInteger currentSWFee = BigInteger.valueOf((long)((btc_fx / SendNotifTxFactory._dSWFeeUSD) * 1e8));
         if(currentSWFee.longValue() < SendNotifTxFactory._bSWFee.longValue() || currentSWFee.longValue() > SendNotifTxFactory._bSWCeilingFee.longValue())  {
             currentSWFee = SendNotifTxFactory._bSWFee;

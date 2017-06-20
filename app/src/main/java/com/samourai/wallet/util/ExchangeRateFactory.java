@@ -147,9 +147,9 @@ public class ExchangeRateFactory	{
         }
     }
 
-    public double getBitcoinAveragePrice(String currency)	 {
+    public double getBitfinexPrice(String currency)	 {
 
-        HashMap<String,Double> fxRates = fxRatesBTCAvg;
+        HashMap<String,Double> fxRates = fxRatesBFX;
 
         if(fxRates.get(currency) != null && fxRates.get(currency) > 0.0)	 {
             PrefsUtil.getInstance(context).setValue("CANNED_" + currency, Double.toString(fxRates.get(currency)));
