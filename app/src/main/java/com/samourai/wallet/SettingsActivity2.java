@@ -1035,8 +1035,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
-                                dialog.dismiss();
-                                getFiat();
+                                if(which == 2)    {
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
+                                    dialog.dismiss();
+                                }
+                                else    {
+                                    dialog.dismiss();
+                                    getFiat();
+                                }
 
                             }
                         }
