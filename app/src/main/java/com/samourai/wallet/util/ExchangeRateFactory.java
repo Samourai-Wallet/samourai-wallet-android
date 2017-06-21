@@ -210,13 +210,17 @@ public class ExchangeRateFactory	{
         try {
             JSONObject jsonObject = new JSONObject(strDataBFX);
             if(jsonObject != null && jsonObject.has("last_price"))	{
-                JSONObject jsonCurr = jsonObject.getJSONObject("last_price");
-                double avg_price = 0.0;
-                avg_price = jsonCurr.getDouble("last_price");
+                String strLastPrice = jsonObject.getString("last_price");
+                double avg_price = Double.parseDouble(strLastPrice);
                 fxRatesBFX.put(currency, Double.valueOf(avg_price));
 //                    Log.i("ExchangeRateFactory", "BFX:" + currency + " " + Double.valueOf(avg_price));
             }
-        } catch (JSONException je) {
+        }
+        catch (JSONException je) {
+            fxRatesBTCe.put(currency, Double.valueOf(-1.0));
+//            fxSymbols.put(currency, null);
+        }
+        catch (NumberFormatException nfe) {
             fxRatesBTCe.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
         }
