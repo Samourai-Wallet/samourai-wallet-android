@@ -146,7 +146,7 @@ public class SamouraiService extends Service {
 
                     response = null;
                     try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
+                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
                         ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCe(response);
                         ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCe();
                     }
@@ -156,7 +156,7 @@ public class SamouraiService extends Service {
 
                     response = null;
                     try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
+                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
                         ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCe(response);
                         ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCe();
                     }
