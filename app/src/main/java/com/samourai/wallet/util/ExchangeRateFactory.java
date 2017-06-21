@@ -217,11 +217,11 @@ public class ExchangeRateFactory	{
             }
         }
         catch (JSONException je) {
-            fxRatesBTCe.put(currency, Double.valueOf(-1.0));
+            fxRatesBFX.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
         }
         catch (NumberFormatException nfe) {
-            fxRatesBTCe.put(currency, Double.valueOf(-1.0));
+            fxRatesBFX.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
         }
     }
