@@ -1070,6 +1070,9 @@ public class APIFactory	{
         catch(IOException ioe) {
             ;
         }
+        catch(NullPointerException npe) {
+            ;
+        }
 
         strJSON = null;
         try {
@@ -1085,6 +1088,9 @@ public class APIFactory	{
         catch(IOException ioe) {
             ;
         }
+        catch(NullPointerException npe) {
+            ;
+        }
 
         strJSON = null;
         try {
@@ -1097,6 +1103,9 @@ public class APIFactory	{
             ;
         }
         catch(IOException ioe) {
+            ;
+        }
+        catch(NullPointerException npe) {
             ;
         }
 
