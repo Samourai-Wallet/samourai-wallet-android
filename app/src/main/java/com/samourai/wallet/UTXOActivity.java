@@ -30,6 +30,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -105,7 +106,7 @@ public class UTXOActivity extends Activity {
                     public void onClick(final DialogInterface dialog, int whichButton) {
 
                         String addr = data.get(position).getLeft().toString();
-                        ECKey ecKey = getPrivKey(addr);
+                        ECKey ecKey = SendFactory.getPrivKey(addr);
                         String strPrivKey = ecKey.getPrivateKeyAsWiF(MainNetParams.get());
 
                         ImageView showQR = new ImageView(UTXOActivity.this);
@@ -166,34 +167,6 @@ public class UTXOActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    private ECKey getPrivKey(String address)    {
-
-        ECKey ecKey = null;
-
-        try {
-            String path = APIFactory.getInstance(UTXOActivity.this).getUnspentPaths().get(address);
-            if(path != null)    {
-                String[] s = path.split("/");
-                int account_no = APIFactory.getInstance(UTXOActivity.this).getUnspentAccounts().get(address);
-                HD_Address hd_address = AddressFactory.getInstance(UTXOActivity.this).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                String strPrivKey = hd_address.getPrivateKeyString();
-                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
-                ecKey = pk.getKey();
-            }
-            else    {
-                String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                PaymentAddress addr = BIP47Util.getInstance(UTXOActivity.this).getReceiveAddress(new PaymentCode(pcode), idx);
-                ecKey = addr.getReceiveECKey();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return ecKey;
     }
 
     private boolean isBIP47(String address)    {

@@ -146,16 +146,6 @@ public class SamouraiService extends Service {
 
                     response = null;
                     try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                        ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCe(response);
-                        ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCe();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    response = null;
-                    try {
                         response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
                         ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCe(response);
                         ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCe();
@@ -166,9 +156,19 @@ public class SamouraiService extends Service {
 
                     response = null;
                     try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.AVG_EXCHANGE_URL);
-                        ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCAvg(response);
-                        ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCAvg();
+                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
+                        ExchangeRateFactory.getInstance(SamouraiService.this).setDataBTCe(response);
+                        ExchangeRateFactory.getInstance(SamouraiService.this).parseBTCe();
+                    }
+                    catch(Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    response = null;
+                    try {
+                        response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
+                        ExchangeRateFactory.getInstance(SamouraiService.this).setDataBFX(response);
+                        ExchangeRateFactory.getInstance(SamouraiService.this).parseBFX();
                     }
                     catch(Exception e) {
                         e.printStackTrace();

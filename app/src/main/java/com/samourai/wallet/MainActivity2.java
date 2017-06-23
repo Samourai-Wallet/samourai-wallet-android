@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,7 +19,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -689,16 +687,6 @@ public class MainActivity2 extends Activity {
 
                 response = null;
                 try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
                     ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
                     ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
@@ -709,9 +697,19 @@ public class MainActivity2 extends Activity {
 
                 response = null;
                 try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.AVG_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCAvg(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCAvg();
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                response = null;
+                try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
                 }
                 catch(Exception e) {
                     e.printStackTrace();
