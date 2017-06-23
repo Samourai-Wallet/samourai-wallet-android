@@ -990,7 +990,7 @@ public class APIFactory	{
 
         Log.i("APIFactory", "initWallet()");
 
-        initFromCache();
+        //initFromCache();
 
         initWalletAmounts();
 
@@ -1052,7 +1052,7 @@ public class APIFactory	{
         }
 
     }
-
+/*
     private synchronized void initFromCache() {
 
         String strJSON = null;
@@ -1110,7 +1110,7 @@ public class APIFactory	{
         }
 
     }
-
+*/
     private synchronized JSONObject getBIP47(String[] addresses, boolean simple) {
 
         JSONObject jsonObject  = null;
