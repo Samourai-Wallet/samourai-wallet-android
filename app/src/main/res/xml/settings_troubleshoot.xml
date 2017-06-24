@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:title="@string/options_passphrase_test"
+        android:summary="@string/options_passphrase_test2"
+        android:key="troubleshoot"
+        />
+
+    <Preference
+        android:title="@string/options_send_backup_to_support"
+        android:summary="@string/options_send_backup_to_support2"
+        android:key="send_backup_support"
+        />
+
+</PreferenceScreen>

@@ -75,6 +75,14 @@
     <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
     <string name="options_rbf0">Spend using RBF (replace-by-fee)</string>
     <string name="options_rbf0_2">Spends will use RBF (replace-by-fee) to enable fee bumping.</string>
+    <string name="options_troubleshoot">Troubleshoot</string>
+    <string name="options_troubleshoot2">Verify wallet access and backup support.</string>
+    <string name="options_passphrase_test">Passphrase/backup test</string>
+    <string name="options_passphrase_test2">Verify wallet access and backup support.</string>
+    <string name="options_send_backup_to_support">Send backup to tech support</string>
+    <string name="options_send_backup_to_support2">Send wallet backup to tech support. Does not contain private key info.</string>
+
+    <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
     <string name="timeline_today">Today</string>
     <string name="timeline_older">Older</string>
@@ -113,7 +121,14 @@
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
+    <string name="wallet_passphrase">Enter your wallet passphrase</string>
     <string name="bip39_passphrase">BIP39 passphrase</string>
+    <string name="bip39_match">BIP39 passphrase verified OK.</string>
+    <string name="bip39_decrypt_test">Wallet passphrase verified OK. Would you like to test decryption of the latest auto backup?</string>
+    <string name="bip39_decrypt_test_please_wait">Testing decryption of passphrase protected backup file. Please wait.</string>
+    <string name="bip39_decrypt_test_ok">BIP39 passphrase verified OK and backup file decrypted successfully.</string>
+    <string name="bip39_decrypt_test_ko">Backup file decryption failed.</string>
+    <string name="backup_read_error">Error reading backup file.</string>
     <string name="mnemonic_hex">Mnemonic or hex entropy</string>
     <string name="pin_enter">Enter PIN code</string>
     <string name="please_wait">Please wait...</string>
@@ -341,5 +356,7 @@
     <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
     <string name="cannot_create_change_output">Cannot create change output.</string>
     <string name="cannot_create_cpfp">Cannot create CPFP transaction.</string>
+
+    <string name="error_reading_payload">Error reading payload. Please try again.</string>
 
 </resources>

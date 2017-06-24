@@ -92,6 +92,16 @@ public class SettingsActivity extends PreferenceActivity	{
             }
         });
 
+        Preference troubleshootPref = (Preference) findPreference("troubleshoot");
+        troubleshootPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
+                intent.putExtra("branch", "troubleshoot");
+                startActivity(intent);
+                return true;
+            }
+        });
+
         Preference otherPref = (Preference) findPreference("other");
         otherPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
