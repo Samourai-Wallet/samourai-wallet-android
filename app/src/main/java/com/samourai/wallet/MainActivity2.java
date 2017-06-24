@@ -57,6 +57,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 public class MainActivity2 extends Activity {
 
@@ -290,15 +291,60 @@ public class MainActivity2 extends Activity {
 
                                         final String passphrase39 = passphrase.getText().toString();
 
-                                        if (passphrase39 != null && passphrase39.length() > 0) {
+                                        if(passphrase39 != null && passphrase39.length() > 0 && passphrase39.contains(" "))    {
 
-                                            Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.putExtra("create", true);
-                                            intent.putExtra("passphrase", passphrase39 == null ? "" : passphrase39);
-                                            startActivity(intent);
+                                            Toast.makeText(MainActivity2.this, R.string.bip39_invalid, Toast.LENGTH_SHORT).show();
+                                            AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                                        } else {
+                                        }
+                                        else if (passphrase39 != null && passphrase39.length() > 0) {
+
+                                            final EditText passphrase2 = new EditText(MainActivity2.this);
+                                            passphrase2.setSingleLine(true);
+                                            passphrase2.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+                                            AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setMessage(R.string.bip39_safe2)
+                                                    .setView(passphrase2)
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            final String _passphrase39 = passphrase2.getText().toString();
+
+                                                            if(_passphrase39.equals(passphrase39))    {
+
+                                                                Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
+                                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                intent.putExtra("create", true);
+                                                                intent.putExtra("passphrase", _passphrase39);
+                                                                startActivity(intent);
+
+                                                            }
+                                                            else {
+
+                                                                Toast.makeText(MainActivity2.this, R.string.bip39_unmatch, Toast.LENGTH_SHORT).show();
+                                                                AppUtil.getInstance(MainActivity2.this).restartApp();
+
+                                                            }
+
+                                                        }
+
+                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
+                                                            AppUtil.getInstance(MainActivity2.this).restartApp();
+
+                                                        }
+                                                    });
+                                            if(!isFinishing())    {
+                                                dlg.show();
+                                            }
+
+                                        }
+                                        else {
 
                                             Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
                                             AppUtil.getInstance(MainActivity2.this).restartApp();

@@ -105,8 +105,11 @@
     <string name="bip38_pw">BIP38 password</string>
     <string name="bip38_pw_error">BIP38 password error</string>
     <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+    <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
     <string name="bip39_restore">Enter your mnemonic (or hex entropy) and, if necessary, your BIP39 passphrase. If you do not use a BIP39 passphrase, leave it blank.</string>
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
+    <string name="bip39_unmatch">Passphrase does not match. Please try again.</string>
+    <string name="bip39_invalid">Do not use any space characters in your passphrase. Please try again.</string>
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>

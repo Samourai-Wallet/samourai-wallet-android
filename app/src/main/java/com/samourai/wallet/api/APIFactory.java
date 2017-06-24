@@ -990,8 +990,6 @@ public class APIFactory	{
 
         Log.i("APIFactory", "initWallet()");
 
-        //initFromCache();
-
         initWalletAmounts();
 
     }
@@ -1052,65 +1050,7 @@ public class APIFactory	{
         }
 
     }
-/*
-    private synchronized void initFromCache() {
 
-        String strJSON = null;
-        try {
-            strJSON = deserialize(strXPUBFilename);
-            JSONObject jsonObj = new JSONObject(strJSON);
-//            Log.i("APIFactory", "deserialized:" + jsonObj.toString());
-            if(jsonObj != null)    {
-                parseXPUB(jsonObj);
-            }
-        }
-        catch(JSONException je) {
-            ;
-        }
-        catch(IOException ioe) {
-            ;
-        }
-        catch(NullPointerException npe) {
-            ;
-        }
-
-        strJSON = null;
-        try {
-            strJSON = deserialize(strFeesFilename);
-            JSONObject jsonObj = new JSONObject(strJSON);
-            if(jsonObj != null)    {
-                parseDynamicFees(jsonObj);
-            }
-        }
-        catch(JSONException je) {
-            ;
-        }
-        catch(IOException ioe) {
-            ;
-        }
-        catch(NullPointerException npe) {
-            ;
-        }
-
-        strJSON = null;
-        try {
-            strJSON = deserialize(strUnspentsFilename);
-            if(strJSON != null)    {
-                parseUnspentOutputs(strJSON);
-            }
-        }
-        catch(JSONException je) {
-            ;
-        }
-        catch(IOException ioe) {
-            ;
-        }
-        catch(NullPointerException npe) {
-            ;
-        }
-
-    }
-*/
     private synchronized JSONObject getBIP47(String[] addresses, boolean simple) {
 
         JSONObject jsonObject  = null;
