@@ -137,6 +137,8 @@ public class BalanceActivity extends Activity {
 
     private boolean isBTC = true;
 
+    private RefreshTask refreshTask = null;
+
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -217,7 +219,8 @@ public class BalanceActivity extends Activity {
                     BalanceActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new PoWTask().execute(blkHash);
+                            PoWTask pow = new PoWTask();
+                            pow.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, blkHash);
                         }
 
                     });
@@ -373,7 +376,7 @@ public class BalanceActivity extends Activity {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
                                 RBFTask RBFTask = new RBFTask();
-                                RBFTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                RBFTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
 
                             }
                         });
@@ -396,7 +399,7 @@ public class BalanceActivity extends Activity {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
                                 CPFPTask CPFPTask = new CPFPTask();
-                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                CPFPTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
 
                             }
                         });
@@ -419,7 +422,7 @@ public class BalanceActivity extends Activity {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
                                 CPFPTask CPFPTask = new CPFPTask();
-                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                CPFPTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
 
                             }
                         });
@@ -1194,8 +1197,10 @@ public class BalanceActivity extends Activity {
 
     private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
-        RefreshTask refreshTask = new RefreshTask(dragged);
-        refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
+        if(refreshTask == null || refreshTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+            refreshTask = new RefreshTask(dragged);
+            refreshTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
+        }
 
     }
 
