@@ -34,6 +34,7 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.BlockExplorerUtil;
+import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -126,14 +127,14 @@ public class UTXOActivity extends Activity {
                         showText.setPadding(40, 10, 40, 10);
                         showText.setTextSize(18.0f);
 
-                        LinearLayout xpubLayout = new LinearLayout(UTXOActivity.this);
-                        xpubLayout.setOrientation(LinearLayout.VERTICAL);
-                        xpubLayout.addView(showQR);
-                        xpubLayout.addView(showText);
+                        LinearLayout privkeyLayout = new LinearLayout(UTXOActivity.this);
+                        privkeyLayout.setOrientation(LinearLayout.VERTICAL);
+                        privkeyLayout.addView(showQR);
+                        privkeyLayout.addView(showText);
 
                         new AlertDialog.Builder(UTXOActivity.this)
                                 .setTitle(R.string.app_name)
-                                .setView(xpubLayout)
+                                .setView(privkeyLayout)
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -151,6 +152,21 @@ public class UTXOActivity extends Activity {
 
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).getLeft().toString()));
                         startActivity(browserIntent);
+
+                    }
+                });
+                builder.setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int whichButton) {
+
+                        String addr = data.get(position).getLeft().toString();
+                        ECKey ecKey = SendFactory.getPrivKey(addr);
+
+                        if(ecKey != null)    {
+                            MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                    UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                    UTXOActivity.this.getString(R.string.utxo_sign_text2),
+                                    ecKey);
+                        }
 
                     }
                 });
