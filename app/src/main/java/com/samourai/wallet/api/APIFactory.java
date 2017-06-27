@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -1032,12 +1033,15 @@ public class APIFactory	{
         //
         try {
 //            APIFactory.getInstance(context).preloadXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
-            APIFactory.getInstance(context).getXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
-            String[] s = new String[2];
-            s[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
-            s[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
-            getUnspentOutputs(s);
-            getDynamicFees();
+            HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
+            if(hdw != null && hdw.getXPUBs() != null)    {
+                APIFactory.getInstance(context).getXPUB(hdw.getXPUBs());
+                String[] s = new String[2];
+                s[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
+                s[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
+                getUnspentOutputs(s);
+                getDynamicFees();
+            }
         }
         catch(IOException ioe) {
             ioe.printStackTrace();
