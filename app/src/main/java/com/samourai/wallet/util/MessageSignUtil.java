@@ -7,11 +7,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.bip47.BIP47Activity;
-import com.samourai.wallet.bip47.BIP47Util;
 
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
 
 import java.security.SignatureException;
