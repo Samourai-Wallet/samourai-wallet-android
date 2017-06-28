@@ -99,6 +99,21 @@ public class MessageSignUtil {
 
     }
 
+    public boolean verifyMessage(String address, String strMessage, String strSignature) throws SignatureException {
+
+        if(address == null || strMessage == null || strSignature == null)    {
+            return false;
+        }
+
+        ECKey ecKey = signedMessageToKey(strMessage, strSignature);
+        if(ecKey != null)   {
+            return ecKey.toAddress(MainNetParams.get()).toString().equals(address);
+        }
+        else    {
+            return false;
+        }
+    }
+
     private String signMessage(ECKey key, String strMessage) {
 
         if(key == null || strMessage == null || !key.hasPrivKey())    {
@@ -135,48 +150,6 @@ public class MessageSignUtil {
         }
 
         return ECKey.signedMessageToKey(strMessage, strSignature);
-    }
-
-    private boolean verifyMessage(ECKey key, String strMessage, String strSignature) throws SignatureException {
-
-        if(key == null || strMessage == null || strSignature == null)    {
-            return false;
-        }
-
-        return signedMessageToKey(strMessage, strSignature).getPublicKeyAsHex().equals(key.getPublicKeyAsHex());
-    }
-
-    private ECKey.ECDSASignature signMessageECDSA(ECKey key, byte[] hash) {
-
-        if(key == null || hash == null)    {
-            return null;
-        }
-
-        ECKey.ECDSASignature sig = null;
-
-        /*
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(strMessage.getBytes());
-            sig = key.sign(Sha256Hash.of(hash));
-        }
-        catch(NoSuchAlgorithmException nsae) {
-            return null;
-        }
-        */
-
-        sig = key.sign(Sha256Hash.of(hash));
-
-        return sig;
-    }
-
-    private boolean verifyMessageECDSA(ECKey key, ECKey.ECDSASignature sig, byte[] hash) {
-
-        if(key == null || sig == null || hash == null)    {
-            return false;
-        }
-
-        return key.verify(Sha256Hash.of(hash), sig);
     }
 
 }
