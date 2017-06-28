@@ -11,7 +11,9 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1521,7 +1523,7 @@ public class SendActivity extends Activity {
     }
 
     private String getCurrentFeeSetting()   {
-        return getText(R.string.current_fee_selection) + "\n" + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + getText(R.string.slash_sat);
+        return getText(R.string.current_fee_selection) + "\n" + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
     }
 
     private void doCustomFee()   {
@@ -1530,8 +1532,26 @@ public class SendActivity extends Activity {
         final long sanityValue = (long)(sanitySat * 1.25);
 
         final EditText etCustomFee = new EditText(SendActivity.this);
-        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
         etCustomFee.setText(Long.toString((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L)));
+
+        InputFilter filter = new InputFilter() {
+
+            String strCharset = "0123456789nollNOLL";
+
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+                for(int i = start; i < end; i++) {
+                    if(strCharset.indexOf(source.charAt(i)) == -1) {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        etCustomFee.setFilters(new InputFilter[] { filter } );
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
@@ -1543,15 +1563,22 @@ public class SendActivity extends Activity {
 
                         String strCustomFee = etCustomFee.getText().toString();
                         long customValue = 0L;
-                        try {
-                            customValue = Long.valueOf(strCustomFee);
+
+                        if(strCustomFee.equalsIgnoreCase("noll") && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+                            customValue = 0L;
                         }
-                        catch(Exception e) {
-                            Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
-                            return;
+                        else {
+
+                            try {
+                                customValue = Long.valueOf(strCustomFee);
+                            } catch (Exception e) {
+                                Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
                         }
 
-                        if(customValue < 25)    {
+                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {

@@ -32,6 +32,11 @@
         />
 
     <Preference
+        android:title="@string/options_troubleshoot"
+        android:key="troubleshoot"
+        />
+
+    <Preference
         android:title="@string/options_cat_other"
         android:key="other"
         />

@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.CheckBoxPreference;
@@ -62,11 +63,14 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.TorUtil;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -738,6 +742,42 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
             }
+            else if(strBranch.equals("troubleshoot"))   {
+                addPreferencesFromResource(R.xml.settings_troubleshoot);
+
+                Preference troubleshootPref = (Preference) findPreference("troubleshoot");
+                troubleshootPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doTroubleshoot();
+                        return true;
+                    }
+                });
+
+                Preference sendBackupPref = (Preference) findPreference("send_backup_support");
+                sendBackupPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+
+                        new AlertDialog.Builder(SettingsActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.prompt_send_backup_to_support)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        doSendBackup();
+
+                                    }
+                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        }).show();
+
+                        return true;
+                    }
+                });
+
+            }
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
 
@@ -779,71 +819,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
-/*
-                Preference certifPref = (Preference) findPreference("certif");
-                certifPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
 
-                        try {
-
-                            StringBuilder sb = new StringBuilder();
-
-                            final PackageManager packageManager = SettingsActivity2.this.getPackageManager();
-
-                            PackageInfo pkgInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                            final String strName = pkgInfo.applicationInfo.loadLabel(packageManager).toString();
-                            final String strVendor = pkgInfo.packageName;
-
-                            sb.append(strName + " / " + strVendor + "\n");
-
-                            final Signature[] arrSignatures = pkgInfo.signatures;
-                            if(arrSignatures != null)    {
-                                for (final Signature sig : arrSignatures) {
-
-                                    final byte[] rawCert = sig.toByteArray();
-                                    InputStream certStream = new ByteArrayInputStream(rawCert);
-
-                                    try {
-                                        CertificateFactory certFactory = CertificateFactory.getInstance("X509");
-                                        X509Certificate x509Cert = (X509Certificate) certFactory.generateCertificate(certStream);
-
-//                                        sb.append("Certificate subject: " + x509Cert.getSubjectDN() + "\n");
-//                                        sb.append("Certificate issuer: " + x509Cert.getIssuerDN() + "\n");
-//                                        sb.append("Certificate serial number: " + x509Cert.getSerialNumber());
-
-                                        sb.append("Certificate signature: " + Hex.toHexString(x509Cert.getSignature()));
-
-                                    }
-                                    catch (CertificateException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            TextView showText = new TextView(SettingsActivity2.this);
-                            showText.setText(sb.toString());
-                            showText.setTextIsSelectable(true);
-                            showText.setPadding(40, 10, 40, 10);
-                            showText.setTextSize(18.0f);
-                            new AlertDialog.Builder(SettingsActivity2.this)
-                                    .setTitle(R.string.app_name)
-                                    .setView(showText)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
-
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        return true;
-                    }
-                });
-*/
                 Preference aboutPref = (Preference) findPreference("about");
                 aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.version_name));
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -1035,8 +1011,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
-                                dialog.dismiss();
-                                getFiat();
+                                if(which == 2)    {
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
+                                    dialog.dismiss();
+                                }
+                                else    {
+                                    dialog.dismiss();
+                                    getFiat();
+                                }
 
                             }
                         }
@@ -1240,6 +1223,148 @@ public class SettingsActivity2 extends PreferenceActivity	{
         if(!isFinishing())    {
             dlg.show();
         }
+    }
+
+    private void doTroubleshoot()   {
+
+        try {
+            final String strExpected = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase();
+
+            final EditText passphrase = new EditText(SettingsActivity2.this);
+            passphrase.setSingleLine(true);
+            passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.wallet_passphrase)
+                    .setView(passphrase)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            final String _passphrase39 = passphrase.getText().toString();
+
+                            if(_passphrase39.equals(strExpected))    {
+
+                                Toast.makeText(SettingsActivity2.this, R.string.bip39_match, Toast.LENGTH_SHORT).show();
+
+                                String directory = Environment.DIRECTORY_DOCUMENTS;
+                                File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+                                final File file = new File(dir, "samourai.txt");
+                                if(file.exists())    {
+
+                                    new AlertDialog.Builder(SettingsActivity2.this)
+                                            .setTitle(R.string.app_name)
+                                            .setMessage(R.string.bip39_decrypt_test)
+                                            .setCancelable(false)
+                                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                    new Thread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+
+                                                            Looper.prepare();
+
+                                                            StringBuilder sb = new StringBuilder();
+                                                            try {
+                                                                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+                                                                String str = null;
+                                                                while((str = in.readLine()) != null) {
+                                                                    sb.append(str);
+                                                                }
+                                                                in.close();
+                                                                String encrypted = sb.toString();
+
+                                                                String decrypted = null;
+                                                                try {
+                                                                    decrypted = AESUtil.decrypt(encrypted, new CharSequenceX(_passphrase39), AESUtil.DefaultPBKDF2Iterations);
+                                                                    Toast.makeText(SettingsActivity2.this, R.string.bip39_decrypt_test_ok, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                                catch (Exception e) {
+                                                                    Toast.makeText(SettingsActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                                finally {
+                                                                    if (decrypted == null || decrypted.length() < 1) {
+                                                                        Toast.makeText(SettingsActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+
+                                                            }
+                                                            catch(FileNotFoundException fnfe) {
+                                                                Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            catch(IOException ioe) {
+                                                                Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
+                                                            }
+
+                                                            Looper.loop();
+
+                                                        }
+                                                    }).start();
+
+                                                }
+                                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    }).show();
+
+                                }
+
+                            }
+                            else {
+
+                                Toast.makeText(SettingsActivity2.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        }
+
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            ;
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+        }
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch (MnemonicException.MnemonicLengthException mle) {
+            mle.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doSendBackup() {
+
+        try {
+            JSONObject jsonObject = PayloadUtil.getInstance(SettingsActivity2.this).getPayload();
+
+            jsonObject.getJSONObject("wallet").remove("seed");
+            jsonObject.getJSONObject("wallet").remove("passphrase");
+
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@samouraiwallet.com" } );
+            email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet support backup");
+            email.putExtra(Intent.EXTRA_TEXT, jsonObject.toString());
+            email.setType("message/rfc822");
+            startActivity(Intent.createChooser(email, SettingsActivity2.this.getText(R.string.choose_email_client)));
+
+        }
+        catch(JSONException je) {
+            je.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }

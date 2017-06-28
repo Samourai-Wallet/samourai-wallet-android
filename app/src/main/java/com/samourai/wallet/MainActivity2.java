@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,7 +19,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -59,6 +57,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 public class MainActivity2 extends Activity {
 
@@ -292,15 +291,60 @@ public class MainActivity2 extends Activity {
 
                                         final String passphrase39 = passphrase.getText().toString();
 
-                                        if (passphrase39 != null && passphrase39.length() > 0) {
+                                        if(passphrase39 != null && passphrase39.length() > 0 && passphrase39.contains(" "))    {
 
-                                            Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.putExtra("create", true);
-                                            intent.putExtra("passphrase", passphrase39 == null ? "" : passphrase39);
-                                            startActivity(intent);
+                                            Toast.makeText(MainActivity2.this, R.string.bip39_invalid, Toast.LENGTH_SHORT).show();
+                                            AppUtil.getInstance(MainActivity2.this).restartApp();
 
-                                        } else {
+                                        }
+                                        else if (passphrase39 != null && passphrase39.length() > 0) {
+
+                                            final EditText passphrase2 = new EditText(MainActivity2.this);
+                                            passphrase2.setSingleLine(true);
+                                            passphrase2.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+                                            AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setMessage(R.string.bip39_safe2)
+                                                    .setView(passphrase2)
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            final String _passphrase39 = passphrase2.getText().toString();
+
+                                                            if(_passphrase39.equals(passphrase39))    {
+
+                                                                Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
+                                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                intent.putExtra("create", true);
+                                                                intent.putExtra("passphrase", _passphrase39);
+                                                                startActivity(intent);
+
+                                                            }
+                                                            else {
+
+                                                                Toast.makeText(MainActivity2.this, R.string.bip39_unmatch, Toast.LENGTH_SHORT).show();
+                                                                AppUtil.getInstance(MainActivity2.this).restartApp();
+
+                                                            }
+
+                                                        }
+
+                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
+                                                            AppUtil.getInstance(MainActivity2.this).restartApp();
+
+                                                        }
+                                                    });
+                                            if(!isFinishing())    {
+                                                dlg.show();
+                                            }
+
+                                        }
+                                        else {
 
                                             Toast.makeText(MainActivity2.this, R.string.bip39_must, Toast.LENGTH_SHORT).show();
                                             AppUtil.getInstance(MainActivity2.this).restartApp();
@@ -689,16 +733,6 @@ public class MainActivity2 extends Activity {
 
                 response = null;
                 try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
                     ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
                     ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
@@ -709,9 +743,19 @@ public class MainActivity2 extends Activity {
 
                 response = null;
                 try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.AVG_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCAvg(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCAvg();
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                response = null;
+                try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
                 }
                 catch(Exception e) {
                     e.printStackTrace();

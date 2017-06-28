@@ -62,6 +62,7 @@ import com.samourai.wallet.bip47.rpc.*;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
@@ -136,6 +137,11 @@ public class BalanceActivity extends Activity {
     private FloatingActionButton actionBIP47 = null;
 
     private boolean isBTC = true;
+
+    private RefreshTask refreshTask = null;
+    private PoWTask powTask = null;
+    private RBFTask rbfTask = null;
+    private CPFPTask cpfpTask = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -217,7 +223,10 @@ public class BalanceActivity extends Activity {
                     BalanceActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new PoWTask().execute(blkHash);
+                            if(powTask == null || powTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                powTask = new PoWTask();
+                                powTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, blkHash);
+                            }
                         }
 
                     });
@@ -290,30 +299,40 @@ public class BalanceActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
-                if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2 ||
-                        (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0 && SamouraiWallet.getInstance().getShowTotalBalance())
-                        )    {
+                try {
+                    HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
 
-                    new AlertDialog.Builder(BalanceActivity.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(R.string.receive2Samourai)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                                    startActivity(intent);
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    ;
-                                }
-                            }).show();
+                    if(hdw != null)    {
+                        if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2 ||
+                                (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0 && SamouraiWallet.getInstance().getShowTotalBalance())
+                                )    {
+
+                            new AlertDialog.Builder(BalanceActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.receive2Samourai)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    }).show();
+
+                        }
+                        else    {
+                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                            startActivity(intent);
+                        }
+                    }
 
                 }
-                else    {
-                    Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                    startActivity(intent);
+                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                    ;
                 }
 
             }
@@ -372,8 +391,10 @@ public class BalanceActivity extends Activity {
                         builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                RBFTask RBFTask = new RBFTask();
-                                RBFTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                if(rbfTask == null || rbfTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                    rbfTask = new RBFTask();
+                                    rbfTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+                                }
 
                             }
                         });
@@ -395,8 +416,10 @@ public class BalanceActivity extends Activity {
                         builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                CPFPTask CPFPTask = new CPFPTask();
-                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                if(cpfpTask == null || cpfpTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                    cpfpTask = new CPFPTask();
+                                    cpfpTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+                                }
 
                             }
                         });
@@ -418,8 +441,10 @@ public class BalanceActivity extends Activity {
                         builder.setPositiveButton(R.string.options_bump_fee, new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                CPFPTask CPFPTask = new CPFPTask();
-                                CPFPTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, tx.getHash());
+                                if(cpfpTask == null || cpfpTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                    cpfpTask = new CPFPTask();
+                                    cpfpTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+                                }
 
                             }
                         });
@@ -1194,8 +1219,10 @@ public class BalanceActivity extends Activity {
 
     private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
 
-        RefreshTask refreshTask = new RefreshTask(dragged);
-        refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
+        if(refreshTask == null || refreshTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+            refreshTask = new RefreshTask(dragged);
+            refreshTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
+        }
 
     }
 
@@ -1383,6 +1410,10 @@ public class BalanceActivity extends Activity {
         protected void onPreExecute() {
 
             Log.d("BalanceActivity", "RefreshTask.preExecute()");
+
+            if(progress != null && progress.isShowing())    {
+                progress.dismiss();
+            }
 
             if(!dragged)    {
                 strProgressTitle = BalanceActivity.this.getText(R.string.app_name).toString();
