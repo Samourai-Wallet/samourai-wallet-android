@@ -99,7 +99,7 @@ public class MessageSignUtil {
 
     }
 
-    public boolean verifyMessage(String address, String strMessage, String strSignature) throws SignatureException {
+    public boolean verifySignedMessage(String address, String strMessage, String strSignature) throws SignatureException {
 
         if(address == null || strMessage == null || strSignature == null)    {
             return false;
