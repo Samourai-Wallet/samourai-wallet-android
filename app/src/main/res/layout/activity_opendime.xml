@@ -1,0 +1,125 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
+    android:background="@color/primary_dark"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="left|center_horizontal"
+        android:textAlignment="gravity"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/address" />
+
+    <ImageView
+        android:id="@+id/qr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/address"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/opendime_confirmed_balance"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:gravity="left|center_vertical"
+        android:textAlignment="gravity"
+        android:layout_below="@id/qr"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/balancePrompt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:gravity="left|center_vertical"
+        android:textAlignment="gravity"
+        android:layout_below="@id/balancePrompt"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/balanceAmount" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/opendime_privkey"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:gravity="left|center_vertical"
+        android:textAlignment="gravity"
+        android:layout_below="@id/balanceAmount"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/keyStatusPrompt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:gravity="left|center_vertical"
+        android:textAlignment="gravity"
+        android:layout_below="@id/keyStatusPrompt"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/keyStatus" />
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10dp"
+        android:gravity="right"
+        >
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="120dp"
+            android:layout_height="75dp"
+            android:text="@string/opendime_topup"
+            android:id="@+id/topup"
+            android:textColor="@color/blue"
+            />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="120dp"
+            android:layout_height="75dp"
+            android:text="@string/opendime_view"
+            android:id="@+id/view"
+            android:textColor="@color/blue"
+            android:layout_toRightOf="@id/topup"
+            />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="120dp"
+            android:layout_height="75dp"
+            android:text="@string/opendime_sweep"
+            android:id="@+id/sweep"
+            android:textColor="@color/blue"
+            android:layout_toRightOf="@id/view"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>
