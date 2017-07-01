@@ -363,4 +363,14 @@
     <string name="utxo_sign_text1">Sign message using this private key?</string>
     <string name="utxo_sign_text2">Signed using utxo address.</string>
 
+    <string name="opendime_confirmed_balance">Confirmed Balance</string>
+    <string name="opendime_privkey">Private Key</string>
+    <string name="opendime_verified">VERIFIED</string>
+    <string name="opendime_valid_key">Valid private key on device</string>
+    <string name="opendime_not_verified">CANNOT VERIFY</string>
+    <string name="opendime_no_valid_key">Cannot validate private key on device</string>
+    <string name="opendime_view">VIEW IN BLOCK EXPLORER</string>
+    <string name="opendime_sweep">SWEEP BALANCE</string>
+    <string name="opendime_topup">TOP UP FROM WALLET</string>
+
 </resources>
