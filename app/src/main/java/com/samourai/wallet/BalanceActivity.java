@@ -72,6 +72,7 @@ import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.WebSocketService;
@@ -718,7 +719,8 @@ public class BalanceActivity extends Activity {
                                         }
 
                                         if(keyDecoded)    {
-                                            doSweep(pvr);
+//                                            doSweep(pvr);
+                                            SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
                                         }
 
                                     }
@@ -735,7 +737,8 @@ public class BalanceActivity extends Activity {
 
                     }
                     else if(privKeyReader != null)	{
-                        doSweep(privKeyReader);
+//                        doSweep(privKeyReader);
+                        SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
                     }
                     else    {
                         ;
@@ -875,7 +878,7 @@ public class BalanceActivity extends Activity {
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_COLD_STORAGE);
     }
-
+/*
     private void doSweep(final PrivKeyReader privKeyReader)  {
 
         new Thread(new Runnable() {
@@ -977,7 +980,7 @@ public class BalanceActivity extends Activity {
         }).start();
 
     }
-
+*/
     private void doBackup() {
 
         try {
