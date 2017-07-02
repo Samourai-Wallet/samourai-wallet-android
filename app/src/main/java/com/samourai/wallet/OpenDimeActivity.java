@@ -93,6 +93,7 @@ public class OpenDimeActivity extends Activity {
 
     private String strAddress = null;
     private CharSequenceX strPrivKey = null;
+    private long balance = 0L;
 
     private static Display display = null;
     private static int imgWidth = 0;
@@ -501,6 +502,7 @@ public class OpenDimeActivity extends Activity {
 
         strAddress = null;
         strPrivKey = null;
+        balance = 0L;
 
         OpenDimeActivity.this.runOnUiThread(new Runnable() {
 
@@ -645,7 +647,7 @@ public class OpenDimeActivity extends Activity {
                                         handler.post(new Runnable() {
                                             public void run() {
                                                 try {
-                                                    long balance = obj.getLong("final_balance");
+                                                    balance = obj.getLong("final_balance");
                                                     double btc_balance = (((double)balance) / 1e8);
 
                                                     String strFiat = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
@@ -657,8 +659,12 @@ public class OpenDimeActivity extends Activity {
                                                     }
 
                                                     String strBalance = "" + btc_balance + " BTC";
-                                                    if(balance > 0L)    {
+                                                    if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
                                                         strBalance += " " + MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance) + " " + strFiat;
+                                                        btSweep.setVisibility(View.VISIBLE);
+                                                    }
+                                                    else    {
+                                                        btSweep.setVisibility(View.GONE);
                                                     }
                                                     tvBalance.setText(strBalance);
 
