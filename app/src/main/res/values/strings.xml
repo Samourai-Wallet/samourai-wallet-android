@@ -374,5 +374,6 @@
     <string name="opendime_topup">TOP UP FROM WALLET</string>
 
     <string name="select_app">Select application</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
 
 </resources>

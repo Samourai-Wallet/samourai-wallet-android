@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -147,6 +148,8 @@ public class OpenDimeActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_opendime);
+
+        setTitle(R.string.samourai_opendime);
 
         display = (OpenDimeActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -341,21 +344,40 @@ public class OpenDimeActivity extends Activity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(usbReceiver);
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+
+            AppUtil.getInstance(OpenDimeActivity.this).restartApp();
+
+            return true;
+        }
+        else	{
+            ;
+        }
+
+        return false;
+    }
+
+    @Override
     public void onBackPressed() {
         try {
             UsbFile dir = dirs.pop();
         }
         catch (NoSuchElementException e) {
-            super.onBackPressed();
+            ;
         }
 
-    }
+        AppUtil.getInstance(OpenDimeActivity.this).restartApp();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(usbReceiver);
-
+        super.onBackPressed();
     }
 
     private boolean hasPublicAddress()  {
