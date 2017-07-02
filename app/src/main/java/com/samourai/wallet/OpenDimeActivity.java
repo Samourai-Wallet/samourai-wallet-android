@@ -20,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.usb.UsbDevice;
@@ -28,6 +29,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -605,7 +609,9 @@ public class OpenDimeActivity extends Activity {
                             handler.post(new Runnable() {
                                 public void run() {
 //                                    Toast.makeText(OpenDimeActivity.this, "validated", Toast.LENGTH_LONG).show();
-                                    tvKey.setText(OpenDimeActivity.this.getText(R.string.opendime_verified) + " " + OpenDimeActivity.this.getText(R.string.opendime_valid_key));
+                                    Spannable spannable = new SpannableString(OpenDimeActivity.this.getText(R.string.opendime_verified) + " - " + OpenDimeActivity.this.getText(R.string.opendime_valid_key));
+                                    spannable.setSpan(new ForegroundColorSpan(Color.GREEN), 0, OpenDimeActivity.this.getText(R.string.opendime_verified).length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    tvKey.setText(spannable);
                                 }
                             });
                         }
@@ -613,7 +619,9 @@ public class OpenDimeActivity extends Activity {
                             handler.post(new Runnable() {
                                 public void run() {
 //                                    Toast.makeText(OpenDimeActivity.this, "invalidated", Toast.LENGTH_LONG).show();
-                                    tvKey.setText(OpenDimeActivity.this.getText(R.string.opendime_not_verified) + " " + OpenDimeActivity.this.getText(R.string.opendime_no_valid_key));
+                                    Spannable spannable = new SpannableString(OpenDimeActivity.this.getText(R.string.opendime_not_verified) + " - " + OpenDimeActivity.this.getText(R.string.opendime_no_valid_key));
+                                    spannable.setSpan(new ForegroundColorSpan(Color.RED), 0, OpenDimeActivity.this.getText(R.string.opendime_not_verified).length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    tvKey.setText(spannable);
                                     btSweep.setVisibility(View.GONE);
 //                                    btTopUp.setVisibility(View.GONE);
                                     btView.setVisibility(View.VISIBLE);
