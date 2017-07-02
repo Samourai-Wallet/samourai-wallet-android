@@ -6,4 +6,10 @@
         android:title=""
         android:showAsAction="always"
         />
+    <item android:id="@+id/action_share_receive"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:visible="true"
+        android:title=""
+        android:showAsAction="always"
+        />
 </menu>

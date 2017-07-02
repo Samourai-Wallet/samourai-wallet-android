@@ -1,5 +1,8 @@
 package com.samourai.wallet;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SignatureException;
 import java.util.ArrayDeque;
@@ -9,13 +12,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -25,6 +31,7 @@ import android.os.Looper;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,6 +51,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.SweepUtil;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -107,12 +115,6 @@ public class OpenDimeActivity extends Activity {
 
                 // determine if connected device is a mass storage devuce
                 if (device != null) {
-                    /*
-                    if(readOpenDimeTask == null || readOpenDimeTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                        readOpenDimeTask = new ReadOpenDimeTask();
-                        readOpenDimeTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
-                    }
-                    */
                     readOpenDimeUSB();
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
@@ -127,12 +129,6 @@ public class OpenDimeActivity extends Activity {
                     }
                     // check if there are other devices or set action bar title
                     // to no device if not
-                    /*
-                    if(readOpenDimeTask == null || readOpenDimeTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                        readOpenDimeTask = new ReadOpenDimeTask();
-                        readOpenDimeTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
-                    }
-                    */
                     readOpenDimeUSB();
                 }
             }
@@ -201,17 +197,44 @@ public class OpenDimeActivity extends Activity {
             }
         });
 
+        ivQR.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(strAddress != null)    {
+
+                    new AlertDialog.Builder(OpenDimeActivity.this)
+                            .setTitle(R.string.app_name)
+                            .setMessage(R.string.receive_address_to_clipboard)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager)OpenDimeActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                    android.content.ClipData clip = null;
+                                    clip = android.content.ClipData.newPlainText("Receive address", strAddress);
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(OpenDimeActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                }
+
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ;
+                        }
+                    }).show();
+
+                }
+
+                return false;
+            }
+        });
+
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(usbReceiver, filter);
 
-                    /*
-                    if(readOpenDimeTask == null || readOpenDimeTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                        readOpenDimeTask = new ReadOpenDimeTask();
-                        readOpenDimeTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
-                    }
-                    */
         readOpenDimeUSB();
     }
 
@@ -240,14 +263,78 @@ public class OpenDimeActivity extends Activity {
 
         if(id == R.id.action_refresh) {
 
-                    /*
-                    if(readOpenDimeTask == null || readOpenDimeTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                        readOpenDimeTask = new ReadOpenDimeTask();
-                        readOpenDimeTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
-                    }
-                    */
             readOpenDimeUSB();
 
+        }
+        else if (id == R.id.action_share_receive) {
+
+            if(strAddress != null)    {
+
+                new AlertDialog.Builder(OpenDimeActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.receive_address_to_share)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                String strFileName = AppUtil.getInstance(OpenDimeActivity.this).getReceiveQRFilename();
+                                File file = new File(strFileName);
+                                if(!file.exists()) {
+                                    try {
+                                        file.createNewFile();
+                                    }
+                                    catch(Exception e) {
+                                        Toast.makeText(OpenDimeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                file.setReadable(true, false);
+
+                                FileOutputStream fos = null;
+                                try {
+                                    fos = new FileOutputStream(file);
+                                }
+                                catch(FileNotFoundException fnfe) {
+                                    ;
+                                }
+
+                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)OpenDimeActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                android.content.ClipData clip = null;
+                                clip = android.content.ClipData.newPlainText("Receive address", strAddress);
+                                clipboard.setPrimaryClip(clip);
+
+                                if(file != null && fos != null) {
+                                    Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                                    try {
+                                        fos.close();
+                                    }
+                                    catch(IOException ioe) {
+                                        ;
+                                    }
+
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_SEND);
+                                    intent.setType("image/png");
+                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                    startActivity(Intent.createChooser(intent, OpenDimeActivity.this.getText(R.string.select_app)));
+                                }
+
+                            }
+
+                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                }).show();
+
+            }
+
+        }
+        else    {
+            ;
         }
 
         return super.onOptionsItemSelected(item);
@@ -447,14 +534,6 @@ public class OpenDimeActivity extends Activity {
                             }
 
                         }
-
-                        /*
-                        handler.post(new Runnable() {
-                            public void run() {
-                                Toast.makeText(OpenDimeActivity.this, "Files found:" + files.size(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        */
 
                         if(hasPrivkey() && hasExposedPrivkey() && hasPublicAddress())    {
                             handler.post(new Runnable() {

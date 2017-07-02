@@ -373,4 +373,6 @@
     <string name="opendime_sweep">SWEEP BALANCE</string>
     <string name="opendime_topup">TOP UP FROM WALLET</string>
 
+    <string name="select_app">Select application</string>
+
 </resources>
