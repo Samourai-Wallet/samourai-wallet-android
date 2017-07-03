@@ -8,6 +8,8 @@ import java.security.SignatureException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -54,6 +56,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.util.AppUtil;
@@ -114,7 +117,8 @@ public class OpenDimeActivity extends Activity {
                     }
                 }
 
-            } else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+            }
+            else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
                 UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
                 Log.d(TAG, "USB device attached");
@@ -123,7 +127,8 @@ public class OpenDimeActivity extends Activity {
                 if (device != null) {
                     readOpenDimeUSB();
                 }
-            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+            }
+            else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                 UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
                 Log.d(TAG, "USB device detached");
@@ -135,8 +140,9 @@ public class OpenDimeActivity extends Activity {
                     }
                     // check if there are other devices or set action bar title
                     // to no device if not
-                    readOpenDimeUSB();
+//                    readOpenDimeUSB();
                 }
+
             }
 
         }
@@ -155,6 +161,13 @@ public class OpenDimeActivity extends Activity {
         setContentView(R.layout.activity_opendime);
 
         setTitle(R.string.samourai_opendime);
+
+        if(!AccessFactory.getInstance(OpenDimeActivity.this).isLoggedIn())    {
+            Intent _intent = new Intent(OpenDimeActivity.this, PinEntryActivity.class);
+            _intent.putExtra("opendime", true);
+            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(_intent);
+        }
 
         display = (OpenDimeActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -521,6 +534,18 @@ public class OpenDimeActivity extends Activity {
                 currentDevice = 0;
 
                 UsbDevice usbDevice = (UsbDevice) getIntent().getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                if(usbDevice == null)    {
+                    HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+                    Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+                    while(deviceIterator.hasNext()){
+                        UsbDevice device = deviceIterator.next();
+                        if(device != null)  {
+                            usbDevice = device;
+                            break;
+                        }
+                    }
+                }
 
                 if (usbDevice != null && usbManager.hasPermission(usbDevice)) {
                     Log.d(TAG, "received usb device via intent");

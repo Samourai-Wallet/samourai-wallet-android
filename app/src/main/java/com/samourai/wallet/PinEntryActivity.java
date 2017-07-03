@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -65,6 +66,7 @@ public class PinEntryActivity extends Activity {
     private String strConfirm = null;
     private String strSeed = null;
     private String strPassphrase = null;
+    private boolean isOpenDime = false;
 
     private ProgressDialog progress = null;
 
@@ -114,6 +116,9 @@ public class PinEntryActivity extends Activity {
             strSeed = extras.getString("seed");
             strPassphrase = extras.getString("passphrase");
             Toast.makeText(PinEntryActivity.this, R.string.pin_5_8_confirm, Toast.LENGTH_LONG).show();
+        }
+        else if(extras != null && extras.containsKey("opendime") && extras.getBoolean("opendime") == true)	{
+            isOpenDime = true;
         }
         else	{
             ;
@@ -364,7 +369,12 @@ public class PinEntryActivity extends Activity {
 
                         AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                         TimeOutUtil.getInstance().updatePin();
-                        if(uri != null)    {
+                        if(isOpenDime)    {
+                            Intent intent = new Intent(PinEntryActivity.this, OpenDimeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                        else if(uri != null)    {
                             Log.i("PinEntryActivity", "uri to restartApp()");
                             AppUtil.getInstance(PinEntryActivity.this).restartApp("uri", uri);
                         }
