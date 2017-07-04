@@ -2,22 +2,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="20dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:gravity="left|center_horizontal"
-        android:textAlignment="gravity"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/address" />
+        android:layout_marginTop="10dp"
+        android:gravity="left|center_horizontal"
+        android:paddingLeft="20dp"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_light"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/qr"
@@ -30,86 +29,84 @@
         />
 
     <TextView
+        android:id="@+id/balancePrompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/opendime_confirmed_balance"
-        android:paddingLeft="20dp"
-        android:textSize="14sp"
-        android:textColor="@android:color/black"
-        android:gravity="left|center_vertical"
-        android:textAlignment="gravity"
         android:layout_below="@id/qr"
-        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/balancePrompt" />
+        android:layout_marginTop="5dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="20dp"
+        android:text="@string/opendime_confirmed_balance"
+        android:textAlignment="gravity"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
 
     <TextView
+        android:id="@+id/balanceAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="20dp"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:gravity="left|center_vertical"
-        android:textAlignment="gravity"
         android:layout_below="@id/balancePrompt"
-        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/balanceAmount" />
+        android:layout_marginTop="5dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="20dp"
+        android:textAlignment="gravity"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_light"
+        android:textSize="16sp" />
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="20dp"
-        android:layout_below="@id/balanceAmount"
-        android:background="@color/darkgrey"
         android:id="@+id/divider0"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/opendime_privkey"
-        android:paddingLeft="20dp"
-        android:textSize="14sp"
-        android:textColor="@android:color/black"
-        android:gravity="left|center_vertical"
-        android:textAlignment="gravity"
-        android:layout_below="@id/divider0"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:id="@+id/keyStatusPrompt" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="20dp"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:gravity="left|center_vertical"
-        android:textAlignment="gravity"
-        android:layout_below="@id/keyStatusPrompt"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:id="@+id/keyStatus" />
-
-    <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="5dp"
+        android:layout_below="@id/balanceAmount"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="20dp"
-        android:layout_below="@id/keyStatus"
-        android:background="@color/darkgrey"
+        android:layout_marginTop="5dp"
+        android:background="@color/primary"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/keyStatusPrompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider0"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="20dp"
+        android:text="@string/opendime_privkey"
+        android:textAlignment="gravity"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/keyStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/keyStatusPrompt"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="20dp"
+        android:textAlignment="gravity"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_light"
+        android:textSize="16sp" />
+
+    <LinearLayout
         android:id="@+id/divider1"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/keyStatus"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/primary"
+        android:orientation="horizontal" />
 
     <RelativeLayout
         android:orientation="horizontal"
@@ -122,34 +119,34 @@
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="120dp"
+            android:layout_width="80dp"
             android:layout_height="75dp"
             android:text="@string/opendime_topup"
             android:id="@+id/topup"
             android:textColor="@color/blue"
-            android:background="@color/white"
+            android:background="@color/window"
             />
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="120dp"
+            android:layout_width="80dp"
             android:layout_height="75dp"
             android:text="@string/opendime_view"
             android:id="@+id/view"
             android:textColor="@color/blue"
-            android:background="@color/white"
             android:layout_toRightOf="@id/topup"
+            android:background="@color/window"
             />
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="120dp"
+            android:layout_width="80dp"
             android:layout_height="75dp"
             android:text="@string/opendime_sweep"
             android:id="@+id/sweep"
             android:textColor="@color/blue"
-            android:background="@color/white"
             android:layout_toRightOf="@id/view"
+            android:background="@color/window"
             />
 
     </RelativeLayout>
