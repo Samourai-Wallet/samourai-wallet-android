@@ -11,6 +11,7 @@ public class PrefsUtil {
 	public static final String GUID_V = "guid_version";
 	public static final String ACCESS_HASH = "accessHash";
 	public static final String ACCESS_HASH2 = "accessHash2";
+	public static final String CREDS_CHECK = "credsCheck";
 	public static final String BTC_UNITS = "btcUnits";
 	public static final String ICON_HIDDEN = "iconHidden";
 	public static final String ACCEPT_REMOTE = "acceptRemote";
@@ -69,6 +70,17 @@ public class PrefsUtil {
 	public boolean setValue(String name, int value) {
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 		editor.putInt(name, (value < 0) ? 0 : value);
+		return editor.commit();
+	}
+
+	public long getValue(String name, long value) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		return prefs.getLong(name, 0L);
+	}
+
+	public boolean setValue(String name, long value) {
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		editor.putLong(name, (value < 0L) ? 0L : value);
 		return editor.commit();
 	}
 
