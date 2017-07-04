@@ -38,23 +38,35 @@ public class FootprintUtil {
 
         strFootprint += tManager.getDeviceId();
 
-//        Log.i("FootprintUtil", strFootprint);
+        return RIPEMD160(strFootprint);
+    }
 
+    public String getFootprintV3() {
+
+        TelephonyManager tManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        String strFootprint = Build.BOARD +  Build.MANUFACTURER + Build.BRAND + Build.MODEL + Build.SERIAL;
+
+        strFootprint += tManager.getDeviceId();
+
+        return RIPEMD160(strFootprint);
+    }
+
+    public String RIPEMD160(String data)   {
         try {
-            byte[] data = strFootprint.getBytes("UTF-8");
+            byte[] hash = data.getBytes("UTF-8");
             RIPEMD160Digest digest = new RIPEMD160Digest();
-            digest.update(data, 0, data.length);
+            digest.update(hash, 0, hash.length);
             byte[] out = new byte[digest.getDigestSize()];
             digest.doFinal(out, 0);
             if(out != null) {
-//                Log.i("FootprintUtil", "RIPEMD160:" + new String(Hex.encode(out)));
                 return new String(Hex.encode(out));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return strFootprint;
+        return "";
 
     }
 
