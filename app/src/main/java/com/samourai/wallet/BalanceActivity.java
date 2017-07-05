@@ -503,7 +503,7 @@ public class BalanceActivity extends Activity {
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                     .setTitle(R.string.recovery_checkup)
-                    .setMessage(Html.fromHtml("<b>" + BalanceActivity.this.getText(R.string.recovery_checkup_message) + "</b>"))
+                    .setMessage(BalanceActivity.this.getText(R.string.recovery_checkup_message))
                     .setCancelable(false)
                     .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -514,8 +514,8 @@ public class BalanceActivity extends Activity {
                                 final String seed = HD_WalletFactory.getInstance(BalanceActivity.this).get().getMnemonic();
                                 final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
 
-                                final String message = "<b>" + BalanceActivity.this.getText(R.string.mnemonic) + ":</b><br><br><b>" + seed + "</b><br><br>" +
-                                        "<b>" + BalanceActivity.this.getText(R.string.passphrase) + ":</b><br><br><b>" + passphrase + "</b>";
+                                final String message = BalanceActivity.this.getText(R.string.mnemonic) + ":<br><br><b>" + seed + "</b><br><br>" +
+                                        BalanceActivity.this.getText(R.string.passphrase) + ":<br><br><b>" + passphrase + "</b>";
 
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                                         .setTitle(R.string.recovery_checkup)
