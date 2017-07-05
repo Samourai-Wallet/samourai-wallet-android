@@ -375,10 +375,10 @@ public class PinEntryActivity extends Activity {
                             Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
                             if(failures == 3)    {
+                                failures = 0;
                                 doBackupRestore();
                             }
                             else    {
-                                Toast.makeText(PinEntryActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
@@ -416,10 +416,10 @@ public class PinEntryActivity extends Activity {
                     Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
                     if(failures == 3)    {
+                        failures = 0;
                         doBackupRestore();
                     }
                     else    {
-                        Toast.makeText(PinEntryActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
