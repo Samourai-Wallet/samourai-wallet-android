@@ -372,7 +372,8 @@ public class PinEntryActivity extends Activity {
                         if(hdw == null) {
 
                             failures++;
-                            
+                            Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
                             if(failures == 3)    {
                                 doBackupRestore();
                             }
@@ -412,7 +413,8 @@ public class PinEntryActivity extends Activity {
                     }
 
                     failures++;
-                    
+                    Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
                     if(failures == 3)    {
                         doBackupRestore();
                     }
