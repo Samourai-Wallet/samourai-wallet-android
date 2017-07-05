@@ -181,35 +181,7 @@ public class MainActivity2 extends Activity {
                 strPCode = extras.getString("pcode");
             }
 
-            if(PrefsUtil.getInstance(MainActivity2.this).getValue("popup_" + getResources().getString(R.string.version_name), false) == true)	{
-                doAppInit(isDial, strUri, strPCode);
-            }
-            else	{
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
-
-                WebView wv = new WebView(MainActivity2.this);
-                wv.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-                });
-                wv.loadUrl("http://samouraiwallet.com/changelog/alpha3.html");
-                alert.setView(wv);
-                alert.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        PrefsUtil.getInstance(MainActivity2.this).setValue("popup_" + getResources().getString(R.string.version_name), true);
-                        AppUtil.getInstance(MainActivity2.this).restartApp();
-                    }
-                });
-                if(!isFinishing())    {
-                    alert.show();
-                }
-            }
+            doAppInit(isDial, strUri, strPCode);
 
         }
 
