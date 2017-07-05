@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -493,6 +495,54 @@ public class BalanceActivity extends Activity {
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
         refreshTx(false, true, false);
+
+        //
+        // user checks mnemonic & passphrase
+        //
+        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CREDS_CHECK, 0L) == 0L)    {
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                    .setTitle(R.string.recovery_checkup)
+                    .setMessage(Html.fromHtml("<b>" + BalanceActivity.this.getText(R.string.recovery_checkup_message) + "</b>"))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                            try {
+                                final String seed = HD_WalletFactory.getInstance(BalanceActivity.this).get().getMnemonic();
+                                final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
+
+                                final String message = "<b>" + BalanceActivity.this.getText(R.string.mnemonic) + ":</b><br><br><b>" + seed + "</b><br><br>" +
+                                        "<b>" + BalanceActivity.this.getText(R.string.passphrase) + ":</b><br><br><b>" + passphrase + "</b>";
+
+                                AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                        .setTitle(R.string.recovery_checkup)
+                                        .setMessage(Html.fromHtml(message))
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.recovery_checkup_finish, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.CREDS_CHECK, System.currentTimeMillis() / 1000L);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                if(!isFinishing())    {
+                                    dlg.show();
+                                }
+
+                            }
+                            catch(IOException | MnemonicException.MnemonicLengthException e) {
+                                Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+        }
 
     }
 
