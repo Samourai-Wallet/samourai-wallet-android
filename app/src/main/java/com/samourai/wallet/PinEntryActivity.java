@@ -727,7 +727,20 @@ public class PinEntryActivity extends Activity {
                                                 progress.dismiss();
                                                 progress = null;
                                             }
-                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+
+                                            new AlertDialog.Builder(PinEntryActivity.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setMessage(getString(R.string.pin_reminder) + "\n\n" + AccessFactory.getInstance(PinEntryActivity.this).getPIN())
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            dialog.dismiss();
+                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+
+                                                        }
+                                                    }).show();
+
                                         }
 
                                         Looper.loop();
@@ -749,6 +762,11 @@ public class PinEntryActivity extends Activity {
 
             }
 
+        }
+        else    {
+            Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
 
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.92.42</string>
+    <string name="version_name">0.92.45</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -367,5 +367,6 @@
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="recovery_checkup_finish">I\'VE SECURED MY RECOVERY INFO</string>
+    <string name="pin_reminder">As a reminder, your PIN code is:</string>
 
 </resources>
