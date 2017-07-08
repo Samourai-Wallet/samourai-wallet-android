@@ -1065,10 +1065,17 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         final CharSequence[] explorers = BlockExplorerUtil.getInstance().getBlockExplorers();
         final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+        final int _sel;
+        if(sel >= explorers.length)    {
+            _sel = 0;
+        }
+        else    {
+            _sel = sel;
+        }
 
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.options_blockexplorer)
-                .setSingleChoiceItems(explorers, sel, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(explorers, _sel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BLOCK_EXPLORER, which);
                                 dialog.dismiss();

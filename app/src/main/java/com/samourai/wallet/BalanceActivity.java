@@ -1432,6 +1432,9 @@ public class BalanceActivity extends Activity {
 
         if(strHash != null) {
             int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+            if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length)    {
+                sel = 0;
+            }
             CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strHash));

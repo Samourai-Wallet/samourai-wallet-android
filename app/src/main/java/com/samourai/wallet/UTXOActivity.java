@@ -149,6 +149,9 @@ public class UTXOActivity extends Activity {
                     public void onClick(final DialogInterface dialog, int whichButton) {
 
                         int sel = PrefsUtil.getInstance(UTXOActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+                        if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
+                            sel = 0;
+                        }
                         CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
 
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).getLeft().toString()));
