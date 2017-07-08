@@ -93,13 +93,14 @@ public class PayloadUtil	{
         return file;
     }
 
-    public JSONObject putPayload(String data)    {
+    public JSONObject putPayload(String data, boolean external)    {
 
         JSONObject obj = new JSONObject();
 
         try {
             obj.put("version", 1);
             obj.put("payload", data);
+            obj.put("external", external);
         }
         catch(JSONException je) {
             return null;
@@ -506,7 +507,7 @@ public class PayloadUtil	{
             data = jsonstr;
         }
 
-        JSONObject jsonObj = putPayload(data);
+        JSONObject jsonObj = putPayload(data, false);
         if(jsonObj != null)    {
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile), "UTF-8"));
             try {
@@ -643,7 +644,7 @@ public class PayloadUtil	{
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
 
-        JSONObject jsonObj = putPayload(data);
+        JSONObject jsonObj = putPayload(data, false);
         if(jsonObj != null)    {
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
             try {

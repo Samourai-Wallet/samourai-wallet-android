@@ -1070,7 +1070,7 @@ public class BalanceActivity extends Activity {
                                         }
                                     }
 
-                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted);
+                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
 
                                     if (which == 0) {
                                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
