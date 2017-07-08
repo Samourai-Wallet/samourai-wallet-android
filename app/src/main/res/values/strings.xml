@@ -128,6 +128,7 @@
     <string name="bip39_decrypt_test_please_wait">Testing decryption of passphrase protected backup file. Please wait.</string>
     <string name="bip39_decrypt_test_ok">BIP39 passphrase verified OK and backup file decrypted successfully.</string>
     <string name="bip39_decrypt_test_ko">Backup file decryption failed.</string>
+    <string name="backup_read_ok">Backup file OK.</string>
     <string name="backup_read_error">Error reading backup file.</string>
     <string name="mnemonic_hex">Mnemonic or hex entropy</string>
     <string name="pin_enter">Enter PIN code</string>

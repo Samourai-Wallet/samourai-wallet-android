@@ -1070,16 +1070,18 @@ public class BalanceActivity extends Activity {
                                         }
                                     }
 
+                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted);
+
                                     if (which == 0) {
                                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                                         android.content.ClipData clip = null;
-                                        clip = android.content.ClipData.newPlainText("Wallet backup", encrypted);
+                                        clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
                                         clipboard.setPrimaryClip(clip);
                                         Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                                     } else {
                                         Intent email = new Intent(Intent.ACTION_SEND);
                                         email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
-                                        email.putExtra(Intent.EXTRA_TEXT, encrypted);
+                                        email.putExtra(Intent.EXTRA_TEXT, obj.toString());
                                         email.setType("message/rfc822");
                                         startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
                                     }

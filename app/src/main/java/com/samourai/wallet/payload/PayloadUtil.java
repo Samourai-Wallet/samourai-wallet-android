@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 //import android.util.Log;
 
+import com.samourai.wallet.PinEntryActivity;
+import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -19,6 +22,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
@@ -61,6 +65,9 @@ public class PayloadUtil	{
     private final static String strTmpFilename = "samourai.tmp";
     private final static String strBackupFilename = "samourai.sav";
 
+    private final static String strOptionalBackupDir = "/samourai";
+    private final static String strOptionalFilename = "samourai.txt";
+
     private static Context context = null;
 
     private static PayloadUtil instance = null;
@@ -76,6 +83,29 @@ public class PayloadUtil	{
         }
 
         return instance;
+    }
+
+    public File getBackupFile()  {
+        String directory = Environment.DIRECTORY_DOCUMENTS;
+        File dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        File file = new File(dir, strOptionalFilename);
+
+        return file;
+    }
+
+    public JSONObject putPayload(String data)    {
+
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put("version", 1);
+            obj.put("payload", data);
+        }
+        catch(JSONException je) {
+            return null;
+        }
+
+        return obj;
     }
 
     public boolean hasPayload(Context ctx) {
@@ -476,16 +506,23 @@ public class PayloadUtil	{
             data = jsonstr;
         }
 
-        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile), "UTF-8"));
-        try {
-            out.write(data);
-        } finally {
-            out.close();
+        JSONObject jsonObj = putPayload(data);
+        if(jsonObj != null)    {
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpfile), "UTF-8"));
+            try {
+                out.write(jsonObj.toString());
+            } finally {
+                out.close();
+            }
+
+            copy(tmpfile, newfile);
+            copy(tmpfile, bakfile);
+//        secureDelete(tmpfile);
         }
 
-        copy(tmpfile, newfile);
-        copy(tmpfile, bakfile);
-//        secureDelete(tmpfile);
+        //
+        // test payload
+        //
 
     }
 
@@ -505,14 +542,31 @@ public class PayloadUtil	{
 
         in.close();
 
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(sb.toString());
+        }
+        catch(JSONException je)   {
+            ;
+        }
+        String payload = null;
+        if(jsonObj != null && jsonObj.has("payload"))    {
+            payload = jsonObj.getString("payload");
+        }
+
+        // not a json stream, assume v0
+        if(payload == null)    {
+            payload = sb.toString();
+        }
+
         JSONObject node = null;
         if(password == null) {
-            node = new JSONObject(sb.toString());
+            node = new JSONObject(payload);
         }
         else {
             String decrypted = null;
             try {
-                decrypted = AESUtil.decrypt(sb.toString(), password, AESUtil.DefaultPBKDF2Iterations);
+                decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
             }
             catch(Exception e) {
                 return null;
@@ -589,13 +643,54 @@ public class PayloadUtil	{
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
 
-        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
-        try {
-            out.write(data);
-        } finally {
-            out.close();
+        JSONObject jsonObj = putPayload(data);
+        if(jsonObj != null)    {
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
+            try {
+                out.write(jsonObj.toString());
+            } finally {
+                out.close();
+            }
         }
 
+        //
+        // test payload
+        //
+
+    }
+
+    public String getDecryptedBackupPayload(String data, CharSequenceX password)  {
+
+        String encrypted = null;
+
+        try {
+            JSONObject jsonObj = new JSONObject(data);
+            if(jsonObj != null && jsonObj.has("payload"))    {
+                encrypted = jsonObj.getString("payload");
+            }
+            else    {
+                encrypted = data;
+            }
+        }
+        catch(JSONException je) {
+            encrypted = data;
+        }
+
+        String decrypted = null;
+        try {
+            decrypted = AESUtil.decrypt(encrypted, password, AESUtil.DefaultPBKDF2Iterations);
+        }
+        catch (Exception e) {
+            Toast.makeText(context, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+        }
+        finally {
+            if (decrypted == null || decrypted.length() < 1) {
+                Toast.makeText(context, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+//                AppUtil.getInstance(context).restartApp();
+            }
+        }
+
+        return decrypted;
     }
 
 }
