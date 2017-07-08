@@ -1,40 +1,31 @@
 package com.samourai.wallet.segwit;
 
-import com.google.common.primitives.Bytes;
-import com.samourai.wallet.bech32.Bech32Util;
-
-import org.apache.commons.lang3.tuple.Pair;
+import com.samourai.wallet.bech32.Bech32;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegwitBech32Util {
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.ArrayUtils;
 
-    private static SegwitBech32Util instance = null;
+public class SegwitAddress {
 
-    private SegwitBech32Util()    { ; }
+    public static Pair<Byte, byte[]> decode(String hrp, String addr) throws Exception {
 
-    public static SegwitBech32Util getInstance() {
-
-        if(instance == null)    {
-            instance = new SegwitBech32Util();
-        }
-
-        return instance;
-    }
-
-    public Pair<Byte, byte[]> decode(String hrp, String addr) throws Exception {
-
-        Pair<byte[], byte[]> p = Bech32Util.getInstance().bech32Decode(addr);
+        Pair<byte[], byte[]> p = Bech32.bech32Decode(addr);
 
         byte[] hrpgot = p.getLeft();
-        if (!hrp.equals(new String(hrpgot)))    {
+        String hrpgotStr =  new String(hrpgot);
+        if (!hrp.equals(hrpgotStr))    {
             throw new Exception("mismatching bech32 human readeable part");
+        }
+        if (!hrpgotStr.equalsIgnoreCase("bc") && !hrpgotStr.equalsIgnoreCase("tb"))    {
+            throw new Exception("invalid segwit human readable part");
         }
 
         byte[] data = p.getRight();
-        byte[] decoded = convertBits(Bytes.asList(Arrays.copyOfRange(data, 1, data.length)), 5, 8, false);
+        byte[] decoded = convertBits(Arrays.asList(ArrayUtils.toObject(Arrays.copyOfRange(data, 1, data.length))), 5, 8, false);
         if(decoded.length < 2 || decoded.length > 40)   {
             throw new Exception("invalid decoded data length");
         }
@@ -51,34 +42,22 @@ public class SegwitBech32Util {
         return Pair.of(witnessVersion, decoded);
     }
 
-    public String encode(byte[] hrp, byte witnessVersion, byte[] witnessProgram) throws Exception    {
+    public static String encode(byte[] hrp, byte witnessVersion, byte[] witnessProgram) throws Exception    {
 
-        byte[] prog = convertBits(Bytes.asList(witnessProgram), 8, 5, true);
+        byte[] prog = convertBits(Arrays.asList(ArrayUtils.toObject(witnessProgram)), 8, 5, true);
         byte[] data = new byte[1 + prog.length];
 
         System.arraycopy(new byte[] { witnessVersion }, 0, data, 0, 1);
         System.arraycopy(prog, 0, data, 1, prog.length);
 
-        String ret = Bech32Util.getInstance().bech32Encode(hrp, data);
+        String ret = Bech32.bech32Encode(hrp, data);
 
         assert(Arrays.equals(data, decode(new String(hrp), ret).getRight()));
 
         return ret;
     }
 
-    public byte[] getScriptPubkey(byte witver, byte[] witprog) {
-
-        byte v = (witver > 0) ? (byte)(witver + 0x80) : (byte)0;
-        byte[] ver = new byte[] { v, (byte)witprog.length };
-
-        byte[] ret = new byte[witprog.length + ver.length];
-        System.arraycopy(ver, 0, ret, 0, ver.length);
-        System.arraycopy(witprog, 0, ret, ver.length, witprog.length);
-
-        return ret;
-    }
-
-    private byte[] convertBits(List<Byte> data, int fromBits, int toBits, boolean pad) throws Exception    {
+    private static byte[] convertBits(List<Byte> data, int fromBits, int toBits, boolean pad) throws Exception    {
 
         int acc = 0;
         int bits = 0;
@@ -117,7 +96,19 @@ public class SegwitBech32Util {
             ;
         }
 
-        return Bytes.toArray(ret);
+        return ArrayUtils.toPrimitive(ret.toArray(new Byte[ret.size()]));
+    }
+
+    public static byte[] getScriptPubkey(byte witver, byte[] witprog) {
+
+        byte v = (witver > 0) ? (byte)(witver + 0x80) : (byte)0;
+        byte[] ver = new byte[] { v, (byte)witprog.length };
+
+        byte[] ret = new byte[witprog.length + ver.length];
+        System.arraycopy(ver, 0, ret, 0, ver.length);
+        System.arraycopy(witprog, 0, ret, ver.length, witprog.length);
+
+        return ret;
     }
 
 }
