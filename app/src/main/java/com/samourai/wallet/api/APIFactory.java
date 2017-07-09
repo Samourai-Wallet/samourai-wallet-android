@@ -39,8 +39,6 @@ import org.json.JSONObject;
 
 import org.spongycastle.util.encoders.Hex;
 
-import static org.spongycastle.util.Arrays.reverse;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -535,8 +533,6 @@ public class APIFactory	{
                             int idx = received_from.getInt("output_no");
 
                             byte[] hashBytes = Hex.decode(strHash);
-//                            Hash hash = new Hash(hashBytes);
-//                            hash.reverse();
                             Sha256Hash txHash = new Sha256Hash(hashBytes);
                             TransactionOutPoint outPoint = new TransactionOutPoint(MainNetParams.get(), idx, txHash);
                             byte[] outpoint = outPoint.bitcoinSerialize();
@@ -695,7 +691,7 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
             url.append("unspent?active=");
             url.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
 //            Log.i("APIFactory", "unspent outputs:" + url.toString());
@@ -736,8 +732,7 @@ public class APIFactory	{
                     JSONObject outDict = utxoArray.getJSONObject(i);
 
                     byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-                    Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
-
+                    Sha256Hash txHash = Sha256Hash.wrap(hashBytes);
                     int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
                     BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
@@ -1431,7 +1426,7 @@ public class APIFactory	{
         String response = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
             url.append("unspent?active=" + address);
 //            Log.i("APIFactory", "unspent outputs:" + url.toString());
             response = WebUtil.getInstance(context).getURL(url.toString());
@@ -1469,8 +1464,7 @@ public class APIFactory	{
                     JSONObject outDict = utxoArray.getJSONObject(i);
 
                     byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-                    Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
-
+                    Sha256Hash txHash = Sha256Hash.wrap(hashBytes);
                     int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
                     BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
