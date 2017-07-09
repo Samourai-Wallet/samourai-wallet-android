@@ -2,9 +2,9 @@ package com.samourai.wallet.util;
 
 public class BlockExplorerUtil {
 
-    private static CharSequence[] blockExplorers = { "Bisq", "Smartbit" };
-    private static CharSequence[] blockExplorerTxUrls = { "https://explorer.bisq.io:8443/insight/tx/", "https://www.smartbit.com.au/tx/" };
-    private static CharSequence[] blockExplorerAddressUrls = { "https://explorer.bisq.io:8443/insight/address/", "https://www.smartbit.com.au/address/" };
+    private static CharSequence[] blockExplorers = { "Smartbit", "Bisq"  };
+    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "https://explorer.bisq.io:8443/insight/tx/" };
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://explorer.bisq.io:8443/insight/address/" };
 
     private static BlockExplorerUtil instance = null;
 
