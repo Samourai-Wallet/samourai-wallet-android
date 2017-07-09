@@ -3,10 +3,7 @@ package com.samourai.wallet;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.util.TimeOutUtil;
+//import android.util.Log;
 
 public class MainActivity extends Activity {
 

@@ -7,10 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -35,8 +41,14 @@ import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class PinEntryActivity extends Activity {
 
@@ -69,6 +81,8 @@ public class PinEntryActivity extends Activity {
     private ProgressDialog progress = null;
 
     private String strUri = null;
+    
+    private static int failures = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -356,10 +370,20 @@ public class PinEntryActivity extends Activity {
                         }
 
                         if(hdw == null) {
-                            Toast.makeText(PinEntryActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+
+                            failures++;
+                            Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
+                            if(failures == 3)    {
+                                failures = 0;
+                                doBackupRestore();
+                            }
+                            else    {
+                                Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+
                         }
 
                         AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
@@ -387,10 +411,20 @@ public class PinEntryActivity extends Activity {
                     if (progress != null && progress.isShowing()) {
                         progress.dismiss();
                     }
-                    Toast.makeText(PinEntryActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+
+                    failures++;
+                    Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
+                    if(failures == 3)    {
+                        failures = 0;
+                        doBackupRestore();
+                    }
+                    else    {
+                        Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
                 }
 
                 if (progress != null && progress.isShowing()) {
@@ -581,6 +615,159 @@ public class PinEntryActivity extends Activity {
 
             }
         }).start();
+
+    }
+
+    void doBackupRestore()  {
+
+        String directory = Environment.DIRECTORY_DOCUMENTS;
+        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+        File file = new File(dir, "samourai.txt");
+        if(file.exists())    {
+
+            StringBuilder sb = new StringBuilder();
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+                String str = null;
+                while((str = in.readLine()) != null) {
+                    sb.append(str);
+                }
+                in.close();
+            }
+            catch(FileNotFoundException fnfe) {
+                ;
+            }
+            catch(IOException ioe) {
+                ;
+            }
+
+            final String encrypted = sb.toString();
+            if(encrypted != null && encrypted.length() > 0)    {
+                final EditText passphrase = new EditText(PinEntryActivity.this);
+                passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                passphrase.setHint(R.string.passphrase);
+
+                AlertDialog.Builder dlg = new AlertDialog.Builder(PinEntryActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setView(passphrase)
+                        .setMessage(R.string.restore_wallet_from_backup)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                final String pw = passphrase.getText().toString();
+                                if (pw == null || pw.length() < 1) {
+                                    Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                }
+
+                                String decrypted = null;
+                                try {
+                                    decrypted = AESUtil.decrypt(encrypted, new CharSequenceX(pw), AESUtil.DefaultPBKDF2Iterations);
+                                } catch (Exception e) {
+                                    Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    if (decrypted == null || decrypted.length() < 1) {
+                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                    }
+                                }
+
+                                final String decryptedPayload = decrypted;
+
+                                progress = new ProgressDialog(PinEntryActivity.this);
+                                progress.setCancelable(false);
+                                progress.setTitle(R.string.app_name);
+                                progress.setMessage(getString(R.string.please_wait));
+                                progress.show();
+
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Looper.prepare();
+
+                                        try {
+
+                                            JSONObject json = new JSONObject(decryptedPayload);
+                                            HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json);
+                                            HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
+                                            String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
+                                            String hash = AccessFactory.getInstance(PinEntryActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+                                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
+                                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
+                                            PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
+
+                                        }
+                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                            mle.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(DecoderException de) {
+                                            de.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(JSONException je) {
+                                            je.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(IOException ioe) {
+                                            ioe.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(java.lang.NullPointerException npe) {
+                                            npe.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch(DecryptionException de) {
+                                            de.printStackTrace();
+                                            Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                        }
+                                        finally {
+                                            if (progress != null && progress.isShowing()) {
+                                                progress.dismiss();
+                                                progress = null;
+                                            }
+
+                                            new AlertDialog.Builder(PinEntryActivity.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setMessage(getString(R.string.pin_reminder) + "\n\n" + AccessFactory.getInstance(PinEntryActivity.this).getPIN())
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            dialog.dismiss();
+                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+
+                                                        }
+                                                    }).show();
+
+                                        }
+
+                                        Looper.loop();
+
+                                    }
+                                }).start();
+
+                            }
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+
+                            }
+                        });
+                if(!isFinishing())    {
+                    dlg.show();
+                }
+
+            }
+
+        }
+        else    {
+            Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
 
     }
 

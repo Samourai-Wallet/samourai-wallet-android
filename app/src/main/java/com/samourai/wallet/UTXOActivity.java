@@ -33,6 +33,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -182,7 +183,11 @@ public class UTXOActivity extends Activity {
 
     @Override
     public void onResume() {
+
         super.onResume();
+
+        AppUtil.getInstance(UTXOActivity.this).checkTimeOut();
+
     }
 
     private boolean isBIP47(String address)    {

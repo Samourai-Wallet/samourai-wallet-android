@@ -32,10 +32,11 @@ import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONValue;
+
 import org.spongycastle.util.encoders.Hex;
 
 import static org.spongycastle.util.Arrays.reverse;
@@ -56,7 +57,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class APIFactory	{
 
@@ -717,72 +717,82 @@ public class APIFactory	{
 
         if(unspents != null)    {
 
-            Map<String, Object> root = (Map<String, Object>)JSONValue.parse(unspents);
-            if(root == null)    {
-                return false;
-            }
-            List<Map<String, Object>> outputsRoot = (List<Map<String, Object>>)root.get("unspent_outputs");
-            if(outputsRoot == null || outputsRoot.size() == 0) {
-                return false;
-            }
+            try {
+                JSONObject jsonObj = new JSONObject(unspents);
+
+//                Map<String, Object> root = (Map<String, Object>)JSONValue.parse(unspents);
+                if(jsonObj == null || !jsonObj.has("unspent_outputs"))    {
+                    return false;
+                }
+                JSONArray utxoArray = jsonObj.getJSONArray("unspent_outputs");
+                if(utxoArray == null || utxoArray.length() == 0) {
+                    return false;
+                }
 
 //            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
 
-            for (Map<String, Object> outDict : outputsRoot) {
+                for (int i = 0; i < utxoArray.length(); i++) {
 
-                byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
+                    JSONObject outDict = utxoArray.getJSONObject(i);
 
-                int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
+                    byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
+                    Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
+
+                    int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
-                BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                    BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
 //            System.out.println("value:" + value);
-                String script = (String)outDict.get("script");
-                byte[] scriptBytes = Hex.decode(script);
+                    String script = (String)outDict.get("script");
+                    byte[] scriptBytes = Hex.decode(script);
 //            System.out.println("script:" + (String)outDict.get("script"));
-                int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    int confirmations = ((Number)outDict.get("confirmations")).intValue();
 //            System.out.println("confirmations:" + confirmations);
 
-                try {
+                    try {
 //                    String address = new BitcoinScript(scriptBytes).getAddress().toString();
-                    String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
+                        String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
 //                    System.out.println("address:" + address);
 
-                    if(outDict.containsKey("xpub"))    {
-                        org.json.simple.JSONObject xpubObj = (org.json.simple.JSONObject)outDict.get("xpub");
-                        String path = (String)xpubObj.get("path");
-                        String m = (String)xpubObj.get("m");
+                        if(outDict.has("xpub"))    {
+                            JSONObject xpubObj = (JSONObject)outDict.get("xpub");
+                            String path = (String)xpubObj.get("path");
+                            String m = (String)xpubObj.get("m");
 //                        Log.d("APIFactory", "unspent:" + address + "," + path);
 //                        Log.d("APIFactory", "m:" + m);
 //                        Log.d("APIFactory", "account no.:" + AddressFactory.getInstance(context).xpub2account().get(m));
-                        unspentPaths.put(address, path);
-                        unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
-                    }
-                    else    {
+                            unspentPaths.put(address, path);
+                            unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
+                        }
+                        else    {
 //                        Log.d("APIFactory", "no path found for:" + address);
-                    }
+                        }
 
-                    // Construct the output
-                    MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
-                    outPoint.setConfirmations(confirmations);
+                        // Construct the output
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        outPoint.setConfirmations(confirmations);
 
-                    if(utxos.containsKey(script))    {
-                        utxos.get(script).getOutpoints().add(outPoint);
+                        if(utxos.containsKey(script))    {
+                            utxos.get(script).getOutpoints().add(outPoint);
+                        }
+                        else    {
+                            UTXO utxo = new UTXO();
+                            utxo.getOutpoints().add(outPoint);
+                            utxos.put(script, utxo);
+                        }
+
                     }
-                    else    {
-                        UTXO utxo = new UTXO();
-                        utxo.getOutpoints().add(outPoint);
-                        utxos.put(script, utxo);
+                    catch(Exception e) {
+                        ;
                     }
 
                 }
-                catch(Exception e) {
-                    ;
-                }
+
+                return true;
 
             }
-
-            return true;
+            catch(JSONException je) {
+                ;
+            }
 
         }
 
@@ -1441,49 +1451,58 @@ public class APIFactory	{
 
         if(unspents != null)    {
 
-            Map<String, Object> root = (Map<String, Object>)JSONValue.parse(unspents);
-            if(root == null)    {
-                return null;
-            }
-            List<Map<String, Object>> outputsRoot = (List<Map<String, Object>>)root.get("unspent_outputs");
-            if(outputsRoot == null || outputsRoot.size() == 0) {
-                return null;
-            }
+            try {
+                JSONObject jsonObj = new JSONObject(unspents);
+
+                if(jsonObj == null || !jsonObj.has("unspent_outputs"))    {
+                    return null;
+                }
+                JSONArray utxoArray = jsonObj.getJSONArray("unspent_outputs");
+                if(utxoArray == null || utxoArray.length() == 0) {
+                    return null;
+                }
 
 //            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
 
-            for (Map<String, Object> outDict : outputsRoot) {
+                for (int i = 0; i < utxoArray.length(); i++) {
 
-                byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
-                Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
+                    JSONObject outDict = utxoArray.getJSONObject(i);
 
-                int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
+                    byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
+                    Sha256Hash txHash = new Sha256Hash(reverse(hashBytes));
+
+                    int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
 //            System.out.println("output n:" + txOutputN);
-                BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                    BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
 //            System.out.println("value:" + value);
-                String script = (String)outDict.get("script");
-                byte[] scriptBytes = Hex.decode(script);
+                    String script = (String)outDict.get("script");
+                    byte[] scriptBytes = Hex.decode(script);
 //            System.out.println("script:" + (String)outDict.get("script"));
-                int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    int confirmations = ((Number)outDict.get("confirmations")).intValue();
 //            System.out.println("confirmations:" + confirmations);
 
-                try {
+                    try {
 //                    String address = new BitcoinScript(scriptBytes).getAddress().toString();
-                    String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
+                        String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
 
-                    // Construct the output
-                    MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
-                    outPoint.setConfirmations(confirmations);
-                    if(utxo == null)    {
-                        utxo = new UTXO();
+                        // Construct the output
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        outPoint.setConfirmations(confirmations);
+                        if(utxo == null)    {
+                            utxo = new UTXO();
+                        }
+                        utxo.getOutpoints().add(outPoint);
+
                     }
-                    utxo.getOutpoints().add(outPoint);
+                    catch(Exception e) {
+                        ;
+                    }
 
                 }
-                catch(Exception e) {
-                    ;
-                }
 
+            }
+            catch(JSONException je) {
+                ;
             }
 
         }
