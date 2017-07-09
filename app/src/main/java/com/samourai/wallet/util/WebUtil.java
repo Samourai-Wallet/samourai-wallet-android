@@ -31,8 +31,10 @@ public class WebUtil	{
 
     public static final String BLOCKCHAIN_DOMAIN = "https://blockchain.info/";
     public static final String BLOCKCHAIN_DOMAIN_TOR = "https://blockchainbdgpzk.onion/";
+
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/v1/status";
+    public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
     public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
