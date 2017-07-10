@@ -401,6 +401,9 @@ public class ReceiveActivity extends Activity {
         menu.findItem(R.id.action_tor).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
+
+        _menu = menu;
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -574,15 +577,21 @@ public class ReceiveActivity extends Activity {
                                     if(jsonObject.has("n_tx") && (jsonObject.getLong("n_tx") > 0)) {
                                         Toast.makeText(ReceiveActivity.this, R.string.address_used_previously, Toast.LENGTH_SHORT).show();
                                         canRefresh = true;
-                                        _menu.findItem(R.id.action_refresh).setVisible(true);
+                                        if(_menu != null)    {
+                                            _menu.findItem(R.id.action_refresh).setVisible(true);
+                                        }
                                     }
                                     else if(AddressFactory.getInstance().canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT)) {
                                         canRefresh = true;
-                                        _menu.findItem(R.id.action_refresh).setVisible(true);
+                                        if(_menu != null)    {
+                                            _menu.findItem(R.id.action_refresh).setVisible(true);
+                                        }
                                     }
                                     else {
                                         canRefresh = false;
-                                        _menu.findItem(R.id.action_refresh).setVisible(false);
+                                        if(_menu != null)    {
+                                            _menu.findItem(R.id.action_refresh).setVisible(false);
+                                        }
                                     }
                                 }
 
