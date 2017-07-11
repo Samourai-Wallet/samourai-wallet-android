@@ -2,24 +2,11 @@ package com.samourai.wallet.bech32;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-public class Bech32Util {
+public class Bech32 {
 
     private static final String CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
-    private static Bech32Util instance = null;
-
-    private Bech32Util()    { ; }
-
-    public static Bech32Util getInstance() {
-
-        if(instance == null)    {
-            instance = new Bech32Util();
-        }
-
-        return instance;
-    }
-
-    public String bech32Encode(byte[] hrp, byte[] data) {
+    public static String bech32Encode(byte[] hrp, byte[] data) {
 
         byte[] chk = createChecksum(hrp, data);
         byte[] combined = new byte[chk.length + data.length];
@@ -40,7 +27,7 @@ public class Bech32Util {
         return new String(ret);
     }
 
-    public Pair<byte[], byte[]> bech32Decode(String bech) throws Exception  {
+    public static Pair<byte[], byte[]> bech32Decode(String bech) throws Exception  {
 
         if(!bech.equals(bech.toLowerCase()) && !bech.equals(bech.toUpperCase()))  {
             throw new Exception("bech32 cannot mix upper and lower case");
@@ -95,7 +82,7 @@ public class Bech32Util {
         return Pair.of(hrp, ret);
     }
 
-    private int polymod(byte[] values)  {
+    private static int polymod(byte[] values)  {
 
         final int[] GENERATORS = { 0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3 };
 
@@ -112,7 +99,7 @@ public class Bech32Util {
         return chk;
     }
 
-    private byte[] hrpExpand(byte[] hrp) {
+    private static byte[] hrpExpand(byte[] hrp) {
 
         byte[] buf1 = new byte[hrp.length];
         byte[] buf2 = new byte[hrp.length];
@@ -134,7 +121,7 @@ public class Bech32Util {
         return ret;
     }
 
-    private boolean verifyChecksum(byte[] hrp, byte[] data) {
+    private static boolean verifyChecksum(byte[] hrp, byte[] data) {
 
         byte[] exp = hrpExpand(hrp);
 
@@ -145,7 +132,7 @@ public class Bech32Util {
         return (1 == polymod(values));
     }
 
-    private byte[] createChecksum(byte[] hrp, byte[] data)  {
+    private static byte[] createChecksum(byte[] hrp, byte[] data)  {
 
         byte[] zeroes = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
         byte[] expanded = hrpExpand(hrp);
