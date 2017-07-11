@@ -1356,11 +1356,11 @@ public class SendActivity extends Activity {
             tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
 
             final String strAmount;
-            DecimalFormat df = new DecimalFormat("#");
-            df.setMinimumIntegerDigits(1);
-            df.setMinimumFractionDigits(1);
-            df.setMaximumFractionDigits(8);
-            strAmount = Coin.valueOf(balance).toPlainString();
+            NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+            nf.setMinimumIntegerDigits(1);
+            nf.setMinimumFractionDigits(1);
+            nf.setMaximumFractionDigits(8);
+            strAmount = nf.format(balance / 1e8);
             tvMax.setText(strAmount + " " + getDisplayUnits());
 
             try {
