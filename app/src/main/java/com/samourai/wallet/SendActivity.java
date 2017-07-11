@@ -178,21 +178,21 @@ public class SendActivity extends Activity {
         }
 
         final String strAmount;
-        DecimalFormat df = new DecimalFormat("#");
-        df.setMinimumIntegerDigits(1);
-        df.setMinimumFractionDigits(1);
-        df.setMaximumFractionDigits(8);
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        nf.setMaximumFractionDigits(8);
+        nf.setMinimumFractionDigits(1);
+        nf.setMinimumIntegerDigits(1);
 
         int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
         switch(unit) {
             case MonetaryUtil.MICRO_BTC:
-                strAmount = df.format(((double)(balance * 1000000L)) / 1e8);
+                strAmount = nf.format(((double)(balance * 1000000L)) / 1e8);
                 break;
             case MonetaryUtil.MILLI_BTC:
-                strAmount = df.format(((double)(balance * 1000L)) / 1e8);
+                strAmount = nf.format(((double)(balance * 1000L)) / 1e8);
                 break;
             default:
-                strAmount = Coin.valueOf(balance).toPlainString();
+                strAmount = nf.format(balance / 1e8);
                 break;
         }
 
