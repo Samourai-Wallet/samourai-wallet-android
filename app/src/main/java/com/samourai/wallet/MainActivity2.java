@@ -367,11 +367,9 @@ public class MainActivity2 extends Activity {
                                                             AppUtil.getInstance(MainActivity2.this).restartApp();
                                                         }
 
-                                                        String directory = Environment.DIRECTORY_DOCUMENTS;
-                                                        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
-                                                        File file = new File(dir, "samourai.txt");
-                                                        String encrypted = null;
-                                                        if(file.exists())    {
+                                                        String data = null;
+                                                        File file = PayloadUtil.getInstance(MainActivity2.this).getBackupFile();
+                                                        if(file != null && file.exists())    {
 
                                                             StringBuilder sb = new StringBuilder();
                                                             try {
@@ -390,7 +388,7 @@ public class MainActivity2 extends Activity {
 
                                                             }
 
-                                                            encrypted = sb.toString();
+                                                            data = sb.toString();
 
                                                         }
 
@@ -414,8 +412,8 @@ public class MainActivity2 extends Activity {
                                                         };
                                                         edBackup.addTextChangedListener(textWatcher);
                                                         String message = null;
-                                                        if(encrypted != null)   {
-                                                            edBackup.setText(encrypted);
+                                                        if(data != null)   {
+                                                            edBackup.setText(data);
                                                             message = getText(R.string.restore_wallet_from_existing_backup).toString();
                                                         }
                                                         else    {
@@ -430,10 +428,31 @@ public class MainActivity2 extends Activity {
                                                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                                        String encrypted = edBackup.getText().toString();
-                                                                        if (encrypted == null || encrypted.length() < 1) {
+                                                                        String data = edBackup.getText().toString();
+                                                                        if (data == null || data.length() < 1) {
                                                                             Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                                                                             AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                                        }
+
+                                                                        final String decrypted = PayloadUtil.getInstance(MainActivity2.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
+                                                                        if(decrypted == null || decrypted.length() < 1)    {
+                                                                            Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                                                            AppUtil.getInstance(MainActivity2.this).restartApp();
+                                                                        }
+
+                                                                        /*
+                                                                        String encrypted = null;
+                                                                        try {
+                                                                            JSONObject jsonObj = new JSONObject(data);
+                                                                            if(jsonObj != null && jsonObj.has("payload"))    {
+                                                                                encrypted = jsonObj.getString("payload");
+                                                                            }
+                                                                            else    {
+                                                                                encrypted = data;
+                                                                            }
+                                                                        }
+                                                                        catch(JSONException je) {
+                                                                            encrypted = data;
                                                                         }
 
                                                                         String decrypted = null;
@@ -447,8 +466,8 @@ public class MainActivity2 extends Activity {
                                                                                 AppUtil.getInstance(MainActivity2.this).restartApp();
                                                                             }
                                                                         }
+                                                                        */
 
-                                                                        final String decryptedPayload = decrypted;
                                                                         if (progress != null && progress.isShowing()) {
                                                                             progress.dismiss();
                                                                             progress = null;
@@ -467,7 +486,7 @@ public class MainActivity2 extends Activity {
 
                                                                                 try {
 
-                                                                                    JSONObject json = new JSONObject(decryptedPayload);
+                                                                                    JSONObject json = new JSONObject(decrypted);
                                                                                     HD_Wallet hdw = PayloadUtil.getInstance(MainActivity2.this).restoreWalletfromJSON(json);
                                                                                     HD_WalletFactory.getInstance(MainActivity2.this).set(hdw);
                                                                                     String guid = AccessFactory.getInstance(MainActivity2.this).createGUID();

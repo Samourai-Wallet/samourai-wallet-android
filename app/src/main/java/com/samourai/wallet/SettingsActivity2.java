@@ -1065,10 +1065,17 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         final CharSequence[] explorers = BlockExplorerUtil.getInstance().getBlockExplorers();
         final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+        final int _sel;
+        if(sel >= explorers.length)    {
+            _sel = 0;
+        }
+        else    {
+            _sel = sel;
+        }
 
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.options_blockexplorer)
-                .setSingleChoiceItems(explorers, sel, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(explorers, _sel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BLOCK_EXPLORER, which);
                                 dialog.dismiss();
@@ -1250,10 +1257,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                 Toast.makeText(SettingsActivity2.this, R.string.bip39_match, Toast.LENGTH_SHORT).show();
 
-                                String directory = Environment.DIRECTORY_DOCUMENTS;
-                                File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
-                                final File file = new File(dir, "samourai.txt");
-                                if(file.exists())    {
+                                final File file = PayloadUtil.getInstance(SettingsActivity2.this).getBackupFile();
+                                if(file != null && file.exists())    {
 
                                     new AlertDialog.Builder(SettingsActivity2.this)
                                             .setTitle(R.string.app_name)
@@ -1276,20 +1281,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                     sb.append(str);
                                                                 }
                                                                 in.close();
-                                                                String encrypted = sb.toString();
+                                                                String data = sb.toString();
 
-                                                                String decrypted = null;
-                                                                try {
-                                                                    decrypted = AESUtil.decrypt(encrypted, new CharSequenceX(_passphrase39), AESUtil.DefaultPBKDF2Iterations);
-                                                                    Toast.makeText(SettingsActivity2.this, R.string.bip39_decrypt_test_ok, Toast.LENGTH_SHORT).show();
+                                                                String decrypted = PayloadUtil.getInstance(SettingsActivity2.this).getDecryptedBackupPayload(data, new CharSequenceX(_passphrase39));
+                                                                if(decrypted == null || decrypted.length() < 1)    {
+                                                                    Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
                                                                 }
-                                                                catch (Exception e) {
-                                                                    Toast.makeText(SettingsActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                                finally {
-                                                                    if (decrypted == null || decrypted.length() < 1) {
-                                                                        Toast.makeText(SettingsActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                                                    }
+                                                                else    {
+                                                                    Toast.makeText(SettingsActivity2.this, R.string.backup_read_ok, Toast.LENGTH_SHORT).show();
                                                                 }
 
                                                             }

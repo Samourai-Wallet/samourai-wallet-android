@@ -1070,16 +1070,18 @@ public class BalanceActivity extends Activity {
                                         }
                                     }
 
+                                    JSONObject obj = PayloadUtil.getInstance(BalanceActivity.this).putPayload(encrypted, true);
+
                                     if (which == 0) {
                                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                                         android.content.ClipData clip = null;
-                                        clip = android.content.ClipData.newPlainText("Wallet backup", encrypted);
+                                        clip = android.content.ClipData.newPlainText("Wallet backup", obj.toString());
                                         clipboard.setPrimaryClip(clip);
                                         Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                                     } else {
                                         Intent email = new Intent(Intent.ACTION_SEND);
                                         email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet backup");
-                                        email.putExtra(Intent.EXTRA_TEXT, encrypted);
+                                        email.putExtra(Intent.EXTRA_TEXT, obj.toString());
                                         email.setType("message/rfc822");
                                         startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
                                     }
@@ -1432,6 +1434,9 @@ public class BalanceActivity extends Activity {
 
         if(strHash != null) {
             int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+            if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length)    {
+                sel = 0;
+            }
             CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strHash));

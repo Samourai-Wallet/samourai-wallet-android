@@ -20,6 +20,9 @@ import com.samourai.wallet.R;
 import java.io.File;
 import java.io.IOException;
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AppUtil {
 
@@ -192,6 +195,12 @@ public class AppUtil {
         else    {
             TimeOutUtil.getInstance().updatePin();
         }
+    }
+
+    public boolean isPlayInstaller() {
+        List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
+        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+        return installer != null && validInstallers.contains(installer);
     }
 
 }

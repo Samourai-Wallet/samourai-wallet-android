@@ -620,10 +620,8 @@ public class PinEntryActivity extends Activity {
 
     void doBackupRestore()  {
 
-        String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
-        File file = new File(dir, "samourai.txt");
-        if(file.exists())    {
+        File file = PayloadUtil.getInstance(PinEntryActivity.this).getBackupFile();
+        if(file != null && file.exists())    {
 
             StringBuilder sb = new StringBuilder();
             try {
@@ -641,8 +639,8 @@ public class PinEntryActivity extends Activity {
                 ;
             }
 
-            final String encrypted = sb.toString();
-            if(encrypted != null && encrypted.length() > 0)    {
+            final String data = sb.toString();
+            if(data != null && data.length() > 0)    {
                 final EditText passphrase = new EditText(PinEntryActivity.this);
                 passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 passphrase.setHint(R.string.passphrase);
@@ -661,19 +659,11 @@ public class PinEntryActivity extends Activity {
                                     AppUtil.getInstance(PinEntryActivity.this).restartApp();
                                 }
 
-                                String decrypted = null;
-                                try {
-                                    decrypted = AESUtil.decrypt(encrypted, new CharSequenceX(pw), AESUtil.DefaultPBKDF2Iterations);
-                                } catch (Exception e) {
+                                final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
+                                if(decrypted == null || decrypted.length() < 1)    {
                                     Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                } finally {
-                                    if (decrypted == null || decrypted.length() < 1) {
-                                        Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                        AppUtil.getInstance(PinEntryActivity.this).restartApp();
-                                    }
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
                                 }
-
-                                final String decryptedPayload = decrypted;
 
                                 progress = new ProgressDialog(PinEntryActivity.this);
                                 progress.setCancelable(false);
@@ -688,7 +678,7 @@ public class PinEntryActivity extends Activity {
 
                                         try {
 
-                                            JSONObject json = new JSONObject(decryptedPayload);
+                                            JSONObject json = new JSONObject(decrypted);
                                             HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(json);
                                             HD_WalletFactory.getInstance(PinEntryActivity.this).set(hdw);
                                             String guid = AccessFactory.getInstance(PinEntryActivity.this).createGUID();
