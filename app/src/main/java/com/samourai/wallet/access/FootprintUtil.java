@@ -52,6 +52,13 @@ public class FootprintUtil {
         return RIPEMD160(strFootprint);
     }
 
+    public String getFootprintV4() {
+
+        String strFootprint = Build.MANUFACTURER + Build.BRAND + Build.MODEL;
+
+        return RIPEMD160(strFootprint);
+    }
+
     public String RIPEMD160(String data)   {
         try {
             byte[] hash = data.getBytes("UTF-8");
