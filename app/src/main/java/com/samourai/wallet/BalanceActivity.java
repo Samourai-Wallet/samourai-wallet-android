@@ -1636,7 +1636,7 @@ public class BalanceActivity extends Activity {
             strBlockHash = params[0];
 
             JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            JSONObject jsonObj = jsonrpc.getBlock(strBlockHash);
+            JSONObject jsonObj = jsonrpc.getBlockHeader(strBlockHash);
             if(jsonObj != null && jsonObj.has("hash"))    {
                 PoW pow = new PoW(strBlockHash);
                 String hash = pow.calcHash(jsonObj);
