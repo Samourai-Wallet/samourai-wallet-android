@@ -182,8 +182,6 @@ public class SendFactory	{
      */
     private Transaction makeTransaction(int accountIdx, HashMap<String, BigInteger> receivers, List<MyTransactionOutPoint> unspent) throws Exception {
 
-        long nSequence = 1L;
-
         BigInteger amount = BigInteger.ZERO;
         for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();
@@ -230,8 +228,7 @@ public class SendFactory	{
 
             MyTransactionInput input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-                input.setSequenceNumber(nSequence);
-                nSequence++;
+                input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
             }
             inputs.add(input);
         }
