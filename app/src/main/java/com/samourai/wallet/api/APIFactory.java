@@ -971,9 +971,15 @@ public class APIFactory	{
 
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             if(hdw != null && hdw.getXPUBs() != null)    {
-                String[] all = new String[hdw.getXPUBs().length + s.length];
-                System.arraycopy(hdw.getXPUBs(), 0, all, 0, hdw.getXPUBs().length);
-                System.arraycopy(s, 0, all, hdw.getXPUBs().length, s.length);
+                String[] all = null;
+                if(s != null && s.length > 0)    {
+                    all = new String[hdw.getXPUBs().length + s.length];
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 0, hdw.getXPUBs().length);
+                    System.arraycopy(s, 0, all, hdw.getXPUBs().length, s.length);
+                }
+                else    {
+                    all = hdw.getXPUBs();
+                }
                 APIFactory.getInstance(context).getXPUB(all);
                 String[] xs = new String[2];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
