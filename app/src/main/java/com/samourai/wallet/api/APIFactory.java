@@ -25,6 +25,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.R;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
@@ -52,6 +53,7 @@ import java.io.Writer;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -958,10 +960,13 @@ public class APIFactory	{
         try {
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());
 
-//            APIFactory.getInstance(context).getBIP47(BIP47Meta.getInstance().getIncomingAddresses(false), false);
-
+            addressStrings.addAll(Arrays.asList(BIP47Meta.getInstance().getIncomingAddresses(false)));
             for(String pcode : BIP47Meta.getInstance().getUnspentProviders())   {
-                addressStrings.addAll(BIP47Meta.getInstance().getUnspentAddresses(context, pcode));
+                for(String addr : BIP47Meta.getInstance().getUnspentAddresses(context, pcode))   {
+                    if(!addressStrings.contains(addr))    {
+                        addressStrings.add(addr);
+                    }
+                }
             }
             if(addressStrings.size() > 0)    {
                 s = addressStrings.toArray(new String[0]);
