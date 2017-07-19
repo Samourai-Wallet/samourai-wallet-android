@@ -1717,7 +1717,7 @@ public class BalanceActivity extends Activity {
 
             Log.d("BalanceActivity", "hash:" + params[0]);
 
-            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this)._getTxInfo(params[0]);
             if(txObj.has("inputs") && txObj.has("out"))    {
 
                 final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
@@ -2032,7 +2032,7 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "tx serialized:" + rbf.getSerializedTx());
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
             Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
-            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this)._getTxInfo(params[0]);
             if(tx != null && txObj.has("inputs") && txObj.has("out"))    {
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");

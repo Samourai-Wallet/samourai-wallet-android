@@ -768,7 +768,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    public synchronized JSONObject getTxInfo(String hash) {
+    public synchronized JSONObject _getTxInfo(String hash) {
 
         JSONObject jsonObject  = null;
 
@@ -777,6 +777,26 @@ public class APIFactory	{
             url.append("tx/");
             url.append(hash);
             url.append("?format=json");
+
+            String response = WebUtil.getInstance(context).getURL(url.toString());
+            jsonObject = new JSONObject(response);
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public synchronized JSONObject getTxInfo(String hash) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            url.append("tx/");
+            url.append(hash);
 
             String response = WebUtil.getInstance(context).getURL(url.toString());
             jsonObject = new JSONObject(response);
