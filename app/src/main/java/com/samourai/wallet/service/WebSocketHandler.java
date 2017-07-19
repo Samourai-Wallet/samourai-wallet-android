@@ -14,8 +14,8 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.samourai.wallet.MainActivity2;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -50,8 +50,6 @@ public class WebSocketHandler {
     private boolean pingPongSuccess = false;
 
     private String[] addrs = null;
-
-    private static final long RBF_THRESHOLD = 4294967295L;
 
     private static Context context = null;
 
@@ -232,7 +230,7 @@ public class WebSocketHandler {
                                             for (int j = 0; j < inputArray.length(); j++) {
                                                 inputObj = (JSONObject) inputArray.get(j);
 
-                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") < RBF_THRESHOLD)    {
+                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") <= SamouraiWallet.RBF_SEQUENCE_NO)    {
                                                     isRBF = true;
                                                 }
 
