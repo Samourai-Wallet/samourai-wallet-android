@@ -1544,12 +1544,15 @@ public class BalanceActivity extends Activity {
 
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
                 Log.i("BalanceActivity", "guid_v < 4");
-                String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
-                String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
-                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
-                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
                 try {
+                    String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
+                    String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+
                     PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(_guid + AccessFactory.getInstance().getPIN()));
+
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
+
                     Log.i("BalanceActivity", "guid_v == 4");
                 }
                 catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {

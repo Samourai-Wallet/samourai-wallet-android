@@ -5,6 +5,8 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 //import android.util.Log;
 
+import com.samourai.wallet.util.PrefsUtil;
+
 import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.util.encoders.Hex;
 
@@ -54,7 +56,15 @@ public class FootprintUtil {
 
     public String getFootprintV4() {
 
-        String strFootprint = Build.MANUFACTURER + Build.BRAND + Build.MODEL;
+        String strFootprint = null;
+
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.FP, "").length() > 0)  {
+            strFootprint = PrefsUtil.getInstance(context).getValue(PrefsUtil.FP, "");
+        }
+        else    {
+            strFootprint = Build.MANUFACTURER + Build.BRAND + Build.MODEL + Build.SERIAL;
+            PrefsUtil.getInstance(context).setValue(PrefsUtil.FP, strFootprint);
+        }
 
         return RIPEMD160(strFootprint);
     }

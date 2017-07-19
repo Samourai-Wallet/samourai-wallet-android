@@ -123,19 +123,15 @@ public class AccessFactory	{
 
     public String getGUID()    {
         if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 4)    {
-//            Log.i("AccessFactory", "get guid v4:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprintV4();
         }
         else if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 3)    {
-//            Log.i("AccessFactory", "get guid v3:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprintV3();
         }
         else if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 2)    {
-//            Log.i("AccessFactory", "get guid v2:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprint();
         }
         else    {
-//            Log.i("AccessFactory", "get guid v1:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "");
         }
     }
