@@ -1163,13 +1163,9 @@ public class APIFactory	{
         for(String key : xpub_txs.keySet())  {
             List<Tx> txs = xpub_txs.get(key);
             for(Tx tx : txs)   {
-                if(!TxAuxUtil.getInstance().getTxs().containsKey(tx.getHash()))    {
-                    ret.add(tx);
-                }
+                ret.add(tx);
             }
         }
-
-        ret.addAll(TxAuxUtil.getInstance().getTxs().values());
 
         Collections.sort(ret, new TxMostRecentDateComparator());
 
