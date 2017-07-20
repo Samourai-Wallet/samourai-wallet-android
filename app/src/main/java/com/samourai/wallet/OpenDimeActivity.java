@@ -435,10 +435,10 @@ public class OpenDimeActivity extends Activity {
 
                 String s = readUsbFile(usbFile);
 
-                if(s.contains("SEALED") && s.contains("README.txt"))    {
+                if(s != null && s.contains("SEALED") && s.contains("README.txt"))    {
                     return false;
                 }
-                else    {
+                else if(s != null)    {
                     strPrivKey = new CharSequenceX(s.trim());
                     PrivKeyReader privkeyReader = new PrivKeyReader(strPrivKey);
                     try {
@@ -454,6 +454,9 @@ public class OpenDimeActivity extends Activity {
                         strPrivKey = null;
                         return false;
                     }
+                }
+                else    {
+                    ;
                 }
             }
 
