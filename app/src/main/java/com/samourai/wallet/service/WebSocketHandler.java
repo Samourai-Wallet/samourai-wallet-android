@@ -22,6 +22,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
@@ -156,9 +157,8 @@ public class WebSocketHandler {
             try {
 
                 mConnection = new WebSocketFactory()
-//                        .createSocket("wss://api.samouraiwallet.com/v1/inv")
-                        .createSocket("wss://ws.blockchain.info/inv")
-                        .addHeader("Origin", "https://blockchain.info").recreate()
+                        .createSocket("wss://api.samourai.io/v2/inv")
+//                        .addHeader("Origin", "https://blockchain.info").recreate()
                         .addListener(new WebSocketAdapter() {
 
                             @Override
