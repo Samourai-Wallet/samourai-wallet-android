@@ -1617,6 +1617,15 @@ public class BalanceActivity extends Activity {
                 LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
             }
 
+            if(!dragged)    {
+                try {
+                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                }
+                catch(Exception e) {
+
+                }
+            }
+
             return "OK";
         }
 

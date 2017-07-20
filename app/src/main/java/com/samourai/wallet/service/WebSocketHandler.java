@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 //import android.util.Log;
 
 import com.neovisionaries.ws.client.WebSocket;
@@ -168,7 +169,7 @@ public class WebSocketHandler {
                             }
 
                             public void onTextMessage(WebSocket websocket, String message) {
-//                                    Log.d("WebSocket", message);
+                                    Log.d("WebSocket", message);
                                 try {
                                     JSONObject jsonObject = null;
                                     try {
@@ -303,20 +304,16 @@ public class WebSocketHandler {
                                                             }
                                                         }
 
-                                                        PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-
                                                         addrs = _addrs.toArray(new String[_addrs.size()]);
 
                                                         start();
 
                                                     }
                                                 }
-                                                /*
-                                                else if(outObj.has("addr") && ReceiveLookAtUtil.getInstance().contains(outObj.getString("addr")))   {
+                                                else if(outObj.has("addr"))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
                                                 }
-                                                */
                                                 else    {
                                                     ;
                                                 }
