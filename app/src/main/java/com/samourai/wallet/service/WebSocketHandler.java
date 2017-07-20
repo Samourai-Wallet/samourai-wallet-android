@@ -25,7 +25,6 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;
@@ -312,10 +311,12 @@ public class WebSocketHandler {
 
                                                     }
                                                 }
+                                                /*
                                                 else if(outObj.has("addr") && ReceiveLookAtUtil.getInstance().contains(outObj.getString("addr")))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
                                                 }
+                                                */
                                                 else    {
                                                     ;
                                                 }

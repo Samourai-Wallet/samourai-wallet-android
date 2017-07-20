@@ -11,8 +11,6 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +49,6 @@ public class WebSocketService extends Service {
         catch(MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
         }
-
-        addrSubs = ReceiveLookAtUtil.getInstance().getReceives();
 
         //
         // prune BIP47 lookbehind

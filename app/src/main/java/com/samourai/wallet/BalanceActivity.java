@@ -87,7 +87,6 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
@@ -1850,8 +1849,6 @@ public class BalanceActivity extends Activity {
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                ReceiveLookAtUtil.getInstance().add(ownReceiveAddr);
 
                                                 if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                                                     stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));

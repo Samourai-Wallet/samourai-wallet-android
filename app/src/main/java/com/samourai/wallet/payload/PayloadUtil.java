@@ -26,7 +26,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
@@ -199,7 +198,6 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
-            meta.put("receives", ReceiveLookAtUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
 
@@ -357,9 +355,6 @@ public class PayloadUtil	{
                 }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
-                }
-                if(meta.has("receives")) {
-                    ReceiveLookAtUtil.getInstance().fromJSON((JSONArray) meta.get("receives"));
                 }
                 if(meta.has("rbfs")) {
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
