@@ -809,6 +809,26 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    public synchronized JSONObject getBlockHeader(String hash) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            url.append("header/");
+            url.append(hash);
+
+            String response = WebUtil.getInstance(context).getURL(url.toString());
+            jsonObject = new JSONObject(response);
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     public synchronized JSONObject getDynamicFees() {
 
         JSONObject jsonObject  = null;

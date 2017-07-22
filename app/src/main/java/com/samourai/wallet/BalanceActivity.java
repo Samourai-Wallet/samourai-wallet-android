@@ -768,7 +768,6 @@ public class BalanceActivity extends Activity {
                                         }
 
                                         if(keyDecoded)    {
-//                                            doSweep(pvr);
                                             SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
                                         }
 
@@ -786,7 +785,6 @@ public class BalanceActivity extends Activity {
 
                     }
                     else if(privKeyReader != null)	{
-//                        doSweep(privKeyReader);
                         SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
                     }
                     else    {
@@ -927,109 +925,7 @@ public class BalanceActivity extends Activity {
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_COLD_STORAGE);
     }
-/*
-    private void doSweep(final PrivKeyReader privKeyReader)  {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                try {
-
-                    if(privKeyReader == null || privKeyReader.getKey() == null || !privKeyReader.getKey().hasPrivKey())    {
-                        Toast.makeText(BalanceActivity.this, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    String address = privKeyReader.getKey().toAddress(MainNetParams.get()).toString();
-                    UTXO utxo = APIFactory.getInstance(BalanceActivity.this).getUnspentOutputsForSweep(address);
-                    if(utxo != null)    {
-
-                        long total_value = 0L;
-                        final List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
-                        for(MyTransactionOutPoint outpoint : outpoints)   {
-                            total_value += outpoint.getValue().longValue();
-                        }
-
-                        final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
-
-                        final long amount = total_value - fee.longValue();
-//                        Log.d("BalanceActivity", "Total value:" + total_value);
-//                        Log.d("BalanceActivity", "Amount:" + amount);
-//                        Log.d("BalanceActivity", "Fee:" + fee.toString());
-
-                        String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
-                        builder.setTitle(R.string.app_name);
-                        builder.setMessage(message);
-                        builder.setCancelable(false);
-                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
-
-                                final ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
-                                progress.setCancelable(false);
-                                progress.setTitle(R.string.app_name);
-                                progress.setMessage(getString(R.string.please_wait_sending));
-                                progress.show();
-
-                                String receive_address = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-                                final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
-                                receivers.put(receive_address, BigInteger.valueOf(amount));
-                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outpoints, receivers);
-
-                                tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
-                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-//                                Log.d("BalanceActivity", hexTx);
-
-                                try {
-                                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-                                    Log.d("BalanceActivity", "pushTx:" + response);
-                                    if(response.contains("Transaction Submitted"))    {
-                                        Toast.makeText(BalanceActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                    }
-                                    else    {
-                                        Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                catch(Exception e) {
-                                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
-                                }
-
-                                if(progress != null && progress.isShowing())    {
-                                    progress.dismiss();
-                                }
-
-                            }
-                        });
-                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
-                                ;
-                            }
-                        });
-
-                        AlertDialog alert = builder.create();
-                        alert.show();
-
-                    }
-                    else    {
-                        Toast.makeText(BalanceActivity.this, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-                catch(Exception e) {
-                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
-                }
-
-                Looper.loop();
-
-            }
-        }).start();
-
-    }
-*/
     private void doBackup() {
 
         try {
@@ -1541,24 +1437,6 @@ public class BalanceActivity extends Activity {
                 publishProgress();
             }
 
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
-                Log.i("BalanceActivity", "guid_v < 4");
-                try {
-                    String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
-                    String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
-
-                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(_guid + AccessFactory.getInstance().getPIN()));
-
-                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
-                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
-
-                    Log.i("BalanceActivity", "guid_v == 4");
-                }
-                catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
-                    ;
-                }
-            }
-
             handler.post(new Runnable() {
                 public void run() {
                     if(dragged)    {
@@ -1618,12 +1496,33 @@ public class BalanceActivity extends Activity {
             }
 
             if(!dragged)    {
-                try {
-                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                }
-                catch(Exception e) {
 
+                if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
+                    Log.i("BalanceActivity", "guid_v < 4");
+                    try {
+                        String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
+                        String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(_guid + AccessFactory.getInstance().getPIN()));
+
+                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
+                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
+
+                        Log.i("BalanceActivity", "guid_v == 4");
+                    }
+                    catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
+                        ;
+                    }
                 }
+                else    {
+                    try {
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                    }
+                    catch(Exception e) {
+
+                    }
+                }
+
             }
 
             return "OK";
@@ -1662,14 +1561,19 @@ public class BalanceActivity extends Activity {
             strBlockHash = params[0];
 
             JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            JSONObject jsonObj = jsonrpc.getBlockHeader(strBlockHash);
-            if(jsonObj != null && jsonObj.has("hash"))    {
+            JSONObject nodeObj = jsonrpc.getBlockHeader(strBlockHash);
+            if(nodeObj != null && nodeObj.has("hash"))    {
                 PoW pow = new PoW(strBlockHash);
-                String hash = pow.calcHash(jsonObj);
+                String hash = pow.calcHash(nodeObj);
                 if(hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase()))    {
-                    if(!pow.check(jsonObj, hash))    {
-                        isOK = false;
+
+                    JSONObject headerObj = APIFactory.getInstance(BalanceActivity.this).getBlockHeader(strBlockHash);
+                    if(headerObj != null && headerObj.has(""))    {
+                        if(!pow.check(headerObj, nodeObj, hash))    {
+                            isOK = false;
+                        }
                     }
+
                 }
                 else    {
                     isOK = false;

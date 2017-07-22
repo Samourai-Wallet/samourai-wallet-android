@@ -108,14 +108,14 @@ public class PoW {
     // Prove the block was as difficult to make as it claims to be.
     // Check value of difficultyTarget to prevent and attack that might have us read a different chain.
     //
-    public boolean check(JSONObject resultObj, String hash) {
+    public boolean check(JSONObject headerObj, JSONObject nodeObj, String hash) {
 
         try {
 
-            double dDifficulty = resultObj.getDouble("difficulty");
+            double dDifficulty = headerObj.getDouble("difficulty");
             Log.i("PoW", "difficulty:" + dDifficulty);
 
-            long difficultyTarget = Long.parseLong(resultObj.getString("bits"), 16);
+            long difficultyTarget = Long.parseLong(nodeObj.getString("bits"), 16);
             target = Utils.decodeCompactBits(difficultyTarget);
             if (target.signum() <= 0 || target.compareTo(MainNetParams.get().getMaxTarget()) > 0) {
                 Log.i("PoW", "invalid target");
