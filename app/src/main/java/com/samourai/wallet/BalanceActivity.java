@@ -175,7 +175,7 @@ public class BalanceActivity extends Activity {
                     public void run() {
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
-                        refreshTx(notifTx, fetch, false);
+                        refreshTx(notifTx, fetch, false, false);
 
                         if(BalanceActivity.this != null)    {
 
@@ -477,7 +477,7 @@ public class BalanceActivity extends Activity {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        refreshTx(false, true, true);
+                        refreshTx(false, true, true, false);
                     }
                 });
 
@@ -494,7 +494,7 @@ public class BalanceActivity extends Activity {
 //        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
-        refreshTx(false, true, false);
+        refreshTx(false, true, false, true);
 
         //
         // user checks mnemonic & passphrase
@@ -1167,10 +1167,10 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
+    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged, final boolean launch) {
 
         if(refreshTask == null || refreshTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-            refreshTask = new RefreshTask(dragged);
+            refreshTask = new RefreshTask(dragged, launch);
             refreshTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
         }
 
@@ -1351,12 +1351,14 @@ public class BalanceActivity extends Activity {
         private ProgressDialog progress = null;
         private Handler handler = null;
         private boolean dragged = false;
+        private boolean launch = false;
 
-        public RefreshTask(boolean dragged) {
+        public RefreshTask(boolean dragged, boolean launch) {
             super();
             Log.d("BalanceActivity", "RefreshTask, dragged==" + dragged);
             handler = new Handler();
             this.dragged = dragged;
+            this.launch = launch;
         }
 
         @Override
@@ -1514,13 +1516,16 @@ public class BalanceActivity extends Activity {
                         ;
                     }
                 }
-                else    {
+                else if(!launch)    {
                     try {
                         PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
                     }
                     catch(Exception e) {
 
                     }
+                }
+                else    {
+                    ;
                 }
 
             }
