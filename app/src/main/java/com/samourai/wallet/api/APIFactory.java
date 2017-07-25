@@ -20,6 +20,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -114,18 +115,30 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            // use POST
-            StringBuilder args = new StringBuilder();
-            args.append("active=");
-            args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-            Log.i("APIFactory", "XPUB:" + args.toString());
-            String response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "multiaddr?", args.toString());
-            Log.i("APIFactory", "XPUB response:" + response);
+
+            String response = null;
+
+            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                // use POST
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                Log.i("APIFactory", "XPUB:" + args.toString());
+                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "multiaddr?", args.toString());
+                Log.i("APIFactory", "XPUB response:" + response);
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("active", StringUtils.join(xpubs, "|"));
+                Log.i("APIFactory", "XPUB:" + args.toString());
+                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "multiaddr", args);
+                Log.i("APIFactory", "XPUB response:" + response);
+            }
+
             try {
                 jsonObject = new JSONObject(response);
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
-//                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), amount0 + bip47_balance);
                 xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance);
             }
             catch(JSONException je) {
@@ -660,13 +673,23 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder args = new StringBuilder();
-            args.append("active=");
-            args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-//            Log.i("APIFactory", "unspents:" + args.toString());
-            String response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
+
+            String response = null;
+
+            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("active", StringUtils.join(xpubs, "|"));
+                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "unspent", args);
+            }
+
             parseUnspentOutputs(response);
-//            Log.i("APIFactory", "unspents response:" + response);
+
         }
         catch(Exception e) {
             jsonObject = null;
@@ -1199,16 +1222,24 @@ public class APIFactory	{
 
     public synchronized UTXO getUnspentOutputsForSweep(String address) {
 
-        String response = null;
-
         try {
-            StringBuilder args = new StringBuilder();
-            args.append("active=");
-            args.append(address);
-//            Log.i("APIFactory", "unspents for sweep:" + args.toString());
-            response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
-//            Log.i("APIFactory", "unspents for sweep response:" + response);
+
+            String response = null;
+
+            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(address);
+                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("active", address);
+                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "unspent", args);
+            }
+
             return parseUnspentOutputsForSweep(response);
+
         }
         catch(Exception e) {
             e.printStackTrace();
