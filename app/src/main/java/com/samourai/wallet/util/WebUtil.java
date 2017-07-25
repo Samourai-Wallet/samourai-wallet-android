@@ -60,10 +60,11 @@ public class WebUtil	{
     private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
     private static final String strProxyIP = "127.0.0.1";
     private static final int proxyPort = 9050;
-    /* HTTP Proxy:
+
+    /*
     private static final String strProxyType = StrongHttpsClient.TYPE_HTTP;
     private static final String strProxyIP = "127.0.0.1";
-    private static final int strProxyPort = 8118;
+    private static final int proxyPort = 8118;
     */
 
     private static WebUtil instance = null;
@@ -216,10 +217,6 @@ public class WebUtil	{
 
     private String tor_getURL(String URL) throws Exception {
 
-        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
-            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
-        }
-
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
         httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
@@ -251,13 +248,7 @@ public class WebUtil	{
 
     }
 
-    private String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
-
-        Log.d("WebUtil", URL);
-
-        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
-            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
-        }
+    public String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
 
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
@@ -267,7 +258,6 @@ public class WebUtil	{
         httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
         httppost.setHeader("charset", "utf-8");
         httppost.setHeader("Accept", "application/json");
-//        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
         httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
 
         if(args != null)    {
