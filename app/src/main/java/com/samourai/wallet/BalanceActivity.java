@@ -1629,14 +1629,14 @@ public class BalanceActivity extends Activity {
 
             Log.d("BalanceActivity", "hash:" + params[0]);
 
-            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this)._getTxInfo(params[0]);
-            if(txObj.has("inputs") && txObj.has("out"))    {
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            if(txObj.has("inputs") && txObj.has("outputs"))    {
 
                 final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
 
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
-                    JSONArray outputs = txObj.getJSONArray("out");
+                    JSONArray outputs = txObj.getJSONArray("outputs");
 
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                     BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
@@ -1649,8 +1649,8 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("prev_out"))    {
-                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                        if(obj.has("outpoint"))    {
+                            JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
                             }
@@ -1942,11 +1942,11 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "tx serialized:" + rbf.getSerializedTx());
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
             Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
-            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this)._getTxInfo(params[0]);
-            if(tx != null && txObj.has("inputs") && txObj.has("out"))    {
+            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
+            if(tx != null && txObj.has("inputs") && txObj.has("outputs"))    {
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
-                    JSONArray outputs = txObj.getJSONArray("out");
+                    JSONArray outputs = txObj.getJSONArray("outputs");
 
                     SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
@@ -1960,8 +1960,8 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("prev_out"))    {
-                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                        if(obj.has("outpoint"))    {
+                            JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
                             }
