@@ -33,6 +33,7 @@ import com.samourai.wallet.util.TorUtil;
 
 import org.apache.commons.codec.DecoderException;
 
+import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
@@ -179,6 +180,16 @@ public class PayloadUtil	{
                 accts.put(acct.toJSON());
             }
             wallet.put("accounts", accts);
+
+            //
+            // export BIP47 payment code for debug payload
+            //
+            try {
+                wallet.put("payment_code", BIP47Util.getInstance(context).getPaymentCode().toString());
+            }
+            catch(AddressFormatException afe) {
+                ;
+            }
 
             //
             // can remove ???
