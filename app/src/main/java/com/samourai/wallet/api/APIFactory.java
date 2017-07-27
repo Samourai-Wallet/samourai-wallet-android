@@ -837,13 +837,13 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.DYNAMIC_FEE_URL);
+            StringBuilder url = new StringBuilder(WebUtil.BITCOIND_FEE_URL);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
             try {
                 jsonObject = new JSONObject(response);
-                parseDynamicFees(jsonObject);
+                parseDynamicFees_bitcoind(jsonObject);
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -858,7 +858,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized boolean parseDynamicFees(JSONObject jsonObject) throws JSONException  {
+    private synchronized boolean parseDynamicFees_21(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
 
@@ -887,6 +887,58 @@ public class APIFactory	{
 
             if(jsonObject.has("hourFee"))    {
                 long fee = jsonObject.getInt("hourFee");
+                SuggestedFee suggestedFee = new SuggestedFee();
+                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
+                suggestedFee.setStressed(false);
+                suggestedFee.setOK(true);
+                suggestedFees.add(suggestedFee);
+            }
+
+            if(suggestedFees.size() > 0)    {
+                FeeUtil.getInstance().setEstimatedFees(suggestedFees);
+
+//                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
+//                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
+//                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
+            }
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    private synchronized boolean parseDynamicFees_bitcoind(JSONObject jsonObject) throws JSONException  {
+
+        if(jsonObject != null)  {
+
+            //
+            // bitcoind
+            //
+            List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
+
+            if(jsonObject.has("2"))    {
+                long fee = jsonObject.getInt("2");
+                SuggestedFee suggestedFee = new SuggestedFee();
+                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
+                suggestedFee.setStressed(false);
+                suggestedFee.setOK(true);
+                suggestedFees.add(suggestedFee);
+            }
+
+            if(jsonObject.has("6"))    {
+                long fee = jsonObject.getInt("6");
+                SuggestedFee suggestedFee = new SuggestedFee();
+                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
+                suggestedFee.setStressed(false);
+                suggestedFee.setOK(true);
+                suggestedFees.add(suggestedFee);
+            }
+
+            if(jsonObject.has("24"))    {
+                long fee = jsonObject.getInt("24");
                 SuggestedFee suggestedFee = new SuggestedFee();
                 suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
                 suggestedFee.setStressed(false);
