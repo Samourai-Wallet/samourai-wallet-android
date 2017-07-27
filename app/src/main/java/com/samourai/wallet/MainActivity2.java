@@ -440,34 +440,6 @@ public class MainActivity2 extends Activity {
                                                                             AppUtil.getInstance(MainActivity2.this).restartApp();
                                                                         }
 
-                                                                        /*
-                                                                        String encrypted = null;
-                                                                        try {
-                                                                            JSONObject jsonObj = new JSONObject(data);
-                                                                            if(jsonObj != null && jsonObj.has("payload"))    {
-                                                                                encrypted = jsonObj.getString("payload");
-                                                                            }
-                                                                            else    {
-                                                                                encrypted = data;
-                                                                            }
-                                                                        }
-                                                                        catch(JSONException je) {
-                                                                            encrypted = data;
-                                                                        }
-
-                                                                        String decrypted = null;
-                                                                        try {
-                                                                            decrypted = AESUtil.decrypt(encrypted, new CharSequenceX(pw), AESUtil.DefaultPBKDF2Iterations);
-                                                                        } catch (Exception e) {
-                                                                            Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                                                        } finally {
-                                                                            if (decrypted == null || decrypted.length() < 1) {
-                                                                                Toast.makeText(MainActivity2.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                                                                AppUtil.getInstance(MainActivity2.this).restartApp();
-                                                                            }
-                                                                        }
-                                                                        */
-
                                                                         if (progress != null && progress.isShowing()) {
                                                                             progress.dismiss();
                                                                             progress = null;
