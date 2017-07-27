@@ -144,6 +144,7 @@
 
     <string name="scan">Scan</string>
     <string name="scan_error">Scan error</string>
+    <string name="enter_privkey">Enter private key</string>
 
     <string name="to">To</string>
     <string name="destination">Address or payment channel</string>
