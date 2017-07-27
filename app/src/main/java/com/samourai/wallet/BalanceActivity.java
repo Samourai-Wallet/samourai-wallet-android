@@ -606,6 +606,8 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
+        menu.findItem(R.id.action_utxo).setVisible(false);
+        menu.findItem(R.id.action_fees).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -623,12 +625,6 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_sweep) {
             doSweep();
-        }
-        else if (id == R.id.action_utxo) {
-            doUTXO();
-        }
-        else if (id == R.id.action_fees) {
-            doFees();
         }
         else if (id == R.id.action_tor) {
 
@@ -882,42 +878,6 @@ public class BalanceActivity extends Activity {
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
         startActivity(intent);
-    }
-
-    private void doUTXO()	{
-        Intent intent = new Intent(BalanceActivity.this, UTXOActivity.class);
-        startActivity(intent);
-    }
-
-    private void doFees()	{
-
-        SuggestedFee highFee = FeeUtil.getInstance().getHighFee();
-        SuggestedFee normalFee = FeeUtil.getInstance().getNormalFee();
-        SuggestedFee lowFee = FeeUtil.getInstance().getLowFee();
-
-        String message = getText(R.string.current_fee_selection) + " " + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_hi_fee_value) + " " + (highFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_mid_fee_value) + " " + (normalFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                .setTitle(R.string.app_name)
-                .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                    }
-                });
-        if(!isFinishing())    {
-            dlg.show();
-        }
-
     }
 
     private void doSweep()	{
