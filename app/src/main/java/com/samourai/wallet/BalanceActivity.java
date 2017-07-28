@@ -607,7 +607,6 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
-        menu.findItem(R.id.action_utxo).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
@@ -626,6 +625,9 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_sweep) {
             doSweep();
+        }
+        else if (id == R.id.action_utxo) {
+            doUTXO();
         }
         else if (id == R.id.action_tor) {
 
@@ -781,16 +783,21 @@ public class BalanceActivity extends Activity {
         return false;
     }
 
-    private void doScan() {
-        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-        startActivityForResult(intent, SCAN_QR);
-    }
-
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    private void doUTXO()	{
+        Intent intent = new Intent(BalanceActivity.this, UTXOActivity.class);
+        startActivity(intent);
+    }
+
+    private void doScan() {
+        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_QR);
     }
 
     private void doSweepViaScan()	{
