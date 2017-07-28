@@ -20,6 +20,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -837,13 +838,19 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BITCOIND_FEE_URL);
+            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+            StringBuilder url = new StringBuilder(sel == 0 ? WebUtil._21CO_FEE_URL : WebUtil.BITCOIND_FEE_URL);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
             try {
                 jsonObject = new JSONObject(response);
-                parseDynamicFees_bitcoind(jsonObject);
+                if(sel == 0)    {
+                    parseDynamicFees_21(jsonObject);
+                }
+                else    {
+                    parseDynamicFees_bitcoind(jsonObject);
+                }
             }
             catch(JSONException je) {
                 je.printStackTrace();

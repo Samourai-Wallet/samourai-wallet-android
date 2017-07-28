@@ -8,6 +8,11 @@ import org.bitcoinj.core.Transaction;
 
 public class FeeUtil  {
 
+    private static String[] providers = {
+            "21.co",
+            "Samourai (bitcoind)",
+    };
+
     private static final int ESTIMATED_INPUT_LEN = 148; // compressed key
     private static final int ESTIMATED_OUTPUT_LEN = 33;
 
@@ -32,6 +37,10 @@ public class FeeUtil  {
         }
 
         return instance;
+    }
+
+    public String[] getProviders()	 {
+        return providers;
     }
 
     public BigInteger estimatedFee(int inputs, int outputs)   {

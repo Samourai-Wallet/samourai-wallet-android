@@ -225,6 +225,7 @@ public class PayloadUtil	{
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
+            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -428,6 +429,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("use_trusted_node")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
+                }
+                if(meta.has("fee_provider_sel")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel"));
                 }
 
                 /*

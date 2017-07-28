@@ -28,4 +28,10 @@
         android:key="useTrustedNode"
         />
 
+    <Preference
+        android:title="@string/options_fee_provider"
+        android:summary="@string/options_fee_provider2"
+        android:key="feeProvider"
+        />
+
 </PreferenceScreen>

@@ -81,6 +81,8 @@
     <string name="options_passphrase_test2">Verify wallet access and backup support.</string>
     <string name="options_send_backup_to_support">Send backup to tech support</string>
     <string name="options_send_backup_to_support2">Send wallet backup to tech support. Does not contain private key info.</string>
+    <string name="options_fee_provider">Fee provider</string>
+    <string name="options_fee_provider2">Select fee provider: 21.co or Samourai (bitcoind)</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -383,6 +385,5 @@
 
     <string name="select_app">Select application</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
->>>>>>> opendime
 
 </resources>
