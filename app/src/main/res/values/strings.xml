@@ -178,9 +178,9 @@
     <string name="confirm_pin">Confirm PIN code</string>
 
     <string name="fee">Fee</string>
-    <string name="auto_fee">NORMAL</string>
-    <string name="priority_fee">PRIORITY</string>
-    <string name="low_fee">LOW</string>
+    <string name="auto_fee">NORMAL FEE</string>
+    <string name="priority_fee">PRIORITY FEE</string>
+    <string name="low_fee">LOW FEE</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
@@ -279,16 +279,18 @@
     <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
     <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
 
+    <string name="premium_addons">Premium Addons</string>
+
     <string name="ricochet_hop">Ricochet Hop</string>
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
     <string name="ricochet_spend3">(includes 0.001 BTC fee to Samourai and miners\' fees)?</string>
 
-    <string name="ricochet_fee_via_bip47">Ricochet spends will cost a 0.001 BTC fee to Samourai. For improved privacy you can pay this fee via our BIP47 payment code. Before spending via Ricochet, would you like to open a BIP47 payment channel to Samourai?</string>
+    <string name="ricochet_fee_via_bip47">For best results connect to the Samourai payment code. Would you like to connect to the payment code now? Press NO to continue sending.</string>
 
     <string name="action_ricochet">Ricochet</string>
-    <string name="ricochet">Ricochet - send with 4 hops</string>
+    <string name="ricochet">Ricochet - send with 4 extra hops</string>
     <string name="action_ricochet_script">Display Ricochet script</string>
     <string name="action_ricochet_replay">Resend Ricochet</string>
     <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
@@ -379,18 +381,19 @@
 
     <string name="replay_chain_split">CHAIN SPLIT</string>
     <string name="replay_enable">Enable replay protection</string>
-    <string name="replay_info">Info</string>
+    <string name="replay_info">INFO</string>
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Unprotected</string>
     <string name="replay_in_progress">In progress</string>
     <string name="replay_protected">Protected</string>
-    <string name="replay_disclaimer">Disclaimer</string>
-    <string name="replay_text">All addresses will be merged into a single transaction and sent to a single address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
+    <string name="replay_disclaimer">Chain split detected</string>
+    <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
     <string name="replay_ENABLE">ENABLE REPLAY PROTECTION</string>
 
     <string name="replay_broadcast_to_network">broadcast to network...</string>
     <string name="replay_seen_on_network">seen on network...</string>
     <string name="replay_split_tx_broadcast">split tx broadcast...</string>
+    <string name="replay_description">Your wallet will send a special transaction to itself that will permanently split your coins from the other chain. This will protect you against replay attacks.</string>
     <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
     <string name="replay_confirmed">confirmed</string>
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>

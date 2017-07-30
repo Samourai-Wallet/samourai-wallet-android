@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primary_dark"
+    android:background="@color/window"
     >
 
     <include layout="@layout/alert_bis_layout" />
@@ -12,17 +12,36 @@
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="10dp"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:textAlignment="gravity"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_light"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:text="@string/replay_disclaimer"
         />
+
+
+    <TextView
+        android:id="@+id/text2a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textAlignment="gravity"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:text="@string/replay_description"
+        />
+
 
     <TextView
         android:id="@+id/text2"
@@ -30,8 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp"
-        android:gravity="left|center_vertical"
-        android:paddingLeft="20dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:textAlignment="gravity"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/white"
@@ -44,11 +64,11 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp"
-        android:textColor="@android:color/holo_blue_bright"
-        android:layout_gravity="right"
-        android:gravity="right|center_vertical"
+        android:gravity="end|center_vertical"
         android:text="@string/replay_ENABLE"
-        />
+        android:textColor="@color/white" />
 
 </LinearLayout>

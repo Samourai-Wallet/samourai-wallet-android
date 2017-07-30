@@ -6,9 +6,9 @@
     <item name="red" type="color">#FFFF4444</item>
     <item name="darkgrey" type="color">#FF1a1c1f</item>
 
-    <color name="window">#FF272c33</color>
+    <color name="window">#272c33</color>
     <color name="primary">#FF3d434c</color>
-    <color name="primary_dark">#FF2e343d</color>
+    <color name="primary_dark">#2e343d</color>
     <color name="primary_light">#FFCFD8DC</color>
     <color name="text_primary">#FFCFD8DC</color>
     <color name="text_secondary">#FFbab9b9</color>
