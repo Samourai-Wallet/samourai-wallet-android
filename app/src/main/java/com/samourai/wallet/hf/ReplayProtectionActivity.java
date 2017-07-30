@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -269,9 +270,11 @@ public class ReplayProtectionActivity extends Activity {
                 }
 
                 if(tx0Status && tx1Status)    {
-
-
-
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast.makeText(ReplayProtectionActivity.this, R.string.replay_in_progress, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
                 rbfHash = strTxHash1;
