@@ -182,15 +182,6 @@
     <string name="priority_fee">PRIORITY</string>
     <string name="low_fee">LOW</string>
 
-    <!--
-    <string name="spend_type_2">Samourai - No address reuse. BIP126, if possible.</string>
-    <string name="spend_type_3">Ricochet - 4 hop spend.</string>
-
-    <string name="spend_type_1_desc">Normal Send - No address reuse. One change address</string>
-    <string name="spend_type_2_desc">Samourai Send - No address reuse. BIP126, if possible.</string>
-    <string name="spend_type_3_desc">Ricochet - 4 hop spend.</string>
--->
-
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
 
@@ -385,5 +376,24 @@
 
     <string name="select_app">Select application</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_chain_split">CHAIN SPLIT</string>
+    <string name="replay_enable">Enable replay protection</string>
+    <string name="replay_info">Info</string>
+    <string name="replay_protection">Replay protection</string>
+    <string name="replay_unprotected">Unprotected</string>
+    <string name="replay_in_progress">In progress</string>
+    <string name="replay_protected">Protected</string>
+    <string name="replay_disclaimer">Disclaimer</string>
+    <string name="replay_text">All addresses will be merged into a single transaction and sent to a single address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
+    <string name="replay_ENABLE">ENABLE REPLAY PROTECTION</string>
+
+    <string name="replay_broadcast_to_network">broadcast to network...</string>
+    <string name="replay_seen_on_network">seen on network...</string>
+    <string name="replay_split_tx_broadcast">split tx broadcast...</string>
+    <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
+    <string name="replay_confirmed">confirmed</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
 </resources>

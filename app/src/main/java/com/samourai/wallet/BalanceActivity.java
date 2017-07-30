@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,11 +40,9 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.BIP38PrivateKey;
@@ -67,6 +64,8 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.hf.HardForkUtil;
+import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
@@ -91,7 +90,6 @@ import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
-import com.samourai.wallet.util.WebUtil;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.crypto.TransactionSignature;
@@ -124,6 +122,8 @@ public class BalanceActivity extends Activity {
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
 
+    private LinearLayout layoutAlert = null;
+
     private LinearLayout tvBalanceBar = null;
     private TextView tvBalanceAmount = null;
     private TextView tvBalanceUnits = null;
@@ -145,6 +145,7 @@ public class BalanceActivity extends Activity {
     private PoWTask powTask = null;
     private RBFTask rbfTask = null;
     private CPFPTask cpfpTask = null;
+    private BCCForkTask bccForkTask = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -543,6 +544,13 @@ public class BalanceActivity extends Activity {
                 dlg.show();
             }
 
+        }
+
+        if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime() &&
+                (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, false) == false) &&
+                (bccForkTask == null || bccForkTask.getStatus().equals(AsyncTask.Status.FINISHED)))    {
+            bccForkTask = new BCCForkTask();
+            bccForkTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
         }
 
     }
@@ -1417,7 +1425,11 @@ public class BalanceActivity extends Activity {
         protected String doInBackground(String... params) {
 
             Log.d("BalanceActivity", "doInBackground()");
-
+/*
+            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            }
+*/
             final boolean notifTx = params[0].equals("1") ? true : false;
             final boolean fetch = params[1].equals("1") ? true : false;
 
@@ -1559,6 +1571,8 @@ public class BalanceActivity extends Activity {
                 }
 
             }
+
+//            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
 
             return "OK";
         }
@@ -2393,6 +2407,70 @@ public class BalanceActivity extends Activity {
 
             return tx;
         }
+
+    }
+
+    private class BCCForkTask extends AsyncTask<String, Void, String> {
+
+        private Handler handler = null;
+        private boolean isFork = false;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
+
+                String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                try {
+                    JSONObject statusObj = new JSONObject(status);
+                    if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
+                            statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+                        isFork = true;
+                    }
+                }
+                catch(JSONException je) {
+                    ;
+                }
+
+            }
+
+            if(isFork())    {
+                handler.post(new Runnable() {
+                    public void run() {
+                        layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                        TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                        TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                        TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                        tvLeftTop.setText(getText(R.string.replay_chain_split));
+                        tvLeftBottom.setText(getText(R.string.replay_enable));
+                        tvRight.setText(getText(R.string.replay_info));
+                        layoutAlert.setVisibility(View.VISIBLE);
+                        layoutAlert.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                Intent intent = new Intent(BalanceActivity.this, ReplayProtectionWarningActivity.class);
+                                startActivity(intent);
+                                return false;
+                            }
+                        });
+                    }
+                });
+
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) { ; }
+
+        @Override
+        protected void onPreExecute() {
+            handler = new Handler();
+        }
+
+//        public boolean isFork() { return isFork; }
+        public boolean isFork() { return true; }
 
     }
 

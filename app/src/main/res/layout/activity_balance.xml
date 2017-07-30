@@ -5,10 +5,14 @@
     android:theme="@style/AppTheme"
     android:orientation="vertical">
 
+    <include layout="@layout/alert_layout" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/alert"
+        >
 
     <ListView
         android:id="@+id/txList"
