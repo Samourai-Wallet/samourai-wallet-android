@@ -65,6 +65,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.hf.HardForkUtil;
+import com.samourai.wallet.hf.ReplayProtectionActivity;
 import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
@@ -547,7 +548,7 @@ public class BalanceActivity extends Activity {
         }
 
         if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime() &&
-                (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, false) == false) &&
+                (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, "").length() > 0) &&
                 (bccForkTask == null || bccForkTask.getStatus().equals(AsyncTask.Status.FINISHED)))    {
             bccForkTask = new BCCForkTask();
             bccForkTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
@@ -2425,7 +2426,35 @@ public class BalanceActivity extends Activity {
                     JSONObject statusObj = new JSONObject(status);
                     if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
                             statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+
                         isFork = true;
+
+                        String strTxHash = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, "");
+                        if(strTxHash != null && strTxHash.length() > 0)    {
+
+                            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(strTxHash);
+                            final int latestBlockHeight = (int)APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+
+                            try {
+                                if(txObj != null && txObj.has("block"))    {
+                                    JSONObject blockObj = txObj.getJSONObject("block");
+                                    if(blockObj.has("height") && blockObj.getInt("height") > 0)    {
+                                        int blockHeight = blockObj.getInt("height");
+                                        int cf = (latestBlockHeight - blockHeight) + 1;
+                                        if(cf >= 6)    {
+                                            isFork = false;
+                                        }
+                                    }
+
+                                }
+
+                            }
+                            catch(JSONException je) {
+                                ;
+                            }
+
+                        }
+
                     }
                 }
                 catch(JSONException je) {

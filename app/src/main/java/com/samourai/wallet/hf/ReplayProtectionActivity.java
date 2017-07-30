@@ -6,11 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -126,153 +127,174 @@ public class ReplayProtectionActivity extends Activity {
 
             Looper.prepare();
 
-            long balance = 0L;
-            List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
-            List<UTXO> utxos = APIFactory.getInstance(ReplayProtectionActivity.this).getUtxos();
-            for(UTXO utxo : utxos)   {
-                balance += utxo.getValue();
-                outpoints.addAll(utxo.getOutpoints());
-            }
+            String rbfHash = null;
 
-            Log.d("ReplayProtectionA", "outpoints selected:" + outpoints.size());
-            Log.d("ReplayProtectionA", "balance:" + balance);
+            if(PrefsUtil.getInstance(ReplayProtectionActivity.this).getValue(PrefsUtil.BCC_REPLAY, "").length() == 0)    {
 
-            SuggestedFee rbfFee = FeeUtil.getInstance().getNormalFee();
+                long balance = 0L;
+                List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
+                List<UTXO> utxos = APIFactory.getInstance(ReplayProtectionActivity.this).getUtxos();
+                for(UTXO utxo : utxos)   {
+                    balance += utxo.getValue();
+                    outpoints.addAll(utxo.getOutpoints());
+                }
 
-            BigInteger biFee0 = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1, BigInteger.valueOf(3L * 1000L));
-            Log.d("ReplayProtectionA", "biFee0:" + biFee0.longValue());
-            BigInteger biFee1 = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1, rbfFee.getDefaultPerKB());
-            Log.d("ReplayProtectionA", "biFee1:" + biFee1.longValue());
+                Log.d("ReplayProtectionA", "outpoints selected:" + outpoints.size());
+                Log.d("ReplayProtectionA", "balance:" + balance);
 
-            long amount0 = balance - biFee0.longValue();
-            Log.d("ReplayProtectionA", "amount0:" + amount0);
-            long amount1 = balance - biFee1.longValue();
-            Log.d("ReplayProtectionA", "amount1:" + amount1);
+                SuggestedFee rbfFee = FeeUtil.getInstance().getNormalFee();
 
-            String ownReceiveAddr = AddressFactory.getInstance(ReplayProtectionActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-            Log.d("ReplayProtectionA", "receive address:" + ownReceiveAddr);
+                BigInteger biFee0 = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1, BigInteger.valueOf(3L * 1000L));
+                Log.d("ReplayProtectionA", "biFee0:" + biFee0.longValue());
+                BigInteger biFee1 = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1, rbfFee.getDefaultPerKB());
+                Log.d("ReplayProtectionA", "biFee1:" + biFee1.longValue());
 
-            HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
+                long amount0 = balance - biFee0.longValue();
+                Log.d("ReplayProtectionA", "amount0:" + amount0);
+                long amount1 = balance - biFee1.longValue();
+                Log.d("ReplayProtectionA", "amount1:" + amount1);
 
-            boolean currentRBF = PrefsUtil.getInstance(ReplayProtectionActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false);
-            PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.RBF_OPT_IN, true);
+                String ownReceiveAddr = AddressFactory.getInstance(ReplayProtectionActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                Log.d("ReplayProtectionA", "receive address:" + ownReceiveAddr);
 
-            receivers.put(ownReceiveAddr, BigInteger.valueOf(amount0));
-            Transaction tx0 = SendFactory.getInstance(ReplayProtectionActivity.this).makeTransaction(0, outpoints, receivers);
-            tx0 = SendFactory.getInstance(ReplayProtectionActivity.this).signTransaction(tx0);
-            final String hexTx0 = new String(Hex.encode(tx0.bitcoinSerialize()));
-            Log.d("ReplayProtectionA", "hexTx0:" + hexTx0);
-            final String strTxHash0 = tx0.getHashAsString();
-            Log.d("ReplayProtectionA", "txHash0:" + strTxHash0);
+                HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
 
-            receivers.clear();
-            receivers.put(ownReceiveAddr, BigInteger.valueOf(amount1));
-            Transaction tx1 = SendFactory.getInstance(ReplayProtectionActivity.this).makeTransaction(0, outpoints, receivers);
-            tx1 = SendFactory.getInstance(ReplayProtectionActivity.this).signTransaction(tx1);
-            String hexTx1 = new String(Hex.encode(tx1.bitcoinSerialize()));
-            Log.d("ReplayProtectionA", "hexTx1:" + hexTx1);
-            final String strTxHash1 = tx1.getHashAsString();
-            Log.d("ReplayProtectionA", "txHash1:" + strTxHash1);
+                boolean currentRBF = PrefsUtil.getInstance(ReplayProtectionActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false);
+                PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.RBF_OPT_IN, true);
 
-            PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.RBF_OPT_IN, currentRBF);
+                receivers.put(ownReceiveAddr, BigInteger.valueOf(amount0));
+                Transaction tx0 = SendFactory.getInstance(ReplayProtectionActivity.this).makeTransaction(0, outpoints, receivers);
+                tx0 = SendFactory.getInstance(ReplayProtectionActivity.this).signTransaction(tx0);
+                final String hexTx0 = new String(Hex.encode(tx0.bitcoinSerialize()));
+                Log.d("ReplayProtectionA", "hexTx0:" + hexTx0);
+                final String strTxHash0 = tx0.getHashAsString();
+                Log.d("ReplayProtectionA", "txHash0:" + strTxHash0);
 
-            //
-            // temp code
-            //
-            try {
-                int idx = HD_WalletFactory.getInstance(ReplayProtectionActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
-                HD_WalletFactory.getInstance(ReplayProtectionActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).setAddrIdx(idx - 1);
-            }
-            catch(Exception e) {
-                ;
-            }
-            //
-            //
-            //
+                receivers.clear();
+                receivers.put(ownReceiveAddr, BigInteger.valueOf(amount1));
+                Transaction tx1 = SendFactory.getInstance(ReplayProtectionActivity.this).makeTransaction(0, outpoints, receivers);
+                tx1 = SendFactory.getInstance(ReplayProtectionActivity.this).signTransaction(tx1);
+                String hexTx1 = new String(Hex.encode(tx1.bitcoinSerialize()));
+                Log.d("ReplayProtectionA", "hexTx1:" + hexTx1);
+                final String strTxHash1 = tx1.getHashAsString();
+                Log.d("ReplayProtectionA", "txHash1:" + strTxHash1);
 
-            boolean tx0pushedBTC = PushTx.getInstance(ReplayProtectionActivity.this).pushTx(hexTx0);
-            Log.d("ReplayProtectionA", "tx0 pushed BTC:" + tx0pushedBTC);
-            if(tx0pushedBTC)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvBitcoin2.setText(getText(R.string.replay_broadcast_to_network));
-                    }
-                });
-            }
+                PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.RBF_OPT_IN, currentRBF);
 
-            boolean tx0pushedBCC = HardForkUtil.getInstance(ReplayProtectionActivity.this).bccPushTx(hexTx0);
-            Log.d("ReplayProtectionA", "tx0 pushed BCC:" + tx0pushedBCC);
-            if(tx0pushedBCC)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvShitcoin2.setText(getText(R.string.replay_broadcast_to_network));
-                    }
-                });
-            }
+                //
+                // temp code
+                //
+                try {
+                    int idx = HD_WalletFactory.getInstance(ReplayProtectionActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).getAddrIdx();
+                    HD_WalletFactory.getInstance(ReplayProtectionActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(0).setAddrIdx(idx - 1);
+                }
+                catch(Exception e) {
+                    ;
+                }
+                //
+                //
+                //
+
+                boolean tx0pushedBTC = PushTx.getInstance(ReplayProtectionActivity.this).pushTx(hexTx0);
+                Log.d("ReplayProtectionA", "tx0 pushed BTC:" + tx0pushedBTC);
+                if(tx0pushedBTC)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvBitcoin2.setText(getText(R.string.replay_broadcast_to_network));
+                        }
+                    });
+                }
+
+                boolean tx0pushedBCC = HardForkUtil.getInstance(ReplayProtectionActivity.this).bccPushTx(hexTx0);
+                Log.d("ReplayProtectionA", "tx0 pushed BCC:" + tx0pushedBCC);
+                if(tx0pushedBCC)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvShitcoin2.setText(getText(R.string.replay_broadcast_to_network));
+                        }
+                    });
+                }
 
 //            JSONObject txObj0 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo("4ebec0d94e8a1faa2a79e18ea869e422f4db297a2f483e739aecc29c4ddd769f");
-            JSONObject txObj0 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(strTxHash0);
-            Log.d("ReplayProtectionA", "tx0 status:" + txObj0.toString());
-            boolean tx0Status = btcTxSeen(txObj0);
-            Log.d("ReplayProtectionA", "tx0 status:" + tx0Status);
-            if(tx0Status)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvBitcoin2.setText(getText(R.string.replay_seen_on_network));
-                        tvBitcoin3.setText(strTxHash0.substring(0, 30) + "...");
-                    }
-                });
-            }
+                JSONObject txObj0 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(strTxHash0);
+                Log.d("ReplayProtectionA", "tx0 status:" + txObj0.toString());
+                boolean tx0Status = btcTxSeen(txObj0);
+                Log.d("ReplayProtectionA", "tx0 status:" + tx0Status);
+                if(tx0Status)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvBitcoin2.setText(getText(R.string.replay_seen_on_network));
+                            tvBitcoin3.setText(strTxHash0.substring(0, 30) + "...");
+                        }
+                    });
+                }
 
 //            String bccTxOut = HardForkUtil.getInstance(ReplayProtectionActivity.this).bccTxOut("4ebec0d94e8a1faa2a79e18ea869e422f4db297a2f483e739aecc29c4ddd769f", 1);
-            String bccTxOut = HardForkUtil.getInstance(ReplayProtectionActivity.this).bccTxOut(strTxHash0, 0);
-            Log.d("ReplayProtectionA", "bcc tx out:" + bccTxOut);
-            boolean bccTxStatus = bccTxConfirmed(bccTxOut);
-            Log.d("ReplayProtectionA", "bcc confirmed:" + bccTxStatus);
-            if(bccTxStatus)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvShitcoin2.setText(getText(R.string.replay_seen_on_network));
-                        tvShitcoin3.setText(strTxHash0.substring(0, 30) + "...");
-                    }
-                });
-            }
+                String bccTxOut = HardForkUtil.getInstance(ReplayProtectionActivity.this).bccTxOut(strTxHash0, 0);
+                Log.d("ReplayProtectionA", "bcc tx out:" + bccTxOut);
+                boolean bccTxStatus = bccTxConfirmed(bccTxOut);
+                Log.d("ReplayProtectionA", "bcc confirmed:" + bccTxStatus);
+                if(bccTxStatus)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvShitcoin2.setText(getText(R.string.replay_seen_on_network));
+                            tvShitcoin3.setText(strTxHash0.substring(0, 30) + "...");
+                        }
+                    });
+                }
 
-            boolean tx1pushedBTC = PushTx.getInstance(ReplayProtectionActivity.this).pushTx(hexTx1);
-            Log.d("ReplayProtectionA", "tx1 pushed BTC:" + tx1pushedBTC);
-            if(tx1pushedBTC)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvBitcoin2.setText(getText(R.string.replay_split_tx_broadcast));
-                        tvBitcoin3.setText("");
-                    }
-                });
-            }
+                boolean tx1pushedBTC = PushTx.getInstance(ReplayProtectionActivity.this).pushTx(hexTx1);
+                Log.d("ReplayProtectionA", "tx1 pushed BTC:" + tx1pushedBTC);
+                if(tx1pushedBTC)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvBitcoin2.setText(getText(R.string.replay_split_tx_broadcast));
+                            tvBitcoin3.setText("");
+                        }
+                    });
+                }
 
 //            JSONObject txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo("1aeada913ee25872b4700b9cf7adbc914c98e398c2bd9781c632b392fe2b0276");
-            JSONObject txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(strTxHash1);
-            Log.d("ReplayProtectionA", "tx1 status:" + txObj1.toString());
-            boolean tx1Status = btcTxSeen(txObj1);
-            Log.d("ReplayProtectionA", "tx1 status:" + tx1Status);
-            if(tx1Status)    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        tvBitcoin2.setText(getText(R.string.replay_seen_on_network));
-                        tvBitcoin3.setText(strTxHash1.substring(0, 30) + "...");
-                    }
-                });
+                JSONObject txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(strTxHash1);
+                Log.d("ReplayProtectionA", "tx1 status:" + txObj1.toString());
+                boolean tx1Status = btcTxSeen(txObj1);
+                Log.d("ReplayProtectionA", "tx1 status:" + tx1Status);
+                if(tx1Status)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            tvBitcoin2.setText(getText(R.string.replay_seen_on_network));
+                            tvBitcoin3.setText(strTxHash1.substring(0, 30) + "...");
+                        }
+                    });
+                }
+
+                if(tx0Status && tx1Status)    {
+
+
+
+                }
+
+                rbfHash = strTxHash1;
+
+            }
+            else    {
+                rbfHash = PrefsUtil.getInstance(ReplayProtectionActivity.this).getValue(PrefsUtil.BCC_REPLAY, "");
             }
 
-            if(tx0Status && tx1Status)    {
-//                PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.BCC_REPLAY, true);
+            boolean tx1Confirmed = false;
+            JSONObject txObj1 = null;
+            final String _strTxHash1 = rbfHash;
+            if(_strTxHash1 != null && _strTxHash1.length() > 0)    {
+//                txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo("1aeada913ee25872b4700b9cf7adbc914c98e398c2bd9781c632b392fe2b0276");
+                txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(_strTxHash1);
+                Log.d("ReplayProtectionA", "tx1 status:" + txObj1.toString());
+                tx1Confirmed = btcTxConfirmed(txObj1);
+                Log.d("ReplayProtectionA", "tx1 confirmed:" + tx1Confirmed);
             }
 
-            txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo("1aeada913ee25872b4700b9cf7adbc914c98e398c2bd9781c632b392fe2b0276");
-//            txObj1 = APIFactory.getInstance(ReplayProtectionActivity.this).getTxInfo(strTxHash1);
-            Log.d("ReplayProtectionA", "tx1 status:" + txObj1.toString());
-            boolean tx1Confirmed = btcTxConfirmed(txObj1);
-            Log.d("ReplayProtectionA", "tx1 confirmed:" + tx1Confirmed);
             if(tx1Confirmed)    {
+
+                PrefsUtil.getInstance(ReplayProtectionActivity.this).setValue(PrefsUtil.BCC_REPLAY, _strTxHash1);
 
                 final int blockHeight = btcTxHeight(txObj1);
 
@@ -288,11 +310,11 @@ public class ReplayProtectionActivity extends Activity {
                                 layoutAlert.setBackgroundColor(COLOR_GREEN);
                                 layoutShitcoin.setVisibility(View.INVISIBLE);
                                 tvBitcoin2.setText(getText(R.string.replay_confirmed));
-                                tvBitcoin3.setText(strTxHash1.substring(0, 30) + "...");
+                                tvBitcoin3.setText(_strTxHash1.substring(0, 30) + "...");
                             }
                             else    {
                                 tvBitcoin2.setText(getText(R.string.replay_waiting_for_confirmations) + " " + cf + "/6");
-                                tvBitcoin3.setText(strTxHash1.substring(0, 30) + "...");
+                                tvBitcoin3.setText(_strTxHash1.substring(0, 30) + "...");
                             }
                         }
                     });
@@ -301,6 +323,10 @@ public class ReplayProtectionActivity extends Activity {
 
             }
 
+            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+            intent.putExtra("fetch", true);
+            LocalBroadcastManager.getInstance(ReplayProtectionActivity.this).sendBroadcast(intent);
+
             Looper.loop();
 
             return "OK";
@@ -308,7 +334,13 @@ public class ReplayProtectionActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            startService(new Intent(ReplayProtectionActivity.this.getApplicationContext(), WebSocketService.class));
+
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    startService(new Intent(ReplayProtectionActivity.this.getApplicationContext(), WebSocketService.class));
+                }
+            }, 15L * 1000L);
+
         }
 
         @Override
