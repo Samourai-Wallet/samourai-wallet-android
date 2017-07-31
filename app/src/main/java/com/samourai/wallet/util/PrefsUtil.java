@@ -39,6 +39,7 @@ public class PrefsUtil {
 	public static final String BCC_REPLAY0 = "BCCReplay0";
 	public static final String BCC_REPLAY1 = "BCCReplay1";
 	public static final String BCC_REPLAYED = "BCCReplayed";
+	public static final String BCC_DISMISSED = "BCCDismiss";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

@@ -67,8 +67,20 @@
         android:layout_gravity="end"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:gravity="end|center_vertical"
         android:text="@string/replay_ENABLE"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/dismiss"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
+        android:gravity="end|center_vertical"
+        android:text="@string/replay_dismiss"
         android:textColor="@color/white" />
 
 </LinearLayout>

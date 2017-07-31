@@ -384,7 +384,7 @@
     <string name="replay_info">INFO</string>
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Unprotected</string>
-    <string name="replay_in_progress">Replay in progress</string>
+    <string name="replay_in_progress">In progress</string>
     <string name="replay_protected">Protected</string>
     <string name="replay_disclaimer">Chain split detected</string>
     <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
@@ -402,5 +402,6 @@
 
     <string name="replay_launch_completed">Replay protection broadcasts completed</string>
     <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
+    <string name="replay_dismiss">DISMISS ALERT</string>
 
 </resources>

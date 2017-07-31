@@ -10,10 +10,12 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.PrefsUtil;
 
 public class ReplayProtectionWarningActivity extends Activity {
 
     private Button btEnable = null;
+    private Button btDismiss = null;
     private LinearLayout layoutAlert = null;
 
     private static final int COLOR_RED = 0xffb71c1c;
@@ -34,6 +36,14 @@ public class ReplayProtectionWarningActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(ReplayProtectionWarningActivity.this, ReplayProtectionActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        btDismiss = (Button)findViewById(R.id.dismiss);
+        btDismiss.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PrefsUtil.getInstance(ReplayProtectionWarningActivity.this).setValue(PrefsUtil.BCC_DISMISSED, true);
+                finish();
             }
         });
 

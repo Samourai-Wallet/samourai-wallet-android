@@ -2412,14 +2412,18 @@ public class BalanceActivity extends Activity {
 
                 boolean isFork = false;
                 int cf = -1;
+                boolean dismissed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_DISMISSED, false);
 
-                if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
+                if(!dismissed && HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
 
                     String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
                     try {
                         JSONObject statusObj = new JSONObject(status);
+                        /*
                         if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
                                 statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+                        */
+                        if(true)   {
 
                             isFork = true;
 
