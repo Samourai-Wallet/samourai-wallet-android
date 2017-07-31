@@ -2414,16 +2414,58 @@ public class BalanceActivity extends Activity {
                 int cf = -1;
                 boolean dismissed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_DISMISSED, false);
 
+                if(!dismissed)    {
+                    long latestBlockHeight = APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+                    long distance = 0L;
+
+                    String strForkStatus = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                    try {
+                        JSONObject forkObj = new JSONObject(strForkStatus);
+                        if(forkObj != null && forkObj.has("forks") && forkObj.getJSONObject("forks").has("abc"))    {
+                            JSONObject abcObj = forkObj.getJSONObject("forks").getJSONObject("abc");
+                            if(abcObj.has("height"))    {
+
+                                long height = abcObj.getLong("height");
+                                distance = latestBlockHeight - height;
+
+                                boolean laterThanFork = true;
+                                List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+                                for(UTXO utxo : utxos)   {
+                                    List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                                    for(MyTransactionOutPoint outpoint : outpoints)   {
+                                        if(outpoint.getConfirmations() >= distance)    {
+                                            laterThanFork = false;
+                                            break;
+                                        }
+                                    }
+                                    if(!laterThanFork)    {
+                                        break;
+                                    }
+                                }
+
+                                if(laterThanFork)    {
+                                    dismissed = true;
+                                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_DISMISSED, true);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+
+                }
+
                 if(!dismissed && HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
 
                     String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
                     try {
                         JSONObject statusObj = new JSONObject(status);
-                        /*
                         if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
                                 statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
-                        */
-                        if(true)   {
 
                             isFork = true;
 
