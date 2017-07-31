@@ -1155,6 +1155,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                                 if(obj.getString("subversion").contains("Bitcoin XT") || obj.getString("subversion").contains("Classic") || obj.getString("subversion").contains("BitcoinUnlimited") ||
                                                         obj.getString("subversion").contains("SegWit2x") || obj.getString("subversion").contains("Segwit2x") ||
+                                                        obj.getString("subversion").contains("Bitcoin ABC") ||
                                                         obj.getString("subversion").contains("Satoshi:1.14"))    {
                                                     Toast.makeText(SettingsActivity2.this, R.string.trusted_node_breaks_consensus, Toast.LENGTH_SHORT).show();
                                                 }

@@ -244,7 +244,7 @@ public class PayloadUtil	{
 
         // save optional external storage backup
         // encrypted using passphrase; cannot be used for restored wallets that do not use a passphrase
-        if(SamouraiWallet.getInstance().hasPassphrase(context) && isExternalStorageWritable() && PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true)) {
+        if(SamouraiWallet.getInstance().hasPassphrase(context) && isExternalStorageWritable() && PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true) && HD_WalletFactory.getInstance(context).get() != null) {
 
             final String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             String encrypted = null;
