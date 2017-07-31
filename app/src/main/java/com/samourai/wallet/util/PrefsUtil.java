@@ -36,7 +36,9 @@ public class PrefsUtil {
 	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";
 	public static final String FEE_PROVIDER_SEL = "feeProviderSel";
-	public static final String BCC_REPLAY = "BCCReplay";
+	public static final String BCC_REPLAY0 = "BCCReplay0";
+	public static final String BCC_REPLAY1 = "BCCReplay1";
+	public static final String BCC_REPLAYED = "BCCReplayed";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

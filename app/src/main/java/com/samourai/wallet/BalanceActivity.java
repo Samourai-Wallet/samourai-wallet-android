@@ -146,7 +146,6 @@ public class BalanceActivity extends Activity {
     private PoWTask powTask = null;
     private RBFTask rbfTask = null;
     private CPFPTask cpfpTask = null;
-    private BCCForkTask bccForkTask = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -545,13 +544,6 @@ public class BalanceActivity extends Activity {
                 dlg.show();
             }
 
-        }
-
-        if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime() &&
-                (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, "").length() > 0) &&
-                (bccForkTask == null || bccForkTask.getStatus().equals(AsyncTask.Status.FINISHED)))    {
-            bccForkTask = new BCCForkTask();
-            bccForkTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, "");
         }
 
     }
@@ -1426,11 +1418,7 @@ public class BalanceActivity extends Activity {
         protected String doInBackground(String... params) {
 
             Log.d("BalanceActivity", "doInBackground()");
-/*
-            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-            }
-*/
+
             final boolean notifTx = params[0].equals("1") ? true : false;
             final boolean fetch = params[1].equals("1") ? true : false;
 
@@ -1573,8 +1561,6 @@ public class BalanceActivity extends Activity {
 
             }
 
-//            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-
             return "OK";
         }
 
@@ -1587,6 +1573,8 @@ public class BalanceActivity extends Activity {
                 }
             }
 
+            bccForkThread();
+
         }
 
         @Override
@@ -1598,6 +1586,7 @@ public class BalanceActivity extends Activity {
             }
 
         }
+
     }
 
     private class PoWTask extends AsyncTask<String, Void, String> {
@@ -2411,95 +2400,169 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private class BCCForkTask extends AsyncTask<String, Void, String> {
+    private void bccForkThread()    {
 
-        private Handler handler = null;
-        private boolean isFork = false;
+        final Handler handler = new Handler();
 
-        @Override
-        protected String doInBackground(String... params) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
+                Looper.prepare();
 
-                String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
-                try {
-                    JSONObject statusObj = new JSONObject(status);
-                    if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
-                            statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+                boolean isFork = false;
+                int cf = -1;
 
-                        isFork = true;
+                if(HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
 
-                        String strTxHash = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY, "");
-                        if(strTxHash != null && strTxHash.length() > 0)    {
+                    String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                    try {
+                        JSONObject statusObj = new JSONObject(status);
+                        /*
+                        if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
+                                statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+                        */
+                        if(true)   {
 
-                            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(strTxHash);
-                            final int latestBlockHeight = (int)APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+                            isFork = true;
 
-                            try {
-                                if(txObj != null && txObj.has("block"))    {
-                                    JSONObject blockObj = txObj.getJSONObject("block");
-                                    if(blockObj.has("height") && blockObj.getInt("height") > 0)    {
-                                        int blockHeight = blockObj.getInt("height");
-                                        int cf = (latestBlockHeight - blockHeight) + 1;
-                                        if(cf >= 6)    {
-                                            isFork = false;
+                            String strTxHash = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY1, "");
+                            if(strTxHash != null && strTxHash.length() > 0)    {
+
+                                Log.d("BalanceActivity", "rbf replay hash:" + strTxHash);
+
+                                JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(strTxHash);
+                                final int latestBlockHeight = (int)APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+
+                                Log.d("BalanceActivity", "txObj:" + txObj.toString());
+
+                                try {
+                                    if(txObj != null && txObj.has("block"))    {
+                                        JSONObject blockObj = txObj.getJSONObject("block");
+                                        if(blockObj.has("height") && blockObj.getInt("height") > 0)    {
+                                            int blockHeight = blockObj.getInt("height");
+                                            cf = (latestBlockHeight - blockHeight) + 1;
+                                            Log.d("BalanceActivity", "confirmations (block):" + cf);
+                                            if(cf >= 6)    {
+                                                isFork = false;
+                                            }
                                         }
+
+                                    }
+                                    else if(txObj != null && txObj.has("txid"))    {
+                                        cf = 0;
+                                        Log.d("BalanceActivity", "confirmations (hash):" + cf);
+                                    }
+                                    else    {
+                                        ;
                                     }
 
                                 }
+                                catch(JSONException je) {
+                                    ;
+                                }
 
-                            }
-                            catch(JSONException je) {
-                                ;
                             }
 
                         }
-
                     }
+                    catch(JSONException je) {
+                        ;
+                    }
+
                 }
-                catch(JSONException je) {
-                    ;
+
+                final int COLOR_ORANGE = 0xfffb8c00;
+                final int COLOR_GREEN = 0xff4caf50;
+
+                final boolean bccReplayed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAYED, false);
+                Log.d("BalanceActivity", "bccReplayed:" + bccReplayed);
+                Log.d("BalanceActivity", "confirmations:" + cf);
+
+                if(cf >= 0 && cf < 6)   {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setBackgroundColor(COLOR_ORANGE);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_in_progress));
+                            tvRight.setText(getText(R.string.replay_info));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionActivity.class);
+                                    startActivity(intent);
+                                    return false;
+                                }
+                            });
+                        }
+                    });
                 }
+                else if(cf >= 6 && !bccReplayed)   {
+
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_REPLAYED, true);
+
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setBackgroundColor(COLOR_GREEN);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_protected));
+                            tvRight.setText(getText(R.string.ok));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+                else if(bccReplayed)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setVisibility(View.GONE);
+                        }
+                    });
+                }
+                else if(isFork)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_enable));
+                            tvRight.setText(getText(R.string.replay_info));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionWarningActivity.class);
+                                    startActivity(intent);
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                }
+                else    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setVisibility(View.GONE);
+                        }
+                    });
+                }
+
+                Looper.loop();
 
             }
-
-            if(isFork())    {
-                handler.post(new Runnable() {
-                    public void run() {
-                        layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                        TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
-                        TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
-                        TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
-                        tvLeftTop.setText(getText(R.string.replay_chain_split));
-                        tvLeftBottom.setText(getText(R.string.replay_enable));
-                        tvRight.setText(getText(R.string.replay_info));
-                        layoutAlert.setVisibility(View.VISIBLE);
-                        layoutAlert.setOnTouchListener(new View.OnTouchListener() {
-                            @Override
-                            public boolean onTouch(View v, MotionEvent event) {
-                                Intent intent = new Intent(BalanceActivity.this, ReplayProtectionWarningActivity.class);
-                                startActivity(intent);
-                                return false;
-                            }
-                        });
-                    }
-                });
-
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) { ; }
-
-        @Override
-        protected void onPreExecute() {
-            handler = new Handler();
-        }
-
-//        public boolean isFork() { return isFork; }
-        public boolean isFork() { return true; }
+        }).start();
 
     }
 

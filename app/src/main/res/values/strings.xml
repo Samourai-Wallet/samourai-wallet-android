@@ -384,7 +384,7 @@
     <string name="replay_info">INFO</string>
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Unprotected</string>
-    <string name="replay_in_progress">In progress</string>
+    <string name="replay_in_progress">Replay in progress</string>
     <string name="replay_protected">Protected</string>
     <string name="replay_disclaimer">Chain split detected</string>
     <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
@@ -396,7 +396,11 @@
     <string name="replay_description">Your wallet will send a special transaction to itself that will permanently split your coins from the other chain. This will protect you against replay attacks.</string>
     <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
     <string name="replay_confirmed">confirmed</string>
+    <string name="replay_confirmations">confirmations:</string>
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_launch_completed">Replay protection broadcasts completed</string>
+    <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
 
 </resources>
