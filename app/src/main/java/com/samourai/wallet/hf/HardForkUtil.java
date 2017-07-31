@@ -18,8 +18,7 @@ public class HardForkUtil {
 
     private static Context context = null;
 
-//    private final static long BITCOIN_ABC_FORK_ACTIVATE_TIME = 1501590000L; // Aug 1 2017, 12:20PM
-    private final static long BITCOIN_ABC_FORK_ACTIVATE_TIME = 0L;
+    private final static long BITCOIN_ABC_FORK_ACTIVATE_TIME = 1501590000L; // Aug 1 2017, 12:20PM
 
     private static HardForkUtil instance = null;
 
