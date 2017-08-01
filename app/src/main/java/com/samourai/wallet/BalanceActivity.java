@@ -1701,7 +1701,7 @@ public class BalanceActivity extends Activity {
                         if(obj.has("value"))    {
                             total_outputs += obj.getLong("value");
 
-                            String addr = obj.getString("addr");
+                            String addr = obj.getString("address");
                             Log.d("BalanceActivity", "checking address:" + addr);
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
@@ -2012,7 +2012,7 @@ public class BalanceActivity extends Activity {
                         if(obj.has("value"))    {
                             total_outputs += obj.getLong("value");
 
-                            String _addr = obj.getString("addr");
+                            String _addr = obj.getString("address");
                             selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
                                 total_change += obj.getLong("value");
