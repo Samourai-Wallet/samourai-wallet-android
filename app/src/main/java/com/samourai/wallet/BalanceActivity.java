@@ -2425,6 +2425,7 @@ public class BalanceActivity extends Activity {
                             JSONObject abcObj = forkObj.getJSONObject("forks").getJSONObject("abc");
                             if(abcObj.has("height"))    {
 
+
                                 long height = abcObj.getLong("height");
                                 distance = latestBlockHeight - height;
 
@@ -2462,10 +2463,13 @@ public class BalanceActivity extends Activity {
                 if(!dismissed && HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
 
                     String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                    Log.d("BalanceActivity", status);
                     try {
                         JSONObject statusObj = new JSONObject(status);
                         if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
-                                statusObj.has("abc") && statusObj.getJSONObject("abc").has("replay") && statusObj.getJSONObject("abc").getBoolean("replay") == true)   {
+                                statusObj.has("clients") && statusObj.getJSONObject("clients").has("abc") &&
+                                statusObj.getJSONObject("clients").getJSONObject("abc").has("replay") &&
+                                statusObj.getJSONObject("clients").getJSONObject("abc").getBoolean("replay") == true)   {
 
                             isFork = true;
 
@@ -2519,8 +2523,6 @@ public class BalanceActivity extends Activity {
                 final int COLOR_GREEN = 0xff4caf50;
 
                 final boolean bccReplayed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAYED, false);
-                Log.d("BalanceActivity", "bccReplayed:" + bccReplayed);
-                Log.d("BalanceActivity", "confirmations:" + cf);
 
                 if(cf >= 0 && cf < 6)   {
                     handler.post(new Runnable() {

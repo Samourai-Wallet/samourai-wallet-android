@@ -43,7 +43,9 @@ public class HardForkUtil {
 
         Date date = new Date();
 
-        if(date.getTime() >= BITCOIN_ABC_FORK_ACTIVATE_TIME)    {
+        Log.d("HardForkUtil", "time:" + date.getTime() / 1000L);
+
+        if((date.getTime() / 1000L) >= BITCOIN_ABC_FORK_ACTIVATE_TIME)    {
             return true;
         }
 
