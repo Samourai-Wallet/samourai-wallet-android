@@ -22,7 +22,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 
-// openssl s_client -showcerts -connect blockchain.info:443
+// openssl s_client -showcerts -connect samourai.io:443
 
 public class SSLVerifierUtil {
 
