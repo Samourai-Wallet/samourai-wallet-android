@@ -327,68 +327,6 @@ public class APIFactory	{
         return latest_block_hash;
     }
 
-/*
-    public JSONObject getNotifAddress(String addr) {
-
-        JSONObject jsonObject  = null;
-
-        try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-            url.append("multiaddr?active=");
-            url.append(addr);
-//            Log.i("APIFactory", "Notif address:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
-            try {
-                jsonObject = new JSONObject(response);
-                parseNotifAddress(jsonObject, addr);
-            }
-            catch(JSONException je) {
-                je.printStackTrace();
-                jsonObject = null;
-            }
-        }
-        catch(Exception e) {
-            jsonObject = null;
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-    public void parseNotifAddress(JSONObject jsonObject, String addr) throws JSONException  {
-
-        if(jsonObject != null)  {
-
-            if(jsonObject.has("txs"))  {
-
-                JSONArray txArray = (JSONArray)jsonObject.get("txs");
-                JSONObject txObj = null;
-                for(int i = 0; i < txArray.length(); i++)  {
-                    txObj = (JSONObject)txArray.get(i);
-
-                    if(!txObj.has("block_height"))    {
-                        return;
-                    }
-
-                    String hash = null;
-
-                    if(txObj.has("hash"))  {
-                        hash = (String)txObj.get("hash");
-                        if(BIP47Meta.getInstance().getIncomingStatus(hash) == null)    {
-                            getNotifTx(hash, addr);
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-*/
-
     public JSONObject getNotifTx(String hash, String addr) {
 
         JSONObject jsonObject  = null;
@@ -773,23 +711,8 @@ public class APIFactory	{
 
     public synchronized JSONObject getAddressInfo(String addr) {
 
-        JSONObject jsonObject  = null;
+        return getXPUB(new String[] { addr });
 
-        try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-            url.append("address/");
-            url.append(addr);
-            url.append("?format=json");
-
-            String response = WebUtil.getInstance(context).getURL(url.toString());
-            jsonObject = new JSONObject(response);
-        }
-        catch(Exception e) {
-            jsonObject = null;
-            e.printStackTrace();
-        }
-
-        return jsonObject;
     }
 
     public synchronized JSONObject getTxInfo(String hash) {
@@ -1107,19 +1030,10 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
-        JSONObject jsonObject = null;
+        JSONObject jsonObject = getXPUB(addresses);
         int ret = 0;
 
-//        StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
-        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-        url.append("multiaddr?active=");
-        url.append(StringUtils.join(addresses, URLEncoder.encode("|")));
-
         try {
-//            Log.i("APIFactory", "BIP47 multiaddr:" + url.toString());
-            String response = WebUtil.getInstance(context).getURL(url.toString());
-//            Log.i("APIFactory", "BIP47 multiaddr:" + response);
-            jsonObject = new JSONObject(response);
 
             if(jsonObject != null)  {
 
@@ -1171,19 +1085,10 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Outgoing(String[] addresses) {
 
-        JSONObject jsonObject  = null;
+        JSONObject jsonObject = getXPUB(addresses);
         int ret = 0;
 
-//        StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
-        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-        url.append("multiaddr?active=");
-        url.append(StringUtils.join(addresses, URLEncoder.encode("|")));
-
         try {
-//            Log.i("APIFactory", "BIP47 multiaddr:" + url.toString());
-            String response = WebUtil.getInstance(context).getURL(url.toString());
-//            Log.i("APIFactory", "BIP47 multiaddr:" + response);
-            jsonObject = new JSONObject(response);
 
             if(jsonObject != null)  {
 
