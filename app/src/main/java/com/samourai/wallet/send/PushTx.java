@@ -48,18 +48,6 @@ public class PushTx {
 
     }
 
-    public String blockchain(String hexString) {
-
-        try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexString);
-            return response;
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-    }
-
     public String samourai(String hexString) {
 
         try {

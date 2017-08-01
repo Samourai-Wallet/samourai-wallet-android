@@ -29,9 +29,6 @@ import info.guardianproject.netcipher.client.StrongHttpsClient;
 
 public class WebUtil	{
 
-    public static final String BLOCKCHAIN_DOMAIN = "https://blockchain.info/";
-    public static final String BLOCKCHAIN_DOMAIN_TOR = "https://blockchainbdgpzk.onion/";
-
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
     public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
