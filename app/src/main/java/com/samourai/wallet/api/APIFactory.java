@@ -723,7 +723,7 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
             url.append("tx/");
             url.append(hash);
-            url.append("?fees=1");
+            url.append("?fees=true");
 
             String response = WebUtil.getInstance(context).getURL(url.toString());
             jsonObject = new JSONObject(response);
