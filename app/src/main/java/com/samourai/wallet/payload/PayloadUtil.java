@@ -200,6 +200,8 @@ public class PayloadUtil	{
             */
 
             JSONObject meta = new JSONObject();
+            meta.put("version_name", context.getText(R.string.version_name));
+
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
