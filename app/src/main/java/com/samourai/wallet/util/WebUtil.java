@@ -41,10 +41,6 @@ public class WebUtil	{
     public static final String _21CO_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
     public static final String BITCOIND_FEE_URL = "https://api.samourai.io/v2/fees";
 
-    public static final String CHAINSO_TX_PREV_OUT_URL = "https://chain.so/api/v2/tx/BTC/";
-    public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
-    public static final String CHAINSO_GET_RECEIVE_TX_URL = "https://chain.so/api/v2/get_tx_received/BTC/";
-
     public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";
 
     public static final String PAYMENTCODE_IO_SEARCH = "https://paymentcode.io/api/v1/search/";
