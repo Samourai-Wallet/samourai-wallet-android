@@ -559,7 +559,7 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.CHAINSO_TX_PREV_OUT_URL);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
             url.append(hash);
 //            Log.i("APIFactory", "Notif tx:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
@@ -579,32 +579,22 @@ public class APIFactory	{
 
     public synchronized int parseNotifTx(JSONObject jsonObject) throws JSONException  {
 
-        if(jsonObject != null)  {
+        int cf = 0;
 
-            if(jsonObject.has("data"))  {
+        if(jsonObject != null && jsonObject.has("block") && jsonObject.getJSONObject("block").has("height"))  {
 
-                JSONObject data = jsonObject.getJSONObject("data");
+            long latestBlockHeght = getLatestBlockHeight();
+            long height = jsonObject.getJSONObject("block").getLong("height");
 
-                if(data.has("confirmations"))    {
-//                    Log.i("APIFactory", "returning notif tx confirmations:" + data.getInt("confirmations"));
-                    return data.getInt("confirmations");
-                }
-                else    {
-//                    Log.i("APIFactory", "returning 0 notif tx confirmations");
-                    return 0;
-                }
+            cf = (int)((latestBlockHeght - height) + 1);
 
-            }
-            else if(jsonObject.has("status") && jsonObject.getString("status").equals("fail"))   {
-                return -1;
-            }
-            else    {
-                ;
+            if(cf < 0)    {
+                cf = 0;
             }
 
         }
 
-        return 0;
+        return cf;
     }
 
     public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
