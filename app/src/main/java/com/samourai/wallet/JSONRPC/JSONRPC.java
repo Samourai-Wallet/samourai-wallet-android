@@ -32,6 +32,7 @@ public class JSONRPC {
     private static final String COMMAND_PUSHTX = "sendrawtransaction";
     private static final String COMMAND_GET_BLOCK = "getblock";
     private static final String COMMAND_GET_BLOCKHEADER = "getblockheader";
+    private static final String COMMAND_GET_FEE_ESTIMATE = "estimatefee";
 
     private String user = null;
     private CharSequenceX password = null;
@@ -151,6 +152,23 @@ public class JSONRPC {
             catch(JSONException je) {
                 return null;
             }
+        }
+    }
+
+    public JSONObject getFeeEstimate(int nbBlocks) {
+        JSONArray array = new JSONArray();
+        array.put(nbBlocks);
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_FEE_ESTIMATE, array);
+        if(json == null)    {
+            return null;
+        }
+        try {
+            JSONObject retObj = new JSONObject();
+            retObj.put("result", json.getDouble("result"));
+            return retObj;
+        }
+        catch(JSONException je) {
+            return null;
         }
     }
 
