@@ -1,7 +1,6 @@
 package com.samourai.wallet.access;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -123,16 +122,16 @@ public class AccessFactory	{
 	}
 
     public String getGUID()    {
-        if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 3)    {
-            Log.i("AccessFactory", "get guid v3:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
+        if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 4)    {
+            return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprintV4();
+        }
+        else if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 3)    {
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprintV3();
         }
         else if(PrefsUtil.getInstance(context).has(PrefsUtil.GUID_V) && PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID_V, 0) == 2)    {
-            Log.i("AccessFactory", "get guid v2:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "") + FootprintUtil.getInstance(context).getFootprint();
         }
         else    {
-//            Log.i("AccessFactory", "get guid v1:" + PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, ""));
             return PrefsUtil.getInstance(context).getValue(PrefsUtil.GUID, "");
         }
     }
@@ -140,10 +139,10 @@ public class AccessFactory	{
     public String createGUID()    {
         String guid = UUID.randomUUID().toString();
         PrefsUtil.getInstance(context).setValue(PrefsUtil.GUID, guid);
-        PrefsUtil.getInstance(context).setValue(PrefsUtil.GUID_V, 3);
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.GUID_V, 4);
 //        Log.i("AccessFactory", "create guid:" + guid);
 
-        return guid + FootprintUtil.getInstance(context).getFootprintV3();
+        return guid + FootprintUtil.getInstance(context).getFootprintV4();
     }
 
 }

@@ -26,15 +26,14 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.api.TxAuxUtil;
 import com.samourai.wallet.util.TorUtil;
 
 import org.apache.commons.codec.DecoderException;
 
+import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
@@ -183,6 +182,16 @@ public class PayloadUtil	{
             wallet.put("accounts", accts);
 
             //
+            // export BIP47 payment code for debug payload
+            //
+            try {
+                wallet.put("payment_code", BIP47Util.getInstance(context).getPaymentCode().toString());
+            }
+            catch(AddressFormatException afe) {
+                ;
+            }
+
+            //
             // can remove ???
             //
             /*
@@ -191,6 +200,8 @@ public class PayloadUtil	{
             */
 
             JSONObject meta = new JSONObject();
+            meta.put("version_name", context.getText(R.string.version_name));
+
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
@@ -200,8 +211,6 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
-            meta.put("receives", ReceiveLookAtUtil.getInstance().toJSON());
-            meta.put("tx_aux", TxAuxUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
 
@@ -218,6 +227,10 @@ public class PayloadUtil	{
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
+            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
+            meta.put("bcc_replay0", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY0, ""));
+            meta.put("bcc_replay1", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY1, ""));
+            meta.put("bcc_replayed", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAYED, false));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -360,12 +373,6 @@ public class PayloadUtil	{
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
                 }
-                if(meta.has("receives")) {
-                    ReceiveLookAtUtil.getInstance().fromJSON((JSONArray) meta.get("receives"));
-                }
-                if(meta.has("tx_aux")) {
-                    TxAuxUtil.getInstance().fromJSON((JSONObject) meta.get("tx_aux"));
-                }
                 if(meta.has("rbfs")) {
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
@@ -427,6 +434,18 @@ public class PayloadUtil	{
                 }
                 if(meta.has("use_trusted_node")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
+                }
+                if(meta.has("fee_provider_sel")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel"));
+                }
+                if(meta.has("bcc_replay0")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY0, meta.getString("bcc_replay0"));
+                }
+                if(meta.has("bcc_replay1")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY1, meta.getString("bcc_replay1"));
+                }
+                if(meta.has("bcc_replayed")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAYED, meta.getBoolean("bcc_replayed"));
                 }
 
                 /*

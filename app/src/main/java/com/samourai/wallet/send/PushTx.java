@@ -8,10 +8,13 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class PushTx {
 
@@ -45,22 +48,20 @@ public class PushTx {
 
     }
 
-    public String blockchain(String hexString) {
-
-        try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexString);
-            return response;
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-    }
-
     public String samourai(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
+            String response = null;
+
+            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("tx", hexString);
+                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API + "v1/pushtx", args);
+            }
+
             return response;
         }
         catch(Exception e) {

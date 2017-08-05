@@ -11,6 +11,7 @@ public class PrefsUtil {
 	public static final String GUID_V = "guid_version";
 	public static final String ACCESS_HASH = "accessHash";
 	public static final String ACCESS_HASH2 = "accessHash2";
+	public static final String FP = "fp";
 	public static final String CREDS_CHECK = "credsCheck";
 	public static final String BTC_UNITS = "btcUnits";
 	public static final String ICON_HIDDEN = "iconHidden";
@@ -34,6 +35,11 @@ public class PrefsUtil {
 	public static final String TRUSTED_NODE = "trustedNode";
 	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";
+	public static final String FEE_PROVIDER_SEL = "feeProviderSel";
+	public static final String BCC_REPLAY0 = "BCCReplay0";
+	public static final String BCC_REPLAY1 = "BCCReplay1";
+	public static final String BCC_REPLAYED = "BCCReplayed";
+	public static final String BCC_DISMISSED = "BCCDismiss";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

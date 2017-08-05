@@ -48,10 +48,12 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -183,6 +185,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
                         }
 
+                        return true;
+                    }
+                });
+
+                Preference feeproviderPref = (Preference) findPreference("feeProvider");
+                feeproviderPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getFeeProvider();
                         return true;
                     }
                 });
@@ -1011,7 +1021,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
-                                if(which == 2)    {
+                                if(which == 1)    {
                                     PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
                                     PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
                                     dialog.dismiss();
@@ -1055,6 +1065,39 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, selectedCurrency);
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, which);
                                 dialog.dismiss();
+                            }
+                        }
+                ).show();
+
+    }
+
+    private void getFeeProvider()	{
+
+        final String[] providers = FeeUtil.getInstance().getProviders();
+        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.options_fee_provider)
+                .setSingleChoiceItems(providers, sel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, which);
+
+                                if(which != sel)    {
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            APIFactory.getInstance(SettingsActivity2.this).getDynamicFees();
+
+                                        }
+                                    }).start();
+
+                                }
+
+                                dialog.dismiss();
+
                             }
                         }
                 ).show();

@@ -41,7 +41,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -529,8 +528,6 @@ public class ReceiveActivity extends Activity {
 
         tvAddress.setText(addr);
         checkPrevUse();
-
-        ReceiveLookAtUtil.getInstance().add(addr);
 
         new Thread(new Runnable() {
             @Override

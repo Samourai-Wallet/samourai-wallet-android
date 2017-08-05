@@ -29,20 +29,17 @@ import info.guardianproject.netcipher.client.StrongHttpsClient;
 
 public class WebUtil	{
 
-    public static final String BLOCKCHAIN_DOMAIN = "https://blockchain.info/";
-    public static final String BLOCKCHAIN_DOMAIN_TOR = "https://blockchainbdgpzk.onion/";
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
-    public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/v1/status";
+    public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
+    public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
-    public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
+//    public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
 
-    //    public static final String DYNAMIC_FEE_URL = "https://api.blockchain.info/fees";
-    public static final String DYNAMIC_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
-
-    public static final String BTCX_FEE_URL = "http://bitcoinexchangerate.org/fees";
+    public static final String _21CO_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
+    public static final String BITCOIND_FEE_URL = "https://api.samourai.io/v2/fees";
 
     public static final String CHAINSO_TX_PREV_OUT_URL = "https://chain.so/api/v2/tx/BTC/";
     public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
@@ -58,10 +55,11 @@ public class WebUtil	{
     private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
     private static final String strProxyIP = "127.0.0.1";
     private static final int proxyPort = 9050;
-    /* HTTP Proxy:
+
+    /*
     private static final String strProxyType = StrongHttpsClient.TYPE_HTTP;
     private static final String strProxyIP = "127.0.0.1";
-    private static final int strProxyPort = 8118;
+    private static final int proxyPort = 8118;
     */
 
     private static WebUtil instance = null;
@@ -113,7 +111,7 @@ public class WebUtil	{
 
         for (int ii = 0; ii < DefaultRequestRetry; ++ii) {
             URL url = new URL(request);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             try {
                 connection.setDoOutput(true);
                 connection.setDoInput(true);
@@ -132,7 +130,7 @@ public class WebUtil	{
 
                 connection.connect();
 
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream ());
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
                 wr.writeBytes(urlParameters);
                 wr.flush();
                 wr.close();
@@ -214,10 +212,6 @@ public class WebUtil	{
 
     private String tor_getURL(String URL) throws Exception {
 
-        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
-            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
-        }
-
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
         httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
@@ -249,13 +243,7 @@ public class WebUtil	{
 
     }
 
-    private String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
-
-        Log.d("WebUtil", URL);
-
-        if(URL.startsWith(WebUtil.BLOCKCHAIN_DOMAIN))    {
-            URL = WebUtil.BLOCKCHAIN_DOMAIN_TOR + URL.substring(WebUtil.BLOCKCHAIN_DOMAIN.length());
-        }
+    public String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
 
         StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
 
@@ -265,7 +253,6 @@ public class WebUtil	{
         httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
         httppost.setHeader("charset", "utf-8");
         httppost.setHeader("Accept", "application/json");
-//        httppost.setHeader("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
         httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
 
         if(args != null)    {

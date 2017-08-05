@@ -124,8 +124,11 @@ public class RicochetActivity extends Activity {
                         String txHash = jHop.getString("hash");
 
                         JSONObject txObj = APIFactory.getInstance(RicochetActivity.this).getTxInfo(txHash);
-                        if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
-                            hasConfirmation = true;
+                        if(txObj != null && txObj.has("block"))    {
+                            JSONObject blockObj = txObj.getJSONObject("block");
+                            if(blockObj != null && blockObj.has("height") && blockObj.getInt("height") > 0)    {
+                                hasConfirmation = true;
+                            }
                         }
                         else if(txObj != null)    {
                             txSeen = true;

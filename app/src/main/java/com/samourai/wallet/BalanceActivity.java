@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,11 +40,9 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.ScriptException;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.BIP38PrivateKey;
@@ -66,6 +64,9 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.hf.HardForkUtil;
+import com.samourai.wallet.hf.ReplayProtectionActivity;
+import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
@@ -87,11 +88,9 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
-import com.samourai.wallet.util.WebUtil;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.crypto.TransactionSignature;
@@ -123,6 +122,8 @@ public class BalanceActivity extends Activity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
+
+    private LinearLayout layoutAlert = null;
 
     private LinearLayout tvBalanceBar = null;
     private TextView tvBalanceAmount = null;
@@ -176,7 +177,7 @@ public class BalanceActivity extends Activity {
                     public void run() {
                         tvBalanceAmount.setText("");
                         tvBalanceUnits.setText("");
-                        refreshTx(notifTx, fetch, false);
+                        refreshTx(notifTx, fetch, false, false);
 
                         if(BalanceActivity.this != null)    {
 
@@ -478,7 +479,7 @@ public class BalanceActivity extends Activity {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        refreshTx(false, true, true);
+                        refreshTx(false, true, true, false);
                     }
                 });
 
@@ -495,7 +496,7 @@ public class BalanceActivity extends Activity {
 //        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
-        refreshTx(false, true, false);
+        refreshTx(false, true, false, true);
 
         //
         // user checks mnemonic & passphrase
@@ -607,6 +608,7 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
+        menu.findItem(R.id.action_fees).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -627,9 +629,6 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_utxo) {
             doUTXO();
-        }
-        else if (id == R.id.action_fees) {
-            doFees();
         }
         else if (id == R.id.action_tor) {
 
@@ -704,97 +703,7 @@ public class BalanceActivity extends Activity {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
-                PrivKeyReader privKeyReader = null;
-
-                String format = null;
-                try	{
-                    privKeyReader = new PrivKeyReader(new CharSequenceX(strResult), null);
-                    format = privKeyReader.getFormat();
-                }
-                catch(Exception e)	{
-                    Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if(format != null)	{
-
-                    if(format.equals(PrivKeyReader.BIP38))	{
-
-                        final PrivKeyReader pvr = privKeyReader;
-
-                        final EditText password38 = new EditText(BalanceActivity.this);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.bip38_pw)
-                                .setView(password38)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        String password = password38.getText().toString();
-
-                                        ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
-                                        progress.setCancelable(false);
-                                        progress.setTitle(R.string.app_name);
-                                        progress.setMessage(getString(R.string.decrypting_bip38));
-                                        progress.show();
-
-                                        boolean keyDecoded = false;
-
-                                        try {
-                                            BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), strResult);
-                                            final ECKey ecKey = bip38.decrypt(password);
-                                            if(ecKey != null && ecKey.hasPrivKey()) {
-
-                                                if(progress != null && progress.isShowing())    {
-                                                    progress.cancel();
-                                                }
-
-                                                pvr.setPassword(new CharSequenceX(password));
-                                                keyDecoded = true;
-
-                                                Toast.makeText(BalanceActivity.this, pvr.getFormat(), Toast.LENGTH_SHORT).show();
-                                                Toast.makeText(BalanceActivity.this, pvr.getKey().toAddress(MainNetParams.get()).toString(), Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        }
-                                        catch(Exception e) {
-                                            e.printStackTrace();
-                                            Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        if(progress != null && progress.isShowing())    {
-                                            progress.cancel();
-                                        }
-
-                                        if(keyDecoded)    {
-//                                            doSweep(pvr);
-                                            SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
-                                        }
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
-
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
-                    else if(privKeyReader != null)	{
-//                        doSweep(privKeyReader);
-                        SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
-                    }
-                    else    {
-                        ;
-                    }
-
-                }
+                doPrivKey(strResult);
 
             }
         }
@@ -875,12 +784,6 @@ public class BalanceActivity extends Activity {
         return false;
     }
 
-    private void doScan() {
-        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-        startActivityForResult(intent, SCAN_QR);
-    }
-
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
@@ -892,28 +795,62 @@ public class BalanceActivity extends Activity {
         startActivity(intent);
     }
 
-    private void doFees()	{
+    private void doScan() {
+        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_QR);
+    }
 
-        SuggestedFee highFee = FeeUtil.getInstance().getHighFee();
-        SuggestedFee normalFee = FeeUtil.getInstance().getNormalFee();
-        SuggestedFee lowFee = FeeUtil.getInstance().getLowFee();
+    private void doSweepViaScan()	{
+        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_COLD_STORAGE);
+    }
 
-        String message = getText(R.string.current_fee_selection) + " " + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_hi_fee_value) + " " + (highFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_mid_fee_value) + " " + (normalFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
-        message += "\n";
-        message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
+    private void doSweep()   {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
-                .setMessage(message)
+                .setMessage(R.string.action_sweep)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.enter_privkey, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        dialog.dismiss();
+                        final EditText privkey = new EditText(BalanceActivity.this);
+                        privkey.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.enter_privkey)
+                                .setView(privkey)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        final String strPrivKey = privkey.getText().toString();
+
+                                        if(strPrivKey != null && strPrivKey.length() > 0)    {
+                                            doPrivKey(strPrivKey);
+                                        }
+
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+
+                }).setNegativeButton(R.string.scan, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        doSweepViaScan();
 
                     }
                 });
@@ -923,114 +860,103 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void doSweep()	{
-        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
-        startActivityForResult(intent, SCAN_COLD_STORAGE);
-    }
-/*
-    private void doSweep(final PrivKeyReader privKeyReader)  {
+    private void doPrivKey(final String data) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        PrivKeyReader privKeyReader = null;
 
-                Looper.prepare();
+        String format = null;
+        try	{
+            privKeyReader = new PrivKeyReader(new CharSequenceX(data), null);
+            format = privKeyReader.getFormat();
+        }
+        catch(Exception e)	{
+            Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                try {
+        if(format != null)	{
 
-                    if(privKeyReader == null || privKeyReader.getKey() == null || !privKeyReader.getKey().hasPrivKey())    {
-                        Toast.makeText(BalanceActivity.this, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            if(format.equals(PrivKeyReader.BIP38))	{
 
-                    String address = privKeyReader.getKey().toAddress(MainNetParams.get()).toString();
-                    UTXO utxo = APIFactory.getInstance(BalanceActivity.this).getUnspentOutputsForSweep(address);
-                    if(utxo != null)    {
+                final PrivKeyReader pvr = privKeyReader;
 
-                        long total_value = 0L;
-                        final List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
-                        for(MyTransactionOutPoint outpoint : outpoints)   {
-                            total_value += outpoint.getValue().longValue();
-                        }
+                final EditText password38 = new EditText(BalanceActivity.this);
 
-                        final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
+                AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.bip38_pw)
+                        .setView(password38)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                        final long amount = total_value - fee.longValue();
-//                        Log.d("BalanceActivity", "Total value:" + total_value);
-//                        Log.d("BalanceActivity", "Amount:" + amount);
-//                        Log.d("BalanceActivity", "Fee:" + fee.toString());
+                                String password = password38.getText().toString();
 
-                        String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BalanceActivity.this);
-                        builder.setTitle(R.string.app_name);
-                        builder.setMessage(message);
-                        builder.setCancelable(false);
-                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
-
-                                final ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
+                                ProgressDialog progress = new ProgressDialog(BalanceActivity.this);
                                 progress.setCancelable(false);
                                 progress.setTitle(R.string.app_name);
-                                progress.setMessage(getString(R.string.please_wait_sending));
+                                progress.setMessage(getString(R.string.decrypting_bip38));
                                 progress.show();
 
-                                String receive_address = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-                                final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
-                                receivers.put(receive_address, BigInteger.valueOf(amount));
-                                org.bitcoinj.core.Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outpoints, receivers);
-
-                                tx = SendFactory.getInstance(BalanceActivity.this).signTransactionForSweep(tx, privKeyReader);
-                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-//                                Log.d("BalanceActivity", hexTx);
+                                boolean keyDecoded = false;
 
                                 try {
-                                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-                                    Log.d("BalanceActivity", "pushTx:" + response);
-                                    if(response.contains("Transaction Submitted"))    {
-                                        Toast.makeText(BalanceActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                    }
-                                    else    {
-                                        Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                    BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), data);
+                                    final ECKey ecKey = bip38.decrypt(password);
+                                    if(ecKey != null && ecKey.hasPrivKey()) {
+
+                                        if(progress != null && progress.isShowing())    {
+                                            progress.cancel();
+                                        }
+
+                                        pvr.setPassword(new CharSequenceX(password));
+                                        keyDecoded = true;
+
+                                        Toast.makeText(BalanceActivity.this, pvr.getFormat(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(BalanceActivity.this, pvr.getKey().toAddress(MainNetParams.get()).toString(), Toast.LENGTH_SHORT).show();
+
                                     }
                                 }
                                 catch(Exception e) {
-                                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                    Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
                                 }
 
                                 if(progress != null && progress.isShowing())    {
-                                    progress.dismiss();
+                                    progress.cancel();
+                                }
+
+                                if(keyDecoded)    {
+                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
                                 }
 
                             }
-                        });
-                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
-                                ;
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                Toast.makeText(BalanceActivity.this, R.string.bip38_pw_error, Toast.LENGTH_SHORT).show();
+
                             }
                         });
-
-                        AlertDialog alert = builder.create();
-                        alert.show();
-
-                    }
-                    else    {
-                        Toast.makeText(BalanceActivity.this, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
-                    }
-
+                if(!isFinishing())    {
+                    dlg.show();
                 }
-                catch(Exception e) {
-                    Toast.makeText(BalanceActivity.this, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
-                }
-
-                Looper.loop();
 
             }
-        }).start();
+            else if(privKeyReader != null)	{
+                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
+            }
+            else    {
+                ;
+            }
+
+        }
+        else    {
+            Toast.makeText(BalanceActivity.this, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
+        }
 
     }
-*/
+
     private void doBackup() {
 
         try {
@@ -1272,10 +1198,10 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged) {
+    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged, final boolean launch) {
 
         if(refreshTask == null || refreshTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-            refreshTask = new RefreshTask(dragged);
+            refreshTask = new RefreshTask(dragged, launch);
             refreshTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
         }
 
@@ -1456,12 +1382,14 @@ public class BalanceActivity extends Activity {
         private ProgressDialog progress = null;
         private Handler handler = null;
         private boolean dragged = false;
+        private boolean launch = false;
 
-        public RefreshTask(boolean dragged) {
+        public RefreshTask(boolean dragged, boolean launch) {
             super();
             Log.d("BalanceActivity", "RefreshTask, dragged==" + dragged);
             handler = new Handler();
             this.dragged = dragged;
+            this.launch = launch;
         }
 
         @Override
@@ -1600,6 +1528,39 @@ public class BalanceActivity extends Activity {
                 LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
             }
 
+            if(!dragged)    {
+
+                if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
+                    Log.i("BalanceActivity", "guid_v < 4");
+                    try {
+                        String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
+                        String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(_guid + AccessFactory.getInstance().getPIN()));
+
+                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
+                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
+
+                        Log.i("BalanceActivity", "guid_v == 4");
+                    }
+                    catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
+                        ;
+                    }
+                }
+                else if(!launch)    {
+                    try {
+                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                    }
+                    catch(Exception e) {
+
+                    }
+                }
+                else    {
+                    ;
+                }
+
+            }
+
             return "OK";
         }
 
@@ -1612,6 +1573,8 @@ public class BalanceActivity extends Activity {
                 }
             }
 
+            bccForkThread();
+
         }
 
         @Override
@@ -1623,6 +1586,7 @@ public class BalanceActivity extends Activity {
             }
 
         }
+
     }
 
     private class PoWTask extends AsyncTask<String, Void, String> {
@@ -1636,14 +1600,19 @@ public class BalanceActivity extends Activity {
             strBlockHash = params[0];
 
             JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            JSONObject jsonObj = jsonrpc.getBlock(strBlockHash);
-            if(jsonObj != null && jsonObj.has("hash"))    {
+            JSONObject nodeObj = jsonrpc.getBlockHeader(strBlockHash);
+            if(nodeObj != null && nodeObj.has("hash"))    {
                 PoW pow = new PoW(strBlockHash);
-                String hash = pow.calcHash(jsonObj);
+                String hash = pow.calcHash(nodeObj);
                 if(hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase()))    {
-                    if(!pow.check(jsonObj, hash))    {
-                        isOK = false;
+
+                    JSONObject headerObj = APIFactory.getInstance(BalanceActivity.this).getBlockHeader(strBlockHash);
+                    if(headerObj != null && headerObj.has(""))    {
+                        if(!pow.check(headerObj, nodeObj, hash))    {
+                            isOK = false;
+                        }
                     }
+
                 }
                 else    {
                     isOK = false;
@@ -1700,13 +1669,13 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "hash:" + params[0]);
 
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
-            if(txObj.has("inputs") && txObj.has("out"))    {
+            if(txObj.has("inputs") && txObj.has("outputs"))    {
 
                 final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
 
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
-                    JSONArray outputs = txObj.getJSONArray("out");
+                    JSONArray outputs = txObj.getJSONArray("outputs");
 
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                     BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
@@ -1719,8 +1688,8 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("prev_out"))    {
-                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                        if(obj.has("outpoint"))    {
+                            JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
                             }
@@ -1732,7 +1701,7 @@ public class BalanceActivity extends Activity {
                         if(obj.has("value"))    {
                             total_outputs += obj.getLong("value");
 
-                            String addr = obj.getString("addr");
+                            String addr = obj.getString("address");
                             Log.d("BalanceActivity", "checking address:" + addr);
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
@@ -1832,8 +1801,6 @@ public class BalanceActivity extends Activity {
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                ReceiveLookAtUtil.getInstance().add(ownReceiveAddr);
 
                                                 if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                                                     stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
@@ -2015,10 +1982,10 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
             Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
-            if(tx != null && txObj.has("inputs") && txObj.has("out"))    {
+            if(tx != null && txObj.has("inputs") && txObj.has("outputs"))    {
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
-                    JSONArray outputs = txObj.getJSONArray("out");
+                    JSONArray outputs = txObj.getJSONArray("outputs");
 
                     SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
@@ -2032,8 +1999,8 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("prev_out"))    {
-                            JSONObject objPrev = obj.getJSONObject("prev_out");
+                        if(obj.has("outpoint"))    {
+                            JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
                             }
@@ -2045,7 +2012,7 @@ public class BalanceActivity extends Activity {
                         if(obj.has("value"))    {
                             total_outputs += obj.getLong("value");
 
-                            String _addr = obj.getString("addr");
+                            String _addr = obj.getString("address");
                             selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
                                 total_change += obj.getLong("value");
@@ -2098,7 +2065,7 @@ public class BalanceActivity extends Activity {
                     List<TransactionInput> txInputs = tx.getInputs();
                     for(TransactionInput input : txInputs) {
                         MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
-                        _input.setSequenceNumber(1L);
+                        _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
                         _inputs.add(_input);
                         Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
                     }
@@ -2217,7 +2184,7 @@ public class BalanceActivity extends Activity {
                             for(MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
 
                                 MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
-                                _input.setSequenceNumber(1L);
+                                _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
                                 _inputs.add(_input);
                                 Log.d("BalanceActivity", "add selected outpoint:" + _input.getOutpoint().toString());
 
@@ -2430,6 +2397,217 @@ public class BalanceActivity extends Activity {
 
             return tx;
         }
+
+    }
+
+    private void bccForkThread()    {
+
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                boolean isFork = false;
+                int cf = -1;
+                boolean dismissed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_DISMISSED, false);
+
+                if(!dismissed)    {
+                    long latestBlockHeight = APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+                    long distance = 0L;
+
+                    String strForkStatus = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                    try {
+                        JSONObject forkObj = new JSONObject(strForkStatus);
+                        if(forkObj != null && forkObj.has("forks") && forkObj.getJSONObject("forks").has("abc"))    {
+                            JSONObject abcObj = forkObj.getJSONObject("forks").getJSONObject("abc");
+                            if(abcObj.has("height"))    {
+
+
+                                long height = abcObj.getLong("height");
+                                distance = latestBlockHeight - height;
+
+                                boolean laterThanFork = true;
+                                List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+                                for(UTXO utxo : utxos)   {
+                                    List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                                    for(MyTransactionOutPoint outpoint : outpoints)   {
+                                        if(outpoint.getConfirmations() >= distance)    {
+                                            laterThanFork = false;
+                                            break;
+                                        }
+                                    }
+                                    if(!laterThanFork)    {
+                                        break;
+                                    }
+                                }
+
+                                if(laterThanFork)    {
+                                    dismissed = true;
+                                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_DISMISSED, true);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+
+                }
+
+                if(!dismissed && HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
+
+                    String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
+                    Log.d("BalanceActivity", status);
+                    try {
+                        JSONObject statusObj = new JSONObject(status);
+                        if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
+                                statusObj.has("clients") && statusObj.getJSONObject("clients").has("abc") &&
+                                statusObj.getJSONObject("clients").getJSONObject("abc").has("replay") &&
+                                statusObj.getJSONObject("clients").getJSONObject("abc").getBoolean("replay") == true)   {
+
+                            isFork = true;
+
+                            String strTxHash = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY1, "");
+                            if(strTxHash != null && strTxHash.length() > 0)    {
+
+                                Log.d("BalanceActivity", "rbf replay hash:" + strTxHash);
+
+                                JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(strTxHash);
+                                final int latestBlockHeight = (int)APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
+
+                                Log.d("BalanceActivity", "txObj:" + txObj.toString());
+
+                                try {
+                                    if(txObj != null && txObj.has("block"))    {
+                                        JSONObject blockObj = txObj.getJSONObject("block");
+                                        if(blockObj.has("height") && blockObj.getInt("height") > 0)    {
+                                            int blockHeight = blockObj.getInt("height");
+                                            cf = (latestBlockHeight - blockHeight) + 1;
+                                            Log.d("BalanceActivity", "confirmations (block):" + cf);
+                                            if(cf >= 6)    {
+                                                isFork = false;
+                                            }
+                                        }
+
+                                    }
+                                    else if(txObj != null && txObj.has("txid"))    {
+                                        cf = 0;
+                                        Log.d("BalanceActivity", "confirmations (hash):" + cf);
+                                    }
+                                    else    {
+                                        ;
+                                    }
+
+                                }
+                                catch(JSONException je) {
+                                    ;
+                                }
+
+                            }
+
+                        }
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+
+                }
+
+                final int COLOR_ORANGE = 0xfffb8c00;
+                final int COLOR_GREEN = 0xff4caf50;
+
+                final boolean bccReplayed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAYED, false);
+
+                if(cf >= 0 && cf < 6)   {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setBackgroundColor(COLOR_ORANGE);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_in_progress));
+                            tvRight.setText(getText(R.string.replay_info));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionActivity.class);
+                                    startActivity(intent);
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                }
+                else if(cf >= 6 && !bccReplayed)   {
+
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_REPLAYED, true);
+
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setBackgroundColor(COLOR_GREEN);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_protected));
+                            tvRight.setText(getText(R.string.ok));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+                else if(bccReplayed)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setVisibility(View.GONE);
+                        }
+                    });
+                }
+                else if(isFork)    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
+                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
+                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
+                            tvLeftTop.setText(getText(R.string.replay_chain_split));
+                            tvLeftBottom.setText(getText(R.string.replay_enable));
+                            tvRight.setText(getText(R.string.replay_info));
+                            layoutAlert.setVisibility(View.VISIBLE);
+                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionWarningActivity.class);
+                                    startActivity(intent);
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                }
+                else    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
+                            layoutAlert.setVisibility(View.GONE);
+                        }
+                    });
+                }
+
+                Looper.loop();
+
+            }
+        }).start();
 
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 //import android.util.Log;
 
 import com.neovisionaries.ws.client.WebSocket;
@@ -14,20 +15,18 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.samourai.wallet.MainActivity2;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.api.Tx;
-import com.samourai.wallet.api.TxAuxUtil;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
 
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;
@@ -52,8 +51,6 @@ public class WebSocketHandler {
     private boolean pingPongSuccess = false;
 
     private String[] addrs = null;
-
-    private static final long RBF_THRESHOLD = 4294967295L;
 
     private static Context context = null;
 
@@ -161,9 +158,8 @@ public class WebSocketHandler {
             try {
 
                 mConnection = new WebSocketFactory()
-//                        .createSocket("wss://api.samouraiwallet.com/v1/inv")
-                        .createSocket("wss://ws.blockchain.info/inv")
-                        .addHeader("Origin", "https://blockchain.info").recreate()
+                        .createSocket("wss://api.samourai.io/v2/inv")
+//                        .addHeader("Origin", "https://blockchain.info").recreate()
                         .addListener(new WebSocketAdapter() {
 
                             @Override
@@ -173,7 +169,7 @@ public class WebSocketHandler {
                             }
 
                             public void onTextMessage(WebSocket websocket, String message) {
-//                                    Log.d("WebSocket", message);
+                                    Log.d("WebSocket", message);
                                 try {
                                     JSONObject jsonObject = null;
                                     try {
@@ -234,7 +230,7 @@ public class WebSocketHandler {
                                             for (int j = 0; j < inputArray.length(); j++) {
                                                 inputObj = (JSONObject) inputArray.get(j);
 
-                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") < RBF_THRESHOLD)    {
+                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") <= SamouraiWallet.RBF_SEQUENCE_NO)    {
                                                     isRBF = true;
                                                 }
 
@@ -282,10 +278,6 @@ public class WebSocketHandler {
                                                         String strTS = sd.format(ts * 1000L);
                                                         String event = strTS + " " + context.getString(R.string.received) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
                                                         BIP47Meta.getInstance().setLatestEvent(pcode, event);
-
-                                                        Tx _tx = new Tx(hash, out_addr, (((double)(value)) / 1e8), System.currentTimeMillis() / 1000L, 0L, -1L, pcode);
-                                                        TxAuxUtil.getInstance().put(_tx);
-
                                                         List<String> _addrs = new ArrayList<String>();
 
                                                         idx++;
@@ -312,15 +304,13 @@ public class WebSocketHandler {
                                                             }
                                                         }
 
-                                                        PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-
                                                         addrs = _addrs.toArray(new String[_addrs.size()]);
 
                                                         start();
 
                                                     }
                                                 }
-                                                else if(outObj.has("addr") && ReceiveLookAtUtil.getInstance().contains(outObj.getString("addr")))   {
+                                                else if(outObj.has("addr"))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
                                                 }
@@ -333,12 +323,11 @@ public class WebSocketHandler {
                                         String title = context.getString(R.string.app_name);
                                         if (total_value > 0L) {
                                             String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
-                                            String text = marquee;
-                                            if (total_value > 0) {
-                                                text += " from " + in_addr;
+                                            if (in_addr !=null && in_addr.length() > 0) {
+                                                marquee += " from " + in_addr;
                                             }
 
-                                            NotificationsFactory.getInstance(context).setNotification(title, marquee, text, R.drawable.ic_launcher, MainActivity2.class, 1000);
+                                            NotificationsFactory.getInstance(context).setNotification(title, marquee, marquee, R.drawable.ic_launcher, MainActivity2.class, 1000);
                                         }
 
                                         updateBalance(isRBF ? hash : null, null);

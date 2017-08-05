@@ -23,6 +23,8 @@ public class SamouraiWallet {
     public static final BigInteger bPriority = BigInteger.valueOf(Coin.parseCoin("0.0005").longValue());
     public static final BigInteger bAddPriority = BigInteger.valueOf(Coin.parseCoin("0.0003").longValue());
 
+    public static final long RBF_SEQUENCE_NO = 0xffffffff - 2;
+
     private static SamouraiWallet instance = null;
 
     private static int currentSelectedAccount = 0;

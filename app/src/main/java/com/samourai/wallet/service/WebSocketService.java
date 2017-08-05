@@ -11,10 +11,11 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.util.ReceiveLookAtUtil;
+import com.samourai.wallet.util.AddressFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,23 +53,16 @@ public class WebSocketService extends Service {
             mle.printStackTrace();
         }
 
-        addrSubs = ReceiveLookAtUtil.getInstance().getReceives();
-
         //
         // prune BIP47 lookbehind
         //
         BIP47Meta.getInstance().pruneIncoming();
 
-        if(addrSubs.size() < 1)    {
-            addrs = BIP47Meta.getInstance().getIncomingLookAhead(context);
-        }
-        else    {
-            String[] bip47 = BIP47Meta.getInstance().getIncomingLookAhead(context);
-            String[] _addrs = addrSubs.toArray(new String[addrSubs.size()]);
-            addrs = new String[bip47.length + _addrs.length];
-            System.arraycopy(bip47, 0, addrs, 0, bip47.length);
-            System.arraycopy(_addrs, 0, addrs, bip47.length, _addrs.length);
-        }
+        addrSubs = new ArrayList<String>();
+        addrSubs.add(AddressFactory.getInstance(context).account2xpub().get(0));
+        addrSubs.addAll(Arrays.asList(BIP47Meta.getInstance().getIncomingLookAhead(context)));
+        String[] addrs = addrSubs.toArray(new String[addrSubs.size()]);
+
         webSocketHandler = new WebSocketHandler(WebSocketService.this, addrs);
         connectToWebsocketIfNotConnected();
 

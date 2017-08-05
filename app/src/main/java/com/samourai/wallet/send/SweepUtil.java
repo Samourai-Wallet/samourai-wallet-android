@@ -8,14 +8,19 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.R;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -96,18 +101,43 @@ public class SweepUtil  {
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("BalanceActivity", hexTx);
 
+                                String response = null;
                                 try {
-                                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", "tx=" + hexTx);
-                                    Log.d("BalanceActivity", "pushTx:" + response);
-                                    if(response.contains("Transaction Submitted"))    {
-                                        Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                    if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+                                        if(TrustedNodeUtil.getInstance().isSet())    {
+                                            response = PushTx.getInstance(context).trustedNode(hexTx);
+                                            JSONObject jsonObject = new org.json.JSONObject(response);
+                                            if(jsonObject.has("result"))    {
+                                                if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
+                                                    Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
+                                                else    {
+                                                    Toast.makeText(context, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+                                        else    {
+                                            Toast.makeText(context, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     else    {
-                                        Toast.makeText(context, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                        response = PushTx.getInstance(context).samourai(hexTx);
+
+                                        if(response != null)    {
+                                            JSONObject jsonObject = new org.json.JSONObject(response);
+                                            if(jsonObject.has("status"))    {
+                                                if(jsonObject.getString("status").equals("ok"))    {
+                                                    Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+                                        else    {
+                                            Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
-                                catch(Exception e) {
-                                    Toast.makeText(context, R.string.cannot_sweep_privkey, Toast.LENGTH_SHORT).show();
+                                catch(JSONException je) {
+                                    Toast.makeText(context, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
 
                                 if(progress != null && progress.isShowing())    {

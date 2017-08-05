@@ -31,6 +31,7 @@ public class JSONRPC {
     private static final String COMMAND_GET_BLOCKCOUNT = "getblockcount";
     private static final String COMMAND_PUSHTX = "sendrawtransaction";
     private static final String COMMAND_GET_BLOCK = "getblock";
+    private static final String COMMAND_GET_BLOCKHEADER = "getblockheader";
 
     private String user = null;
     private CharSequenceX password = null;
@@ -140,6 +141,37 @@ public class JSONRPC {
 
     public String getBlockAsString(String hash) {
         JSONObject json = getBlock(hash);
+        if(json == null)    {
+            return null;
+        }
+        else    {
+            try {
+                return json.getString("result").toString();
+            }
+            catch(JSONException je) {
+                return null;
+            }
+        }
+    }
+
+    public JSONObject getBlockHeader(String hash) {
+        JSONArray array = new JSONArray();
+        array.put(hash);
+        array.put(true);
+        JSONObject json = doRPC(UUID.randomUUID().toString(), COMMAND_GET_BLOCKHEADER, array);
+        if(json == null)    {
+            return null;
+        }
+        try {
+            return json.getJSONObject("result");
+        }
+        catch(JSONException je) {
+            return null;
+        }
+    }
+
+    public String getBlockHeaderAsString(String hash) {
+        JSONObject json = getBlockHeader(hash);
         if(json == null)    {
             return null;
         }

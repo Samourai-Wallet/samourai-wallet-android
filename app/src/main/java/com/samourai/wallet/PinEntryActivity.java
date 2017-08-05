@@ -520,8 +520,8 @@ public class PinEntryActivity extends Activity {
                         }
 
                         try {
-                            PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
                             AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
+                            PayloadUtil.getInstance(PinEntryActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
 
                             if(create) {
                                 PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.WALLET_ORIGIN, "new");

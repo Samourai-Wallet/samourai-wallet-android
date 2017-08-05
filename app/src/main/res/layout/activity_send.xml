@@ -9,13 +9,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
         >
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/primary"
             >
 
@@ -43,7 +42,7 @@
                     android:layout_gravity="center_horizontal"
                     android:hint="@string/destination"
                     android:textColorHint="@color/primary_light"
-                    android:drawableRight="@android:drawable/ic_menu_search"
+                    android:drawableEnd="@android:drawable/ic_menu_search"
                     android:textColor="@color/primary_light"
                     />
 
@@ -82,7 +81,7 @@
                         android:id="@+id/amountBTC"
                         android:hint="0.0000"
                         android:textColorHint="@color/primary_light"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="8dp"
                         android:textColor="@color/primary_light"
                         android:maxLength="17"
                         android:textSize="16sp"
@@ -109,7 +108,7 @@
                         android:id="@+id/amountFiat"
                         android:hint="0.00"
                         android:textColorHint="@color/primary_light"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:textColor="@color/primary_light"
                         android:maxLength="17"
                         android:textSize="16sp"
@@ -166,77 +165,88 @@
                         </LinearLayout>
             -->
             <LinearLayout
-                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/ricochetField"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_horizontal|center_vertical"-->
+                    <!--android:text="@string/fee"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceSmall" />-->
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/fee"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginEnd="20dp"
+                        android:layout_weight="1"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/auto_fee"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/current_fee_prompt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="2"
+                        android:gravity="end|center_vertical"
+                        android:textColor="@color/primary_light" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ricochetField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:id="@+id/ricochetField"
-                android:layout_below="@+id/toField"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/toField"
+                android:background="@color/primary_dark"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/premium_addons"
+                    android:textAlignment="gravity"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/primary_light"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
 
                 <Switch
                     android:id="@+id/ricochet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/ricochet" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:paddingBottom="8dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/ricochetField">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/fee"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    />
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="8dp"
-                    >
-
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_fee"
-                        android:id="@+id/fee"
-                        android:layout_marginRight="20dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:layout_gravity="left|center_vertical"
-                        android:gravity="left|center_vertical"
-                        />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/primary_light"
-                        android:layout_marginRight="5dp"
-                        android:id="@+id/current_fee_prompt"
-                        android:layout_gravity="right|center_vertical"
-                        android:gravity="right|center_vertical"
-                        />
-
-                </LinearLayout>
 
             </LinearLayout>
 
