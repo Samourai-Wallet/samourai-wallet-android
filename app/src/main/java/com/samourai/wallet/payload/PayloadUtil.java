@@ -2,6 +2,7 @@ package com.samourai.wallet.payload;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -201,6 +202,10 @@ public class PayloadUtil	{
 
             JSONObject meta = new JSONObject();
             meta.put("version_name", context.getText(R.string.version_name));
+            meta.put("android_release", Build.VERSION.RELEASE == null ? "" : Build.VERSION.RELEASE);
+            meta.put("device_manufacturer", Build.MANUFACTURER == null ? "" : Build.MANUFACTURER);
+            meta.put("device_model", Build.MODEL == null ? "" : Build.MODEL);
+            meta.put("device_product", Build.PRODUCT == null ? "" : Build.PRODUCT);
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
