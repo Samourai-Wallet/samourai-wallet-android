@@ -364,11 +364,11 @@ public class APIFactory	{
 
         try {
             StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
-            url.append("multiaddr?");
+            url.append("multiaddr?active=");
             url.append(addr);
 //            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
+            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
