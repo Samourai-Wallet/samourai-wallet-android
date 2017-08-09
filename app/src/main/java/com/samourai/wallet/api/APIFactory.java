@@ -368,7 +368,7 @@ public class APIFactory	{
             url.append(addr);
 //            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-            Log.i("APIFactory", "Notif address:" + response);
+//            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
