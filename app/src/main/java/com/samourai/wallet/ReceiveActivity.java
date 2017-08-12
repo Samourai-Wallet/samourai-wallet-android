@@ -571,7 +571,7 @@ public class ReceiveActivity extends Activity {
                         @Override
                         public void run() {
                             try {
-                                if(jsonObject != null && jsonObject.has("addresses")) {
+                                if(jsonObject != null && jsonObject.has("addresses") && jsonObject.getJSONArray("addresses").length() > 0) {
                                     JSONArray addrs = jsonObject.getJSONArray("addresses");
                                     JSONObject _addr = addrs.getJSONObject(0);
                                     if(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L) {
