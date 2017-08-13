@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -130,8 +131,12 @@ public class RicochetActivity extends Activity {
                                 hasConfirmation = true;
                             }
                         }
-                        else if(txObj != null)    {
+                        else if(txObj != null && txObj.has("txid"))    {
                             txSeen = true;
+                        }
+                        // not broadcast, not seen
+                        else if(txObj != null && txObj.has("status") && txObj.getString("status").equals("error"))    {
+                            txSeen = false;
                         }
                         else    {
                             ;
