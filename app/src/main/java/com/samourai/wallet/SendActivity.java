@@ -87,6 +87,7 @@ import net.sourceforge.zbar.Symbol;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
@@ -1646,31 +1647,22 @@ public class SendActivity extends Activity {
 
     private void emptyRicochetQueue()    {
 
+        RicochetMeta.getInstance(SendActivity.this).setLastRicochet(null);
         RicochetMeta.getInstance(SendActivity.this).empty();
 
-        try {
-            JSONObject jsonObject = PayloadUtil.getInstance(SendActivity.this).getPayload();
-            jsonObject.getJSONObject("meta").remove("ricochet");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-
-                    try {
-                        PayloadUtil.getInstance(SendActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendActivity.this).getGUID() + AccessFactory.getInstance(SendActivity.this).getPIN()));
-                    }
-                    catch(Exception e) {
-                        ;
-                    }
-
+                try {
+                    PayloadUtil.getInstance(SendActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendActivity.this).getGUID() + AccessFactory.getInstance(SendActivity.this).getPIN()));
                 }
-            }).start();
+                catch(Exception e) {
+                    ;
+                }
 
-        }
-        catch(JSONException je) {
-            je.printStackTrace();
-            Toast.makeText(SendActivity.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
-        }
+            }
+        }).start();
 
     }
 
