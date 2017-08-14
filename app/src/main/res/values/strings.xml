@@ -289,7 +289,8 @@
 
     <string name="ricochet_fee_via_bip47">For best results connect to the Samourai payment code. Would you like to connect to the payment code now? Press NO to continue sending.</string>
 
-    <string name="action_ricochet">Ricochet</string>
+    <string name="action_ricochet">Replay Ricochet</string>
+    <string name="action_empty_ricochet">Empty Ricochet queue</string>
     <string name="ricochet">Ricochet - send with 4 extra hops</string>
     <string name="action_ricochet_script">Display Ricochet script</string>
     <string name="action_ricochet_replay">Resend Ricochet</string>

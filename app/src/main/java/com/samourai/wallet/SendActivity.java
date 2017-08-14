@@ -37,6 +37,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Activity;
@@ -45,6 +46,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.FeeUtil;
@@ -54,6 +56,7 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -1251,6 +1254,9 @@ public class SendActivity extends Activity {
             Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
             startActivity(intent);
         }
+        else if (id == R.id.action_empty_ricochet) {
+            emptyRicochetQueue();
+        }
         else if (id == R.id.action_utxo) {
             doUTXO();
         }
@@ -1634,6 +1640,36 @@ public class SendActivity extends Activity {
                 });
         if(!isFinishing())    {
             dlg.show();
+        }
+
+    }
+
+    private void emptyRicochetQueue()    {
+
+        RicochetMeta.getInstance(SendActivity.this).empty();
+
+        try {
+            JSONObject jsonObject = PayloadUtil.getInstance(SendActivity.this).getPayload();
+            jsonObject.getJSONObject("meta").remove("ricochet");
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        PayloadUtil.getInstance(SendActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendActivity.this).getGUID() + AccessFactory.getInstance(SendActivity.this).getPIN()));
+                    }
+                    catch(Exception e) {
+                        ;
+                    }
+
+                }
+            }).start();
+
+        }
+        catch(JSONException je) {
+            je.printStackTrace();
+            Toast.makeText(SendActivity.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
         }
 
     }
