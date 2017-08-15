@@ -198,17 +198,17 @@ public class APIFactory	{
                             addr = (String)addrObj.get("address");
                             amount = addrObj.getLong("final_balance");
                             String pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
-                            int idx = BIP47Meta.getInstance().getIdx4Addr(addr);
-                            if(pcode != null && pcode.length() > 0)    {
+                            if(addr != null && addr.length() > 0 && pcode != null && pcode.length() > 0 && BIP47Meta.getInstance().getIdx4Addr(addr) != null)    {
+                                int idx = BIP47Meta.getInstance().getIdx4Addr(addr);
                                 if(amount > 0L)    {
                                     BIP47Meta.getInstance().addUnspent(pcode, idx);
                                 }
                                 else    {
                                     BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
                                 }
-                            }
-                            if(addr != null)  {
-                                bip47_amounts.put(addr, amount);
+                                if(addr != null)  {
+                                    bip47_amounts.put(addr, amount);
+                                }
                             }
 
                         }

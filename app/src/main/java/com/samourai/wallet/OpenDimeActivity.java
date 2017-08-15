@@ -671,35 +671,44 @@ public class OpenDimeActivity extends Activity {
                                     Looper.prepare();
 
                                     final JSONObject obj = APIFactory.getInstance(OpenDimeActivity.this).getAddressInfo(strAddress);
-                                    if(obj != null && obj.has("final_balance"))    {
+                                    JSONObject walletObj = null;
+
+                                    try {
+
+                                        if(obj.has("wallet"))    {
+                                            walletObj = obj.getJSONObject("wallet");
+                                            if(walletObj.has("final_balance"))    {
+                                                balance = walletObj.getLong("final_balance");
+                                            }
+                                        }
+
+                                    }
+                                    catch(JSONException je) {
+                                        ;
+                                    }
+
+                                    if(walletObj != null && walletObj.has("final_balance"))    {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                try {
-                                                    balance = obj.getLong("final_balance");
-                                                    double btc_balance = (((double)balance) / 1e8);
+                                                double btc_balance = (((double)balance) / 1e8);
 
-                                                    String strFiat = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-                                                    double btc_fx = 0.0;
-                                                    double fiat_balance = 0.0;
-                                                    if(balance > 0L)    {
-                                                        btc_fx = ExchangeRateFactory.getInstance(OpenDimeActivity.this).getAvgPrice(strFiat);
-                                                        fiat_balance = btc_fx * btc_balance;
-                                                    }
-
-                                                    String strBalance = "" + btc_balance + " BTC";
-                                                    if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
-                                                        strBalance += " " + MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance) + " " + strFiat;
-                                                        btSweep.setVisibility(View.VISIBLE);
-                                                    }
-                                                    else    {
-                                                        btSweep.setVisibility(View.GONE);
-                                                    }
-                                                    tvBalance.setText(strBalance);
-
+                                                String strFiat = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+                                                double btc_fx = 0.0;
+                                                double fiat_balance = 0.0;
+                                                if(balance > 0L)    {
+                                                    btc_fx = ExchangeRateFactory.getInstance(OpenDimeActivity.this).getAvgPrice(strFiat);
+                                                    fiat_balance = btc_fx * btc_balance;
                                                 }
-                                                catch(JSONException je) {
-                                                    ;
+
+                                                String strBalance = "" + btc_balance + " BTC";
+                                                if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
+                                                    strBalance += " " + MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance) + " " + strFiat;
+                                                    btSweep.setVisibility(View.VISIBLE);
                                                 }
+                                                else    {
+                                                    btSweep.setVisibility(View.GONE);
+                                                }
+                                                tvBalance.setText(strBalance);
                                             }
                                         });
                                     }
