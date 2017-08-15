@@ -36,18 +36,6 @@ public class PushTx {
         return instance;
     }
 
-    public String chainSo(String hexString) {
-
-        try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.CHAINSO_PUSHTX_URL, "tx_hex=" + hexString);
-            return response;
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-    }
-
     public String samourai(String hexString) {
 
         try {

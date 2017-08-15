@@ -16,6 +16,8 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.service.BroadcastReceiverService;
+import com.samourai.wallet.service.WebSocketService;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +82,10 @@ public class AppUtil {
 	}
 
 	public void restartApp() {
+        if(isServiceRunning(WebSocketService.class)) {
+            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
+        }
+
 		Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -91,6 +97,10 @@ public class AppUtil {
 	}
 
 	public void restartApp(String name, boolean value) {
+        if(isServiceRunning(WebSocketService.class)) {
+            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
+        }
+
 		Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -105,6 +115,10 @@ public class AppUtil {
 	}
 
     public void restartApp(String name, String value) {
+        if(isServiceRunning(WebSocketService.class)) {
+            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
+        }
+
         Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);

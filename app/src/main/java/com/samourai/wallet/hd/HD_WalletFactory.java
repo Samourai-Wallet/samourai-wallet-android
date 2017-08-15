@@ -145,7 +145,7 @@ public class HD_WalletFactory	{
                 hdw = new HD_Wallet(44, mc, params, seed, passphrase, nbAccounts);
             }
             else {
-                data = data.replaceAll("[^a-z]+", " ");             // only use for BIP39 English
+                data = data.toLowerCase().replaceAll("[^a-z]+", " ");             // only use for BIP39 English
                 words = Arrays.asList(data.trim().split("\\s+"));
                 seed = mc.toEntropy(words);
                 hdw = new HD_Wallet(44, mc, params, seed, passphrase, nbAccounts);

@@ -496,7 +496,17 @@ public class BalanceActivity extends Activity {
 //        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
-        refreshTx(false, true, false, true);
+        boolean notifTx = false;
+        boolean fetch = false;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey("notifTx"))	{
+            notifTx = extras.getBoolean("notifTx");
+        }
+        if(extras != null && extras.containsKey("uri"))	{
+            fetch = extras.getBoolean("fetch");
+        }
+
+        refreshTx(notifTx, fetch, false, true);
 
         //
         // user checks mnemonic & passphrase
@@ -1491,9 +1501,9 @@ public class BalanceActivity extends Activity {
                 //
                 try {
                     PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
+                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
+                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
                     APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
-//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
-//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
                 }
                 catch (AddressFormatException afe) {
                     afe.printStackTrace();

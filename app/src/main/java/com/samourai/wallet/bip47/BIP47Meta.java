@@ -209,7 +209,7 @@ public class BIP47Meta {
 
         ArrayList<String> addrs = new ArrayList<String>();
         for(String pcode : pcodeIncomingIdxs.keySet())   {
-            if(!includeArchived && pcodeArchived.get(pcode))    {
+            if(!includeArchived && pcodeArchived.get(pcode) != null)    {
                 continue;
             }
             else    {

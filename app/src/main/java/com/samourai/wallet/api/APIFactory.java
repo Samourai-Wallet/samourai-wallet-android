@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.samourai.wallet.JSONRPC.JSONRPC;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Wallet;
@@ -335,11 +337,13 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.CHAINSO_TX_PREV_OUT_URL);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            url.append("tx/");
             url.append(hash);
-//            Log.i("APIFactory", "Notif tx:" + url.toString());
+            url.append("?fees=1");
+            Log.i("APIFactory", "Notif tx:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif tx:" + response);
+            Log.i("APIFactory", "Notif tx:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifTx(jsonObject, addr, hash);
@@ -362,11 +366,12 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.CHAINSO_GET_RECEIVE_TX_URL);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            url.append("multiaddr?active=");
             url.append(addr);
-//            Log.i("APIFactory", "Notif address:" + url.toString());
+            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
+            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
@@ -386,34 +391,24 @@ public class APIFactory	{
 
     public void parseNotifAddress(JSONObject jsonObject, String addr) throws JSONException  {
 
-        if(jsonObject != null)  {
+        if(jsonObject != null && jsonObject.has("txs"))  {
 
-            if(jsonObject.has("status") && jsonObject.getString("status").equals("success") && jsonObject.has("data"))  {
+            JSONArray txArray = jsonObject.getJSONArray("txs");
+            JSONObject txObj = null;
+            for(int i = 0; i < txArray.length(); i++)  {
+                txObj = (JSONObject)txArray.get(i);
 
-                JSONObject dataObj = jsonObject.getJSONObject("data");
+                if(!txObj.has("block_height") || (txObj.has("block_height") && txObj.getLong("block_height") < 1L))    {
+                    return;
+                }
 
-                if(dataObj.has("txs"))    {
+                String hash = null;
 
-                    JSONArray txArray = dataObj.getJSONArray("txs");
-                    JSONObject txObj = null;
-                    for(int i = 0; i < txArray.length(); i++)  {
-                        txObj = (JSONObject)txArray.get(i);
-
-                        if(!txObj.has("confirmations") || (txObj.has("confirmations") && txObj.getLong("confirmations") < 1L))    {
-                            return;
-                        }
-
-                        String hash = null;
-
-                        if(txObj.has("txid"))  {
-                            hash = (String)txObj.get("txid");
-                            if(BIP47Meta.getInstance().getIncomingStatus(hash) == null)    {
-                                getNotifTx(hash, addr);
-                            }
-                        }
-
+                if(txObj.has("hash"))  {
+                    hash = (String)txObj.get("hash");
+                    if(BIP47Meta.getInstance().getIncomingStatus(hash) == null)    {
+                        getNotifTx(hash, addr);
                     }
-
                 }
 
             }
@@ -430,98 +425,89 @@ public class APIFactory	{
             byte[] payload = null;
             PaymentCode pcode = null;
 
-            if(jsonObject.has("data"))  {
+            if(jsonObject.has("inputs"))    {
 
-                JSONObject data = jsonObject.getJSONObject("data");
+                JSONArray inArray = (JSONArray)jsonObject.get("inputs");
 
-                if(data.has("confirmations") && data.getInt("confirmations") < 1)    {
-                    return;
-                }
-
-                if(data.has("inputs"))    {
-
-                    JSONArray inArray = (JSONArray)data.get("inputs");
-
-                    if(inArray.length() > 0 && ((JSONObject)inArray.get(0)).has("script_hex"))    {
-                        String strScript = ((JSONObject)inArray.get(0)).getString("script_hex");
-                        Script script = new Script(Hex.decode(strScript));
-//                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
-                        ECKey pKey = new ECKey(null, script.getPubKey(), true);
-//                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
+                if(inArray.length() > 0)    {
+                    JSONObject objInput = (JSONObject)inArray.get(0);
+                    String strScript = objInput.getString("sig");
+                    Script script = new Script(Hex.decode(strScript));
+                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
+                    ECKey pKey = new ECKey(null, script.getPubKey(), true);
+                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
-                        if(((JSONObject)inArray.get(0)).has("received_from"))    {
-                            JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("received_from");
+                    if(((JSONObject)inArray.get(0)).has("outpoint"))    {
+                        JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("outpoint");
 
-                            String strHash = received_from.getString("txid");
-                            int idx = received_from.getInt("output_no");
+                        String strHash = received_from.getString("txid");
+                        int idx = received_from.getInt("vout");
 
-                            byte[] hashBytes = Hex.decode(strHash);
-                            Sha256Hash txHash = new Sha256Hash(hashBytes);
-                            TransactionOutPoint outPoint = new TransactionOutPoint(MainNetParams.get(), idx, txHash);
-                            byte[] outpoint = outPoint.bitcoinSerialize();
-//                            Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
+                        byte[] hashBytes = Hex.decode(strHash);
+                        Sha256Hash txHash = new Sha256Hash(hashBytes);
+                        TransactionOutPoint outPoint = new TransactionOutPoint(MainNetParams.get(), idx, txHash);
+                        byte[] outpoint = outPoint.bitcoinSerialize();
+                            Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
-                            try {
-                                mask = BIP47Util.getInstance(context).getIncomingMask(script.getPubKey(), outpoint);
-//                                Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
-                            }
-                            catch(Exception e) {
-                                e.printStackTrace();
-                            }
-
+                        try {
+                            mask = BIP47Util.getInstance(context).getIncomingMask(script.getPubKey(), outpoint);
+                                Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
                         }
 
                     }
 
                 }
 
-                if(data.has("outputs"))  {
-                    JSONArray outArray = (JSONArray)data.get("outputs");
-                    JSONObject outObj = null;
-                    boolean isIncoming = false;
-                    String _addr = null;
-                    String script = null;
-                    String op_return = null;
-                    for(int j = 0; j < outArray.length(); j++)  {
-                        outObj = (JSONObject)outArray.get(j);
-                        if(outObj.has("address"))  {
-                            _addr = outObj.getString("address");
-                            if(addr.equals(_addr))    {
-                                isIncoming = true;
-                            }
-                        }
-                        if(outObj.has("script_hex"))  {
-                            script = outObj.getString("script_hex");
-                            if(script.startsWith("6a4c50"))    {
-                                op_return = script;
-                            }
+            }
+
+            if(jsonObject.has("outputs"))  {
+                JSONArray outArray = (JSONArray)jsonObject.get("outputs");
+                JSONObject outObj = null;
+                boolean isIncoming = false;
+                String _addr = null;
+                String script = null;
+                String op_return = null;
+                for(int j = 0; j < outArray.length(); j++)  {
+                    outObj = (JSONObject)outArray.get(j);
+                    if(outObj.has("address"))  {
+                        _addr = outObj.getString("address");
+                        if(addr.equals(_addr))    {
+                            isIncoming = true;
                         }
                     }
-                    if(isIncoming && op_return != null && op_return.startsWith("6a4c50"))    {
-                        payload = Hex.decode(op_return.substring(6));
+                    if(outObj.has("scriptpubkey"))  {
+                        script = outObj.getString("scriptpubkey");
+                        if(script.startsWith("6a4c50"))    {
+                            op_return = script;
+                        }
+                    }
+                }
+                if(isIncoming && op_return != null && op_return.startsWith("6a4c50"))    {
+                    payload = Hex.decode(op_return.substring(6));
+                }
+
+            }
+
+            if(mask != null && payload != null)    {
+                try {
+                    byte[] xlat_payload = PaymentCode.blind(payload, mask);
+                        Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
+
+                    pcode = new PaymentCode(xlat_payload);
+                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
+
+                    if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
+                        BIP47Meta.getInstance().setLabel(pcode.toString(), "");
+                        BIP47Meta.getInstance().setIncomingStatus(hash);
                     }
 
                 }
-
-                if(mask != null && payload != null)    {
-                    try {
-                        byte[] xlat_payload = PaymentCode.blind(payload, mask);
-//                        Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
-
-                        pcode = new PaymentCode(xlat_payload);
-//                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
-
-                        if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
-                            BIP47Meta.getInstance().setLabel(pcode.toString(), "");
-                            BIP47Meta.getInstance().setIncomingStatus(hash);
-                        }
-
-                    }
-                    catch(AddressFormatException afe) {
-                        afe.printStackTrace();
-                    }
-
+                catch(AddressFormatException afe) {
+                    afe.printStackTrace();
                 }
 
             }
@@ -541,7 +527,6 @@ public class APIFactory	{
                         BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                         BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
                         BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
-//                        PaymentAddress sendAddress = BIP47Util.getInstance(context).getSendAddress(pcode, i);
 //                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
                     }
 
@@ -562,8 +547,10 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.CHAINSO_TX_PREV_OUT_URL);
+            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            url.append("tx/");
             url.append(hash);
+            url.append("?fees=1");
 //            Log.i("APIFactory", "Notif tx:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "Notif tx:" + response);
@@ -582,32 +569,22 @@ public class APIFactory	{
 
     public synchronized int parseNotifTx(JSONObject jsonObject) throws JSONException  {
 
-        if(jsonObject != null)  {
+        int cf = 0;
 
-            if(jsonObject.has("data"))  {
+        if(jsonObject != null && jsonObject.has("block") && jsonObject.getJSONObject("block").has("height"))  {
 
-                JSONObject data = jsonObject.getJSONObject("data");
+            long latestBlockHeght = getLatestBlockHeight();
+            long height = jsonObject.getJSONObject("block").getLong("height");
 
-                if(data.has("confirmations"))    {
-//                    Log.i("APIFactory", "returning notif tx confirmations:" + data.getInt("confirmations"));
-                    return data.getInt("confirmations");
-                }
-                else    {
-//                    Log.i("APIFactory", "returning 0 notif tx confirmations");
-                    return 0;
-                }
+            cf = (int)((latestBlockHeght - height) + 1);
 
-            }
-            else if(jsonObject.has("status") && jsonObject.getString("status").equals("fail"))   {
-                return -1;
-            }
-            else    {
-                ;
+            if(cf < 0)    {
+                cf = 0;
             }
 
         }
 
-        return 0;
+        return cf;
     }
 
     public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
@@ -765,22 +742,50 @@ public class APIFactory	{
 
         try {
             int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
-            StringBuilder url = new StringBuilder(sel == 0 ? WebUtil._21CO_FEE_URL : WebUtil.BITCOIND_FEE_URL);
-//            Log.i("APIFactory", "Dynamic fees:" + url.toString());
-            String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Dynamic fees response:" + response);
-            try {
-                jsonObject = new JSONObject(response);
-                if(sel == 0)    {
-                    parseDynamicFees_21(jsonObject);
+            if(sel == 2)    {
+
+                int[] blocks = new int[] { 2, 6, 24 };
+
+                List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
+
+                JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
+
+                for(int i = 0; i < blocks.length; i++)   {
+                    JSONObject feeObj = jsonrpc.getFeeEstimate(blocks[i]);
+                    if(feeObj != null && feeObj.has("result"))    {
+                        double fee = feeObj.getDouble("result");
+
+                        SuggestedFee suggestedFee = new SuggestedFee();
+                        suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(fee * 1e8)));
+                        suggestedFee.setStressed(false);
+                        suggestedFee.setOK(true);
+                        suggestedFees.add(suggestedFee);
+                    }
                 }
-                else    {
-                    parseDynamicFees_bitcoind(jsonObject);
+
+                if(suggestedFees.size() > 0)    {
+                    FeeUtil.getInstance().setEstimatedFees(suggestedFees);
                 }
+
             }
-            catch(JSONException je) {
-                je.printStackTrace();
-                jsonObject = null;
+            else    {
+                StringBuilder url = new StringBuilder(sel == 0 ? WebUtil._21CO_FEE_URL : WebUtil.BITCOIND_FEE_URL);
+//            Log.i("APIFactory", "Dynamic fees:" + url.toString());
+                String response = WebUtil.getInstance(null).getURL(url.toString());
+//            Log.i("APIFactory", "Dynamic fees response:" + response);
+                try {
+                    jsonObject = new JSONObject(response);
+                    if(sel == 0)    {
+                        parseDynamicFees_21(jsonObject);
+                    }
+                    else    {
+                        parseDynamicFees_bitcoind(jsonObject);
+                    }
+                }
+                catch(JSONException je) {
+                    je.printStackTrace();
+                    jsonObject = null;
+                }
             }
         }
         catch(Exception e) {

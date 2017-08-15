@@ -46,6 +46,7 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -572,8 +573,10 @@ public class ReceiveActivity extends Activity {
                         @Override
                         public void run() {
                             try {
-                                if(jsonObject != null) {
-                                    if(jsonObject.has("n_tx") && (jsonObject.getLong("n_tx") > 0)) {
+                                if(jsonObject != null && jsonObject.has("addresses") && jsonObject.getJSONArray("addresses").length() > 0) {
+                                    JSONArray addrs = jsonObject.getJSONArray("addresses");
+                                    JSONObject _addr = addrs.getJSONObject(0);
+                                    if(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L) {
                                         Toast.makeText(ReceiveActivity.this, R.string.address_used_previously, Toast.LENGTH_SHORT).show();
                                         canRefresh = true;
                                         if(_menu != null)    {
