@@ -338,9 +338,9 @@ public class APIFactory	{
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
-//            Log.i("APIFactory", "Notif tx:" + url.toString());
+            Log.i("APIFactory", "Notif tx:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif tx:" + response);
+            Log.i("APIFactory", "Notif tx:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifTx(jsonObject, addr, hash);
@@ -366,9 +366,9 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
             url.append("multiaddr?active=");
             url.append(addr);
-//            Log.i("APIFactory", "Notif address:" + url.toString());
+            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
+            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
@@ -426,12 +426,13 @@ public class APIFactory	{
 
                 JSONArray inArray = (JSONArray)jsonObject.get("inputs");
 
-                if(inArray.length() > 0 && ((JSONObject)inArray.get(0)).has("sig"))    {
-                    String strScript = ((JSONObject)inArray.get(0)).getString("sig");
+                if(inArray.length() > 0)    {
+                    JSONObject objInput = (JSONObject)inArray.get(0);
+                    String strScript = objInput.getString("sig");
                     Script script = new Script(Hex.decode(strScript));
-//                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
+                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
                     ECKey pKey = new ECKey(null, script.getPubKey(), true);
-//                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
+                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
                     if(((JSONObject)inArray.get(0)).has("outpoint"))    {
@@ -444,11 +445,11 @@ public class APIFactory	{
                         Sha256Hash txHash = new Sha256Hash(hashBytes);
                         TransactionOutPoint outPoint = new TransactionOutPoint(MainNetParams.get(), idx, txHash);
                         byte[] outpoint = outPoint.bitcoinSerialize();
-//                            Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
+                            Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
                         try {
                             mask = BIP47Util.getInstance(context).getIncomingMask(script.getPubKey(), outpoint);
-//                                Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
+                                Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
                         }
                         catch(Exception e) {
                             e.printStackTrace();
@@ -491,10 +492,10 @@ public class APIFactory	{
             if(mask != null && payload != null)    {
                 try {
                     byte[] xlat_payload = PaymentCode.blind(payload, mask);
-//                        Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
+                        Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
 
                     pcode = new PaymentCode(xlat_payload);
-//                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
+                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
 
                     if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
                         BIP47Meta.getInstance().setLabel(pcode.toString(), "");
@@ -523,7 +524,6 @@ public class APIFactory	{
                         BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                         BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
                         BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
-//                        PaymentAddress sendAddress = BIP47Util.getInstance(context).getSendAddress(pcode, i);
 //                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
                     }
 
