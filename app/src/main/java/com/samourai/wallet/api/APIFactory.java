@@ -111,7 +111,7 @@ public class APIFactory	{
         utxos = new HashMap<String, UTXO>();
     }
 
-    private synchronized JSONObject getXPUB(String[] xpubs) {
+    private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
 
         JSONObject jsonObject  = null;
 
@@ -138,6 +138,9 @@ public class APIFactory	{
 
             try {
                 jsonObject = new JSONObject(response);
+                if(!parse)    {
+                    return jsonObject;
+                }
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
                 xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance);
@@ -711,7 +714,7 @@ public class APIFactory	{
 
     public synchronized JSONObject getAddressInfo(String addr) {
 
-        return getXPUB(new String[] { addr });
+        return getXPUB(new String[] { addr }, false);
 
     }
 
@@ -1010,7 +1013,7 @@ public class APIFactory	{
                 else    {
                     all = hdw.getXPUBs();
                 }
-                APIFactory.getInstance(context).getXPUB(all);
+                APIFactory.getInstance(context).getXPUB(all, true);
                 String[] xs = new String[2];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
                 xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
@@ -1030,7 +1033,7 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
-        JSONObject jsonObject = getXPUB(addresses);
+        JSONObject jsonObject = getXPUB(addresses, false);
         int ret = 0;
 
         try {
@@ -1084,7 +1087,7 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Outgoing(String[] addresses) {
 
-        JSONObject jsonObject = getXPUB(addresses);
+        JSONObject jsonObject = getXPUB(addresses, false);
         int ret = 0;
 
         try {
