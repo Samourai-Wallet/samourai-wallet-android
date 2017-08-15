@@ -124,7 +124,7 @@ public class WebSocketHandler {
 
                 Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                 intent.putExtra("rbf", rbfHash);
-                intent.putExtra("notifTx", false);
+                intent.putExtra("notifTx", true);
                 intent.putExtra("fetch", true);
                 intent.putExtra("hash", blkHash);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
