@@ -1574,7 +1574,7 @@ public class BalanceActivity extends Activity {
                 }
             }
 
-            bccForkThread();
+//            bccForkThread();
 
         }
 
