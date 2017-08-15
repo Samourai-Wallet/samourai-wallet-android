@@ -675,7 +675,7 @@ public class OpenDimeActivity extends Activity {
 
                                     try {
 
-                                        if(obj.has("wallet"))    {
+                                        if(obj != null && obj.has("wallet"))    {
                                             walletObj = obj.getJSONObject("wallet");
                                             if(walletObj.has("final_balance"))    {
                                                 balance = walletObj.getLong("final_balance");
