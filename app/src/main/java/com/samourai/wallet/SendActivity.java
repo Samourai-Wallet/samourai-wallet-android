@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,12 +22,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.Toast;
 //import android.util.Log;
 
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
@@ -39,7 +41,6 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
@@ -78,18 +79,14 @@ import java.util.List;
 import java.util.Locale;
 import java.text.DecimalFormatSymbols;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.Button;
-
 import net.sourceforge.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
 
@@ -999,8 +996,19 @@ public class SendActivity extends Activity {
                                 final Transaction _tx = tx;
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("SendActivity", hexTx);
-
                                 final String strTxHash = tx.getHashAsString();
+
+                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
+
+                                    if(progress != null && progress.isShowing())    {
+                                        progress.dismiss();
+                                    }
+
+                                    doShowTx(hexTx, strTxHash);
+
+                                    return;
+
+                                }
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -1663,6 +1671,32 @@ public class SendActivity extends Activity {
 
             }
         }).start();
+
+    }
+
+    private void doShowTx(final String hexTx, final String txHash) {
+
+        TextView showTx = new TextView(SendActivity.this);
+        showTx.setText(hexTx);
+        showTx.setTextIsSelectable(true);
+        showTx.setPadding(40, 10, 40, 10);
+        showTx.setTextSize(18.0f);
+
+        LinearLayout hexLayout = new LinearLayout(SendActivity.this);
+        hexLayout.setOrientation(LinearLayout.VERTICAL);
+        hexLayout.addView(showTx);
+
+        new AlertDialog.Builder(SendActivity.this)
+                .setTitle(txHash)
+                .setView(hexLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        SendActivity.this.finish();
+
+                    }
+                }).show();
 
     }
 

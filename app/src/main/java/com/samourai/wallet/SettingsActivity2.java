@@ -197,6 +197,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                final CheckBoxPreference cbPref10 = (CheckBoxPreference) findPreference("broadcastTx");
+                cbPref10.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref10.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, true);
+                        }
+
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("stealth"))   {
                 addPreferencesFromResource(R.xml.settings_stealth);
