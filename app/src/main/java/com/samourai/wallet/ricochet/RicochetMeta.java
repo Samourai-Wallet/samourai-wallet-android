@@ -48,7 +48,7 @@ public class RicochetMeta {
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
-    public final static BigInteger samouraiFeeAmount = BigInteger.valueOf(100000L);
+    public final static BigInteger samouraiFeeAmount = BigInteger.valueOf(200000L);
 
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;
