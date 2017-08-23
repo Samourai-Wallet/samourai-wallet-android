@@ -407,4 +407,9 @@
     <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
     <string name="replay_dismiss">DISMISS ALERT</string>
 
+    <string name="show_qr">Show QR</string>
+    <string name="share_qr">Share QR</string>
+    <string name="send_tx">Send raw transaction</string>
+    <string name="tx_too_large_qr">Raw transaction too large to display in QR code.</string>
+
 </resources>
