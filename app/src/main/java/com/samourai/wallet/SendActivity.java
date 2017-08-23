@@ -8,11 +8,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -38,6 +44,10 @@ import org.bitcoinj.crypto.MnemonicException;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -66,6 +76,9 @@ import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -1676,6 +1689,8 @@ public class SendActivity extends Activity {
 
     private void doShowTx(final String hexTx, final String txHash) {
 
+        final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
+
         TextView showTx = new TextView(SendActivity.this);
         showTx.setText(hexTx);
         showTx.setTextIsSelectable(true);
@@ -1690,10 +1705,103 @@ public class SendActivity extends Activity {
                 .setTitle(txHash)
                 .setView(hexLayout)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                        dialog.dismiss();
                         SendActivity.this.finish();
+
+                    }
+                })
+                .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
+
+                            final ImageView ivQR = new ImageView(SendActivity.this);
+
+                            Display display = (SendActivity.this).getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            int imgWidth = size.x - 240;
+
+                            Bitmap bitmap = null;
+
+                            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(hexTx, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), imgWidth);
+
+                            try {
+                                bitmap = qrCodeEncoder.encodeAsBitmap();
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+                            ivQR.setImageBitmap(bitmap);
+
+                            LinearLayout qrLayout = new LinearLayout(SendActivity.this);
+                            qrLayout.setOrientation(LinearLayout.VERTICAL);
+                            qrLayout.addView(ivQR);
+
+                            new AlertDialog.Builder(SendActivity.this)
+                                    .setTitle(txHash)
+                                    .setView(qrLayout)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            dialog.dismiss();
+                                            SendActivity.this.finish();
+
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.share_qr, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            String strFileName = AppUtil.getInstance(SendActivity.this).getReceiveQRFilename();
+                                            File file = new File(strFileName);
+                                            if(!file.exists()) {
+                                                try {
+                                                    file.createNewFile();
+                                                }
+                                                catch(Exception e) {
+                                                    Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            file.setReadable(true, false);
+
+                                            FileOutputStream fos = null;
+                                            try {
+                                                fos = new FileOutputStream(file);
+                                            }
+                                            catch(FileNotFoundException fnfe) {
+                                                ;
+                                            }
+
+                                            if(file != null && fos != null) {
+                                                Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
+                                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                                                try {
+                                                    fos.close();
+                                                }
+                                                catch(IOException ioe) {
+                                                    ;
+                                                }
+
+                                                Intent intent = new Intent();
+                                                intent.setAction(Intent.ACTION_SEND);
+                                                intent.setType("image/png");
+                                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                                startActivity(Intent.createChooser(intent, SendActivity.this.getText(R.string.send_tx)));
+                                            }
+
+                                        }
+                                    }).show();
+                        }
+                        else    {
+
+                            Toast.makeText(SendActivity.this, R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
+
+                        }
 
                     }
                 }).show();
