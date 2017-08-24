@@ -82,10 +82,6 @@ public class AppUtil {
 	}
 
 	public void restartApp() {
-        if(isServiceRunning(WebSocketService.class)) {
-            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
-        }
-
 		Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -97,10 +93,6 @@ public class AppUtil {
 	}
 
 	public void restartApp(String name, boolean value) {
-        if(isServiceRunning(WebSocketService.class)) {
-            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
-        }
-
 		Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -115,10 +107,6 @@ public class AppUtil {
 	}
 
     public void restartApp(String name, String value) {
-        if(isServiceRunning(WebSocketService.class)) {
-            context.stopService(new Intent(context.getApplicationContext(), WebSocketService.class));
-        }
-
         Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
