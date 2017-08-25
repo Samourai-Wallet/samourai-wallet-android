@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 //import android.util.Log;
 
-import com.samourai.wallet.PinEntryActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
@@ -23,7 +22,6 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
@@ -31,6 +29,7 @@ import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.WebUtil;
 
 import org.apache.commons.codec.DecoderException;
 
@@ -39,7 +38,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
-import org.bitcoinj.params.TestNet2Params;
+import org.bitcoinj.params.TestNet3Params;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -172,6 +171,7 @@ public class PayloadUtil	{
             JSONObject wallet = new JSONObject();
 
             wallet.put("testnet", SamouraiWallet.getInstance().isTestNet() ? true : false);
+            WebUtil.getInstance(context);
 
             if(HD_WalletFactory.getInstance(context).get().getSeedHex() != null) {
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
@@ -325,7 +325,7 @@ public class PayloadUtil	{
             if(wallet != null) {
 
                 if(wallet.has("testnet"))    {
-                    SamouraiWallet.getInstance().setCurrentNetworkParams(wallet.getBoolean("testnet") ? TestNet2Params.get() : MainNetParams.get());
+                    SamouraiWallet.getInstance().setCurrentNetworkParams(wallet.getBoolean("testnet") ? TestNet3Params.get() : MainNetParams.get());
                 }
                 else    {
                     SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());

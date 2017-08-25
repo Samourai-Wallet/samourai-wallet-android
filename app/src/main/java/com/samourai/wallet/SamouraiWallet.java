@@ -3,7 +3,6 @@ package com.samourai.wallet;
 import android.content.Context;
 
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
