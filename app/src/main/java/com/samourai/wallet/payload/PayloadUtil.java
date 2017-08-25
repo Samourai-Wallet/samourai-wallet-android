@@ -192,6 +192,8 @@ public class PayloadUtil	{
                 ;
             }
 
+            wallet.put("testnet", PrefsUtil.getInstance(context).getValue(PrefsUtil.TESTNET, false));
+
             //
             // can remove ???
             //
@@ -315,6 +317,9 @@ public class PayloadUtil	{
         }
 
         try {
+
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+
 //            Log.i("PayloadUtil", obj.toString());
             if(wallet != null) {
                 hdw = new HD_Wallet(context, 44, wallet, params);
@@ -335,11 +340,20 @@ public class PayloadUtil	{
                         AddressFactory.getInstance().xpub2account().put(hdw.getAccount(i).xpubstr(), i);
                     }
                 }
+
+                if(wallet.has("testnet"))    {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, wallet.getBoolean("testnet"));
+                    editor.putBoolean("testnet", wallet.getBoolean("testnet") ? true : false);
+                    editor.commit();
+                }
+                else    {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, false);
+                    editor.putBoolean("testnet", false);
+                    editor.commit();
+                }
             }
 
             if(meta != null) {
-
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 
                 if(meta.has("prev_balance")) {
                     APIFactory.getInstance(context).setXpubBalance(meta.getLong("prev_balance"));
