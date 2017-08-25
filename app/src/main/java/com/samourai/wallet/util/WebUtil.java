@@ -32,7 +32,8 @@ public class WebUtil	{
 
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
-    public static String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
+    public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
+    public static final String SAMOURAI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
 //    public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
@@ -69,12 +70,7 @@ public class WebUtil	{
     public static WebUtil getInstance(Context ctx)  {
 
         context = ctx;
-
         if(instance == null)  {
-
-            if(SamouraiWallet.getInstance().isTestNet())    {
-                SAMOURAI_API2 = "https://api.samourai.io/test/v2/";
-            }
 
             instance = new WebUtil();
         }
