@@ -158,7 +158,7 @@ public class WebSocketHandler {
             try {
 
                 mConnection = new WebSocketFactory()
-                        .createSocket("wss://api.samourai.io/v2/inv")
+                        .createSocket(SamouraiWallet.getInstance().isTestNet() ? "wss://api.samourai.io/test/v2/inv" : "wss://api.samourai.io/v2/inv")
 //                        .addHeader("Origin", "https://blockchain.info").recreate()
                         .addListener(new WebSocketAdapter() {
 
