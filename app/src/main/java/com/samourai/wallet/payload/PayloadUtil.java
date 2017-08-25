@@ -39,6 +39,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
+import org.bitcoinj.params.TestNet2Params;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -170,6 +171,8 @@ public class PayloadUtil	{
         try {
             JSONObject wallet = new JSONObject();
 
+            wallet.put("testnet", SamouraiWallet.getInstance().isTestNet() ? true : false);
+
             if(HD_WalletFactory.getInstance(context).get().getSeedHex() != null) {
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
                 wallet.put("passphrase", HD_WalletFactory.getInstance(context).get().getPassphrase());
@@ -191,8 +194,6 @@ public class PayloadUtil	{
             catch(AddressFormatException afe) {
                 ;
             }
-
-            wallet.put("testnet", PrefsUtil.getInstance(context).getValue(PrefsUtil.TESTNET, false));
 
             //
             // can remove ???
@@ -322,6 +323,14 @@ public class PayloadUtil	{
 
 //            Log.i("PayloadUtil", obj.toString());
             if(wallet != null) {
+
+                if(wallet.has("testnet"))    {
+                    SamouraiWallet.getInstance().setCurrentNetworkParams(wallet.getBoolean("testnet") ? TestNet2Params.get() : MainNetParams.get());
+                }
+                else    {
+                    SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());
+                }
+
                 hdw = new HD_Wallet(context, 44, wallet, params);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getReceive().setAddrIdx(wallet.has("receiveIdx") ? wallet.getInt("receiveIdx") : 0);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChange().setAddrIdx(wallet.has("changeIdx") ? wallet.getInt("changeIdx") : 0);
@@ -341,16 +350,6 @@ public class PayloadUtil	{
                     }
                 }
 
-                if(wallet.has("testnet"))    {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, wallet.getBoolean("testnet"));
-                    editor.putBoolean("testnet", wallet.getBoolean("testnet") ? true : false);
-                    editor.commit();
-                }
-                else    {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, false);
-                    editor.putBoolean("testnet", false);
-                    editor.commit();
-                }
             }
 
             if(meta != null) {

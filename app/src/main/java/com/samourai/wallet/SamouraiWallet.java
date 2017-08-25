@@ -3,6 +3,7 @@ package com.samourai.wallet;
 import android.content.Context;
 
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
@@ -39,7 +40,6 @@ public class SamouraiWallet {
     public static SamouraiWallet getInstance()  {
 
         if(instance == null)    {
-            networkParams = SamouraiWallet.getInstance().getCurrentNetworkParams();
             instance = new SamouraiWallet();
         }
 
@@ -83,6 +83,9 @@ public class SamouraiWallet {
     }
 
     public NetworkParameters getCurrentNetworkParams() {
+        if(networkParams == null)    {
+            networkParams = MainNetParams.get();
+        }
         return networkParams;
     }
 
@@ -91,7 +94,15 @@ public class SamouraiWallet {
     }
 
     public boolean isTestNet()  {
-        return !(getCurrentNetworkParams() instanceof MainNetParams);
+
+        if(networkParams == null)    {
+            networkParams = MainNetParams.get();
+            return false;
+        }
+        else    {
+            return !(getCurrentNetworkParams() instanceof MainNetParams);
+        }
+
     }
 
 }
