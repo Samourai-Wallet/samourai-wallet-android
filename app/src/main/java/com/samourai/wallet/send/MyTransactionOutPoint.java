@@ -1,5 +1,7 @@
 package com.samourai.wallet.send;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ProtocolException;
 import org.bitcoinj.core.Sha256Hash;

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;

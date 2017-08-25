@@ -1,5 +1,7 @@
 package com.samourai.wallet.hd;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.NetworkParameters;

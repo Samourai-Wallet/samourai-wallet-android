@@ -7,6 +7,7 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.params.MainNetParams;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.util.FormatsUtil;

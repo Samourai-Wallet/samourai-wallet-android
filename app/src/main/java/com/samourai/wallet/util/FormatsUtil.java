@@ -2,6 +2,7 @@ package com.samourai.wallet.util;
 
 import android.util.Patterns;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.bitcoinj.core.Address;

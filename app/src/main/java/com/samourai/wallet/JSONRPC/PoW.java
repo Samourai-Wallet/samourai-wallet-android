@@ -13,6 +13,8 @@ import static org.spongycastle.util.Arrays.reverse;
 
 import android.util.Log;
 
+import com.samourai.wallet.SamouraiWallet;
+
 public class PoW {
 
     private String strHash = null;

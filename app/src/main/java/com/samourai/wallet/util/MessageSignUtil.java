@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;

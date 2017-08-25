@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Address;

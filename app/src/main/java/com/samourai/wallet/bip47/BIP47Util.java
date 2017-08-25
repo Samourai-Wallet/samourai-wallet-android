@@ -3,6 +3,7 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.SecretPoint;

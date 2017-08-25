@@ -1,5 +1,6 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Wallet;
 
 import org.bitcoinj.core.NetworkParameters;

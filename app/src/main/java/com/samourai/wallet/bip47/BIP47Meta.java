@@ -3,6 +3,7 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 //import android.util.Log;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 

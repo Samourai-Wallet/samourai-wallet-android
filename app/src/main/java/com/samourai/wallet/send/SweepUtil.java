@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
