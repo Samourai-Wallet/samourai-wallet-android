@@ -82,10 +82,7 @@ public class SamouraiWallet {
     }
 
     public NetworkParameters getCurrentNetworkParams() {
-        if(networkParams == null)    {
-            networkParams = MainNetParams.get();
-        }
-        return networkParams;
+        return (networkParams == null) ? MainNetParams.get() : networkParams;
     }
 
     public void setCurrentNetworkParams(NetworkParameters params) {
@@ -93,15 +90,7 @@ public class SamouraiWallet {
     }
 
     public boolean isTestNet()  {
-
-        if(networkParams == null)    {
-            networkParams = MainNetParams.get();
-            return false;
-        }
-        else    {
-            return !(getCurrentNetworkParams() instanceof MainNetParams);
-        }
-
+        return (networkParams == null) ? false : !(getCurrentNetworkParams() instanceof MainNetParams);
     }
 
 }

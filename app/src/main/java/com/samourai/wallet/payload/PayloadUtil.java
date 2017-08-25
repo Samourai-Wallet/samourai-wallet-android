@@ -171,7 +171,6 @@ public class PayloadUtil	{
             JSONObject wallet = new JSONObject();
 
             wallet.put("testnet", SamouraiWallet.getInstance().isTestNet() ? true : false);
-            WebUtil.getInstance(context);
 
             if(HD_WalletFactory.getInstance(context).get().getSeedHex() != null) {
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
