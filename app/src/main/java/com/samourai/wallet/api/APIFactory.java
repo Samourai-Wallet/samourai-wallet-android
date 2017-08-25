@@ -12,6 +12,7 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.FeeUtil;
@@ -31,6 +32,7 @@ import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
@@ -322,6 +324,68 @@ public class APIFactory	{
 
         return false;
 
+    }
+
+    private synchronized JSONObject deleteXPUB(String xpub) {
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String response = null;
+            ECKey ecKey = null;
+
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
+                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
+                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                ecKey = addr.getECKey();
+
+                if(ecKey != null && ecKey.hasPrivKey())    {
+
+                    String sig = ecKey.signMessage(xpub);
+
+                    if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                        // use POST
+                        StringBuilder args = new StringBuilder();
+                        args.append("message=");
+                        args.append(xpub);
+                        args.append("address=");
+                        args.append(ecKey.toAddress(MainNetParams.get()).toString());
+                        args.append("signature=");
+                        args.append(sig);
+                        Log.i("APIFactory", "delete XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "delete?", args.toString());
+                        Log.i("APIFactory", "delete XPUB response:" + response);
+                    }
+                    else    {
+                        HashMap<String,String> args = new HashMap<String,String>();
+                        args.put("message", xpub);
+                        args.put("address", ecKey.toAddress(MainNetParams.get()).toString());
+                        args.put("signature", sig);
+                        Log.i("APIFactory", "XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "delete", args);
+                        Log.i("APIFactory", "XPUB response:" + response);
+                    }
+
+                    try {
+                        jsonObject = new JSONObject(response);
+
+                    }
+                    catch(JSONException je) {
+                        je.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                }
+            }
+
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 
     public long getLatestBlockHeight()  {
