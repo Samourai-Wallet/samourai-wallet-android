@@ -117,7 +117,7 @@ public class PoW {
 
             long difficultyTarget = Long.parseLong(nodeObj.getString("bits"), 16);
             target = Utils.decodeCompactBits(difficultyTarget);
-            if (target.signum() <= 0 || target.compareTo(MainNetParams.get().getMaxTarget()) > 0) {
+            if (target.signum() <= 0 || target.compareTo(SamouraiWallet.getInstance().getCurrentNetworkParams().getMaxTarget()) > 0) {
                 Log.i("PoW", "invalid target");
                 return false;
             }

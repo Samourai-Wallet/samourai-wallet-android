@@ -98,7 +98,7 @@ public class HD_WalletFactory	{
             passphrase = "";
         }
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         AppUtil.getInstance(context).applyPRNGFixes();
         SecureRandom random = new SecureRandom();
@@ -126,7 +126,7 @@ public class HD_WalletFactory	{
             passphrase = "";
         }
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         InputStream wis = context.getResources().getAssets().open("BIP39/en.txt");
         if(wis != null) {
@@ -182,7 +182,7 @@ public class HD_WalletFactory	{
             String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
-            hdw47 = new BIP47Wallet(47, mc, MainNetParams.get(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+            hdw47 = new BIP47Wallet(47, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
         }
 
         return hdw47;

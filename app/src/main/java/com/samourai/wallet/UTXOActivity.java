@@ -109,7 +109,7 @@ public class UTXOActivity extends Activity {
 
                         String addr = data.get(position).getLeft().toString();
                         ECKey ecKey = SendFactory.getPrivKey(addr);
-                        String strPrivKey = ecKey.getPrivateKeyAsWiF(MainNetParams.get());
+                        String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                         ImageView showQR = new ImageView(UTXOActivity.this);
                         Bitmap bitmap = null;

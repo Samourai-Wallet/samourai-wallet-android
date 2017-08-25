@@ -71,7 +71,7 @@ public class PaymentCode {
     }
 
     public HD_Address addressAt(int idx) throws AddressFormatException {
-        return new BIP47Account(MainNetParams.get(), strPaymentCode).addressAt(idx);
+        return new BIP47Account(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPaymentCode).addressAt(idx);
     }
 
     public byte[] getPayload() throws AddressFormatException    {

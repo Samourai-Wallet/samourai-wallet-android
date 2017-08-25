@@ -292,7 +292,7 @@ public class PayloadUtil	{
 
         HD_Wallet hdw = null;
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         JSONObject wallet = null;
         JSONObject meta = null;

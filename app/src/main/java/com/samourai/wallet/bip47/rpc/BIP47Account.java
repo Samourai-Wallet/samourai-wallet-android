@@ -81,7 +81,7 @@ public class BIP47Account extends HD_Account {
      *
      */
     public HD_Address addressAt(int idx) {
-        return new HD_Address(MainNetParams.get(), aKey, idx);
+        return new HD_Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), aKey, idx);
     }
 
     private String createPaymentCodeFromAccountKey() {

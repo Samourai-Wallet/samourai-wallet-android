@@ -60,7 +60,7 @@ public class SweepUtil  {
                         return;
                     }
 
-                    String address = privKeyReader.getKey().toAddress(MainNetParams.get()).toString();
+                    String address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                     UTXO utxo = APIFactory.getInstance(context).getUnspentOutputsForSweep(address);
                     if(utxo != null)    {
 

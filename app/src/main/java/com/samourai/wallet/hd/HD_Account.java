@@ -40,7 +40,7 @@ public class HD_Account {
         childnum |= ChildNumber.HARDENED_BIT;
         aKey = HDKeyDerivation.deriveChildKey(mKey, childnum);
 
-        strXPUB = aKey.serializePubB58(MainNetParams.get());
+        strXPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
         mReceive = new HD_Chain(mParams, aKey, true);
         mChange = new HD_Chain(mParams, aKey, false);

@@ -5,12 +5,16 @@ import android.content.Context;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.params.MainNetParams;
 
 import java.io.IOException;
 import java.math.BigInteger;
 
 public class SamouraiWallet {
+
+    private static NetworkParameters networkParams = null;
 
     public final static int SAMOURAI_ACCOUNT = 0;
     public final static int MIXING_ACCOUNT = 1;
@@ -35,6 +39,7 @@ public class SamouraiWallet {
     public static SamouraiWallet getInstance()  {
 
         if(instance == null)    {
+            networkParams = SamouraiWallet.getInstance().getCurrentNetworkParams();
             instance = new SamouraiWallet();
         }
 
@@ -77,5 +82,16 @@ public class SamouraiWallet {
         }
     }
 
+    public NetworkParameters getCurrentNetworkParams() {
+        return networkParams;
+    }
+
+    public void setCurrentNetworkParams(NetworkParameters params) {
+        networkParams = params;
+    }
+
+    public boolean isTestNet()  {
+        return !(getCurrentNetworkParams() instanceof MainNetParams);
+    }
 
 }

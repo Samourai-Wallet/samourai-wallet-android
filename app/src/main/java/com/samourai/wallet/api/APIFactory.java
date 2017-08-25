@@ -350,7 +350,7 @@ public class APIFactory	{
                         args.append("message=");
                         args.append(xpub);
                         args.append("address=");
-                        args.append(ecKey.toAddress(MainNetParams.get()).toString());
+                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.append("signature=");
                         args.append(sig);
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
@@ -360,7 +360,7 @@ public class APIFactory	{
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
                         args.put("message", xpub);
-                        args.put("address", ecKey.toAddress(MainNetParams.get()).toString());
+                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.put("signature", sig);
                         Log.i("APIFactory", "XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "delete", args);
@@ -499,7 +499,7 @@ public class APIFactory	{
                     Script script = new Script(Hex.decode(strScript));
                         Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
                     ECKey pKey = new ECKey(null, script.getPubKey(), true);
-                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
+                        Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
                     if(((JSONObject)inArray.get(0)).has("outpoint"))    {
@@ -510,7 +510,7 @@ public class APIFactory	{
 
                         byte[] hashBytes = Hex.decode(strHash);
                         Sha256Hash txHash = new Sha256Hash(hashBytes);
-                        TransactionOutPoint outPoint = new TransactionOutPoint(MainNetParams.get(), idx, txHash);
+                        TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), idx, txHash);
                         byte[] outpoint = outPoint.bitcoinSerialize();
                             Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
@@ -587,11 +587,11 @@ public class APIFactory	{
                     //
                     for(int i = 0; i < 3; i++)   {
                         PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(pcode, i);
-//                        Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                        BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                        BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
-//                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
+//                        Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                        BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
+//                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                     }
 
                 }
@@ -710,7 +710,7 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     try {
-                        String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
+                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
@@ -1314,7 +1314,7 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     try {
-                        String address = new Script(scriptBytes).getToAddress(MainNetParams.get()).toString();
+                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
 
                         // Construct the output
                         MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);

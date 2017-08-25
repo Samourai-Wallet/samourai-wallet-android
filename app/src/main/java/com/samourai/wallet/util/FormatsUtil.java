@@ -129,7 +129,7 @@ public class FormatsUtil {
 		Address addr = null;
 		
 		try {
-			addr = new Address(MainNetParams.get(), address);
+			addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
 			if(addr != null) {
 				ret = true;
 			}

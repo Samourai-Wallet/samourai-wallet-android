@@ -944,7 +944,7 @@ public class BIP47Activity extends Activity {
                 continue;
             }
 
-            MyTransactionInput input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], o, o.getTxHash().toString(), o.getTxOutputN());
+            MyTransactionInput input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], o, o.getTxHash().toString(), o.getTxOutputN());
             inputs.add(input);
         }
         //
@@ -973,7 +973,7 @@ public class BIP47Activity extends Activity {
         //
         try {
             Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
-            String address = inputScript.getToAddress(MainNetParams.get()).toString();
+            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             ECKey ecKey = null;
             String privStr = null;
             String path = APIFactory.getInstance(BIP47Activity.this).getUnspentPaths().get(address);
@@ -987,7 +987,7 @@ public class BIP47Activity extends Activity {
                 String[] s = path.split("/");
                 HD_Address hd_address = AddressFactory.getInstance(BIP47Activity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                 privStr = hd_address.getPrivateKeyString();
-                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
+                DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), privStr);
                 ecKey = pk.getKey();
             }
 
@@ -1452,11 +1452,11 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
-                            addrs.add(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
+                            addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Incoming(s);
@@ -1474,11 +1474,11 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress sendAddress = BIP47Util.getInstance(BIP47Activity.this).getSendAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                            BIP47Meta.getInstance().setOutgoingIdx(payment_code.toString(), i);
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
-                            addrs.add(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
+                            addrs.add(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Outgoing(s);

@@ -283,24 +283,24 @@ public class WebSocketHandler {
                                                         idx++;
                                                         for(int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++)   {
                                                             PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-//                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
+//                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
 
-                                                            _addrs.add(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+                                                            _addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                         }
 
                                                         idx--;
                                                         if(idx >= 2)    {
                                                             for(int i = idx; i >= (idx - (BIP47Meta.INCOMING_LOOKAHEAD - 1)); i--)   {
                                                                 PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-//                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
+//                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
 
-                                                                _addrs.add(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+                                                                _addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                             }
                                                         }
 

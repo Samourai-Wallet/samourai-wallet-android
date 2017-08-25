@@ -240,11 +240,11 @@ public class BIP47Meta {
             for(int i = idx; i < (idx + INCOMING_LOOKAHEAD); i++)   {
                 try {
                     PaymentAddress receiveAddress = BIP47Util.getInstance(ctx).getReceiveAddress(new PaymentCode(pcode), i);
-//                    Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                    BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
-                    addrs.add(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+//                    Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                    BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
+                    BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
+                    addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                 }
                 catch(Exception e) {
                     ;
@@ -376,8 +376,8 @@ public class BIP47Meta {
             if(idxs != null)    {
                 for(int i = 0; i < idxs.size(); i++)   {
                     PaymentAddress addr = BIP47Util.getInstance(ctx).getReceiveAddress(new PaymentCode(pcode), idxs.get(i));
-//                    Log.i("BIP47Meta", "address has unspents:" + addr.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    ret.add(addr.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+//                    Log.i("BIP47Meta", "address has unspents:" + addr.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                    ret.add(addr.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                 }
             }
 

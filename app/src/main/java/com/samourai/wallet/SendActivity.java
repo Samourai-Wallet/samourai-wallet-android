@@ -849,7 +849,7 @@ public class SendActivity extends Activity {
                     for(TransactionOutput output : pair.getRight())   {
                         try {
                             Script script = new Script(output.getScriptBytes());
-                            receivers.put(script.getToAddress(MainNetParams.get()).toString(), BigInteger.valueOf(output.getValue().longValue()));
+                            receivers.put(script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), BigInteger.valueOf(output.getValue().longValue()));
                             outputAmount += output.getValue().longValue();
                         }
                         catch(Exception e) {
@@ -982,9 +982,9 @@ public class SendActivity extends Activity {
 
                                 for(TransactionInput input : tx.getInputs())    {
 
-                                    String _addr = input.getConnectedOutput().getAddressFromP2PKHScript(MainNetParams.get()).toString();
+                                    String _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                                     if(_addr == null)    {
-                                        _addr = input.getConnectedOutput().getAddressFromP2SH(MainNetParams.get()).toString();
+                                        _addr = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                                     }
 
                                     String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
@@ -1088,8 +1088,8 @@ public class SendActivity extends Activity {
                                                 if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
-                                                        if(!address.equals(out.getAddressFromP2PKHScript(MainNetParams.get()).toString()))  {
-                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(MainNetParams.get()).toString());
+                                                        if(!address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
+                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                         }
                                                     }
 
@@ -1431,7 +1431,7 @@ public class SendActivity extends Activity {
                     PaymentCode _pcode = new PaymentCode(pcode);
                     PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(_pcode, BIP47Meta.getInstance().getOutgoingIdx(pcode));
 
-                    strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
+                    strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                     strPCode = _pcode.toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     edAddress.setEnabled(false);

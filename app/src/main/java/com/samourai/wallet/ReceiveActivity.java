@@ -516,7 +516,7 @@ public class ReceiveActivity extends Activity {
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(MainNetParams.get(), addr), Coin.valueOf(lamount), null, null)));
+                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr), Coin.valueOf(lamount), null, null)));
             }
             else {
                 ivQR.setImageBitmap(generateQRCode(addr));
