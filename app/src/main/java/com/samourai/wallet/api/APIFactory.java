@@ -118,6 +118,8 @@ public class APIFactory	{
 
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
@@ -130,14 +132,14 @@ public class APIFactory	{
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
                 Log.i("APIFactory", "XPUB:" + args.toString());
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "multiaddr?", args.toString());
+                response = WebUtil.getInstance(context).postURL(_url + "multiaddr?", args.toString());
                 Log.i("APIFactory", "XPUB response:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", StringUtils.join(xpubs, "|"));
                 Log.i("APIFactory", "XPUB:" + args.toString());
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "multiaddr", args);
+                response = WebUtil.getInstance(context).tor_postURL(_url + "multiaddr", args);
                 Log.i("APIFactory", "XPUB response:" + response);
             }
 
@@ -329,6 +331,8 @@ public class APIFactory	{
 
     private synchronized JSONObject deleteXPUB(String xpub) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
@@ -355,7 +359,7 @@ public class APIFactory	{
                         args.append("signature=");
                         args.append(sig);
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "delete?", args.toString());
+                        response = WebUtil.getInstance(context).postURL(_url + "delete?", args.toString());
                         Log.i("APIFactory", "delete XPUB response:" + response);
                     }
                     else    {
@@ -364,7 +368,7 @@ public class APIFactory	{
                         args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.put("signature", sig);
                         Log.i("APIFactory", "XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "delete", args);
+                        response = WebUtil.getInstance(context).tor_postURL(_url + "delete", args);
                         Log.i("APIFactory", "XPUB response:" + response);
                     }
 
@@ -399,10 +403,12 @@ public class APIFactory	{
 
     public JSONObject getNotifTx(String hash, String addr) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            StringBuilder url = new StringBuilder(_url);
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
@@ -428,10 +434,12 @@ public class APIFactory	{
 
     public JSONObject getNotifAddress(String addr) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            StringBuilder url = new StringBuilder(_url);
             url.append("multiaddr?active=");
             url.append(addr);
             Log.i("APIFactory", "Notif address:" + url.toString());
@@ -607,12 +615,14 @@ public class APIFactory	{
 
     public synchronized int getNotifTxConfirmations(String hash) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
 //        Log.i("APIFactory", "Notif tx:" + hash);
 
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            StringBuilder url = new StringBuilder(_url);
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
@@ -654,6 +664,8 @@ public class APIFactory	{
 
     public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
@@ -664,12 +676,12 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
+                response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", StringUtils.join(xpubs, "|"));
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "unspent", args);
+                response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
             }
 
             parseUnspentOutputs(response);
@@ -762,10 +774,12 @@ public class APIFactory	{
 
     public synchronized JSONObject getTxInfo(String hash) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            StringBuilder url = new StringBuilder(_url);
             url.append("tx/");
             url.append(hash);
             url.append("?fees=true");
@@ -783,10 +797,12 @@ public class APIFactory	{
 
     public synchronized JSONObject getBlockHeader(String hash) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API2);
+            StringBuilder url = new StringBuilder(_url);
             url.append("header/");
             url.append(hash);
 
@@ -1257,6 +1273,8 @@ public class APIFactory	{
 
     public synchronized UTXO getUnspentOutputsForSweep(String address) {
 
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
         try {
 
             String response = null;
@@ -1265,12 +1283,12 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API2 + "unspent?", args.toString());
+                response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", address);
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API2 + "unspent", args);
+                response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
             }
 
             return parseUnspentOutputsForSweep(response);
