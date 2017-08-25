@@ -266,6 +266,10 @@ public class BalanceActivity extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            setTitle(getText(R.string.app_name) + ":" + "TestNet");
+        }
+
         LayoutInflater inflator = BalanceActivity.this.getLayoutInflater();
         tvBalanceBar = (LinearLayout)inflator.inflate(R.layout.balance_layout, null);
         tvBalanceBar.setOnTouchListener(new View.OnTouchListener() {
