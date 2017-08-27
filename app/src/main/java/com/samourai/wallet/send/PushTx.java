@@ -39,7 +39,7 @@ public class PushTx {
 
     public String samourai(String hexString) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? "test/v2/pushtx" : "v1/pushtx";
+        String _url = SamouraiWallet.getInstance().isTestNet() ? "test/v2/pushtx/" : "v1/pushtx";
 
         try {
             String response = null;
