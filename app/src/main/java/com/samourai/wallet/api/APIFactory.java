@@ -329,7 +329,7 @@ public class APIFactory	{
 
     }
 
-    private synchronized JSONObject deleteXPUB(String xpub) {
+    public synchronized JSONObject deleteXPUB(String xpub) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -350,16 +350,14 @@ public class APIFactory	{
                     String sig = ecKey.signMessage(xpub);
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use POST
+                        // use DELETE
                         StringBuilder args = new StringBuilder();
-                        args.append("message=");
-                        args.append(xpub);
                         args.append("address=");
                         args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        args.append("signature=");
+                        args.append("&signature=");
                         args.append(sig);
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).postURL(_url + "delete?", args.toString());
+                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub, args.toString());
                         Log.i("APIFactory", "delete XPUB response:" + response);
                     }
                     else    {

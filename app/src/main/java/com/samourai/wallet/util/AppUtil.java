@@ -12,6 +12,7 @@ import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
@@ -62,10 +63,15 @@ public class AppUtil {
 	public void wipeApp() {
 
         try {
+            HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
+            String[] s = hdw.getXPUBs();
+            for(int i = 0; i < s.length; i++)   {
+                APIFactory.getInstance(context).deleteXPUB(s[i]);
+            }
             PayloadUtil.getInstance(context).wipe();
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
+        catch(Exception e) {
+            e.printStackTrace();
         }
 
         deleteBackup();

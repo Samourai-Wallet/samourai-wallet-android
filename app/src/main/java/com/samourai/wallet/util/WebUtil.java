@@ -23,6 +23,7 @@ import java.util.List;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
+import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
@@ -116,6 +117,56 @@ public class WebUtil	{
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType);
+                connection.setRequestProperty("charset", "utf-8");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+                connection.setUseCaches (false);
+
+                connection.setConnectTimeout(DefaultRequestTimeout);
+                connection.setReadTimeout(DefaultRequestTimeout);
+
+                connection.connect();
+
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(urlParameters);
+                wr.flush();
+                wr.close();
+
+                connection.setInstanceFollowRedirects(false);
+
+                if (connection.getResponseCode() == 200) {
+//					System.out.println("postURL:return code 200");
+                    return IOUtils.toString(connection.getInputStream(), "UTF-8");
+                }
+                else {
+                    error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
+//                    System.out.println("postURL:return code " + error);
+                }
+
+                Thread.sleep(5000);
+            } finally {
+                connection.disconnect();
+            }
+        }
+
+        throw new Exception("Invalid Response " + error);
+    }
+
+    public String deleteURL(String request, String urlParameters) throws Exception {
+
+        String error = null;
+
+        for (int ii = 0; ii < DefaultRequestRetry; ++ii) {
+            URL url = new URL(request);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            try {
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("DELETE");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("charset", "utf-8");
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
@@ -262,6 +313,52 @@ public class WebUtil	{
         }
 
         HttpResponse response = httpclient.execute(httppost);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(response.getStatusLine()).append("\n\n");
+
+        InputStream is = response.getEntity().getContent();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        while ((line = br.readLine()) != null)  {
+            sb.append(line);
+        }
+
+        httpclient.close();
+
+        String result = sb.toString();
+//        Log.d("WebUtil", "POST result via Tor:" + result);
+        int idx = result.indexOf("{");
+        if(idx != -1)    {
+            return result.substring(idx);
+        }
+        else    {
+            return result;
+        }
+
+    }
+
+    public String tor_deleteURL(String URL, HashMap<String,String> args) throws Exception {
+
+        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
+
+        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
+
+        HttpDelete httpdelete = new HttpDelete(new URI(URL));
+        httpdelete.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpdelete.setHeader("charset", "utf-8");
+        httpdelete.setHeader("Accept", "application/json");
+        httpdelete.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+        if(args != null)    {
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            for(String key : args.keySet())   {
+                urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+            }
+//            httpdelete.setEntity(new UrlEncodedFormEntity(urlParameters));
+        }
+
+        HttpResponse response = httpclient.execute(httpdelete);
 
         StringBuffer sb = new StringBuffer();
         sb.append(response.getStatusLine()).append("\n\n");
