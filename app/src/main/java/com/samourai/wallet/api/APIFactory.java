@@ -366,7 +366,7 @@ public class APIFactory	{
                         args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.put("signature", sig);
                         Log.i("APIFactory", "XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).tor_postURL(_url + "delete", args);
+                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
                         Log.i("APIFactory", "XPUB response:" + response);
                     }
 
