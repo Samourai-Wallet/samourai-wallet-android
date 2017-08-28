@@ -325,9 +325,11 @@ public class PayloadUtil	{
 
                 if(wallet.has("testnet"))    {
                     SamouraiWallet.getInstance().setCurrentNetworkParams(wallet.getBoolean("testnet") ? TestNet3Params.get() : MainNetParams.get());
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, wallet.getBoolean("testnet"));
                 }
                 else    {
                     SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());
+                    PrefsUtil.getInstance(context).removeValue(PrefsUtil.TESTNET);
                 }
 
                 hdw = new HD_Wallet(context, 44, wallet, params);
