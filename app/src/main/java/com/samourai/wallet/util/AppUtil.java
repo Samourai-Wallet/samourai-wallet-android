@@ -199,10 +199,10 @@ public class AppUtil {
         }
     }
 
-    public boolean isPlayInstaller() {
+    public boolean isSideLoaded() {
         List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
         final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        return installer != null && validInstallers.contains(installer);
+        return installer == null || !validInstallers.contains(installer);
     }
 
 }
