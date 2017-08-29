@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -355,7 +356,7 @@ public class APIFactory	{
                         args.append("address=");
                         args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.append("&signature=");
-                        args.append(sig);
+                        args.append(Uri.encode(sig));
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub, args.toString());
                         Log.i("APIFactory", "delete XPUB response:" + response);
@@ -364,7 +365,7 @@ public class APIFactory	{
                         HashMap<String,String> args = new HashMap<String,String>();
                         args.put("message", xpub);
                         args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        args.put("signature", sig);
+                        args.put("signature", Uri.encode(sig));
                         Log.i("APIFactory", "XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
                         Log.i("APIFactory", "XPUB response:" + response);
