@@ -412,4 +412,8 @@
     <string name="send_tx">Send raw transaction</string>
     <string name="tx_too_large_qr">Raw transaction too large to display in QR code.</string>
 
+    <string name="select_network">Select network...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
 </resources>
