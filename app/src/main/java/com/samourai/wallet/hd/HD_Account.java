@@ -70,7 +70,8 @@ public class HD_Account {
         byte[] xpubBytes = Base58.decodeChecked(xpubstr);
 
         ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
-        if(bb.getInt() != 0x0488B21E)   {
+        int version = bb.getInt();
+        if(version != 0x0488B21E && version != 0x043587CF)   {
             throw new AddressFormatException("invalid xpub version");
         }
 

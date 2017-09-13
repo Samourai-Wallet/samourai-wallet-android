@@ -167,7 +167,8 @@ public class FormatsUtil {
 			byte[] xpubBytes = Base58.decodeChecked(xpub);
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
-			if(byteBuffer.getInt() != 0x0488B21E)   {
+			int version = byteBuffer.getInt();
+			if(version != 0x0488B21E && version != 0x043587CF)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{
