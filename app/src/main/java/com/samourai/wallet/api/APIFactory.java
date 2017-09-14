@@ -353,12 +353,14 @@ public class APIFactory	{
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                         // use DELETE
                         StringBuilder args = new StringBuilder();
+                        args.append("message=");
+                        args.append(xpub);
                         args.append("address=");
                         args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub, args.toString());
+                        response = WebUtil.getInstance(context).deleteURL(_url + "delete/" + xpub, args.toString());
                         Log.i("APIFactory", "delete XPUB response:" + response);
                     }
                     else    {
@@ -373,6 +375,100 @@ public class APIFactory	{
 
                     try {
                         jsonObject = new JSONObject(response);
+
+                        if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                            ;
+                        }
+
+                    }
+                    catch(JSONException je) {
+                        je.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                }
+            }
+
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public synchronized JSONObject lockXPUB(String xpub, boolean bip49) {
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String response = null;
+            ECKey ecKey = null;
+
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
+                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
+                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                ecKey = addr.getECKey();
+
+                if(ecKey != null && ecKey.hasPrivKey())    {
+
+                    String sig = ecKey.signMessage(xpub);
+
+                    if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                        // use DELETE
+                        StringBuilder args = new StringBuilder();
+                        args.append("address=");
+                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.append("&signature=");
+                        args.append(Uri.encode(sig));
+                        args.append("&message=");
+                        args.append("lock");
+                        args.append("&type=");
+                        args.append("restore");
+                        if(bip49)    {
+                            args.append("&segwit=");
+                            args.append("bip49");
+                        }
+                        else    {
+                            args.append("&xpub=");
+                            args.append("bip44");
+                        }
+                        Log.i("APIFactory", "delete XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub, args.toString());
+                        Log.i("APIFactory", "delete XPUB response:" + response);
+                    }
+                    else    {
+                        HashMap<String,String> args = new HashMap<String,String>();
+                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.put("signature", Uri.encode(sig));
+                        args.put("message", "lock");
+                        args.put("type", "restore");
+                        if(bip49)    {
+                            args.put("segwit", "bip49");
+                        }
+                        else    {
+                            args.put("xpub", "bip44");
+                        }
+                        Log.i("APIFactory", "XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "xpub", args);
+                        Log.i("APIFactory", "XPUB response:" + response);
+                    }
+
+                    try {
+                        jsonObject = new JSONObject(response);
+
+                        if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                            if(bip49)    {
+                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                            }
+                            else    {
+                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
+                            }
+                        }
 
                     }
                     catch(JSONException je) {
