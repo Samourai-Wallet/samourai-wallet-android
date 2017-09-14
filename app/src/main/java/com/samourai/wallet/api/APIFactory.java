@@ -438,7 +438,7 @@ public class APIFactory	{
                             args.append("bip44");
                         }
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub, args.toString());
+                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub + "/lock/", args.toString());
                         Log.i("APIFactory", "delete XPUB response:" + response);
                     }
                     else    {
@@ -454,7 +454,7 @@ public class APIFactory	{
                             args.put("xpub", "bip44");
                         }
                         Log.i("APIFactory", "XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "xpub", args);
+                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "xpub" + xpub + "/lock/", args);
                         Log.i("APIFactory", "XPUB response:" + response);
                     }
 
