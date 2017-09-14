@@ -368,9 +368,9 @@ public class APIFactory	{
                         args.put("message", xpub);
                         args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         args.put("signature", Uri.encode(sig));
-                        Log.i("APIFactory", "XPUB:" + args.toString());
+                        Log.i("APIFactory", "delete XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
-                        Log.i("APIFactory", "XPUB response:" + response);
+                        Log.i("APIFactory", "delete XPUB response:" + response);
                     }
 
                     try {
@@ -437,9 +437,9 @@ public class APIFactory	{
                             args.append("&xpub=");
                             args.append("bip44");
                         }
-                        Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).deleteURL(_url + "xpub/" + xpub + "/lock/", args.toString());
-                        Log.i("APIFactory", "delete XPUB response:" + response);
+                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
+                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
@@ -453,9 +453,9 @@ public class APIFactory	{
                         else    {
                             args.put("xpub", "bip44");
                         }
-                        Log.i("APIFactory", "XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "xpub" + xpub + "/lock/", args);
-                        Log.i("APIFactory", "XPUB response:" + response);
+                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+                        response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
+                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
@@ -601,9 +601,9 @@ public class APIFactory	{
                     JSONObject objInput = (JSONObject)inArray.get(0);
                     String strScript = objInput.getString("sig");
                     Script script = new Script(Hex.decode(strScript));
-                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
+                    Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
                     ECKey pKey = new ECKey(null, script.getPubKey(), true);
-                        Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                    Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
                     if(((JSONObject)inArray.get(0)).has("outpoint"))    {
@@ -616,11 +616,11 @@ public class APIFactory	{
                         Sha256Hash txHash = new Sha256Hash(hashBytes);
                         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), idx, txHash);
                         byte[] outpoint = outPoint.bitcoinSerialize();
-                            Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
+                        Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
                         try {
                             mask = BIP47Util.getInstance(context).getIncomingMask(script.getPubKey(), outpoint);
-                                Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
+                            Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
                         }
                         catch(Exception e) {
                             e.printStackTrace();
@@ -663,10 +663,10 @@ public class APIFactory	{
             if(mask != null && payload != null)    {
                 try {
                     byte[] xlat_payload = PaymentCode.blind(payload, mask);
-                        Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
+                    Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
 
                     pcode = new PaymentCode(xlat_payload);
-                        Log.i("APIFactory", "incoming payment code:" + pcode.toString());
+                    Log.i("APIFactory", "incoming payment code:" + pcode.toString());
 
                     if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
                         BIP47Meta.getInstance().setLabel(pcode.toString(), "");
