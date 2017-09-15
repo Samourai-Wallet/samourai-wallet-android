@@ -44,6 +44,10 @@ Samourai implementation of multi-hop spend designed to outrun the baying pack of
 
 Samourai indicates whether or not connections are being routed via Tor Socks5 proxy (uses Orbot).
 
+### TestNet3:
+
+MainNet/TestNet selection is displayed when sideloading a new installation. To switch networks, make a backup of your current wallet, uninstall/reinstall (sideload) and select desired network.
+
 ### OpenDime:
 
 Plug in your OpenDime using the appropriate OTG (On-The-Go) USB cable and Samourai can be used to view address and balance, validate the private key, and sweep balance to your wallet.
