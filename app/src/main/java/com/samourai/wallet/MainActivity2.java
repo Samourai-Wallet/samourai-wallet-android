@@ -198,7 +198,7 @@ public class MainActivity2 extends Activity {
 
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
-
+/*
         if(TimeOutUtil.getInstance().isTimedOut()) {
             if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
                 AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
@@ -220,7 +220,7 @@ public class MainActivity2 extends Activity {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
         }
-
+*/
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
         LocalBroadcastManager.getInstance(MainActivity2.this).registerReceiver(receiver_restart, filter_restart);
 

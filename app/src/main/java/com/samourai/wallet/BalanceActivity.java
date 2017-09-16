@@ -1575,7 +1575,7 @@ public class BalanceActivity extends Activity {
                 }
 
             }
-
+/*
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
                 try {
@@ -1593,7 +1593,7 @@ public class BalanceActivity extends Activity {
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
                 ;
             }
-
+*/
             return "OK";
         }
 
