@@ -917,7 +917,7 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
             if(sel == 2)    {
 
                 int[] blocks = new int[] { 2, 6, 24 };

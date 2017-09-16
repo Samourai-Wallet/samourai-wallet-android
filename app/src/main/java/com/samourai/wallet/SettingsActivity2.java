@@ -1100,11 +1100,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
         final int sel;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length)    {
+        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1) >= providers.length)    {
             sel = 1;
         }
         else    {
-            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
         }
 
         new AlertDialog.Builder(SettingsActivity2.this)
