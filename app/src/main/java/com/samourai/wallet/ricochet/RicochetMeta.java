@@ -47,6 +47,7 @@ import org.spongycastle.util.encoders.Hex;
 public class RicochetMeta {
 
     private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "12s6pEL6CUGKp5S1X9ire17S6fihUmSx4D";
+    private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "mhP47HR51VhabBudEihETvKkxfKQPeLqqc";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
@@ -426,12 +427,12 @@ public class RicochetMeta {
                 receivers.put(strAddress, samouraiFeeAmount);
             }
             catch(Exception e) {
-                receivers.put(SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
+                receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
             }
 
         }
         else    {
-            receivers.put(SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
+            receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
         }
 
         Transaction tx = SendFactory.getInstance(context).makeTransaction(0, unspent, receivers);

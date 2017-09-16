@@ -1030,7 +1030,7 @@ public class BIP47Activity extends Activity {
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
         receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
-        receivers.put(SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, currentSWFee);
+        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, currentSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
