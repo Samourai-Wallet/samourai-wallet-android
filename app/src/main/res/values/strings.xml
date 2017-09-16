@@ -85,6 +85,8 @@
     <string name="options_fee_provider2">Select fee provider: 21.co or Samourai (bitcoind)</string>
     <string name="options_broadcast_on">Broadcast transactions</string>
     <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy/paste raw signed transaction.</string>
+    <string name="options_segwit">Receive to segwit addresses</string>
+    <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 

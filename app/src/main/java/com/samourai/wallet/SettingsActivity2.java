@@ -125,6 +125,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
             else if(strBranch.equals("txs"))   {
                 addPreferencesFromResource(R.xml.settings_txs);
 
+                final CheckBoxPreference cbPref0 = (CheckBoxPreference) findPreference("segwit");
+                cbPref0.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref0.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, true);
+                        }
+
+                        return true;
+                    }
+                });
+
                 final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
                 cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {

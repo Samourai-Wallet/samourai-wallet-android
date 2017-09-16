@@ -38,6 +38,7 @@ public class PrefsUtil {
 	public static final String FEE_PROVIDER_SEL = "feeProviderSel";
 	public static final String BROADCAST_TX = "broadcastTx";
 	public static final String TESTNET = "testnet";
+	public static final String USE_SEGWIT = "useSegwit";
 	public static final String XPUB44LOCK = "xpub44lock";
 	public static final String XPUB49LOCK = "xpub49lock";
 

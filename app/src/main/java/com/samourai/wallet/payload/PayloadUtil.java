@@ -211,6 +211,7 @@ public class PayloadUtil	{
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
@@ -357,6 +358,11 @@ public class PayloadUtil	{
 
                 if(meta.has("prev_balance")) {
                     APIFactory.getInstance(context).setXpubBalance(meta.getLong("prev_balance"));
+                }
+                if(meta.has("use_segwit")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_SEGWIT, meta.getInt("use_segwit"));
+                    editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
+                    editor.commit();
                 }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
