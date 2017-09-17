@@ -188,6 +188,24 @@ public class HD_WalletFactory	{
         return hdw47;
     }
 
+    public HD_Wallet getBIP49() throws IOException, MnemonicException.MnemonicLengthException {
+
+        if(wallets == null || wallets.size() < 1) {
+            return null;
+        }
+
+        HD_Wallet hdw49 = null;
+        InputStream wis = context.getAssets().open("BIP39/en.txt");
+        if (wis != null) {
+            String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
+            String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
+            MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            hdw49 = new BIP47Wallet(49, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+        }
+
+        return hdw49;
+    }
+
     public void set(HD_Wallet wallet)	{
 
         if(wallet != null)	{
