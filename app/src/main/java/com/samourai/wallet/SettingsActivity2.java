@@ -496,6 +496,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference xpub49Pref = (Preference) findPreference("xpub49");
+                xpub49Pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB49();
+                        return true;
+                    }
+                });
+
                 Preference wipePref = (Preference) findPreference("wipe");
                 wipePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -1020,6 +1028,55 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             }
                         }
                 ).show();
+
+    }
+
+    private void getXPUB49()	{
+
+        String xpub = null;
+        try {
+            xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).getBIP49().getAccount(0).xpubstr();
+        }
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch (MnemonicException.MnemonicLengthException mle) {
+            mle.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(xpub);
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout xpubLayout = new LinearLayout(SettingsActivity2.this);
+        xpubLayout.setOrientation(LinearLayout.VERTICAL);
+        xpubLayout.addView(showQR);
+        xpubLayout.addView(showText);
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(xpubLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                }).show();
 
     }
 

@@ -20,10 +20,17 @@
         android:summary="@string/options_mnemonic2"
         android:key="mnemonic"
         />
+
     <Preference
         android:title="@string/options_xpub"
         android:summary="@string/options_xpub2"
         android:key="xpub"
+        />
+
+    <Preference
+        android:title="@string/options_xpub49"
+        android:summary="@string/options_xpub49_2"
+        android:key="xpub49"
         />
 
     <Preference
