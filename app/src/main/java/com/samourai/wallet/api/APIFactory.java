@@ -17,6 +17,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFUtil;
@@ -200,8 +201,10 @@ public class APIFactory	{
                     if(addrObj != null && addrObj.has("final_balance") && addrObj.has("address"))  {
                         if(FormatsUtil.getInstance().isValidXpub((String)addrObj.get("address")))    {
                             xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
-                            AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                            AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                            if(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null)    {
+                                AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                            }
                         }
                         else    {
                             long amount = 0L;
@@ -1187,17 +1190,21 @@ public class APIFactory	{
             if(hdw != null && hdw.getXPUBs() != null)    {
                 String[] all = null;
                 if(s != null && s.length > 0)    {
-                    all = new String[hdw.getXPUBs().length + s.length];
-                    System.arraycopy(hdw.getXPUBs(), 0, all, 0, hdw.getXPUBs().length);
-                    System.arraycopy(s, 0, all, hdw.getXPUBs().length, s.length);
+                    all = new String[hdw.getXPUBs().length + 1 + s.length];
+                    all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
+                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 1, s.length);
                 }
                 else    {
-                    all = hdw.getXPUBs();
+                    all = new String[hdw.getXPUBs().length + 1];
+                    all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
                 }
                 APIFactory.getInstance(context).getXPUB(all, true);
-                String[] xs = new String[2];
+                String[] xs = new String[3];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
                 xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
+                xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 getUnspentOutputs(xs);
                 getDynamicFees();
             }
