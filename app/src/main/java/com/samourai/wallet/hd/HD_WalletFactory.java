@@ -200,7 +200,7 @@ public class HD_WalletFactory	{
             String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
-            hdw49 = new BIP47Wallet(49, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+            hdw49 = new HD_Wallet(49, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
         }
 
         return hdw49;
