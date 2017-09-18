@@ -53,6 +53,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
@@ -1033,18 +1034,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getXPUB49()	{
 
-        String xpub = null;
-        try {
-            xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).getBIP49().getAccount(0).xpubstr();
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
+        String xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
