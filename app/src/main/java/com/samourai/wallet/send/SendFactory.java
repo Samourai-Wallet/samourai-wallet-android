@@ -23,6 +23,8 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -30,6 +32,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -724,11 +727,17 @@ public class SendFactory	{
             String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
             if(path != null)    {
                 String[] s = path.split("/");
-                int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
-                HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                String strPrivKey = hd_address.getPrivateKeyString();
-                DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
-                ecKey = pk.getKey();
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    ecKey = addr.getECKey();
+                }
+                else    {
+                    int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
+                    HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                    String strPrivKey = hd_address.getPrivateKeyString();
+                    DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
+                    ecKey = pk.getKey();
+                }
             }
             else    {
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
