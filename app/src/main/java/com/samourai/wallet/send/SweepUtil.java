@@ -9,9 +9,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -19,6 +21,7 @@ import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.R;
 
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +49,7 @@ public class SweepUtil  {
         return instance;
     }
 
-    public void sweep(final PrivKeyReader privKeyReader)  {
+    public void sweep(final PrivKeyReader privKeyReader, final boolean isBIP49)  {
 
         new Thread(new Runnable() {
             @Override
@@ -61,7 +64,14 @@ public class SweepUtil  {
                         return;
                     }
 
-                    String address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    String address = null;
+                    if(isBIP49)    {
+                        address = new SegwitAddress(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
+                    }
+                    else    {
+                        address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
+
                     UTXO utxo = APIFactory.getInstance(context).getUnspentOutputsForSweep(address);
                     if(utxo != null)    {
 
@@ -71,7 +81,15 @@ public class SweepUtil  {
                             total_value += outpoint.getValue().longValue();
                         }
 
-                        final BigInteger fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
+                        final BigInteger fee;
+                        if(isBIP49)    {
+                            int txSize = FeeUtil.getInstance().estimatedSize(outpoints.size(), 1);
+                            int vSize = FeeUtil.getInstance().getVSize(txSize);
+                            fee = FeeUtil.getInstance().calculateFee(vSize, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB());
+                        }
+                        else    {
+                            fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
+                        }
 
                         final long amount = total_value - fee.longValue();
 //                        Log.d("BalanceActivity", "Total value:" + total_value);
@@ -93,7 +111,13 @@ public class SweepUtil  {
                                 progress.setMessage(context.getString(R.string.please_wait_sending));
                                 progress.show();
 
-                                String receive_address = AddressFactory.getInstance(context).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                                String receive_address = null;
+                                if(isBIP49)    {
+                                    receive_address = AddressFactory.getInstance(context).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                                }
+                                else    {
+                                    receive_address = AddressFactory.getInstance(context).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                                }
                                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                                 receivers.put(receive_address, BigInteger.valueOf(amount));
                                 org.bitcoinj.core.Transaction tx = SendFactory.getInstance(context).makeTransaction(0, outpoints, receivers);
@@ -159,6 +183,7 @@ public class SweepUtil  {
                     }
                     else    {
                         Toast.makeText(context, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
+                        sweep(privKeyReader, true);
                     }
 
                 }

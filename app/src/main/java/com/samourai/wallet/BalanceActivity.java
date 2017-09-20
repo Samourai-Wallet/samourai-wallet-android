@@ -942,7 +942,7 @@ public class BalanceActivity extends Activity {
                                 }
 
                                 if(keyDecoded)    {
-                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
+                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr, false);
                                 }
 
                             }
@@ -959,7 +959,7 @@ public class BalanceActivity extends Activity {
 
             }
             else if(privKeyReader != null)	{
-                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
+                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader, false);
             }
             else    {
                 ;
