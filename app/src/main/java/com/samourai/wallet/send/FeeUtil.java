@@ -13,7 +13,8 @@ public class FeeUtil  {
             "Samourai (bitcoind)",
     };
 
-    private static final int ESTIMATED_INPUT_LEN = 148; // compressed key
+    private static final int ESTIMATED_INPUT_LEN_P2PKH = 148; // compressed key
+    private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 146; // p2sh
     private static final int ESTIMATED_OUTPUT_LEN = 33;
 
     private static SuggestedFee suggestedFee = null;
@@ -41,15 +42,6 @@ public class FeeUtil  {
 
     public String[] getProviders()	 {
         return providers;
-    }
-
-    public BigInteger estimatedFee(int inputs, int outputs)   {
-        int size = estimatedSize(inputs, outputs);
-        return calculateFee(size, getSuggestedFee().getDefaultPerKB());
-    }
-
-    public int estimatedSize(int inputs, int outputs)   {
-        return (outputs * ESTIMATED_OUTPUT_LEN) + (inputs * ESTIMATED_INPUT_LEN) + inputs;
     }
 
     public synchronized SuggestedFee getSuggestedFee() {
@@ -130,28 +122,37 @@ public class FeeUtil  {
 
     }
 
+    public BigInteger estimatedFee(int inputs, int outputs)   {
+        int size = estimatedSize(inputs, outputs);
+        return calculateFee(size, getSuggestedFee().getDefaultPerKB());
+    }
+
+    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs)   {
+        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
+        return calculateFee(size, getSuggestedFee().getDefaultPerKB());
+    }
+
+    public int estimatedSize(int inputs, int outputs)   {
+        return (outputs * ESTIMATED_OUTPUT_LEN) + (inputs * ESTIMATED_INPUT_LEN_P2PKH) + inputs + 8 + 1 + 1;
+    }
+
+    public int estimatedSizeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs)   {
+        return (outputs * ESTIMATED_OUTPUT_LEN) + (inputsP2PKH * ESTIMATED_INPUT_LEN_P2PKH) + (inputsP2SHP2WPKH * ESTIMATED_INPUT_LEN_P2SH_P2WPKH) + inputsP2PKH + inputsP2SHP2WPKH + 8 + 1 + 1;
+    }
+
     public BigInteger estimatedFee(int inputs, int outputs, BigInteger feePerKb)   {
         int size = estimatedSize(inputs, outputs);
+        return calculateFee(size, feePerKb);
+    }
+
+    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs, BigInteger feePerKb)   {
+        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
         return calculateFee(size, feePerKb);
     }
 
     public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
         double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
         return BigInteger.valueOf((long)fee);
-    }
-
-    // use unsigned tx here
-    private static long getPriority(Transaction tx, List<MyTransactionOutPoint> outputs)   {
-        long priority = 0L;
-        for(MyTransactionOutPoint output : outputs)   {
-            priority += output.getValue().longValue() * output.getConfirmations();
-        }
-        //
-        // calculate priority
-        //
-        long estimatedSize = tx.bitcoinSerialize().length + (114 * tx.getInputs().size());
-        priority /= estimatedSize;
-        return priority;
     }
 
 }

@@ -83,9 +83,7 @@ public class SweepUtil  {
 
                         final BigInteger fee;
                         if(isBIP49)    {
-                            int txSize = FeeUtil.getInstance().estimatedSize(outpoints.size(), 1);
-                            int vSize = FeeUtil.getInstance().getVSize(txSize);
-                            fee = FeeUtil.getInstance().calculateFee(vSize, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB());
+                            fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
                         }
                         else    {
                             fee = FeeUtil.getInstance().estimatedFee(outpoints.size(), 1);
