@@ -21,6 +21,7 @@ import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -193,6 +194,11 @@ public class PayloadUtil	{
             catch(AddressFormatException afe) {
                 ;
             }
+
+            //
+            // export BIP49 xpub for debug payload
+            //
+            wallet.put("xpub49", BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr());
 
             //
             // can remove ???
