@@ -116,11 +116,11 @@ public class AddressFactory {
             HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
 
             if(hdw != null)    {
-                idx = hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
-                addr = hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
+                idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
+                addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
                 segwitAddress = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                 if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
-                    hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
+                    BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
                     PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                 }
             }
