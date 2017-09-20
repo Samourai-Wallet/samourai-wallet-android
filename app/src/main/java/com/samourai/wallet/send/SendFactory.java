@@ -37,6 +37,9 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.core.TransactionOutPoint;
+import org.bitcoinj.core.TransactionWitness;
 import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -272,21 +275,49 @@ public class SendFactory	{
             connectedOutput = input.getOutpoint().getConnectedOutput();
             scriptPubKey = connectedOutput.getScriptPubKey();
 
-            if(key != null && key.hasPrivKey() || key.isEncrypted()) {
-                sig = transaction.calculateSignature(i, key, connectedPubKeyScript, Transaction.SigHash.ALL, false);
-            }
-            else {
-                sig = TransactionSignature.dummy();   // watch only ?
-            }
+            String address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
 
-            if(scriptPubKey.isSentToAddress()) {
-                input.setScriptSig(ScriptBuilder.createInputScript(sig, key));
+                final SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
+//                final Script scriptPubKey = segwitAddress.segWitOutputScript();
+//                System.out.println("scriptPubKey:" + Hex.toHexString(scriptPubKey.getProgram()));
+                System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                final Script redeemScript = segwitAddress.segWitRedeemScript();
+                System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
+                final Script scriptCode = redeemScript.scriptCode();
+                System.out.println("script code:" + Hex.toHexString(scriptCode.getProgram()));
+
+                sig = transaction.calculateWitnessSignature(i, key, scriptCode, connectedOutput.getValue(), Transaction.SigHash.ALL, false);
+                final TransactionWitness witness = new TransactionWitness(2);
+                witness.setPush(0, sig.encodeToBitcoin());
+                witness.setPush(1, key.getPubKey());
+                transaction.setWitness(i, witness);
+
+                final ScriptBuilder sigScript = new ScriptBuilder();
+                sigScript.data(redeemScript.getProgram());
+                transaction.getInput(i).setScriptSig(sigScript.build());
+
+                transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+
             }
-            else if(scriptPubKey.isSentToRawPubKey()) {
-                input.setScriptSig(ScriptBuilder.createInputScript(sig));
-            }
-            else {
-                throw new RuntimeException("Unknown script type: " + scriptPubKey);
+            else    {
+                if(key != null && key.hasPrivKey() || key.isEncrypted()) {
+                    sig = transaction.calculateSignature(i, key, connectedPubKeyScript, Transaction.SigHash.ALL, false);
+                }
+                else {
+                    sig = TransactionSignature.dummy();   // watch only ?
+                }
+
+                if(scriptPubKey.isSentToAddress()) {
+                    input.setScriptSig(ScriptBuilder.createInputScript(sig, key));
+                }
+                else if(scriptPubKey.isSentToRawPubKey()) {
+                    input.setScriptSig(ScriptBuilder.createInputScript(sig));
+                }
+                else {
+                    throw new RuntimeException("Unknown script type: " + scriptPubKey);
+                }
             }
 
         }
