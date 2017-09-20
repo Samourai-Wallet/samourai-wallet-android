@@ -171,7 +171,7 @@ public class UTXOActivity extends Activity {
                 String addr = data.get(position).getLeft().toString();
                 Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr);
                 if(address.isP2SHAddress())    {
-                    alert.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+//                    alert.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
                     alert.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
                 }
 
