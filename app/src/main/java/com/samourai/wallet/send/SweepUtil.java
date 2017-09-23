@@ -5,24 +5,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.P2SH_P2WPKH;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
-import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.R;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
@@ -66,7 +60,7 @@ public class SweepUtil  {
 
                     String address = null;
                     if(isBIP49)    {
-                        address = new SegwitAddress(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
+                        address = new P2SH_P2WPKH(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
                     }
                     else    {
                         address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
