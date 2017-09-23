@@ -127,8 +127,8 @@ public class FeeUtil  {
         return calculateFee(size, getSuggestedFee().getDefaultPerKB());
     }
 
-    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsp2shp2wpkh, int outputs)   {
-        int size = estimatedSizeSegwit(inputsP2PKH, inputsp2shp2wpkh, outputs);
+    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs)   {
+        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
         return calculateFee(size, getSuggestedFee().getDefaultPerKB());
     }
 
@@ -136,8 +136,8 @@ public class FeeUtil  {
         return (outputs * ESTIMATED_OUTPUT_LEN) + (inputs * ESTIMATED_INPUT_LEN_P2PKH) + inputs + 8 + 1 + 1;
     }
 
-    public int estimatedSizeSegwit(int inputsP2PKH, int inputsp2shp2wpkh, int outputs)   {
-        return (outputs * ESTIMATED_OUTPUT_LEN) + (inputsP2PKH * ESTIMATED_INPUT_LEN_P2PKH) + (inputsp2shp2wpkh * ESTIMATED_INPUT_LEN_P2SH_P2WPKH) + inputsP2PKH + inputsp2shp2wpkh + 8 + 1 + 1;
+    public int estimatedSizeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs)   {
+        return (outputs * ESTIMATED_OUTPUT_LEN) + (inputsP2PKH * ESTIMATED_INPUT_LEN_P2PKH) + (inputsP2SHP2WPKH * ESTIMATED_INPUT_LEN_P2SH_P2WPKH) + inputsP2PKH + inputsP2SHP2WPKH + 8 + 1 + 1;
     }
 
     public BigInteger estimatedFee(int inputs, int outputs, BigInteger feePerKb)   {
@@ -145,8 +145,8 @@ public class FeeUtil  {
         return calculateFee(size, feePerKb);
     }
 
-    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsp2shp2wpkh, int outputs, BigInteger feePerKb)   {
-        int size = estimatedSizeSegwit(inputsP2PKH, inputsp2shp2wpkh, outputs);
+    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs, BigInteger feePerKb)   {
+        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
         return calculateFee(size, feePerKb);
     }
 
