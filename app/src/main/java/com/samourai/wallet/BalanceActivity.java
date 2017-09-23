@@ -101,8 +101,8 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
-import org.spongycastle.util.encoders.DecoderException;
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;

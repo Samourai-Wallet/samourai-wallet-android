@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.DecoderException;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 

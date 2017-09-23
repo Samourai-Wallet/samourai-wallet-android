@@ -5,11 +5,11 @@ import org.bitcoinj.core.Utils;
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 
-import static org.spongycastle.util.Arrays.reverse;
+import static org.bouncycastle.util.Arrays.reverse;
 
 import android.util.Log;
 
@@ -95,7 +95,7 @@ public class PoW {
             hash = Hex.toHexString(reverse(Sha256Hash.hashTwice(buf)));
             Log.i("PoW", "hash:" + hash);
         }
-        catch(org.spongycastle.util.encoders.DecoderException de) {
+        catch(org.bouncycastle.util.encoders.DecoderException de) {
             de.printStackTrace();
             return null;
         }

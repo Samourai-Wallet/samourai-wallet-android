@@ -50,7 +50,7 @@ import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.DecoderException;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -1094,7 +1094,7 @@ public class BIP47Activity extends Activity {
                                     }
 
                                     tx = SendFactory.getInstance(BIP47Activity.this).signTransaction(tx);
-                                    final String hexTx = new String(org.spongycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
+                                    final String hexTx = new String(org.bouncycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
                                     Log.d("SendActivity", tx.getHashAsString());
                                     Log.d("SendActivity", hexTx);
 

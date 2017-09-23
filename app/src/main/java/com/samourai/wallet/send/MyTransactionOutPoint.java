@@ -47,8 +47,8 @@ public class MyTransactionOutPoint extends TransactionOutPoint {
         return txHash;
     }
 
-    public BigInteger getValue() {
-        return value;
+    public Coin getValue() {
+        return Coin.valueOf(value.longValue());
     }
 
     public String getAddress() {

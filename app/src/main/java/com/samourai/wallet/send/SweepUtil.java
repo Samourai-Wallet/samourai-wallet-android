@@ -19,7 +19,7 @@ import com.samourai.wallet.R;
 import org.bitcoinj.core.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 import java.util.HashMap;
