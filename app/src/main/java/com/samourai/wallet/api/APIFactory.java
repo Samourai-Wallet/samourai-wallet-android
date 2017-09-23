@@ -74,6 +74,7 @@ public class APIFactory	{
     private static HashMap<String, Long> xpub_amounts = null;
     private static HashMap<String,List<Tx>> xpub_txs = null;
     private static HashMap<String,Integer> unspentAccounts = null;
+    private static HashMap<String,Integer> unspentBIP49 = null;
     private static HashMap<String,String> unspentPaths = null;
     private static HashMap<String,UTXO> utxos = null;
 
@@ -101,6 +102,7 @@ public class APIFactory	{
             bip47_amounts = new HashMap<String, Long>();
             unspentPaths = new HashMap<String, String>();
             unspentAccounts = new HashMap<String, Integer>();
+            unspentBIP49 = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
             instance = new APIFactory();
         }
@@ -115,6 +117,7 @@ public class APIFactory	{
         xpub_txs.clear();
         unspentPaths = new HashMap<String, String>();
         unspentAccounts = new HashMap<String, Integer>();
+        unspentBIP49 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
     }
 
@@ -822,13 +825,20 @@ public class APIFactory	{
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
                             String path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
-                            unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
+                            Log.d("APIFactory", "address:" + path);
+                            if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                                unspentBIP49.put(address, 0);   // assume account 0
+                            }
+                            else    {
+                                unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
+                            }
                         }
 
                         // Construct the output
@@ -1344,6 +1354,10 @@ public class APIFactory	{
 
     public HashMap<String, Integer> getUnspentAccounts() {
         return unspentAccounts;
+    }
+
+    public HashMap<String, Integer> getUnspentBIP49() {
+        return unspentBIP49;
     }
 
     public List<UTXO> getUtxos() {
