@@ -513,9 +513,9 @@ public class APIFactory	{
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
-            Log.i("APIFactory", "Notif tx:" + url.toString());
+//            Log.i("APIFactory", "Notif tx:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-            Log.i("APIFactory", "Notif tx:" + response);
+//            Log.i("APIFactory", "Notif tx:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifTx(jsonObject, addr, hash);
@@ -543,9 +543,9 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(_url);
             url.append("multiaddr?active=");
             url.append(addr);
-            Log.i("APIFactory", "Notif address:" + url.toString());
+//            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-            Log.i("APIFactory", "Notif address:" + response);
+//            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
@@ -825,14 +825,14 @@ public class APIFactory	{
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                        Log.d("APIFactory", "address:" + address);
+//                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
                             String path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
-                            Log.d("APIFactory", "address:" + path);
+//                            Log.d("APIFactory", "address:" + path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
                                 unspentBIP49.put(address, 0);   // assume account 0
                             }

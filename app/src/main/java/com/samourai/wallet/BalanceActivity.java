@@ -1441,7 +1441,6 @@ public class BalanceActivity extends Activity {
             // TBD: check on lookahead/lookbehind for all incoming payment codes
             //
             if(fetch || txs.size() == 0)    {
-                Log.d("BalanceActivity", "initWallet()");
                 APIFactory.getInstance(BalanceActivity.this).initWallet();
             }
 
@@ -1505,8 +1504,8 @@ public class BalanceActivity extends Activity {
                 //
                 try {
                     PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
-                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
-                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
+//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
+//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
                     APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
                 }
                 catch (AddressFormatException afe) {
