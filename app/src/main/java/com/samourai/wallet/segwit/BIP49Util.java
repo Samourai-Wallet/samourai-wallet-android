@@ -3,6 +3,8 @@ package com.samourai.wallet.segwit;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
@@ -49,6 +51,12 @@ public class BIP49Util {
 
     public HD_Wallet getWallet() {
         return wallet;
+    }
+
+    public P2SH_P2WPKH getAddressAt(int chain, int idx) {
+        HD_Address addr = getWallet().getAccount(0).getChain(chain).getAddressAt(idx);
+        P2SH_P2WPKH p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+        return p2shp2wpkh;
     }
 
 }
