@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
@@ -60,12 +61,14 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -612,19 +615,6 @@ public class SendActivity extends Activity {
                 btSend.setClickable(false);
                 btSend.setActivated(false);
 
-                // store current change index to restore value in case of sending fail
-                int change_index = 0;
-                try {
-                    change_index = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
-//                    Log.d("SendActivity", "storing change index:" + change_index);
-                }
-                catch(IOException ioe) {
-                    ;
-                }
-                catch(MnemonicException.MnemonicLengthException mle) {
-                    ;
-                }
-
                 double btc_amount = 0.0;
 
                 try {
@@ -656,8 +646,28 @@ public class SendActivity extends Activity {
                 final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
+                final boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+
                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                 receivers.put(address, BigInteger.valueOf(amount));
+
+                // store current change index to restore value in case of sending fail
+                int change_index = 0;
+                if(isBIP49)    {
+                    change_index = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+                }
+                else    {
+                    try {
+                        change_index = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
+//                    Log.d("SendActivity", "storing change index:" + change_index);
+                    }
+                    catch(IOException ioe) {
+                        ;
+                    }
+                    catch(MnemonicException.MnemonicLengthException mle) {
+                        ;
+                    }
+                }
 
                 // get all UTXO
                 List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
@@ -953,16 +963,23 @@ public class SendActivity extends Activity {
                             // add change
                             if(_change > 0L)    {
                                 if(SPEND_TYPE == SPEND_SIMPLE)    {
-                                    try {
-                                        String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                                    if(isBIP49)    {
+                                        String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP47Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                                         receivers.put(change_address, BigInteger.valueOf(_change));
                                     }
-                                    catch(IOException ioe) {
-                                        ;
+                                    else    {
+                                        try {
+                                            String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                                            receivers.put(change_address, BigInteger.valueOf(_change));
+                                        }
+                                        catch(IOException ioe) {
+                                            ;
+                                        }
+                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                            ;
+                                        }
                                     }
-                                    catch(MnemonicException.MnemonicLengthException mle) {
-                                        ;
-                                    }
+
                                 }
                                 else if (SPEND_TYPE == SPEND_BIP126)   {
                                     // do nothing, change addresses included
@@ -1138,7 +1155,12 @@ public class SendActivity extends Activity {
                                             else    {
                                                 Toast.makeText(SendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                 // reset change index upon tx fail
-                                                HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
+                                                if(isBIP49)    {
+                                                    BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
+                                                }
+                                                else    {
+                                                    HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
+                                                }
                                             }
                                         }
                                         catch(JSONException je) {
@@ -1183,8 +1205,14 @@ public class SendActivity extends Activity {
 
                             try {
                                 // reset change index upon 'NO'
-                                HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
-//                                Log.d("SendActivity", "resetting change index:" + _change_index);
+                                if(isBIP49)    {
+                                    BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
+                                }
+                                else    {
+                                    HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
+                                }
+
+
                             }
                             catch(Exception e) {
 //                                Log.d("SendActivity", e.getMessage());
