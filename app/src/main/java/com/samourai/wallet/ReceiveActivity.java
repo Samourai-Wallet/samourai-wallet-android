@@ -105,7 +105,7 @@ public class ReceiveActivity extends Activity {
                 if(extras != null && extras.containsKey("received_on"))	{
                     String in_addr = extras.getString("received_on");
 
-                    if(in_addr.equals(addr))    {
+                    if(in_addr.equals(addr) || in_addr.equals(addr44) || in_addr.equals(addr49))    {
                         ReceiveActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
