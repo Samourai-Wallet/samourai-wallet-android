@@ -1447,18 +1447,7 @@ public class BalanceActivity extends Activity {
 
             try {
                 int acc = 0;
-                if(SamouraiWallet.getInstance().getShowTotalBalance())    {
-                    if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0)    {
-                        txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-                    }
-                    else    {
-                        acc = SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1;
-                        txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                    }
-                }
-                else    {
-                    txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                }
+                txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
                 if(txs != null)    {
                     Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                 }
