@@ -740,7 +740,7 @@ public class SendFactory	{
     private String getChangeAddress(boolean isBIP49)    {
 
         if(isBIP49)    {
-            String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP47Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
             return change_address;
         }
