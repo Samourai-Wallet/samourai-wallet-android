@@ -311,8 +311,13 @@ public class WebSocketHandler {
                                                     }
                                                 }
                                                 else if(outObj.has("addr"))   {
-                                                    total_value += value;
-                                                    out_addr = outObj.getString("addr");
+                                                    if(outObj.has("xpub") && outObj.getJSONObject("xpub").has("path") && outObj.getJSONObject("xpub").getString("path").startsWith("M/1/"))    {
+                                                        ;
+                                                    }
+                                                    else    {
+                                                        total_value += value;
+                                                        out_addr = outObj.getString("addr");
+                                                    }
                                                 }
                                                 else    {
                                                     ;
