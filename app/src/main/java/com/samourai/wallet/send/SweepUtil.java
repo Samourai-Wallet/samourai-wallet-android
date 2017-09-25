@@ -174,7 +174,7 @@ public class SweepUtil  {
 
                     }
                     else    {
-                        Toast.makeText(context, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, R.string.cannot_find_unspents, Toast.LENGTH_SHORT).show();
                         sweep(privKeyReader, true);
                     }
 
