@@ -366,7 +366,7 @@ public class PayloadUtil	{
                     APIFactory.getInstance(context).setXpubBalance(meta.getLong("prev_balance"));
                 }
                 if(meta.has("use_segwit")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_SEGWIT, meta.getInt("use_segwit"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_SEGWIT, meta.getBoolean("use_segwit"));
                     editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
                     editor.commit();
                 }
