@@ -32,6 +32,9 @@ public class AddressFactory {
     private static HashMap<Integer,Integer> highestTxReceiveIdx = null;
     private static HashMap<Integer,Integer> highestTxChangeIdx = null;
 
+    private static int highestBIP49ReceiveIdx = 0;
+    private static int highestBIP49ChangeIdx = 0;
+
     private static HashMap<String,Integer> xpub2account = null;
     private static HashMap<Integer,String> account2xpub = null;
 
@@ -204,6 +207,22 @@ public class AddressFactory {
         highestTxChangeIdx.put(account, idx);
     }
 
+    public int getHighestBIP49ReceiveIdx()  {
+        return highestBIP49ReceiveIdx;
+    }
+
+    public void setHighestBIP49ReceiveIdx(int idx) {
+        highestBIP49ReceiveIdx = idx;
+    }
+
+    public int getHighestBIP49ChangeIdx() {
+        return highestBIP49ChangeIdx;
+    }
+
+    public void setHighestBIP49ChangeIdx(int idx) {
+        highestBIP49ChangeIdx = idx;
+    }
+
     public boolean canIncReceiveAddress(int account, int idx) {
         if(highestTxReceiveIdx.get(account) != null) {
             return ((idx - highestTxReceiveIdx.get(account)) < (LOOKAHEAD_GAP - 1));
@@ -219,6 +238,10 @@ public class AddressFactory {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean canIncBIP49ReceiveAddress(int idx) {
+        return ((idx - highestBIP49ReceiveIdx) < (LOOKAHEAD_GAP - 1));
     }
 
     public HashMap<String,Integer> xpub2account()   {
