@@ -68,6 +68,7 @@ import com.samourai.wallet.hf.HardForkUtil;
 import com.samourai.wallet.hf.ReplayProtectionActivity;
 import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -1468,6 +1469,14 @@ public class BalanceActivity extends Activity {
                 if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().getAddrIdx()) {
                     HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
                 }
+
+                if(AddressFactory.getInstance().getHighestBIP49ReceiveIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
+                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ReceiveIdx());
+                }
+                if(AddressFactory.getInstance().getHighestBIP49ChangeIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
+                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ChangeIdx());
+                }
+
             }
             catch(IOException ioe) {
                 ioe.printStackTrace();
