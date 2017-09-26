@@ -40,6 +40,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -1705,8 +1706,25 @@ public class BalanceActivity extends Activity {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("outputs");
 
+                    int p2pkh = 0;
+                    int p2wpkh = 0;
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
+                            Script script = new Script(Hex.decode(scriptpubkey));
+                            Address address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if(address.isP2SHAddress())    {
+                                p2wpkh++;
+                            }
+                            else    {
+                                p2pkh++
+                            }
+                        }
+                    }
+
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length());
 
                     long total_inputs = 0L;
                     long total_outputs = 0L;
@@ -1733,6 +1751,7 @@ public class BalanceActivity extends Activity {
                             Log.d("BalanceActivity", "checking address:" + addr);
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
+                                break;
                             }
                         }
                     }
@@ -1764,8 +1783,12 @@ public class BalanceActivity extends Activity {
 
                         long totalAmount = utxo.getValue();
                         Log.d("BalanceActivity", "amount before fee:" + totalAmount);
-                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 1);
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
+
+                        p2pkh = outpointTypes.getLeft();
+                        p2wpkh = outpointTypes.getRight();
 
                         if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
                             Log.d("BalanceActivity", "selecting additional utxo");
@@ -1774,7 +1797,10 @@ public class BalanceActivity extends Activity {
                                 totalAmount += _utxo.getValue();
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
-                                cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                                outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+                                p2pkh += outpointTypes.getLeft();
+                                p2wpkh += outpointTypes.getRight();
+                                cpfpFee = FeeUtil.getInstance().estimatedFee(p2pkh, p2wpkh, 1);
                                 if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
@@ -2015,9 +2041,26 @@ public class BalanceActivity extends Activity {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("outputs");
 
+                    int p2pkh = 0;
+                    int p2wpkh = 0;
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
+                            Script script = new Script(Hex.decode(scriptpubkey));
+                            Address address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if(address.isP2SHAddress())    {
+                                p2wpkh++;
+                            }
+                            else    {
+                                p2pkh++
+                            }
+                        }
+                    }
+
                     SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(tx.getInputs().size(), tx.getOutputs().size());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length());
 
                     long total_inputs = 0L;
                     long total_outputs = 0L;
@@ -2098,6 +2141,7 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
                     }
 
+                    Pair<Integer,Integer> outpointTypes = null;
                     if(remainder > 0L)    {
                         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                         long selectedAmount = 0L;
@@ -2136,7 +2180,10 @@ public class BalanceActivity extends Activity {
                             Log.d("BalanceActivity", "selected utxo:" + selected);
                             selectedAmount += _utxo.getValue();
                             Log.d("BalanceActivity", "selected utxo value:" + _utxo.getValue());
-                            _remainingFee = FeeUtil.getInstance().estimatedFee(inputs.length() + selected, outputs.length() == 1 ? 2 : outputs.length()).longValue();
+                            outpointTypes = FeeUtil.getInstance().getOutpointCount(_utxo.getOutpoints());
+                            p2pkh += outpointTypes.getLeft();
+                            p2wpkh += outpointTypes.getRight();
+                            _remainingFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length() == 1 ? 2 : outputs.length()).longValue();
                             Log.d("BalanceActivity", "_remaining fee:" + _remainingFee);
                             if(selectedAmount >= (_remainingFee + SamouraiWallet.bDust.longValue())) {
                                 break;
