@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -798,7 +799,8 @@ public class SendActivity extends Activity {
 
                     // get smallest 1 UTXO > than spend + fee + dust
                     for(UTXO u : _utxos)   {
-                        if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(1, 2).longValue()))    {
+                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
+                        if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 2).longValue()))    {
                             selectedUTXO.add(u);
                             totalValueSelected += u.getValue();
 //                            Log.d("SendActivity", "spend type:" + SPEND_TYPE);
@@ -815,6 +817,8 @@ public class SendActivity extends Activity {
                         // sort in descending order by value
                         Collections.sort(_utxos, new UTXO.UTXOComparator());
                         int selected = 0;
+                        int p2pkh = 0;
+                        int p2wpkh = 0;
 
                         // get largest UTXOs > than spend + fee + dust
                         for(UTXO u : _utxos)   {
@@ -826,7 +830,10 @@ public class SendActivity extends Activity {
 //                            Log.d("SendActivity", "value selected:" + u.getValue());
 //                            Log.d("SendActivity", "total value selected/threshold:" + totalValueSelected + "/" + (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()));
 
-                            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()))    {
+                            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
+                            p2pkh += outpointTypes.getLeft();
+                            p2wpkh += outpointTypes.getRight();
+                            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, 2).longValue()))    {
 //                                Log.d("SendActivity", "spend type:" + SPEND_TYPE);
 //                                Log.d("SendActivity", "multiple outputs");
 //                                Log.d("SendActivity", "amount:" + amount);
@@ -882,7 +889,12 @@ public class SendActivity extends Activity {
 
                     // estimate fee for simple spend, already done if BIP126
                     if(SPEND_TYPE == SPEND_SIMPLE)    {
-                        fee = FeeUtil.getInstance().estimatedFee(selectedUTXO.size(), 2);
+                        List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
+                        for(UTXO utxo : selectedUTXO)   {
+                            outpoints.addAll(utxo.getOutpoints());
+                        }
+                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
+                        fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 2);
                     }
 
 //                    Log.d("SendActivity", "spend type:" + SPEND_TYPE);
