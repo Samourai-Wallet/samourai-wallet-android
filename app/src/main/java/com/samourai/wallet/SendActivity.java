@@ -976,7 +976,7 @@ public class SendActivity extends Activity {
                             if(_change > 0L)    {
                                 if(SPEND_TYPE == SPEND_SIMPLE)    {
                                     if(isBIP49)    {
-                                        String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP47Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                                        String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                                         receivers.put(change_address, BigInteger.valueOf(_change));
                                     }
                                     else    {
