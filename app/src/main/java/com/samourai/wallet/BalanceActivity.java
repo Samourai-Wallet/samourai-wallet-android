@@ -1778,7 +1778,14 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "remaining fee:" + remainingFee);
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
-                        final String ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        String addr = outputs.getJSONObject(0).getString("address");
+                        final String ownReceiveAddr;
+                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                            ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                        }
+                        else    {
+                            ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        }
                         Log.d("BalanceActivity", "receive address:" + ownReceiveAddr);
 
                         long totalAmount = utxo.getValue();
