@@ -2098,6 +2098,9 @@ public class BalanceActivity extends Activity {
                         }
                     }
 
+                    boolean isBIP49 = true;
+                    isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
+
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
                     if(fee > estimatedFee.longValue())    {
@@ -2214,8 +2217,14 @@ public class BalanceActivity extends Activity {
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
-                                int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
-                                String change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
+                                String change_address = null;
+                                if(isBIP49)    {
+                                    change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                                }
+                                else    {
+                                    int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
+                                    change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
+                                }
 
                                 Script toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), change_address));
                                 TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
