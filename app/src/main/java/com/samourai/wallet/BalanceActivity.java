@@ -2070,7 +2070,7 @@ public class BalanceActivity extends Activity {
                     long remainder = remainingFee;
                     if(total_change > remainder)    {
                         for(TransactionOutput output : txOutputs)   {
-                            if(rbf.getChangeAddrs().contains(output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))    {
+                            if(rbf.getChangeAddrs().contains(output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()) || rbf.getChangeAddrs().contains(output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))    {
                                 if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
                                     output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
                                     remainder = 0L;
