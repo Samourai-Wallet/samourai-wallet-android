@@ -43,7 +43,7 @@ public class SweepUtil  {
         return instance;
     }
 
-    public void sweep(final PrivKeyReader privKeyReader, final boolean isBIP49)  {
+    public void sweep(final PrivKeyReader privKeyReader, final boolean sweepBIP49)  {
 
         new Thread(new Runnable() {
             @Override
@@ -59,7 +59,7 @@ public class SweepUtil  {
                     }
 
                     String address = null;
-                    if(isBIP49)    {
+                    if(sweepBIP49)    {
                         address = new P2SH_P2WPKH(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
                     }
                     else    {
@@ -76,7 +76,7 @@ public class SweepUtil  {
                         }
 
                         final BigInteger fee;
-                        if(isBIP49)    {
+                        if(sweepBIP49)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
                         }
                         else    {
@@ -104,7 +104,7 @@ public class SweepUtil  {
                                 progress.show();
 
                                 String receive_address = null;
-                                if(isBIP49)    {
+                                if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
                                     receive_address = AddressFactory.getInstance(context).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                                 }
                                 else    {
