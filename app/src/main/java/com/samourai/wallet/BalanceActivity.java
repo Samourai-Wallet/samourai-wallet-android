@@ -1718,7 +1718,7 @@ public class BalanceActivity extends Activity {
                                 p2wpkh++;
                             }
                             else    {
-                                p2pkh++
+                                p2pkh++;
                             }
                         }
                     }
@@ -1800,7 +1800,7 @@ public class BalanceActivity extends Activity {
                                 outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
                                 p2pkh += outpointTypes.getLeft();
                                 p2wpkh += outpointTypes.getRight();
-                                cpfpFee = FeeUtil.getInstance().estimatedFee(p2pkh, p2wpkh, 1);
+                                cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, 1);
                                 if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
@@ -2053,7 +2053,7 @@ public class BalanceActivity extends Activity {
                                 p2wpkh++;
                             }
                             else    {
-                                p2pkh++
+                                p2pkh++;
                             }
                         }
                     }
