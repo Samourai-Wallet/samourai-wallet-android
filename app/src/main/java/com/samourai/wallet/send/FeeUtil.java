@@ -1,9 +1,13 @@
 package com.samourai.wallet.send;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 
 public class FeeUtil  {
@@ -153,6 +157,23 @@ public class FeeUtil  {
     public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
         double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
         return BigInteger.valueOf((long)fee);
+    }
+
+    public Pair<Integer,Integer> getOutpointCount(List<MyTransactionOutPoint> outpoints) {
+
+        int p2wpkh = 0;
+        int p2pkh = 0;
+
+        for(MyTransactionOutPoint out : outpoints)   {
+            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), out.getAddress()).isP2SHAddress())    {
+                p2wpkh++;
+            }
+            else   {
+                p2pkh++;
+            }
+        }
+
+        return Pair.of(p2pkh, p2wpkh);
     }
 
 }
