@@ -364,7 +364,8 @@ public class SendFactory	{
             double pctThreshold = (100.0 / (double)outputs.size()) / 100.0;
             long _pct = (long)(totalValue.doubleValue() * pctThreshold);
 
-            biFee = FeeUtil.getInstance().estimatedFee(selectedOutputs.size(), output_scripts);
+            Pair<Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(selectedOutputs);
+            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getRight(), output_scripts);
 
             if(totalValue.compareTo(totalAmount.add(biFee)) >= 0 && output_scripts >= 3)    {
 
@@ -633,7 +634,8 @@ public class SendFactory	{
             selectedOutputs.addAll(output.getOutpoints());
             totalValue = totalValue.add(BigInteger.valueOf(output.getValue()));
 
-            biFee = FeeUtil.getInstance().estimatedFee(selectedOutputs.size(), NB_OUTPUTS);
+            Pair<Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(selectedOutputs);
+            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getRight(), NB_OUTPUTS);
 
             if(totalValue.compareTo(totalAmount.multiply(BigInteger.valueOf(2L)).add(biFee)) >= 0 && selectedOutputs.size() >= 4)    {
                 break;
