@@ -22,6 +22,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -227,6 +228,7 @@ public class PayloadUtil	{
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
+            meta.put("blocked_utxo", BlockedUTXO.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -411,6 +413,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("tor")) {
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
+                }
+                if(meta.has("blocked_utxo")) {
+                    BlockedUTXO.getInstance().fromJSON((JSONArray) meta.get("blocked_utxo"));
                 }
 
                 if(meta.has("units")) {
