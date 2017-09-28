@@ -11,6 +11,8 @@ public class BlockedUTXO {
     private static BlockedUTXO instance = null;
     private static HashMap<String,Long> blockedUTXO = null;
 
+    public final static long BLOCKED_UTXO_THRESHOLD = 1000L;
+
     private BlockedUTXO() { ; }
 
     public static BlockedUTXO getInstance() {
