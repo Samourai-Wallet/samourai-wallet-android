@@ -4,12 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class BlockedUTXO {
 
     private static BlockedUTXO instance = null;
     private static HashMap<String,Long> blockedUTXO = null;
+    private static List<String> dustedUTXO = null;
 
     public final static long BLOCKED_UTXO_THRESHOLD = 1000L;
 
@@ -20,6 +23,7 @@ public class BlockedUTXO {
         if(instance == null) {
             instance = new BlockedUTXO();
             blockedUTXO = new HashMap<String,Long>();
+            dustedUTXO = new ArrayList<String>();
         }
 
         return instance;
@@ -53,6 +57,26 @@ public class BlockedUTXO {
             ret += blockedUTXO.get(id);
         }
         return ret;
+    }
+
+    public void addDusted(String hash)    {
+        if(!dustedUTXO.contains(hash))    {
+            dustedUTXO.add(hash);
+        }
+    }
+
+    public void remove(String hash)   {
+        if(dustedUTXO.contains(hash))    {
+            dustedUTXO.remove(hash);
+        }
+    }
+
+    public boolean containsDusted(String hash)   {
+        return dustedUTXO.contains(hash);
+    }
+
+    public void clearDusted()    {
+        dustedUTXO.clear();
     }
 
     public JSONArray toJSON() {

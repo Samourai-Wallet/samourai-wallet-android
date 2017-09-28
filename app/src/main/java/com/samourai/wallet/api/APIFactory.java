@@ -18,6 +18,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFUtil;
@@ -296,6 +297,9 @@ public class APIFactory	{
                         JSONObject outObj = null;
                         for(int j = 0; j < outArray.length(); j++)  {
                             outObj = (JSONObject)outArray.get(j);
+                            if(!BlockedUTXO.getInstance().contains(hash, outObj.getInt("n")) && amount > 0L && outObj.getLong("value") < BlockedUTXO.BLOCKED_UTXO_THRESHOLD)    {
+                                BlockedUTXO.getInstance().addDusted(hash);
+                            }
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = (String)xpubObj.get("m");
