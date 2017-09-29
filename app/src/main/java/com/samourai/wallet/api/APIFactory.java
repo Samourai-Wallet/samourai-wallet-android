@@ -1344,7 +1344,7 @@ public class APIFactory	{
     }
 
     public long getXpubBalance()  {
-        return xpub_balance;
+        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked();
     }
 
     public void setXpubBalance(long value)  {
