@@ -1753,6 +1753,8 @@ public class BalanceActivity extends Activity {
                             Log.d("BalanceActivity", "checking address:" + addr);
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
+                            }
+                            else    {
                                 break;
                             }
                         }
@@ -1780,7 +1782,7 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "remaining fee:" + remainingFee);
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
-                        String addr = outputs.getJSONObject(0).getString("address");
+                        final String addr = outputs.getJSONObject(0).getString("address");
                         final String ownReceiveAddr;
                         if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
@@ -1907,8 +1909,15 @@ public class BalanceActivity extends Activity {
                                                             });
 
                                                             // reset receive index upon tx fail
-                                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            }
+                                                            else    {
+                                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            }
+
                                                         }
                                                     }
                                                     catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
@@ -1929,9 +1938,14 @@ public class BalanceActivity extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         try {
-                                            // reset receive index upon tx fail
-                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            }
+                                            else    {
+                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            }
                                         }
                                         catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
                                             handler.post(new Runnable() {
