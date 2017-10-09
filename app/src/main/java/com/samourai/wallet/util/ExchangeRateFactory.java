@@ -16,16 +16,18 @@ public class ExchangeRateFactory	{
     private static String strDataLBC = null;
     private static String strDataBTCe = null;
     private static String strDataBFX = null;
+    private static String strDataLuno = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
     private static HashMap<String,Double> fxRatesBFX = null;
+    private static HashMap<String,Double> fxRatesLuno = null;
 //    private static HashMap<String,String> fxSymbols = null;
 
     private static ExchangeRateFactory instance = null;
 
     private static String[] currencies = {
-            "CNY", "EUR", "GBP", "RUB", "USD"
+            "CNY", "EUR", "GBP", "RUB", "USD", "ZAR"
     };
 
     private static String[] currencyLabels = {
@@ -33,7 +35,8 @@ public class ExchangeRateFactory	{
             "Euro - EUR",
             "British Pound Sterling - GBP",
             "Chinese Yuan - CNY",
-            "Russian Rouble - RUB"
+            "Russian Rouble - RUB",
+            "South African Rand - ZAR"
     };
 
     private static String[] currencyLabelsBTCe = {
@@ -42,10 +45,17 @@ public class ExchangeRateFactory	{
             "Russian Rouble - RUR"
     };
 
+    private static String[] currencyLabelsLuno = {
+            "South African Rand - ZAR"
+//            "Nigerian Naira - NGR - WIP",
+//            "Singaporian Dollar - SGD - WIP"
+    };
+
     private static String[] exchangeLabels = {
             "LocalBitcoins.com",
 //            "BTC-e",
             "Bitfinex",
+            "Luno"
     };
 
     private ExchangeRateFactory()	 { ; }
@@ -58,6 +68,7 @@ public class ExchangeRateFactory	{
             fxRatesLBC = new HashMap<String,Double>();
             fxRatesBTCe = new HashMap<String,Double>();
             fxRatesBFX = new HashMap<String,Double>();
+            fxRatesLuno = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
 
             instance = new ExchangeRateFactory();
@@ -102,6 +113,10 @@ public class ExchangeRateFactory	{
         return currencyLabelsBTCe;
     }
 
+    public String[] getCurrencyLabelsLuno()	 {
+        return currencyLabelsLuno;
+    }
+
     public String[] getExchangeLabels()	 {
         return exchangeLabels;
     }
@@ -116,6 +131,10 @@ public class ExchangeRateFactory	{
 
     public void setDataBFX(String data)	 {
         strDataBFX = data;
+    }
+
+    public void setDataLuno(String data)	 {
+        strDataLuno = data;
     }
 
     public void parseLBC()	 {
@@ -204,7 +223,7 @@ public class ExchangeRateFactory	{
             }
         } catch (JSONException je) {
             fxRatesBTCe.put(currency, Double.valueOf(-1.0));
-//            fxSymbols.put(currency, null);
+//            fxSymbols.put(cur c crency, null);
         }
     }
 
@@ -225,6 +244,23 @@ public class ExchangeRateFactory	{
         catch (NumberFormatException nfe) {
             fxRatesBFX.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
+        }
+    }
+
+    private void getLuno(String currency)	 {
+        try {
+            JSONObject jsonObject = new JSONObject(strDataBFX);
+            if(jsonObject != null && jsonObject.has("last_trade"))	{
+                String strLastPrice = jsonObject.getString("last_trade");
+                double avg_price = Double.parseDouble(strLastPrice);
+                fxRatesLuno.put(currency, Double.valueOf(avg_price));
+            }
+        }
+        catch (JSONException je) {
+            fxRatesBFX.put(currency, Double.valueOf(-1.0));
+        }
+        catch (NumberFormatException nfe) {
+            fxRatesBFX.put(currency, Double.valueOf(-1.0));
         }
     }
 
