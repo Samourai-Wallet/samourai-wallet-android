@@ -1011,14 +1011,25 @@ public class SendActivity extends Activity {
 
                                 for(TransactionInput input : tx.getInputs())    {
 
-                                    String _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                                    boolean _isBIP49 = false;
+                                    String _addr = null;
+                                    Address _address = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                    if(_address != null)    {
+                                        _addr = _address.toString();
+                                    }
                                     if(_addr == null)    {
                                         _addr = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                                        _isBIP49 = true;
                                     }
 
                                     String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
                                     if(path != null)    {
-                                        rbf.addKey(input.getOutpoint().toString(), path);
+                                        if(_isBIP49)    {
+                                            rbf.addKey(input.getOutpoint().toString(), path + "/49");
+                                        }
+                                        else    {
+                                            rbf.addKey(input.getOutpoint().toString(), path);
+                                        }
                                     }
                                     else    {
                                         String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);

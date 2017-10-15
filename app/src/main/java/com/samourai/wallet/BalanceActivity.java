@@ -2038,11 +2038,13 @@ public class BalanceActivity extends Activity {
         private List<UTXO> utxos = null;
         private Handler handler = null;
         private RBFSpend rbf = null;
+        private HashMap<String,Long> input_values = null;
 
         @Override
         protected void onPreExecute() {
             handler = new Handler();
             utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+            input_values = new HashMap<String,Long>();
         }
 
         @Override
@@ -2097,6 +2099,8 @@ public class BalanceActivity extends Activity {
                             JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
+                                String key = objPrev.getString("txid") + ":" + objPrev.getLong("vout");
+                                input_values.put(key, objPrev.getLong("value"));
                             }
                         }
                     }
@@ -2113,9 +2117,6 @@ public class BalanceActivity extends Activity {
                             }
                         }
                     }
-
-                    boolean isBIP49 = true;
-                    isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
 
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
@@ -2139,7 +2140,9 @@ public class BalanceActivity extends Activity {
                     long remainder = remainingFee;
                     if(total_change > remainder)    {
                         for(TransactionOutput output : txOutputs)   {
-                            if(rbf.getChangeAddrs().contains(output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()) || rbf.getChangeAddrs().contains(output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))    {
+                            Address _p2sh = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if((_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString())))    {
                                 if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
                                     output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
                                     remainder = 0L;
@@ -2233,9 +2236,12 @@ public class BalanceActivity extends Activity {
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
+                                boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
+
                                 String change_address = null;
                                 if(isBIP49)    {
-                                    change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                                    int changeIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+                                    change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
                                 }
                                 else    {
                                     int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
@@ -2261,8 +2267,12 @@ public class BalanceActivity extends Activity {
                         // parent tx had change output
                         else    {
                             for(TransactionOutput output : txOutputs)   {
-                                Log.d("BalanceActivity", "checking for change:" + output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                if(rbf.containsChangeAddr(output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))    {
+                                Address _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                if(_address == null)    {
+                                    _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                }
+                                Log.d("BalanceActivity", "checking for change:" + _address.toString());
+                                if(rbf.containsChangeAddr(_address.toString()))    {
                                     Log.d("BalanceActivity", "before extra:" + output.getValue().longValue());
                                     output.setValue(Coin.valueOf(extraChange + output.getValue().longValue()));
                                     Log.d("BalanceActivity", "after extra:" + output.getValue().longValue());
@@ -2297,7 +2307,8 @@ public class BalanceActivity extends Activity {
 
                                 String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(outpoint.getAddress());
                                 if(path != null)    {
-                                    if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress()).isP2SHAddress())    {
+                                    Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress());
+                                    if(address != null && address.isP2SHAddress())    {
                                         rbf.addKey(outpoint.toString(), path + "/49");
                                     }
                                     else    {
@@ -2356,10 +2367,10 @@ public class BalanceActivity extends Activity {
 
                                     Transaction __tx = signTx(_tx);
                                     final String hexTx = new String(Hex.encode(__tx.bitcoinSerialize()));
-                                    Log.d("BalanceActivity", hexTx);
+                                    Log.d("BalanceActivity", "hex tx:" + hexTx);
 
                                     final String strTxHash = __tx.getHashAsString();
-                                    Log.d("BalanceActivity", strTxHash);
+                                    Log.d("BalanceActivity", "tx hash" + strTxHash);
 
                                     if(__tx != null)    {
 
@@ -2454,6 +2465,7 @@ public class BalanceActivity extends Activity {
         private Transaction signTx(Transaction tx)    {
 
             HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
+            HashMap<String,ECKey> keyBag49 = new HashMap<String,ECKey>();
 
             HashMap<String,String> keys = rbf.getKeyBag();
             for(String outpoint : keys.keySet())   {
@@ -2461,11 +2473,12 @@ public class BalanceActivity extends Activity {
                 ECKey ecKey = null;
 
                 String[] s = keys.get(outpoint).split("/");
+                Log.i("BalanceActivity", "path length:" + s.length);
                 if(s.length == 4)    {
-                    P2SH_P2WPKH p2sh_p2wphk = AddressFactory.getInstance(BalanceActivity.this).getBIP49(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                    ecKey = p2sh_p2wphk.getECKey();
+                    HD_Address addr = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    ecKey = addr.getECKey();
                 }
-                if(s.length == 3)    {
+                else if(s.length == 3)    {
                     HD_Address hd_address = AddressFactory.getInstance(BalanceActivity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                     String strPrivKey = hd_address.getPrivateKeyString();
                     DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
@@ -2485,10 +2498,16 @@ public class BalanceActivity extends Activity {
                 }
 
                 Log.i("BalanceActivity", "outpoint:" + outpoint);
-                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                Log.i("BalanceActivity", "path:" + keys.get(outpoint));
+//                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
                 if(ecKey != null) {
-                    keyBag.put(outpoint, ecKey);
+                    if(s.length == 4)    {
+                        keyBag49.put(outpoint, ecKey);
+                    }
+                    else    {
+                        keyBag.put(outpoint, ecKey);
+                    }
                 }
                 else {
                     throw new RuntimeException("ECKey error: cannot process private key");
@@ -2500,24 +2519,26 @@ public class BalanceActivity extends Activity {
             List<TransactionInput> inputs = tx.getInputs();
             for (int i = 0; i < inputs.size(); i++) {
 
-                ECKey ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
-                TransactionOutput connectedOutput = inputs.get(i).getOutpoint().getConnectedOutput();
-                Script scriptPubKey = connectedOutput.getScriptPubKey();
-                byte[] connectedPubKeyScript = inputs.get(i).getOutpoint().getConnectedPubKeyScript();
-                String address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                ECKey ecKey = null;
+                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()))    {
+                    ecKey = keyBag49.get(inputs.get(i).getOutpoint().toString());
+                }
+                else    {
+                    ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
+                }
+
+                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()))    {
 
                     final P2SH_P2WPKH p2shp2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     System.out.println("pubKey:" + Hex.toHexString(ecKey.getPubKey()));
-//                final Script scriptPubKey = p2shp2wpkh.segWitOutputScript();
-//                System.out.println("scriptPubKey:" + Hex.toHexString(scriptPubKey.getProgram()));
+                    Script scriptPubKey = p2shp2wpkh.segWitOutputScript();
                     System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                     final Script redeemScript = p2shp2wpkh.segWitRedeemScript();
                     System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
                     final Script scriptCode = redeemScript.scriptCode();
                     System.out.println("script code:" + Hex.toHexString(scriptCode.getProgram()));
 
-                    TransactionSignature sig = tx.calculateWitnessSignature(i, ecKey, scriptCode, connectedOutput.getValue(), Transaction.SigHash.ALL, false);
+                    TransactionSignature sig = tx.calculateWitnessSignature(i, ecKey, scriptCode, Coin.valueOf(input_values.get(inputs.get(i).getOutpoint().toString())), Transaction.SigHash.ALL, false);
                     final TransactionWitness witness = new TransactionWitness(2);
                     witness.setPush(0, sig.encodeToBitcoin());
                     witness.setPush(1, ecKey.getPubKey());
@@ -2527,7 +2548,7 @@ public class BalanceActivity extends Activity {
                     sigScript.data(redeemScript.getProgram());
                     tx.getInput(i).setScriptSig(sigScript.build());
 
-                    tx.getInput(i).getScriptSig().correctlySpends(tx, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+                    tx.getInput(i).getScriptSig().correctlySpends(tx, i, scriptPubKey, Coin.valueOf(input_values.get(inputs.get(i).getOutpoint().toString())), Script.ALL_VERIFY_FLAGS);
 
                 }
                 else    {
