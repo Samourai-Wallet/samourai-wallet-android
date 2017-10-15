@@ -41,6 +41,8 @@ public class PrefsUtil {
 	public static final String USE_SEGWIT = "useSegwit";
 	public static final String XPUB44LOCK = "xpub44lock";
 	public static final String XPUB49LOCK = "xpub49lock";
+	public static final String XPUB44REG = "xpub44reg";
+	public static final String XPUB49REG = "xpub49reg";
 
 	public static final String BCC_REPLAY0 = "BCCReplay0";
 	public static final String BCC_REPLAY1 = "BCCReplay1";
