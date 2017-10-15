@@ -1526,6 +1526,11 @@ public class SendActivity extends Activity {
 
         double btc_amount = 0.0;
 
+        String strBTCAddress = edAddress.getText().toString().trim();
+        if(strBTCAddress.startsWith("bitcoin:"))    {
+            edAddress.setText(strBTCAddress.substring(8));
+        }
+
         try {
             btc_amount = NumberFormat.getInstance(Locale.getDefault()).parse(edAmountBTC.getText().toString().trim()).doubleValue();
 //            Log.i("SendFragment", "amount entered:" + btc_amount);
