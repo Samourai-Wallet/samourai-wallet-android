@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -564,6 +565,10 @@ public class BalanceActivity extends Activity {
 
         }
 
+        if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
+            doClipboardCheck();
+        }
+
     }
 
     @Override
@@ -1047,6 +1052,51 @@ public class BalanceActivity extends Activity {
         catch(MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doClipboardCheck()  {
+
+        final android.content.ClipboardManager clipboard = (android.content.ClipboardManager)BalanceActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+        if(clipboard.hasPrimaryClip())    {
+            final ClipData clip = clipboard.getPrimaryClip();
+            ClipData.Item item = clip.getItemAt(0);
+            if(item.getText() != null)    {
+                String text = item.getText().toString();
+                String[] s = text.split("\\s+");
+
+                try {
+                    for(int i = 0; i < s.length; i++)   {
+                        PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(s[i]));
+                        if(privKeyReader.getFormat() != null)    {
+
+                            new AlertDialog.Builder(BalanceActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.privkey_clipboard)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            clipboard.setPrimaryClip(ClipData.newPlainText("", ""));
+
+                                        }
+
+                                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            }).show();
+
+                        }
+                    }
+                }
+                catch(Exception e) {
+                    ;
+                }
+            }
         }
 
     }

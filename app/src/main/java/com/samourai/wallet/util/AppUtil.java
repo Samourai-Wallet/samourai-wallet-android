@@ -45,6 +45,8 @@ public class AppUtil {
 
     private static boolean PRNG_FIXES = false;
 
+    private static boolean CLIPBOARD_SEEN = false;
+
     private AppUtil() { ; }
 
 	public static AppUtil getInstance(Context ctx) {
@@ -209,6 +211,14 @@ public class AppUtil {
         List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
         final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
         return installer == null || !validInstallers.contains(installer);
+    }
+
+    public boolean isClipboardSeen() {
+        return CLIPBOARD_SEEN;
+    }
+
+    public void setClipboardSeen(boolean seen) {
+        CLIPBOARD_SEEN = seen;
     }
 
 }
