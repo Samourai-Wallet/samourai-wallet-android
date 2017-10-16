@@ -46,7 +46,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
-    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "12s6pEL6CUGKp5S1X9ire17S6fihUmSx4D";
+    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "3F5nwobf5xZeeXXQG5cfwNJFMmwEKDUqSk";
     private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "mhP47HR51VhabBudEihETvKkxfKQPeLqqc";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
