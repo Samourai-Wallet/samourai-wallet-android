@@ -81,6 +81,9 @@ public class UTXOActivity extends Activity {
                 if(isBIP47(addr))    {
                     text1.setTypeface(null, Typeface.ITALIC);
                 }
+                else    {
+                    text1.setTypeface(null, Typeface.NORMAL);
+                }
                 text2.setText(df.format(((double)((BigInteger)data.get(position).getRight()).longValue()) / 1e8) + " BTC");
 
                 return view;
@@ -199,9 +202,10 @@ public class UTXOActivity extends Activity {
             }
             else    {
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                List<Integer> unspentIdxs  = BIP47Meta.getInstance().getUnspent(pcode);
+                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                List<Integer> unspentIdxs = BIP47Meta.getInstance().getUnspent(pcode);
 
-                if(unspentIdxs != null && unspentIdxs.size() > 0)    {
+                if(unspentIdxs != null && unspentIdxs.contains(Integer.valueOf(idx)))    {
                     return true;
                 }
                 else    {
