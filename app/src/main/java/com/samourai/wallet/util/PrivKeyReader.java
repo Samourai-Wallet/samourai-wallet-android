@@ -24,7 +24,7 @@ public class PrivKeyReader {
     public final static String BASE64 = "base64";
     public final static String BIP38 = "bip38";
     public final static String HEX_UNCOMPRESSED = "hex_u";
-    public final static String HEX_COMPRESSED = "hex_c";
+//    public final static String HEX_COMPRESSED = "hex_c";
     public final static String MINI = "mini";
     public final static String WIF_COMPRESSED = "wif_c";
     public final static String WIF_UNCOMPRESSED = "wif_u";
@@ -129,9 +129,6 @@ public class PrivKeyReader {
         }
         else if(format.equals(HEX_UNCOMPRESSED)) {
             return decodeHexPK(strPrivKey.toString(), false);
-        }
-        else if(format.equals(HEX_COMPRESSED)) {
-            return decodeHexPK(strPrivKey.toString(), true);
         }
         else if(format.equals(BIP38)) {
             return parseBIP38(strPrivKey.toString(), strPassword);
