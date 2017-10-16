@@ -1069,7 +1069,12 @@ public class BalanceActivity extends Activity {
                 try {
                     for(int i = 0; i < s.length; i++)   {
                         PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(s[i]));
-                        if(privKeyReader.getFormat() != null)    {
+                        if(privKeyReader.getFormat() != null &&
+                                (privKeyReader.getFormat().equals(PrivKeyReader.WIF_COMPRESSED) ||
+                                        privKeyReader.getFormat().equals(PrivKeyReader.WIF_UNCOMPRESSED) ||
+                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38)
+                                )
+                                )    {
 
                             new AlertDialog.Builder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
