@@ -197,9 +197,11 @@ public class PayloadUtil	{
             }
 
             //
-            // export BIP49 xpub for debug payload
+            // export BIP49 account for debug payload
             //
-            wallet.put("xpub49", BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr());
+            JSONArray bip49_account = new JSONArray();
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON());
+            wallet.put("bip49_accounts", bip49_account);
 
             //
             // can remove ???
