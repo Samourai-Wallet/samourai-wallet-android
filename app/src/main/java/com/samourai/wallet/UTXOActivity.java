@@ -199,8 +199,9 @@ public class UTXOActivity extends Activity {
             }
             else    {
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                List<Integer> unspentIdxs  = BIP47Meta.getInstance().getUnspent(pcode);
 
-                if(pcode != null)    {
+                if(unspentIdxs != null && unspentIdxs.size() > 0)    {
                     return true;
                 }
                 else    {
