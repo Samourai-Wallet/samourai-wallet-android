@@ -1,9 +1,9 @@
 package com.samourai.wallet.bip47.rpc;
 
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.spec.ECPrivateKeySpec;
-import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.spec.ECParameterSpec;
+import org.spongycastle.jce.spec.ECPrivateKeySpec;
+import org.spongycastle.jce.spec.ECPublicKeySpec;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
@@ -21,13 +21,13 @@ public class SecretPoint {
     private static final ECParameterSpec params = ECNamedCurveTable.getParameterSpec("secp256k1");
 
     static {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
     }
 
     private SecretPoint()    { ; }
 
     public SecretPoint(byte[] dataPrv, byte[] dataPub) throws InvalidKeySpecException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, NoSuchProviderException {
-        kf = KeyFactory.getInstance("ECDH", "BC");
+        kf = KeyFactory.getInstance("ECDH", "SC");
         privKey = loadPrivateKey(dataPrv);
         pubKey = loadPublicKey(dataPub);
     }

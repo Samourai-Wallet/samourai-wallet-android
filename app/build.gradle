@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 70
-        versionName "0.96"
+        versionName "0.96c"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -54,6 +54,7 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:1.3.9'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'org.bouncycastle:bcprov-jdk15on:1.55'
+    compile 'com.madgag.spongycastle:prov:1.54.0.0'
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-okhttp3:2.0.0-alpha1'
     compile 'com.github.mjdev:libaums:0.5.5'
