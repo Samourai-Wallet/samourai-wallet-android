@@ -72,6 +72,7 @@ import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
@@ -82,6 +83,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -1034,18 +1036,8 @@ public class BIP47Activity extends Activity {
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
-            try {
-                String change_address = HD_WalletFactory.getInstance(BIP47Activity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(BIP47Activity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                receivers.put(change_address, BigInteger.valueOf(change));
-            }
-            catch(IOException ioe) {
-                Toast.makeText(BIP47Activity.this, ioe.getMessage(), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                Toast.makeText(BIP47Activity.this, mle.getMessage(), Toast.LENGTH_SHORT).show();
-                return;
-            }
+            String change_address = BIP49Util.getInstance(BIP47Activity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BIP47Activity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            receivers.put(change_address, BigInteger.valueOf(change));
         }
         Log.d("BIP47Activity", "outpoints:" + outpoints.size());
         Log.d("BIP47Activity", "totalValueSelected:" + BigInteger.valueOf(totalValueSelected).toString());
@@ -1133,15 +1125,7 @@ public class BIP47Activity extends Activity {
                                             // increment change index
                                             //
                                             if(change > 0L)    {
-                                                try {
-                                                    HD_WalletFactory.getInstance(BIP47Activity.this).get().getAccount(0).getChange().incAddrIdx();
-                                                }
-                                                catch(IOException ioe) {
-                                                    ;
-                                                }
-                                                catch(MnemonicException.MnemonicLengthException mle) {
-                                                    ;
-                                                }
+                                                BIP49Util.getInstance(BIP47Activity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                                             }
 
                                             PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
