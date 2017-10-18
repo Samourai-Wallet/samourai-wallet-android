@@ -691,7 +691,7 @@ public class MainActivity2 extends Activity {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
-/*
+
                 response = null;
                 try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
@@ -721,7 +721,7 @@ public class MainActivity2 extends Activity {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
-*/
+
                 response = null;
                 try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);

@@ -133,7 +133,7 @@ public class SamouraiService extends Service {
                     catch(Exception e) {
                         e.printStackTrace();
                     }
-/*
+
                     response = null;
                     try {
                         response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
@@ -163,7 +163,7 @@ public class SamouraiService extends Service {
                     catch(Exception e) {
                         e.printStackTrace();
                     }
-*/
+
                     response = null;
                     try {
                         response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
