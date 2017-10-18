@@ -976,21 +976,10 @@ public class BIP47Activity extends Activity {
         try {
             Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
             String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-            ECKey ecKey = null;
-            String privStr = null;
-            String path = APIFactory.getInstance(BIP47Activity.this).getUnspentPaths().get(address);
-            if(path == null)    {
-                String _pcode = BIP47Meta.getInstance().getPCode4Addr(address);
-                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
-                PaymentAddress addr = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(new PaymentCode(_pcode), idx);
-                ecKey = addr.getReceiveECKey();
-            }
-            else    {
-                String[] s = path.split("/");
-                HD_Address hd_address = AddressFactory.getInstance(BIP47Activity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                privStr = hd_address.getPrivateKeyString();
-                DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), privStr);
-                ecKey = pk.getKey();
+            ECKey ecKey = SendFactory.getPrivKey(address);
+            if(ecKey == null || !ecKey.hasPrivKey())    {
+                Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
+                return;
             }
 
             //
@@ -1007,10 +996,6 @@ public class BIP47Activity extends Activity {
 //                Log.i("BIP47Activity", "payload0:" + Hex.toHexString(BIP47Util.getInstance(context).getPaymentCode().getPayload()));
             op_return = PaymentCode.blind(BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().getPayload(), mask);
 //                Log.i("BIP47Activity", "payload1:" + Hex.toHexString(op_return));
-        }
-        catch(NotSecp256k1Exception ns) {
-            Toast.makeText(BIP47Activity.this, ns.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
         }
         catch(InvalidKeyException ike) {
             Toast.makeText(BIP47Activity.this, ike.getMessage(), Toast.LENGTH_SHORT).show();
