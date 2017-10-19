@@ -316,31 +316,8 @@ public class BalanceActivity extends Activity {
                     HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
 
                     if(hdw != null)    {
-                        if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2 ||
-                                (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0 && SamouraiWallet.getInstance().getShowTotalBalance())
-                                )    {
-
-                            new AlertDialog.Builder(BalanceActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(R.string.receive2Samourai)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
-
-                        }
-                        else    {
-                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                            startActivity(intent);
-                        }
+                        Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                        startActivity(intent);
                     }
 
                 }
