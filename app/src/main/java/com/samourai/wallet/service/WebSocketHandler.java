@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 //import android.util.Log;
@@ -51,6 +52,8 @@ public class WebSocketHandler {
     private boolean pingPongSuccess = false;
 
     private String[] addrs = null;
+
+    private static List<String> seenHashes = new ArrayList<String>();
 
     private static Context context = null;
 
@@ -196,6 +199,12 @@ public class WebSocketHandler {
 
                                         if (objX.has("hash")) {
                                             hash = objX.getString("hash");
+                                            if(seenHashes.contains(hash)){
+                                                return;
+                                            }
+                                            else    {
+                                                seenHashes.add(hash);
+                                            }
                                         }
 
                                         updateBalance(null, hash);
