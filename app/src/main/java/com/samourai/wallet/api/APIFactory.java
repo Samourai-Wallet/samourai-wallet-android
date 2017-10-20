@@ -661,6 +661,9 @@ public class APIFactory	{
 
     public void parseNotifTx(JSONObject jsonObject, String addr, String hash) throws JSONException  {
 
+        Log.i("APIFactory", "notif address:" + addr);
+        Log.i("APIFactory", "hash:" + hash);
+
         if(jsonObject != null)  {
 
             byte[] mask = null;
@@ -673,10 +676,21 @@ public class APIFactory	{
 
                 if(inArray.length() > 0)    {
                     JSONObject objInput = (JSONObject)inArray.get(0);
+                    byte[] pubkey = null;
                     String strScript = objInput.getString("sig");
-                    Script script = new Script(Hex.decode(strScript));
-                    Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
-                    ECKey pKey = new ECKey(null, script.getPubKey(), true);
+                    Log.i("APIFactory", "ScriptSig:" + strScript);
+                    if(strScript.startsWith("160014") && objInput.has("witness"))    {
+                        JSONArray witnessArray = (JSONArray)objInput.get("witness");
+                        if(witnessArray.length() == 2)    {
+                            pubkey = Hex.decode((String)witnessArray.get(1));
+                        }
+                    }
+                    else    {
+                        Script script = new Script(Hex.decode(strScript));
+                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
+                        pubkey = script.getPubKey();
+                    }
+                    ECKey pKey = new ECKey(null, pubkey, true);
                     Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
@@ -693,7 +707,7 @@ public class APIFactory	{
                         Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
                         try {
-                            mask = BIP47Util.getInstance(context).getIncomingMask(script.getPubKey(), outpoint);
+                            mask = BIP47Util.getInstance(context).getIncomingMask(pubkey, outpoint);
                             Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
                         }
                         catch(Exception e) {
