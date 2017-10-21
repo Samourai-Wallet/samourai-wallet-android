@@ -5,10 +5,10 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId 'com.samourai.wallet'
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 70
-        versionName "0.96c"
+        versionName "0.96f"
         // Enabling multidex support.
         multiDexEnabled true
     }

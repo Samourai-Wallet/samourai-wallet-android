@@ -1287,6 +1287,8 @@ public class APIFactory	{
                 getUnspentOutputs(s);
             }
 
+            Log.d("APIFactory", "addresses:" + addressStrings.toString());
+
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             if(hdw != null && hdw.getXPUBs() != null)    {
                 String[] all = null;
