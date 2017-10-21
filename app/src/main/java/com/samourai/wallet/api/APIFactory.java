@@ -678,7 +678,7 @@ public class APIFactory	{
                     JSONObject objInput = (JSONObject)inArray.get(0);
                     byte[] pubkey = null;
                     String strScript = objInput.getString("sig");
-                    Log.i("APIFactory", "ScriptSig:" + strScript);
+                    Log.i("APIFactory", "scriptsig:" + strScript);
                     if(strScript.startsWith("160014") && objInput.has("witness"))    {
                         JSONArray witnessArray = (JSONArray)objInput.get("witness");
                         if(witnessArray.length() == 2)    {
