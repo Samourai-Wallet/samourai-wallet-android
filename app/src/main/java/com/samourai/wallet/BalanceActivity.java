@@ -813,7 +813,7 @@ public class BalanceActivity extends Activity {
         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.action_sweep)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.enter_privkey, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
