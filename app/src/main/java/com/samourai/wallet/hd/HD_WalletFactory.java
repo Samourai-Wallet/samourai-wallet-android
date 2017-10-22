@@ -21,6 +21,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -112,6 +113,8 @@ public class HD_WalletFactory	{
             wis.close();
         }
 
+        BIP47Util.getInstance(context).reset();
+        BIP49Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -155,6 +158,8 @@ public class HD_WalletFactory	{
 
         }
 
+        BIP47Util.getInstance(context).reset();
+        BIP49Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
