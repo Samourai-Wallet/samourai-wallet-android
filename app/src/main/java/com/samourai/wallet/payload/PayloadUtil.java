@@ -126,6 +126,7 @@ public class PayloadUtil	{
 
         BIP47Util.getInstance(context).reset();
         BIP47Meta.getInstance().clear();
+        BIP49Util.getInstance(context).reset();
         APIFactory.getInstance(context).reset();
 
         try	{
