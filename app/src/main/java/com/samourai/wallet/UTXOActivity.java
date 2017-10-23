@@ -24,6 +24,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.segwit.P2SH_P2WPKH;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
@@ -35,6 +36,7 @@ import com.samourai.wallet.util.PrefsUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.spongycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -152,31 +154,63 @@ public class UTXOActivity extends Activity {
 
                     }
                 });
-                builder.setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int whichButton) {
-
-                        String addr = data.get(position).getLeft().toString();
-                        ECKey ecKey = SendFactory.getPrivKey(addr);
-
-                        if(ecKey != null)    {
-                            MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                    UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                    UTXOActivity.this.getString(R.string.utxo_sign_text2),
-                                    ecKey);
-                        }
-
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
 
                 String addr = data.get(position).getLeft().toString();
                 Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr);
+
                 if(address.isP2SHAddress())    {
-//                    alert.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
-                    alert.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
+                    builder.setNeutralButton(R.string.redeem_script, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            String addr = data.get(position).getLeft().toString();
+                            ECKey ecKey = SendFactory.getPrivKey(addr);
+                            P2SH_P2WPKH p2sh_p2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+
+                            if(ecKey != null && p2sh_p2wpkh != null)    {
+
+                                String redeemScript = Hex.toHexString(p2sh_p2wpkh.segWitRedeemScript().getProgram());
+
+                                TextView showText = new TextView(UTXOActivity.this);
+                                showText.setText(redeemScript);
+                                showText.setTextIsSelectable(true);
+                                showText.setPadding(40, 10, 40, 10);
+                                showText.setTextSize(18.0f);
+
+                                new AlertDialog.Builder(UTXOActivity.this)
+                                        .setTitle(R.string.app_name)
+                                        .setView(showText)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                ;
+                                            }
+                                        }).show();
+
+                            }
+
+                        }
+                    });
                 }
+                else    {
+                    builder.setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            String addr = data.get(position).getLeft().toString();
+                            ECKey ecKey = SendFactory.getPrivKey(addr);
+
+                            if(ecKey != null)    {
+                                MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                        UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                        UTXOActivity.this.getString(R.string.utxo_sign_text2),
+                                        ecKey);
+                            }
+
+                        }
+                    });
+                }
+
+                AlertDialog alert = builder.create();
+                alert.show();
 
             }
         };
