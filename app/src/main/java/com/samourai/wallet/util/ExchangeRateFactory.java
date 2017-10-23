@@ -1,7 +1,9 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,10 +47,15 @@ public class ExchangeRateFactory	{
             "Russian Rouble - RUR"
     };
 
+    private static String[] lunoCurrencies = {
+            "ZAR", "NGN", "MYR", "IDR"
+    };
+
     private static String[] currencyLabelsLuno = {
-            "South African Rand - ZAR"
-//            "Nigerian Naira - NGR - WIP",
-//            "Singaporian Dollar - SGD - WIP"
+            "South African Rand - ZAR",
+            "Nigerian Naira - NGN",
+            "Malaysian Ringgit - MYR",
+            "Indonesian Rupiah - IDR"
     };
 
     private static String[] exchangeLabels = {
@@ -87,6 +94,8 @@ public class ExchangeRateFactory	{
         */
         if(fxSel == 1)	 {
             fxRates = fxRatesBFX;
+        }else if(fxSel == 2){
+            fxRates = fxRatesLuno;
         }
         else	 {
             fxRates = fxRatesLBC;
@@ -168,6 +177,23 @@ public class ExchangeRateFactory	{
         }
     }
 
+    public void parseLuno()	 {
+        for(int i = 0; i < lunoCurrencies.length; i++)	 {
+            getLuno(lunoCurrencies[i]);
+        }
+    }
+
+//    public void parseLuno()	 {
+//        for(int i = 0; i < currencies.length; i++)	 {
+//            if(currencies[i].equals("ZAR"))	 {
+//                getLuno("ZAR");
+//            }
+//            else	 {
+//                continue;
+//            }
+//        }
+//    }
+
     public double getBitfinexPrice(String currency)	 {
 
         HashMap<String,Double> fxRates = fxRatesBFX;
@@ -247,21 +273,45 @@ public class ExchangeRateFactory	{
         }
     }
 
-    private void getLuno(String currency)	 {
-        try {
-            JSONObject jsonObject = new JSONObject(strDataBFX);
-            if(jsonObject != null && jsonObject.has("last_trade"))	{
+//    private void getLuno(String currency)	 {
+//        try {
+//            JSONObject jsonObject = new JSONObject(strDataLuno);
+//            if(jsonObject != null && jsonObject.has("last_trade"))	{
+//                String strLastPrice = jsonObject.getString("last_trade");
+//                double avg_price = Double.parseDouble(strLastPrice);
+//                fxRatesLuno.put(currency, Double.valueOf(avg_price));
+//                Log.i("ExchangeRateFactory", "Luno:" + currency + " " + Double.valueOf(avg_price));
+//            }
+//        }
+//        catch (JSONException je) {
+//            fxRatesBFX.put(currency, Double.valueOf(-1.0));
+//        }
+//        catch (NumberFormatException nfe) {
+//            fxRatesBFX.put(currency, Double.valueOf(-1.0));
+//        }
+//    }
+
+    private void getLuno(String lunoCurrency){
+        try{
+            JSONObject jsonObject = new JSONObject(strDataLuno);
+            Log.i("ExchangeRateFactory", jsonObject.toString());
+            Log.i("ExchangeRateFactory", "test");
+            if(jsonObject != null){
+                double last_trade = 0.0;
+                Log.i("ExchangeRateFactory", "XBT"+lunoCurrency);
                 String strLastPrice = jsonObject.getString("last_trade");
-                double avg_price = Double.parseDouble(strLastPrice);
-                fxRatesLuno.put(currency, Double.valueOf(avg_price));
+                last_trade = Double.parseDouble(strLastPrice);
+                Log.i("ExchangeRateFactory", "test2");
+                Log.i("ExchangeRateFactory", "last_trade" + last_trade);
+                if(strLastPrice != null){
+                    fxRatesLuno.put(lunoCurrency, Double.valueOf(last_trade));
+                    Log.i("ExchangeRateFactory", "Luno:" + lunoCurrency + " " + Double.valueOf(last_trade));
+                }
             }
-        }
-        catch (JSONException je) {
-            fxRatesBFX.put(currency, Double.valueOf(-1.0));
-        }
-        catch (NumberFormatException nfe) {
-            fxRatesBFX.put(currency, Double.valueOf(-1.0));
+        }catch(JSONException je){
+            fxRatesLuno.put(lunoCurrency, Double.valueOf(-1.0));
         }
     }
+
 
 }

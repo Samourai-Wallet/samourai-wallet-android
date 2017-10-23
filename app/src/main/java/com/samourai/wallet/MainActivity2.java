@@ -683,6 +683,17 @@ public class MainActivity2 extends Activity {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
+
+                response = null;
+                try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.LUNO_EXCHANGE_URL);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataLuno(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseLuno();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
 /*
                 response = null;
                 try {
