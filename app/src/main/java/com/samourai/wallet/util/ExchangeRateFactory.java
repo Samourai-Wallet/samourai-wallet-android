@@ -256,7 +256,7 @@ public class ExchangeRateFactory	{
     }
 
     private void getLuno(){
-        Pattern pattern = Pattern.compile("(\"timestamp\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\".)|(.)(\"rolling_24_hour_volume\")(.*?\")(.*?\",)|(\\{\"tickers\":[\\{)|\\{|\\}]\\}|\\}|,)");
+        Pattern pattern = Pattern.compile("(\"timestamp\")(.*?,)(.*?,)(.*?,)|(.)(\"rolling_24_hour_volume\")(.*?,)|(\\{\"tickers\":\\[\\{)|\\{|\\}]\\}|}|,");
         Matcher matcher = pattern.matcher(strDataLuno);
         String split[] = pattern.split(strDataLuno);
 
