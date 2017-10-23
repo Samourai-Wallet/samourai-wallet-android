@@ -1,9 +1,6 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
-import android.util.Log;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,10 +43,6 @@ public class ExchangeRateFactory	{
             "United States Dollar - USD",
             "Euro - EUR",
             "Russian Rouble - RUR"
-    };
-
-    private static String[] lunoCurrencies = {
-            "ZAR", "NGN", "MYR", "IDR"
     };
 
     private static String[] currencyLabelsLuno = {
@@ -182,16 +175,6 @@ public class ExchangeRateFactory	{
         getLuno();
     }
 
-//    public void parseLuno()	 {
-//        for(int i = 0; i < currencies.length; i++)	 {
-//            if(currencies[i].equals("ZAR"))	 {
-//                getLuno("ZAR");
-//            }
-//            else	 {
-//                continue;
-//            }
-//        }
-//    }
 
     public double getBitfinexPrice(String currency)	 {
 
@@ -271,51 +254,6 @@ public class ExchangeRateFactory	{
 //            fxSymbols.put(currency, null);
         }
     }
-
-//    private void getLuno(String currency)	 {
-//        try {
-//            JSONObject jsonObject = new JSONObject(strDataLuno);
-//            if(jsonObject != null && jsonObject.has("last_trade"))	{
-//                String strLastPrice = jsonObject.getString("last_trade");
-//                double avg_price = Double.parseDouble(strLastPrice);
-//                fxRatesLuno.put(currency, Double.valueOf(avg_price));
-//                Log.i("ExchangeRateFactory", "Luno:" + currency + " " + Double.valueOf(avg_price));
-//            }
-//        }
-//        catch (JSONException je) {
-//            fxRatesBFX.put(currency, Double.valueOf(-1.0));
-//        }
-//        catch (NumberFormatException nfe) {
-//            fxRatesBFX.put(currency, Double.valueOf(-1.0));
-//        }
-//    }
-
-
-//    try{
-//        JSONObject jsonObject = new JSONObject(strDataLuno);
-//        Log.i("ExchangeRateFactory", jsonObject.toString());
-//        Log.i("ExchangeRateFactory", "test");
-//        if(jsonObject != null){
-//            double last_trade = 0.0;
-//            Log.i("ExchangeRateFactory", "XBT"+lunoCurrency);
-//
-//            //begin loop through the JSON string
-//            for(){
-//
-//            }
-//
-//            String strLastPrice = jsonObject.getString("last_trade");
-//            last_trade = Double.parseDouble(strLastPrice);
-//            Log.i("ExchangeRateFactory", "test2");
-//            Log.i("ExchangeRateFactory", "last_trade" + last_trade);
-//            if(strLastPrice != null){
-//                fxRatesLuno.put(lunoCurrency, Double.valueOf(last_trade));
-//                Log.i("ExchangeRateFactory", "Luno:" + lunoCurrency + " " + Double.valueOf(last_trade));
-//            }
-//        }
-//    }catch(JSONException je){
-//        fxRatesLuno.put(lunoCurrency, Double.valueOf(-1.0));
-//    }
 
     private void getLuno(){
         Pattern pattern = Pattern.compile("(\"timestamp\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\".)|(.)(\"rolling_24_hour_volume\")(.*?\")(.*?\",)|(\\{\"tickers\":[\\{)|\\{|\\}]\\}|\\}|,)");
