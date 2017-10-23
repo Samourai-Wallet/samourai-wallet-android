@@ -20,6 +20,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 [BIP47 test vectors](https://gist.github.com/SamouraiDev/6aad669604c5930864bd)
 
+### BIP49 (Segwit):
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl.
+
 ### BIP69:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
@@ -69,5 +73,3 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 [Samourai HQ](http://samouraiwallet.com)
 
 [Paymentcode.io](http://paymentcode.io)
-
-[Segwit activation tracker](http://segw.it)
