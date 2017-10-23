@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.regex.*;
 
 //import android.util.Log;
 
@@ -178,9 +179,7 @@ public class ExchangeRateFactory	{
     }
 
     public void parseLuno()	 {
-        for(int i = 0; i < lunoCurrencies.length; i++)	 {
-            getLuno(lunoCurrencies[i]);
-        }
+        getLuno();
     }
 
 //    public void parseLuno()	 {
@@ -291,26 +290,60 @@ public class ExchangeRateFactory	{
 //        }
 //    }
 
-    private void getLuno(String lunoCurrency){
-        try{
-            JSONObject jsonObject = new JSONObject(strDataLuno);
-            Log.i("ExchangeRateFactory", jsonObject.toString());
-            Log.i("ExchangeRateFactory", "test");
-            if(jsonObject != null){
-                double last_trade = 0.0;
-                Log.i("ExchangeRateFactory", "XBT"+lunoCurrency);
-                String strLastPrice = jsonObject.getString("last_trade");
-                last_trade = Double.parseDouble(strLastPrice);
-                Log.i("ExchangeRateFactory", "test2");
-                Log.i("ExchangeRateFactory", "last_trade" + last_trade);
-                if(strLastPrice != null){
-                    fxRatesLuno.put(lunoCurrency, Double.valueOf(last_trade));
-                    Log.i("ExchangeRateFactory", "Luno:" + lunoCurrency + " " + Double.valueOf(last_trade));
-                }
+
+//    try{
+//        JSONObject jsonObject = new JSONObject(strDataLuno);
+//        Log.i("ExchangeRateFactory", jsonObject.toString());
+//        Log.i("ExchangeRateFactory", "test");
+//        if(jsonObject != null){
+//            double last_trade = 0.0;
+//            Log.i("ExchangeRateFactory", "XBT"+lunoCurrency);
+//
+//            //begin loop through the JSON string
+//            for(){
+//
+//            }
+//
+//            String strLastPrice = jsonObject.getString("last_trade");
+//            last_trade = Double.parseDouble(strLastPrice);
+//            Log.i("ExchangeRateFactory", "test2");
+//            Log.i("ExchangeRateFactory", "last_trade" + last_trade);
+//            if(strLastPrice != null){
+//                fxRatesLuno.put(lunoCurrency, Double.valueOf(last_trade));
+//                Log.i("ExchangeRateFactory", "Luno:" + lunoCurrency + " " + Double.valueOf(last_trade));
+//            }
+//        }
+//    }catch(JSONException je){
+//        fxRatesLuno.put(lunoCurrency, Double.valueOf(-1.0));
+//    }
+
+    private void getLuno(){
+        Pattern pattern = Pattern.compile("(\"timestamp\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\")(.*?\".)|(.)(\"rolling_24_hour_volume\")(.*?\")(.*?\",)|(\\{\"tickers\":[\\{)|\\{|\\}]\\}|\\}|,)");
+        Matcher matcher = pattern.matcher(strDataLuno);
+        String split[] = pattern.split(strDataLuno);
+
+        double last_trade = 0;
+        String pair = "";
+        int triggerAdd = 0;
+        for (int y = 0; y < split.length; y++) {
+            if(split[y].contains("last_trade")){
+                String secondSplit[] = split[y].split(":");
+                secondSplit[1] = secondSplit[1].replace("\"","");
+                last_trade = Double.parseDouble(secondSplit[1]);
+                triggerAdd++;
+            }else if(split[y].contains("pair")){
+                String secondSplit[] = split[y].split(":");
+                secondSplit[1] = secondSplit[1].replace("\"","");
+                pair = secondSplit[1];
+                triggerAdd++;
             }
-        }catch(JSONException je){
-            fxRatesLuno.put(lunoCurrency, Double.valueOf(-1.0));
+
+            if(triggerAdd == 2){
+                fxRatesLuno.put(pair.replace("XBT",""), last_trade);
+                triggerAdd = 0;
+            }
         }
+
     }
 
 
