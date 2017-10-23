@@ -3,6 +3,7 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.SecretPoint;
@@ -83,7 +84,7 @@ public class BIP47Util {
     public byte[] getIncomingMask(byte[] pubkey, byte[] outPoint) throws AddressFormatException, Exception    {
 
         HD_Address notifAddress = getNotificationAddress();
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), notifAddress.getPrivateKeyString());
+        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
         ECKey inputKey = dpk.getKey();
         byte[] privkey = inputKey.getPrivKeyBytes();
         byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
@@ -92,7 +93,7 @@ public class BIP47Util {
     }
 
     public PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, HD_Address address) throws AddressFormatException, NotSecp256k1Exception {
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), address.getPrivateKeyString());
+        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), address.getPrivateKeyString());
         ECKey eckey = dpk.getKey();
         PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, eckey.getPrivKeyBytes());
         return paymentAddress;

@@ -53,6 +53,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
@@ -125,6 +126,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
             else if(strBranch.equals("txs"))   {
                 addPreferencesFromResource(R.xml.settings_txs);
 
+                final CheckBoxPreference cbPref0 = (CheckBoxPreference) findPreference("segwit");
+                cbPref0.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref0.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, true);
+                        }
+
+                        return true;
+                    }
+                });
+
                 final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
                 cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -193,6 +209,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 feeproviderPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         getFeeProvider();
+                        return true;
+                    }
+                });
+
+                final CheckBoxPreference cbPref10 = (CheckBoxPreference) findPreference("broadcastTx");
+                cbPref10.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref10.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, true);
+                        }
+
                         return true;
                     }
                 });
@@ -462,6 +493,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 xpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         getXPUB();
+                        return true;
+                    }
+                });
+
+                Preference xpub49Pref = (Preference) findPreference("xpub49");
+                xpub49Pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB49();
                         return true;
                     }
                 });
@@ -993,6 +1032,44 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
+    private void getXPUB49()	{
+
+        String xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(xpub);
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout xpubLayout = new LinearLayout(SettingsActivity2.this);
+        xpubLayout.setOrientation(LinearLayout.VERTICAL);
+        xpubLayout.addView(showQR);
+        xpubLayout.addView(showText);
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(xpubLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                }).show();
+
+    }
+
     private void getUnits()	{
 
         final CharSequence[] units = MonetaryUtil.getInstance().getBTCUnits();
@@ -1021,7 +1098,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void onClick(DialogInterface dialog, int which) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
-                                if(which == 1)    {
+                                if(which == 2)    {
                                     PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
                                     PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
                                     dialog.dismiss();
@@ -1076,8 +1153,24 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getFeeProvider()	{
 
-        final String[] providers = FeeUtil.getInstance().getProviders();
-        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+        final String[] providers;
+        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+            providers = new String[FeeUtil.getInstance().getProviders().length + 1];
+            System.arraycopy(FeeUtil.getInstance().getProviders(), 0, providers, 0, FeeUtil.getInstance().getProviders().length);
+            String[] trusted = new String[] { "Trusted node" };
+            System.arraycopy(trusted, 0, providers, FeeUtil.getInstance().getProviders().length, 1);
+        }
+        else    {
+            providers = FeeUtil.getInstance().getProviders();
+        }
+
+        final int sel;
+        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1) >= providers.length)    {
+            sel = 1;
+        }
+        else    {
+            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
+        }
 
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.options_fee_provider)

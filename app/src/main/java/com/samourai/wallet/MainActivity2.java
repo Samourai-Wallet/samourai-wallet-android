@@ -48,6 +48,9 @@ import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.WebUtil;
 
 import org.apache.commons.codec.DecoderException;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet2Params;
+import org.bitcoinj.params.TestNet3Params;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -195,11 +198,16 @@ public class MainActivity2 extends Activity {
 
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
-
+/*
         if(TimeOutUtil.getInstance().isTimedOut()) {
             if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
                 AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-                initDialog();
+                if(AppUtil.getInstance(MainActivity2.this).isSideLoaded())    {
+                    doSelectNet();
+                }
+                else    {
+                    initDialog();
+                }
             }
             else {
                 AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
@@ -212,7 +220,7 @@ public class MainActivity2 extends Activity {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
         }
-
+*/
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
         LocalBroadcastManager.getInstance(MainActivity2.this).registerReceiver(receiver_restart, filter_restart);
 
@@ -684,6 +692,7 @@ public class MainActivity2 extends Activity {
                     e.printStackTrace();
                 }
 
+
                 response = null;
                 try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.LUNO_EXCHANGE_URL);
@@ -694,7 +703,7 @@ public class MainActivity2 extends Activity {
                     e.printStackTrace();
                 }
 
-/*
+
                 response = null;
                 try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
@@ -724,7 +733,7 @@ public class MainActivity2 extends Activity {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
-*/
+
                 response = null;
                 try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
@@ -783,7 +792,12 @@ public class MainActivity2 extends Activity {
         }
         else if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-            initDialog();
+            if(AppUtil.getInstance(MainActivity2.this).isSideLoaded())    {
+                doSelectNet();
+            }
+            else    {
+                initDialog();
+            }
         }
         else if(isDial && AccessFactory.getInstance(MainActivity2.this).validateHash(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""), AccessFactory.getInstance(MainActivity2.this).getGUID(), new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations)) {
             TimeOutUtil.getInstance().updatePin();
@@ -810,7 +824,7 @@ public class MainActivity2 extends Activity {
 
     }
 
-    public void doAccountSelection() {
+    private void doAccountSelection() {
 
         if(!PayloadUtil.getInstance(MainActivity2.this).walletFileExists())    {
             return;
@@ -844,6 +858,38 @@ public class MainActivity2 extends Activity {
         }
         else    {
             SamouraiWallet.getInstance().setShowTotalBalance(false);
+        }
+
+    }
+
+    private void doSelectNet()  {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.select_network)
+                .setCancelable(false)
+                .setPositiveButton(R.string.MainNet, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+                        PrefsUtil.getInstance(MainActivity2.this).removeValue(PrefsUtil.TESTNET);
+                        SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());
+                        initDialog();
+
+                    }
+                })
+                .setNegativeButton(R.string.TestNet, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+                        PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.TESTNET, true);
+                        SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
+                        initDialog();
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
         }
 
     }

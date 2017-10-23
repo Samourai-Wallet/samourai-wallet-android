@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
@@ -104,7 +105,7 @@ public class MessageSignUtil {
 
         ECKey ecKey = signedMessageToKey(strMessage, strSignature);
         if(ecKey != null)   {
-            return ecKey.toAddress(MainNetParams.get()).toString().equals(address);
+            return ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString().equals(address);
         }
         else    {
             return false;
@@ -131,7 +132,7 @@ public class MessageSignUtil {
             ret += "\n";
             ret += "-----BEGIN BITCOIN SIGNATURE-----\n";
             ret += "Version: Bitcoin-qt (1.0)\n";
-            ret += "Address: " + key.toAddress(MainNetParams.get()).toString() + "\n\n";
+            ret += "Address: " + key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString() + "\n\n";
             ret += sig;
             ret += "\n";
             ret += "-----END BITCOIN SIGNATURE-----\n";

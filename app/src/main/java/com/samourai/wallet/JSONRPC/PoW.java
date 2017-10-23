@@ -5,13 +5,15 @@ import org.bitcoinj.core.Utils;
 import org.bitcoinj.params.MainNetParams;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 
-import static org.spongycastle.util.Arrays.reverse;
+import static org.bouncycastle.util.Arrays.reverse;
 
 import android.util.Log;
+
+import com.samourai.wallet.SamouraiWallet;
 
 public class PoW {
 
@@ -93,7 +95,7 @@ public class PoW {
             hash = Hex.toHexString(reverse(Sha256Hash.hashTwice(buf)));
             Log.i("PoW", "hash:" + hash);
         }
-        catch(org.spongycastle.util.encoders.DecoderException de) {
+        catch(org.bouncycastle.util.encoders.DecoderException de) {
             de.printStackTrace();
             return null;
         }
@@ -117,7 +119,7 @@ public class PoW {
 
             long difficultyTarget = Long.parseLong(nodeObj.getString("bits"), 16);
             target = Utils.decodeCompactBits(difficultyTarget);
-            if (target.signum() <= 0 || target.compareTo(MainNetParams.get().getMaxTarget()) > 0) {
+            if (target.signum() <= 0 || target.compareTo(SamouraiWallet.getInstance().getCurrentNetworkParams().getMaxTarget()) > 0) {
                 Log.i("PoW", "invalid target");
                 return false;
             }

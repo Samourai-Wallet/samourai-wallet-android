@@ -24,28 +24,18 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.rpc.PaymentAddress;
-import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.hd.HD_Address;
-import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.core.DumpedPrivateKey;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -67,7 +57,7 @@ public class UTXOActivity extends Activity {
         data = new ArrayList<Pair>();
         for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos())   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                Pair pair = Pair.of(outpoint.getAddress(), outpoint.getValue());
+                Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
                 data.add(pair);
             }
         }
@@ -91,6 +81,9 @@ public class UTXOActivity extends Activity {
                 if(isBIP47(addr))    {
                     text1.setTypeface(null, Typeface.ITALIC);
                 }
+                else    {
+                    text1.setTypeface(null, Typeface.NORMAL);
+                }
                 text2.setText(df.format(((double)((BigInteger)data.get(position).getRight()).longValue()) / 1e8) + " BTC");
 
                 return view;
@@ -109,7 +102,7 @@ public class UTXOActivity extends Activity {
 
                         String addr = data.get(position).getLeft().toString();
                         ECKey ecKey = SendFactory.getPrivKey(addr);
-                        String strPrivKey = ecKey.getPrivateKeyAsWiF(MainNetParams.get());
+                        String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                         ImageView showQR = new ImageView(UTXOActivity.this);
                         Bitmap bitmap = null;
@@ -178,6 +171,13 @@ public class UTXOActivity extends Activity {
                 AlertDialog alert = builder.create();
                 alert.show();
 
+                String addr = data.get(position).getLeft().toString();
+                Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr);
+                if(address.isP2SHAddress())    {
+//                    alert.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+                    alert.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.GONE);
+                }
+
             }
         };
         listView.setOnItemClickListener(listener);
@@ -202,8 +202,10 @@ public class UTXOActivity extends Activity {
             }
             else    {
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                List<Integer> unspentIdxs = BIP47Meta.getInstance().getUnspent(pcode);
 
-                if(pcode != null)    {
+                if(unspentIdxs != null && unspentIdxs.contains(Integer.valueOf(idx)))    {
                     return true;
                 }
                 else    {

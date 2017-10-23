@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,11 +41,13 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.core.TransactionWitness;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -68,6 +71,8 @@ import com.samourai.wallet.hf.HardForkUtil;
 import com.samourai.wallet.hf.ReplayProtectionActivity;
 import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.P2SH_P2WPKH;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -101,8 +106,8 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
-import org.spongycastle.util.encoders.DecoderException;
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
@@ -266,6 +271,10 @@ public class BalanceActivity extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            setTitle(getText(R.string.app_name) + ":" + "TestNet");
+        }
+
         LayoutInflater inflator = BalanceActivity.this.getLayoutInflater();
         tvBalanceBar = (LinearLayout)inflator.inflate(R.layout.balance_layout, null);
         tvBalanceBar.setOnTouchListener(new View.OnTouchListener() {
@@ -307,31 +316,8 @@ public class BalanceActivity extends Activity {
                     HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
 
                     if(hdw != null)    {
-                        if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2 ||
-                                (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0 && SamouraiWallet.getInstance().getShowTotalBalance())
-                                )    {
-
-                            new AlertDialog.Builder(BalanceActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(R.string.receive2Samourai)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.generate_receive_yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
-
-                        }
-                        else    {
-                            Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-                            startActivity(intent);
-                        }
+                        Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                        startActivity(intent);
                     }
 
                 }
@@ -496,7 +482,17 @@ public class BalanceActivity extends Activity {
 //        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
-        refreshTx(false, true, false, true);
+        boolean notifTx = false;
+        boolean fetch = false;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey("notifTx"))	{
+            notifTx = extras.getBoolean("notifTx");
+        }
+        if(extras != null && extras.containsKey("uri"))	{
+            fetch = extras.getBoolean("fetch");
+        }
+
+        refreshTx(notifTx, fetch, false, true);
 
         //
         // user checks mnemonic & passphrase
@@ -544,6 +540,10 @@ public class BalanceActivity extends Activity {
                 dlg.show();
             }
 
+        }
+
+        if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
+            doClipboardCheck();
         }
 
     }
@@ -813,7 +813,7 @@ public class BalanceActivity extends Activity {
         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.action_sweep)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.enter_privkey, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -902,7 +902,7 @@ public class BalanceActivity extends Activity {
                                 boolean keyDecoded = false;
 
                                 try {
-                                    BIP38PrivateKey bip38 = new BIP38PrivateKey(MainNetParams.get(), data);
+                                    BIP38PrivateKey bip38 = new BIP38PrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), data);
                                     final ECKey ecKey = bip38.decrypt(password);
                                     if(ecKey != null && ecKey.hasPrivKey()) {
 
@@ -914,7 +914,7 @@ public class BalanceActivity extends Activity {
                                         keyDecoded = true;
 
                                         Toast.makeText(BalanceActivity.this, pvr.getFormat(), Toast.LENGTH_SHORT).show();
-                                        Toast.makeText(BalanceActivity.this, pvr.getKey().toAddress(MainNetParams.get()).toString(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(BalanceActivity.this, pvr.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), Toast.LENGTH_SHORT).show();
 
                                     }
                                 }
@@ -928,7 +928,7 @@ public class BalanceActivity extends Activity {
                                 }
 
                                 if(keyDecoded)    {
-                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr);
+                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr, false);
                                 }
 
                             }
@@ -945,7 +945,7 @@ public class BalanceActivity extends Activity {
 
             }
             else if(privKeyReader != null)	{
-                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader);
+                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader, false);
             }
             else    {
                 ;
@@ -1029,6 +1029,56 @@ public class BalanceActivity extends Activity {
         catch(MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doClipboardCheck()  {
+
+        final android.content.ClipboardManager clipboard = (android.content.ClipboardManager)BalanceActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+        if(clipboard.hasPrimaryClip())    {
+            final ClipData clip = clipboard.getPrimaryClip();
+            ClipData.Item item = clip.getItemAt(0);
+            if(item.getText() != null)    {
+                String text = item.getText().toString();
+                String[] s = text.split("\\s+");
+
+                try {
+                    for(int i = 0; i < s.length; i++)   {
+                        PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(s[i]));
+                        if(privKeyReader.getFormat() != null &&
+                                (privKeyReader.getFormat().equals(PrivKeyReader.WIF_COMPRESSED) ||
+                                        privKeyReader.getFormat().equals(PrivKeyReader.WIF_UNCOMPRESSED) ||
+                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38)
+                                )
+                                )    {
+
+                            new AlertDialog.Builder(BalanceActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.privkey_clipboard)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            clipboard.setPrimaryClip(ClipData.newPlainText("", ""));
+
+                                        }
+
+                                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ;
+                                }
+                            }).show();
+
+                        }
+                    }
+                }
+                catch(Exception e) {
+                    ;
+                }
+            }
         }
 
     }
@@ -1427,24 +1477,12 @@ public class BalanceActivity extends Activity {
             // TBD: check on lookahead/lookbehind for all incoming payment codes
             //
             if(fetch || txs.size() == 0)    {
-                Log.d("BalanceActivity", "initWallet()");
                 APIFactory.getInstance(BalanceActivity.this).initWallet();
             }
 
             try {
                 int acc = 0;
-                if(SamouraiWallet.getInstance().getShowTotalBalance())    {
-                    if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0)    {
-                        txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-                    }
-                    else    {
-                        acc = SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1;
-                        txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                    }
-                }
-                else    {
-                    txs = APIFactory.getInstance(BalanceActivity.this).getXpubTxs().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).xpubstr());
-                }
+                txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
                 if(txs != null)    {
                     Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
                 }
@@ -1455,6 +1493,14 @@ public class BalanceActivity extends Activity {
                 if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().getAddrIdx()) {
                     HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
                 }
+
+                if(AddressFactory.getInstance().getHighestBIP49ReceiveIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
+                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ReceiveIdx());
+                }
+                if(AddressFactory.getInstance().getHighestBIP49ChangeIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
+                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ChangeIdx());
+                }
+
             }
             catch(IOException ioe) {
                 ioe.printStackTrace();
@@ -1491,9 +1537,9 @@ public class BalanceActivity extends Activity {
                 //
                 try {
                     PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
-                    APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
 //                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
 //                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
+                    APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
                 }
                 catch (AddressFormatException afe) {
                     afe.printStackTrace();
@@ -1561,7 +1607,25 @@ public class BalanceActivity extends Activity {
                 }
 
             }
+/*
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
+                try {
+                    String[] s = HD_WalletFactory.getInstance(BalanceActivity.this).get().getXPUBs();
+                    for(int i = 0; i < s.length; i++)   {
+                        APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
+                    }
+                }
+                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                    ;
+                }
+
+            }
+
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
+                ;
+            }
+*/
             return "OK";
         }
 
@@ -1573,8 +1637,6 @@ public class BalanceActivity extends Activity {
                     progress.dismiss();
                 }
             }
-
-//            bccForkThread();
 
         }
 
@@ -1678,8 +1740,25 @@ public class BalanceActivity extends Activity {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("outputs");
 
+                    int p2pkh = 0;
+                    int p2wpkh = 0;
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
+                            Script script = new Script(Hex.decode(scriptpubkey));
+                            Address address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if(address.isP2SHAddress())    {
+                                p2wpkh++;
+                            }
+                            else    {
+                                p2pkh++;
+                            }
+                        }
+                    }
+
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(inputs.length(), outputs.length());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length());
 
                     long total_inputs = 0L;
                     long total_outputs = 0L;
@@ -1707,6 +1786,9 @@ public class BalanceActivity extends Activity {
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
                             }
+                            else    {
+                                break;
+                            }
                         }
                     }
 
@@ -1732,13 +1814,24 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "remaining fee:" + remainingFee);
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
-                        final String ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        final String addr = outputs.getJSONObject(0).getString("address");
+                        final String ownReceiveAddr;
+                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                            ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                        }
+                        else    {
+                            ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        }
                         Log.d("BalanceActivity", "receive address:" + ownReceiveAddr);
 
                         long totalAmount = utxo.getValue();
                         Log.d("BalanceActivity", "amount before fee:" + totalAmount);
-                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 1);
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
+
+                        p2pkh = outpointTypes.getLeft();
+                        p2wpkh = outpointTypes.getRight();
 
                         if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
                             Log.d("BalanceActivity", "selecting additional utxo");
@@ -1747,7 +1840,10 @@ public class BalanceActivity extends Activity {
                                 totalAmount += _utxo.getValue();
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
-                                cpfpFee = FeeUtil.getInstance().estimatedFee(selected, 1);
+                                outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+                                p2pkh += outpointTypes.getLeft();
+                                p2wpkh += outpointTypes.getRight();
+                                cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, 1);
                                 if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
@@ -1845,8 +1941,15 @@ public class BalanceActivity extends Activity {
                                                             });
 
                                                             // reset receive index upon tx fail
-                                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            }
+                                                            else    {
+                                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            }
+
                                                         }
                                                     }
                                                     catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
@@ -1867,9 +1970,14 @@ public class BalanceActivity extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         try {
-                                            // reset receive index upon tx fail
-                                            int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                            HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            }
+                                            else    {
+                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            }
                                         }
                                         catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
                                             handler.post(new Runnable() {
@@ -1962,11 +2070,13 @@ public class BalanceActivity extends Activity {
         private List<UTXO> utxos = null;
         private Handler handler = null;
         private RBFSpend rbf = null;
+        private HashMap<String,Long> input_values = null;
 
         @Override
         protected void onPreExecute() {
             handler = new Handler();
             utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+            input_values = new HashMap<String,Long>();
         }
 
         @Override
@@ -1978,7 +2088,7 @@ public class BalanceActivity extends Activity {
 
             rbf = RBFUtil.getInstance().get(params[0]);
             Log.d("BalanceActivity", "rbf:" + ((rbf == null) ? "null" : "not null"));
-            final Transaction tx = new Transaction(MainNetParams.get(), Hex.decode(rbf.getSerializedTx()));
+            final Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(rbf.getSerializedTx()));
             Log.d("BalanceActivity", "tx serialized:" + rbf.getSerializedTx());
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
             Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
@@ -1988,9 +2098,26 @@ public class BalanceActivity extends Activity {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("outputs");
 
+                    int p2pkh = 0;
+                    int p2wpkh = 0;
+
+                    for(int i = 0; i < inputs.length(); i++)   {
+                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
+                            Script script = new Script(Hex.decode(scriptpubkey));
+                            Address address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if(address.isP2SHAddress())    {
+                                p2wpkh++;
+                            }
+                            else    {
+                                p2pkh++;
+                            }
+                        }
+                    }
+
                     SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFee(tx.getInputs().size(), tx.getOutputs().size());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length());
 
                     long total_inputs = 0L;
                     long total_outputs = 0L;
@@ -2004,6 +2131,8 @@ public class BalanceActivity extends Activity {
                             JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
+                                String key = objPrev.getString("txid") + ":" + objPrev.getLong("vout");
+                                input_values.put(key, objPrev.getLong("value"));
                             }
                         }
                     }
@@ -2043,7 +2172,9 @@ public class BalanceActivity extends Activity {
                     long remainder = remainingFee;
                     if(total_change > remainder)    {
                         for(TransactionOutput output : txOutputs)   {
-                            if(rbf.getChangeAddrs().contains(output.getAddressFromP2PKHScript(MainNetParams.get()).toString()))    {
+                            Address _p2sh = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            if((_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString())))    {
                                 if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
                                     output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
                                     remainder = 0L;
@@ -2065,12 +2196,13 @@ public class BalanceActivity extends Activity {
                     List<MyTransactionInput> _inputs = new ArrayList<MyTransactionInput>();
                     List<TransactionInput> txInputs = tx.getInputs();
                     for(TransactionInput input : txInputs) {
-                        MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
+                        MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
                         _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
                         _inputs.add(_input);
                         Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
                     }
 
+                    Pair<Integer,Integer> outpointTypes = null;
                     if(remainder > 0L)    {
                         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                         long selectedAmount = 0L;
@@ -2109,7 +2241,10 @@ public class BalanceActivity extends Activity {
                             Log.d("BalanceActivity", "selected utxo:" + selected);
                             selectedAmount += _utxo.getValue();
                             Log.d("BalanceActivity", "selected utxo value:" + _utxo.getValue());
-                            _remainingFee = FeeUtil.getInstance().estimatedFee(inputs.length() + selected, outputs.length() == 1 ? 2 : outputs.length()).longValue();
+                            outpointTypes = FeeUtil.getInstance().getOutpointCount(_utxo.getOutpoints());
+                            p2pkh += outpointTypes.getLeft();
+                            p2wpkh += outpointTypes.getRight();
+                            _remainingFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length() == 1 ? 2 : outputs.length()).longValue();
                             Log.d("BalanceActivity", "_remaining fee:" + _remainingFee);
                             if(selectedAmount >= (_remainingFee + SamouraiWallet.bDust.longValue())) {
                                 break;
@@ -2133,11 +2268,20 @@ public class BalanceActivity extends Activity {
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
-                                int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
-                                String change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
+                                boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
 
-                                Script toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), change_address));
-                                TransactionOutput output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
+                                String change_address = null;
+                                if(isBIP49)    {
+                                    int changeIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+                                    change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
+                                }
+                                else    {
+                                    int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
+                                    change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
+                                }
+
+                                Script toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), change_address));
+                                TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
                                 txOutputs.add(output);
                                 addedChangeOutput = true;
                             }
@@ -2155,8 +2299,12 @@ public class BalanceActivity extends Activity {
                         // parent tx had change output
                         else    {
                             for(TransactionOutput output : txOutputs)   {
-                                Log.d("BalanceActivity", "checking for change:" + output.getAddressFromP2PKHScript(MainNetParams.get()).toString());
-                                if(rbf.containsChangeAddr(output.getAddressFromP2PKHScript(MainNetParams.get()).toString()))    {
+                                Address _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                if(_address == null)    {
+                                    _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                }
+                                Log.d("BalanceActivity", "checking for change:" + _address.toString());
+                                if(rbf.containsChangeAddr(_address.toString()))    {
                                     Log.d("BalanceActivity", "before extra:" + output.getValue().longValue());
                                     output.setValue(Coin.valueOf(extraChange + output.getValue().longValue()));
                                     Log.d("BalanceActivity", "after extra:" + output.getValue().longValue());
@@ -2184,14 +2332,20 @@ public class BalanceActivity extends Activity {
 
                             for(MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
 
-                                MyTransactionInput _input = new MyTransactionInput(MainNetParams.get(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
+                                MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
                                 _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
                                 _inputs.add(_input);
                                 Log.d("BalanceActivity", "add selected outpoint:" + _input.getOutpoint().toString());
 
                                 String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(outpoint.getAddress());
                                 if(path != null)    {
-                                    rbf.addKey(outpoint.toString(), path);
+                                    Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress());
+                                    if(address != null && address.isP2SHAddress())    {
+                                        rbf.addKey(outpoint.toString(), path + "/49");
+                                    }
+                                    else    {
+                                        rbf.addKey(outpoint.toString(), path);
+                                    }
                                 }
                                 else    {
                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outpoint.getAddress());
@@ -2209,7 +2363,7 @@ public class BalanceActivity extends Activity {
                     //
                     // BIP69 sort of outputs/inputs
                     //
-                    final Transaction _tx = new Transaction(MainNetParams.get());
+                    final Transaction _tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
                     List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
                     _txOutputs.addAll(txOutputs);
                     Collections.sort(_txOutputs, new SendFactory.BIP69OutputComparator());
@@ -2245,10 +2399,10 @@ public class BalanceActivity extends Activity {
 
                                     Transaction __tx = signTx(_tx);
                                     final String hexTx = new String(Hex.encode(__tx.bitcoinSerialize()));
-                                    Log.d("BalanceActivity", hexTx);
+                                    Log.d("BalanceActivity", "hex tx:" + hexTx);
 
                                     final String strTxHash = __tx.getHashAsString();
-                                    Log.d("BalanceActivity", strTxHash);
+                                    Log.d("BalanceActivity", "tx hash" + strTxHash);
 
                                     if(__tx != null)    {
 
@@ -2343,6 +2497,7 @@ public class BalanceActivity extends Activity {
         private Transaction signTx(Transaction tx)    {
 
             HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
+            HashMap<String,ECKey> keyBag49 = new HashMap<String,ECKey>();
 
             HashMap<String,String> keys = rbf.getKeyBag();
             for(String outpoint : keys.keySet())   {
@@ -2350,10 +2505,15 @@ public class BalanceActivity extends Activity {
                 ECKey ecKey = null;
 
                 String[] s = keys.get(outpoint).split("/");
-                if(s.length == 3)    {
+                Log.i("BalanceActivity", "path length:" + s.length);
+                if(s.length == 4)    {
+                    HD_Address addr = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    ecKey = addr.getECKey();
+                }
+                else if(s.length == 3)    {
                     HD_Address hd_address = AddressFactory.getInstance(BalanceActivity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                     String strPrivKey = hd_address.getPrivateKeyString();
-                    DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), strPrivKey);
+                    DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
                     ecKey = pk.getKey();
                 }
                 else if(s.length == 2)    {
@@ -2370,10 +2530,16 @@ public class BalanceActivity extends Activity {
                 }
 
                 Log.i("BalanceActivity", "outpoint:" + outpoint);
-                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(MainNetParams.get()).toString());
+                Log.i("BalanceActivity", "path:" + keys.get(outpoint));
+//                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
                 if(ecKey != null) {
-                    keyBag.put(outpoint, ecKey);
+                    if(s.length == 4)    {
+                        keyBag49.put(outpoint, ecKey);
+                    }
+                    else    {
+                        keyBag.put(outpoint, ecKey);
+                    }
                 }
                 else {
                     throw new RuntimeException("ECKey error: cannot process private key");
@@ -2385,230 +2551,52 @@ public class BalanceActivity extends Activity {
             List<TransactionInput> inputs = tx.getInputs();
             for (int i = 0; i < inputs.size(); i++) {
 
-                ECKey ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
-                Log.i("BalanceActivity", "sign outpoint:" + inputs.get(i).getOutpoint().toString());
-                Log.i("BalanceActivity", "ECKey address from keyBag:" + ecKey.toAddress(MainNetParams.get()).toString());
+                ECKey ecKey = null;
+                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()))    {
+                    ecKey = keyBag49.get(inputs.get(i).getOutpoint().toString());
+                }
+                else    {
+                    ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
+                }
 
-                Log.i("BalanceActivity", "script:" + ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())));
-                Log.i("BalanceActivity", "script:" + Hex.toHexString(ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())).getProgram()));
-                TransactionSignature sig = tx.calculateSignature(i, ecKey, ScriptBuilder.createOutputScript(ecKey.toAddress(MainNetParams.get())).getProgram(), Transaction.SigHash.ALL, false);
-                tx.getInput(i).setScriptSig(ScriptBuilder.createInputScript(sig, ecKey));
+                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()))    {
+
+                    final P2SH_P2WPKH p2shp2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    System.out.println("pubKey:" + Hex.toHexString(ecKey.getPubKey()));
+                    Script scriptPubKey = p2shp2wpkh.segWitOutputScript();
+                    System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                    final Script redeemScript = p2shp2wpkh.segWitRedeemScript();
+                    System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
+                    final Script scriptCode = redeemScript.scriptCode();
+                    System.out.println("script code:" + Hex.toHexString(scriptCode.getProgram()));
+
+                    TransactionSignature sig = tx.calculateWitnessSignature(i, ecKey, scriptCode, Coin.valueOf(input_values.get(inputs.get(i).getOutpoint().toString())), Transaction.SigHash.ALL, false);
+                    final TransactionWitness witness = new TransactionWitness(2);
+                    witness.setPush(0, sig.encodeToBitcoin());
+                    witness.setPush(1, ecKey.getPubKey());
+                    tx.setWitness(i, witness);
+
+                    final ScriptBuilder sigScript = new ScriptBuilder();
+                    sigScript.data(redeemScript.getProgram());
+                    tx.getInput(i).setScriptSig(sigScript.build());
+
+                    tx.getInput(i).getScriptSig().correctlySpends(tx, i, scriptPubKey, Coin.valueOf(input_values.get(inputs.get(i).getOutpoint().toString())), Script.ALL_VERIFY_FLAGS);
+
+                }
+                else    {
+                    Log.i("BalanceActivity", "sign outpoint:" + inputs.get(i).getOutpoint().toString());
+                    Log.i("BalanceActivity", "ECKey address from keyBag:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+
+                    Log.i("BalanceActivity", "script:" + ScriptBuilder.createOutputScript(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams())));
+                    Log.i("BalanceActivity", "script:" + Hex.toHexString(ScriptBuilder.createOutputScript(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams())).getProgram()));
+                    TransactionSignature sig = tx.calculateSignature(i, ecKey, ScriptBuilder.createOutputScript(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams())).getProgram(), Transaction.SigHash.ALL, false);
+                    tx.getInput(i).setScriptSig(ScriptBuilder.createInputScript(sig, ecKey));
+                }
 
             }
 
             return tx;
         }
-
-    }
-
-    private void bccForkThread()    {
-
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                boolean isFork = false;
-                int cf = -1;
-                boolean dismissed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_DISMISSED, false);
-
-                if(!dismissed)    {
-                    long latestBlockHeight = APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
-                    long distance = 0L;
-
-                    String strForkStatus = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
-                    try {
-                        JSONObject forkObj = new JSONObject(strForkStatus);
-                        if(forkObj != null && forkObj.has("forks") && forkObj.getJSONObject("forks").has("abc"))    {
-                            JSONObject abcObj = forkObj.getJSONObject("forks").getJSONObject("abc");
-                            if(abcObj.has("height"))    {
-
-
-                                long height = abcObj.getLong("height");
-                                distance = latestBlockHeight - height;
-
-                                boolean laterThanFork = true;
-                                List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
-                                for(UTXO utxo : utxos)   {
-                                    List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
-                                    for(MyTransactionOutPoint outpoint : outpoints)   {
-                                        if(outpoint.getConfirmations() >= distance)    {
-                                            laterThanFork = false;
-                                            break;
-                                        }
-                                    }
-                                    if(!laterThanFork)    {
-                                        break;
-                                    }
-                                }
-
-                                if(laterThanFork)    {
-                                    dismissed = true;
-                                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_DISMISSED, true);
-                                }
-
-                            }
-
-                        }
-
-                    }
-                    catch(JSONException je) {
-                        ;
-                    }
-
-                }
-
-                if(!dismissed && HardForkUtil.getInstance(BalanceActivity.this).isBitcoinABCForkActivateTime())    {
-
-                    String status = HardForkUtil.getInstance(BalanceActivity.this).forkStatus();
-                    Log.d("BalanceActivity", status);
-                    try {
-                        JSONObject statusObj = new JSONObject(status);
-                        if(statusObj.has("forks") && statusObj.getJSONObject("forks").has("abc") &&
-                                statusObj.has("clients") && statusObj.getJSONObject("clients").has("abc") &&
-                                statusObj.getJSONObject("clients").getJSONObject("abc").has("replay") &&
-                                statusObj.getJSONObject("clients").getJSONObject("abc").getBoolean("replay") == true)   {
-
-                            isFork = true;
-
-                            String strTxHash = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAY1, "");
-                            if(strTxHash != null && strTxHash.length() > 0)    {
-
-                                Log.d("BalanceActivity", "rbf replay hash:" + strTxHash);
-
-                                JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(strTxHash);
-                                final int latestBlockHeight = (int)APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight();
-
-                                Log.d("BalanceActivity", "txObj:" + txObj.toString());
-
-                                try {
-                                    if(txObj != null && txObj.has("block"))    {
-                                        JSONObject blockObj = txObj.getJSONObject("block");
-                                        if(blockObj.has("height") && blockObj.getInt("height") > 0)    {
-                                            int blockHeight = blockObj.getInt("height");
-                                            cf = (latestBlockHeight - blockHeight) + 1;
-                                            Log.d("BalanceActivity", "confirmations (block):" + cf);
-                                            if(cf >= 6)    {
-                                                isFork = false;
-                                            }
-                                        }
-
-                                    }
-                                    else if(txObj != null && txObj.has("txid"))    {
-                                        cf = 0;
-                                        Log.d("BalanceActivity", "confirmations (hash):" + cf);
-                                    }
-                                    else    {
-                                        ;
-                                    }
-
-                                }
-                                catch(JSONException je) {
-                                    ;
-                                }
-
-                            }
-
-                        }
-                    }
-                    catch(JSONException je) {
-                        ;
-                    }
-
-                }
-
-                final int COLOR_ORANGE = 0xfffb8c00;
-                final int COLOR_GREEN = 0xff4caf50;
-
-                final boolean bccReplayed = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BCC_REPLAYED, false);
-
-                if(cf >= 0 && cf < 6)   {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                            layoutAlert.setBackgroundColor(COLOR_ORANGE);
-                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
-                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
-                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
-                            tvLeftTop.setText(getText(R.string.replay_chain_split));
-                            tvLeftBottom.setText(getText(R.string.replay_in_progress));
-                            tvRight.setText(getText(R.string.replay_info));
-                            layoutAlert.setVisibility(View.VISIBLE);
-                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
-                                @Override
-                                public boolean onTouch(View v, MotionEvent event) {
-                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionActivity.class);
-                                    startActivity(intent);
-                                    return false;
-                                }
-                            });
-                        }
-                    });
-                }
-                else if(cf >= 6 && !bccReplayed)   {
-
-                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.BCC_REPLAYED, true);
-
-                    handler.post(new Runnable() {
-                        public void run() {
-                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                            layoutAlert.setBackgroundColor(COLOR_GREEN);
-                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
-                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
-                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
-                            tvLeftTop.setText(getText(R.string.replay_chain_split));
-                            tvLeftBottom.setText(getText(R.string.replay_protected));
-                            tvRight.setText(getText(R.string.ok));
-                            layoutAlert.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-                else if(bccReplayed)    {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                            layoutAlert.setVisibility(View.GONE);
-                        }
-                    });
-                }
-                else if(isFork)    {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                            TextView tvLeftTop = (TextView)layoutAlert.findViewById(R.id.left_top);
-                            TextView tvLeftBottom = (TextView)layoutAlert.findViewById(R.id.left_bottom);
-                            TextView tvRight = (TextView)layoutAlert.findViewById(R.id.right);
-                            tvLeftTop.setText(getText(R.string.replay_chain_split));
-                            tvLeftBottom.setText(getText(R.string.replay_enable));
-                            tvRight.setText(getText(R.string.replay_info));
-                            layoutAlert.setVisibility(View.VISIBLE);
-                            layoutAlert.setOnTouchListener(new View.OnTouchListener() {
-                                @Override
-                                public boolean onTouch(View v, MotionEvent event) {
-                                    Intent intent = new Intent(BalanceActivity.this, ReplayProtectionWarningActivity.class);
-                                    startActivity(intent);
-                                    return false;
-                                }
-                            });
-                        }
-                    });
-                }
-                else    {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            layoutAlert = (LinearLayout)findViewById(R.id.alert);
-                            layoutAlert.setVisibility(View.GONE);
-                        }
-                    });
-                }
-
-                Looper.loop();
-
-            }
-        }).start();
 
     }
 

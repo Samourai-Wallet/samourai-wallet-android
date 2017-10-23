@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.95.05</string>
+    <string name="version_name">0.96.02</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -31,8 +31,10 @@
 
     <string name="options_mnemonic">Show mnemonic</string>
     <string name="options_mnemonic2">Show mnemonic for this wallet.</string>
-    <string name="options_xpub">Show XPUB</string>
-    <string name="options_xpub2">Show extended public key for an account.</string>
+    <string name="options_xpub">Show BIP44 XPUB</string>
+    <string name="options_xpub2">Show extended public key for BIP44 account.</string>
+    <string name="options_xpub49">Show Segwit XPUB</string>
+    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_units">Units</string>
@@ -83,6 +85,10 @@
     <string name="options_send_backup_to_support2">Send wallet backup to tech support. Does not contain private key info.</string>
     <string name="options_fee_provider">Fee provider</string>
     <string name="options_fee_provider2">Select fee provider: 21.co or Samourai (bitcoind)</string>
+    <string name="options_broadcast_on">Broadcast transactions</string>
+    <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy/paste raw signed transaction.</string>
+    <string name="options_segwit">Receive to segwit addresses</string>
+    <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -404,5 +410,19 @@
     <string name="replay_launch_completed">Replay protection broadcasts completed</string>
     <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
     <string name="replay_dismiss">DISMISS ALERT</string>
+
+    <string name="show_qr">Show QR</string>
+    <string name="share_qr">Share QR</string>
+    <string name="send_tx">Send raw transaction</string>
+    <string name="tx_too_large_qr">Raw transaction too large to display in QR code.</string>
+
+    <string name="select_network">Select network...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">Segwit Address</string>
+    <string name="segwit_switch_prompt">Funds deposited in Segwit addresses are more efficient to transact with. Offering reduced miner fees when sending bitcoin from your wallet.</string>
+
+    <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
 </resources>

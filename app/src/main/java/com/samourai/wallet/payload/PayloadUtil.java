@@ -2,12 +2,12 @@ package com.samourai.wallet.payload;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 //import android.util.Log;
 
-import com.samourai.wallet.PinEntryActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SendActivity;
@@ -21,8 +21,9 @@ import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
@@ -30,6 +31,7 @@ import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.WebUtil;
 
 import org.apache.commons.codec.DecoderException;
 
@@ -38,6 +40,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
+import org.bitcoinj.params.TestNet3Params;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,6 +126,7 @@ public class PayloadUtil	{
 
         BIP47Util.getInstance(context).reset();
         BIP47Meta.getInstance().clear();
+        BIP49Util.getInstance(context).reset();
         APIFactory.getInstance(context).reset();
 
         try	{
@@ -169,6 +173,8 @@ public class PayloadUtil	{
         try {
             JSONObject wallet = new JSONObject();
 
+            wallet.put("testnet", SamouraiWallet.getInstance().isTestNet() ? true : false);
+
             if(HD_WalletFactory.getInstance(context).get().getSeedHex() != null) {
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
                 wallet.put("passphrase", HD_WalletFactory.getInstance(context).get().getPassphrase());
@@ -192,6 +198,13 @@ public class PayloadUtil	{
             }
 
             //
+            // export BIP49 account for debug payload
+            //
+            JSONArray bip49_account = new JSONArray();
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON());
+            wallet.put("bip49_accounts", bip49_account);
+
+            //
             // can remove ???
             //
             /*
@@ -201,9 +214,14 @@ public class PayloadUtil	{
 
             JSONObject meta = new JSONObject();
             meta.put("version_name", context.getText(R.string.version_name));
+            meta.put("android_release", Build.VERSION.RELEASE == null ? "" : Build.VERSION.RELEASE);
+            meta.put("device_manufacturer", Build.MANUFACTURER == null ? "" : Build.MANUFACTURER);
+            meta.put("device_model", Build.MODEL == null ? "" : Build.MODEL);
+            meta.put("device_product", Build.PRODUCT == null ? "" : Build.PRODUCT);
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
@@ -213,6 +231,7 @@ public class PayloadUtil	{
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
+            meta.put("blocked_utxo", BlockedUTXO.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -227,7 +246,11 @@ public class PayloadUtil	{
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
-            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
+            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1));
+            meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
+//            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
+            meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
+
             meta.put("bcc_replay0", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY0, ""));
             meta.put("bcc_replay1", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY1, ""));
             meta.put("bcc_replayed", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAYED, false));
@@ -285,7 +308,7 @@ public class PayloadUtil	{
 
         HD_Wallet hdw = null;
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         JSONObject wallet = null;
         JSONObject meta = null;
@@ -308,8 +331,21 @@ public class PayloadUtil	{
         }
 
         try {
+
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+
 //            Log.i("PayloadUtil", obj.toString());
             if(wallet != null) {
+
+                if(wallet.has("testnet"))    {
+                    SamouraiWallet.getInstance().setCurrentNetworkParams(wallet.getBoolean("testnet") ? TestNet3Params.get() : MainNetParams.get());
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.TESTNET, wallet.getBoolean("testnet"));
+                }
+                else    {
+                    SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());
+                    PrefsUtil.getInstance(context).removeValue(PrefsUtil.TESTNET);
+                }
+
                 hdw = new HD_Wallet(context, 44, wallet, params);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getReceive().setAddrIdx(wallet.has("receiveIdx") ? wallet.getInt("receiveIdx") : 0);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChange().setAddrIdx(wallet.has("changeIdx") ? wallet.getInt("changeIdx") : 0);
@@ -328,14 +364,18 @@ public class PayloadUtil	{
                         AddressFactory.getInstance().xpub2account().put(hdw.getAccount(i).xpubstr(), i);
                     }
                 }
+
             }
 
             if(meta != null) {
 
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-
                 if(meta.has("prev_balance")) {
                     APIFactory.getInstance(context).setXpubBalance(meta.getLong("prev_balance"));
+                }
+                if(meta.has("use_segwit")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_SEGWIT, meta.getBoolean("use_segwit"));
+                    editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
+                    editor.commit();
                 }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
@@ -378,6 +418,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("tor")) {
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
+                }
+                if(meta.has("blocked_utxo")) {
+                    BlockedUTXO.getInstance().fromJSON((JSONArray) meta.get("blocked_utxo"));
                 }
 
                 if(meta.has("units")) {
@@ -438,6 +481,18 @@ public class PayloadUtil	{
                 if(meta.has("fee_provider_sel")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel"));
                 }
+                if(meta.has("broadcast_tx")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
+                }
+                /*
+                if(meta.has("xpubreg44")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, meta.getBoolean("xpubreg44"));
+                }
+                */
+                if(meta.has("xpubreg49")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
+                }
+
                 if(meta.has("bcc_replay0")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY0, meta.getString("bcc_replay0"));
                 }
@@ -605,7 +660,7 @@ public class PayloadUtil	{
             long length = file.length();
             SecureRandom random = new SecureRandom();
             RandomAccessFile raf = new RandomAccessFile(file, "rws");
-            for(int i = 0; i < 10; i++) {
+            for(int i = 0; i < 5; i++) {
                 raf.seek(0);
                 raf.getFilePointer();
                 byte[] data = new byte[64];

@@ -5,6 +5,7 @@ import android.util.Log;
 //import android.util.Log;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 
 import org.apache.commons.io.IOUtils;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
+import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
@@ -32,19 +34,16 @@ public class WebUtil	{
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
     public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
+    public static final String SAMOURAI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
-//    public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
+    public static final String BTCe_EXCHANGE_URL = "https://wex.nz/api/3/ticker/";
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String LUNO_EXCHANGE_URL = "https://api.mybitx.com/api/1/tickers";
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
 
     public static final String _21CO_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
     public static final String BITCOIND_FEE_URL = "https://api.samourai.io/v2/fees";
-
-    public static final String CHAINSO_TX_PREV_OUT_URL = "https://chain.so/api/v2/tx/BTC/";
-    public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
-    public static final String CHAINSO_GET_RECEIVE_TX_URL = "https://chain.so/api/v2/get_tx_received/BTC/";
 
     public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";
 
@@ -73,8 +72,8 @@ public class WebUtil	{
     public static WebUtil getInstance(Context ctx)  {
 
         context = ctx;
-
         if(instance == null)  {
+
             instance = new WebUtil();
         }
 
@@ -119,6 +118,56 @@ public class WebUtil	{
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType);
+                connection.setRequestProperty("charset", "utf-8");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+                connection.setUseCaches (false);
+
+                connection.setConnectTimeout(DefaultRequestTimeout);
+                connection.setReadTimeout(DefaultRequestTimeout);
+
+                connection.connect();
+
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(urlParameters);
+                wr.flush();
+                wr.close();
+
+                connection.setInstanceFollowRedirects(false);
+
+                if (connection.getResponseCode() == 200) {
+//					System.out.println("postURL:return code 200");
+                    return IOUtils.toString(connection.getInputStream(), "UTF-8");
+                }
+                else {
+                    error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
+//                    System.out.println("postURL:return code " + error);
+                }
+
+                Thread.sleep(5000);
+            } finally {
+                connection.disconnect();
+            }
+        }
+
+        throw new Exception("Invalid Response " + error);
+    }
+
+    public String deleteURL(String request, String urlParameters) throws Exception {
+
+        String error = null;
+
+        for (int ii = 0; ii < DefaultRequestRetry; ++ii) {
+            URL url = new URL(request);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            try {
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("DELETE");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 connection.setRequestProperty("charset", "utf-8");
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
@@ -265,6 +314,52 @@ public class WebUtil	{
         }
 
         HttpResponse response = httpclient.execute(httppost);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(response.getStatusLine()).append("\n\n");
+
+        InputStream is = response.getEntity().getContent();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        while ((line = br.readLine()) != null)  {
+            sb.append(line);
+        }
+
+        httpclient.close();
+
+        String result = sb.toString();
+//        Log.d("WebUtil", "POST result via Tor:" + result);
+        int idx = result.indexOf("{");
+        if(idx != -1)    {
+            return result.substring(idx);
+        }
+        else    {
+            return result;
+        }
+
+    }
+
+    public String tor_deleteURL(String URL, HashMap<String,String> args) throws Exception {
+
+        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
+
+        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
+
+        HttpDelete httpdelete = new HttpDelete(new URI(URL));
+        httpdelete.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpdelete.setHeader("charset", "utf-8");
+        httpdelete.setHeader("Accept", "application/json");
+        httpdelete.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+        if(args != null)    {
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            for(String key : args.keySet())   {
+                urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+            }
+//            httpdelete.setEntity(new UrlEncodedFormEntity(urlParameters));
+        }
+
+        HttpResponse response = httpclient.execute(httpdelete);
 
         StringBuffer sb = new StringBuffer();
         sb.append(response.getStatusLine()).append("\n\n");

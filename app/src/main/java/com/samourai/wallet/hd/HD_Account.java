@@ -1,5 +1,7 @@
 package com.samourai.wallet.hd;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.NetworkParameters;
@@ -40,7 +42,7 @@ public class HD_Account {
         childnum |= ChildNumber.HARDENED_BIT;
         aKey = HDKeyDerivation.deriveChildKey(mKey, childnum);
 
-        strXPUB = aKey.serializePubB58(MainNetParams.get());
+        strXPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
         mReceive = new HD_Chain(mParams, aKey, true);
         mChange = new HD_Chain(mParams, aKey, false);
@@ -68,7 +70,8 @@ public class HD_Account {
         byte[] xpubBytes = Base58.decodeChecked(xpubstr);
 
         ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
-        if(bb.getInt() != 0x0488B21E)   {
+        int version = bb.getInt();
+        if(version != 0x0488B21E && version != 0x043587CF)   {
             throw new AddressFormatException("invalid xpub version");
         }
 
