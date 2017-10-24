@@ -425,4 +425,6 @@
 
     <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
+    <string name="redeem_script">Redeem script</string>
+
 </resources>
