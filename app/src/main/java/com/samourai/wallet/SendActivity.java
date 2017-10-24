@@ -329,7 +329,7 @@ public class SendActivity extends Activity {
 
                 int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
-                NumberFormat btcFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                 switch (unit) {
                     case MonetaryUtil.MICRO_BTC:
                         max_len = 2;
@@ -346,7 +346,7 @@ public class SendActivity extends Activity {
 
                 double d = 0.0;
                 try {
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = btcFormat.format(d);
                     if (s1.indexOf(defaultSeparator) != -1) {
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -412,13 +412,13 @@ public class SendActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(textWatcherBTC);
 
                 int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
                 fiatFormat.setMaximumFractionDigits(max_len + 1);
                 fiatFormat.setMinimumFractionDigits(0);
 
                 double d = 0.0;
                 try	{
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = fiatFormat.format(d);
                     if(s1.indexOf(defaultSeparator) != -1)	{
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -619,7 +619,7 @@ public class SendActivity extends Activity {
                 double btc_amount = 0.0;
 
                 try {
-                    btc_amount = NumberFormat.getInstance(Locale.getDefault()).parse(edAmountBTC.getText().toString().trim()).doubleValue();
+                    btc_amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString().trim()).doubleValue();
 //                    Log.i("SendFragment", "amount entered:" + btc_amount);
                 } catch (NumberFormatException nfe) {
                     btc_amount = 0.0;
@@ -1421,7 +1421,7 @@ public class SendActivity extends Activity {
 
             if(amount != null) {
                 try {
-                    NumberFormat btcFormat = NumberFormat.getInstance(Locale.getDefault());
+                    NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                     btcFormat.setMaximumFractionDigits(8);
                     btcFormat.setMinimumFractionDigits(1);
                     edAmountBTC.setText(btcFormat.format(Double.parseDouble(amount) / 1e8));
@@ -1435,7 +1435,7 @@ public class SendActivity extends Activity {
             tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
 
             final String strAmount;
-            NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+            NumberFormat nf = NumberFormat.getInstance(Locale.US);
             nf.setMinimumIntegerDigits(1);
             nf.setMinimumFractionDigits(1);
             nf.setMaximumFractionDigits(8);
@@ -1532,7 +1532,7 @@ public class SendActivity extends Activity {
         }
 
         try {
-            btc_amount = NumberFormat.getInstance(Locale.getDefault()).parse(edAmountBTC.getText().toString().trim()).doubleValue();
+            btc_amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString().trim()).doubleValue();
 //            Log.i("SendFragment", "amount entered:" + btc_amount);
         }
         catch (NumberFormatException nfe) {
