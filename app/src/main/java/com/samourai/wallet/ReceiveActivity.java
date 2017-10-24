@@ -227,7 +227,7 @@ public class ReceiveActivity extends Activity {
             }
         });
 
-        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.getDefault());
+        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols=format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
@@ -248,7 +248,7 @@ public class ReceiveActivity extends Activity {
 
                 int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
-                NumberFormat btcFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                 switch (unit) {
                     case MonetaryUtil.MICRO_BTC:
                         max_len = 2;
@@ -265,7 +265,7 @@ public class ReceiveActivity extends Activity {
 
                 double d = 0.0;
                 try {
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = btcFormat.format(d);
                     if (s1.indexOf(defaultSeparator) != -1) {
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -332,13 +332,13 @@ public class ReceiveActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(textWatcherBTC);
 
                 int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
                 fiatFormat.setMaximumFractionDigits(max_len + 1);
                 fiatFormat.setMinimumFractionDigits(0);
 
                 double d = 0.0;
                 try	{
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = fiatFormat.format(d);
                     if(s1.indexOf(defaultSeparator) != -1)	{
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -547,7 +547,7 @@ public class ReceiveActivity extends Activity {
     private void displayQRCode() {
 
         try {
-            double amount = NumberFormat.getInstance(Locale.getDefault()).parse(edAmountBTC.getText().toString()).doubleValue();
+            double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
 
             int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
             switch (unit) {
