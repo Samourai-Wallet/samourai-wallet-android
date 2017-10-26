@@ -563,6 +563,8 @@ public class MainActivity2 extends Activity {
                                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                                                        PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.IS_RESTORE, true);
+
                                                         final String seed39 = mnemonic.getText().toString();
                                                         final String passphrase39 = passphrase.getText().toString();
 

@@ -187,7 +187,12 @@ public class APIFactory	{
                 args.append("xpub=");
                 args.append(xpub);
                 args.append("&type=");
-                args.append("restore");
+                if(PrefsUtil.getInstance(context).getValue(PrefsUtil.IS_RESTORE, false) == true)    {
+                    args.append("restore");
+                }
+                else    {
+                    args.append("new");
+                }
                 if(isBIP49)    {
                     args.append("&segwit=");
                     args.append("bip49");
@@ -199,7 +204,12 @@ public class APIFactory	{
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("xpub", xpub);
-                args.put("type", "restore");
+                if(PrefsUtil.getInstance(context).getValue(PrefsUtil.IS_RESTORE, false) == true)    {
+                    args.put("type", "restore");
+                }
+                else    {
+                    args.put("type", "new");
+                }
                 if(isBIP49)    {
                     args.put("segwit", "bip49");
                 }
@@ -213,6 +223,7 @@ public class APIFactory	{
                 Log.i("APIFactory", "XPUB response:" + jsonObject.toString());
                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") && isBIP49)    {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
+                    PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
                 }
             }
             catch(JSONException je) {

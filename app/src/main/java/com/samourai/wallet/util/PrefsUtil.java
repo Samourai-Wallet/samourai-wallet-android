@@ -43,6 +43,7 @@ public class PrefsUtil {
 	public static final String XPUB49LOCK = "xpub49lock";
 	public static final String XPUB44REG = "xpub44reg";
 	public static final String XPUB49REG = "xpub49reg";
+	public static final String IS_RESTORE = "isRestore";
 
 	public static final String BCC_REPLAY0 = "BCCReplay0";
 	public static final String BCC_REPLAY1 = "BCCReplay1";
