@@ -1,6 +1,7 @@
 package com.samourai.wallet;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -23,8 +24,11 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,12 +37,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -55,6 +62,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -65,6 +73,8 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.TorUtil;
+
+import net.sourceforge.zbar.Symbol;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -84,7 +94,10 @@ import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
+    private ProgressDialog progress = null;
     private boolean steathActivating = false;
+
+    private final static int SCAN_HEX_TX = 2011;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,6 +237,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, true);
                         }
 
+                        return true;
+                    }
+                });
+
+                Preference broadcastHexPref = (Preference) findPreference("broadcastHex");
+                broadcastHexPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doBroadcastHex();
                         return true;
                     }
                 });
@@ -921,6 +942,28 @@ public class SettingsActivity2 extends PreferenceActivity	{
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_HEX_TX)	{
+
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                doBroadcastHex(strResult);
+
+            }
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_HEX_TX)	{
+            ;
+        }
+        else {
+            ;
+        }
+
+    }
+
     private void getHDSeed(boolean mnemonic)	{
         String seed = null;
         try {
@@ -1501,6 +1544,128 @@ public class SettingsActivity2 extends PreferenceActivity	{
         catch(JSONException je) {
             je.printStackTrace();
             Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doScanHexTx()   {
+        Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_HEX_TX);
+    }
+
+    private void doBroadcastHex()    {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.tx_hex)
+                .setCancelable(true)
+                .setPositiveButton(R.string.enter_tx_hex, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        final EditText edHexTx = new EditText(SettingsActivity2.this);
+                        edHexTx.setSingleLine(false);
+                        edHexTx.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                        edHexTx.setLines(10);
+                        edHexTx.setHint(R.string.tx_hex);
+                        edHexTx.setGravity(Gravity.START);
+                        TextWatcher textWatcher = new TextWatcher() {
+
+                            public void afterTextChanged(Editable s) {
+                                edHexTx.setSelection(0);
+                            }
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                ;
+                            }
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                ;
+                            }
+                        };
+                        edHexTx.addTextChangedListener(textWatcher);
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setView(edHexTx)
+                                .setMessage(R.string.enter_tx_hex)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        final String strHexTx = edHexTx.getText().toString().trim();
+
+                                        doBroadcastHex(strHexTx);
+
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        ;
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+
+                }).setNegativeButton(R.string.scan, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        doScanHexTx();
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
+    }
+
+    private void doBroadcastHex(final String strHexTx)    {
+
+        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(strHexTx));
+
+        String msg = SettingsActivity2.this.getString(R.string.broadcast) + ":" + tx.getHashAsString() + " ?";
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if (progress != null && progress.isShowing()) {
+                            progress.dismiss();
+                            progress = null;
+                        }
+
+                        progress = new ProgressDialog(SettingsActivity2.this);
+                        progress.setCancelable(false);
+                        progress.setTitle(R.string.app_name);
+                        progress.setMessage(getString(R.string.please_wait));
+                        progress.show();
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Looper.prepare();
+
+                                PushTx.getInstance(SettingsActivity2.this).pushTx(strHexTx);
+
+                                progress.dismiss();
+
+                                Looper.loop();
+
+                            }
+                        }).start();
+
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
         }
 
     }
