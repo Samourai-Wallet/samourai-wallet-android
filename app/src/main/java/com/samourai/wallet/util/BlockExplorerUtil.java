@@ -1,10 +1,16 @@
 package com.samourai.wallet.util;
 
+import com.samourai.wallet.SamouraiWallet;
+
 public class BlockExplorerUtil {
 
-    private static CharSequence[] blockExplorers = { "Smartbit", "UASF Explorer" };
-    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "https://uasf-explorer.satoshiportal.com/tx/" };
-    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://uasf-explorer.satoshiportal.com/address/" };
+    private static CharSequence[] blockExplorers = { "Smartbit", "UASF Explorer", "Blockchain Reader (Yogh)" };
+    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "https://uasf-explorer.satoshiportal.com/tx/", "http://srv1.yogh.io/#tx:id:" };
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://uasf-explorer.satoshiportal.com/address/", "http://srv1.yogh.io/#addr:id:" };
+
+    private static CharSequence[] tBlockExplorers = { "Smartbit" };
+    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/" };
+    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/" };
 
     private static BlockExplorerUtil instance = null;
 
@@ -20,15 +26,36 @@ public class BlockExplorerUtil {
     }
 
     public CharSequence[] getBlockExplorers() {
-        return blockExplorers;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorers;
+        }
+        else    {
+            return blockExplorers;
+        }
+
     }
 
     public CharSequence[] getBlockExplorerTxUrls() {
-        return blockExplorerTxUrls;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorerTxUrls;
+        }
+        else    {
+            return blockExplorerTxUrls;
+        }
+
     }
 
     public CharSequence[] getBlockExplorerAddressUrls() {
-        return blockExplorerAddressUrls;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorerAddressUrls;
+        }
+        else    {
+            return blockExplorerAddressUrls;
+        }
+
     }
 
 }

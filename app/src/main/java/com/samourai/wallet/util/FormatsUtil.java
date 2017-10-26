@@ -2,6 +2,7 @@ package com.samourai.wallet.util;
 
 import android.util.Patterns;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.bitcoinj.core.Address;
@@ -11,7 +12,7 @@ import org.bitcoinj.core.WrongNetworkException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.bitcoinj.uri.BitcoinURIParseException;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
@@ -129,7 +130,7 @@ public class FormatsUtil {
 		Address addr = null;
 		
 		try {
-			addr = new Address(MainNetParams.get(), address);
+			addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
 			if(addr != null) {
 				ret = true;
 			}
@@ -166,7 +167,8 @@ public class FormatsUtil {
 			byte[] xpubBytes = Base58.decodeChecked(xpub);
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
-			if(byteBuffer.getInt() != 0x0488B21E)   {
+			int version = byteBuffer.getInt();
+			if(version != 0x0488B21E && version != 0x043587CF)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{

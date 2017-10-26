@@ -1,5 +1,6 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Wallet;
 
 import org.bitcoinj.core.NetworkParameters;
@@ -31,7 +32,7 @@ public class BIP47Wallet extends HD_Wallet {
 
         super(purpose, mc, params, seed, passphrase, nbAccounts);
 
-        mAccount = new BIP47Account(MainNetParams.get(), mRoot, 0);
+        mAccount = new BIP47Account(SamouraiWallet.getInstance().getCurrentNetworkParams(), mRoot, 0);
 
     }
 

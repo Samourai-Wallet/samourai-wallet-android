@@ -48,7 +48,12 @@ public class MyTransactionInput extends TransactionInput {
     }
 
     public Coin getValue() {
-        return Coin.valueOf(value.longValue());
+        if(value == null)    {
+            return null;
+        }
+        else    {
+            return Coin.valueOf(value.longValue());
+        }
     }
 
     public void setValue(BigInteger value) {

@@ -7,8 +7,8 @@ import android.telephony.TelephonyManager;
 
 import com.samourai.wallet.util.PrefsUtil;
 
-import org.spongycastle.crypto.digests.RIPEMD160Digest;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.bouncycastle.util.encoders.Hex;
 
 public class FootprintUtil {
 

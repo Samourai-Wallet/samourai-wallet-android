@@ -7,8 +7,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 69
-        versionName "0.95.05"
+        versionCode 75
+        versionName "0.96.03"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -50,11 +50,10 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
     compile 'commons-codec:commons-codec:1.4'
     compile 'org.apache.commons:commons-lang3:3.3'
-    compile 'com.google.guava:guava:16.0.1'
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.code.findbugs:jsr305:1.3.9'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'org.bitcoinj:bitcoinj-core:0.14.4'
     compile 'org.bouncycastle:bcprov-jdk15on:1.55'
-    compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile 'com.madgag.spongycastle:prov:1.54.0.0'
     compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
     compile 'info.guardianproject.netcipher:netcipher-okhttp3:2.0.0-alpha1'

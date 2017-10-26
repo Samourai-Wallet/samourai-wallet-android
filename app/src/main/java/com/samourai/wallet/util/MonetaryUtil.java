@@ -21,11 +21,11 @@ public class MonetaryUtil {
 	public static MonetaryUtil getInstance() {
 		
 		if(instance == null) {
-        	fiatFormat = NumberFormat.getInstance(Locale.getDefault());
+        	fiatFormat = NumberFormat.getInstance(Locale.US);
         	fiatFormat.setMaximumFractionDigits(2);
         	fiatFormat.setMinimumFractionDigits(2);
 
-        	btcFormat = NumberFormat.getInstance(Locale.getDefault());
+        	btcFormat = NumberFormat.getInstance(Locale.US);
         	btcFormat.setMaximumFractionDigits(8);
         	btcFormat.setMinimumFractionDigits(1);
 

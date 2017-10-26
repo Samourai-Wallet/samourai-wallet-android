@@ -5,7 +5,7 @@ import android.content.Context;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.security.MessageDigest;
 import java.util.UUID;

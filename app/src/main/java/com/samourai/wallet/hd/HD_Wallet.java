@@ -105,7 +105,7 @@ public class HD_Wallet {
     }
 
     public String getSeedHex() {
-        return org.spongycastle.util.encoders.Hex.toHexString(mSeed);
+        return org.bouncycastle.util.encoders.Hex.toHexString(mSeed);
     }
 
     public String getMnemonic() {

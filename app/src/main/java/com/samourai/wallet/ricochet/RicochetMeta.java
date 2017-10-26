@@ -42,13 +42,16 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
+    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "3F5nwobf5xZeeXXQG5cfwNJFMmwEKDUqSk";
+    private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "mhP47HR51VhabBudEihETvKkxfKQPeLqqc";
+
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
-    public final static BigInteger samouraiFeeAmount = BigInteger.valueOf(100000L);
+    public final static BigInteger samouraiFeeAmount = BigInteger.valueOf(200000L);
 
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;
@@ -249,7 +252,7 @@ public class RicochetMeta {
             int prevTxN = 0;
             for(int i = 0; i < txHop0.getOutputs().size(); i++)   {
                 Script script = txHop0.getOutputs().get(i).getScriptPubKey();
-                String address = new Script(script.getProgram()).getToAddress(MainNetParams.get()).toString();
+                String address = new Script(script.getProgram()).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
 //                Log.d("RicochetMeta", "address from script:" + address);
                 if(address.equals(getDestinationAddress(index)))    {
                     prevTxN = i;
@@ -419,17 +422,17 @@ public class RicochetMeta {
             try {
                 PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
                 PaymentAddress paymentAddress = BIP47Util.getInstance(context).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
-                String strAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
+                String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
 
                 receivers.put(strAddress, samouraiFeeAmount);
             }
             catch(Exception e) {
-                receivers.put(SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, samouraiFeeAmount);
+                receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
             }
 
         }
         else    {
-            receivers.put(SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, samouraiFeeAmount);
+            receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
         }
 
         Transaction tx = SendFactory.getInstance(context).makeTransaction(0, unspent, receivers);
@@ -446,17 +449,17 @@ public class RicochetMeta {
         try {
             address = HD_WalletFactory.getInstance(context).get().getAccountAt(RICOCHET_ACCOUNT).getChain(0).getAddressAt(prevIndex);
             ECKey ecKey = address.getECKey();
-//            Log.d("RicochetMeta", "getHopTx address:" + ecKey.toAddress(MainNetParams.get()).toString());
+//            Log.d("RicochetMeta", "getHopTx address:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
             byte[] hashBytes = Hex.decode(prevTxHash);
             Sha256Hash txHash = new Sha256Hash(hashBytes);
-            TransactionOutPoint outpoint = new TransactionOutPoint(MainNetParams.get(), prevTxN, txHash);
-            TransactionInput input = new TransactionInput(MainNetParams.get(), null, Hex.decode(scriptPubKey), outpoint);
+            TransactionOutPoint outpoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash);
+            TransactionInput input = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Hex.decode(scriptPubKey), outpoint);
 
-            Script outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(MainNetParams.get(), destination));
-            TransactionOutput output = new TransactionOutput(MainNetParams.get(), null, Coin.valueOf(spendAmount), outputScript.getProgram());
+            Script outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), destination));
+            TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount), outputScript.getProgram());
 
-            tx = new Transaction(MainNetParams.get());
+            tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
             tx.addInput(input);
             tx.addOutput(output);
 

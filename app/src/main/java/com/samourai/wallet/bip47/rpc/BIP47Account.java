@@ -7,6 +7,7 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.params.MainNetParams;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.util.FormatsUtil;
@@ -81,7 +82,7 @@ public class BIP47Account extends HD_Account {
      *
      */
     public HD_Address addressAt(int idx) {
-        return new HD_Address(MainNetParams.get(), aKey, idx);
+        return new HD_Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), aKey, idx);
     }
 
     private String createPaymentCodeFromAccountKey() {

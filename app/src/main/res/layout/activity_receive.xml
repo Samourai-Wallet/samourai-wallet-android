@@ -9,10 +9,10 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="26dp"
+        android:paddingTop="20dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="26dp"
+        android:paddingBottom="20dp"
         android:background="@color/primary"
         android:focusable="false"
         android:elevation="2dp">
@@ -28,7 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
-                android:digits="0123456789.,"
+                android:digits="0123456789."
                 android:ems="10"
                 android:id="@+id/amountBTC"
                 android:hint="0.0000"
@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:inputType="number|numberDecimal"
-                android:digits="0123456789.,"
+                android:digits="0123456789."
                 android:ems="10"
                 android:id="@+id/amountFiat"
                 android:hint="0.00"
@@ -66,7 +66,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -81,10 +81,47 @@
             android:id="@+id/qr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:paddingLeft="75dp"
+            android:paddingTop="20dp"
+            android:layout_gravity="left"
+            android:fontFamily="Roboto Regular"
+            android:text="@string/segwit_address"
+            android:textStyle="bold"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="5dp"
+            android:layout_height="wrap_content">
+
+            <Switch
+                android:id="@+id/segwit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="22dp"
+                android:checked="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/segwit_switch_prompt"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="22dp"
+                android:paddingTop="5dp"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -93,10 +130,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <LinearLayout
             android:id="@+id/receive_address_layout"
@@ -110,7 +147,6 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="16sp"
                 android:paddingLeft="22dp"
-                android:paddingTop="20dp"
                 android:fontFamily="Roboto Regular"
                 android:text="Address"
                 />
@@ -123,7 +159,6 @@
                 android:autoText="false"
                 android:textSize="14sp"
                 android:paddingLeft="22dp"
-                android:paddingBottom="20dp"
                 android:fontFamily="Roboto Regular"
                 android:textStyle="italic"
                 />

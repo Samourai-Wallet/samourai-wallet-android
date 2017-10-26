@@ -21,6 +21,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -98,7 +99,7 @@ public class HD_WalletFactory	{
             passphrase = "";
         }
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         AppUtil.getInstance(context).applyPRNGFixes();
         SecureRandom random = new SecureRandom();
@@ -112,6 +113,8 @@ public class HD_WalletFactory	{
             wis.close();
         }
 
+        BIP47Util.getInstance(context).reset();
+        BIP49Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -126,7 +129,7 @@ public class HD_WalletFactory	{
             passphrase = "";
         }
 
-        NetworkParameters params = MainNetParams.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         InputStream wis = context.getResources().getAssets().open("BIP39/en.txt");
         if(wis != null) {
@@ -145,7 +148,7 @@ public class HD_WalletFactory	{
                 hdw = new HD_Wallet(44, mc, params, seed, passphrase, nbAccounts);
             }
             else {
-                data = data.replaceAll("[^a-z]+", " ");             // only use for BIP39 English
+                data = data.toLowerCase().replaceAll("[^a-z]+", " ");             // only use for BIP39 English
                 words = Arrays.asList(data.trim().split("\\s+"));
                 seed = mc.toEntropy(words);
                 hdw = new HD_Wallet(44, mc, params, seed, passphrase, nbAccounts);
@@ -155,6 +158,8 @@ public class HD_WalletFactory	{
 
         }
 
+        BIP47Util.getInstance(context).reset();
+        BIP49Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -182,10 +187,28 @@ public class HD_WalletFactory	{
             String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
             MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
-            hdw47 = new BIP47Wallet(47, mc, MainNetParams.get(), org.spongycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+            hdw47 = new BIP47Wallet(47, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.bouncycastle.util.encoders.Hex.decode(seed), passphrase, 1);
         }
 
         return hdw47;
+    }
+
+    public HD_Wallet getBIP49() throws IOException, MnemonicException.MnemonicLengthException {
+
+        if(wallets == null || wallets.size() < 1) {
+            return null;
+        }
+
+        HD_Wallet hdw49 = null;
+        InputStream wis = context.getAssets().open("BIP39/en.txt");
+        if (wis != null) {
+            String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
+            String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
+            MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            hdw49 = new HD_Wallet(49, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.bouncycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+        }
+
+        return hdw49;
     }
 
     public void set(HD_Wallet wallet)	{

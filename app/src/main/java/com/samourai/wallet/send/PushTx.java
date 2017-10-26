@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
@@ -36,30 +37,20 @@ public class PushTx {
         return instance;
     }
 
-    public String chainSo(String hexString) {
-
-        try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.CHAINSO_PUSHTX_URL, "tx_hex=" + hexString);
-            return response;
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-    }
-
     public String samourai(String hexString) {
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? "test/v2/pushtx/" : "v2/pushtx/";
 
         try {
             String response = null;
 
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + "v1/pushtx", "tx=" + hexString);
+                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + _url, "tx=" + hexString);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("tx", hexString);
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API + "v1/pushtx", args);
+                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API + _url, args);
             }
 
             return response;

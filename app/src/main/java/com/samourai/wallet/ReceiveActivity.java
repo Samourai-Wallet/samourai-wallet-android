@@ -18,14 +18,17 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.service.WebSocketHandler;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
@@ -44,8 +48,10 @@ import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -71,6 +77,7 @@ public class ReceiveActivity extends Activity {
     private EditText edAmountFiat = null;
     private TextWatcher textWatcherBTC = null;
     private TextWatcher textWatcherFiat = null;
+    private Switch swSegwit = null;
 
     private String defaultSeparator = null;
 
@@ -79,8 +86,11 @@ public class ReceiveActivity extends Activity {
     private TextView tvFiatSymbol = null;
 
     private String addr = null;
+    private String addr44 = null;
+    private String addr49 = null;
 
-    private boolean canRefresh = false;
+    private boolean canRefresh44 = false;
+    private boolean canRefresh49 = false;
     private Menu _menu = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.ReceiveFragment.REFRESH";
@@ -95,7 +105,7 @@ public class ReceiveActivity extends Activity {
                 if(extras != null && extras.containsKey("received_on"))	{
                     String in_addr = extras.getString("received_on");
 
-                    if(in_addr.equals(addr))    {
+                    if(in_addr.equals(addr) || in_addr.equals(addr44) || in_addr.equals(addr49))    {
                         ReceiveActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -130,9 +140,33 @@ public class ReceiveActivity extends Activity {
         display = (ReceiveActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        imgWidth = size.x - 240;
+        imgWidth = size.x - 460;
 
-        addr = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+        swSegwit = (Switch)findViewById(R.id.segwit);
+        swSegwit.setChecked(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true));
+        swSegwit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked)    {
+                    addr = addr49;
+                }
+                else    {
+                    addr = addr44;
+                }
+
+                displayQRCode();
+
+            }
+        });
+
+        addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+        addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+        if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
+            addr = addr49;
+        }
+        else    {
+            addr = addr44;
+        }
 
         addressLayout = (LinearLayout)findViewById(R.id.receive_address_layout);
         addressLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -172,25 +206,28 @@ public class ReceiveActivity extends Activity {
         ivQR.setOnTouchListener(new OnSwipeTouchListener(ReceiveActivity.this) {
             @Override
             public void onSwipeLeft() {
-                if(canRefresh) {
-                    addr = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-                    canRefresh = false;
+                if(swSegwit.isChecked() && canRefresh49) {
+                    addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                    addr = addr49;
+                    canRefresh49 = false;
                     _menu.findItem(R.id.action_refresh).setVisible(false);
                     displayQRCode();
                 }
+                else if(!swSegwit.isChecked() && canRefresh44)   {
+                    addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                    addr = addr44;
+                    canRefresh44 = false;
+                    _menu.findItem(R.id.action_refresh).setVisible(false);
+                    displayQRCode();
+                }
+                else    {
+                    ;
+                }
+
             }
-            /*
-            @Override
-            public void onSwipeRight() {
-                addr = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN);
-                canRefresh = false;
-                _menu.findItem(R.id.action_refresh).setVisible(false);
-                displayQRCode();
-            }
-            */
         });
 
-        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.getDefault());
+        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols=format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
@@ -211,7 +248,7 @@ public class ReceiveActivity extends Activity {
 
                 int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
-                NumberFormat btcFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                 switch (unit) {
                     case MonetaryUtil.MICRO_BTC:
                         max_len = 2;
@@ -228,7 +265,7 @@ public class ReceiveActivity extends Activity {
 
                 double d = 0.0;
                 try {
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = btcFormat.format(d);
                     if (s1.indexOf(defaultSeparator) != -1) {
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -295,13 +332,13 @@ public class ReceiveActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(textWatcherBTC);
 
                 int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.getDefault());
+                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
                 fiatFormat.setMaximumFractionDigits(max_len + 1);
                 fiatFormat.setMinimumFractionDigits(0);
 
                 double d = 0.0;
                 try	{
-                    d = NumberFormat.getInstance(Locale.getDefault()).parse(s.toString()).doubleValue();
+                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
                     String s1 = fiatFormat.format(d);
                     if(s1.indexOf(defaultSeparator) != -1)	{
                         String dec = s1.substring(s1.indexOf(defaultSeparator));
@@ -481,11 +518,22 @@ public class ReceiveActivity extends Activity {
         }
         else if (id == R.id.action_refresh) {
 
-            if(canRefresh) {
-                addr = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-                canRefresh = false;
+            if(swSegwit.isChecked() && canRefresh49) {
+                addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                addr = addr49;
+                canRefresh49 = false;
                 item.setVisible(false);
                 displayQRCode();
+            }
+            else if(!swSegwit.isChecked() && canRefresh44)   {
+                addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                addr = addr44;
+                canRefresh44 = false;
+                item.setVisible(false);
+                displayQRCode();
+            }
+            else    {
+                ;
             }
 
         }
@@ -499,7 +547,7 @@ public class ReceiveActivity extends Activity {
     private void displayQRCode() {
 
         try {
-            double amount = NumberFormat.getInstance(Locale.getDefault()).parse(edAmountBTC.getText().toString()).doubleValue();
+            double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
 
             int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
             switch (unit) {
@@ -515,7 +563,7 @@ public class ReceiveActivity extends Activity {
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(MainNetParams.get(), addr), Coin.valueOf(lamount), null, null)));
+                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr), Coin.valueOf(lamount), null, null)));
             }
             else {
                 ivQR.setImageBitmap(generateQRCode(addr));
@@ -572,22 +620,39 @@ public class ReceiveActivity extends Activity {
                         @Override
                         public void run() {
                             try {
-                                if(jsonObject != null) {
-                                    if(jsonObject.has("n_tx") && (jsonObject.getLong("n_tx") > 0)) {
+                                if(jsonObject != null && jsonObject.has("addresses") && jsonObject.getJSONArray("addresses").length() > 0) {
+                                    JSONArray addrs = jsonObject.getJSONArray("addresses");
+                                    JSONObject _addr = addrs.getJSONObject(0);
+                                    if(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L) {
                                         Toast.makeText(ReceiveActivity.this, R.string.address_used_previously, Toast.LENGTH_SHORT).show();
-                                        canRefresh = true;
+                                        if(swSegwit.isChecked())    {
+                                            canRefresh49 = true;
+                                        }
+                                        else    {
+                                            canRefresh44 = true;
+                                        }
                                         if(_menu != null)    {
                                             _menu.findItem(R.id.action_refresh).setVisible(true);
                                         }
                                     }
                                     else if(AddressFactory.getInstance().canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT)) {
-                                        canRefresh = true;
+                                        if(swSegwit.isChecked())    {
+                                            canRefresh49 = true;
+                                        }
+                                        else    {
+                                            canRefresh44 = true;
+                                        }
                                         if(_menu != null)    {
                                             _menu.findItem(R.id.action_refresh).setVisible(true);
                                         }
                                     }
                                     else {
-                                        canRefresh = false;
+                                        if(swSegwit.isChecked())    {
+                                            canRefresh49 = false;
+                                        }
+                                        else    {
+                                            canRefresh44 = false;
+                                        }
                                         if(_menu != null)    {
                                             _menu.findItem(R.id.action_refresh).setVisible(false);
                                         }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -226,7 +227,7 @@ public class RicochetActivity extends Activity {
                                         if(samouraiFeeViaBIP47)    {
                                             PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
                                             PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
-                                            String strAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
+                                            String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                                             BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
                                             BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
                                         }

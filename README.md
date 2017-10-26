@@ -20,6 +20,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 [BIP47 test vectors](https://gist.github.com/SamouraiDev/6aad669604c5930864bd)
 
+### BIP49 (Segwit):
+
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl.
+
 ### BIP69:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
@@ -44,6 +48,10 @@ Samourai implementation of multi-hop spend designed to outrun the baying pack of
 
 Samourai indicates whether or not connections are being routed via Tor Socks5 proxy (uses Orbot).
 
+### TestNet3:
+
+MainNet/TestNet selection is displayed when sideloading a new installation. To switch networks, make a backup of your current wallet, uninstall/reinstall (sideload) and select desired network.
+
 ### OpenDime:
 
 Plug in your OpenDime using the appropriate OTG (On-The-Go) USB cable and Samourai can be used to view address and balance, validate the private key, and sweep balance to your wallet.
@@ -65,5 +73,3 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 [Samourai HQ](http://samouraiwallet.com)
 
 [Paymentcode.io](http://paymentcode.io)
-
-[Segwit activation tracker](http://segw.it)

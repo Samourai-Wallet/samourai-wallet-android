@@ -11,6 +11,8 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.P2SH_P2WPKH;
 
 import org.json.JSONException;
 
@@ -29,6 +31,9 @@ public class AddressFactory {
 
     private static HashMap<Integer,Integer> highestTxReceiveIdx = null;
     private static HashMap<Integer,Integer> highestTxChangeIdx = null;
+
+    private static int highestBIP49ReceiveIdx = 0;
+    private static int highestBIP49ChangeIdx = 0;
 
     private static HashMap<String,Integer> xpub2account = null;
     private static HashMap<Integer,String> account2xpub = null;
@@ -103,6 +108,46 @@ public class AddressFactory {
 
     }
 
+    public P2SH_P2WPKH getBIP49(int chain)	{
+
+        int idx = 0;
+        HD_Address addr = null;
+        P2SH_P2WPKH p2shp2wpkh = null;
+
+        try	{
+            HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
+
+            if(hdw != null)    {
+                idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
+                addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
+                p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
+                    BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
+                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                }
+            }
+        }
+        catch(JSONException je)	{
+            je.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch(IOException ioe)	{
+            ioe.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch(MnemonicException.MnemonicLengthException mle)	{
+            mle.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch(DecryptionException de)	{
+            de.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+        return p2shp2wpkh;
+
+    }
+
     public HD_Address get(int accountIdx, int chain, int idx)	{
 
         HD_Address addr = null;
@@ -120,6 +165,18 @@ public class AddressFactory {
         }
 
         return addr;
+    }
+
+    public P2SH_P2WPKH getBIP49(int accountIdx, int chain, int idx)	{
+
+        HD_Address addr = null;
+        P2SH_P2WPKH p2shp2wpkh = null;
+
+        HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
+        addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
+        p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+
+        return p2shp2wpkh;
     }
 
     public int getHighestTxReceiveIdx(int account)  {
@@ -150,6 +207,22 @@ public class AddressFactory {
         highestTxChangeIdx.put(account, idx);
     }
 
+    public int getHighestBIP49ReceiveIdx()  {
+        return highestBIP49ReceiveIdx;
+    }
+
+    public void setHighestBIP49ReceiveIdx(int idx) {
+        highestBIP49ReceiveIdx = idx;
+    }
+
+    public int getHighestBIP49ChangeIdx() {
+        return highestBIP49ChangeIdx;
+    }
+
+    public void setHighestBIP49ChangeIdx(int idx) {
+        highestBIP49ChangeIdx = idx;
+    }
+
     public boolean canIncReceiveAddress(int account, int idx) {
         if(highestTxReceiveIdx.get(account) != null) {
             return ((idx - highestTxReceiveIdx.get(account)) < (LOOKAHEAD_GAP - 1));
@@ -165,6 +238,10 @@ public class AddressFactory {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean canIncBIP49ReceiveAddress(int idx) {
+        return ((idx - highestBIP49ReceiveIdx) < (LOOKAHEAD_GAP - 1));
     }
 
     public HashMap<String,Integer> xpub2account()   {

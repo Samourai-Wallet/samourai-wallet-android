@@ -2,6 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
+        android:title="@string/options_segwit"
+        android:summary="@string/options_segwit_2"
+        android:defaultValue="true"
+        android:key="segwit"
+        />
+
+    <CheckBoxPreference
         android:title="@string/options_bip126"
         android:summary="@string/options_bip126_2"
         android:defaultValue="true"
@@ -32,6 +39,13 @@
         android:title="@string/options_fee_provider"
         android:summary="@string/options_fee_provider2"
         android:key="feeProvider"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_broadcast_on"
+        android:summary="@string/options_broadcast_on2"
+        android:defaultValue="true"
+        android:key="broadcastTx"
         />
 
 </PreferenceScreen>

@@ -12,10 +12,13 @@ import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.service.BroadcastReceiverService;
+import com.samourai.wallet.service.WebSocketService;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +45,8 @@ public class AppUtil {
 
     private static boolean PRNG_FIXES = false;
 
+    private static boolean CLIPBOARD_SEEN = false;
+
     private AppUtil() { ; }
 
 	public static AppUtil getInstance(Context ctx) {
@@ -60,10 +65,15 @@ public class AppUtil {
 	public void wipeApp() {
 
         try {
+            HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
+            String[] s = hdw.getXPUBs();
+            for(int i = 0; i < s.length; i++)   {
+                APIFactory.getInstance(context).deleteXPUB(s[i]);
+            }
             PayloadUtil.getInstance(context).wipe();
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
+        catch(Exception e) {
+            e.printStackTrace();
         }
 
         deleteBackup();
@@ -197,10 +207,18 @@ public class AppUtil {
         }
     }
 
-    public boolean isPlayInstaller() {
+    public boolean isSideLoaded() {
         List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
         final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        return installer != null && validInstallers.contains(installer);
+        return installer == null || !validInstallers.contains(installer);
+    }
+
+    public boolean isClipboardSeen() {
+        return CLIPBOARD_SEEN;
+    }
+
+    public void setClipboardSeen(boolean seen) {
+        CLIPBOARD_SEEN = seen;
     }
 
 }

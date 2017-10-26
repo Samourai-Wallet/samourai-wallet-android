@@ -44,7 +44,7 @@ public class ExchangeRateFactory	{
 
     private static String[] exchangeLabels = {
             "LocalBitcoins.com",
-//            "BTC-e",
+            "WEX (ex-'BTC-e')",
             "Bitfinex",
     };
 
@@ -69,12 +69,10 @@ public class ExchangeRateFactory	{
     public double getAvgPrice(String currency)	 {
         int fxSel = PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
         HashMap<String,Double> fxRates = null;
-        /*
         if(fxSel == 1)	 {
             fxRates = fxRatesBTCe;
         }
-        */
-        if(fxSel == 1)	 {
+        else if(fxSel == 2)	 {
             fxRates = fxRatesBFX;
         }
         else	 {

@@ -1,5 +1,6 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Address;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -71,7 +72,7 @@ public class PaymentCode {
     }
 
     public HD_Address addressAt(int idx) throws AddressFormatException {
-        return new BIP47Account(MainNetParams.get(), strPaymentCode).addressAt(idx);
+        return new BIP47Account(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPaymentCode).addressAt(idx);
     }
 
     public byte[] getPayload() throws AddressFormatException    {

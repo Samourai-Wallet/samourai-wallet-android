@@ -212,7 +212,7 @@ public class OpenDimeActivity extends Activity {
             public void onClick(View v) {
 
                 if(strPrivKey != null)    {
-                    SweepUtil.getInstance(OpenDimeActivity.this).sweep(new PrivKeyReader(strPrivKey));
+                    SweepUtil.getInstance(OpenDimeActivity.this).sweep(new PrivKeyReader(strPrivKey), false);
                 }
 
             }
