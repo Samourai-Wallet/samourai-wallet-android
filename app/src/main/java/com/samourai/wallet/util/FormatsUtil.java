@@ -168,7 +168,7 @@ public class FormatsUtil {
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
 			int version = byteBuffer.getInt();
-			if(version != 0x0488B21E && version != 0x043587CF)   {
+			if(version != 0x0488B21E && version != 0x043587CF && version != 0x049D7CB2 && version != 0x044A5262)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{

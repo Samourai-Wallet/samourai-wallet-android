@@ -60,7 +60,7 @@ public class HD_Account {
         // assign master key to account key
         aKey = createMasterPubKeyFromXPub(xpub);
 
-        strXPUB = xpub;
+        strXPUB = strYPUB = xpub;
 
         mReceive = new HD_Chain(mParams, aKey, true);
         mChange = new HD_Chain(mParams, aKey, false);
@@ -73,7 +73,7 @@ public class HD_Account {
 
         ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
         int version = bb.getInt();
-        if(version != 0x0488B21E && version != 0x043587CF)   {
+        if(version != 0x0488B21E && version != 0x043587CF && version != 0x049D7CB2 && version != 0x044A5262)   {
             throw new AddressFormatException("invalid xpub version");
         }
 
