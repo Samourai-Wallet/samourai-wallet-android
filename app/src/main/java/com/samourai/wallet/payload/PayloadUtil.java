@@ -183,7 +183,7 @@ public class PayloadUtil	{
 
             JSONArray accts = new JSONArray();
             for(HD_Account acct : HD_WalletFactory.getInstance(context).get().getAccounts()) {
-                accts.put(acct.toJSON());
+                accts.put(acct.toJSON(false));
             }
             wallet.put("accounts", accts);
 
@@ -201,7 +201,7 @@ public class PayloadUtil	{
             // export BIP49 account for debug payload
             //
             JSONArray bip49_account = new JSONArray();
-            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON());
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(true));
             wallet.put("bip49_accounts", bip49_account);
 
             //

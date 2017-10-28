@@ -26,6 +26,7 @@ public class HD_Account {
     private HD_Chain mChange = null;
 
     protected String strXPUB = null;
+    protected String strYPUB = null;
 
     protected NetworkParameters mParams = null;
 
@@ -43,6 +44,7 @@ public class HD_Account {
         aKey = HDKeyDerivation.deriveChildKey(mKey, childnum);
 
         strXPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams());
+        strYPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams(), true);
 
         mReceive = new HD_Chain(mParams, aKey, true);
         mChange = new HD_Chain(mParams, aKey, false);
@@ -95,6 +97,12 @@ public class HD_Account {
 
     }
 
+    public String ypubstr() {
+
+        return strYPUB;
+
+    }
+
     public String getLabel() {
         return strLabel;
     }
@@ -119,11 +127,16 @@ public class HD_Account {
         return (idx == 0) ? mReceive : mChange;
     }
 
-    public JSONObject toJSON() {
+    public JSONObject toJSON(boolean isBIP49) {
         try {
             JSONObject obj = new JSONObject();
 
-            obj.put("xpub", xpubstr());
+            if(isBIP49)    {
+                obj.put("ypub", ypubstr());
+            }
+            else    {
+                obj.put("xpub", xpubstr());
+            }
             obj.put("receiveIdx", getReceive().getAddrIdx());
             obj.put("changeIdx", getChange().getAddrIdx());
             obj.put("id", mAID);

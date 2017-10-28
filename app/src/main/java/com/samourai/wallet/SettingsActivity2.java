@@ -497,10 +497,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                Preference xpub49Pref = (Preference) findPreference("xpub49");
-                xpub49Pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                Preference ypubPref = (Preference) findPreference("ypub");
+                ypubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB49();
+                        getYPUB();
                         return true;
                     }
                 });
@@ -1032,13 +1032,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB49()	{
+    private void getYPUB()	{
 
-        String xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
+        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(ypub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
         }
@@ -1048,7 +1048,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         showQR.setImageBitmap(bitmap);
 
         TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(xpub);
+        showText.setText(ypub);
         showText.setTextIsSelectable(true);
         showText.setPadding(40, 10, 40, 10);
         showText.setTextSize(18.0f);
