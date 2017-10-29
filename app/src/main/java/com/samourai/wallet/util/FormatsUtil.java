@@ -23,7 +23,12 @@ public class FormatsUtil {
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	private Pattern phonePattern = Pattern.compile("(\\+[1-9]{1}[0-9]{1,2}+|00[1-9]{1}[0-9]{1,2}+)[\\(\\)\\.\\-\\s\\d]{6,16}");
 
-    public static final String XPUB = "^xpub[1-9A-Za-z][^OIl]+$";
+	public static final int MAGIC_XPUB = 0x0488B21E;
+	public static final int MAGIC_TPUB = 0x043587CF;
+	public static final int MAGIC_YPUB = 0x049D7CB2;
+	public static final int MAGIC_UPUB = 0x044A5262;
+
+	public static final String XPUB = "^xpub[1-9A-Za-z][^OIl]+$";
     public static final String HEX = "^[0-9A-Fa-f]+$";
 
 	private static FormatsUtil instance = null;
@@ -168,7 +173,7 @@ public class FormatsUtil {
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
 			int version = byteBuffer.getInt();
-			if(version != 0x0488B21E && version != 0x043587CF && version != 0x049D7CB2 && version != 0x044A5262)   {
+			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{
