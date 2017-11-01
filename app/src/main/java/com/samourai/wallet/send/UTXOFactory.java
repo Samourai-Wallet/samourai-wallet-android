@@ -52,7 +52,7 @@ public class UTXOFactory {
         p2sh_p2wpkh.put(script, utxo);
     }
 
-    public long getTotalP2PKH() {
+    public long getP2PKHTotal() {
 
         long ret = 0L;
 
@@ -63,12 +63,34 @@ public class UTXOFactory {
         return ret;
     }
 
-    public long getTotalP2SH_P2WPKH() {
+    public long getP2SH_P2WPKHTotal() {
 
         long ret = 0L;
 
         for(UTXO utxo : p2sh_p2wpkh.values())   {
             ret += utxo.getValue();
+        }
+
+        return ret;
+    }
+
+    public int getP2PKHCount() {
+
+        int ret = 0;
+
+        for(UTXO utxo : p2pkh.values())   {
+            ret += utxo.getOutpoints().size();
+        }
+
+        return ret;
+    }
+
+    public int getP2SH_P2WPKHCount() {
+
+        int ret = 0;
+
+        for(UTXO utxo : p2sh_p2wpkh.values())   {
+            ret += utxo.getOutpoints().size();
         }
 
         return ret;
