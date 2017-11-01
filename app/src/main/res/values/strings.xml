@@ -366,6 +366,7 @@
     <string name="utxo_sign">Sign message</string>
     <string name="utxo_sign_text1">Sign message using this private key?</string>
     <string name="utxo_sign_text2">Signed using utxo address.</string>
+    <string name="utxo_sign_text3">Signed using utxo address.</string>
 
     <string name="recovery_checkup">Recovery Checkup</string>
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
