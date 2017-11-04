@@ -901,6 +901,8 @@ public class APIFactory	{
                     return false;
                 }
 
+                List<String> seenOutputs = new ArrayList<String>();
+
                 for (int i = 0; i < utxoArray.length(); i++) {
 
                     JSONObject outDict = utxoArray.getJSONObject(i);
@@ -912,6 +914,8 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+
+                    seenOutputs.add(txHash.toString() + "-" + txOutputN);
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
@@ -949,6 +953,12 @@ public class APIFactory	{
                         ;
                     }
 
+                }
+
+                for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+                    if(!seenOutputs.contains(s))    {
+                        BlockedUTXO.getInstance().removeNotDusted(s);
+                    }
                 }
 
                 return true;

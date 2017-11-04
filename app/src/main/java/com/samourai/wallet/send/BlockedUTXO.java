@@ -71,8 +71,22 @@ public class BlockedUTXO {
         }
     }
 
+    public void removeNotDusted(String s)   {
+        if(notDustedUTXO.contains(s))    {
+            notDustedUTXO.remove(s);
+        }
+    }
+
     public boolean containsNotDusted(String hash, int idx)   {
         return notDustedUTXO.contains(hash + "-" + Integer.toString(idx));
+    }
+
+    public HashMap<String, Long> getBlockedUTXO() {
+        return blockedUTXO;
+    }
+
+    public List<String> getNotDustedUTXO() {
+        return notDustedUTXO;
     }
 
     public JSONObject toJSON() {
