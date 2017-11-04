@@ -1662,7 +1662,7 @@ public class SendActivity extends Activity {
 
                         }
 
-                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
+                        if(customValue < 3 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {
