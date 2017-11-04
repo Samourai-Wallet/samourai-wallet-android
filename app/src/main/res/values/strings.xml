@@ -427,8 +427,10 @@
 
     <string name="redeem_script">Redeem script</string>
 
-    <string name="dusting_attempt">An incoming amount might be a \'dusting\' attempt meant to follow your spending outputs later on. Should this amount be blocked from future spending?</string>
+    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
     <string name="dusting_attempt_amount">Amount:</string>
     <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Ignore</string>
+    <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
 
 </resources>

@@ -1675,13 +1675,13 @@ public class BalanceActivity extends Activity {
                                 .setTitle(R.string.app_name)
                                 .setMessage(message)
                                 .setCancelable(false)
-                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         BlockedUTXO.getInstance().add(hash, idx, amount);
 
                                     }
-                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         BlockedUTXO.getInstance().addNotDusted(hash, idx);
