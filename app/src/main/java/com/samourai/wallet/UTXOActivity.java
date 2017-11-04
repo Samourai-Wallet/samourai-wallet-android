@@ -180,11 +180,34 @@ public class UTXOActivity extends Activity {
                                         .setTitle(R.string.app_name)
                                         .setView(showText)
                                         .setCancelable(false)
-                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                String addr = data.get(position).getLeft().toString();
+                                                ECKey ecKey = SendFactory.getPrivKey(addr);
+
+                                                String msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
+                                                msg += ":";
+                                                msg += addr;
+                                                msg += ", ";
+                                                msg += "pubkey:";
+                                                msg += ecKey.getPublicKeyAsHex();
+
+                                                if(ecKey != null)    {
+                                                    MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                                            UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                                            msg,
+                                                            ecKey);
+                                                }
+
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 ;
                                             }
-                                        }).show();
+                                        })
+                                        .show();
 
                             }
 

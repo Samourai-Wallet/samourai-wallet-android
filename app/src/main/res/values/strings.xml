@@ -368,6 +368,7 @@
     <string name="utxo_sign">Sign message</string>
     <string name="utxo_sign_text1">Sign message using this private key?</string>
     <string name="utxo_sign_text2">Signed using utxo address.</string>
+    <string name="utxo_sign_text3">Signed using utxo address.</string>
 
     <string name="recovery_checkup">Recovery Checkup</string>
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
@@ -427,9 +428,9 @@
 
     <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
-    <string name="redeem_script">Redeem script</string>
     <string name="tx_hex">Transaction hex</string>
     <string name="enter_tx_hex">Enter transaction in hex format</string>
     <string name="broadcast">Broadcast transaction</string>
+    <string name="redeem_script">Redeem script/Signhttps://www.reddit.com/r/btc/comments/79z22j/wtf_is_this_cant_sign_messages_with_a_segwit/</string>
 
 </resources>
