@@ -433,5 +433,7 @@
     <string name="dusting_attempt_id">Hash-Index:</string>
     <string name="dusting_attempt_ignore">Ignore</string>
     <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
+    <string name="paycode">NYM</string>
+    <string name="dust">DUST</string>
 
 </resources>
