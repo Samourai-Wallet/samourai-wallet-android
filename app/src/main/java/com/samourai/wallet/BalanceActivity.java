@@ -1672,7 +1672,7 @@ public class BalanceActivity extends Activity {
                         message += hash + "-" + idx;
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                                .setTitle(R.string.app_name)
+                                .setTitle(R.string.dusting_tx)
                                 .setMessage(message)
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
