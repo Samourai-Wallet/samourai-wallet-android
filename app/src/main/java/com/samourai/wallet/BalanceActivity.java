@@ -1646,6 +1646,13 @@ public class BalanceActivity extends Activity {
                 List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
                 for(MyTransactionOutPoint out : outpoints)   {
 
+                    byte[] scriptBytes = out.getScriptBytes();
+                    String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
+                    if(path.startsWith("M/1/"))    {
+                        continue;
+                    }
+
                     final String hash = out.getHash().toString();
                     final int idx = out.getTxOutputN();
                     final long amount = out.getValue().longValue();
@@ -1677,7 +1684,7 @@ public class BalanceActivity extends Activity {
                                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                        ;
+                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
 
                                     }
                                 });
