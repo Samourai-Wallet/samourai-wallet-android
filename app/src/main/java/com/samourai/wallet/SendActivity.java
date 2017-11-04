@@ -69,6 +69,7 @@ import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -671,7 +672,27 @@ public class SendActivity extends Activity {
                 }
 
                 // get all UTXO
-                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+//                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                List<UTXO> utxos = null;
+                long neededAmount = 0L;
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getP2SH_P2WPKHCount(), 4).longValue();
+                }
+                else    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getP2PKHCount(), 0, 4).longValue();
+                }
+                neededAmount += amount;
+                neededAmount += SamouraiWallet.bDust.longValue();
+
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getP2SH_P2WPKHTotal() > neededAmount))    {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+                }
+                else if(UTXOFactory.getInstance().getP2PKHTotal() > neededAmount)   {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+                }
+                else    {
+                    utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                }
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;

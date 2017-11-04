@@ -24,6 +24,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
@@ -120,6 +121,8 @@ public class APIFactory	{
         unspentAccounts = new HashMap<String, Integer>();
         unspentBIP49 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
+
+        UTXOFactory.getInstance().clear();
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
@@ -947,12 +950,22 @@ public class APIFactory	{
                             utxos.put(script, utxo);
                         }
 
+                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                        }
+                        else    {
+                            UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                        }
+
                     }
                     catch(Exception e) {
                         ;
                     }
 
                 }
+
+                Log.d("APIFactory", "p2pkh total:" + UTXOFactory.getInstance().getTotalP2PKH());
+                Log.d("APIFactory", "p2sh-p2wpkh total:" + UTXOFactory.getInstance().getTotalP2SH_P2WPKH());
 
                 return true;
 
