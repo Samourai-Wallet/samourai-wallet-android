@@ -231,7 +231,7 @@ public class PayloadUtil	{
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
-            meta.put("blocked_utxo", BlockedUTXO.getInstance().toJSON());
+            meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -419,8 +419,8 @@ public class PayloadUtil	{
                 if(meta.has("tor")) {
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
-                if(meta.has("blocked_utxo")) {
-                    BlockedUTXO.getInstance().fromJSON((JSONArray) meta.get("blocked_utxo"));
+                if(meta.has("blocked_utxos")) {
+                    BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxo"));
                 }
 
                 if(meta.has("units")) {

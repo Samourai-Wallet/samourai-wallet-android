@@ -57,7 +57,7 @@ public class UTXOActivity extends Activity {
         listView = (ListView)findViewById(R.id.list);
 
         data = new ArrayList<Pair>();
-        for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos())   {
+        for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
                 data.add(pair);

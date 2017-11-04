@@ -365,9 +365,6 @@ public class APIFactory	{
                         JSONObject outObj = null;
                         for(int j = 0; j < outArray.length(); j++)  {
                             outObj = (JSONObject)outArray.get(j);
-                            if(!BlockedUTXO.getInstance().contains(hash, outObj.getInt("n")) && amount > 0L && outObj.getLong("value") < BlockedUTXO.BLOCKED_UTXO_THRESHOLD)    {
-                                BlockedUTXO.getInstance().addDusted(hash);
-                            }
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = (String)xpubObj.get("m");
@@ -1464,12 +1461,28 @@ public class APIFactory	{
         return unspentBIP49;
     }
 
-    public List<UTXO> getUtxos() {
+    public List<UTXO> getUtxos(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
-        unspents.addAll(utxos.values());
-        return unspents;
 
+        if(filter)    {
+            for(String key : utxos.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxos.values());
+        }
+
+        return unspents;
     }
 
     public void setUtxos(HashMap<String, UTXO> utxos) {

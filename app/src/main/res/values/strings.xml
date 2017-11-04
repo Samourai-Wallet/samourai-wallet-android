@@ -427,4 +427,8 @@
 
     <string name="redeem_script">Redeem script</string>
 
+    <string name="dusting_attempt">An incoming amount might be a \'dusting\' attempt meant to follow your spending outputs later on. Should this amount be blocked from future spending?</string>
+    <string name="dusting_attempt_amount">Amount:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+
 </resources>

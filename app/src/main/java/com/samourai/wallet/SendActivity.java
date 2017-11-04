@@ -671,7 +671,7 @@ public class SendActivity extends Activity {
                 }
 
                 // get all UTXO
-                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos(true);
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;
