@@ -52,7 +52,7 @@ public class UTXOFactory {
         p2sh_p2wpkh.put(script, utxo);
     }
 
-    public long getP2PKHTotal() {
+    public long getTotalP2PKH() {
 
         long ret = 0L;
 
@@ -63,7 +63,7 @@ public class UTXOFactory {
         return ret;
     }
 
-    public long getP2SH_P2WPKHTotal() {
+    public long getTotalP2SH_P2WPKH() {
 
         long ret = 0L;
 
@@ -74,7 +74,7 @@ public class UTXOFactory {
         return ret;
     }
 
-    public int getP2PKHCount() {
+    public int getCountP2PKH() {
 
         int ret = 0;
 
@@ -85,7 +85,7 @@ public class UTXOFactory {
         return ret;
     }
 
-    public int getP2SH_P2WPKHCount() {
+    public int getCountP2SH_P2WPKH() {
 
         int ret = 0;
 

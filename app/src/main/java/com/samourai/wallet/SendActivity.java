@@ -674,20 +674,21 @@ public class SendActivity extends Activity {
                 // get all UTXO
 //                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
                 List<UTXO> utxos = null;
+                // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
                 long neededAmount = 0L;
                 if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getP2SH_P2WPKHCount(), 4).longValue();
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
                 }
                 else    {
-                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getP2PKHCount(), 0, 4).longValue();
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
                 }
                 neededAmount += amount;
                 neededAmount += SamouraiWallet.bDust.longValue();
 
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getP2SH_P2WPKHTotal() > neededAmount))    {
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
                 }
-                else if(UTXOFactory.getInstance().getP2PKHTotal() > neededAmount)   {
+                else if(UTXOFactory.getInstance().getTotalP2PKH() > neededAmount)   {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
                 }
                 else    {
