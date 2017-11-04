@@ -498,7 +498,7 @@ public class SendActivity extends Activity {
         });
 */
 
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BIP126, true) ? SPEND_BIP126 : SPEND_SIMPLE;
         if(SPEND_TYPE > SPEND_BIP126)    {
             SPEND_TYPE = SPEND_BIP126;
             PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);

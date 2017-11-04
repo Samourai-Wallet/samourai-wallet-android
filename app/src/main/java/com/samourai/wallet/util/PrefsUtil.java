@@ -32,6 +32,7 @@ public class PrefsUtil {
 	public static final String SCRAMBLE_PIN = "scramblePin";
 	public static final String AUTO_BACKUP = "autoBackup";
 	public static final String SPEND_TYPE = "spendType";
+	public static final String USE_BIP126 = "bip126";
 	public static final String TRUSTED_NODE = "trustedNode";
 	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";

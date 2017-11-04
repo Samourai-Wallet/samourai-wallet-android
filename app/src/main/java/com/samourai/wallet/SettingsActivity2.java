@@ -159,10 +159,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                         if (cbPref7.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_SIMPLE);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, false);
                         }
                         else    {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, true);
                         }
 
                         return true;
