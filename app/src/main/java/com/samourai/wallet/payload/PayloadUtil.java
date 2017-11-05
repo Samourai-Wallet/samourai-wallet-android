@@ -420,7 +420,7 @@ public class PayloadUtil	{
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
                 if(meta.has("blocked_utxos")) {
-                    BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxo"));
+                    BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
 
                 if(meta.has("units")) {
