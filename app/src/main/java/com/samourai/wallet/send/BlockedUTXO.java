@@ -128,7 +128,6 @@ public class BlockedUTXO {
 
                 for(int i = 0; i < array.length(); i++)   {
                     JSONObject obj = array.getJSONObject(i);
-                    Log.d("BlockedUTXO", obj.getString("id") + ":" + obj.getLong("value"));
                     blockedUTXO.put(obj.getString("id"), obj.getLong("value"));
                 }
             }
