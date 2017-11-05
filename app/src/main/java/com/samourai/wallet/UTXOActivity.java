@@ -2,16 +2,23 @@ package com.samourai.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,6 +32,7 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
@@ -45,8 +53,16 @@ import java.util.List;
 
 public class UTXOActivity extends Activity {
 
-    private List<Pair> data = null;
+    private class DisplayData   {
+        private String addr = null;
+        private long amount = 0L;
+        private String hash = null;
+        private int idx = 0;
+    }
+
+    private List<DisplayData> data = null;
     private ListView listView = null;
+    private UTXOAdapter adapter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,41 +72,20 @@ public class UTXOActivity extends Activity {
 
         listView = (ListView)findViewById(R.id.list);
 
-        data = new ArrayList<Pair>();
+        data = new ArrayList<DisplayData>();
         for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
-                data.add(pair);
+                DisplayData displayData = new DisplayData();
+                displayData.addr = outpoint.getAddress();
+                displayData.amount = outpoint.getValue().longValue();
+                displayData.hash = outpoint.getTxHash().toString();
+                displayData.idx = outpoint.getTxOutputN();
+                data.add(displayData);
             }
         }
 
-        final DecimalFormat df = new DecimalFormat("#");
-        df.setMinimumIntegerDigits(1);
-        df.setMinimumFractionDigits(8);
-        df.setMaximumFractionDigits(8);
-
-        ArrayAdapter adapter = new ArrayAdapter(UTXOActivity.this, android.R.layout.simple_list_item_2, android.R.id.text1, data) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-
-                View view = super.getView(position, convertView, parent);
-
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                String addr = data.get(position).getLeft().toString();
-                text1.setText(addr);
-                if(isBIP47(addr))    {
-                    text1.setTypeface(null, Typeface.ITALIC);
-                }
-                else    {
-                    text1.setTypeface(null, Typeface.NORMAL);
-                }
-                text2.setText(df.format(((double)((BigInteger)data.get(position).getRight()).longValue()) / 1e8) + " BTC");
-
-                return view;
-            }
-        };
+        adapter = new UTXOAdapter();
         listView.setAdapter(adapter);
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -102,7 +97,7 @@ public class UTXOActivity extends Activity {
                 builder.setPositiveButton(R.string.options_privkey, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int whichButton) {
 
-                        String addr = data.get(position).getLeft().toString();
+                        String addr = data.get(position).addr;
                         ECKey ecKey = SendFactory.getPrivKey(addr);
                         String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
@@ -149,20 +144,20 @@ public class UTXOActivity extends Activity {
                         }
                         CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
 
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).getLeft().toString()));
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).addr));
                         startActivity(browserIntent);
 
                     }
                 });
 
-                String addr = data.get(position).getLeft().toString();
+                String addr = data.get(position).addr;
                 Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr);
 
                 if(address.isP2SHAddress())    {
                     builder.setNeutralButton(R.string.redeem_script, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                            String addr = data.get(position).getLeft().toString();
+                            String addr = data.get(position).addr;
                             ECKey ecKey = SendFactory.getPrivKey(addr);
                             P2SH_P2WPKH p2sh_p2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
@@ -195,7 +190,7 @@ public class UTXOActivity extends Activity {
                     builder.setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                            String addr = data.get(position).getLeft().toString();
+                            String addr = data.get(position).addr;
                             ECKey ecKey = SendFactory.getPrivKey(addr);
 
                             if(ecKey != null)    {
@@ -224,6 +219,91 @@ public class UTXOActivity extends Activity {
         super.onResume();
 
         AppUtil.getInstance(UTXOActivity.this).checkTimeOut();
+
+    }
+
+    private class UTXOAdapter extends BaseAdapter {
+
+        private LayoutInflater inflater = null;
+
+        UTXOAdapter() {
+            inflater = (LayoutInflater)UTXOActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return (String)data.get(position).addr;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0L;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, final ViewGroup parent) {
+
+            View view = null;
+
+            int type = getItemViewType(position);
+            if(convertView == null) {
+                view = inflater.inflate(R.layout.simple_list_item3, parent, false);
+            }
+            else {
+                view = convertView;
+            }
+
+            TextView text1 = (TextView) view.findViewById(R.id.text1);
+            TextView text2 = (TextView) view.findViewById(R.id.text2);
+            TextView text3 = (TextView) view.findViewById(R.id.text3);
+
+            final DecimalFormat df = new DecimalFormat("#");
+            df.setMinimumIntegerDigits(1);
+            df.setMinimumFractionDigits(8);
+            df.setMaximumFractionDigits(8);
+
+            text1.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " BTC");
+
+            String addr = data.get(position).addr;
+            text2.setText(addr);
+
+            String descr = null;
+            Spannable word = null;
+            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                descr = UTXOActivity.this.getText(R.string.segwit).toString();
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(Color.GREEN), 0, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            else    {
+                descr = UTXOActivity.this.getText(R.string.p2pkh).toString();
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(Color.BLUE), 0, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            text3.setText(word);
+
+            String descr2 = "";
+            Spannable word2 = null;
+            if(isBIP47(addr))    {
+                descr2 = " " + UTXOActivity.this.getText(R.string.p2pkh).toString();
+                word2 = new SpannableString(descr2);
+                word2.setSpan(new ForegroundColorSpan(Color.MAGENTA), 1, descr2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                descr2 = " " + UTXOActivity.this.getText(R.string.dust);
+                word2 = new SpannableString(descr2);
+                word2.setSpan(new ForegroundColorSpan(Color.GRAY), 1, descr2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if(descr2.length() > 0)    {
+                text3.append(word2);
+            }
+
+            return view;
+        }
 
     }
 

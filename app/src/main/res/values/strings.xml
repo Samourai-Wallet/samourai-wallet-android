@@ -428,12 +428,14 @@
     <string name="redeem_script">Redeem script</string>
 
     <string name="dusting_tx">DUST TRANSACTION</string>
-    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
+    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\n\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
     <string name="dusting_attempt_amount">Amount:</string>
     <string name="dusting_attempt_id">Hash-Index:</string>
     <string name="dusting_attempt_ignore">Ignore</string>
     <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
     <string name="paycode">NYM</string>
     <string name="dust">DUST</string>
+    <string name="segwit">SEGWIT</string>
+    <string name="p2pkh">BIP44</string>
 
 </resources>
