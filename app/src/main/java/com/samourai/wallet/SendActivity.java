@@ -692,8 +692,9 @@ public class SendActivity extends Activity {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
                 }
                 else    {
-                    utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                    utxos = APIFactory.getInstance(SendActivity.this).getUtxos(true);
                 }
+
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;

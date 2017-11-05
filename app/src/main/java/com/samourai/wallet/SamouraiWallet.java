@@ -22,7 +22,7 @@ public class SamouraiWallet {
 
     public final static int NB_ACCOUNTS = 2;
 
-    public static final BigInteger bDust = BigInteger.valueOf(Coin.parseCoin("0.00005460").longValue());    // https://github.com/bitcoin/bitcoin/pull/2760
+    public static final BigInteger bDust = BigInteger.valueOf(Coin.parseCoin("0.00000546").longValue());    // https://github.com/bitcoin/bitcoin/pull/2760
     public static final BigInteger bFee = BigInteger.valueOf(Coin.parseCoin("0.00015").longValue());
     public static final BigInteger bPriority = BigInteger.valueOf(Coin.parseCoin("0.0005").longValue());
     public static final BigInteger bAddPriority = BigInteger.valueOf(Coin.parseCoin("0.0003").longValue());
