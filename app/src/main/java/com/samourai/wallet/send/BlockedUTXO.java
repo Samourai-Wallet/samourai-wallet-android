@@ -1,5 +1,7 @@
 package com.samourai.wallet.send;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,6 +128,7 @@ public class BlockedUTXO {
 
                 for(int i = 0; i < array.length(); i++)   {
                     JSONObject obj = array.getJSONObject(i);
+                    Log.d("BlockedUTXO", obj.getString("id") + ":" + obj.getLong("value"));
                     blockedUTXO.put(obj.getString("id"), obj.getLong("value"));
                 }
             }
