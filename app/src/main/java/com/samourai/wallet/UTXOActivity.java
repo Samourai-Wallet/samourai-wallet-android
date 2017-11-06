@@ -61,6 +61,7 @@ public class UTXOActivity extends Activity {
     }
 
     private List<DisplayData> data = null;
+    private List<DisplayData> doNotSpend = null;
     private ListView listView = null;
     private UTXOAdapter adapter = null;
 
@@ -73,6 +74,7 @@ public class UTXOActivity extends Activity {
         listView = (ListView)findViewById(R.id.list);
 
         data = new ArrayList<DisplayData>();
+        doNotSpend = new ArrayList<DisplayData>();
         for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
@@ -81,9 +83,15 @@ public class UTXOActivity extends Activity {
                 displayData.amount = outpoint.getValue().longValue();
                 displayData.hash = outpoint.getTxHash().toString();
                 displayData.idx = outpoint.getTxOutputN();
-                data.add(displayData);
+                if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
+                    doNotSpend.add(displayData);
+                }
+                else    {
+                    data.add(displayData);
+                }
             }
         }
+        data.addAll(doNotSpend);
 
         adapter = new UTXOAdapter();
         listView.setAdapter(adapter);
