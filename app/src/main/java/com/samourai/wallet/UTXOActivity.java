@@ -347,7 +347,7 @@ public class UTXOActivity extends Activity {
             String descr2 = "";
             Spannable word2 = null;
             if(isBIP47(addr))    {
-                descr2 = " " + UTXOActivity.this.getText(R.string.p2pkh).toString();
+                descr2 = " " + UTXOActivity.this.getText(R.string.paycode).toString();
                 word2 = new SpannableString(descr2);
                 word2.setSpan(new ForegroundColorSpan(Color.MAGENTA), 1, descr2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
