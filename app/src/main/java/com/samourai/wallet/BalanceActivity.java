@@ -1649,7 +1649,7 @@ public class BalanceActivity extends Activity {
                     byte[] scriptBytes = out.getScriptBytes();
                     String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                     String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
-                    if(path.startsWith("M/1/"))    {
+                    if(path != null && path.startsWith("M/1/"))    {
                         continue;
                     }
 
