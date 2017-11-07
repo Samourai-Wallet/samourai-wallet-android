@@ -3,6 +3,7 @@ package com.samourai.wallet.segwit;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Utils;
 import org.bitcoinj.script.Script;
 
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -73,7 +74,7 @@ public class P2SH_P2WPKH {
         //
         // OP_HASH160 hash160(redeemScript) OP_EQUAL
         //
-        byte[] hash = getRIPEMD160(getSHA("SHA-256", segWitRedeemScript().getProgram()));
+        byte[] hash = Utils.sha256hash160(segWitRedeemScript().getProgram());
         byte[] buf = new byte[3 + hash.length];
         buf[0] = (byte)0xa9;    // HASH160
         buf[1] = (byte)0x14;    // push 20 bytes
@@ -88,7 +89,7 @@ public class P2SH_P2WPKH {
         //
         // The P2SH segwit redeemScript is always 22 bytes. It starts with a OP_0, followed by a canonical push of the keyhash (i.e. 0x0014{20-byte keyhash})
         //
-        byte[] hash = getRIPEMD160(getSHA("SHA-256", ecKey.getPubKey()));
+        byte[] hash = Utils.sha256hash160(ecKey.getPubKey());
         byte[] buf = new byte[2 + hash.length];
         buf[0] = (byte)0x00;  // OP_0
         buf[1] = (byte)0x14;  // push 20 bytes
@@ -105,36 +106,6 @@ public class P2SH_P2WPKH {
         else    {
             return false;
         }
-
-    }
-
-    private byte[] getRIPEMD160(byte[] data) {
-
-        byte[] out = null;
-
-        RIPEMD160Digest digest = new RIPEMD160Digest();
-        digest.update(data, 0, data.length);
-        out = new byte[digest.getDigestSize()];
-        digest.doFinal(out, 0);
-
-        return out;
-
-    }
-
-    private byte[] getSHA(String algo, byte[] data) {
-
-        byte[] out = null;
-
-        try {
-            MessageDigest md = MessageDigest.getInstance(algo);
-            md.update(data);
-            out = md.digest();
-        }
-        catch(NoSuchAlgorithmException nsae) {
-            ;
-        }
-
-        return out;
 
     }
 

@@ -1,5 +1,7 @@
 package com.samourai.wallet.send;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +14,7 @@ public class BlockedUTXO {
 
     private static BlockedUTXO instance = null;
     private static HashMap<String,Long> blockedUTXO = null;
-    private static List<String> dustedUTXO = null;
+    private static List<String> notDustedUTXO = null;
 
     public final static long BLOCKED_UTXO_THRESHOLD = 1000L;
 
@@ -23,7 +25,7 @@ public class BlockedUTXO {
         if(instance == null) {
             instance = new BlockedUTXO();
             blockedUTXO = new HashMap<String,Long>();
-            dustedUTXO = new ArrayList<String>();
+            notDustedUTXO = new ArrayList<String>();
         }
 
         return instance;
@@ -59,27 +61,39 @@ public class BlockedUTXO {
         return ret;
     }
 
-    public void addDusted(String hash)    {
-        if(!dustedUTXO.contains(hash))    {
-            dustedUTXO.add(hash);
+    public void addNotDusted(String hash, int idx)    {
+        if(!notDustedUTXO.contains(hash + "-" + Integer.toString(idx)))    {
+            notDustedUTXO.add(hash + "-" + Integer.toString(idx));
         }
     }
 
-    public void remove(String hash)   {
-        if(dustedUTXO.contains(hash))    {
-            dustedUTXO.remove(hash);
+    public void removeNotDusted(String hash, int idx)   {
+        if(notDustedUTXO.contains(hash + "-" + Integer.toString(idx)))    {
+            notDustedUTXO.remove(hash + "-" + Integer.toString(idx));
         }
     }
 
-    public boolean containsDusted(String hash)   {
-        return dustedUTXO.contains(hash);
+    public void removeNotDusted(String s)   {
+        if(notDustedUTXO.contains(s))    {
+            notDustedUTXO.remove(s);
+        }
     }
 
-    public void clearDusted()    {
-        dustedUTXO.clear();
+    public boolean containsNotDusted(String hash, int idx)   {
+        return notDustedUTXO.contains(hash + "-" + Integer.toString(idx));
     }
 
-    public JSONArray toJSON() {
+    public HashMap<String, Long> getBlockedUTXO() {
+        return blockedUTXO;
+    }
+
+    public List<String> getNotDustedUTXO() {
+        return notDustedUTXO;
+    }
+
+    public JSONObject toJSON() {
+
+        JSONObject blockedObj = new JSONObject();
 
         JSONArray array = new JSONArray();
         try {
@@ -89,21 +103,41 @@ public class BlockedUTXO {
                 obj.put("value", blockedUTXO.get(id));
                 array.put(obj);
             }
+            blockedObj.put("blocked", array);
+
+            JSONArray notDusted = new JSONArray();
+            for(String s : notDustedUTXO)   {
+                notDusted.put(s);
+            }
+            blockedObj.put("notDusted", notDusted);
+
         }
         catch(JSONException je) {
             ;
         }
 
-        return array;
+        return blockedObj;
     }
 
-    public void fromJSON(JSONArray array) {
+    public void fromJSON(JSONObject blockedObj) {
 
         try {
 
-            for(int i = 0; i < array.length(); i++)   {
-                JSONObject obj = array.getJSONObject(i);
-                blockedUTXO.put(obj.getString("id"), obj.getLong("value"));
+            if(blockedObj.has("blocked"))    {
+                JSONArray array = blockedObj.getJSONArray("blocked");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    JSONObject obj = array.getJSONObject(i);
+                    blockedUTXO.put(obj.getString("id"), obj.getLong("value"));
+                }
+            }
+
+            if(blockedObj.has("notDusted"))  {
+                JSONArray array = blockedObj.getJSONArray("notDusted");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    notDustedUTXO.add(array.getString(i));
+                }
             }
 
         }

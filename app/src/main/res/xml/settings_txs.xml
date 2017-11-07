@@ -48,4 +48,10 @@
         android:key="broadcastTx"
         />
 
+    <Preference
+        android:title="@string/options_broadcast_hex"
+        android:summary="@string/options_broadcast_hex2"
+        android:key="broadcastHex"
+        />
+
 </PreferenceScreen>
