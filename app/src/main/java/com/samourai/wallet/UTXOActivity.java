@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +24,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,103 +101,88 @@ public class UTXOActivity extends Activity {
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                PopupMenu menu = new PopupMenu (UTXOActivity.this, view);
+                menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()   {
+                    @Override
+                    public boolean onMenuItemClick (MenuItem item)  {
+                        int id = item.getItemId();
+                        switch (id) {
+                            case R.id.item_do_not_spend:
+                            {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
-                    builder.setTitle(R.string.dusting_tx);
-                    builder.setMessage(R.string.dusting_tx_unblock);
-                    builder.setCancelable(true);
-                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
+                                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
 
-                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
+                                    builder.setTitle(R.string.dusting_tx);
+                                    builder.setMessage(R.string.dusting_tx_unblock);
+                                    builder.setCancelable(true);
+                                    builder.setPositiveButton(R.string.dusting_unblock, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
 
-                        }
-                    });
-                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
-                            ;
-                        }
-                    });
+                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
 
-                    AlertDialog alert = builder.create();
-                    alert.show();
-
-                }
-                else    {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
-                    builder.setTitle(R.string.app_name);
-                    builder.setMessage(R.string.prompt_privkey_or_explorer);
-                    builder.setCancelable(true);
-                    builder.setPositiveButton(R.string.options_privkey, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
-
-                            String addr = data.get(position).addr;
-                            ECKey ecKey = SendFactory.getPrivKey(addr);
-                            String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-                            ImageView showQR = new ImageView(UTXOActivity.this);
-                            Bitmap bitmap = null;
-                            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(strPrivKey, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-                            try {
-                                bitmap = qrCodeEncoder.encodeAsBitmap();
-                            }
-                            catch (WriterException e) {
-                                e.printStackTrace();
-                            }
-                            showQR.setImageBitmap(bitmap);
-
-                            TextView showText = new TextView(UTXOActivity.this);
-                            showText.setText(strPrivKey);
-                            showText.setTextIsSelectable(true);
-                            showText.setPadding(40, 10, 40, 10);
-                            showText.setTextSize(18.0f);
-
-                            LinearLayout privkeyLayout = new LinearLayout(UTXOActivity.this);
-                            privkeyLayout.setOrientation(LinearLayout.VERTICAL);
-                            privkeyLayout.addView(showQR);
-                            privkeyLayout.addView(showText);
-
-                            new AlertDialog.Builder(UTXOActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setView(privkeyLayout)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
                                         }
-                                    }).show();
+                                    });
+                                    builder.setNegativeButton(R.string.dusting_unblock_ignore, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
 
-                        }
-                    });
-                    builder.setNegativeButton(R.string.options_block_explorer, new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, int whichButton) {
+                                            BlockedUTXO.getInstance().addNotDusted(data.get(position).hash, data.get(position).idx);
 
-                            int sel = PrefsUtil.getInstance(UTXOActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-                            if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
-                                sel = 0;
+                                        }
+                                    });
+
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }
+
                             }
-                            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
 
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).addr));
-                            startActivity(browserIntent);
+                            break;
 
-                        }
-                    });
+                            case R.id.item_sign:
+                            {
+                                String addr = data.get(position).addr;
+                                ECKey ecKey = SendFactory.getPrivKey(addr);
+                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
 
-                    String addr = data.get(position).addr;
-                    Address address = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr);
+                                    String msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
+                                    msg += ":";
+                                    msg += addr;
+                                    msg += ", ";
+                                    msg += "pubkey:";
+                                    msg += ecKey.getPublicKeyAsHex();
 
-                    if(address.isP2SHAddress())    {
-                        builder.setNeutralButton(R.string.redeem_script, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
+                                    if(ecKey != null)    {
+                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                                msg,
+                                                ecKey);
+                                    }
 
+                                }
+                                else    {
+
+                                    if(ecKey != null)    {
+                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                                UTXOActivity.this.getString(R.string.utxo_sign_text2),
+                                                ecKey);
+                                    }
+
+                                }
+
+                            }
+
+                            break;
+
+                            case R.id.item_redeem:
+                            {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
                                 P2SH_P2WPKH p2sh_p2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-                                if(ecKey != null && p2sh_p2wpkh != null)    {
+                                if(ecKey != null && p2sh_p2wpkh != null) {
 
                                     String redeemScript = Hex.toHexString(p2sh_p2wpkh.segWitRedeemScript().getProgram());
 
@@ -204,69 +192,96 @@ public class UTXOActivity extends Activity {
                                     showText.setPadding(40, 10, 40, 10);
                                     showText.setTextSize(18.0f);
 
+                                    new AlertDialog.Builder(UTXOActivity.this)
+                                            .setTitle(R.string.app_name)
+                                            .setView(showText)
+                                            .setCancelable(false)
+                                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    ;
+                                                }
+                                            })
+                                            .show();
+                                }
+                            }
+
+                            break;
+
+                            case R.id.item_view:
+                            {
+                                int sel = PrefsUtil.getInstance(UTXOActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+                                if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
+                                    sel = 0;
+                                }
+                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
+
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).addr));
+                                startActivity(browserIntent);
+                            }
+
+                            break;
+
+                            case R.id.item_privkey:
+                            {
+                                String addr = data.get(position).addr;
+                                ECKey ecKey = SendFactory.getPrivKey(addr);
+                                String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
+
+                                ImageView showQR = new ImageView(UTXOActivity.this);
+                                Bitmap bitmap = null;
+                                QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(strPrivKey, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+                                try {
+                                    bitmap = qrCodeEncoder.encodeAsBitmap();
+                                }
+                                catch (WriterException e) {
+                                    e.printStackTrace();
+                                }
+                                showQR.setImageBitmap(bitmap);
+
+                                TextView showText = new TextView(UTXOActivity.this);
+                                showText.setText(strPrivKey);
+                                showText.setTextIsSelectable(true);
+                                showText.setPadding(40, 10, 40, 10);
+                                showText.setTextSize(18.0f);
+
+                                LinearLayout privkeyLayout = new LinearLayout(UTXOActivity.this);
+                                privkeyLayout.setOrientation(LinearLayout.VERTICAL);
+                                privkeyLayout.addView(showQR);
+                                privkeyLayout.addView(showText);
+
                                 new AlertDialog.Builder(UTXOActivity.this)
                                         .setTitle(R.string.app_name)
-                                        .setView(showText)
+                                        .setView(privkeyLayout)
                                         .setCancelable(false)
-                                        .setPositiveButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                String addr = data.get(position).addr;
-                                                ECKey ecKey = SendFactory.getPrivKey(addr);
-
-                                                String msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
-                                                msg += ":";
-                                                msg += addr;
-                                                msg += ", ";
-                                                msg += "pubkey:";
-                                                msg += ecKey.getPublicKeyAsHex();
-
-                                                if(ecKey != null)    {
-                                                    MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                                            UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                                            msg,
-                                                            ecKey);
-                                                }
-
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 ;
                                             }
-                                        })
-                                        .show();
-
-                                }
-
+                                        }).show();
                             }
-                        });
+
+                            break;
+
+                        }
+                        return true;
                     }
-                    else    {
-                        builder.setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, int whichButton) {
+                });
+                menu.inflate (R.menu.utxo_menu);
 
-                                String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr);
-
-                                if(ecKey != null)    {
-                                    MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                            UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                            UTXOActivity.this.getString(R.string.utxo_sign_text2),
-                                            ecKey);
-                                }
-
-                            }
-                        });
-                    }
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
-
+                String addr = data.get(position).addr;
+                if(!Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                    menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
                 }
+
+                if(!(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) && data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD))    {
+                    menu.getMenu().findItem(R.id.item_do_not_spend).setVisible(false);
+                }
+
+                menu.show();
 
             }
         };
+
         listView.setOnItemClickListener(listener);
 
     }
@@ -308,12 +323,7 @@ public class UTXOActivity extends Activity {
 
             View view = null;
 
-            if(convertView == null) {
-                view = inflater.inflate(R.layout.simple_list_item3, parent, false);
-            }
-            else {
-                view = convertView;
-            }
+            view = inflater.inflate(R.layout.simple_list_item3, parent, false);
 
             TextView text1 = (TextView) view.findViewById(R.id.text1);
             TextView text2 = (TextView) view.findViewById(R.id.text2);
@@ -342,18 +352,21 @@ public class UTXOActivity extends Activity {
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+            if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr = " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            else if(BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
+            else if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
                 descr = " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+            else    {
+                ;
+            }
             if(descr.length() > 0)    {
-                text3.append(word);
+                text3.setText(word);
             }
 
             return view;

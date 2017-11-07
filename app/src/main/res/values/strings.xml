@@ -445,5 +445,13 @@
     <string name="segwit">SEGWIT</string>
     <string name="p2pkh">BIP44</string>
     <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
+    <string name="dusting_unblock">Unlock</string>
+    <string name="dusting_unblock_ignore">Unlock and Ignore</string>
+
+    <string name="options_do_not_spend">Unblock UTXO</string>
+    <string name="options_sign_a_message">Sign a message</string>
+    <string name="options_display_redeem_script">Display redeem script</string>
+    <string name="options_view_tx">View transaction</string>
+    <string name="options_display_privkey">Display private key</string>
 
 </resources>
