@@ -308,7 +308,6 @@ public class UTXOActivity extends Activity {
 
             View view = null;
 
-            int type = getItemViewType(position);
             if(convertView == null) {
                 view = inflater.inflate(R.layout.simple_list_item3, parent, false);
             }
@@ -330,34 +329,31 @@ public class UTXOActivity extends Activity {
             String addr = data.get(position).addr;
             text2.setText(addr);
 
-            String descr = null;
+            String descr = "";
             Spannable word = null;
-            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
-                descr = UTXOActivity.this.getText(R.string.segwit).toString();
-                word = new SpannableString(descr);
-                word.setSpan(new ForegroundColorSpan(Color.GREEN), 0, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            else    {
-                descr = UTXOActivity.this.getText(R.string.p2pkh).toString();
-                word = new SpannableString(descr);
-                word.setSpan(new ForegroundColorSpan(Color.BLUE), 0, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            text3.setText(word);
-
-            String descr2 = "";
-            Spannable word2 = null;
             if(isBIP47(addr))    {
-                descr2 = " " + UTXOActivity.this.getText(R.string.paycode).toString();
-                word2 = new SpannableString(descr2);
-                word2.setSpan(new ForegroundColorSpan(Color.MAGENTA), 1, descr2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(addr);
+                if(pcode != null && pcode.length() > 0)    {
+                    descr = " " + BIP47Meta.getInstance().getDisplayLabel(pcode);
+                }
+                else    {
+                    descr = " " + UTXOActivity.this.getText(R.string.paycode).toString();
+                }
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
-                descr2 = " " + UTXOActivity.this.getText(R.string.dust);
-                word2 = new SpannableString(descr2);
-                word2.setSpan(new ForegroundColorSpan(Color.GRAY), 1, descr2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                descr = " " + UTXOActivity.this.getText(R.string.do_not_spend);
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            if(descr2.length() > 0)    {
-                text3.append(word2);
+            else if(BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
+                descr = " " + UTXOActivity.this.getText(R.string.dust);
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if(descr.length() > 0)    {
+                text3.append(word);
             }
 
             return view;

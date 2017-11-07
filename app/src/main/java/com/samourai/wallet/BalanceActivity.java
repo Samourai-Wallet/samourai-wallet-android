@@ -1662,7 +1662,7 @@ public class BalanceActivity extends Activity {
                             !BlockedUTXO.getInstance().containsNotDusted(hash, idx))    {
 
                         String message = BalanceActivity.this.getString(R.string.dusting_attempt);
-                        message += "\n";
+                        message += "\n\n";
                         message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
                         message += " ";
                         message += Coin.valueOf(amount).toPlainString();
