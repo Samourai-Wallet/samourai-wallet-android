@@ -478,25 +478,6 @@ public class SendActivity extends Activity {
             }
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
-/*
-        cbSpendType = (CheckBox)findViewById(R.id.simple);
-        cbSpendType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                CheckBox cb = (CheckBox)v;
-
-                if(swRicochet.isChecked()) {
-                    SPEND_TYPE = SPEND_RICOCHET;
-                }
-                else    {
-                    SPEND_TYPE = cb.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
-                }
-
-            }
-
-        });
-*/
 
         SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BIP126, true) ? SPEND_BIP126 : SPEND_SIMPLE;
         if(SPEND_TYPE > SPEND_BIP126)    {
@@ -511,40 +492,6 @@ public class SendActivity extends Activity {
 
                 if(isChecked)    {
                     SPEND_TYPE = SPEND_RICOCHET;
-
-                    if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM) {
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.ricochet_fee_via_bip47)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-//                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
-//                                        startActivity(intent);
-
-                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
-                                        intent.putExtra("pcode", BIP47Meta.strSamouraiDonationPCode);
-                                        intent.putExtra("meta", BIP47Meta.strSamouraiDonationMeta);
-                                        startActivity(intent);
-
-                                    }
-
-                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
                 }
                 else    {
                     SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
