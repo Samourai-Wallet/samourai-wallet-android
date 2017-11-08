@@ -1533,6 +1533,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
             jsonObject.getJSONObject("wallet").remove("seed");
             jsonObject.getJSONObject("wallet").remove("passphrase");
 
+            if(jsonObject.has("meta") && jsonObject.getJSONObject("meta").has("trusted_node"))    {
+                jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("password");
+                jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("node");
+                jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("port");
+                jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("user");
+            }
+
             Intent email = new Intent(Intent.ACTION_SEND);
             email.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@samouraiwallet.com" } );
             email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet support backup");
