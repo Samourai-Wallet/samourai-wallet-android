@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_link_white_24dp"
+            fab:fab_icon="@drawable/ic_paynym_white_24dp"
             fab:fab_colorNormal="#FF673ab7"
             fab:fab_colorPressed="#FF512da8"
             fab:fab_title="@string/action_bip47"
