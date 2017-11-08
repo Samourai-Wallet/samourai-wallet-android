@@ -15,6 +15,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,7 +84,7 @@ public class UTXOActivity extends Activity {
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                PopupMenu menu = new PopupMenu (UTXOActivity.this, view);
+                PopupMenu menu = new PopupMenu (UTXOActivity.this, view, Gravity.RIGHT);
                 menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()   {
                     @Override
                     public boolean onMenuItemClick (MenuItem item)  {
