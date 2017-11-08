@@ -447,6 +447,10 @@
     <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
     <string name="dusting_unblock">Unblock</string>
     <string name="dusting_unblock_ignore">Unblock and Ignore</string>
+    <string name="mark_spend">Mark spendable</string>
+    <string name="mark_do_not_spend">Mark do-not-spend</string>
+    <string name="mark_utxo_spend">Make this unspent output spendable?</string>
+    <string name="mark_utxo_do_not_spend">Make this unspent output unspendable?</string>
 
     <string name="options_do_not_spend">Unblock UTXO</string>
     <string name="options_sign_a_message">Sign a message</string>

@@ -3,7 +3,7 @@
     <item
         android:id="@+id/item_do_not_spend"
         android:showAsAction="never"
-        android:title="@string/options_do_not_spend"
+        android:title="@string/mark_do_not_spend"
         android:visible="true"/>
     <item
         android:id="@+id/item_sign"

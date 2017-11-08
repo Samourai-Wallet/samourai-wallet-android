@@ -110,7 +110,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_do_not_spend:
                             {
 
-                                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                                if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
                                     builder.setTitle(R.string.dusting_tx);
@@ -128,6 +128,52 @@ public class UTXOActivity extends Activity {
 
                                             BlockedUTXO.getInstance().addNotDusted(data.get(position).hash, data.get(position).idx);
 
+                                        }
+                                    });
+
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }
+                                else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
+                                    builder.setTitle(R.string.mark_spend);
+                                    builder.setMessage(R.string.mark_utxo_spend);
+                                    builder.setCancelable(true);
+                                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
+
+                                        }
+                                    });
+                                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    });
+
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }
+                                else    {
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
+                                    builder.setTitle(R.string.mark_do_not_spend);
+                                    builder.setMessage(R.string.mark_utxo_do_not_spend);
+                                    builder.setCancelable(true);
+                                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                            BlockedUTXO.getInstance().add(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+
+                                        }
+                                    });
+                                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+                                            ;
                                         }
                                     });
 
@@ -268,6 +314,13 @@ public class UTXOActivity extends Activity {
                 });
                 menu.inflate (R.menu.utxo_menu);
 
+                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                    menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
+                }
+                else    {
+                    menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_do_not_spend);
+                }
+
                 String addr = data.get(position).addr;
                 if(!Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                     menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
@@ -361,6 +414,11 @@ public class UTXOActivity extends Activity {
                 descr = " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                descr = " " + UTXOActivity.this.getText(R.string.do_not_spend);
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             else    {
                 ;
