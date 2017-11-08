@@ -55,9 +55,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_send_plane"
-            fab:fab_colorNormal="#FFb34d5e"
-            fab:fab_colorPressed="#FF873a47"
+            fab:fab_icon="@drawable/ic_samourai_send_24dp"
+            fab:fab_colorNormal="#e91e63"
+            fab:fab_colorPressed="#c2185b"
             fab:fab_title="@string/send"
             />
 
@@ -66,9 +66,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_receive_qr"
-            fab:fab_colorNormal="#FF51a66b"
-            fab:fab_colorPressed="#FF448b5a"
+            fab:fab_icon="@drawable/ic_samourai_deposit_24dp"
+            fab:fab_colorNormal="#00bfa5"
+            fab:fab_colorPressed="#009688"
             fab:fab_title="@string/receive"
             />
 
