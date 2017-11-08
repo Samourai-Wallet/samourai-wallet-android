@@ -9,8 +9,8 @@ public class BlockExplorerUtil {
     private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://uasf-explorer.satoshiportal.com/address/", "http://srv1.yogh.io/#addr:id:", "https://live.blockcypher.com/btc/address/" };
 
     private static CharSequence[] tBlockExplorers = { "Smartbit", "BlockCypher" };
-    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/bitcoin-test/tx/" };
-    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/bitcoin-test/address/" };
+    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/btc-testnet/tx/" };
+    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/btc-testnet/address/" };
 
     private static BlockExplorerUtil instance = null;
 
