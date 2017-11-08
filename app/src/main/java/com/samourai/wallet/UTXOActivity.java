@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -76,26 +77,7 @@ public class UTXOActivity extends Activity {
 
         listView = (ListView)findViewById(R.id.list);
 
-        data = new ArrayList<DisplayData>();
-        doNotSpend = new ArrayList<DisplayData>();
-        for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
-                DisplayData displayData = new DisplayData();
-                displayData.addr = outpoint.getAddress();
-                displayData.amount = outpoint.getValue().longValue();
-                displayData.hash = outpoint.getTxHash().toString();
-                displayData.idx = outpoint.getTxOutputN();
-                if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
-                    doNotSpend.add(displayData);
-                }
-                else    {
-                    data.add(displayData);
-                }
-            }
-        }
-        data.addAll(doNotSpend);
-
+        update(false);
         adapter = new UTXOAdapter();
         listView.setAdapter(adapter);
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
@@ -121,12 +103,16 @@ public class UTXOActivity extends Activity {
 
                                             BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
 
+                                            update(true);
+
                                         }
                                     });
                                     builder.setNegativeButton(R.string.dusting_unblock_ignore, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                                             BlockedUTXO.getInstance().addNotDusted(data.get(position).hash, data.get(position).idx);
+
+                                            update(true);
 
                                         }
                                     });
@@ -145,6 +131,8 @@ public class UTXOActivity extends Activity {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                                             BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
+
+                                            update(true);
 
                                         }
                                     });
@@ -168,6 +156,8 @@ public class UTXOActivity extends Activity {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                                             BlockedUTXO.getInstance().add(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+
+                                            update(true);
 
                                         }
                                     });
@@ -326,10 +316,6 @@ public class UTXOActivity extends Activity {
                     menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
                 }
 
-                if(!(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) && data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD))    {
-                    menu.getMenu().findItem(R.id.item_do_not_spend).setVisible(false);
-                }
-
                 menu.show();
 
             }
@@ -345,6 +331,43 @@ public class UTXOActivity extends Activity {
         super.onResume();
 
         AppUtil.getInstance(UTXOActivity.this).checkTimeOut();
+
+    }
+
+    private void update(boolean broadcast)   {
+
+        data = new ArrayList<DisplayData>();
+        doNotSpend = new ArrayList<DisplayData>();
+
+        for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
+            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
+                DisplayData displayData = new DisplayData();
+                displayData.addr = outpoint.getAddress();
+                displayData.amount = outpoint.getValue().longValue();
+                displayData.hash = outpoint.getTxHash().toString();
+                displayData.idx = outpoint.getTxOutputN();
+                if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
+                    doNotSpend.add(displayData);
+                }
+                else    {
+                    data.add(displayData);
+                }
+            }
+        }
+
+        data.addAll(doNotSpend);
+
+        if(adapter != null)    {
+            adapter.notifyDataSetInvalidated();
+        }
+
+        if(broadcast)    {
+            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+            intent.putExtra("notifTx", false);
+            intent.putExtra("fetch", true);
+            LocalBroadcastManager.getInstance(UTXOActivity.this).sendBroadcast(intent);
+        }
 
     }
 
