@@ -99,16 +99,16 @@ public class UTXOActivity extends Activity {
                                     builder.setTitle(R.string.dusting_tx);
                                     builder.setMessage(R.string.dusting_tx_unblock);
                                     builder.setCancelable(true);
-                                    builder.setPositiveButton(R.string.dusting_unblock, new DialogInterface.OnClickListener() {
+                                    builder.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
-
-                                            update(true);
+//                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
+//                                            update(true);
+                                            ;
 
                                         }
                                     });
-                                    builder.setNegativeButton(R.string.dusting_unblock_ignore, new DialogInterface.OnClickListener() {
+                                    builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                                             BlockedUTXO.getInstance().addNotDusted(data.get(position).hash, data.get(position).idx);
