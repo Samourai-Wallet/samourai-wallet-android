@@ -89,6 +89,8 @@
     <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy raw signed transaction to the clipboard.</string>
     <string name="options_segwit">Receive to segwit addresses</string>
     <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
+    <string name="options_broadcast_hex">Broadcast transaction hex</string>
+    <string name="options_broadcast_hex2">Broadcast signed transaction supplied in hex format.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -366,6 +368,7 @@
     <string name="utxo_sign">Sign message</string>
     <string name="utxo_sign_text1">Sign message using this private key?</string>
     <string name="utxo_sign_text2">Signed using utxo address.</string>
+    <string name="utxo_sign_text3">Signed using utxo address.</string>
 
     <string name="recovery_checkup">Recovery Checkup</string>
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
@@ -425,6 +428,30 @@
 
     <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
-    <string name="redeem_script">Redeem script</string>
+    <string name="tx_hex">Transaction hex</string>
+    <string name="enter_tx_hex">Enter transaction in hex format</string>
+    <string name="broadcast">Broadcast transaction</string>
+    <string name="redeem_script">Redeem script/Sign</string>
+
+    <string name="dusting_tx">DUST TRANSACTION</string>
+    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\n\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
+    <string name="dusting_attempt_amount">Amount:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Ignore</string>
+    <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">DUST</string>
+    <string name="do_not_spend">DUST - Do Not Spend</string>
+    <string name="segwit">SEGWIT</string>
+    <string name="p2pkh">BIP44</string>
+    <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
+    <string name="dusting_unblock">Unblock</string>
+    <string name="dusting_unblock_ignore">Unblock and Ignore</string>
+
+    <string name="options_do_not_spend">Unblock UTXO</string>
+    <string name="options_sign_a_message">Sign a message</string>
+    <string name="options_display_redeem_script">Display redeem script</string>
+    <string name="options_view_tx">View transaction</string>
+    <string name="options_display_privkey">Display private key</string>
 
 </resources>

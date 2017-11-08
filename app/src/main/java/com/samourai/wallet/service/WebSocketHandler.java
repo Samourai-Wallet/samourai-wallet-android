@@ -162,7 +162,6 @@ public class WebSocketHandler {
 
                 mConnection = new WebSocketFactory()
                         .createSocket(SamouraiWallet.getInstance().isTestNet() ? "wss://api.samourai.io/test/v2/inv" : "wss://api.samourai.io/v2/inv")
-//                        .addHeader("Origin", "https://blockchain.info").recreate()
                         .addListener(new WebSocketAdapter() {
 
                             @Override
@@ -321,7 +320,7 @@ public class WebSocketHandler {
                                                 }
                                                 else if(outObj.has("addr"))   {
                                                     if(outObj.has("xpub") && outObj.getJSONObject("xpub").has("path") && outObj.getJSONObject("xpub").getString("path").startsWith("M/1/"))    {
-                                                        ;
+                                                        return;
                                                     }
                                                     else    {
                                                         total_value += value;

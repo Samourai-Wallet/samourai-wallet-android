@@ -17,6 +17,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
 
@@ -86,6 +87,7 @@ public class AppUtil {
         APIFactory.getInstance(context).setXpubBalance(0L);
         APIFactory.getInstance(context).reset();
 		PrefsUtil.getInstance(context).clear();
+        BlockedUTXO.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
 	}
 

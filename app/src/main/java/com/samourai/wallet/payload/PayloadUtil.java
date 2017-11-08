@@ -223,6 +223,7 @@ public class PayloadUtil	{
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
+            meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
@@ -231,7 +232,7 @@ public class PayloadUtil	{
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
-            meta.put("blocked_utxo", BlockedUTXO.getInstance().toJSON());
+            meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
 
             meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
@@ -382,6 +383,11 @@ public class PayloadUtil	{
                     editor.putBoolean("bip126", meta.getInt("spend_type") == SendActivity.SPEND_BIP126 ? true : false);
                     editor.commit();
                 }
+                if(meta.has("use_bip126")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BIP126, meta.getBoolean("use_bip126"));
+                    editor.putBoolean("bip126", meta.getBoolean("use_bip126"));
+                    editor.commit();
+                }
                 if(meta.has("rbf_opt_in")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.RBF_OPT_IN, meta.getBoolean("rbf_opt_in"));
                     editor.putBoolean("rbf", meta.getBoolean("rbf_opt_in") ? true : false);
@@ -419,8 +425,8 @@ public class PayloadUtil	{
                 if(meta.has("tor")) {
                     TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
-                if(meta.has("blocked_utxo")) {
-                    BlockedUTXO.getInstance().fromJSON((JSONArray) meta.get("blocked_utxo"));
+                if(meta.has("blocked_utxos")) {
+                    BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
 
                 if(meta.has("units")) {

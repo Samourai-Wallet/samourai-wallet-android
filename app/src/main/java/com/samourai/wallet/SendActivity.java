@@ -69,6 +69,7 @@ import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -497,7 +498,7 @@ public class SendActivity extends Activity {
         });
 */
 
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BIP126, true) ? SPEND_BIP126 : SPEND_SIMPLE;
         if(SPEND_TYPE > SPEND_BIP126)    {
             SPEND_TYPE = SPEND_BIP126;
             PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
@@ -671,7 +672,29 @@ public class SendActivity extends Activity {
                 }
 
                 // get all UTXO
-                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+//                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                List<UTXO> utxos = null;
+                // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
+                long neededAmount = 0L;
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
+                }
+                else    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
+                }
+                neededAmount += amount;
+                neededAmount += SamouraiWallet.bDust.longValue();
+
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+                }
+                else if(UTXOFactory.getInstance().getTotalP2PKH() > neededAmount)   {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+                }
+                else    {
+                    utxos = APIFactory.getInstance(SendActivity.this).getUtxos(true);
+                }
+
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;
@@ -1662,7 +1685,7 @@ public class SendActivity extends Activity {
 
                         }
 
-                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
+                        if(customValue < 3 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {
