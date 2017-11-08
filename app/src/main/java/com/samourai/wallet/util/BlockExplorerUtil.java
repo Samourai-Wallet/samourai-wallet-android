@@ -4,13 +4,13 @@ import com.samourai.wallet.SamouraiWallet;
 
 public class BlockExplorerUtil {
 
-    private static CharSequence[] blockExplorers = { "Smartbit", "UASF Explorer", "Blockchain Reader (Yogh)" };
-    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "https://uasf-explorer.satoshiportal.com/tx/", "http://srv1.yogh.io/#tx:id:" };
-    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://uasf-explorer.satoshiportal.com/address/", "http://srv1.yogh.io/#addr:id:" };
+    private static CharSequence[] blockExplorers = { "Smartbit", "UASF Explorer", "Blockchain Reader (Yogh)", "BlockCypher" };
+    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "https://uasf-explorer.satoshiportal.com/tx/", "http://srv1.yogh.io/#tx:id:", "https://live.blockcypher.com/btc/tx/" };
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "https://uasf-explorer.satoshiportal.com/address/", "http://srv1.yogh.io/#addr:id:", "https://live.blockcypher.com/btc/address/" };
 
-    private static CharSequence[] tBlockExplorers = { "Smartbit" };
-    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/" };
-    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/" };
+    private static CharSequence[] tBlockExplorers = { "Smartbit", "BlockCypher" };
+    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/bitcoin-test/tx/" };
+    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/bitcoin-test/address/" };
 
     private static BlockExplorerUtil instance = null;
 
