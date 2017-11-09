@@ -111,6 +111,7 @@ public class UTXOActivity extends Activity {
                                     builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
+                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
                                             BlockedUTXO.getInstance().addNotDusted(data.get(position).hash, data.get(position).idx);
 
                                             update(true);
