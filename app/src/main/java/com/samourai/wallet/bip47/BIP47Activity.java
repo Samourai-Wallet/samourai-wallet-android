@@ -824,7 +824,7 @@ public class BIP47Activity extends Activity {
         //
         // get unspents
         //
-        List<UTXO> utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos();
+        List<UTXO> utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
 //        long change = 0L;

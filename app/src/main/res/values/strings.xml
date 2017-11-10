@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.96.03</string>
+    <string name="version_name">0.97.01</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -13,7 +13,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_sweep">Sweep private key</string>
-    <string name="action_bip47">Payment codes</string>
+    <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
 
@@ -30,7 +30,7 @@
     <string name="options_cat_other">About</string>
 
     <string name="options_mnemonic">Show mnemonic</string>
-    <string name="options_mnemonic2">Show mnemonic for this wallet.</string>
+    <string name="options_mnemonic2">Show 12-word seed for this wallet.</string>
     <string name="options_xpub">Show BIP44 XPUB</string>
     <string name="options_xpub2">Show extended public key for BIP44 account.</string>
     <string name="options_xpub49">Show Segwit XPUB</string>
@@ -61,7 +61,7 @@
     <string name="options_Tor2">Launch Orbot (Tor).</string>
     <string name="options_export">Export wallet backup</string>
     <string name="options_change_pin">Change PIN</string>
-    <string name="options_change_pin2">Define a new PIN.</string>
+    <string name="options_change_pin2">Define a new PIN code; used to unlock your wallet.</string>
     <string name="options_remote_pin">Stealth launch and remote PIN</string>
     <string name="options_remote_pin2">Define alternative PIN for stealth launch and remote functions.</string>
     <string name="options_autosave_backup">Autosave backup to device storage</string>
@@ -71,24 +71,26 @@
     <string name="options_bip126">Spend using BIP126</string>
     <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
-    <string name="options_trusted_node">Trusted node</string>
-    <string name="options_trusted_node2">Specify your own trusted node for broadcasting transactions.</string>
+    <string name="options_trusted_node">Set trusted node</string>
+    <string name="options_trusted_node2">Specify your own bitcoin node to broadcast transactions.</string>
     <string name="options_use_trusted_node">Use trusted node</string>
-    <string name="options_use_trusted_node2">Use trusted node for broadcasting transactions.</string>
-    <string name="options_rbf0">Spend using RBF (replace-by-fee)</string>
-    <string name="options_rbf0_2">Spends will use RBF (replace-by-fee) to enable fee bumping.</string>
+    <string name="options_use_trusted_node2">Broadcast transactions from your own node.</string>
+    <string name="options_rbf0">Spend using RBF</string>
+    <string name="options_rbf0_2">Spends will use replace-by-fee to enable fee bumping.</string>
     <string name="options_troubleshoot">Troubleshoot</string>
     <string name="options_troubleshoot2">Verify wallet access and backup support.</string>
     <string name="options_passphrase_test">Passphrase/backup test</string>
     <string name="options_passphrase_test2">Verify wallet access and backup support.</string>
     <string name="options_send_backup_to_support">Send backup to tech support</string>
     <string name="options_send_backup_to_support2">Send wallet backup to tech support. Does not contain private key info.</string>
-    <string name="options_fee_provider">Fee provider</string>
-    <string name="options_fee_provider2">Select fee provider: 21.co or Samourai (bitcoind)</string>
+    <string name="options_fee_provider">Fee Estimation Source</string>
+    <string name="options_fee_provider2">Select your preferred transaction fee estimation provider.</string>
     <string name="options_broadcast_on">Broadcast transactions</string>
-    <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy/paste raw signed transaction.</string>
+    <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy raw signed transaction to the clipboard.</string>
     <string name="options_segwit">Receive to segwit addresses</string>
     <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
+    <string name="options_broadcast_hex">Broadcast transaction hex</string>
+    <string name="options_broadcast_hex2">Broadcast signed transaction supplied in hex format.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -366,6 +368,7 @@
     <string name="utxo_sign">Sign message</string>
     <string name="utxo_sign_text1">Sign message using this private key?</string>
     <string name="utxo_sign_text2">Signed using utxo address.</string>
+    <string name="utxo_sign_text3">Signed using utxo address.</string>
 
     <string name="recovery_checkup">Recovery Checkup</string>
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
@@ -425,6 +428,34 @@
 
     <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
-    <string name="redeem_script">Redeem script</string>
+    <string name="tx_hex">Transaction hex</string>
+    <string name="enter_tx_hex">Enter transaction in hex format</string>
+    <string name="broadcast">Broadcast transaction</string>
+    <string name="redeem_script">Redeem script/Sign</string>
+
+    <string name="dusting_tx">DUST TRANSACTION</string>
+    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\n\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
+    <string name="dusting_attempt_amount">Amount:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Ignore</string>
+    <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">DUST</string>
+    <string name="do_not_spend">Do Not Spend</string>
+    <string name="segwit">SEGWIT</string>
+    <string name="p2pkh">BIP44</string>
+    <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
+    <string name="dusting_unblock">Unblock</string>
+    <string name="dusting_unblock_ignore">Unblock and Ignore</string>
+    <string name="mark_spend">Mark spendable</string>
+    <string name="mark_do_not_spend">Mark do-not-spend</string>
+    <string name="mark_utxo_spend">Make this unspent output spendable?</string>
+    <string name="mark_utxo_do_not_spend">Make this unspent output unspendable?</string>
+
+    <string name="options_do_not_spend">Unblock UTXO</string>
+    <string name="options_sign_a_message">Sign a message</string>
+    <string name="options_display_redeem_script">Display redeem script</string>
+    <string name="options_view_tx">View transaction</string>
+    <string name="options_display_privkey">Display private key</string>
 
 </resources>

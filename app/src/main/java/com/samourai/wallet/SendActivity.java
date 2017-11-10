@@ -69,6 +69,7 @@ import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -477,27 +478,8 @@ public class SendActivity extends Activity {
             }
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
-/*
-        cbSpendType = (CheckBox)findViewById(R.id.simple);
-        cbSpendType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                CheckBox cb = (CheckBox)v;
-
-                if(swRicochet.isChecked()) {
-                    SPEND_TYPE = SPEND_RICOCHET;
-                }
-                else    {
-                    SPEND_TYPE = cb.isChecked() ? SPEND_SIMPLE : SPEND_BIP126;
-                }
-
-            }
-
-        });
-*/
-
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BIP126, true) ? SPEND_BIP126 : SPEND_SIMPLE;
         if(SPEND_TYPE > SPEND_BIP126)    {
             SPEND_TYPE = SPEND_BIP126;
             PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
@@ -510,40 +492,6 @@ public class SendActivity extends Activity {
 
                 if(isChecked)    {
                     SPEND_TYPE = SPEND_RICOCHET;
-
-                    if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) != BIP47Meta.STATUS_SENT_CFM) {
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.ricochet_fee_via_bip47)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-//                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
-//                                        startActivity(intent);
-
-                                        Intent intent = new Intent(SendActivity.this, BIP47Activity.class);
-                                        intent.putExtra("pcode", BIP47Meta.strSamouraiDonationPCode);
-                                        intent.putExtra("meta", BIP47Meta.strSamouraiDonationMeta);
-                                        startActivity(intent);
-
-                                    }
-
-                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
                 }
                 else    {
                     SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
@@ -671,7 +619,29 @@ public class SendActivity extends Activity {
                 }
 
                 // get all UTXO
-                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+//                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
+                List<UTXO> utxos = null;
+                // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
+                long neededAmount = 0L;
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
+                }
+                else    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
+                }
+                neededAmount += amount;
+                neededAmount += SamouraiWallet.bDust.longValue();
+
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+                }
+                else if(UTXOFactory.getInstance().getTotalP2PKH() > neededAmount)   {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+                }
+                else    {
+                    utxos = APIFactory.getInstance(SendActivity.this).getUtxos(true);
+                }
+
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;
@@ -1662,7 +1632,7 @@ public class SendActivity extends Activity {
 
                         }
 
-                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
+                        if(customValue < 3 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {

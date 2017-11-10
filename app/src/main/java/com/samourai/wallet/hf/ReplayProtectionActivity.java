@@ -139,7 +139,7 @@ public class ReplayProtectionActivity extends Activity {
 
                     long balance = 0L;
                     List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
-                    List<UTXO> utxos = APIFactory.getInstance(ReplayProtectionActivity.this).getUtxos();
+                    List<UTXO> utxos = APIFactory.getInstance(ReplayProtectionActivity.this).getUtxos(true);
                     for(UTXO utxo : utxos)   {
                         balance += utxo.getValue();
                         outpoints.addAll(utxo.getOutpoints());

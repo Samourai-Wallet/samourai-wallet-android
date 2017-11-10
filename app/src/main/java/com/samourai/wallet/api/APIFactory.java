@@ -24,6 +24,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
@@ -120,6 +121,8 @@ public class APIFactory	{
         unspentAccounts = new HashMap<String, Integer>();
         unspentBIP49 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
+
+        UTXOFactory.getInstance().clear();
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
@@ -156,7 +159,7 @@ public class APIFactory	{
                 }
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
-                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance);
+                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -365,9 +368,6 @@ public class APIFactory	{
                         JSONObject outObj = null;
                         for(int j = 0; j < outArray.length(); j++)  {
                             outObj = (JSONObject)outArray.get(j);
-                            if(!BlockedUTXO.getInstance().contains(hash, outObj.getInt("n")) && amount > 0L && outObj.getLong("value") < BlockedUTXO.BLOCKED_UTXO_THRESHOLD)    {
-                                BlockedUTXO.getInstance().addDusted(hash);
-                            }
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = (String)xpubObj.get("m");
@@ -904,6 +904,8 @@ public class APIFactory	{
                     return false;
                 }
 
+                List<String> seenOutputs = new ArrayList<String>();
+
                 for (int i = 0; i < utxoArray.length(); i++) {
 
                     JSONObject outDict = utxoArray.getJSONObject(i);
@@ -915,6 +917,8 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+
+                    seenOutputs.add(txHash.toString() + "-" + txOutputN);
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
@@ -947,11 +951,27 @@ public class APIFactory	{
                             utxos.put(script, utxo);
                         }
 
+                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                        }
+                        else    {
+                            UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                        }
+
                     }
                     catch(Exception e) {
                         ;
                     }
 
+                }
+
+                Log.d("APIFactory", "p2pkh total:" + UTXOFactory.getInstance().getTotalP2PKH());
+                Log.d("APIFactory", "p2sh-p2wpkh total:" + UTXOFactory.getInstance().getTotalP2SH_P2WPKH());
+
+                for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+                    if(!seenOutputs.contains(s))    {
+                        BlockedUTXO.getInstance().removeNotDusted(s);
+                    }
                 }
 
                 return true;
@@ -1464,12 +1484,28 @@ public class APIFactory	{
         return unspentBIP49;
     }
 
-    public List<UTXO> getUtxos() {
+    public List<UTXO> getUtxos(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
-        unspents.addAll(utxos.values());
-        return unspents;
 
+        if(filter)    {
+            for(String key : utxos.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxos.values());
+        }
+
+        return unspents;
     }
 
     public void setUtxos(HashMap<String, UTXO> utxos) {

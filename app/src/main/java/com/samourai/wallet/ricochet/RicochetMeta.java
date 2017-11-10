@@ -352,7 +352,7 @@ public class RicochetMeta {
 
     private Pair<List<UTXO>, BigInteger> getHop0UTXO(long spendAmount, int nbHops, long feePerHop) {
 
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos();
+        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
 
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;

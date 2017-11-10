@@ -73,6 +73,7 @@ import com.samourai.wallet.hf.ReplayProtectionWarningActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -90,6 +91,7 @@ import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -1626,6 +1628,7 @@ public class BalanceActivity extends Activity {
                 ;
             }
 */
+
             return "OK";
         }
 
@@ -1635,6 +1638,62 @@ public class BalanceActivity extends Activity {
             if(!dragged)    {
                 if(progress != null && progress.isShowing())    {
                     progress.dismiss();
+                }
+            }
+
+            List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
+            for(UTXO utxo : utxos)   {
+                List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                for(MyTransactionOutPoint out : outpoints)   {
+
+                    byte[] scriptBytes = out.getScriptBytes();
+                    String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
+                    if(path != null && path.startsWith("M/1/"))    {
+                        continue;
+                    }
+
+                    final String hash = out.getHash().toString();
+                    final int idx = out.getTxOutputN();
+                    final long amount = out.getValue().longValue();
+
+                    if(amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
+                            !BlockedUTXO.getInstance().contains(hash, idx) &&
+                            !BlockedUTXO.getInstance().containsNotDusted(hash, idx))    {
+
+                        String message = BalanceActivity.this.getString(R.string.dusting_attempt);
+                        message += "\n\n";
+                        message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
+                        message += " ";
+                        message += Coin.valueOf(amount).toPlainString();
+                        message += " BTC\n";
+                        message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
+                        message += " ";
+                        message += hash + "-" + idx;
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                .setTitle(R.string.dusting_tx)
+                                .setMessage(message)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        BlockedUTXO.getInstance().add(hash, idx, amount);
+
+                                    }
+                                }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
+
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+
                 }
             }
 
@@ -1721,7 +1780,7 @@ public class BalanceActivity extends Activity {
         @Override
         protected void onPreExecute() {
             handler = new Handler();
-            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(true);
         }
 
         @Override
@@ -2075,7 +2134,7 @@ public class BalanceActivity extends Activity {
         @Override
         protected void onPreExecute() {
             handler = new Handler();
-            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos();
+            utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(true);
             input_values = new HashMap<String,Long>();
         }
 

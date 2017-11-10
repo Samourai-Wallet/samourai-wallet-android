@@ -19,7 +19,7 @@
         android:showAsAction="always"
         />
     <item android:id="@+id/action_scan_qr"
-        android:icon="@drawable/ic_receive_qr"
+        android:icon="@drawable/ic_crop_free_white_24dp"
         android:visible="true"
         android:title=""
         android:showAsAction="always"
