@@ -83,13 +83,9 @@ public class AddressFactory {
                 addr = HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
                 if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
                     HD_WalletFactory.getInstance(context).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
-                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+//                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                 }
             }
-        }
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
         catch(IOException ioe)	{
             ioe.printStackTrace();
@@ -99,10 +95,16 @@ public class AddressFactory {
             mle.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
+        /*
+        catch(JSONException je)	{
+            je.printStackTrace();
+            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
         catch(DecryptionException de)	{
             de.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
+        */
 
         return addr;
 
@@ -114,7 +116,7 @@ public class AddressFactory {
         HD_Address addr = null;
         P2SH_P2WPKH p2shp2wpkh = null;
 
-        try	{
+//        try	{
             HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
 
             if(hdw != null)    {
@@ -123,10 +125,11 @@ public class AddressFactory {
                 p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                 if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
                     BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
-                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+//                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                 }
             }
-        }
+//        }
+        /*
         catch(JSONException je)	{
             je.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
@@ -143,6 +146,7 @@ public class AddressFactory {
             de.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
+        */
 
         return p2shp2wpkh;
 
