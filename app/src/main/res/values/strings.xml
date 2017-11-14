@@ -458,4 +458,6 @@
     <string name="options_view_tx">View transaction</string>
     <string name="options_display_privkey">Display private key</string>
 
+    <string name="do_not_repeat_sent_to">Chech box to not warn about repeat sends to this address.</string>
+
 </resources>
