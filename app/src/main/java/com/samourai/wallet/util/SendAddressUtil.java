@@ -24,14 +24,16 @@ public class SendAddressUtil {
     }
 
     public void add(String addr, boolean showAgain) {
-        sendAddresses.put(addr, showAgain);
+        if(addr.length() >= 12)    {
+            sendAddresses.put(addr.substring(0, 12), showAgain);
+        }
     }
 
     public int get(String addr) {
-        if(sendAddresses.get(addr) == null) {
+        if(addr.length() >= 12 && sendAddresses.get(addr.substring(0, 12)) == null) {
             return -1;
         }
-        else if (sendAddresses.get(addr) == true) {
+        else if(addr.length() >= 12 && sendAddresses.get(addr.substring(0, 12)) == true) {
             return 1;
         }
         else {
@@ -44,9 +46,11 @@ public class SendAddressUtil {
         JSONArray sent_tos = new JSONArray();
         for(String key : sendAddresses.keySet()) {
             JSONArray sent = new JSONArray();
-            sent.put(key);
-            sent.put(sendAddresses.get(key));
-            sent_tos.put(sent);
+            if(key.length() >= 12)    {
+                sent.put(key.substring(0, 12));
+                sent.put(sendAddresses.get(key));
+                sent_tos.put(sent);
+            }
         }
 
         return sent_tos;
