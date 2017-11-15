@@ -4,7 +4,10 @@ import android.util.Patterns;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.segwit.bech32.Bech32;
+import com.samourai.wallet.segwit.bech32.SegwitAddress;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
@@ -128,17 +131,63 @@ public class FormatsUtil {
 
 		boolean ret = false;
 		Address addr = null;
-		
-		try {
-			addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
-			if(addr != null) {
-				ret = true;
+
+		if((!SamouraiWallet.getInstance().isTestNet() && address.startsWith("bc") || (SamouraiWallet.getInstance().isTestNet() && address.startsWith("tb"))))	{
+
+			try	{
+				Pair<Byte, byte[]> pair = SegwitAddress.decode(address.substring(0, 2), address);
+				if(pair.getLeft() == null || pair.getRight() == null)	{
+					;
+				}
+				else	{
+					ret = true;
+				}
+			}
+			catch(Exception e)	{
+				;
+			}
+
+		}
+		else	{
+
+			try {
+				addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+				if(addr != null) {
+					ret = true;
+				}
+			}
+			catch(WrongNetworkException wne) {
+				ret = false;
+			}
+			catch(AddressFormatException afe) {
+				ret = false;
+			}
+
+		}
+
+		return ret;
+	}
+
+	public boolean isValidBech32(final String address) {
+
+		boolean ret = false;
+
+		try	{
+			Pair<String, byte[]> pair0 = Bech32.bech32Decode(address);
+			if(pair0.getLeft() == null || pair0.getRight() == null)	{
+				ret = false;
+			}
+			else	{
+				Pair<Byte, byte[]> pair1 = SegwitAddress.decode(address.substring(0, 2), address);
+				if(pair1.getLeft() == null || pair1.getRight() == null)	{
+					ret = false;
+				}
+				else	{
+					ret = true;
+				}
 			}
 		}
-		catch(WrongNetworkException wne) {
-			ret = false;
-		}
-		catch(AddressFormatException afe) {
+		catch(Exception e)	{
 			ret = false;
 		}
 

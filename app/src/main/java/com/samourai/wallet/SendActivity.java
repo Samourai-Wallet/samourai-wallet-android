@@ -100,11 +100,9 @@ import java.text.DecimalFormatSymbols;
 import net.sourceforge.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -595,7 +593,7 @@ public class SendActivity extends Activity {
                 final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
-                final boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+                final boolean isBIP49 = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
 
                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                 receivers.put(address, BigInteger.valueOf(amount));
@@ -623,7 +621,7 @@ public class SendActivity extends Activity {
                 List<UTXO> utxos = null;
                 // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
                 long neededAmount = 0L;
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
                     neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
                 }
                 else    {
@@ -632,7 +630,7 @@ public class SendActivity extends Activity {
                 neededAmount += amount;
                 neededAmount += SamouraiWallet.bDust.longValue();
 
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
+                if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
                 }
                 else if(UTXOFactory.getInstance().getTotalP2PKH() > neededAmount)   {
@@ -1098,14 +1096,19 @@ public class SendActivity extends Activity {
                                                 if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
-                                                        if(!isBIP49 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
-                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                        try {
+                                                            if(!isBIP49 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
+                                                                rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            }
+                                                            else if(isBIP49 && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
+                                                                rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            }
+                                                            else    {
+                                                                ;
+                                                            }
                                                         }
-                                                        else if(isBIP49 && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
-                                                            rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                        }
-                                                        else    {
-                                                            ;
+                                                        catch(NullPointerException npe) {
+                                                            ;   // test for bech32, skip for now as it's not a change address
                                                         }
                                                     }
 
