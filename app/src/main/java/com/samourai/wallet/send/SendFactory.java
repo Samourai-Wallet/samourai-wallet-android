@@ -16,18 +16,16 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.segwit.P2SH_P2WPKH;
-import com.samourai.wallet.segwit.bech32.SegwitAddress;
+import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -221,8 +219,8 @@ public class SendFactory	{
                 byte[] scriptPubKey = null;
 
                 try {
-                    Pair<Byte, byte[]> pair = SegwitAddress.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", toAddress);
-                    scriptPubKey = SegwitAddress.getScriptPubkey(pair.getLeft(), pair.getRight());
+                    Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", toAddress);
+                    scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
                 }
                 catch(Exception e) {
                     return null;
@@ -291,7 +289,7 @@ public class SendFactory	{
             String address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
 
-                final P2SH_P2WPKH p2shp2wpkh = new P2SH_P2WPKH(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                final SegwitAddress p2shp2wpkh = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                 System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
 //                final Script scriptPubKey = p2shp2wpkh.segWitOutputScript();
 //                System.out.println("scriptPubKey:" + Hex.toHexString(scriptPubKey.getProgram()));

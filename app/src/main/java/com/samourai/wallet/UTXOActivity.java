@@ -6,29 +6,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -36,7 +31,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -218,7 +213,7 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                P2SH_P2WPKH p2sh_p2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                SegwitAddress p2sh_p2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 if(ecKey != null && p2sh_p2wpkh != null) {
 

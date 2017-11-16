@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegwitAddress {
+public class Bech32Segwit {
 
     public static Pair<Byte, byte[]> decode(String hrp, String addr) throws Exception {
 

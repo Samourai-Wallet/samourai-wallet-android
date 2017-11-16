@@ -13,20 +13,20 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class P2SH_P2WPKH {
+public class SegwitAddress {
 
     private ECKey ecKey = null;
     private List<ECKey> keys = null;
     private NetworkParameters params = null;
 
-    private P2SH_P2WPKH()   { ; }
+    private SegwitAddress()   { ; }
 
-    public P2SH_P2WPKH(NetworkParameters params) {
+    public SegwitAddress(NetworkParameters params) {
         this.params = params;
         keys = new ArrayList<ECKey>();
     }
 
-    public P2SH_P2WPKH(ECKey ecKey, NetworkParameters params) {
+    public SegwitAddress(ECKey ecKey, NetworkParameters params) {
         this.ecKey = ecKey;
         this.params = params;
         keys = new ArrayList<ECKey>();
@@ -35,7 +35,7 @@ public class P2SH_P2WPKH {
     //
     // use only compressed public keys for SegWit
     //
-    public P2SH_P2WPKH(byte[] pubkey, NetworkParameters params) {
+    public SegwitAddress(byte[] pubkey, NetworkParameters params) {
         this.ecKey = ECKey.fromPublicOnly(pubkey);
         this.params = params;
         keys = new ArrayList<ECKey>();

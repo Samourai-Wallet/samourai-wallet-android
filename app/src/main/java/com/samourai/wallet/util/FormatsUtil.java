@@ -5,14 +5,13 @@ import android.util.Patterns;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.segwit.bech32.Bech32;
-import com.samourai.wallet.segwit.bech32.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.WrongNetworkException;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.bitcoinj.uri.BitcoinURIParseException;
 import org.bouncycastle.util.encoders.Hex;
@@ -136,7 +135,7 @@ public class FormatsUtil {
 				|| (SamouraiWallet.getInstance().isTestNet() && (address.startsWith("tb") || address.startsWith("TB")))))	{
 
 			try	{
-				Pair<Byte, byte[]> pair = SegwitAddress.decode(address.substring(0, 2), address);
+				Pair<Byte, byte[]> pair = Bech32Segwit.decode(address.substring(0, 2), address);
 				if(pair.getLeft() == null || pair.getRight() == null)	{
 					;
 				}
@@ -179,7 +178,7 @@ public class FormatsUtil {
 				ret = false;
 			}
 			else	{
-				Pair<Byte, byte[]> pair1 = SegwitAddress.decode(address.substring(0, 2), address);
+				Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(address.substring(0, 2), address);
 				if(pair1.getLeft() == null || pair1.getRight() == null)	{
 					ret = false;
 				}
