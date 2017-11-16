@@ -1,5 +1,8 @@
 package com.samourai.wallet.segwit;
 
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -67,6 +70,20 @@ public class SegwitAddress {
 
         return segWitAddress().toString();
 
+    }
+
+    public String getBech32AsString()    {
+
+        String address = null;
+
+        try {
+            address = Bech32Segwit.encode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", (byte)0x00, segWitRedeemScript().getProgram());
+        }
+        catch(Exception e) {
+            ;
+        }
+
+        return address;
     }
 
     public Script segWitOutputScript()    {
