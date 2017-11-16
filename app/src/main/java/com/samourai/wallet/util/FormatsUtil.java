@@ -132,7 +132,8 @@ public class FormatsUtil {
 		boolean ret = false;
 		Address addr = null;
 
-		if((!SamouraiWallet.getInstance().isTestNet() && address.startsWith("bc") || (SamouraiWallet.getInstance().isTestNet() && address.startsWith("tb"))))	{
+		if((!SamouraiWallet.getInstance().isTestNet() && (address.startsWith("bc") || address.startsWith("BC"))
+				|| (SamouraiWallet.getInstance().isTestNet() && (address.startsWith("tb") || address.startsWith("TB")))))	{
 
 			try	{
 				Pair<Byte, byte[]> pair = SegwitAddress.decode(address.substring(0, 2), address);
