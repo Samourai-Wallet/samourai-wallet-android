@@ -951,11 +951,15 @@ public class APIFactory	{
                             utxos.put(script, utxo);
                         }
 
-                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                            UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
-                        }
-                        else    {
-                            UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                        if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
+
+                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                                UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                            }
+                            else    {
+                                UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                            }
+
                         }
 
                     }
