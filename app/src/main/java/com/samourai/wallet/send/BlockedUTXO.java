@@ -45,6 +45,12 @@ public class BlockedUTXO {
         }
     }
 
+    public void remove(String id)   {
+        if(blockedUTXO != null && blockedUTXO.containsKey(id))  {
+            blockedUTXO.remove(id);
+        }
+    }
+
     public boolean contains(String hash, int idx)   {
         return blockedUTXO.containsKey(hash + "-" + Integer.toString(idx));
     }
@@ -99,8 +105,6 @@ public class BlockedUTXO {
         try {
             for(String id : blockedUTXO.keySet())   {
                 JSONObject obj = new JSONObject();
-                obj.put("id", id);
-                obj.put("value", blockedUTXO.get(id));
                 array.put(obj);
             }
             blockedObj.put("blocked", array);

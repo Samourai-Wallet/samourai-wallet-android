@@ -965,12 +965,14 @@ public class APIFactory	{
 
                 }
 
-                Log.d("APIFactory", "p2pkh total:" + UTXOFactory.getInstance().getTotalP2PKH());
-                Log.d("APIFactory", "p2sh-p2wpkh total:" + UTXOFactory.getInstance().getTotalP2SH_P2WPKH());
-
                 for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
                     if(!seenOutputs.contains(s))    {
                         BlockedUTXO.getInstance().removeNotDusted(s);
+                    }
+                }
+                for(String s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
+                    if(!seenOutputs.contains(s))    {
+                        BlockedUTXO.getInstance().remove(s);
                     }
                 }
 
