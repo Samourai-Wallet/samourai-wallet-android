@@ -105,6 +105,8 @@ public class BlockedUTXO {
         try {
             for(String id : blockedUTXO.keySet())   {
                 JSONObject obj = new JSONObject();
+                obj.put("id", id);
+                obj.put("value", blockedUTXO.get(id));
                 array.put(obj);
             }
             blockedObj.put("blocked", array);
