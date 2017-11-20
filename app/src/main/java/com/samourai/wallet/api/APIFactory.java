@@ -919,6 +919,7 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     seenOutputs.add(txHash.toString() + "-" + txOutputN);
+                    Log.d("APIFactory", "seen:" + txHash.toString() + "-" + txOutputN);
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
@@ -970,13 +971,17 @@ public class APIFactory	{
                 }
 
                 for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+                    Log.d("APIFactory", "not dusted:" + s);
                     if(!seenOutputs.contains(s))    {
                         BlockedUTXO.getInstance().removeNotDusted(s);
+                        Log.d("APIFactory", "not dusted removed:" + s);
                     }
                 }
                 for(String s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
+                    Log.d("APIFactory", "blocked:" + s);
                     if(!seenOutputs.contains(s))    {
                         BlockedUTXO.getInstance().remove(s);
+                        Log.d("APIFactory", "blocked removed:" + s);
                     }
                 }
 

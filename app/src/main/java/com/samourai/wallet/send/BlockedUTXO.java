@@ -9,12 +9,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BlockedUTXO {
 
     private static BlockedUTXO instance = null;
-    private static HashMap<String,Long> blockedUTXO = null;
-    private static List<String> notDustedUTXO = null;
+    private static ConcurrentHashMap<String,Long> blockedUTXO = null;
+    private static CopyOnWriteArrayList<String> notDustedUTXO = null;
 
     public final static long BLOCKED_UTXO_THRESHOLD = 1000L;
 
@@ -24,8 +26,8 @@ public class BlockedUTXO {
 
         if(instance == null) {
             instance = new BlockedUTXO();
-            blockedUTXO = new HashMap<String,Long>();
-            notDustedUTXO = new ArrayList<String>();
+            blockedUTXO = new ConcurrentHashMap<>();
+            notDustedUTXO = new CopyOnWriteArrayList<>();
         }
 
         return instance;
@@ -89,7 +91,7 @@ public class BlockedUTXO {
         return notDustedUTXO.contains(hash + "-" + Integer.toString(idx));
     }
 
-    public HashMap<String, Long> getBlockedUTXO() {
+    public ConcurrentHashMap<String, Long> getBlockedUTXO() {
         return blockedUTXO;
     }
 
