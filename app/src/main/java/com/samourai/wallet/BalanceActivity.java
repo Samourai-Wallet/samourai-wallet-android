@@ -88,6 +88,7 @@ import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -2322,7 +2323,7 @@ public class BalanceActivity extends Activity {
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
-                                boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
+                                boolean isBIP49 = FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) ||  Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
 
                                 String change_address = null;
                                 if(isBIP49)    {
