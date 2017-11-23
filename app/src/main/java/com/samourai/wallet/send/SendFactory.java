@@ -214,7 +214,7 @@ public class SendFactory	{
                 toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(Hex.decode(toAddress)).build();
                 output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(0L), toOutputScript.getProgram());
             }
-            else if(toAddress.startsWith("tb") || toAddress.startsWith("bc"))   {
+            else if(toAddress.toLowerCase().startsWith("tb") || toAddress.toLowerCase().startsWith("bc"))   {
 
                 byte[] scriptPubKey = null;
 
@@ -457,7 +457,7 @@ public class SendFactory	{
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
                 // spend address here
-                if(address.startsWith("tb") || address.startsWith("bc"))   {
+                if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
 
                     byte[] scriptPubKey = null;
 
@@ -722,7 +722,7 @@ public class SendFactory	{
 //        System.out.println("spend:" + spendAmount.toString());
         try {
             // spend address here
-            if(address.startsWith("tb") || address.startsWith("bc"))   {
+            if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
 
                 byte[] scriptPubKey = null;
 

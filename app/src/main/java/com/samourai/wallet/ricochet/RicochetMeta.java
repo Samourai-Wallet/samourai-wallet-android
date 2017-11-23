@@ -459,7 +459,7 @@ public class RicochetMeta {
 
             Script outputScript = null;
             TransactionOutput output = null;
-            if(destination.startsWith("tb") || destination.startsWith("bc"))   {
+            if(destination.toLowerCase().startsWith("tb") || destination.toLowerCase().startsWith("bc"))   {
 
                 byte[] bScriptPubKey = null;
 

@@ -131,8 +131,8 @@ public class FormatsUtil {
 		boolean ret = false;
 		Address addr = null;
 
-		if((!SamouraiWallet.getInstance().isTestNet() && (address.startsWith("bc") || address.startsWith("BC"))
-				|| (SamouraiWallet.getInstance().isTestNet() && (address.startsWith("tb") || address.startsWith("TB")))))	{
+		if((!SamouraiWallet.getInstance().isTestNet() && address.toLowerCase().startsWith("bc")) ||
+				(SamouraiWallet.getInstance().isTestNet() && address.toLowerCase().startsWith("tb")))	{
 
 			try	{
 				Pair<Byte, byte[]> pair = Bech32Segwit.decode(address.substring(0, 2), address);
