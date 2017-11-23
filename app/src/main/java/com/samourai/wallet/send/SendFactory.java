@@ -531,7 +531,7 @@ public class SendFactory	{
                 // spend address here
 //                Log.d("SendFactory", address + ":" + org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
                 // spend address here
-                if(address.startsWith("tb") || address.startsWith("bc"))   {
+                if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
 
                     byte[] scriptPubKey = null;
 
