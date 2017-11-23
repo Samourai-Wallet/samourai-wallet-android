@@ -12,6 +12,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -456,8 +457,25 @@ public class RicochetMeta {
             TransactionOutPoint outpoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash);
             TransactionInput input = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Hex.decode(scriptPubKey), outpoint);
 
-            Script outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), destination));
-            TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount), outputScript.getProgram());
+            Script outputScript = null;
+            TransactionOutput output = null;
+            if(destination.startsWith("tb") || destination.startsWith("bc"))   {
+
+                byte[] bScriptPubKey = null;
+
+                try {
+                    Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", destination);
+                    bScriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
+                }
+                catch(Exception e) {
+                    return null;
+                }
+                output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount), bScriptPubKey);
+            }
+            else    {
+                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), destination));
+                output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount), outputScript.getProgram());
+            }
 
             tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
             tx.addInput(input);
