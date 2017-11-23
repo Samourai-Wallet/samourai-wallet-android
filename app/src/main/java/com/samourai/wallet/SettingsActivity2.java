@@ -1205,11 +1205,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
         final int sel;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1) >= providers.length)    {
-            sel = 1;
+        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length)    {
+            sel = 0;
         }
         else    {
-            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
+            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
         }
 
         new AlertDialog.Builder(SettingsActivity2.this)
@@ -1374,6 +1374,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 cbPref8.setChecked(false);
                                                 cbPref8.setEnabled(false);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                                                 TrustedNodeUtil.getInstance().setValidated(false);
                                             }
 
