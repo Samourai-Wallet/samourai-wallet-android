@@ -342,7 +342,7 @@ public class SendFactory	{
     //
     public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> heterogeneous(List<UTXO> outputs, BigInteger spendAmount, String address) {
 
-        boolean isBIP49 = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+        boolean isSegwit = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
 
         Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> ret = Pair.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>());
 
@@ -449,11 +449,11 @@ public class SendFactory	{
 
             try {
                 // change address here
-                changeAddress = getChangeAddress(isBIP49);
+                changeAddress = getChangeAddress(isSegwit);
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
                 // change address here
-                changeAddress = getChangeAddress(isBIP49);
+                changeAddress = getChangeAddress(isSegwit);
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
                 // spend address here
@@ -552,7 +552,7 @@ public class SendFactory	{
 
                 //                System.out.println("pair part:" + spendAmount.toString());
                 // change address here
-                changeAddress = getChangeAddress(isBIP49);
+                changeAddress = getChangeAddress(isSegwit);
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
             }
@@ -593,7 +593,7 @@ public class SendFactory	{
                     if(i == (remainingOutputs - 1))    {
 //                    System.out.println("remainder:" + remainder.toString());
                         // change address here
-                        changeAddress = getChangeAddress(isBIP49);
+                        changeAddress = getChangeAddress(isSegwit);
                         outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                         txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
 
@@ -603,7 +603,7 @@ public class SendFactory	{
                     else    {
 //                    System.out.println("remainder:" + remainderPart);
                         // change address here
-                        changeAddress = getChangeAddress(isBIP49);
+                        changeAddress = getChangeAddress(isSegwit);
                         outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                         txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainderPart.longValue()), outputScript.getProgram());
 
@@ -646,7 +646,7 @@ public class SendFactory	{
     //
     public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> altHeterogeneous(List<UTXO> outputs, BigInteger spendAmount, String address) {
 
-        boolean isBIP49 = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+        boolean isSegwit = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
 
         Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> ret = Pair.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>());
 
@@ -741,7 +741,7 @@ public class SendFactory	{
             }
 
             // change address here
-            changeAddress = getChangeAddress(isBIP49);
+            changeAddress = getChangeAddress(isSegwit);
             outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
             txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
         }
@@ -756,7 +756,7 @@ public class SendFactory	{
 //        System.out.println("change:" + remainder.toString());
         try {
             // change address here
-            changeAddress = getChangeAddress(isBIP49);
+            changeAddress = getChangeAddress(isSegwit);
             outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
             txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
         }
@@ -798,9 +798,9 @@ public class SendFactory	{
 
     }
 
-    private String getChangeAddress(boolean isBIP49)    {
+    private String getChangeAddress(boolean isSegwit)    {
 
-        if(isBIP49)    {
+        if(isSegwit)    {
             String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
             return change_address;
