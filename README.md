@@ -22,7 +22,7 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 ### BIP49 (Segwit):
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl.
+Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl and includes support for BIP49-specific XPUBs: [YPUB](https://github.com/Samourai-Wallet/sentinel-android/issues/16).
 
 ### BIP69:
 
