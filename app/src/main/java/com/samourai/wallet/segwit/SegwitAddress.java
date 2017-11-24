@@ -7,6 +7,7 @@ import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Utils;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -77,7 +78,7 @@ public class SegwitAddress {
         String address = null;
 
         try {
-            address = Bech32Segwit.encode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", (byte)0x00, segWitRedeemScript().getProgram());
+            address = Bech32Segwit.encode(params instanceof TestNet3Params ? "tb" : "bc", (byte)0x00, segWitRedeemScript().getProgram());
         }
         catch(Exception e) {
             ;
