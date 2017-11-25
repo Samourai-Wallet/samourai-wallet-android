@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
