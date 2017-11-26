@@ -14,10 +14,10 @@ public class Bech32Segwit {
 
         String hrpgotStr =  p.getLeft();
         if(hrpgotStr == null)  {
-          return null;
+            return null;
         }
-        if (!hrp.equals(hrpgotStr))    {
-          return null;
+        if (!hrp.equalsIgnoreCase(hrpgotStr))    {
+            return null;
         }
         if (!hrpgotStr.equalsIgnoreCase("bc") && !hrpgotStr.equalsIgnoreCase("tb"))    {
             throw new Exception("invalid segwit human readable part");
