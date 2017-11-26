@@ -10,4 +10,6 @@
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:colorButtonNormal">@color/accent</item>
     </style>
+
+    <style name="UI2Theme" parent="android:Theme.Material.NoActionBar"/>
 </resources>

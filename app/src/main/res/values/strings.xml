@@ -4,6 +4,10 @@
     <string name="version_name">0.97.30</string>
     <string name="app_name">Samourai</string>
 
+    <!-- Start Activity -->
+    <string name="samourai_wallet_title">Samourai Bitcoin Wallet</string>
+    <string name="new_wallet_button">START NEW WALLET</string>
+
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 

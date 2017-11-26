@@ -5,9 +5,31 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="UI2Theme" parent="android:Theme.Holo.Light.NoActionBar"/>
+
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="main_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingEnd">50dp</item>
+        <item name="android:paddingStart">50dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">@drawable/main_btn_selector</item>
+    </style>
+
+    <style name="text" parent="UI2Theme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="text.title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
 </resources>
