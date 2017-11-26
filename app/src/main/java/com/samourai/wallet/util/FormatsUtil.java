@@ -17,6 +17,8 @@ import org.bitcoinj.uri.BitcoinURIParseException;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import android.util.Log;
 
@@ -24,6 +26,8 @@ public class FormatsUtil {
 
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	private Pattern phonePattern = Pattern.compile("(\\+[1-9]{1}[0-9]{1,2}+|00[1-9]{1}[0-9]{1,2}+)[\\(\\)\\.\\-\\s\\d]{6,16}");
+
+	private String URI_BECH32 = "^bitcoin:((tb|TB|bc|BC)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
 
 	public static final int MAGIC_XPUB = 0x0488B21E;
 	public static final int MAGIC_TPUB = 0x043587CF;
@@ -72,7 +76,12 @@ public class FormatsUtil {
 			ret = true;
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = false;
+			if(s.matches(URI_BECH32))	{
+				ret = true;
+			}
+			else	{
+				ret = false;
+			}
 		}
 		
 		return ret;
@@ -88,7 +97,12 @@ public class FormatsUtil {
 			ret = uri.toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				return s;
+			}
+			else	{
+				ret = null;
+			}
 		}
 		
 		return ret;
@@ -104,7 +118,16 @@ public class FormatsUtil {
 			ret = uri.getAddress().toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				Pattern pattern = Pattern.compile(URI_BECH32);
+				Matcher matcher = pattern.matcher(s);
+				if(matcher.find() && matcher.group(1) != null)    {
+					return matcher.group(1);
+				}
+			}
+			else	{
+				ret = null;
+			}
 		}
 
 		return ret;
@@ -125,7 +148,23 @@ public class FormatsUtil {
 			}
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				Pattern pattern = Pattern.compile(URI_BECH32);
+				Matcher matcher = pattern.matcher(s);
+				if(matcher.find() && matcher.group(4) != null)    {
+					String amt = matcher.group(4);
+					try	{
+						double amount = Double.valueOf(amt);
+						return Long.toString((long)(amount * 1e8));
+					}
+					catch(NumberFormatException nfe)	{
+						ret = "0.0000";
+					}
+				}
+			}
+			else	{
+				ret = null;
+			}
 		}
 
 		return ret;
@@ -149,7 +188,7 @@ public class FormatsUtil {
 				}
 			}
 			catch(Exception e)	{
-				;
+				e.printStackTrace();
 			}
 
 		}
