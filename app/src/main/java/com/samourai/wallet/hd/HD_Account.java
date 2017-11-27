@@ -131,12 +131,11 @@ public class HD_Account {
         try {
             JSONObject obj = new JSONObject();
 
+            obj.put("xpub", xpubstr());
             if(isBIP49)    {
                 obj.put("ypub", ypubstr());
             }
-            else    {
-                obj.put("xpub", xpubstr());
-            }
+
             obj.put("receiveIdx", getReceive().getAddrIdx());
             obj.put("changeIdx", getChange().getAddrIdx());
             obj.put("id", mAID);
