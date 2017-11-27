@@ -70,6 +70,12 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 
 ### What we do:
 
-[Samourai HQ](http://samouraiwallet.com)
+[Samourai HQ](https://samouraiwallet.com)
 
-[Paymentcode.io](http://paymentcode.io)
+[Paymentcode.io](https://paymentcode.io)
+
+[PayNym.is](https://paynym.is)
+
+[Sovereign.ly](http://sovereign.ly)
+
+[Mule Tools](http://mule.tools)
