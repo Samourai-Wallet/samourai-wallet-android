@@ -919,6 +919,7 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     seenOutputs.add(txHash.toString() + "-" + txOutputN);
+                    Log.d("APIFactory", "seen:" + txHash.toString() + "-" + txOutputN);
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
@@ -951,11 +952,15 @@ public class APIFactory	{
                             utxos.put(script, utxo);
                         }
 
-                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                            UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
-                        }
-                        else    {
-                            UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                        if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
+
+                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                                UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                            }
+                            else    {
+                                UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                            }
+
                         }
 
                     }
@@ -965,12 +970,18 @@ public class APIFactory	{
 
                 }
 
-                Log.d("APIFactory", "p2pkh total:" + UTXOFactory.getInstance().getTotalP2PKH());
-                Log.d("APIFactory", "p2sh-p2wpkh total:" + UTXOFactory.getInstance().getTotalP2SH_P2WPKH());
-
                 for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+                    Log.d("APIFactory", "not dusted:" + s);
                     if(!seenOutputs.contains(s))    {
                         BlockedUTXO.getInstance().removeNotDusted(s);
+                        Log.d("APIFactory", "not dusted removed:" + s);
+                    }
+                }
+                for(String s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
+                    Log.d("APIFactory", "blocked:" + s);
+                    if(!seenOutputs.contains(s))    {
+                        BlockedUTXO.getInstance().remove(s);
+                        Log.d("APIFactory", "blocked removed:" + s);
                     }
                 }
 

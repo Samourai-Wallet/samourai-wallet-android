@@ -25,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -904,7 +905,7 @@ public class SendActivity extends Activity {
                         dest = address;
                     }
 
-                    String strPrivacyWarning = null;
+                    final String strPrivacyWarning;
                     if(SendAddressUtil.getInstance().get(address) == 1) {
                         strPrivacyWarning = getString(R.string.send_privacy_warning) + "\n\n";
                     }
@@ -920,13 +921,23 @@ public class SendActivity extends Activity {
                         strChangeIsDust = "";
                     }
 
-                    String message = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?";
+                    String message = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
                     final long _amount = amount;
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
                     builder.setTitle(R.string.app_name);
                     builder.setMessage(message);
+                    final CheckBox cbShowAgain;
+                    if(strPrivacyWarning.length() > 0)    {
+                        cbShowAgain = new CheckBox(SendActivity.this);
+                        cbShowAgain.setText(R.string.do_not_repeat_sent_to);
+                        cbShowAgain.setChecked(false);
+                        builder.setView(cbShowAgain);
+                    }
+                    else    {
+                        cbShowAgain = null;
+                    }
                     builder.setCancelable(false);
                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
@@ -1128,7 +1139,15 @@ public class SendActivity extends Activity {
                                                     strPCode = null;
                                                 }
 
-                                                SendAddressUtil.getInstance().add(address, true);
+                                                if(strPrivacyWarning.length() > 0 && cbShowAgain != null)    {
+                                                    SendAddressUtil.getInstance().add(address, cbShowAgain.isChecked() ? false : true);
+                                                }
+                                                else if(SendAddressUtil.getInstance().get(address) == 0)    {
+                                                    SendAddressUtil.getInstance().add(address, false);
+                                                }
+                                                else    {
+                                                    SendAddressUtil.getInstance().add(address, true);
+                                                }
 
                                                 Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                                                 intent.putExtra("notifTx", false);

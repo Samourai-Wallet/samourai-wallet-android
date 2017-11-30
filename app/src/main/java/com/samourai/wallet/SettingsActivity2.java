@@ -1374,6 +1374,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 cbPref8.setChecked(false);
                                                 cbPref8.setEnabled(false);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
                                                 TrustedNodeUtil.getInstance().setValidated(false);
                                             }
 

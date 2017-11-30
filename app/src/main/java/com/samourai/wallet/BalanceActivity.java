@@ -719,9 +719,20 @@ public class BalanceActivity extends Activity {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
-                Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-                intent.putExtra("uri", strResult);
-                startActivity(intent);
+                PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(strResult));
+                try {
+                    if(privKeyReader.getFormat() != null)    {
+                        doPrivKey(strResult);
+                    }
+                    else    {
+                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                        intent.putExtra("uri", strResult);
+                        startActivity(intent);
+                    }
+                }
+                catch(Exception e) {
+                    ;
+                }
 
             }
         }

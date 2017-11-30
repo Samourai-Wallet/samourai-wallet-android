@@ -79,14 +79,14 @@ public class PoW {
             Log.i("PoW", "merkle root:" + strMerkleRoot);
 
             ts = resultObj.getLong("time");
-            strTS = Hex.toHexString(reverse(Hex.decode(Long.toHexString(ts))));
+            strTS = Hex.toHexString(reverse(Hex.decode(String.format("%08X", ts))));
             Log.i("PoW", "timestamp:" + strTS);
 
             strBits = Hex.toHexString(reverse(Hex.decode(resultObj.getString("bits"))));
             Log.i("PoW", "bits:" + strBits);
 
             nonce = resultObj.getLong("nonce");
-            strNonce = Hex.toHexString(reverse(Hex.decode(Long.toHexString(nonce))));
+            strNonce = Hex.toHexString(reverse(Hex.decode(String.format("%08X", nonce))));
             Log.i("PoW", "nonce:" + strNonce);
 
             String strHeader = strVersionHex + strPrevBlock + strMerkleRoot + strTS + strBits + strNonce;
