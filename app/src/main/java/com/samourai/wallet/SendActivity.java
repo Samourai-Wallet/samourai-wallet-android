@@ -1774,7 +1774,7 @@ public class SendActivity extends Activity {
                             Display display = (SendActivity.this).getWindowManager().getDefaultDisplay();
                             Point size = new Point();
                             display.getSize(size);
-                            int imgWidth = size.x - 240;
+                            int imgWidth = Math.max(size.x - 240, 150);
 
                             Bitmap bitmap = null;
 

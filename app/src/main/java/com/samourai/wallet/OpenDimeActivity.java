@@ -172,7 +172,7 @@ public class OpenDimeActivity extends Activity {
         display = (OpenDimeActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        imgWidth = size.x - 300;
+        imgWidth = Math.max(size.x - 300, 150);
 
         tvAddress = (TextView)findViewById(R.id.address);
         tvBalance = (TextView)findViewById(R.id.balanceAmount);
