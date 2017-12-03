@@ -140,7 +140,7 @@ public class ReceiveActivity extends Activity {
         display = (ReceiveActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        imgWidth = size.x - 460;
+        imgWidth = Math.max(size.x - 460, 150);
 
         swSegwit = (Switch)findViewById(R.id.segwit);
         swSegwit.setChecked(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true));

@@ -403,7 +403,7 @@ public class MainActivity2 extends Activity {
                                                         final EditText edBackup = new EditText(MainActivity2.this);
                                                         edBackup.setSingleLine(false);
                                                         edBackup.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                                                        edBackup.setLines(10);
+                                                        edBackup.setLines(7);
                                                         edBackup.setHint(R.string.encrypted_backup);
                                                         edBackup.setGravity(Gravity.START);
                                                         TextWatcher textWatcher = new TextWatcher() {
