@@ -460,4 +460,6 @@
 
     <string name="do_not_repeat_sent_to">Chech box to not warn about repeat sends to this address.</string>
 
+    <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
+
 </resources>

@@ -64,6 +64,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
@@ -1751,8 +1752,13 @@ public class SendActivity extends Activity {
         showTx.setPadding(40, 10, 40, 10);
         showTx.setTextSize(18.0f);
 
+        final CheckBox cbMarkInputsUnspent = new CheckBox(SendActivity.this);
+        cbMarkInputsUnspent.setText(R.string.mark_inputs_as_unspendable);
+        cbMarkInputsUnspent.setChecked(false);
+
         LinearLayout hexLayout = new LinearLayout(SendActivity.this);
         hexLayout.setOrientation(LinearLayout.VERTICAL);
+        hexLayout.addView(cbMarkInputsUnspent);
         hexLayout.addView(showTx);
 
         new AlertDialog.Builder(SendActivity.this)
@@ -1762,6 +1768,14 @@ public class SendActivity extends Activity {
                 .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                        }
+
                         dialog.dismiss();
                         SendActivity.this.finish();
 
@@ -1769,6 +1783,14 @@ public class SendActivity extends Activity {
                 })
                 .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                        }
 
                         if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
 
@@ -1859,6 +1881,23 @@ public class SendActivity extends Activity {
 
                     }
                 }).show();
+
+    }
+
+    private void markUTXOAsUnspendable(String hexTx)    {
+
+        HashMap<String, Long> utxos = new HashMap<String,Long>();
+
+        for(UTXO utxo : APIFactory.getInstance(SendActivity.this).getUtxos(true))   {
+            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
+            }
+        }
+
+        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
+        for(TransactionInput input : tx.getInputs())   {
+            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
+        }
 
     }
 
