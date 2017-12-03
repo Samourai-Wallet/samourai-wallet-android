@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -60,7 +60,7 @@ public class SweepUtil  {
 
                     String address = null;
                     if(sweepBIP49)    {
-                        address = new P2SH_P2WPKH(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
+                        address = new SegwitAddress(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
                     }
                     else    {
                         address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();

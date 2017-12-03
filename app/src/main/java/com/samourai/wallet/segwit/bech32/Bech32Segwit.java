@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SegwitAddress {
+public class Bech32Segwit {
 
     public static Pair<Byte, byte[]> decode(String hrp, String addr) throws Exception {
 
@@ -14,10 +14,10 @@ public class SegwitAddress {
 
         String hrpgotStr =  p.getLeft();
         if(hrpgotStr == null)  {
-          return null;
+            return null;
         }
-        if (!hrp.equals(hrpgotStr))    {
-          return null;
+        if (!hrp.equalsIgnoreCase(hrpgotStr))    {
+            return null;
         }
         if (!hrpgotStr.equalsIgnoreCase("bc") && !hrpgotStr.equalsIgnoreCase("tb"))    {
             throw new Exception("invalid segwit human readable part");

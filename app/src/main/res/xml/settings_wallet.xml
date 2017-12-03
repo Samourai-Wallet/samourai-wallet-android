@@ -30,7 +30,7 @@
     <Preference
         android:title="@string/options_xpub49"
         android:summary="@string/options_xpub49_2"
-        android:key="xpub49"
+        android:key="ypub"
         />
 
     <Preference

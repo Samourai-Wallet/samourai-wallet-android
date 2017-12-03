@@ -12,7 +12,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.segwit.SegwitAddress;
 
 import org.json.JSONException;
 
@@ -110,11 +110,11 @@ public class AddressFactory {
 
     }
 
-    public P2SH_P2WPKH getBIP49(int chain)	{
+    public SegwitAddress getBIP49(int chain)	{
 
         int idx = 0;
         HD_Address addr = null;
-        P2SH_P2WPKH p2shp2wpkh = null;
+        SegwitAddress p2shp2wpkh = null;
 
 //        try	{
             HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
@@ -122,7 +122,7 @@ public class AddressFactory {
             if(hdw != null)    {
                 idx = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddrIdx();
                 addr = BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).getAddressAt(idx);
-                p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                 if(chain == RECEIVE_CHAIN && canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT))	{
                     BIP49Util.getInstance(context).getWallet().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChain(chain).incAddrIdx();
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
@@ -171,14 +171,14 @@ public class AddressFactory {
         return addr;
     }
 
-    public P2SH_P2WPKH getBIP49(int accountIdx, int chain, int idx)	{
+    public SegwitAddress getBIP49(int accountIdx, int chain, int idx)	{
 
         HD_Address addr = null;
-        P2SH_P2WPKH p2shp2wpkh = null;
+        SegwitAddress p2shp2wpkh = null;
 
         HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
         addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        p2shp2wpkh = new P2SH_P2WPKH(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+        p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
         return p2shp2wpkh;
     }
