@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.03</string>
+    <string name="version_name">0.97.10</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -33,7 +33,7 @@
     <string name="options_mnemonic2">Show 12-word seed for this wallet.</string>
     <string name="options_xpub">Show BIP44 XPUB</string>
     <string name="options_xpub2">Show extended public key for BIP44 account.</string>
-    <string name="options_xpub49">Show Segwit XPUB</string>
+    <string name="options_xpub49">Show Segwit YPUB</string>
     <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
@@ -459,5 +459,7 @@
     <string name="options_display_privkey">Display private key</string>
 
     <string name="do_not_repeat_sent_to">Chech box to not warn about repeat sends to this address.</string>
+
+    <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
 
 </resources>

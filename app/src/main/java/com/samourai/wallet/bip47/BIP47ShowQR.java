@@ -72,7 +72,7 @@ public class BIP47ShowQR extends Activity {
         display = (BIP47ShowQR.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        imgWidth = size.x - 280;
+        imgWidth = Math.max(size.x - 280, 150);
 
         addressLayout = (LinearLayout)findViewById(R.id.receive_address_layout);
         addressLayout.setOnTouchListener(new View.OnTouchListener() {

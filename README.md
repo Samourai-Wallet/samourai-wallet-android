@@ -22,7 +22,7 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 ### BIP49 (Segwit):
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl.
+Samourai P2SH-P2WPKH implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl and includes support for BIP49-specific XPUBs: [YPUB](https://github.com/Samourai-Wallet/sentinel-android/issues/16).
 
 ### BIP69:
 
@@ -35,6 +35,10 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 ### BIP126:
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
+
+### BIP141:
+
+Samourai spends to bech32 addresses P2WPKH based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki) by Eric Lombrozo, Johnson Lau and Pieter Wuille.
 
 ### BIP173:
 
@@ -70,6 +74,12 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 
 ### What we do:
 
-[Samourai HQ](http://samouraiwallet.com)
+[Samourai HQ](https://samouraiwallet.com)
 
-[Paymentcode.io](http://paymentcode.io)
+[Paymentcode.io](https://paymentcode.io)
+
+[PayNym.is](https://paynym.is)
+
+[Sovereign.ly](http://sovereign.ly)
+
+[Mule Tools](http://mule.tools)
