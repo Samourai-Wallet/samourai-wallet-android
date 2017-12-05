@@ -36,7 +36,7 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
-###BIP141:
+### BIP141:
 
 Samourai spends to bech32 addresses P2WPKH based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki) by Eric Lombrozo, Johnson Lau and Pieter Wuille.
 
