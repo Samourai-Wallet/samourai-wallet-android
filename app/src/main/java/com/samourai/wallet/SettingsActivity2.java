@@ -1077,7 +1077,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getYPUB()	{
 
-        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+//        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
