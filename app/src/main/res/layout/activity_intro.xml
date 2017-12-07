@@ -6,15 +6,22 @@
     android:layout_height="match_parent"
     tools:context="com.samourai.wallet.IntroActivity">
 
-    <!-- TODO: change img and width/height -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/window" />
+
     <ImageView
+        android:id="@+id/samouraiLogo"
         android:layout_width="@dimen/intro_logo_size"
         android:layout_height="@dimen/intro_logo_size"
-        android:id="@+id/samouraiLogo"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/ic_samourai_logo_trans2x"
+        android:contentDescription="@string/samourai_logo_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -55,6 +62,7 @@
         app:layout_constraintTop_toTopOf="@+id/btn_create_wallet"
         app:layout_constraintBottom_toBottomOf="@+id/btn_create_wallet"
         app:layout_constraintEnd_toEndOf="@+id/btn_create_wallet"
-         android:layout_marginEnd="8dp"
-        android:clickable="false"/>
+        android:layout_marginEnd="8dp"
+        android:clickable="false"
+        tools:ignore="ContentDescription" />
 </android.support.constraint.ConstraintLayout>

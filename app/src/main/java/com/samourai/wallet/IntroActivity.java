@@ -1,15 +1,17 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class IntroActivity extends Activity {
+public class IntroActivity extends AppCompatActivity {
 
     private TextView mVersionText;
     private Button mCreateWalletButton;
@@ -21,6 +23,11 @@ public class IntroActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        myToolbar.setTitle("");
+        setSupportActionBar(myToolbar);
+
+
         Bundle extras = getIntent().getExtras();
         if(extras != null && extras.containsKey(MainActivity.URI_KEY))	{
             mUri = extras.getString(MainActivity.URI_KEY);
@@ -31,9 +38,15 @@ public class IntroActivity extends Activity {
         addListeners();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.intro_menu, menu);
+        return true;
+    }
+
     private void findViews() {
-        mVersionText = (TextView) findViewById(R.id.versionNumber);
-        mCreateWalletButton = (Button) findViewById(R.id.btn_create_wallet);
+        mVersionText = findViewById(R.id.versionNumber);
+        mCreateWalletButton = findViewById(R.id.btn_create_wallet);
     }
 
     private void setupViewContent() {

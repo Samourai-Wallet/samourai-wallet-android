@@ -4,7 +4,7 @@
     <string name="version_name">0.97.30</string>
     <string name="app_name">Samourai</string>
 
-    <!-- Start Activity -->
+    <!-- Intro Activity -->
     <string name="samourai_wallet_title">Samourai Bitcoin Wallet</string>
     <string name="new_wallet_button">START NEW WALLET</string>
 
@@ -465,5 +465,8 @@
     <string name="fee_high_priority">High priority: estimated 2</string>
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocks before confirmation</string>
+
+    <!-- Accessibility and content description -->
+    <string name="samourai_logo_description">Samourai logo image.</string>
 
 </resources>

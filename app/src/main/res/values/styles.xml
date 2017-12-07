@@ -5,7 +5,17 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="UI2Theme" parent="android:Theme.Holo.Light.NoActionBar"/>
+    <style name="UI2Theme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:navigationBarColor">@color/primary_dark</item>
+        <item name="android:colorButtonNormal">@color/accent</item>
+    </style>
+
 
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
