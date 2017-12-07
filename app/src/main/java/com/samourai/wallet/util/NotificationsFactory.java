@@ -33,14 +33,19 @@ public class NotificationsFactory {
 
     public void setNotification(String title, String marquee, String text, int drawable, Class cls, int id) {
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        final Notification notifyDetails = new Notification(drawable, marquee, System.currentTimeMillis());
 
         Intent notifyIntent = new Intent(context, cls);
         PendingIntent intent = PendingIntent.getActivity(context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notifyDetails.setLatestEventInfo(context, title, text, intent);
-        notifyDetails.flags |= Notification.FLAG_AUTO_CANCEL;
-        notifyDetails.number = 0;
-//        notifyDetails.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.alert);
-        mNotificationManager.notify(id, notifyDetails);
+
+        Notification.Builder builder = new Notification.Builder(context);
+        builder.setContentTitle(title)
+                .setContentText(text)
+                .setContentIntent(intent)
+                .setSmallIcon(drawable)
+                .setAutoCancel(true)
+                .setNumber(0)
+                .setTicker(marquee);
+
+        mNotificationManager.notify(id, builder.build());
     }
 }
