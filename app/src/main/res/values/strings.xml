@@ -33,8 +33,7 @@
     <string name="options_mnemonic2">Show 12-word seed for this wallet.</string>
     <string name="options_xpub">Show BIP44 XPUB</string>
     <string name="options_xpub2">Show extended public key for BIP44 account.</string>
-<!--    <string name="options_xpub49">Show Segwit YPUB</string> -->
-    <string name="options_xpub49">Show Segwit XPUB</string>
+    <string name="options_xpub49">Show Segwit YPUB</string>
     <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
