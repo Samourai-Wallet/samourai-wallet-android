@@ -252,10 +252,6 @@ public class PayloadUtil	{
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
 
-            meta.put("bcc_replay0", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY0, ""));
-            meta.put("bcc_replay1", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY1, ""));
-            meta.put("bcc_replayed", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAYED, false));
-
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
             obj.put("meta", meta);
@@ -497,16 +493,6 @@ public class PayloadUtil	{
                 */
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
-                }
-
-                if(meta.has("bcc_replay0")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY0, meta.getString("bcc_replay0"));
-                }
-                if(meta.has("bcc_replay1")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY1, meta.getString("bcc_replay1"));
-                }
-                if(meta.has("bcc_replayed")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAYED, meta.getBoolean("bcc_replayed"));
                 }
 
                 /*
