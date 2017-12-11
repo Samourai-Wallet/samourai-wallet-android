@@ -9,6 +9,13 @@
         />
 
     <CheckBoxPreference
+        android:title="@string/options_like_typed_change"
+        android:summary="@string/options_like_typed_change2"
+        android:defaultValue="true"
+        android:key="likeTypedChange"
+        />
+
+    <CheckBoxPreference
         android:title="@string/options_bip126"
         android:summary="@string/options_bip126_2"
         android:defaultValue="true"

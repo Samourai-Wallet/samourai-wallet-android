@@ -222,6 +222,7 @@ public class PayloadUtil	{
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
+            meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
             meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
@@ -372,6 +373,11 @@ public class PayloadUtil	{
                 if(meta.has("use_segwit")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_SEGWIT, meta.getBoolean("use_segwit"));
                     editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
+                    editor.commit();
+                }
+                if(meta.has("use_like_typed_change")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, meta.getBoolean("use_like_typed_change"));
+                    editor.putBoolean("likeTypedChange", meta.getBoolean("use_like_typed_change"));
                     editor.commit();
                 }
                 if(meta.has("spend_type")) {

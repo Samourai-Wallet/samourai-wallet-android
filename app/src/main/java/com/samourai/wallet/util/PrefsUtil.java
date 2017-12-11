@@ -40,6 +40,7 @@ public class PrefsUtil {
 	public static final String BROADCAST_TX = "broadcastTx";
 	public static final String TESTNET = "testnet";
 	public static final String USE_SEGWIT = "useSegwit";
+	public static final String USE_LIKE_TYPED_CHANGE = "useLikeTypedChange";
 	public static final String XPUB44LOCK = "xpub44lock";
 	public static final String XPUB49LOCK = "xpub49lock";
 	public static final String XPUB44REG = "xpub44reg";

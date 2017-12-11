@@ -595,14 +595,14 @@ public class SendActivity extends Activity {
                 final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
-                final boolean isSegwit = FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+                final boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
 
                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                 receivers.put(address, BigInteger.valueOf(amount));
 
                 // store current change index to restore value in case of sending fail
                 int change_index = 0;
-                if(isSegwit)    {
+                if(isSegwitChange)    {
                     change_index = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
                 }
                 else    {
@@ -959,7 +959,7 @@ public class SendActivity extends Activity {
                             // add change
                             if(_change > 0L)    {
                                 if(SPEND_TYPE == SPEND_SIMPLE)    {
-                                    if(isSegwit)    {
+                                    if(isSegwitChange)    {
                                         String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                                         receivers.put(change_address, BigInteger.valueOf(_change));
                                     }
@@ -1113,10 +1113,10 @@ public class SendActivity extends Activity {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
                                                         try {
-                                                            if(!isSegwit && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
+                                                            if(!isSegwitChange && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
                                                                 rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                             }
-                                                            else if(isSegwit && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
+                                                            else if(isSegwitChange && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
                                                                 rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                             }
                                                             else    {
@@ -1181,7 +1181,7 @@ public class SendActivity extends Activity {
                                             else    {
                                                 Toast.makeText(SendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                 // reset change index upon tx fail
-                                                if(isSegwit)    {
+                                                if(isSegwitChange)    {
                                                     BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
                                                 }
                                                 else    {
@@ -1231,7 +1231,7 @@ public class SendActivity extends Activity {
 
                             try {
                                 // reset change index upon 'NO'
-                                if(isSegwit)    {
+                                if(isSegwitChange)    {
                                     BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
                                 }
                                 else    {

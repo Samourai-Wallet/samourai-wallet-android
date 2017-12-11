@@ -154,6 +154,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                final CheckBoxPreference cbPref15 = (CheckBoxPreference) findPreference("likeTypedChange");
+                cbPref15.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref15.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true);
+                        }
+
+                        return true;
+                    }
+                });
+
                 final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
                 cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
