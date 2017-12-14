@@ -28,7 +28,7 @@ Samourai P2SH-P2WPKH implementation based on [original BIP] (https://github.com/
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
 
-### BIP125 (RBF):
+### BIP125 (Replace-by-fee, RBF):
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
 
