@@ -222,6 +222,7 @@ public class PayloadUtil	{
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
+            meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
             meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
@@ -251,10 +252,6 @@ public class PayloadUtil	{
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
-
-            meta.put("bcc_replay0", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY0, ""));
-            meta.put("bcc_replay1", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY1, ""));
-            meta.put("bcc_replayed", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAYED, false));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -378,6 +375,11 @@ public class PayloadUtil	{
                     editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
                     editor.commit();
                 }
+                if(meta.has("use_like_typed_change")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, meta.getBoolean("use_like_typed_change"));
+                    editor.putBoolean("likeTypedChange", meta.getBoolean("use_like_typed_change"));
+                    editor.commit();
+                }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
                     editor.putBoolean("bip126", meta.getInt("spend_type") == SendActivity.SPEND_BIP126 ? true : false);
@@ -497,16 +499,6 @@ public class PayloadUtil	{
                 */
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
-                }
-
-                if(meta.has("bcc_replay0")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY0, meta.getString("bcc_replay0"));
-                }
-                if(meta.has("bcc_replay1")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY1, meta.getString("bcc_replay1"));
-                }
-                if(meta.has("bcc_replayed")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAYED, meta.getBoolean("bcc_replayed"));
                 }
 
                 /*

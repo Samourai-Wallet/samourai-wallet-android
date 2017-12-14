@@ -28,7 +28,7 @@ Samourai P2SH-P2WPKH implementation based on [original BIP] (https://github.com/
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
 
-### BIP125:
+### BIP125 (RBF):
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
 
@@ -36,11 +36,11 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
-### BIP141:
+### BIP141 (Segwit):
 
 Samourai spends to bech32 addresses P2WPKH based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki) by Eric Lombrozo, Johnson Lau and Pieter Wuille.
 
-### BIP173:
+### BIP173 (Segwit):
 
 Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
 

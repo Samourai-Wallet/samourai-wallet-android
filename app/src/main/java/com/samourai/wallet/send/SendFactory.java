@@ -800,7 +800,13 @@ public class SendFactory	{
 
     private String getChangeAddress(boolean isSegwit)    {
 
-        if(isSegwit)    {
+        boolean isSegwitChange = isSegwit;
+
+        if(isSegwit || PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
+            isSegwitChange = true;
+        }
+
+        if(isSegwitChange)    {
             String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
             return change_address;

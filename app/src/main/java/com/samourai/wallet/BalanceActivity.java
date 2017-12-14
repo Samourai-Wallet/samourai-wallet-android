@@ -2334,10 +2334,10 @@ public class BalanceActivity extends Activity {
                         // parent tx didn't have change output
                         if(outputs.length() == 1 && extraChange > 0L)    {
                             try {
-                                boolean isSegwit = FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) ||  Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress();
+                                boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) ||  Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress()) || PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
 
                                 String change_address = null;
-                                if(isSegwit)    {
+                                if(isSegwitChange)    {
                                     int changeIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
                                     change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
                                 }
