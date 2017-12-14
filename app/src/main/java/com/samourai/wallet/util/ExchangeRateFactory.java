@@ -1,11 +1,11 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.regex.*;
 
 //import android.util.Log;
 
@@ -16,16 +16,18 @@ public class ExchangeRateFactory	{
     private static String strDataLBC = null;
     private static String strDataBTCe = null;
     private static String strDataBFX = null;
+    private static String strDataLuno = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
     private static HashMap<String,Double> fxRatesBFX = null;
+    private static HashMap<String,Double> fxRatesLuno = null;
 //    private static HashMap<String,String> fxSymbols = null;
 
     private static ExchangeRateFactory instance = null;
 
     private static String[] currencies = {
-            "CNY", "EUR", "GBP", "RUB", "USD"
+            "CNY", "EUR", "GBP", "RUB", "USD", "ZAR"
     };
 
     private static String[] currencyLabels = {
@@ -33,7 +35,8 @@ public class ExchangeRateFactory	{
             "Euro - EUR",
             "British Pound Sterling - GBP",
             "Chinese Yuan - CNY",
-            "Russian Rouble - RUB"
+            "Russian Rouble - RUB",
+            "South African Rand - ZAR"
     };
 
     private static String[] currencyLabelsBTCe = {
@@ -42,10 +45,18 @@ public class ExchangeRateFactory	{
             "Russian Rouble - RUR"
     };
 
+    private static String[] currencyLabelsLuno = {
+            "South African Rand - ZAR",
+            "Nigerian Naira - NGN",
+            "Malaysian Ringgit - MYR",
+            "Indonesian Rupiah - IDR"
+    };
+
     private static String[] exchangeLabels = {
             "LocalBitcoins.com",
             "WEX (ex-'BTC-e')",
             "Bitfinex",
+            "Luno"
     };
 
     private ExchangeRateFactory()	 { ; }
@@ -58,6 +69,7 @@ public class ExchangeRateFactory	{
             fxRatesLBC = new HashMap<String,Double>();
             fxRatesBTCe = new HashMap<String,Double>();
             fxRatesBFX = new HashMap<String,Double>();
+            fxRatesLuno = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
 
             instance = new ExchangeRateFactory();
@@ -74,6 +86,8 @@ public class ExchangeRateFactory	{
         }
         else if(fxSel == 2)	 {
             fxRates = fxRatesBFX;
+        }else if(fxSel == 2){
+            fxRates = fxRatesLuno;
         }
         else	 {
             fxRates = fxRatesLBC;
@@ -100,6 +114,10 @@ public class ExchangeRateFactory	{
         return currencyLabelsBTCe;
     }
 
+    public String[] getCurrencyLabelsLuno()	 {
+        return currencyLabelsLuno;
+    }
+
     public String[] getExchangeLabels()	 {
         return exchangeLabels;
     }
@@ -114,6 +132,10 @@ public class ExchangeRateFactory	{
 
     public void setDataBFX(String data)	 {
         strDataBFX = data;
+    }
+
+    public void setDataLuno(String data)	 {
+        strDataLuno = data;
     }
 
     public void parseLBC()	 {
@@ -146,6 +168,11 @@ public class ExchangeRateFactory	{
             }
         }
     }
+
+    public void parseLuno()	 {
+        getLuno();
+    }
+
 
     public double getBitfinexPrice(String currency)	 {
 
@@ -202,7 +229,7 @@ public class ExchangeRateFactory	{
             }
         } catch (JSONException je) {
             fxRatesBTCe.put(currency, Double.valueOf(-1.0));
-//            fxSymbols.put(currency, null);
+//            fxSymbols.put(cur c crency, null);
         }
     }
 
@@ -225,5 +252,35 @@ public class ExchangeRateFactory	{
 //            fxSymbols.put(currency, null);
         }
     }
+
+    private void getLuno(){
+        Pattern pattern = Pattern.compile("(\"timestamp\")(.*?,)(.*?,)(.*?,)|(.)(\"rolling_24_hour_volume\")(.*?,)|(\\{\"tickers\":\\[\\{)|\\{|\\}]\\}|}|,");
+        Matcher matcher = pattern.matcher(strDataLuno);
+        String split[] = pattern.split(strDataLuno);
+
+        double last_trade = 0;
+        String pair = "";
+        int triggerAdd = 0;
+        for (int y = 0; y < split.length; y++) {
+            if(split[y].contains("last_trade")){
+                String secondSplit[] = split[y].split(":");
+                secondSplit[1] = secondSplit[1].replace("\"","");
+                last_trade = Double.parseDouble(secondSplit[1]);
+                triggerAdd++;
+            }else if(split[y].contains("pair")){
+                String secondSplit[] = split[y].split(":");
+                secondSplit[1] = secondSplit[1].replace("\"","");
+                pair = secondSplit[1];
+                triggerAdd++;
+            }
+
+            if(triggerAdd == 2){
+                fxRatesLuno.put(pair.replace("XBT",""), last_trade);
+                triggerAdd = 0;
+            }
+        }
+
+    }
+
 
 }
