@@ -38,12 +38,15 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -177,32 +180,39 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                String msg = null;
 
-                                    String msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
-                                    msg += ":";
-                                    msg += addr;
-                                    msg += ", ";
-                                    msg += "pubkey:";
-                                    msg += ecKey.getPublicKeyAsHex();
+                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
+                                        FormatsUtil.getInstance().isValidBech32(addr))    {
 
-                                    if(ecKey != null)    {
-                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                                msg,
-                                                ecKey);
+                                    msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
+
+                                    try {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("pubkey", ecKey.getPublicKeyAsHex());
+                                        obj.put("address", addr);
+                                        msg +=  " " + obj.toString();
+                                    }
+                                    catch(JSONException je) {
+                                        msg += ":";
+                                        msg += addr;
+                                        msg += ", ";
+                                        msg += "pubkey:";
+                                        msg += ecKey.getPublicKeyAsHex();
                                     }
 
                                 }
                                 else    {
 
-                                    if(ecKey != null)    {
-                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text2),
-                                                ecKey);
-                                    }
+                                    msg = UTXOActivity.this.getString(R.string.utxo_sign_text2);
 
+                                }
+
+                                if(ecKey != null)    {
+                                    MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                            UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                            msg,
+                                            ecKey);
                                 }
 
                             }
