@@ -1329,25 +1329,14 @@ public class BalanceActivity extends Activity {
         df.setMinimumFractionDigits(1);
         df.setMaximumFractionDigits(8);
 
-        int unit = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-        switch(unit) {
-            case MonetaryUtil.MICRO_BTC:
-                strAmount = df.format(((double)(value * 1000000L)) / 1e8);
-                break;
-            case MonetaryUtil.MILLI_BTC:
-                strAmount = df.format(((double)(value * 1000L)) / 1e8);
-                break;
-            default:
-                strAmount = Coin.valueOf(value).toPlainString();
-                break;
-        }
+        strAmount = Coin.valueOf(value).toPlainString();
 
         return strAmount;
     }
 
     private String getBTCDisplayUnits() {
 
-        return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
+        return MonetaryUtil.getInstance().getBTCUnits();
 
     }
 

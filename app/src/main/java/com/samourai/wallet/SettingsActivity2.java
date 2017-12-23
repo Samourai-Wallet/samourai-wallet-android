@@ -111,14 +111,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
             if(strBranch.equals("prefs"))    {
                 addPreferencesFromResource(R.xml.settings_prefs);
 
-                Preference unitsPref = (Preference) findPreference("units");
-                unitsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getUnits();
-                        return true;
-                    }
-                });
-
                 Preference fiatPref = (Preference) findPreference("fiat");
                 fiatPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -1125,23 +1117,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         ;
                     }
                 }).show();
-
-    }
-
-    private void getUnits()	{
-
-        final CharSequence[] units = MonetaryUtil.getInstance().getBTCUnits();
-        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BTC_UNITS, 0);
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_units)
-                .setSingleChoiceItems(units, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BTC_UNITS, which);
-                                dialog.dismiss();
-                            }
-                        }
-                ).show();
 
     }
 
