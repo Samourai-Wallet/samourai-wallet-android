@@ -1054,8 +1054,8 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
-            if(sel == 2)    {
+            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
+            if(sel == 1)    {
 
                 int[] blocks = new int[] { 2, 6, 24 };
 
@@ -1088,12 +1088,7 @@ public class APIFactory	{
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
                 try {
                     jsonObject = new JSONObject(response);
-                    if(sel == 0)    {
-                        parseDynamicFees_21(jsonObject);
-                    }
-                    else    {
-                        parseDynamicFees_bitcoind(jsonObject);
-                    }
+                    parseDynamicFees_bitcoind(jsonObject);
                 }
                 catch(JSONException je) {
                     je.printStackTrace();
@@ -1108,7 +1103,7 @@ public class APIFactory	{
 
         return jsonObject;
     }
-
+/*
     private synchronized boolean parseDynamicFees_21(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
@@ -1160,7 +1155,7 @@ public class APIFactory	{
         return false;
 
     }
-
+*/
     private synchronized boolean parseDynamicFees_bitcoind(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
