@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
@@ -51,7 +52,11 @@ public class MainActivity extends Activity {
 
     private void doMain(String strUri) {
         Intent intent;
-        intent = new Intent(MainActivity.this, IntroActivity.class);
+        if (PayloadUtil.getInstance(MainActivity.this).walletFileExists()) {
+            intent = new Intent(MainActivity.this, MainActivity2.class);
+        } else {
+            intent = new Intent(MainActivity.this, IntroActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(strUri != null)    {
             intent.putExtra(URI_KEY, strUri);
