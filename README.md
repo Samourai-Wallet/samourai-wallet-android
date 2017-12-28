@@ -76,7 +76,9 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 
 [Samourai HQ](https://samouraiwallet.com)
 
-[Paymentcode.io](https://paymentcode.io)
+[Afterburner](https://play.google.com/store/apps/details?id=com.samourai.afterburner&hl=en)
+
+[Sentinel](https://play.google.com/store/apps/details?id=com.samourai.sentinel&hl=en)
 
 [PayNym.is](https://paynym.is)
 
