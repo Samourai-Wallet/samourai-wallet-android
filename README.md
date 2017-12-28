@@ -10,11 +10,11 @@ Import as Android Studio project. Should build "as is". PGP signed tagged releas
 
 ### BIP44:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki), extends [bitcoinj](https://bitcoinj.github.io/).
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki), extends [bitcoinj](https://bitcoinj.github.io/).
 
 ### BIP47:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier. Extends BIP44 implementation (above).
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki) by Justus Ranvier. Extends BIP44 implementation (above).
 
 [Generic source code for BIP47.](https://github.com/SamouraiDev/BIP47_RPC)
 
@@ -22,27 +22,27 @@ Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips
 
 ### BIP49 (Segwit):
 
-Samourai P2SH-P2WPKH implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl and includes support for BIP49-specific XPUBs: [YPUB](https://github.com/Samourai-Wallet/sentinel-android/issues/16).
+Samourai P2SH-P2WPKH implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki) by Daniel Weigl and includes support for BIP49-specific XPUBs: [YPUB](https://github.com/Samourai-Wallet/sentinel-android/issues/16).
 
 ### BIP69:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
 
 ### BIP125 (Replace-by-fee, RBF):
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
 
 ### BIP126:
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
 ### BIP141 (Segwit):
 
-Samourai spends to bech32 addresses P2WPKH based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki) by Eric Lombrozo, Johnson Lau and Pieter Wuille.
+Samourai spends to bech32 addresses P2WPKH based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki) by Eric Lombrozo, Johnson Lau and Pieter Wuille.
 
 ### BIP173 (Segwit):
 
-Samourai implementation based on [original BIP] (https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
 
 ### Ricochet:
 
@@ -62,7 +62,7 @@ Plug in your OpenDime using the appropriate OTG (On-The-Go) USB cable and Samour
 
 ### License:
 
-[Unlicense] (https://github.com/Samourai-Wallet/samourai-wallet-android/blob/master/LICENSE)
+[Unlicense](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/master/LICENSE)
 
 ### Contributing:
 
