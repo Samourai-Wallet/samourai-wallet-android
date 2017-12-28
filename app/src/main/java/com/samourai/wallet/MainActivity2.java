@@ -152,7 +152,8 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if(!ConnectivityStatus.hasConnectivity(MainActivity2.this))  {
+        if(!ConnectivityStatus.hasConnectivity(MainActivity2.this) &&
+        !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
 
             new AlertDialog.Builder(MainActivity2.this)
                     .setTitle(R.string.app_name)
