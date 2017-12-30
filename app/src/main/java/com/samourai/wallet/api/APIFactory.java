@@ -1082,7 +1082,7 @@ public class APIFactory	{
 
             }
             else    {
-                StringBuilder url = new StringBuilder(sel == 0 ? WebUtil._21CO_FEE_URL : WebUtil.BITCOIND_FEE_URL);
+                StringBuilder url = new StringBuilder(WebUtil.BITCOIND_FEE_URL);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
                 String response = WebUtil.getInstance(null).getURL(url.toString());
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
