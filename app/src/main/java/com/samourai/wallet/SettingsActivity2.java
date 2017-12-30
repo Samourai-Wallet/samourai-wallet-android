@@ -1044,6 +1044,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
                                 }
 
+                                final String _xpub = xpub;
+
                                 ImageView showQR = new ImageView(SettingsActivity2.this);
                                 Bitmap bitmap = null;
                                 QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
@@ -1070,11 +1072,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         .setTitle(R.string.app_name)
                                         .setView(xpubLayout)
                                         .setCancelable(false)
-                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                                android.content.ClipData clip = null;
+                                                clip = android.content.ClipData.newPlainText("XPUB", _xpub);
+                                                clipboard.setPrimaryClip(clip);
+                                                Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 ;
                                             }
-                                        }).show();
+                                        })
+                                        .show();
 
                             }
                         }
@@ -1084,7 +1096,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getYPUB()	{
 
-        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+        final String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
@@ -1112,11 +1124,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 .setTitle(R.string.app_name)
                 .setView(xpubLayout)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("YPUB", ypub);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         ;
                     }
-                }).show();
+                })
+                .show();
 
     }
 

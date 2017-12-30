@@ -464,4 +464,6 @@
 
     <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
 
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+
 </resources>
