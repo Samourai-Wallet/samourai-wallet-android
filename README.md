@@ -76,11 +76,13 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 
 [Samourai HQ](https://samouraiwallet.com)
 
-[Afterburner](https://play.google.com/store/apps/details?id=com.samourai.afterburner&hl=en)
-
 [Sentinel](https://play.google.com/store/apps/details?id=com.samourai.sentinel&hl=en)
 
+[Afterburner](https://play.google.com/store/apps/details?id=com.samourai.afterburner&hl=en)
+
 [PayNym.is](https://paynym.is)
+
+[OXT](https://oxt.me)
 
 [Sovereign.ly](http://sovereign.ly)
 
