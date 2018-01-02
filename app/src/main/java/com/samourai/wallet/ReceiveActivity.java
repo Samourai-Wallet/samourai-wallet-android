@@ -635,17 +635,6 @@ public class ReceiveActivity extends Activity {
                                             _menu.findItem(R.id.action_refresh).setVisible(true);
                                         }
                                     }
-                                    else if(AddressFactory.getInstance().canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT)) {
-                                        if(swSegwit.isChecked())    {
-                                            canRefresh49 = true;
-                                        }
-                                        else    {
-                                            canRefresh44 = true;
-                                        }
-                                        if(_menu != null)    {
-                                            _menu.findItem(R.id.action_refresh).setVisible(true);
-                                        }
-                                    }
                                     else {
                                         if(swSegwit.isChecked())    {
                                             canRefresh49 = false;
@@ -660,11 +649,29 @@ public class ReceiveActivity extends Activity {
                                 }
 
                             } catch (Exception e) {
+                                if(swSegwit.isChecked())    {
+                                    canRefresh49 = false;
+                                }
+                                else    {
+                                    canRefresh44 = false;
+                                }
+                                if(_menu != null)    {
+                                    _menu.findItem(R.id.action_refresh).setVisible(false);
+                                }
                                 e.printStackTrace();
                             }
                         }
                     });
                 } catch (Exception e) {
+                    if(swSegwit.isChecked())    {
+                        canRefresh49 = false;
+                    }
+                    else    {
+                        canRefresh44 = false;
+                    }
+                    if(_menu != null)    {
+                        _menu.findItem(R.id.action_refresh).setVisible(false);
+                    }
                     e.printStackTrace();
                 }
             }
