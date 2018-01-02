@@ -1405,7 +1405,7 @@ public class SendActivity extends Activity {
 
     private void processScan(String data) {
 
-        if(data.startsWith("bitcoin:") && data.contains("https://bitpay.com"))	{
+        if(data.contains("https://bitpay.com"))	{
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                     .setTitle(R.string.app_name)
