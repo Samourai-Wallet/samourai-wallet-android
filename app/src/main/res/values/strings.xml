@@ -464,4 +464,7 @@
 
     <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
 
+    <string name="no_bitpay">Samourai Wallet does not support payments via BitPay payment protocols.</string>
+    <string name="learn_more">Learn more</string>
+
 </resources>

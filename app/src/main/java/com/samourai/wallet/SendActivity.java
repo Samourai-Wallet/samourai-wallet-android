@@ -1405,6 +1405,33 @@ public class SendActivity extends Activity {
 
     private void processScan(String data) {
 
+        if(data.startsWith("bitcoin:") && data.contains("https://bitpay.com"))	{
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.no_bitpay)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.learn_more, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.samouraiwallet.com/post/169222582782/bitpay-qr-codes-are-no-longer-valid-important"));
+                            startActivity(intent);
+
+                        }
+                    }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    dialog.dismiss();
+
+                }
+            });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
+        }
+
         if(FormatsUtil.getInstance().isValidPaymentCode(data))	{
             processPCode(data, null);
             return;
