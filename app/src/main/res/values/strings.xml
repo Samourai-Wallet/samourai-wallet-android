@@ -466,7 +466,7 @@
 
     <string name="copy_to_clipboard">Copy to clipboard</string>
 
-    <string name="no_bitpay">"Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses"</string>
+    <string name="no_bitpay">Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses.</string>
     <string name="learn_more">Learn More</string>
 
 </resources>
