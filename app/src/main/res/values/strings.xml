@@ -469,4 +469,15 @@
     <string name="no_bitpay">Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses.</string>
     <string name="learn_more">Learn More</string>
 
+    <string name="paynym">PayNym</string>
+    <string name="claim_paynym">Claim your paynym</string>
+    <string name="claim_paynym_title1">Claim your free PayNymID</string>
+    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
+    <string name="claim_paynym_title2">Benefits of a PayNymID</string>
+    <string name="claim_paynym_text2a">Unique name and image generated with a hash of your paynym code. No two will ever be the same!</string>
+    <string name="claim_paynym_text2b">No identity checks! Your name and image are based on your paynym code, not any national ID card.</string>
+    <string name="claim_paynym_text2c">Be found easily! Compatible wallets can search for new contacts and send private secure payments without leaving a trace.</string>
+    <string name="claim_paynym_id">Claim my PayNymID</string>
+    <string name="claim_paynym_id_refused">Not interested. Don\'t ask me again.</string>
+
 </resources>
