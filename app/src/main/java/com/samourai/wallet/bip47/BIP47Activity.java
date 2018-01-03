@@ -99,6 +99,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -533,6 +534,11 @@ public class BIP47Activity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bip47_menu, menu);
+
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
