@@ -70,6 +70,7 @@ import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -553,11 +554,19 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_sync_all) {
             doSyncAll();
         }
+        else if(id == R.id.action_claim_paynym) {
+            doClaimPayNym();
+        }
         else {
             ;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doClaimPayNym() {
+        Intent intent = new Intent(BIP47Activity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
     }
 
     private void doScan() {

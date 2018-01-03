@@ -5,7 +5,7 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_receive_qr"
         />
-    <item android:id="@+id/claim_paynym"
+    <item android:id="@+id/action_claim_paynym"
         android:title="@string/claim_paynym"
         android:orderInCategory="100"
         android:showAsAction="always"
