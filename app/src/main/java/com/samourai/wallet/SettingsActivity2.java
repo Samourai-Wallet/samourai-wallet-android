@@ -942,11 +942,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
     @Override
     protected void onResume() {
         super.onResume();
-
-        AppUtil.getInstance(SettingsActivity2.this).setIsInForeground(true);
-
         AppUtil.getInstance(SettingsActivity2.this).checkTimeOut();
-
     }
 
     @Override

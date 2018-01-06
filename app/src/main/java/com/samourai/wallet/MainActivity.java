@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
 
         if(genesis)    {
             genesis = false;
+            if (LogUtil.DEBUG) Log.d(TAG, "Genesis done, finishing.");
             finish();
         }
     }
