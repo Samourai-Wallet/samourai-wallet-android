@@ -2209,7 +2209,12 @@ public class BalanceActivity extends Activity {
                         if(obj.has("value"))    {
                             total_outputs += obj.getLong("value");
 
-                            String _addr = obj.getString("address");
+                            String _addr = null;
+                            if(obj.has("address"))    {
+                                _addr = obj.getString("address");
+                            }
+                            // if !obj.has("address"), not a change address -- probably bech32
+
                             selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
                                 total_change += obj.getLong("value");
@@ -2368,7 +2373,7 @@ public class BalanceActivity extends Activity {
                             for(TransactionOutput output : txOutputs)   {
                                 Address _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
                                 if(_address == null)    {
-                                    _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                    _address = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
                                 }
                                 Log.d("BalanceActivity", "checking for change:" + _address.toString());
                                 if(rbf.containsChangeAddr(_address.toString()))    {
