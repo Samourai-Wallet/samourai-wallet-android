@@ -545,10 +545,6 @@ public class BalanceActivity extends Activity {
             doClipboardCheck();
         }
 
-        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false)    {
-            doClaimPayNym();
-        }
-
     }
 
     @Override
@@ -1701,6 +1697,12 @@ public class BalanceActivity extends Activity {
                     }
 
                 }
+
+            }
+
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                    PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
+                doClaimPayNym();
             }
 
         }

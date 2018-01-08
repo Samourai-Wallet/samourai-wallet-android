@@ -118,19 +118,6 @@ public class ClaimPayNymActivity extends Activity {
                     responseObj = new JSONObject(res);
                     if(responseObj.has("claimed") && responseObj.has("token"))    {
 
-                        /*
-                        ClaimPayNymActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                Log.d("UI thread", "I am the UI thread");
-                            }
-                        });
-
-                        handler.post(new Runnable() {
-                            public void run() {
-                            }
-                        });
-                        */
-
                         PrefsUtil.getInstance(ClaimPayNymActivity.this).setValue(PrefsUtil.PAYNYM_CLAIMED, true);
                         Log.d("ClaimPayNymActivity", "paynym claimed:" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
 
@@ -145,8 +132,8 @@ public class ClaimPayNymActivity extends Activity {
                             final String strNymName = responseObj.getString("nymName");
 
                             AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage("Your PayNym has been claimed.\n\n" + strNymName)
+                                    .setTitle("Your PayNym has been claimed")
+                                    .setMessage(strNymName)
 //                                    .setView(imgLayout)
                                     .setCancelable(false)
                                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -159,51 +146,6 @@ public class ClaimPayNymActivity extends Activity {
                             if(!isFinishing())    {
                                 dlg.show();
                             }
-/*
-                            ClaimPayNymActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Picasso.with(ClaimPayNymActivity.this)
-                                            .load("http://188.214.30.147/" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString() + "/avatar")
-                                            .into(new Target() {
-                                                @Override
-                                                public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
-
-                                                    final ImageView ivRobot = new ImageView(ClaimPayNymActivity.this);
-
-                                                    LinearLayout imgLayout = new LinearLayout(ClaimPayNymActivity.this);
-                                                    imgLayout.setOrientation(LinearLayout.VERTICAL);
-                                                    imgLayout.addView(ivRobot);
-
-                                                    ivRobot.setImageBitmap(bitmap);
-
-                                                    AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
-                                                            .setTitle(R.string.app_name)
-                                                            .setMessage("Your PayNym has been claimed.\n\n" + strNymName)
-                                                            .setView(imgLayout)
-                                                            .setCancelable(false)
-                                                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                                    ClaimPayNymActivity.this.finish();
-
-                                                                }
-                                                            });
-                                                    if(!isFinishing())    {
-                                                        dlg.show();
-                                                    }
-
-                                                }
-
-                                                @Override
-                                                public void onPrepareLoad(Drawable placeHolderDrawable) {}
-
-                                                @Override
-                                                public void onBitmapFailed(Drawable errorDrawable) {}
-                                            });
-                                }
-                            });
-*/
-                            //                            Picasso.with(ClaimPayNymActivity.this).load("http://188.214.30.147/" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString() + "/avatar").into(ivRobot);
 
                         }
 
