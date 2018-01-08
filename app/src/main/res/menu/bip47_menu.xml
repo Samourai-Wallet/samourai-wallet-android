@@ -5,6 +5,12 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_receive_qr"
         />
+    <item android:id="@+id/action_claim_paynym"
+        android:title="@string/claim_paynym"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_account_box_white_24dp"
+        />
     <item android:id="@+id/action_unarchive"
         android:title="@string/action_unarchive"
         android:orderInCategory="100"

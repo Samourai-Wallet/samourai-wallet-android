@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -45,6 +49,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.bouncycastle.util.encoders.DecoderException;
@@ -70,6 +75,7 @@ import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -98,6 +104,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -121,6 +128,8 @@ public class BIP47Activity extends Activity {
 
     private Timer timer = null;
     private Handler handler = null;
+
+    private PayNymTask payNymTask = null;
 
     private ProgressDialog progress = null;
 
@@ -146,20 +155,6 @@ public class BIP47Activity extends Activity {
         actionPartners.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-
-                /*
-                AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage("Want to see your payment code suggested here? Contact us at wallet@samouraiwallet.com.")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ;
-                            }
-
-                        });
-
-                dlg.show();
-                */
 
                 Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
                 startActivityForResult(intent, RECOMMENDED_PCODE);
@@ -532,6 +527,11 @@ public class BIP47Activity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bip47_menu, menu);
+
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -553,11 +553,19 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_sync_all) {
             doSyncAll();
         }
+        else if(id == R.id.action_claim_paynym) {
+            doClaimPayNym();
+        }
         else {
             ;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doClaimPayNym() {
+        Intent intent = new Intent(BIP47Activity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
     }
 
     private void doScan() {
@@ -711,11 +719,14 @@ public class BIP47Activity extends Activity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-//        new PaymentCodeMetaTask().execute("");
-
     }
 
     private void setDisplay()   {
+
+        if(payNymTask == null || payNymTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+            payNymTask = new PayNymTask();
+            payNymTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
 
         if(pcodes.length > 0)    {
             listView.setVisibility(View.VISIBLE);
@@ -1568,6 +1579,80 @@ public class BIP47Activity extends Activity {
 
             refreshList();
 
+        }
+
+    }
+
+    private class PayNymTask extends AsyncTask<String, Void, String> {
+
+        private Handler handler = null;
+
+        @Override
+        protected void onPreExecute() {
+            handler = new Handler();
+        }
+
+        @Override
+        protected String doInBackground(String... s) {
+
+            Looper.prepare();
+
+            final String strPaymentCode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString();
+
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("nym", strPaymentCode);
+                String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/nym", obj.toString());
+                Log.d("BIP47Activity", res);
+
+                JSONObject responseObj = new JSONObject(res);
+                if(responseObj.has("codes"))    {
+                    JSONArray array = responseObj.getJSONArray("codes");
+                    if(array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed") == true)    {
+                        final String strNymName = responseObj.getString("nymName");
+                        handler.post(new Runnable() {
+                            public void run() {
+                                ((RelativeLayout) findViewById(R.id.paynym)).setVisibility(View.VISIBLE);
+                                Log.d("BIP47Activity", strNymName);
+
+                                final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
+                                Picasso.with(BIP47Activity.this).load("http://188.214.30.147/" + strPaymentCode + "/avatar").into(ivAvatar);
+
+                                ((TextView)findViewById(R.id.nymName)).setText(strNymName);
+                                ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
+
+                            }
+                        });
+                    }
+                    else    {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }
+                else    {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                        }
+                    });
+                }
+
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+
+            Looper.loop();
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            ;
         }
 
     }

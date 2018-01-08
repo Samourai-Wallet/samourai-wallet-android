@@ -61,6 +61,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.*;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -792,6 +793,11 @@ public class BalanceActivity extends Activity {
         }
 
         return false;
+    }
+
+    private void doClaimPayNym() {
+        Intent intent = new Intent(BalanceActivity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
     }
 
     private void doSettings()	{
@@ -1691,6 +1697,12 @@ public class BalanceActivity extends Activity {
                     }
 
                 }
+
+            }
+
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                    PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
+                doClaimPayNym();
             }
 
         }
