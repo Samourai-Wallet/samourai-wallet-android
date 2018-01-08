@@ -196,7 +196,7 @@ public class SendActivity extends Activity {
         }
 
         final String strAmount;
-        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(8);
         nf.setMinimumFractionDigits(1);
         nf.setMinimumIntegerDigits(1);
@@ -228,7 +228,7 @@ public class SendActivity extends Activity {
             }
         });
 
-        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.getDefault());
+        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
@@ -1361,12 +1361,12 @@ public class SendActivity extends Activity {
 
                         }
                     }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
+                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                    dialog.dismiss();
+                            dialog.dismiss();
 
-                }
-            });
+                        }
+                    });
             if(!isFinishing())    {
                 dlg.show();
             }
