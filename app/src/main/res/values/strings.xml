@@ -237,7 +237,7 @@
     <string name="bip47_setup4_text1">A one time fee of</string>
     <string name="bip47_setup4_text2">will be deducted from your wallet balance in order to create the payment channel on the block chain.</string>
 
-    <string name="bip47_add1_title">New connection</string>
+    <string name="bip47_add1_title">New contact</string>
     <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
 
     <string name="paste">Paste</string>
