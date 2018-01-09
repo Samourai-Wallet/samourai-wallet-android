@@ -2,6 +2,7 @@ package com.samourai.wallet.bip47.paynym;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -82,11 +83,15 @@ public class ClaimPayNymActivity extends Activity {
 
     private class ClaimPayNymTask extends AsyncTask<String, Void, String> {
 
-        private Handler handler = null;
+        private ProgressDialog progress = null;
 
         @Override
         protected void onPreExecute() {
-            handler = new Handler();
+            progress = new ProgressDialog(ClaimPayNymActivity.this);
+            progress.setCancelable(false);
+            progress.setTitle(R.string.app_name);
+            progress.setMessage(getString(R.string.please_wait));
+            progress.show();
         }
 
         @Override
@@ -182,7 +187,11 @@ public class ClaimPayNymActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(String result) { ; }
+        protected void onPostExecute(String result) {
+            if(progress != null && progress.isShowing())    {
+                progress.cancel();
+            }
+        }
 
         @Override
         protected void onProgressUpdate(Void... values) {
