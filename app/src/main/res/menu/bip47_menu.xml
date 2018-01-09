@@ -3,7 +3,7 @@
     <item android:id="@+id/action_show_qr"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/ic_receive_qr"
+        android:icon="@drawable/ic_action_account_circle"
         />
     <item android:id="@+id/action_claim_paynym"
         android:title="@string/claim_paynym"
