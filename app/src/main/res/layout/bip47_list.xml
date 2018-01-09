@@ -87,16 +87,6 @@
             fab:fab_colorPressed="#FF3f51b5"
             fab:fab_title="@string/bip47_sign"
             />
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/bip47_partners"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_loyalty_white_24dp"
-            fab:fab_colorNormal="#FF5c6bc0"
-            fab:fab_colorPressed="#FF3f51b5"
-            fab:fab_title="@string/bip47_partners"
-            />
     <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/bip47_add"
             android:layout_width="wrap_content"

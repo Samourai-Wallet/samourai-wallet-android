@@ -123,7 +123,6 @@ public class BIP47Activity extends Activity {
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
-    private FloatingActionButton actionPartners = null;
     private FloatingActionButton actionSign = null;
 
     private Timer timer = null;
@@ -146,17 +145,6 @@ public class BIP47Activity extends Activity {
             @Override
             public void onClick(View arg0) {
                 doAdd();
-            }
-        });
-
-        actionPartners = (FloatingActionButton)findViewById(R.id.bip47_partners);
-        actionPartners.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-                Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
-                startActivityForResult(intent, RECOMMENDED_PCODE);
-
             }
         });
 
