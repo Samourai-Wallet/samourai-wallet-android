@@ -692,6 +692,10 @@ public class BIP47Activity extends Activity {
 
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
+        if(_pcodes.size() < 1)    {
+            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Samourai Wallet Donations");
+        }
+
         //
         // check for own payment code
         //
@@ -711,94 +715,11 @@ public class BIP47Activity extends Activity {
             ++i;
         }
 
-        setDisplay();
+        doPayNymTask();
 
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-    }
-
-    private void setDisplay()   {
-
-        doPayNymTask();
-
-        if(pcodes.length > 0)    {
-            listView.setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.GONE);
-        }
-        else    {
-            listView.setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    doHelp();
-                    return false;
-                }
-            });
-        }
-
-    }
-
-    private void doHelp()  {
-
-        new AlertDialog.Builder(BIP47Activity.this)
-                .setTitle(R.string.bip47_setup1_title)
-                .setMessage(R.string.bip47_setup1_text)
-                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        new AlertDialog.Builder(BIP47Activity.this)
-                                .setTitle(R.string.bip47_setup2_title)
-                                .setMessage(R.string.bip47_setup2_text)
-                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        new AlertDialog.Builder(BIP47Activity.this)
-                                                .setTitle(R.string.bip47_setup2_title)
-                                                .setMessage(R.string.bip47_setup3_text)
-                                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                        Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
-                                                        intent.putExtra("label", "Samourai Donations");
-                                                        intent.putExtra("pcode", "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh");
-                                                        startActivityForResult(intent, EDIT_PCODE);
-
-                                                    }
-
-                                                }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                ;
-
-                                            }
-                                        }).show();
-
-                                    }
-
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                ;
-
-                            }
-                        }).show();
-
-                    }
-
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        ;
-
-                    }
-        }).show();
 
     }
 

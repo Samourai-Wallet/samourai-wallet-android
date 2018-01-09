@@ -56,52 +56,6 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text1"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:visibility="gone"
-        android:layout_below="@+id/paynym"
-        android:textSize="16sp"
-        />
-
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text2"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:visibility="gone"
-        android:layout_below="@+id/text1"
-        android:textSize="16sp"
-        />
-
-    <TextView
-        android:id="@+id/text3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text3"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:visibility="gone"
-        android:layout_below="@+id/text2"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        />
-
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/list"
         android:layout_height="wrap_content"
