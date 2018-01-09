@@ -470,6 +470,7 @@
     <string name="learn_more">Learn More</string>
 
     <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Claim your paynym</string>
     <string name="claim_paynym_title1">Claim your free PayNymID</string>
     <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>

@@ -125,6 +125,8 @@ public class BIP47Activity extends Activity {
     private FloatingActionButton actionAdd = null;
     private FloatingActionButton actionSign = null;
 
+    private Menu _menu = null;
+
     private Timer timer = null;
     private Handler handler = null;
 
@@ -134,6 +136,8 @@ public class BIP47Activity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bip47_list);
+
+        setTitle(R.string.paynyms);
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -394,6 +398,10 @@ public class BIP47Activity extends Activity {
         super.onResume();
         AppUtil.getInstance(BIP47Activity.this).checkTimeOut();
 
+        if(_menu != null && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            _menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
+
         refreshList();
 
     }
@@ -514,6 +522,8 @@ public class BIP47Activity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bip47_menu, menu);
+
+        _menu = menu;
 
         if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
             menu.findItem(R.id.action_claim_paynym).setVisible(false);
@@ -1440,55 +1450,11 @@ public class BIP47Activity extends Activity {
 
     }
 
-    private class PaymentCodeMetaTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            if(meta == null)    {
-                meta = new HashMap<String,String>();
-            }
-            if(bitmaps == null)    {
-                bitmaps = new HashMap<String,Bitmap>();
-            }
-        }
-
-        @Override
-        protected String doInBackground(String... s) {
-
-            for(int i = 0; i < pcodes.length; i++)  {
-                String result = null;
-                String url = WebUtil.PAYMENTCODE_IO_SEARCH + pcodes[i];
-                try {
-                    result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
-
-                    JSONObject obj = new JSONObject(result);
-                    if(!meta.containsKey(pcodes[i]))    {
-                        meta.put(pcodes[i], obj.toString());
-                    }
-
-                }
-                catch(Exception e) {
-                    ;
-                }
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            adapter.notifyDataSetChanged();
-        }
-
-        protected void onProgressUpdate(String... progress) {
-
-            refreshList();
-
-        }
-
-    }
-
     private void doPayNymTask() {
+
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+        }
 
         new Thread(new Runnable() {
 
@@ -1544,6 +1510,11 @@ public class BIP47Activity extends Activity {
 
                 }
                 catch(Exception e) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                        }
+                    });
                     e.printStackTrace();
                 }
 
