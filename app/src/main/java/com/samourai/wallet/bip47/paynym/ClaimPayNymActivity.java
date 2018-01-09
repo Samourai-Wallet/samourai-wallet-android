@@ -38,10 +38,29 @@ public class ClaimPayNymActivity extends Activity {
         btClaim.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(claimTask == null || claimTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                    claimTask = new ClaimPayNymTask();
-                    claimTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                }
+                AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.claim_paynym_prompt)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                dialog.dismiss();
+
+                                if(claimTask == null || claimTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                    claimTask = new ClaimPayNymTask();
+                                    claimTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                                }
+
+                            }
+
+                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        });
+
+                dlg.show();
+
 
             }
 

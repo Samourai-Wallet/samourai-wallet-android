@@ -480,4 +480,6 @@
     <string name="claim_paynym_id">Claim my PayNymID</string>
     <string name="claim_paynym_id_refused">Not interested. Don\'t ask me again.</string>
 
+    <string name="claim_paynym_prompt">Claim my PayNymID and add my public PayNym code to PayNym.is?</string>
+
 </resources>
