@@ -520,8 +520,16 @@ public class BalanceActivity extends Activity {
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.recovery_checkup_finish, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
-                                                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.CREDS_CHECK, System.currentTimeMillis() / 1000L);
+
                                                 dialog.dismiss();
+
+                                                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.CREDS_CHECK, System.currentTimeMillis() / 1000L);
+
+                                                if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                                                        PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
+                                                    doClaimPayNym();
+                                                }
+
                                             }
                                         });
                                 if(!isFinishing())    {
@@ -539,6 +547,12 @@ public class BalanceActivity extends Activity {
                 dlg.show();
             }
 
+        }
+        else    {
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                    PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
+                doClaimPayNym();
+            }
         }
 
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
@@ -1698,11 +1712,6 @@ public class BalanceActivity extends Activity {
 
                 }
 
-            }
-
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-                    PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
-                doClaimPayNym();
             }
 
         }
