@@ -129,8 +129,6 @@ public class BIP47Activity extends Activity {
     private Timer timer = null;
     private Handler handler = null;
 
-    private PayNymTask payNymTask = null;
-
     private ProgressDialog progress = null;
 
     @Override
@@ -723,10 +721,7 @@ public class BIP47Activity extends Activity {
 
     private void setDisplay()   {
 
-        if(payNymTask == null || payNymTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-            payNymTask = new PayNymTask();
-            payNymTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        }
+        doPayNymTask();
 
         if(pcodes.length > 0)    {
             listView.setVisibility(View.VISIBLE);
@@ -1583,46 +1578,51 @@ public class BIP47Activity extends Activity {
 
     }
 
-    private class PayNymTask extends AsyncTask<String, Void, String> {
+    private void doPayNymTask() {
 
-        private Handler handler = null;
+        new Thread(new Runnable() {
 
-        @Override
-        protected void onPreExecute() {
-            handler = new Handler();
-        }
+            private Handler handler = new Handler();
 
-        @Override
-        protected String doInBackground(String... s) {
+            @Override
+            public void run() {
 
-            Looper.prepare();
+                Looper.prepare();
 
-            final String strPaymentCode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString();
+                final String strPaymentCode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString();
 
-            try {
-                JSONObject obj = new JSONObject();
-                obj.put("nym", strPaymentCode);
-                String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/nym", obj.toString());
-                Log.d("BIP47Activity", res);
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("nym", strPaymentCode);
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/nym", obj.toString());
+                    Log.d("BIP47Activity", res);
 
-                JSONObject responseObj = new JSONObject(res);
-                if(responseObj.has("codes"))    {
-                    JSONArray array = responseObj.getJSONArray("codes");
-                    if(array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed") == true)    {
-                        final String strNymName = responseObj.getString("nymName");
-                        handler.post(new Runnable() {
-                            public void run() {
-                                ((RelativeLayout) findViewById(R.id.paynym)).setVisibility(View.VISIBLE);
-                                Log.d("BIP47Activity", strNymName);
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("codes"))    {
+                        JSONArray array = responseObj.getJSONArray("codes");
+                        if(array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed") == true)    {
+                            final String strNymName = responseObj.getString("nymName");
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    ((RelativeLayout) findViewById(R.id.paynym)).setVisibility(View.VISIBLE);
+                                    Log.d("BIP47Activity", strNymName);
 
-                                final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
-                                Picasso.with(BIP47Activity.this).load("http://188.214.30.147/" + strPaymentCode + "/avatar").into(ivAvatar);
+                                    final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
+                                    Picasso.with(BIP47Activity.this).load("http://188.214.30.147/" + strPaymentCode + "/avatar").into(ivAvatar);
 
-                                ((TextView)findViewById(R.id.nymName)).setText(strNymName);
-                                ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
+                                    ((TextView)findViewById(R.id.nymName)).setText(strNymName);
+                                    ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
 
-                            }
-                        });
+                                }
+                            });
+                        }
+                        else    {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                                }
+                            });
+                        }
                     }
                     else    {
                         handler.post(new Runnable() {
@@ -1631,30 +1631,16 @@ public class BIP47Activity extends Activity {
                             }
                         });
                     }
+
                 }
-                else    {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
-                        }
-                    });
+                catch(Exception e) {
+                    e.printStackTrace();
                 }
 
+                Looper.loop();
+
             }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-
-            Looper.loop();
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            ;
-        }
-
+        }).start();
     }
 
 }
