@@ -10,7 +10,7 @@
         android:id="@+id/paynym"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="top|center_horizontal"
         android:orientation="vertical"
         android:layout_alignParentTop="true"
         >
@@ -60,6 +60,7 @@
         android:id="@+id/list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_below="@+id/paynym"
         />
 
     <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
