@@ -234,8 +234,8 @@
     <string name="bip47_setup2_text">Add a payment code by pressing the \'+\' icon on the bottom right.\n\nAdd a payment code to open a payment channel. Once the channel is open you can send through it at any time.</string>
     <string name="bip47_setup3_text">The payment code for donating to Samourai will be prefilled on the next screen. Normally, you would need to enter this by scanning a QR code or pasting from your clipboard.\n\nIf you choose to continue a payment channel will be created with Samourai and you can choose to donate whenever you feel like it.\n\nIf you prefer to end here without adding your first payment channel to Samourai press \'Close\'. You are ready to start using payment channels at any time.</string>
     <string name="bip47_setup4_title">Confirm payment channel</string>
-    <string name="bip47_setup4_text1">A one time fee of</string>
-    <string name="bip47_setup4_text2">will be deducted from your wallet balance in order to create the payment channel on the block chain.</string>
+    <string name="bip47_setup4_text1">Would you like to connect to this PayNym? (One time fee of</string>
+    <string name="bip47_setup4_text2">) will be deducted from your wallet balance in order to create the payment channel on the block chain.</string>
 
     <string name="bip47_add1_title">New contact</string>
     <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
