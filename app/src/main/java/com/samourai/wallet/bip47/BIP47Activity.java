@@ -1594,7 +1594,7 @@ public class BIP47Activity extends Activity {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("nym", strPaymentCode);
-                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/nym", obj.toString());
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
                     Log.d("BIP47Activity", res);
 
                     JSONObject responseObj = new JSONObject(res);
@@ -1608,7 +1608,7 @@ public class BIP47Activity extends Activity {
                                     Log.d("BIP47Activity", strNymName);
 
                                     final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
-                                    Picasso.with(BIP47Activity.this).load("http://188.214.30.147/" + strPaymentCode + "/avatar").into(ivAvatar);
+                                    Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
 
                                     ((TextView)findViewById(R.id.nymName)).setText(strNymName);
                                     ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));

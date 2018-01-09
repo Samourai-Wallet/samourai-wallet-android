@@ -4,17 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.util.AppUtil;
@@ -22,8 +17,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,7 +97,7 @@ public class ClaimPayNymActivity extends Activity {
                 JSONObject obj = new JSONObject();
                 obj.put("code", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
                 Log.d("ClaimPayNymActivity", obj.toString());
-                String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/create", obj.toString());
+                String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/create", obj.toString());
                 Log.d("ClaimPayNymActivity", res);
 
                 JSONObject responseObj = new JSONObject(res);
@@ -117,7 +110,7 @@ public class ClaimPayNymActivity extends Activity {
                     obj = new JSONObject();
                     obj.put("signature", sig);
 
-                    res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", token, "http://188.214.30.147/api/v1/claim", obj.toString());
+                    res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", token, WebUtil.PAYNYM_API + "api/v1/claim", obj.toString());
                     Log.d("ClaimPayNymActivity", res);
 
                     responseObj = new JSONObject(res);
@@ -128,7 +121,7 @@ public class ClaimPayNymActivity extends Activity {
 
                         obj = new JSONObject();
                         obj.put("nym", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-                        res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, "http://188.214.30.147/api/v1/nym", obj.toString());
+                        res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
                         Log.d("ClaimPayNymActivity", res);
 
                         responseObj = new JSONObject(res);
