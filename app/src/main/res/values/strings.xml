@@ -228,7 +228,7 @@
     <string name="invalid_payment_code">Invalid payment code</string>
     <string name="error_payment_code">Error generating payment code</string>
 
-    <string name="bip47_setup1_title">Your Payment Code</string>
+    <string name="bip47_setup1_title">Your PayNym</string>
     <string name="bip47_setup1_text">Your payment code is reusable and unique to your wallet. Press the QR code icon in the top right to share your payment code.\n\nWhen your payment code is added a payment channel will be opened allowing payments into your wallet at anytime.</string>
     <string name="bip47_setup2_title">Opening a payment channel</string>
     <string name="bip47_setup2_text">Add a payment code by pressing the \'+\' icon on the bottom right.\n\nAdd a payment code to open a payment channel. Once the channel is open you can send through it at any time.</string>
