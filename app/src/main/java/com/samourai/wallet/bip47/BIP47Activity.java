@@ -404,6 +404,7 @@ public class BIP47Activity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppUtil.getInstance(BIP47Activity.this).checkTimeOut();
 
         refreshList();
 
