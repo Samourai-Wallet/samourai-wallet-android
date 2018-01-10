@@ -771,6 +771,7 @@ public class BIP47Activity extends Activity {
         //
         List<UTXO> utxos = null;
         if(UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0,1, 4).longValue())    {
+            utxos = new ArrayList<UTXO>();
             utxos.addAll(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
         }
         else    {
