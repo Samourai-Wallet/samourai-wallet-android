@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,6 +91,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -123,8 +125,9 @@ public class BIP47Activity extends Activity {
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
-    private FloatingActionButton actionPartners = null;
     private FloatingActionButton actionSign = null;
+
+    private Menu _menu = null;
 
     private Timer timer = null;
     private Handler handler = null;
@@ -136,6 +139,8 @@ public class BIP47Activity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bip47_list);
 
+        setTitle(R.string.paynyms);
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -146,17 +151,6 @@ public class BIP47Activity extends Activity {
             @Override
             public void onClick(View arg0) {
                 doAdd();
-            }
-        });
-
-        actionPartners = (FloatingActionButton)findViewById(R.id.bip47_partners);
-        actionPartners.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-                Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
-                startActivityForResult(intent, RECOMMENDED_PCODE);
-
             }
         });
 
@@ -404,6 +398,11 @@ public class BIP47Activity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppUtil.getInstance(BIP47Activity.this).checkTimeOut();
+
+        if(_menu != null && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            _menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
 
         refreshList();
 
@@ -525,6 +524,8 @@ public class BIP47Activity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bip47_menu, menu);
+
+        _menu = menu;
 
         if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
             menu.findItem(R.id.action_claim_paynym).setVisible(false);
@@ -692,6 +693,10 @@ public class BIP47Activity extends Activity {
 
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
+        if(_pcodes.size() < 1)    {
+            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Samourai Wallet Donations");
+        }
+
         //
         // check for own payment code
         //
@@ -711,94 +716,11 @@ public class BIP47Activity extends Activity {
             ++i;
         }
 
-        setDisplay();
+        doPayNymTask();
 
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-    }
-
-    private void setDisplay()   {
-
-        doPayNymTask();
-
-        if(pcodes.length > 0)    {
-            listView.setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.GONE);
-        }
-        else    {
-            listView.setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    doHelp();
-                    return false;
-                }
-            });
-        }
-
-    }
-
-    private void doHelp()  {
-
-        new AlertDialog.Builder(BIP47Activity.this)
-                .setTitle(R.string.bip47_setup1_title)
-                .setMessage(R.string.bip47_setup1_text)
-                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        new AlertDialog.Builder(BIP47Activity.this)
-                                .setTitle(R.string.bip47_setup2_title)
-                                .setMessage(R.string.bip47_setup2_text)
-                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        new AlertDialog.Builder(BIP47Activity.this)
-                                                .setTitle(R.string.bip47_setup2_title)
-                                                .setMessage(R.string.bip47_setup3_text)
-                                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                        Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
-                                                        intent.putExtra("label", "Samourai Donations");
-                                                        intent.putExtra("pcode", "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh");
-                                                        startActivityForResult(intent, EDIT_PCODE);
-
-                                                    }
-
-                                                }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                ;
-
-                                            }
-                                        }).show();
-
-                                    }
-
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                ;
-
-                            }
-                        }).show();
-
-                    }
-
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        ;
-
-                    }
-        }).show();
 
     }
 
@@ -821,10 +743,6 @@ public class BIP47Activity extends Activity {
             balance = 0L;
         }
 
-        //
-        // get unspents
-        //
-        List<UTXO> utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
 //        long change = 0L;
@@ -848,6 +766,18 @@ public class BIP47Activity extends Activity {
         //
         amount += currentSWFee.longValue();
 
+        //
+        // get unspents
+        //
+        List<UTXO> utxos = null;
+        if(UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0,1, 4).longValue())    {
+            utxos = new ArrayList<UTXO>();
+            utxos.addAll(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+        }
+        else    {
+            utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
+        }
+
         // sort in ascending order by value
         final List<UTXO> _utxos = utxos;
         Collections.sort(_utxos, new UTXO.UTXOComparator());
@@ -869,10 +799,10 @@ public class BIP47Activity extends Activity {
         }
 
         //
-        // use high fee settings
+        // use low fee settings
         //
         SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
-        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
 
         if(selectedUTXO.size() == 0)    {
             // sort in descending order by value
@@ -910,7 +840,37 @@ public class BIP47Activity extends Activity {
         // total amount to spend including fee
         //
         if((amount + fee.longValue()) >= balance)    {
-            Toast.makeText(BIP47Activity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+
+            String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
+            BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
+            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " BTC ";
+            message += strAmount;
+            message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/article/58-connecting-to-a-paynym-contact"));
+                            startActivity(browserIntent);
+
+                        }
+                    })
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
         }
 
         //
@@ -925,7 +885,7 @@ public class BIP47Activity extends Activity {
         }
 
         if(payment_code == null)    {
-
+            return;
         }
 
         //
@@ -1039,10 +999,8 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " BTC ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " BTC ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
-        strNotifTxMsg += "\n";
-        strNotifTxMsg += "(" + MonetaryUtil.getInstance().getBTCFormat().format(((double) fee.longValue()) / 1e8) + " BTC miner's fee).";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                 .setTitle(R.string.bip47_setup4_title)
@@ -1530,55 +1488,11 @@ public class BIP47Activity extends Activity {
 
     }
 
-    private class PaymentCodeMetaTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            if(meta == null)    {
-                meta = new HashMap<String,String>();
-            }
-            if(bitmaps == null)    {
-                bitmaps = new HashMap<String,Bitmap>();
-            }
-        }
-
-        @Override
-        protected String doInBackground(String... s) {
-
-            for(int i = 0; i < pcodes.length; i++)  {
-                String result = null;
-                String url = WebUtil.PAYMENTCODE_IO_SEARCH + pcodes[i];
-                try {
-                    result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
-
-                    JSONObject obj = new JSONObject(result);
-                    if(!meta.containsKey(pcodes[i]))    {
-                        meta.put(pcodes[i], obj.toString());
-                    }
-
-                }
-                catch(Exception e) {
-                    ;
-                }
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            adapter.notifyDataSetChanged();
-        }
-
-        protected void onProgressUpdate(String... progress) {
-
-            refreshList();
-
-        }
-
-    }
-
     private void doPayNymTask() {
+
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+        }
 
         new Thread(new Runnable() {
 
@@ -1634,6 +1548,11 @@ public class BIP47Activity extends Activity {
 
                 }
                 catch(Exception e) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                        }
+                    });
                     e.printStackTrace();
                 }
 

@@ -11,15 +11,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:textAlignment="gravity"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_light"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:text="@string/claim_paynym_title1"
         />
@@ -27,7 +26,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"
@@ -42,7 +40,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"
@@ -50,7 +47,7 @@
         android:textAlignment="gravity"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_light"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:text="@string/claim_paynym_title2"
         />
@@ -58,7 +55,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"
@@ -73,7 +69,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"
@@ -88,7 +83,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:gravity="start|center_vertical"
         android:paddingStart="20dp"

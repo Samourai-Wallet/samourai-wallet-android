@@ -38,10 +38,29 @@ public class ClaimPayNymActivity extends Activity {
         btClaim.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                if(claimTask == null || claimTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                    claimTask = new ClaimPayNymTask();
-                    claimTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                }
+                AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.claim_paynym_prompt)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                dialog.dismiss();
+
+                                if(claimTask == null || claimTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
+                                    claimTask = new ClaimPayNymTask();
+                                    claimTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                                }
+
+                            }
+
+                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        });
+
+                dlg.show();
+
 
             }
 
@@ -116,36 +135,7 @@ public class ClaimPayNymActivity extends Activity {
                     responseObj = new JSONObject(res);
                     if(responseObj.has("claimed") && responseObj.has("token"))    {
 
-                        PrefsUtil.getInstance(ClaimPayNymActivity.this).setValue(PrefsUtil.PAYNYM_CLAIMED, true);
-                        Log.d("ClaimPayNymActivity", "paynym claimed:" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-
-                        obj = new JSONObject();
-                        obj.put("nym", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-                        res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
-                        Log.d("ClaimPayNymActivity", res);
-
-                        responseObj = new JSONObject(res);
-                        if(responseObj.has("nymName"))    {
-
-                            final String strNymName = responseObj.getString("nymName");
-
-                            AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
-                                    .setTitle("Your PayNym has been claimed")
-                                    .setMessage(strNymName)
-//                                    .setView(imgLayout)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            ClaimPayNymActivity.this.finish();
-
-                                        }
-                                    });
-                            if(!isFinishing())    {
-                                dlg.show();
-                            }
-
-                        }
+                        doClaimed();
 
                     }
                     else if(responseObj.has("result") && responseObj.getInt("result") == 400)   {
@@ -157,6 +147,8 @@ public class ClaimPayNymActivity extends Activity {
 
                 }
                 else if(responseObj.has("claimed"))    {
+
+                    doClaimed();
 
                 }
                 else if(responseObj.has("result") && responseObj.getInt("result") == 400)   {
@@ -189,6 +181,49 @@ public class ClaimPayNymActivity extends Activity {
         @Override
         protected void onProgressUpdate(Void... values) {
             ;
+        }
+
+        private void doClaimed()  {
+
+            try {
+                PrefsUtil.getInstance(ClaimPayNymActivity.this).setValue(PrefsUtil.PAYNYM_CLAIMED, true);
+                Log.d("ClaimPayNymActivity", "paynym claimed:" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
+
+                JSONObject obj = new JSONObject();
+                obj.put("nym", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
+                String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                Log.d("ClaimPayNymActivity", res);
+
+                JSONObject responseObj = new JSONObject(res);
+                if(responseObj.has("nymName"))    {
+
+                    final String strNymName = responseObj.getString("nymName");
+
+                    AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
+                            .setTitle("Your PayNym has been claimed")
+                            .setMessage(strNymName)
+//                                    .setView(imgLayout)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                    ClaimPayNymActivity.this.finish();
+
+                                }
+                            });
+                    if(!isFinishing())    {
+                        dlg.show();
+                    }
+
+                }
+            }
+            catch(JSONException je) {
+                ;
+            }
+            catch(Exception e) {
+                ;
+            }
+
         }
 
     }

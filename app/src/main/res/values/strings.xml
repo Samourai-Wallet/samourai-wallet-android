@@ -228,16 +228,16 @@
     <string name="invalid_payment_code">Invalid payment code</string>
     <string name="error_payment_code">Error generating payment code</string>
 
-    <string name="bip47_setup1_title">Your Payment Code</string>
+    <string name="bip47_setup1_title">Your PayNym</string>
     <string name="bip47_setup1_text">Your payment code is reusable and unique to your wallet. Press the QR code icon in the top right to share your payment code.\n\nWhen your payment code is added a payment channel will be opened allowing payments into your wallet at anytime.</string>
     <string name="bip47_setup2_title">Opening a payment channel</string>
     <string name="bip47_setup2_text">Add a payment code by pressing the \'+\' icon on the bottom right.\n\nAdd a payment code to open a payment channel. Once the channel is open you can send through it at any time.</string>
     <string name="bip47_setup3_text">The payment code for donating to Samourai will be prefilled on the next screen. Normally, you would need to enter this by scanning a QR code or pasting from your clipboard.\n\nIf you choose to continue a payment channel will be created with Samourai and you can choose to donate whenever you feel like it.\n\nIf you prefer to end here without adding your first payment channel to Samourai press \'Close\'. You are ready to start using payment channels at any time.</string>
-    <string name="bip47_setup4_title">Confirm payment channel</string>
-    <string name="bip47_setup4_text1">A one time fee of</string>
-    <string name="bip47_setup4_text2">will be deducted from your wallet balance in order to create the payment channel on the block chain.</string>
+    <string name="bip47_setup4_title">Add PayNym contact</string>
+    <string name="bip47_setup4_text1">Adding this PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain.</string>
+    <string name="bip47_setup4_text2">will be deducted from your wallet balance.</string>
 
-    <string name="bip47_add1_title">New connection</string>
+    <string name="bip47_add1_title">New contact</string>
     <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
 
     <string name="paste">Paste</string>
@@ -470,6 +470,7 @@
     <string name="learn_more">Learn More</string>
 
     <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Claim your paynym</string>
     <string name="claim_paynym_title1">Claim your free PayNymID</string>
     <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
@@ -479,5 +480,11 @@
     <string name="claim_paynym_text2c">Be found easily! Compatible wallets can search for new contacts and send private secure payments without leaving a trace.</string>
     <string name="claim_paynym_id">Claim my PayNymID</string>
     <string name="claim_paynym_id_refused">Not interested. Don\'t ask me again.</string>
+
+    <string name="claim_paynym_prompt">Claim my PayNymID and add my public PayNym code to PayNym.is?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Adding a PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain. Deposit</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
+    <string name="help">Help</string>
 
 </resources>
