@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
@@ -26,8 +26,6 @@ public class ClaimPayNymActivity extends Activity {
     private Button btClaim = null;
     private Button btRefuse = null;
 
-    private ClaimPayNymTask claimTask = null;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +44,7 @@ public class ClaimPayNymActivity extends Activity {
 
                                 dialog.dismiss();
 
-                                if(claimTask == null || claimTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-                                    claimTask = new ClaimPayNymTask();
-                                    claimTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                                }
+                                doClaimPayNymTask();
 
                             }
 
@@ -93,138 +88,140 @@ public class ClaimPayNymActivity extends Activity {
         super.onDestroy();
     }
 
-    private class ClaimPayNymTask extends AsyncTask<String, Void, String> {
+    private void doClaimPayNymTask() {
 
-        private ProgressDialog progress = null;
+        new Thread(new Runnable() {
 
-        @Override
-        protected void onPreExecute() {
-            progress = new ProgressDialog(ClaimPayNymActivity.this);
-            progress.setCancelable(false);
-            progress.setTitle(R.string.app_name);
-            progress.setMessage(getString(R.string.please_wait));
-            progress.show();
-        }
+            private Handler handler = new Handler();
 
-        @Override
-        protected String doInBackground(final String... params) {
+            private ProgressDialog progress = null;
 
-            Looper.prepare();
+            @Override
+            public void run() {
 
-            try {
+                handler.post(new Runnable() {
+                    public void run() {
+                        progress = new ProgressDialog(ClaimPayNymActivity.this);
+                        progress.setCancelable(false);
+                        progress.setTitle(R.string.app_name);
+                        progress.setMessage(getString(R.string.please_wait));
+                        progress.show();
+                    }
+                });
 
-                JSONObject obj = new JSONObject();
-                obj.put("code", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-                Log.d("ClaimPayNymActivity", obj.toString());
-                String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/create", obj.toString());
-                Log.d("ClaimPayNymActivity", res);
+                Looper.prepare();
 
-                JSONObject responseObj = new JSONObject(res);
-                if(responseObj.has("token"))    {
-                    String token = responseObj.getString("token");
+                try {
 
-                    String sig = MessageSignUtil.getInstance(ClaimPayNymActivity.this).signMessage(BIP47Util.getInstance(ClaimPayNymActivity.this).getNotificationAddress().getECKey(), token);
-                    Log.d("ClaimPayNymActivity", sig);
-
-                    obj = new JSONObject();
-                    obj.put("signature", sig);
-
-                    res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", token, WebUtil.PAYNYM_API + "api/v1/claim", obj.toString());
+                    JSONObject obj = new JSONObject();
+                    obj.put("code", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
+                    Log.d("ClaimPayNymActivity", obj.toString());
+                    String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/create", obj.toString());
                     Log.d("ClaimPayNymActivity", res);
 
-                    responseObj = new JSONObject(res);
-                    if(responseObj.has("claimed") && responseObj.has("token"))    {
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("token"))    {
+                        String token = responseObj.getString("token");
+
+                        String sig = MessageSignUtil.getInstance(ClaimPayNymActivity.this).signMessage(BIP47Util.getInstance(ClaimPayNymActivity.this).getNotificationAddress().getECKey(), token);
+                        Log.d("ClaimPayNymActivity", sig);
+
+                        obj = new JSONObject();
+                        obj.put("signature", sig);
+
+                        res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", token, WebUtil.PAYNYM_API + "api/v1/claim", obj.toString());
+                        Log.d("ClaimPayNymActivity", res);
+
+                        responseObj = new JSONObject(res);
+                        if(responseObj.has("claimed") && responseObj.has("token"))    {
+
+                            doClaimed();
+
+                        }
+                        else if(responseObj.has("result") && responseObj.getInt("result") == 400)   {
+                            ;
+                        }
+                        else    {
+                            ;
+                        }
+
+                    }
+                    else if(responseObj.has("claimed"))    {
 
                         doClaimed();
 
                     }
                     else if(responseObj.has("result") && responseObj.getInt("result") == 400)   {
-                        ;
+
                     }
                     else    {
-                        ;
+
                     }
 
                 }
-                else if(responseObj.has("claimed"))    {
-
-                    doClaimed();
-
+                catch(JSONException je) {
+                    je.printStackTrace();
                 }
-                else if(responseObj.has("result") && responseObj.getInt("result") == 400)   {
-
-                }
-                else    {
-
+                catch(Exception e) {
+                    e.printStackTrace();
                 }
 
+                Looper.loop();
+
+                handler.post(new Runnable() {
+                    public void run() {
+                        if(progress != null && progress.isShowing())    {
+                            progress.cancel();
+                        }
+                    }
+                });
+
             }
-            catch(JSONException je) {
-                je.printStackTrace();
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
 
-            Looper.loop();
+            private void doClaimed()  {
 
-            return "OK";
-        }
+                try {
+                    PrefsUtil.getInstance(ClaimPayNymActivity.this).setValue(PrefsUtil.PAYNYM_CLAIMED, true);
+                    Log.d("ClaimPayNymActivity", "paynym claimed:" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
 
-        @Override
-        protected void onPostExecute(String result) {
-            if(progress != null && progress.isShowing())    {
-                progress.cancel();
-            }
-        }
+                    JSONObject obj = new JSONObject();
+                    obj.put("nym", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
+                    String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                    Log.d("ClaimPayNymActivity", res);
 
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            ;
-        }
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("nymName"))    {
 
-        private void doClaimed()  {
+                        final String strNymName = responseObj.getString("nymName");
 
-            try {
-                PrefsUtil.getInstance(ClaimPayNymActivity.this).setValue(PrefsUtil.PAYNYM_CLAIMED, true);
-                Log.d("ClaimPayNymActivity", "paynym claimed:" + BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-
-                JSONObject obj = new JSONObject();
-                obj.put("nym", BIP47Util.getInstance(ClaimPayNymActivity.this).getPaymentCode().toString());
-                String res = WebUtil.getInstance(ClaimPayNymActivity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
-                Log.d("ClaimPayNymActivity", res);
-
-                JSONObject responseObj = new JSONObject(res);
-                if(responseObj.has("nymName"))    {
-
-                    final String strNymName = responseObj.getString("nymName");
-
-                    AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
-                            .setTitle("Your PayNym has been claimed")
-                            .setMessage(strNymName)
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
+                                .setTitle("Your PayNym has been claimed")
+                                .setMessage(strNymName)
 //                                    .setView(imgLayout)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    ClaimPayNymActivity.this.finish();
+                                        ClaimPayNymActivity.this.finish();
 
-                                }
-                            });
-                    if(!isFinishing())    {
-                        dlg.show();
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
                     }
-
                 }
-            }
-            catch(JSONException je) {
-                ;
-            }
-            catch(Exception e) {
-                ;
+                catch(JSONException je) {
+                    ;
+                }
+                catch(Exception e) {
+                    ;
+                }
+
             }
 
-        }
+        }).start();
 
     }
 
