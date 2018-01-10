@@ -999,10 +999,8 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " BTC ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " BTC ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
-        strNotifTxMsg += "\n";
-        strNotifTxMsg += "(" + MonetaryUtil.getInstance().getBTCFormat().format(((double) fee.longValue()) / 1e8) + " BTC miner's fee).";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                 .setTitle(R.string.bip47_setup4_title)
