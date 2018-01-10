@@ -845,7 +845,7 @@ public class BIP47Activity extends Activity {
                     .setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/section/14-payment-codes"));
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/article/58-connecting-to-a-paynym-contact"));
                             startActivity(browserIntent);
 
                         }
@@ -876,7 +876,7 @@ public class BIP47Activity extends Activity {
         }
 
         if(payment_code == null)    {
-
+            return;
         }
 
         //
