@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -789,10 +790,10 @@ public class BIP47Activity extends Activity {
         }
 
         //
-        // use high fee settings
+        // use low fee settings
         //
         SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
-        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
 
         if(selectedUTXO.size() == 0)    {
             // sort in descending order by value
@@ -830,7 +831,37 @@ public class BIP47Activity extends Activity {
         // total amount to spend including fee
         //
         if((amount + fee.longValue()) >= balance)    {
-            Toast.makeText(BIP47Activity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+
+            String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
+            BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 3, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
+            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " BTC ";
+            message += strAmount;
+            message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/section/14-payment-codes"));
+                            startActivity(browserIntent);
+
+                        }
+                    })
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
         }
 
         //
