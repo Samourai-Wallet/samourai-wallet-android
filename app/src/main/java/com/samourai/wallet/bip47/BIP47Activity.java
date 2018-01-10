@@ -91,6 +91,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -742,10 +743,6 @@ public class BIP47Activity extends Activity {
             balance = 0L;
         }
 
-        //
-        // get unspents
-        //
-        List<UTXO> utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
 //        long change = 0L;
@@ -768,6 +765,17 @@ public class BIP47Activity extends Activity {
         // add Samourai Wallet fee to total amount
         //
         amount += currentSWFee.longValue();
+
+        //
+        // get unspents
+        //
+        List<UTXO> utxos = null;
+        if(UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0,1, 4).longValue())    {
+            utxos.addAll(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+        }
+        else    {
+            utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
+        }
 
         // sort in ascending order by value
         final List<UTXO> _utxos = utxos;
@@ -833,7 +841,7 @@ public class BIP47Activity extends Activity {
         if((amount + fee.longValue()) >= balance)    {
 
             String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
-            BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 3, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
+            BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
             String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " BTC ";
             message += strAmount;
             message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
