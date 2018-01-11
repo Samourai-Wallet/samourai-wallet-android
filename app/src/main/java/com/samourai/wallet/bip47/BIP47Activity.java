@@ -381,7 +381,7 @@ public class BIP47Activity extends Activity {
 
                 Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
                 intent.putExtra("pcode", pcode);
-                intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
+                intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
                 startActivityForResult(intent, EDIT_PCODE);
             }
             catch(UnsupportedEncodingException uee) {
@@ -575,6 +575,9 @@ public class BIP47Activity extends Activity {
 
     private void processScan(String data) {
 
+        if(data.startsWith("bitcoin://") && data.length() > 10)    {
+            data = data.substring(10);
+        }
         if(data.startsWith("bitcoin:") && data.length() > 8)    {
             data = data.substring(8);
         }
@@ -594,7 +597,33 @@ public class BIP47Activity extends Activity {
             intent.putExtra("pcode", data);
             startActivityForResult(intent, EDIT_PCODE);
 
-        } else {
+        }
+        else if(data.contains("?") && (data.length() >= data.indexOf("?"))) {
+
+            String meta = data.substring(data.indexOf("?") + 1);
+
+            String _meta = null;
+            try {
+                Map<String, String> map = new HashMap<String,String>();
+                if(meta != null && meta.length() > 0)    {
+                    _meta = URLDecoder.decode(meta, "UTF-8");
+                    map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                }
+
+                Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
+                intent.putExtra("pcode", data.substring(0, data.indexOf("?")));
+                intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                startActivityForResult(intent, EDIT_PCODE);
+            }
+            catch(UnsupportedEncodingException uee) {
+                ;
+            }
+            catch(Exception e) {
+                ;
+            }
+
+        }
+        else {
             Toast.makeText(BIP47Activity.this, R.string.scan_error, Toast.LENGTH_SHORT).show();
         }
 
