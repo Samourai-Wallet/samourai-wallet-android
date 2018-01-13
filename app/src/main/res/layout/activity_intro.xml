@@ -45,24 +45,55 @@
         app:layout_constraintEnd_toEndOf="@+id/walletTitle"
         app:layout_constraintTop_toBottomOf="@+id/walletTitle" />
 
-    <Button
-        android:id="@+id/btn_create_wallet"
-        style="@style/main_button"
-        android:text="@string/new_wallet_button"
-        android:background="@drawable/main_btn_selector"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/versionNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/versionNumber">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_chevron_right_white"
-        app:layout_constraintTop_toTopOf="@+id/btn_create_wallet"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_create_wallet"
-        app:layout_constraintEnd_toEndOf="@+id/btn_create_wallet"
-        android:layout_marginEnd="8dp"
-        android:clickable="false"
-        tools:ignore="ContentDescription" />
+        <Button
+            android:id="@+id/btn_create_wallet"
+            style="@style/main_button"
+            android:text="@string/new_wallet_button"
+            android:background="@drawable/main_btn_selector" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right_white"
+            android:layout_alignEnd="@id/btn_create_wallet"
+            android:layout_alignBottom="@id/btn_create_wallet"
+            android:layout_alignTop="@id/btn_create_wallet"
+            android:layout_marginEnd="8dp"
+            android:clickable="false"
+            tools:ignore="ContentDescription" />
+
+        <Button
+            android:id="@+id/btn_restore_wallet"
+            style="@style/main_button"
+            android:text="@string/restore_wallet_button"
+            android:background="@drawable/main_btn_selector"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/btn_create_wallet"
+            android:layout_alignStart="@id/btn_create_wallet"
+            android:layout_alignEnd="@id/btn_create_wallet"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right_white"
+            android:layout_alignEnd="@id/btn_restore_wallet"
+            android:layout_alignBottom="@id/btn_restore_wallet"
+            android:layout_alignTop="@id/btn_restore_wallet"
+            android:layout_marginEnd="8dp"
+            android:clickable="false"
+            tools:ignore="ContentDescription" />
+
+
+
+    </RelativeLayout>
+
+
 </android.support.constraint.ConstraintLayout>

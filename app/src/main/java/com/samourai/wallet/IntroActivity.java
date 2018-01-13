@@ -14,7 +14,8 @@ import android.widget.TextView;
 public class IntroActivity extends AppCompatActivity {
 
     private TextView mVersionText;
-    private Button mCreateWalletButton;
+    private Button mCreateWalletBtn;
+    private Button mRestoreWalletBtn;
 
     private String mUri;
 
@@ -40,13 +41,15 @@ public class IntroActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.intro_menu, menu);
+        //TODO: hiding menu until definition of what goes in there
+        // getMenuInflater().inflate(R.menu.intro_menu, menu);
         return true;
     }
 
     private void findViews() {
         mVersionText = findViewById(R.id.versionNumber);
-        mCreateWalletButton = findViewById(R.id.btn_create_wallet);
+        mCreateWalletBtn = findViewById(R.id.btn_create_wallet);
+        mRestoreWalletBtn = findViewById(R.id.btn_restore_wallet);
     }
 
     private void setupViewContent() {
@@ -63,7 +66,14 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void addListeners() {
-        mCreateWalletButton.setOnClickListener(new View.OnClickListener() {
+        mCreateWalletBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startMainActivity2();
+            }
+        });
+
+        mRestoreWalletBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startMainActivity2();
@@ -73,7 +83,7 @@ public class IntroActivity extends AppCompatActivity {
 
     private void startMainActivity2() {
         Intent intent = new Intent(this, MainActivity2.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(mUri!= null)    {
             intent.putExtra(MainActivity.URI_KEY, mUri);
         }
