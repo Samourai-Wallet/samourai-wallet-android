@@ -60,7 +60,8 @@
         <activity android:name=".create.CreateWalletActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/UI2Theme" />
+            android:theme="@style/UI2Theme"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"

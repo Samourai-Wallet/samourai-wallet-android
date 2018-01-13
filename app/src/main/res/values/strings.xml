@@ -9,6 +9,20 @@
     <string name="new_wallet_button">START NEW WALLET</string>
     <string name="restore_wallet_button">RESTORE WALLET</string>
 
+    <!-- Create Wallet Activity -->
+
+    <!-- Passphrase Fragment -->
+    <string name="passphrase_title">PASSPHRASE</string>
+    <string name="passphrase_subtitle">Create a secure passphrase for your wallet</string>
+    <string name="create_passphrase">Create a passphrase</string>
+    <string name="enter_passphrase">Enter passphrase</string>
+    <string name="re_enter_passphrase">Re-enter passphrase</string>
+    <string name="passphrase_acknowledge_check">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrase. Samourai never has any knowledge of my passphrase.</string>
+
+    <!-- Passphrase Dialog-->
+    <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+    <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
@@ -128,8 +142,7 @@
     <string name="no_internet">No Internet connectivity. Please try again.</string>
     <string name="bip38_pw">BIP38 password</string>
     <string name="bip38_pw_error">BIP38 password error</string>
-    <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
-    <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+
     <string name="bip39_restore">Enter your mnemonic (or hex entropy) and, if necessary, your BIP39 passphrase. If you do not use a BIP39 passphrase, leave it blank.</string>
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
     <string name="bip39_unmatch">Passphrase does not match. Please try again.</string>
@@ -469,6 +482,7 @@
 
     <!-- Accessibility and content description -->
     <string name="samourai_logo_description">Samourai logo image.</string>
+    <string name="lock_icon_description">A lock icon.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

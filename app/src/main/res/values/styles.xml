@@ -14,6 +14,10 @@
         <item name="android:textColor">@color/text_secondary</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:colorButtonNormal">@color/accent</item>
+
+        <item name="colorControlNormal">@color/grey</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
     </style>
 
 
@@ -35,11 +39,17 @@
     <style name="text" parent="UI2Theme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="text.title">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="text.editText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColorHint">@color/grey</item>
     </style>
 
 </resources>

@@ -1,14 +1,80 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.samourai.wallet.create.PassphraseFragment">
+    android:layout_height="match_parent" >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
 
-</FrameLayout>
+        android:padding="24dp"
+        tools:context="com.samourai.wallet.create.PassphraseFragment">
+
+        <RelativeLayout
+            android:id="@+id/title_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/img_create_title_icon"
+                android:layout_width="@dimen/create_title_icon_size"
+                android:layout_height="@dimen/create_title_icon_size"
+                android:src="@drawable/ic_lock_white"
+                android:contentDescription="@string/lock_icon_description" />
+
+            <TextView
+                android:id="@+id/txt_passphrase_title"
+                style="@style/text.title"
+                android:layout_toEndOf="@+id/img_create_title_icon"
+                android:layout_marginStart="16dp"
+                android:text="@string/passphrase_title" />
+            <TextView
+                style="@style/text"
+                android:layout_toEndOf="@+id/img_create_title_icon"
+                android:layout_below="@id/txt_passphrase_title"
+                android:layout_marginStart="16dp"
+                android:text="@string/passphrase_subtitle" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_create_passphrase"
+            style="@style/text"
+            android:layout_marginTop="36dp"
+            app:layout_constraintTop_toBottomOf="@id/title_container"
+            android:text="@string/create_passphrase"
+            android:textColor="@color/grey"/>
+        <EditText
+            android:id="@+id/edt_first_passphrase"
+            style="@style/text.editText"
+            android:inputType="textNoSuggestions"
+            android:layout_marginTop="6dp"
+            app:layout_constraintTop_toBottomOf="@id/txt_create_passphrase"
+            android:hint="@string/enter_passphrase"/>
+
+        <EditText
+            android:id="@+id/edt_second_passphrase"
+            style="@style/text.editText"
+            android:inputType="textNoSuggestions"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/edt_first_passphrase"
+            android:hint="@string/re_enter_passphrase" />
+
+        <CheckBox
+            style="@style/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/edt_second_passphrase"
+            android:text="@string/passphrase_acknowledge_check"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
+
+
