@@ -6,12 +6,19 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.samourai.wallet.create.CreateWalletActivity;
+import com.samourai.wallet.util.LogUtil;
+
+import java.util.logging.Logger;
+
 public class IntroActivity extends AppCompatActivity {
+    private static final String TAG = LogUtil.getTag();
 
     private TextView mVersionText;
     private Button mCreateWalletBtn;
@@ -69,7 +76,7 @@ public class IntroActivity extends AppCompatActivity {
         mCreateWalletBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startMainActivity2();
+                startCreateWallet();
             }
         });
 
@@ -82,11 +89,18 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void startMainActivity2() {
+        if (LogUtil.DEBUG) Log.d(TAG, "Starting MainActivity2");
         Intent intent = new Intent(this, MainActivity2.class);
         // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(mUri!= null)    {
             intent.putExtra(MainActivity.URI_KEY, mUri);
         }
+        startActivity(intent);
+    }
+
+    private void startCreateWallet() {
+        if (LogUtil.DEBUG) Log.d(TAG, "Starting CreateWalletActivity");
+        Intent intent = new Intent(this, CreateWalletActivity.class);
         startActivity(intent);
     }
 

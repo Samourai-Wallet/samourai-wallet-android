@@ -470,4 +470,7 @@
     <!-- Accessibility and content description -->
     <string name="samourai_logo_description">Samourai logo image.</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
