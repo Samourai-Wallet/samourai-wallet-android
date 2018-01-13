@@ -23,6 +23,14 @@
     <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
     <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
 
+    <!-- Create PIN Fragment -->
+    <string name="create_pin_title">SET PIN CODE</string>
+    <string name="create_pin_subtitle">Create a 5–8 digit PIN code</string>
+
+    <!-- Confirm PIN Fragment -->
+    <string name="confirm_pin_title">CONFIRM PIN CODE</string>
+    <string name="confirm_pin_subtitle">Re-enter your PIN code</string>
+
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
@@ -483,8 +491,6 @@
     <!-- Accessibility and content description -->
     <string name="samourai_logo_description">Samourai logo image.</string>
     <string name="lock_icon_description">A lock icon.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="backspace_btn_description">Backspace button</string>
 
 </resources>

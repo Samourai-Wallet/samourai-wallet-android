@@ -16,6 +16,10 @@
         <item name="android:colorButtonNormal">@color/accent</item>
 
         <item name="colorControlNormal">@color/grey</item>
+    </style>
+
+    <style name="UI2Theme.EditText">
+        <item name="colorControlNormal">@color/grey</item>
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
     </style>
@@ -50,6 +54,24 @@
     <style name="text.editText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColorHint">@color/grey</item>
+        <item name="android:theme">@style/UI2Theme.EditText</item>
     </style>
+
+    <style name="pin_digit">
+        <item name="android:layout_width">@dimen/pin_character_size</item>
+        <item name="android:layout_height">@dimen/pin_character_size</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="grid_item">
+        <item name="android:layout_width">@dimen/grid_item_size</item>
+        <item name="android:layout_height">@dimen/grid_item_size</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:background">@drawable/grid_btn_selector</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
+    </style>
+
 
 </resources>
