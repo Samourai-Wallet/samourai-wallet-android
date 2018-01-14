@@ -1311,6 +1311,11 @@ public class APIFactory	{
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());
 
             addressStrings.addAll(Arrays.asList(BIP47Meta.getInstance().getIncomingAddresses(false)));
+            for(String _s : Arrays.asList(BIP47Meta.getInstance().getIncomingLookAhead(context)))   {
+                if(!addressStrings.contains(_s))    {
+                    addressStrings.add(_s);
+                }
+            }
             for(String pcode : BIP47Meta.getInstance().getUnspentProviders())   {
                 for(String addr : BIP47Meta.getInstance().getUnspentAddresses(context, pcode))   {
                     if(!addressStrings.contains(addr))    {
