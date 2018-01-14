@@ -1281,6 +1281,9 @@ public class SendActivity extends Activity {
         else if (id == R.id.action_fees) {
             doFees();
         }
+        else if (id == R.id.action_batch) {
+            doBatchSpend();
+        }
         else {
             ;
         }
@@ -1648,6 +1651,11 @@ public class SendActivity extends Activity {
 
     private void doUTXO()	{
         Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
+        startActivity(intent);
+    }
+
+    private void doBatchSpend()	{
+        Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
         startActivity(intent);
     }
 

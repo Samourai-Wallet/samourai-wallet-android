@@ -424,6 +424,7 @@
     <string name="options_display_redeem_script">Display redeem script</string>
     <string name="options_view_tx">View transaction</string>
     <string name="options_display_privkey">Display private key</string>
+    <string name="options_batch">Batch spend</string>
 
     <string name="do_not_repeat_sent_to">Check box to not warn about repeat sends to this address.</string>
 
