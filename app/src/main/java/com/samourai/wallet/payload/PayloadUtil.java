@@ -235,7 +235,6 @@ public class PayloadUtil	{
             meta.put("tor", TorUtil.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
 
-            meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
@@ -248,10 +247,12 @@ public class PayloadUtil	{
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
-            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1));
+            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
+            meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
+            meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -431,9 +432,6 @@ public class PayloadUtil	{
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
 
-                if(meta.has("units")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BTC_UNITS, meta.getInt("units"));
-                }
                 if(meta.has("explorer")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BLOCK_EXPLORER, meta.getInt("explorer"));
                 }
@@ -487,7 +485,8 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
                 }
                 if(meta.has("fee_provider_sel")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel"));
+//                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel") > 0 ? 0 : meta.getInt("fee_provider_sel"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
@@ -499,6 +498,12 @@ public class PayloadUtil	{
                 */
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
+                }
+                if(meta.has("paynym_claimed")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));
+                }
+                if(meta.has("paynym_refused")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_REFUSED, meta.getBoolean("paynym_refused"));
                 }
 
                 /*

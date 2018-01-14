@@ -7,16 +7,42 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
         >
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/nymName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:textAlignment="gravity"
+            android:layout_below="@+id/avatar"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            />
 
         <ImageView
             android:id="@+id/qr"

@@ -112,7 +112,7 @@ public class MessageSignUtil {
         }
     }
 
-    private String signMessage(ECKey key, String strMessage) {
+    public String signMessage(ECKey key, String strMessage) {
 
         if(key == null || strMessage == null || !key.hasPrivKey())    {
             return null;

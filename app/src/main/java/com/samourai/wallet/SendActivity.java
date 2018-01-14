@@ -196,23 +196,12 @@ public class SendActivity extends Activity {
         }
 
         final String strAmount;
-        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(8);
         nf.setMinimumFractionDigits(1);
         nf.setMinimumIntegerDigits(1);
 
-        int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-        switch(unit) {
-            case MonetaryUtil.MICRO_BTC:
-                strAmount = nf.format(((double)(balance * 1000000L)) / 1e8);
-                break;
-            case MonetaryUtil.MILLI_BTC:
-                strAmount = nf.format(((double)(balance * 1000L)) / 1e8);
-                break;
-            default:
-                strAmount = nf.format(balance / 1e8);
-                break;
-        }
+        strAmount = nf.format(balance / 1e8);
 
         tvMax.setText(strAmount + " " + getDisplayUnits());
         tvMaxPrompt.setOnTouchListener(new View.OnTouchListener() {
@@ -239,7 +228,7 @@ public class SendActivity extends Activity {
             }
         });
 
-        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.getDefault());
+        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
@@ -328,20 +317,8 @@ public class SendActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(this);
                 edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        max_len = 2;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        max_len = 4;
-                        break;
-                    default:
-                        max_len = 8;
-                        break;
-                }
                 btcFormat.setMaximumFractionDigits(max_len + 1);
                 btcFormat.setMinimumFractionDigits(0);
 
@@ -364,17 +341,6 @@ public class SendActivity extends Activity {
                     ;
                 } catch (ParseException pe) {
                     ;
-                }
-
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d / 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d / 1000.0;
-                        break;
-                    default:
-                        break;
                 }
 
                 if(d > 21000000.0)    {
@@ -437,18 +403,6 @@ public class SendActivity extends Activity {
                 }
                 catch(ParseException pe) {
                     ;
-                }
-
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d * 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d * 1000.0;
-                        break;
-                    default:
-                        break;
                 }
 
                 if((d / btc_fx) > 21000000.0)    {
@@ -575,19 +529,7 @@ public class SendActivity extends Activity {
                     btc_amount = 0.0;
                 }
 
-                double dAmount;
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        dAmount = btc_amount / 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        dAmount = btc_amount / 1000.0;
-                        break;
-                    default:
-                        dAmount = btc_amount;
-                        break;
-                }
+                double dAmount = btc_amount;
 
                 long amount = (long)(Math.round(dAmount * 1e8));;
 
@@ -1405,6 +1347,33 @@ public class SendActivity extends Activity {
 
     private void processScan(String data) {
 
+        if(data.contains("https://bitpay.com"))	{
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.no_bitpay)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.learn_more, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.samouraiwallet.com/post/169222582782/bitpay-qr-codes-are-no-longer-valid-important"));
+                            startActivity(intent);
+
+                        }
+                    }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
+        }
+
         if(FormatsUtil.getInstance().isValidPaymentCode(data))	{
             processPCode(data, null);
             return;
@@ -1428,7 +1397,6 @@ public class SendActivity extends Activity {
                 }
             }
 
-            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
             tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
 
             final String strAmount;
@@ -1539,20 +1507,9 @@ public class SendActivity extends Activity {
             btc_amount = 0.0;
         }
 
-        final double dAmount;
-        int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-        switch (unit) {
-            case MonetaryUtil.MICRO_BTC:
-                dAmount = btc_amount / 1000000.0;
-                break;
-            case MonetaryUtil.MILLI_BTC:
-                dAmount = btc_amount / 1000.0;
-                break;
-            default:
-                dAmount = btc_amount;
-                break;
-        }
-//        Log.i("SendFragment", "amount entered (converted):" + dAmount);
+        final double dAmount = btc_amount;
+
+        //        Log.i("SendFragment", "amount entered (converted):" + dAmount);
 
         final long amount = (long)(Math.round(dAmount * 1e8));
 //        Log.i("SendFragment", "amount entered (converted to long):" + amount);
@@ -1584,7 +1541,7 @@ public class SendActivity extends Activity {
 
     public String getDisplayUnits() {
 
-        return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
+        return MonetaryUtil.getInstance().getBTCUnits();
 
     }
 

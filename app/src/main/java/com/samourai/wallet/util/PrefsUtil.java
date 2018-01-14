@@ -13,7 +13,6 @@ public class PrefsUtil {
 	public static final String ACCESS_HASH2 = "accessHash2";
 	public static final String FP = "fp";
 	public static final String CREDS_CHECK = "credsCheck";
-	public static final String BTC_UNITS = "btcUnits";
 	public static final String ICON_HIDDEN = "iconHidden";
 	public static final String ACCEPT_REMOTE = "acceptRemote";
 	public static final String CURRENT_FIAT = "currentFiat";
@@ -45,6 +44,8 @@ public class PrefsUtil {
 	public static final String XPUB49LOCK = "xpub49lock";
 	public static final String XPUB44REG = "xpub44reg";
 	public static final String XPUB49REG = "xpub49reg";
+	public static final String PAYNYM_CLAIMED = "paynymClaimed";
+	public static final String PAYNYM_REFUSED = "paynymRefused";
 	public static final String IS_RESTORE = "isRestore";
 
 	public static final String BCC_REPLAY0 = "BCCReplay0";

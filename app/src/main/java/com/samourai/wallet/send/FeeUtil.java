@@ -13,7 +13,6 @@ import org.bitcoinj.core.Transaction;
 public class FeeUtil  {
 
     private static String[] providers = {
-            "21.co",
             "Samourai (bitcoind)",
     };
 

@@ -111,14 +111,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
             if(strBranch.equals("prefs"))    {
                 addPreferencesFromResource(R.xml.settings_prefs);
 
-                Preference unitsPref = (Preference) findPreference("units");
-                unitsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getUnits();
-                        return true;
-                    }
-                });
-
                 Preference fiatPref = (Preference) findPreference("fiat");
                 fiatPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -1052,6 +1044,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
                                 }
 
+                                final String _xpub = xpub;
+
                                 ImageView showQR = new ImageView(SettingsActivity2.this);
                                 Bitmap bitmap = null;
                                 QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
@@ -1078,11 +1072,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         .setTitle(R.string.app_name)
                                         .setView(xpubLayout)
                                         .setCancelable(false)
-                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                                android.content.ClipData clip = null;
+                                                clip = android.content.ClipData.newPlainText("XPUB", _xpub);
+                                                clipboard.setPrimaryClip(clip);
+                                                Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
                                                 ;
                                             }
-                                        }).show();
+                                        })
+                                        .show();
 
                             }
                         }
@@ -1092,7 +1096,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getYPUB()	{
 
-        String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+        final String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
@@ -1120,28 +1124,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 .setTitle(R.string.app_name)
                 .setView(xpubLayout)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("YPUB", ypub);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         ;
                     }
-                }).show();
-
-    }
-
-    private void getUnits()	{
-
-        final CharSequence[] units = MonetaryUtil.getInstance().getBTCUnits();
-        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BTC_UNITS, 0);
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_units)
-                .setSingleChoiceItems(units, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BTC_UNITS, which);
-                                dialog.dismiss();
-                            }
-                        }
-                ).show();
+                })
+                .show();
 
     }
 
@@ -1220,11 +1217,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
         final int sel;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1) >= providers.length)    {
-            sel = 1;
+        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length)    {
+            sel = 0;
         }
         else    {
-            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
+            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
         }
 
         new AlertDialog.Builder(SettingsActivity2.this)
@@ -1389,7 +1386,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 cbPref8.setChecked(false);
                                                 cbPref8.setEnabled(false);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
-                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, 1);
+                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                                                 TrustedNodeUtil.getInstance().setValidated(false);
                                             }
 

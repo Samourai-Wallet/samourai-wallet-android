@@ -23,8 +23,6 @@
     <string name="options_xpub2">Mostrar clave extendido para esta cuenta de billetera (se pueden copiar al portapapeles).</string>
     <string name="options_wipe">Limpie la billetera</string>
     <string name="options_wipe2">Limpie esta billetera del dispositivo.</string>
-    <string name="options_units">Unidades</string>
-    <string name="options_units2">Bitcoin unidades para mostrar (BTC por defecto).</string>
     <string name="options_stealth_display">Lanzador de sigilo</string>
     <string name="options_stealth_display2">Eliminar todos los rastros de Samourai del lanzador y la pantalla de inicio. Para abrir su dial billetera ** YOUR_PIN_CODE # desde el marcador de teléfono.</string>
     <string name="options_remote_commands">Comandos remotos</string>
