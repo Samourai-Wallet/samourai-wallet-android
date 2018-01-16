@@ -15,6 +15,13 @@
         android:key="scramblePin"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_haptic"
+        android:summary="@string/options_haptic_2"
+        android:defaultValue="true"
+        android:key="haptic"
+        />
+
     <Preference
         android:title="@string/options_mnemonic"
         android:summary="@string/options_mnemonic2"

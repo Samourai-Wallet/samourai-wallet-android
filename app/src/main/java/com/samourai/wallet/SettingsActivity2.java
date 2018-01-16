@@ -597,6 +597,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                final CheckBoxPreference cbPref11 = (CheckBoxPreference) findPreference("haptic");
+                cbPref11.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref11.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.HAPTIC_PIN, false);
+                        }
+                        else {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.HAPTIC_PIN, true);
+                        }
+
+                        return true;
+                    }
+                });
+
                 Preference changePinPref = (Preference) findPreference("change_pin");
                 changePinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
