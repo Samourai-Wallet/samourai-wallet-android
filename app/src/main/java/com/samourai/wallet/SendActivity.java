@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -472,6 +473,10 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
@@ -479,6 +484,10 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
@@ -486,7 +495,34 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
                 break;
+        }
+
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue();
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue();
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue();
+
+        if(lo == mi || mi == hi)    {
+            mi = (lo + hi) / 2L;
+            SuggestedFee sf = new SuggestedFee();
+            sf.setDefaultPerKB(BigInteger.valueOf(mi));
+            FeeUtil.getInstance().setNormalFee(sf);
+        }
+        else if(lo == mi && mi == hi) {
+            lo = (long) ((double) mi * 0.9);
+            hi = (long) ((double) mi * 1.1);
+            SuggestedFee sf = new SuggestedFee();
+            sf.setDefaultPerKB(BigInteger.valueOf(lo));
+            FeeUtil.getInstance().setLowFee(sf);
+            sf.setDefaultPerKB(BigInteger.valueOf(hi));
+            FeeUtil.getInstance().setHighFee(sf);
+        }
+        else    {
+            ;
         }
 
         btLowFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
@@ -501,6 +537,10 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
             }
         });
 
@@ -512,6 +552,10 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
             }
         });
 
@@ -523,6 +567,10 @@ public class SendActivity extends Activity {
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
             }
         });
 
@@ -1654,6 +1702,11 @@ public class SendActivity extends Activity {
                             suggestedFee.setOK(true);
                             suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
                             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+                            btCustomFee.setText((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+                            btCustomFee.setTypeface(null, Typeface.BOLD);
+                            btLowFee.setTypeface(null, Typeface.NORMAL);
+                            btAutoFee.setTypeface(null, Typeface.NORMAL);
+                            btPriorityFee.setTypeface(null, Typeface.NORMAL);
                         }
 
                         dialog.dismiss();
