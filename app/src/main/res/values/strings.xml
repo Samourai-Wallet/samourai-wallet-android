@@ -455,4 +455,11 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
     <string name="help">Help</string>
 
+    <string name="fee">Miner fee</string>
+    <string name="fee_low_priority">Low priority: estimated 24</string>
+    <string name="fee_mid_priority">Normal priority: estimated 6</string>
+    <string name="fee_high_priority">High priority: estimated 2</string>
+    <string name="fee_custom_priority">Custom fee: estimated</string>
+    <string name="blocks_to_cf">blocks before confirmation</string>
+
 </resources>
