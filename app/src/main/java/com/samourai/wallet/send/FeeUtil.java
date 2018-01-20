@@ -148,11 +148,6 @@ public class FeeUtil  {
         return calculateFee(size, feePerKb);
     }
 
-    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs, BigInteger feePerKb)   {
-        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
-        return calculateFee(size, feePerKb);
-    }
-
     public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
         double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
         return BigInteger.valueOf((long)fee);
