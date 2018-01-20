@@ -186,6 +186,8 @@
     <string name="auto_fee">NORMAL FEE</string>
     <string name="priority_fee">PRIORITY FEE</string>
     <string name="low_fee">LOW FEE</string>
+    <string name="custom_fee">Custom</string>
+    <string name="sat_b">sat/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>

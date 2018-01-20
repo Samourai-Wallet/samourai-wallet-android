@@ -172,7 +172,10 @@
                 android:orientation="horizontal"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:paddingRight="16dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                >
 
                 <!--<TextView-->
                     <!--android:layout_width="wrap_content"-->
@@ -184,21 +187,64 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    >
 
                     <Button
-                        android:id="@+id/fee"
+                        android:id="@+id/low_fee"
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="65dp"
                         android:layout_gravity="start|center_vertical"
-                        android:layout_marginEnd="20dp"
                         android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/low_fee"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/auto_fee"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="65dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
                         android:gravity="start|center_vertical"
                         android:text="@string/auto_fee"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/white" />
 
+                    <Button
+                        android:id="@+id/priority_fee"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="65dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/priority_fee"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/custom_fee"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="0dp"
+                        android:layout_height="65dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/custom_fee"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/white" />
+
+                    <!--
                     <TextView
                         android:id="@+id/current_fee_prompt"
                         android:layout_width="0dp"
@@ -208,6 +254,7 @@
                         android:layout_weight="2"
                         android:gravity="end|center_vertical"
                         android:textColor="@color/primary_light" />
+                     -->
 
                 </LinearLayout>
 
