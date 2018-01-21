@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.26</string>
+    <string name="version_name">0.97.30</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
