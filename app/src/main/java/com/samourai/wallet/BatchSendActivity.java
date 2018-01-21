@@ -58,7 +58,7 @@ public class BatchSendActivity extends Activity {
     private final static int SCAN_QR = 2012;
 
     private class DisplayData   {
-        private String dest = null;
+        private String pcode = null;
         private String addr = null;
         private long amount = 0L;
     }
@@ -179,6 +179,16 @@ public class BatchSendActivity extends Activity {
         textWatcherAddress = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
+
+                if(_menu != null)    {
+                    if(edAddress.getText().toString().length() > 0)    {
+                        _menu.findItem(R.id.action_scan_qr).setVisible(false);
+                    }
+                    else    {
+                        _menu.findItem(R.id.action_scan_qr).setVisible(true);
+                    }
+                }
+
                 validateSpend();
             }
 
@@ -417,16 +427,18 @@ public class BatchSendActivity extends Activity {
             doScan();
         }
         else if (id == R.id.action_new) {
-            _menu.findItem(R.id.action_scan_qr).setVisible(true);
-            _menu.findItem(R.id.action_refresh).setVisible(true);
-            _menu.findItem(R.id.action_new).setVisible(false);
-            _menu.findItem(R.id.action_send).setVisible(false);
-
             doAddNew();
         }
         else if (id == R.id.action_refresh) {
 
             data.clear();
+            edAddress.setText("");
+            edAmountBTC.setText("");
+            edAmountFiat.setText("");
+            edAddress.setEnabled(true);
+
+            strPCode = "";
+            strDestinationBTCAddress = "";
 
             NumberFormat nf = NumberFormat.getInstance(Locale.US);
             nf.setMaximumFractionDigits(8);
@@ -448,6 +460,13 @@ public class BatchSendActivity extends Activity {
             _menu.findItem(R.id.action_refresh).setVisible(false);
             _menu.findItem(R.id.action_new).setVisible(false);
             _menu.findItem(R.id.action_send).setVisible(false);
+
+            if(validateSpend())    {
+                Toast.makeText(BatchSendActivity.this, "Can spend", Toast.LENGTH_SHORT).show();
+            }
+            else    {
+                Toast.makeText(BatchSendActivity.this, "Cannot spend", Toast.LENGTH_SHORT).show();
+            }
         }
         else {
             ;
@@ -487,7 +506,18 @@ public class BatchSendActivity extends Activity {
     private void doAddNew()  {
 
         DisplayData dd = new DisplayData();
-        dd.addr = edAddress.getText().toString();
+        if(FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString()))    {
+            dd.addr = edAddress.getText().toString();
+            dd.pcode = null;
+        }
+        else if(FormatsUtil.getInstance().isValidPaymentCode(strPCode))   {
+            dd.addr = strDestinationBTCAddress;
+            dd.pcode = strPCode;
+            Toast.makeText(BatchSendActivity.this, dd.addr, Toast.LENGTH_SHORT).show();
+        }
+        else    {
+            ;
+        }
 
         double btc_amount = 0.0;
 
@@ -510,6 +540,10 @@ public class BatchSendActivity extends Activity {
         edAmountBTC.setText("");
         edAmountFiat.setText("");
         edAddress.setText("");
+        edAddress.setEnabled(true);
+
+        strPCode = "";
+        strDestinationBTCAddress = "";
 
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(8);
@@ -519,7 +553,12 @@ public class BatchSendActivity extends Activity {
         String strAmount = nf.format(displayBalance / 1e8);
         tvMax.setText(strAmount + " " + getDisplayUnits());
 
-        strDestinationBTCAddress = "";
+        if(_menu != null)    {
+            _menu.findItem(R.id.action_scan_qr).setVisible(true);
+            _menu.findItem(R.id.action_refresh).setVisible(true);
+            _menu.findItem(R.id.action_new).setVisible(false);
+            _menu.findItem(R.id.action_send).setVisible(true);
+        }
 
         refreshDisplay();
     }
@@ -667,7 +706,7 @@ public class BatchSendActivity extends Activity {
 
     }
 
-    private void validateSpend() {
+    private boolean validateSpend() {
 
         boolean isValid = false;
         boolean insufficientFunds = false;
@@ -717,12 +756,16 @@ public class BatchSendActivity extends Activity {
             if(!isValid || insufficientFunds) {
                 _menu.findItem(R.id.action_send).setVisible(false);
                 _menu.findItem(R.id.action_new).setVisible(false);
+                return false;
             }
             else {
-                _menu.findItem(R.id.action_send).setVisible(true);
+                _menu.findItem(R.id.action_send).setVisible(false);
                 _menu.findItem(R.id.action_new).setVisible(true);
+                return true;
             }
         }
+
+        return false;
 
     }
 
@@ -767,8 +810,14 @@ public class BatchSendActivity extends Activity {
             TextView text3 = (TextView) view.findViewById(R.id.text3);
             text3.setVisibility(View.GONE);
 
-            String addr = data.get(position).addr;
-            text1.setText(addr);
+            if(data.get(position).pcode != null)    {
+                String label = BIP47Meta.getInstance().getDisplayLabel(data.get(position).pcode);
+                text1.setText(label);
+            }
+            else    {
+                String addr = data.get(position).addr;
+                text1.setText(addr);
+            }
 
             final DecimalFormat df = new DecimalFormat("#");
             df.setMinimumIntegerDigits(1);
