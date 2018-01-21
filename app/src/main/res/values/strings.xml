@@ -160,6 +160,7 @@
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
+    <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
     <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
@@ -427,6 +428,7 @@
     <string name="options_display_redeem_script">Display redeem script</string>
     <string name="options_view_tx">View transaction</string>
     <string name="options_display_privkey">Display private key</string>
+    <string name="options_batch">Batch spend</string>
 
     <string name="do_not_repeat_sent_to">Check box to not warn about repeat sends to this address.</string>
 
