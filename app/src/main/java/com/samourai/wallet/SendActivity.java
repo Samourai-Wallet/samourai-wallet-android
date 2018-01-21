@@ -468,6 +468,30 @@ public class SendActivity extends Activity {
 
         FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+        if(lo == mi && mi == hi) {
+            lo = (long) ((double) mi * 0.85);
+            hi = (long) ((double) mi * 1.15);
+            SuggestedFee lo_sf = new SuggestedFee();
+            lo_sf.setDefaultPerKB(BigInteger.valueOf(lo * 1000L));
+            FeeUtil.getInstance().setLowFee(lo_sf);
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf(hi * 1000L));
+            FeeUtil.getInstance().setHighFee(hi_sf);
+        }
+        else if(lo == mi || mi == hi)    {
+            mi = (lo + hi) / 2L;
+            SuggestedFee mi_sf = new SuggestedFee();
+            mi_sf.setDefaultPerKB(BigInteger.valueOf(mi * 1000L));
+            FeeUtil.getInstance().setNormalFee(mi_sf);
+        }
+        else    {
+            ;
+        }
+
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
@@ -505,29 +529,6 @@ public class SendActivity extends Activity {
                 btCustomFee.setTypeface(null, Typeface.NORMAL);
                 tvFeePrompt.setText(getText(R.string.fee_mid_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
-        }
-
-        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue();
-        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue();
-        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue();
-
-        if(lo == mi || mi == hi)    {
-            mi = (lo + hi) / 2L;
-            SuggestedFee sf = new SuggestedFee();
-            sf.setDefaultPerKB(BigInteger.valueOf(mi));
-            FeeUtil.getInstance().setNormalFee(sf);
-        }
-        else if(lo == mi && mi == hi) {
-            lo = (long) ((double) mi * 0.9);
-            hi = (long) ((double) mi * 1.1);
-            SuggestedFee sf = new SuggestedFee();
-            sf.setDefaultPerKB(BigInteger.valueOf(lo));
-            FeeUtil.getInstance().setLowFee(sf);
-            sf.setDefaultPerKB(BigInteger.valueOf(hi));
-            FeeUtil.getInstance().setHighFee(sf);
-        }
-        else    {
-            ;
         }
 
         btLowFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
