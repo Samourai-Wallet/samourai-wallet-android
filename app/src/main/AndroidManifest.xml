@@ -204,6 +204,7 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".CreateWallet"></activity>
     </application>
 
 </manifest>

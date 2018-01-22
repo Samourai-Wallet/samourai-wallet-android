@@ -12,18 +12,14 @@ import android.os.Vibrator;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.crypto.MnemonicException;
-
-import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;
@@ -38,6 +34,8 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -215,7 +213,9 @@ public class PinEntryActivity extends Activity {
 
                 if (userInput.toString().length() > 0) {
                     userInput.deleteCharAt(userInput.length() - 1);
-                    vibrator.vibrate(55);
+                    if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
+                        vibrator.vibrate(55);
+                    }
                 }
                 displayUserInput();
 
@@ -227,7 +227,9 @@ public class PinEntryActivity extends Activity {
             public boolean onLongClick(View view) {
                 if (userInput.toString().length() > 0) {
                     userInput.setLength(0);
-                    vibrator.vibrate(55);
+                    if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
+                        vibrator.vibrate(55);
+                    }
                 }
                 displayUserInput();
                 return false;
@@ -237,7 +239,9 @@ public class PinEntryActivity extends Activity {
     }
 
     public void OnNumberPadClick(View view) {
-        vibrator.vibrate(55);
+        if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
+            vibrator.vibrate(55);
+        }
         userInput.append(((Button) view).getText().toString());
         displayUserInput();
     }
