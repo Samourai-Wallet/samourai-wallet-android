@@ -106,6 +106,7 @@
     <string name="receive">Receive</string>
     <string name="cannot_select_utxo">Cannot select unspent outputs</string>
     <string name="error_bip126_output">Error determining output address</string>
+    <string name="error_change_output">Error determining change address</string>
 
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="send_payment_code">Send payment code</string>

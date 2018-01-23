@@ -992,10 +992,12 @@ public class SendActivity extends Activity {
                                             receivers.put(change_address, BigInteger.valueOf(_change));
                                         }
                                         catch(IOException ioe) {
-                                            ;
+                                            Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                         catch(MnemonicException.MnemonicLengthException mle) {
-                                            ;
+                                            Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                     }
 

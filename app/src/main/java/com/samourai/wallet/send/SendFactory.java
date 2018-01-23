@@ -818,14 +818,13 @@ public class SendFactory	{
                 return change_address;
             }
             catch(IOException ioe) {
-                ;
+                return null;
             }
             catch(MnemonicException.MnemonicLengthException mle) {
-                ;
+                return null;
             }
         }
 
-        return null;
     }
 
     public static ECKey getPrivKey(String address)    {
