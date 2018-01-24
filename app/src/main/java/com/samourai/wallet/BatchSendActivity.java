@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,13 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
@@ -41,17 +49,24 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import net.sourceforge.zbar.Symbol;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bouncycastle.util.encoders.Hex;
 
 public class BatchSendActivity extends Activity {
 
@@ -461,12 +476,7 @@ public class BatchSendActivity extends Activity {
             _menu.findItem(R.id.action_new).setVisible(false);
             _menu.findItem(R.id.action_send).setVisible(false);
 
-            if(validateSpend())    {
-                Toast.makeText(BatchSendActivity.this, "Can spend", Toast.LENGTH_SHORT).show();
-            }
-            else    {
-                Toast.makeText(BatchSendActivity.this, "Cannot spend", Toast.LENGTH_SHORT).show();
-            }
+            doSpend();
         }
         else {
             ;
@@ -766,6 +776,95 @@ public class BatchSendActivity extends Activity {
         }
 
         return false;
+
+    }
+
+    private void doSpend()  {
+
+        HashMap<String,BigInteger> receivers = new HashMap<String,BigInteger>();
+        long amount = 0L;
+        for(DisplayData _data : data)   {
+            Log.d("BatchSendActivity", "output:" + _data.amount);
+            Log.d("BatchSendActivity", "output:" + _data.addr);
+            Log.d("BatchSendActivity", "output:" + _data.pcode);
+            amount += _data.amount;
+            receivers.put(_data.addr, BigInteger.valueOf(_data.amount));
+        }
+        Log.d("BatchSendActivity", "amount:" + amount);
+
+        List<UTXO> utxos = APIFactory.getInstance(BatchSendActivity.this).getUtxos(true);
+        List<UTXO> selectedUTXO = new ArrayList<UTXO>();
+        Collections.sort(utxos, new UTXO.UTXOComparator());
+
+        int p2pkh = 0;
+        int p2wpkh = 0;
+        long totalValueSelected = 0L;
+        int totalSelected = 0;
+
+        //
+        //
+        //
+        SuggestedFee suggestedFee = new SuggestedFee();
+        suggestedFee.setDefaultPerKB(BigInteger.valueOf(9000L));
+        FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
+        for(UTXO u : utxos)   {
+            Log.d("BatchSendActivity", "utxo value:" + u.getValue());
+            selectedUTXO.add(u);
+            totalValueSelected += u.getValue();
+            totalSelected += u.getOutpoints().size();
+            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
+            p2pkh += outpointTypes.getLeft();
+            p2wpkh += outpointTypes.getRight();
+            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, receivers.size()).longValue()))    {
+                break;
+            }
+        }
+
+        Log.d("BatchSendActivity", "totalSelected:" + totalSelected);
+        Log.d("BatchSendActivity", "totalValueSelected:" + totalValueSelected);
+
+        List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
+        for(UTXO utxo : selectedUTXO)   {
+            outpoints.addAll(utxo.getOutpoints());
+        }
+        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
+        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size());
+        Log.d("BatchSendActivity", "fee:" + fee.longValue());
+
+        boolean isSegwitChange = (outpointTypes.getRight() > 0) || PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
+        long changeAmount = totalValueSelected - (amount + fee.longValue());
+        if(isSegwitChange)    {
+            String change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            receivers.put(change_address, BigInteger.valueOf(changeAmount));
+            Log.d("BatchSendActivity", "change output:" + changeAmount);
+            Log.d("BatchSendActivity", "change output:" + change_address);
+        }
+        else    {
+            try {
+                String change_address = HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                receivers.put(change_address, BigInteger.valueOf(changeAmount));
+                Log.d("BatchSendActivity", "change output:" + changeAmount);
+                Log.d("BatchSendActivity", "change output:" + change_address);
+            }
+            catch(IOException ioe) {
+                return;
+            }
+            catch(MnemonicException.MnemonicLengthException mle) {
+                return;
+            }
+        }
+
+        Transaction tx = SendFactory.getInstance(BatchSendActivity.this).makeTransaction(0, outpoints, receivers);
+
+        tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+        Log.d("BatchSendActivity", "tx unsigned inputs:" + tx.getInputs().size());
+        Log.d("BatchSendActivity", "tx unsigned outputs:" + tx.getOutputs().size());
+        final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+        Log.d("BatchSendActivity", "tx signed inputs:" + tx.getInputs().size());
+        Log.d("BatchSendActivity", "tx signed outputs:" + tx.getOutputs().size());
+        Log.d("BatchSendActivity", "tx hash:" + tx.getHashAsString());
+        Log.d("BatchSendActivity", "hex tx:" + hexTx);
 
     }
 
