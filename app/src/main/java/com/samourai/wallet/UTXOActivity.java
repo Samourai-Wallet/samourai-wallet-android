@@ -6,29 +6,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -36,19 +31,22 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.segwit.P2SH_P2WPKH;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -182,32 +180,39 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                String msg = null;
 
-                                    String msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
-                                    msg += ":";
-                                    msg += addr;
-                                    msg += ", ";
-                                    msg += "pubkey:";
-                                    msg += ecKey.getPublicKeyAsHex();
+                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
+                                        FormatsUtil.getInstance().isValidBech32(addr))    {
 
-                                    if(ecKey != null)    {
-                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                                msg,
-                                                ecKey);
+                                    msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
+
+                                    try {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("pubkey", ecKey.getPublicKeyAsHex());
+                                        obj.put("address", addr);
+                                        msg +=  " " + obj.toString();
+                                    }
+                                    catch(JSONException je) {
+                                        msg += ":";
+                                        msg += addr;
+                                        msg += ", ";
+                                        msg += "pubkey:";
+                                        msg += ecKey.getPublicKeyAsHex();
                                     }
 
                                 }
                                 else    {
 
-                                    if(ecKey != null)    {
-                                        MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text1),
-                                                UTXOActivity.this.getString(R.string.utxo_sign_text2),
-                                                ecKey);
-                                    }
+                                    msg = UTXOActivity.this.getString(R.string.utxo_sign_text2);
 
+                                }
+
+                                if(ecKey != null)    {
+                                    MessageSignUtil.getInstance(UTXOActivity.this).doSign(UTXOActivity.this.getString(R.string.utxo_sign),
+                                            UTXOActivity.this.getString(R.string.utxo_sign_text1),
+                                            msg,
+                                            ecKey);
                                 }
 
                             }
@@ -218,7 +223,7 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                P2SH_P2WPKH p2sh_p2wpkh = new P2SH_P2WPKH(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                SegwitAddress p2sh_p2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 if(ecKey != null && p2sh_p2wpkh != null) {
 

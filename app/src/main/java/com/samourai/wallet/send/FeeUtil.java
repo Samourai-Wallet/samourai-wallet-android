@@ -13,12 +13,11 @@ import org.bitcoinj.core.Transaction;
 public class FeeUtil  {
 
     private static String[] providers = {
-            "21.co",
             "Samourai (bitcoind)",
     };
 
     private static final int ESTIMATED_INPUT_LEN_P2PKH = 148; // compressed key
-    private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 146; // p2sh
+    private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 102; // p2sh, includes segwit discount (ex: 146)
     private static final int ESTIMATED_OUTPUT_LEN = 33;
 
     private static SuggestedFee suggestedFee = null;
@@ -146,11 +145,6 @@ public class FeeUtil  {
 
     public BigInteger estimatedFee(int inputs, int outputs, BigInteger feePerKb)   {
         int size = estimatedSize(inputs, outputs);
-        return calculateFee(size, feePerKb);
-    }
-
-    public BigInteger estimatedFeeSegwit(int inputsP2PKH, int inputsP2SHP2WPKH, int outputs, BigInteger feePerKb)   {
-        int size = estimatedSizeSegwit(inputsP2PKH, inputsP2SHP2WPKH, outputs);
         return calculateFee(size, feePerKb);
     }
 

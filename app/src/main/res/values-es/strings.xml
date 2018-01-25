@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="version_name">0.50a</string>
     <string name="app_name">Samourai</string>
     <string name="alpha_create_wallet">Este es un producto alfa y las cosas pueden salir mal. Anote las siguientes 12 palabras y guárdelas en un lugar seguro. Mientras tenga estas 12 palabras y la contraseña que acaba de crear, nunca perderá acceso a sus fondos.</string>
     <string name="alpha_create_confirm_backup">He escrito mis palabras de recuperación</string>
@@ -23,8 +22,6 @@
     <string name="options_xpub2">Mostrar clave extendido para esta cuenta de billetera (se pueden copiar al portapapeles).</string>
     <string name="options_wipe">Limpie la billetera</string>
     <string name="options_wipe2">Limpie esta billetera del dispositivo.</string>
-    <string name="options_units">Unidades</string>
-    <string name="options_units2">Bitcoin unidades para mostrar (BTC por defecto).</string>
     <string name="options_stealth_display">Lanzador de sigilo</string>
     <string name="options_stealth_display2">Eliminar todos los rastros de Samourai del lanzador y la pantalla de inicio. Para abrir su dial billetera ** YOUR_PIN_CODE # desde el marcador de teléfono.</string>
     <string name="options_remote_commands">Comandos remotos</string>

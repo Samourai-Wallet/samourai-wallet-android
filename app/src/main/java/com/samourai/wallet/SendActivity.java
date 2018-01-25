@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
@@ -101,11 +103,9 @@ import java.text.DecimalFormatSymbols;
 import net.sourceforge.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -118,7 +118,6 @@ public class SendActivity extends Activity {
 
     private TextView tvMaxPrompt = null;
     private TextView tvMax = null;
-    private TextView tvCurrentFeePrompt = null;
     private long balance = 0L;
 
     private EditText edAddress = null;
@@ -132,13 +131,17 @@ public class SendActivity extends Activity {
 
     private String defaultSeparator = null;
 
-    private Button btFee = null;
+    private Button btLowFee = null;
+    private Button btAutoFee = null;
+    private Button btPriorityFee = null;
+    private Button btCustomFee = null;
+    private TextView tvFeePrompt = null;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
     private final static int FEE_PRIORITY = 2;
     private final static int FEE_CUSTOM = 3;
-    private int FEE_TYPE = 0;
+    private int FEE_TYPE = FEE_LOW;
 
     public final static int SPEND_SIMPLE = 0;
     public final static int SPEND_BIP126 = 1;
@@ -197,23 +200,12 @@ public class SendActivity extends Activity {
         }
 
         final String strAmount;
-        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(8);
         nf.setMinimumFractionDigits(1);
         nf.setMinimumIntegerDigits(1);
 
-        int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-        switch(unit) {
-            case MonetaryUtil.MICRO_BTC:
-                strAmount = nf.format(((double)(balance * 1000000L)) / 1e8);
-                break;
-            case MonetaryUtil.MILLI_BTC:
-                strAmount = nf.format(((double)(balance * 1000L)) / 1e8);
-                break;
-            default:
-                strAmount = nf.format(balance / 1e8);
-                break;
-        }
+        strAmount = nf.format(balance / 1e8);
 
         tvMax.setText(strAmount + " " + getDisplayUnits());
         tvMaxPrompt.setOnTouchListener(new View.OnTouchListener() {
@@ -231,6 +223,7 @@ public class SendActivity extends Activity {
             }
         });
 
+        /*
         tvCurrentFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
         tvCurrentFeePrompt.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -239,8 +232,9 @@ public class SendActivity extends Activity {
                 return false;
             }
         });
+        */
 
-        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.getDefault());
+        DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
@@ -329,20 +323,8 @@ public class SendActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(this);
                 edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        max_len = 2;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        max_len = 4;
-                        break;
-                    default:
-                        max_len = 8;
-                        break;
-                }
                 btcFormat.setMaximumFractionDigits(max_len + 1);
                 btcFormat.setMinimumFractionDigits(0);
 
@@ -365,17 +347,6 @@ public class SendActivity extends Activity {
                     ;
                 } catch (ParseException pe) {
                     ;
-                }
-
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d / 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d / 1000.0;
-                        break;
-                    default:
-                        break;
                 }
 
                 if(d > 21000000.0)    {
@@ -440,18 +411,6 @@ public class SendActivity extends Activity {
                     ;
                 }
 
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d * 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d * 1000.0;
-                        break;
-                    default:
-                        break;
-                }
-
                 if((d / btc_fx) > 21000000.0)    {
                     edAmountFiat.setText("0.00");
                     edAmountFiat.setSelection(edAmountFiat.getText().length());
@@ -501,60 +460,135 @@ public class SendActivity extends Activity {
             }
         });
 
-        btFee = (Button)findViewById(R.id.fee);
+        btLowFee = (Button)findViewById(R.id.low_fee);
+        btAutoFee = (Button)findViewById(R.id.auto_fee);
+        btPriorityFee = (Button)findViewById(R.id.priority_fee);
+        btCustomFee = (Button)findViewById(R.id.custom_fee);
+        tvFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
+
         FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+        if(lo == mi && mi == hi) {
+            lo = (long) ((double) mi * 0.85);
+            hi = (long) ((double) mi * 1.15);
+            SuggestedFee lo_sf = new SuggestedFee();
+            lo_sf.setDefaultPerKB(BigInteger.valueOf(lo * 1000L));
+            FeeUtil.getInstance().setLowFee(lo_sf);
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf(hi * 1000L));
+            FeeUtil.getInstance().setHighFee(hi_sf);
+        }
+        else if(lo == mi || mi == hi)    {
+            mi = (lo + hi) / 2L;
+            SuggestedFee mi_sf = new SuggestedFee();
+            mi_sf.setDefaultPerKB(BigInteger.valueOf(mi * 1000L));
+            FeeUtil.getInstance().setNormalFee(mi_sf);
+        }
+        else    {
+            ;
+        }
+
         switch(FEE_TYPE)    {
-            case FEE_NORMAL:
-                btFee.setText(getString(R.string.auto_fee));
-                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                break;
             case FEE_LOW:
-                btFee.setText(getString(R.string.low_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_low_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
             case FEE_PRIORITY:
-                btFee.setText(getString(R.string.priority_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_high_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
             default:
-                btFee.setText(getString(R.string.auto_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_mid_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
         }
 
-        tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+        btLowFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        btPriorityFee.setText((FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        btAutoFee.setText((FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
 
-        btFee.setOnClickListener(new View.OnClickListener() {
+        btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_low_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
-                switch(FEE_TYPE)    {
-                    case FEE_NORMAL:
-                        FEE_TYPE = FEE_LOW;
-                        btFee.setText(getString(R.string.low_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                        break;
-                    case FEE_LOW:
-                        FEE_TYPE = FEE_PRIORITY;
-                        btFee.setText(getString(R.string.priority_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                        break;
-                    case FEE_PRIORITY:
-                        FEE_TYPE = FEE_NORMAL;
-                        btFee.setText(getString(R.string.auto_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                        break;
-                    case FEE_CUSTOM:
-                    default:
-                        FEE_TYPE = FEE_NORMAL;
-                        btFee.setText(getString(R.string.auto_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                        break;
-                }
+        btAutoFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_mid_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
-                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_TYPE == FEE_CUSTOM ? FEE_NORMAL : FEE_TYPE);
-                tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+        btPriorityFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_high_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
+        btCustomFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                doCustomFee();
             }
         });
 
@@ -576,19 +610,7 @@ public class SendActivity extends Activity {
                     btc_amount = 0.0;
                 }
 
-                double dAmount;
-                int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        dAmount = btc_amount / 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        dAmount = btc_amount / 1000.0;
-                        break;
-                    default:
-                        dAmount = btc_amount;
-                        break;
-                }
+                double dAmount = btc_amount;
 
                 long amount = (long)(Math.round(dAmount * 1e8));;
 
@@ -596,14 +618,14 @@ public class SendActivity extends Activity {
                 final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
-                final boolean isBIP49 = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress();
+                final boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
 
                 final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
                 receivers.put(address, BigInteger.valueOf(amount));
 
                 // store current change index to restore value in case of sending fail
                 int change_index = 0;
-                if(isBIP49)    {
+                if(isSegwitChange)    {
                     change_index = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
                 }
                 else    {
@@ -620,27 +642,31 @@ public class SendActivity extends Activity {
                 }
 
                 // get all UTXO
-//                List<UTXO> utxos = APIFactory.getInstance(SendActivity.this).getUtxos();
                 List<UTXO> utxos = null;
                 // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
                 long neededAmount = 0L;
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
                     neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
+//                    Log.d("SendActivity", "segwit:" + neededAmount);
                 }
                 else    {
                     neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
+//                    Log.d("SendActivity", "p2pkh:" + neededAmount);
                 }
                 neededAmount += amount;
                 neededAmount += SamouraiWallet.bDust.longValue();
 
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
+                if((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) && (UTXOFactory.getInstance().getP2SH_P2WPKH().size() > 0 && UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+//                    Log.d("SendActivity", "segwit utxos:" + utxos.size());
                 }
-                else if(UTXOFactory.getInstance().getTotalP2PKH() > neededAmount)   {
+                else if((UTXOFactory.getInstance().getP2PKH().size() > 0) && (UTXOFactory.getInstance().getTotalP2PKH() > neededAmount))   {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+//                    Log.d("SendActivity", "p2pkh utxos:" + utxos.size());
                 }
                 else    {
                     utxos = APIFactory.getInstance(SendActivity.this).getUtxos(true);
+//                    Log.d("SendActivity", "all filtered utxos:" + utxos.size());
                 }
 
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
@@ -956,7 +982,7 @@ public class SendActivity extends Activity {
                             // add change
                             if(_change > 0L)    {
                                 if(SPEND_TYPE == SPEND_SIMPLE)    {
-                                    if(isBIP49)    {
+                                    if(isSegwitChange)    {
                                         String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                                         receivers.put(change_address, BigInteger.valueOf(_change));
                                     }
@@ -1109,14 +1135,19 @@ public class SendActivity extends Activity {
                                                 if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
-                                                        if(!isBIP49 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
-                                                            rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                        try {
+                                                            if(!isSegwitChange && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
+                                                                rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            }
+                                                            else if(isSegwitChange && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
+                                                                rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            }
+                                                            else    {
+                                                                ;
+                                                            }
                                                         }
-                                                        else if(isBIP49 && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
-                                                            rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                        }
-                                                        else    {
-                                                            ;
+                                                        catch(NullPointerException npe) {
+                                                            ;   // test for bech32, skip for now as it's not a change address
                                                         }
                                                     }
 
@@ -1173,7 +1204,7 @@ public class SendActivity extends Activity {
                                             else    {
                                                 Toast.makeText(SendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                 // reset change index upon tx fail
-                                                if(isBIP49)    {
+                                                if(isSegwitChange)    {
                                                     BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
                                                 }
                                                 else    {
@@ -1223,7 +1254,7 @@ public class SendActivity extends Activity {
 
                             try {
                                 // reset change index upon 'NO'
-                                if(isBIP49)    {
+                                if(isSegwitChange)    {
                                     BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
                                 }
                                 else    {
@@ -1397,6 +1428,33 @@ public class SendActivity extends Activity {
 
     private void processScan(String data) {
 
+        if(data.contains("https://bitpay.com"))	{
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.no_bitpay)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.learn_more, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.samouraiwallet.com/post/169222582782/bitpay-qr-codes-are-no-longer-valid-important"));
+                            startActivity(intent);
+
+                        }
+                    }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
+        }
+
         if(FormatsUtil.getInstance().isValidPaymentCode(data))	{
             processPCode(data, null);
             return;
@@ -1420,7 +1478,6 @@ public class SendActivity extends Activity {
                 }
             }
 
-            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
             tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
 
             final String strAmount;
@@ -1531,20 +1588,9 @@ public class SendActivity extends Activity {
             btc_amount = 0.0;
         }
 
-        final double dAmount;
-        int unit = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-        switch (unit) {
-            case MonetaryUtil.MICRO_BTC:
-                dAmount = btc_amount / 1000000.0;
-                break;
-            case MonetaryUtil.MILLI_BTC:
-                dAmount = btc_amount / 1000.0;
-                break;
-            default:
-                dAmount = btc_amount;
-                break;
-        }
-//        Log.i("SendFragment", "amount entered (converted):" + dAmount);
+        final double dAmount = btc_amount;
+
+        //        Log.i("SendFragment", "amount entered (converted):" + dAmount);
 
         final long amount = (long)(Math.round(dAmount * 1e8));
 //        Log.i("SendFragment", "amount entered (converted to long):" + amount);
@@ -1576,7 +1622,7 @@ public class SendActivity extends Activity {
 
     public String getDisplayUnits() {
 
-        return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
+        return MonetaryUtil.getInstance().getBTCUnits();
 
     }
 
@@ -1602,7 +1648,7 @@ public class SendActivity extends Activity {
     private void doCustomFee()   {
 
         long sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
-        final long sanityValue = (long)(sanitySat * 1.25);
+        final long sanityValue = (long)(sanitySat * 1.5);
 
         final EditText etCustomFee = new EditText(SendActivity.this);
 //        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1663,8 +1709,43 @@ public class SendActivity extends Activity {
                             suggestedFee.setOK(true);
                             suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
                             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-                            tvCurrentFeePrompt.setText(getCurrentFeeSetting());
-                            btFee.setText("             ");
+
+                            btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+
+                            btCustomFee.setText((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+                            btCustomFee.setTypeface(null, Typeface.BOLD);
+                            btLowFee.setTypeface(null, Typeface.NORMAL);
+                            btAutoFee.setTypeface(null, Typeface.NORMAL);
+                            btPriorityFee.setTypeface(null, Typeface.NORMAL);
+
+                            long lowFee = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+                            long normalFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+                            long highFee = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+                            double pct = 0.0;
+                            int nbBlocks = 6;
+                            if(customValue == 0L)    {
+                                customValue = 1L;
+                            }
+                            if(customValue <= lowFee)    {
+                                pct = ((double)lowFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 24.0)).intValue();
+                            }
+                            else if(customValue >= highFee)   {
+                                pct = ((double)highFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 2.0)).intValue();
+                                if(nbBlocks < 1)    {
+                                    nbBlocks = 1;
+                                }
+                            }
+                            else    {
+                                pct = ((double)normalFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 6.0)).intValue();
+                            }
+                            tvFeePrompt.setText(getText(R.string.fee_custom_priority) + " " + nbBlocks  + " " + getText(R.string.blocks_to_cf));
                         }
 
                         dialog.dismiss();
@@ -1748,8 +1829,13 @@ public class SendActivity extends Activity {
         showTx.setPadding(40, 10, 40, 10);
         showTx.setTextSize(18.0f);
 
+        final CheckBox cbMarkInputsUnspent = new CheckBox(SendActivity.this);
+        cbMarkInputsUnspent.setText(R.string.mark_inputs_as_unspendable);
+        cbMarkInputsUnspent.setChecked(false);
+
         LinearLayout hexLayout = new LinearLayout(SendActivity.this);
         hexLayout.setOrientation(LinearLayout.VERTICAL);
+        hexLayout.addView(cbMarkInputsUnspent);
         hexLayout.addView(showTx);
 
         new AlertDialog.Builder(SendActivity.this)
@@ -1759,6 +1845,14 @@ public class SendActivity extends Activity {
                 .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                        }
+
                         dialog.dismiss();
                         SendActivity.this.finish();
 
@@ -1766,6 +1860,14 @@ public class SendActivity extends Activity {
                 })
                 .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                        }
 
                         if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
 
@@ -1856,6 +1958,23 @@ public class SendActivity extends Activity {
 
                     }
                 }).show();
+
+    }
+
+    private void markUTXOAsUnspendable(String hexTx)    {
+
+        HashMap<String, Long> utxos = new HashMap<String,Long>();
+
+        for(UTXO utxo : APIFactory.getInstance(SendActivity.this).getUtxos(true))   {
+            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
+            }
+        }
+
+        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
+        for(TransactionInput input : tx.getInputs())   {
+            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
+        }
 
     }
 

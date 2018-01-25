@@ -246,20 +246,8 @@ public class ReceiveActivity extends Activity {
                 edAmountBTC.removeTextChangedListener(this);
                 edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
-                int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        max_len = 2;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        max_len = 4;
-                        break;
-                    default:
-                        max_len = 8;
-                        break;
-                }
                 btcFormat.setMaximumFractionDigits(max_len + 1);
                 btcFormat.setMinimumFractionDigits(0);
 
@@ -283,17 +271,6 @@ public class ReceiveActivity extends Activity {
                 }
                 catch(ParseException pe) {
                     ;
-                }
-
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d / 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d / 1000.0;
-                        break;
-                    default:
-                        break;
                 }
 
                 if(d > 21000000.0)    {
@@ -356,18 +333,6 @@ public class ReceiveActivity extends Activity {
                 }
                 catch(ParseException pe) {
                     ;
-                }
-
-                int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-                switch (unit) {
-                    case MonetaryUtil.MICRO_BTC:
-                        d = d * 1000000.0;
-                        break;
-                    case MonetaryUtil.MILLI_BTC:
-                        d = d * 1000.0;
-                        break;
-                    default:
-                        break;
                 }
 
                 if((d / btc_fx) > 21000000.0)    {
@@ -549,18 +514,6 @@ public class ReceiveActivity extends Activity {
         try {
             double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
 
-            int unit = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC);
-            switch (unit) {
-                case MonetaryUtil.MICRO_BTC:
-                    amount = amount / 1000000.0;
-                    break;
-                case MonetaryUtil.MILLI_BTC:
-                    amount = amount / 1000.0;
-                    break;
-                default:
-                    break;
-            }
-
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
                 ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr), Coin.valueOf(lamount), null, null)));
@@ -635,17 +588,6 @@ public class ReceiveActivity extends Activity {
                                             _menu.findItem(R.id.action_refresh).setVisible(true);
                                         }
                                     }
-                                    else if(AddressFactory.getInstance().canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT)) {
-                                        if(swSegwit.isChecked())    {
-                                            canRefresh49 = true;
-                                        }
-                                        else    {
-                                            canRefresh44 = true;
-                                        }
-                                        if(_menu != null)    {
-                                            _menu.findItem(R.id.action_refresh).setVisible(true);
-                                        }
-                                    }
                                     else {
                                         if(swSegwit.isChecked())    {
                                             canRefresh49 = false;
@@ -660,11 +602,29 @@ public class ReceiveActivity extends Activity {
                                 }
 
                             } catch (Exception e) {
+                                if(swSegwit.isChecked())    {
+                                    canRefresh49 = false;
+                                }
+                                else    {
+                                    canRefresh44 = false;
+                                }
+                                if(_menu != null)    {
+                                    _menu.findItem(R.id.action_refresh).setVisible(false);
+                                }
                                 e.printStackTrace();
                             }
                         }
                     });
                 } catch (Exception e) {
+                    if(swSegwit.isChecked())    {
+                        canRefresh49 = false;
+                    }
+                    else    {
+                        canRefresh44 = false;
+                    }
+                    if(_menu != null)    {
+                        _menu.findItem(R.id.action_refresh).setVisible(false);
+                    }
                     e.printStackTrace();
                 }
             }
@@ -673,7 +633,7 @@ public class ReceiveActivity extends Activity {
 
     public String getDisplayUnits() {
 
-        return (String) MonetaryUtil.getInstance().getBTCUnits()[PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.BTC_UNITS, MonetaryUtil.UNIT_BTC)];
+        return MonetaryUtil.getInstance().getBTCUnits();
 
     }
 

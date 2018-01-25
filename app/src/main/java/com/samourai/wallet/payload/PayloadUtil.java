@@ -183,7 +183,7 @@ public class PayloadUtil	{
 
             JSONArray accts = new JSONArray();
             for(HD_Account acct : HD_WalletFactory.getInstance(context).get().getAccounts()) {
-                accts.put(acct.toJSON());
+                accts.put(acct.toJSON(false));
             }
             wallet.put("accounts", accts);
 
@@ -201,7 +201,7 @@ public class PayloadUtil	{
             // export BIP49 account for debug payload
             //
             JSONArray bip49_account = new JSONArray();
-            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON());
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(true));
             wallet.put("bip49_accounts", bip49_account);
 
             //
@@ -222,6 +222,7 @@ public class PayloadUtil	{
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
+            meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
             meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
@@ -234,10 +235,10 @@ public class PayloadUtil	{
             meta.put("tor", TorUtil.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
 
-            meta.put("units", PrefsUtil.getInstance(context).getValue(PrefsUtil.BTC_UNITS, 0));
             meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
+            meta.put("haptic_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.HAPTIC_PIN, true));
             meta.put("auto_backup", PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true));
             meta.put("remote", PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false));
             meta.put("use_trusted", PrefsUtil.getInstance(context).getValue(PrefsUtil.TRUSTED_LOCK, false));
@@ -247,14 +248,12 @@ public class PayloadUtil	{
             meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
             meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
-            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 1));
+            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
-
-            meta.put("bcc_replay0", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY0, ""));
-            meta.put("bcc_replay1", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAY1, ""));
-            meta.put("bcc_replayed", PrefsUtil.getInstance(context).getValue(PrefsUtil.BCC_REPLAYED, false));
+            meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
+            meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -378,6 +377,11 @@ public class PayloadUtil	{
                     editor.putBoolean("segwit", meta.getBoolean("use_segwit"));
                     editor.commit();
                 }
+                if(meta.has("use_like_typed_change")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, meta.getBoolean("use_like_typed_change"));
+                    editor.putBoolean("likeTypedChange", meta.getBoolean("use_like_typed_change"));
+                    editor.commit();
+                }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
                     editor.putBoolean("bip126", meta.getInt("spend_type") == SendActivity.SPEND_BIP126 ? true : false);
@@ -429,9 +433,6 @@ public class PayloadUtil	{
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
 
-                if(meta.has("units")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BTC_UNITS, meta.getInt("units"));
-                }
                 if(meta.has("explorer")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BLOCK_EXPLORER, meta.getInt("explorer"));
                 }
@@ -443,6 +444,11 @@ public class PayloadUtil	{
                 if(meta.has("scramble_pin")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SCRAMBLE_PIN, meta.getBoolean("scramble_pin"));
                     editor.putBoolean("scramblePin", meta.getBoolean("scramble_pin"));
+                    editor.commit();
+                }
+                if(meta.has("haptic_pin")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.HAPTIC_PIN, meta.getBoolean("haptic_pin"));
+                    editor.putBoolean("haptic", meta.getBoolean("haptic_pin"));
                     editor.commit();
                 }
                 if(meta.has("auto_backup")) {
@@ -485,7 +491,8 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
                 }
                 if(meta.has("fee_provider_sel")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel"));
+//                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel") > 0 ? 0 : meta.getInt("fee_provider_sel"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
@@ -498,15 +505,11 @@ public class PayloadUtil	{
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
                 }
-
-                if(meta.has("bcc_replay0")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY0, meta.getString("bcc_replay0"));
+                if(meta.has("paynym_claimed")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));
                 }
-                if(meta.has("bcc_replay1")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAY1, meta.getString("bcc_replay1"));
-                }
-                if(meta.has("bcc_replayed")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BCC_REPLAYED, meta.getBoolean("bcc_replayed"));
+                if(meta.has("paynym_refused")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_REFUSED, meta.getBoolean("paynym_refused"));
                 }
 
                 /*

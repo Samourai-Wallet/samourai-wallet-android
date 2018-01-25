@@ -4,17 +4,21 @@ import android.util.Patterns;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.segwit.bech32.Bech32;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.WrongNetworkException;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.bitcoinj.uri.BitcoinURIParseException;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import android.util.Log;
 
@@ -23,7 +27,14 @@ public class FormatsUtil {
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	private Pattern phonePattern = Pattern.compile("(\\+[1-9]{1}[0-9]{1,2}+|00[1-9]{1}[0-9]{1,2}+)[\\(\\)\\.\\-\\s\\d]{6,16}");
 
-    public static final String XPUB = "^xpub[1-9A-Za-z][^OIl]+$";
+	private String URI_BECH32 = "^bitcoin:((tb|TB|bc|BC)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
+
+	public static final int MAGIC_XPUB = 0x0488B21E;
+	public static final int MAGIC_TPUB = 0x043587CF;
+	public static final int MAGIC_YPUB = 0x049D7CB2;
+	public static final int MAGIC_UPUB = 0x044A5262;
+
+	public static final String XPUB = "^[xtyu]pub[1-9A-Za-z][^OIl]+$";
     public static final String HEX = "^[0-9A-Fa-f]+$";
 
 	private static FormatsUtil instance = null;
@@ -65,7 +76,12 @@ public class FormatsUtil {
 			ret = true;
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = false;
+			if(s.matches(URI_BECH32))	{
+				ret = true;
+			}
+			else	{
+				ret = false;
+			}
 		}
 		
 		return ret;
@@ -81,7 +97,12 @@ public class FormatsUtil {
 			ret = uri.toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				return s;
+			}
+			else	{
+				ret = null;
+			}
 		}
 		
 		return ret;
@@ -97,7 +118,16 @@ public class FormatsUtil {
 			ret = uri.getAddress().toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				Pattern pattern = Pattern.compile(URI_BECH32);
+				Matcher matcher = pattern.matcher(s);
+				if(matcher.find() && matcher.group(1) != null)    {
+					return matcher.group(1);
+				}
+			}
+			else	{
+				ret = null;
+			}
 		}
 
 		return ret;
@@ -118,7 +148,23 @@ public class FormatsUtil {
 			}
 		}
 		catch(BitcoinURIParseException bupe) {
-			ret = null;
+			if(s.matches(URI_BECH32))	{
+				Pattern pattern = Pattern.compile(URI_BECH32);
+				Matcher matcher = pattern.matcher(s);
+				if(matcher.find() && matcher.group(4) != null)    {
+					String amt = matcher.group(4);
+					try	{
+						double amount = Double.valueOf(amt);
+						return Long.toString((long)(amount * 1e8));
+					}
+					catch(NumberFormatException nfe)	{
+						ret = "0.0000";
+					}
+				}
+			}
+			else	{
+				ret = null;
+			}
 		}
 
 		return ret;
@@ -128,17 +174,64 @@ public class FormatsUtil {
 
 		boolean ret = false;
 		Address addr = null;
-		
-		try {
-			addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
-			if(addr != null) {
-				ret = true;
+
+		if((!SamouraiWallet.getInstance().isTestNet() && address.toLowerCase().startsWith("bc")) ||
+				(SamouraiWallet.getInstance().isTestNet() && address.toLowerCase().startsWith("tb")))	{
+
+			try	{
+				Pair<Byte, byte[]> pair = Bech32Segwit.decode(address.substring(0, 2), address);
+				if(pair.getLeft() == null || pair.getRight() == null)	{
+					;
+				}
+				else	{
+					ret = true;
+				}
+			}
+			catch(Exception e)	{
+				e.printStackTrace();
+			}
+
+		}
+		else	{
+
+			try {
+				addr = new Address(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+				if(addr != null) {
+					ret = true;
+				}
+			}
+			catch(WrongNetworkException wne) {
+				ret = false;
+			}
+			catch(AddressFormatException afe) {
+				ret = false;
+			}
+
+		}
+
+		return ret;
+	}
+
+	public boolean isValidBech32(final String address) {
+
+		boolean ret = false;
+
+		try	{
+			Pair<String, byte[]> pair0 = Bech32.bech32Decode(address);
+			if(pair0.getLeft() == null || pair0.getRight() == null)	{
+				ret = false;
+			}
+			else	{
+				Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(address.substring(0, 2), address);
+				if(pair1.getLeft() == null || pair1.getRight() == null)	{
+					ret = false;
+				}
+				else	{
+					ret = true;
+				}
 			}
 		}
-		catch(WrongNetworkException wne) {
-			ret = false;
-		}
-		catch(AddressFormatException afe) {
+		catch(Exception e)	{
 			ret = false;
 		}
 
@@ -168,7 +261,7 @@ public class FormatsUtil {
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
 			int version = byteBuffer.getInt();
-			if(version != 0x0488B21E && version != 0x043587CF)   {
+			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{

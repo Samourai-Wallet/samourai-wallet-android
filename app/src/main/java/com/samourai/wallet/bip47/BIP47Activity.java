@@ -11,11 +11,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,8 +28,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
@@ -41,13 +45,12 @@ import net.sourceforge.zbar.Symbol;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.bouncycastle.util.encoders.DecoderException;
@@ -60,7 +63,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,15 +74,14 @@ import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.SecretPoint;
 import com.samourai.wallet.crypto.DecryptionException;
-import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -90,6 +91,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -104,6 +106,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -122,8 +125,9 @@ public class BIP47Activity extends Activity {
 
     private FloatingActionsMenu ibBIP47Menu = null;
     private FloatingActionButton actionAdd = null;
-    private FloatingActionButton actionPartners = null;
     private FloatingActionButton actionSign = null;
+
+    private Menu _menu = null;
 
     private Timer timer = null;
     private Handler handler = null;
@@ -135,6 +139,8 @@ public class BIP47Activity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bip47_list);
 
+        setTitle(R.string.paynyms);
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -145,31 +151,6 @@ public class BIP47Activity extends Activity {
             @Override
             public void onClick(View arg0) {
                 doAdd();
-            }
-        });
-
-        actionPartners = (FloatingActionButton)findViewById(R.id.bip47_partners);
-        actionPartners.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-                /*
-                AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage("Want to see your payment code suggested here? Contact us at wallet@samouraiwallet.com.")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ;
-                            }
-
-                        });
-
-                dlg.show();
-                */
-
-                Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
-                startActivityForResult(intent, RECOMMENDED_PCODE);
-
             }
         });
 
@@ -400,7 +381,7 @@ public class BIP47Activity extends Activity {
 
                 Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
                 intent.putExtra("pcode", pcode);
-                intent.putExtra("label", map.containsKey("title") ? map.get("title") : "");
+                intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
                 startActivityForResult(intent, EDIT_PCODE);
             }
             catch(UnsupportedEncodingException uee) {
@@ -417,6 +398,11 @@ public class BIP47Activity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        AppUtil.getInstance(BIP47Activity.this).checkTimeOut();
+
+        if(_menu != null && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            _menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
 
         refreshList();
 
@@ -538,6 +524,13 @@ public class BIP47Activity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bip47_menu, menu);
+
+        _menu = menu;
+
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            menu.findItem(R.id.action_claim_paynym).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -559,11 +552,19 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_sync_all) {
             doSyncAll();
         }
+        else if(id == R.id.action_claim_paynym) {
+            doClaimPayNym();
+        }
         else {
             ;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doClaimPayNym() {
+        Intent intent = new Intent(BIP47Activity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
     }
 
     private void doScan() {
@@ -574,6 +575,9 @@ public class BIP47Activity extends Activity {
 
     private void processScan(String data) {
 
+        if(data.startsWith("bitcoin://") && data.length() > 10)    {
+            data = data.substring(10);
+        }
         if(data.startsWith("bitcoin:") && data.length() > 8)    {
             data = data.substring(8);
         }
@@ -593,7 +597,33 @@ public class BIP47Activity extends Activity {
             intent.putExtra("pcode", data);
             startActivityForResult(intent, EDIT_PCODE);
 
-        } else {
+        }
+        else if(data.contains("?") && (data.length() >= data.indexOf("?"))) {
+
+            String meta = data.substring(data.indexOf("?") + 1);
+
+            String _meta = null;
+            try {
+                Map<String, String> map = new HashMap<String,String>();
+                if(meta != null && meta.length() > 0)    {
+                    _meta = URLDecoder.decode(meta, "UTF-8");
+                    map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                }
+
+                Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
+                intent.putExtra("pcode", data.substring(0, data.indexOf("?")));
+                intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                startActivityForResult(intent, EDIT_PCODE);
+            }
+            catch(UnsupportedEncodingException uee) {
+                ;
+            }
+            catch(Exception e) {
+                ;
+            }
+
+        }
+        else {
             Toast.makeText(BIP47Activity.this, R.string.scan_error, Toast.LENGTH_SHORT).show();
         }
 
@@ -692,6 +722,10 @@ public class BIP47Activity extends Activity {
 
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
+        if(_pcodes.size() < 1)    {
+            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Samourai Wallet Donations");
+        }
+
         //
         // check for own payment code
         //
@@ -711,94 +745,11 @@ public class BIP47Activity extends Activity {
             ++i;
         }
 
-        setDisplay();
+        doPayNymTask();
 
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-        new PaymentCodeMetaTask().execute("");
-
-    }
-
-    private void setDisplay()   {
-
-        if(pcodes.length > 0)    {
-            listView.setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.GONE);
-        }
-        else    {
-            listView.setVisibility(View.GONE);
-            ((TextView)findViewById(R.id.text1)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text2)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.text3)).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    doHelp();
-                    return false;
-                }
-            });
-        }
-
-    }
-
-    private void doHelp()  {
-
-        new AlertDialog.Builder(BIP47Activity.this)
-                .setTitle(R.string.bip47_setup1_title)
-                .setMessage(R.string.bip47_setup1_text)
-                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        new AlertDialog.Builder(BIP47Activity.this)
-                                .setTitle(R.string.bip47_setup2_title)
-                                .setMessage(R.string.bip47_setup2_text)
-                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        new AlertDialog.Builder(BIP47Activity.this)
-                                                .setTitle(R.string.bip47_setup2_title)
-                                                .setMessage(R.string.bip47_setup3_text)
-                                                .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                        Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
-                                                        intent.putExtra("label", "Samourai Donations");
-                                                        intent.putExtra("pcode", "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh");
-                                                        startActivityForResult(intent, EDIT_PCODE);
-
-                                                    }
-
-                                                }).setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                ;
-
-                                            }
-                                        }).show();
-
-                                    }
-
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                ;
-
-                            }
-                        }).show();
-
-                    }
-
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        ;
-
-                    }
-        }).show();
 
     }
 
@@ -821,10 +772,6 @@ public class BIP47Activity extends Activity {
             balance = 0L;
         }
 
-        //
-        // get unspents
-        //
-        List<UTXO> utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
 //        long change = 0L;
@@ -848,6 +795,18 @@ public class BIP47Activity extends Activity {
         //
         amount += currentSWFee.longValue();
 
+        //
+        // get unspents
+        //
+        List<UTXO> utxos = null;
+        if(UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0,1, 4).longValue())    {
+            utxos = new ArrayList<UTXO>();
+            utxos.addAll(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+        }
+        else    {
+            utxos = APIFactory.getInstance(BIP47Activity.this).getUtxos(true);
+        }
+
         // sort in ascending order by value
         final List<UTXO> _utxos = utxos;
         Collections.sort(_utxos, new UTXO.UTXOComparator());
@@ -869,10 +828,10 @@ public class BIP47Activity extends Activity {
         }
 
         //
-        // use high fee settings
+        // use low fee settings
         //
         SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
-        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
 
         if(selectedUTXO.size() == 0)    {
             // sort in descending order by value
@@ -910,7 +869,37 @@ public class BIP47Activity extends Activity {
         // total amount to spend including fee
         //
         if((amount + fee.longValue()) >= balance)    {
-            Toast.makeText(BIP47Activity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+
+            String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
+            BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
+            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " BTC ";
+            message += strAmount;
+            message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/article/58-connecting-to-a-paynym-contact"));
+                            startActivity(browserIntent);
+
+                        }
+                    })
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+            return;
         }
 
         //
@@ -925,7 +914,7 @@ public class BIP47Activity extends Activity {
         }
 
         if(payment_code == null)    {
-
+            return;
         }
 
         //
@@ -1039,10 +1028,8 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " BTC ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " BTC ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
-        strNotifTxMsg += "\n";
-        strNotifTxMsg += "(" + MonetaryUtil.getInstance().getBTCFormat().format(((double) fee.longValue()) / 1e8) + " BTC miner's fee).";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                 .setTitle(R.string.bip47_setup4_title)
@@ -1530,52 +1517,78 @@ public class BIP47Activity extends Activity {
 
     }
 
-    private class PaymentCodeMetaTask extends AsyncTask<String, Void, String> {
+    private void doPayNymTask() {
 
-        @Override
-        protected void onPreExecute() {
-            if(meta == null)    {
-                meta = new HashMap<String,String>();
-            }
-            if(bitmaps == null)    {
-                bitmaps = new HashMap<String,Bitmap>();
-            }
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
+            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
         }
 
-        @Override
-        protected String doInBackground(String... s) {
+        new Thread(new Runnable() {
 
-            for(int i = 0; i < pcodes.length; i++)  {
-                String result = null;
-                String url = WebUtil.PAYMENTCODE_IO_SEARCH + pcodes[i];
+            private Handler handler = new Handler();
+
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                final String strPaymentCode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString();
+
                 try {
-                    result = WebUtil.getInstance(BIP47Activity.this).getURL(url);
+                    JSONObject obj = new JSONObject();
+                    obj.put("nym", strPaymentCode);
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                    Log.d("BIP47Activity", res);
 
-                    JSONObject obj = new JSONObject(result);
-                    if(!meta.containsKey(pcodes[i]))    {
-                        meta.put(pcodes[i], obj.toString());
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("codes"))    {
+                        JSONArray array = responseObj.getJSONArray("codes");
+                        if(array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed") == true)    {
+                            final String strNymName = responseObj.getString("nymName");
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    ((RelativeLayout) findViewById(R.id.paynym)).setVisibility(View.VISIBLE);
+                                    Log.d("BIP47Activity", strNymName);
+
+                                    final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
+                                    Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+
+                                    ((TextView)findViewById(R.id.nymName)).setText(strNymName);
+                                    ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
+
+                                }
+                            });
+                        }
+                        else    {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    }
+                    else    {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                            }
+                        });
                     }
 
                 }
                 catch(Exception e) {
-                    ;
+                    handler.post(new Runnable() {
+                        public void run() {
+                            ((RelativeLayout)findViewById(R.id.paynym)).setVisibility(View.GONE);
+                        }
+                    });
+                    e.printStackTrace();
                 }
+
+                Looper.loop();
+
             }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            adapter.notifyDataSetChanged();
-        }
-
-        protected void onProgressUpdate(String... progress) {
-
-            refreshList();
-
-        }
-
+        }).start();
     }
 
 }

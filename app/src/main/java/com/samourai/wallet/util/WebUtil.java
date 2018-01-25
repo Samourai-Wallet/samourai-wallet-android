@@ -41,7 +41,6 @@ public class WebUtil	{
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
 
-    public static final String _21CO_FEE_URL = "https://bitcoinfees.21.co/api/v1/fees/recommended";
     public static final String BITCOIND_FEE_URL = "https://api.samourai.io/v2/fees";
 
     public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";

@@ -7,19 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+//import android.util.Log;
 
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -71,7 +69,7 @@ public class BIP47Add extends Activity {
                 final String userInput = edPCode.getText().toString();
 
                 if(FormatsUtil.getInstance().isValidPaymentCode(userInput))    {
-                    new PaymentCodeIOTask().execute(new String[] { userInput });
+//                    new PaymentCodeIOTask().execute(new String[] { userInput });
                 }
 
                 edPCode.addTextChangedListener(twPCode);

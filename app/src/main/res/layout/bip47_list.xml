@@ -1,61 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text1"
+    <RelativeLayout
+        android:id="@+id/paynym"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text1"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
+        android:gravity="top|center_horizontal"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
         android:visibility="gone"
-        android:textSize="16sp"
-        />
+        >
 
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text2"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:visibility="gone"
-        android:layout_below="@+id/text1"
-        android:textSize="16sp"
-        />
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
+            />
 
-    <TextView
-        android:id="@+id/text3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bip47_init_text3"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:gravity="center_horizontal"
-        android:textAlignment="gravity"
-        android:visibility="gone"
-        android:layout_below="@+id/text2"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        />
+        <TextView
+            android:id="@+id/nymName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:textAlignment="gravity"
+            android:layout_below="@+id/avatar"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:id="@+id/pcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center_horizontal"
+            android:textAlignment="gravity"
+            android:layout_below="@+id/nymName"
+            android:textSize="16sp"
+            />
+
+    </RelativeLayout>
 
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_below="@+id/paynym"
         />
 
     <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
@@ -82,16 +89,6 @@
             fab:fab_colorNormal="#FF5c6bc0"
             fab:fab_colorPressed="#FF3f51b5"
             fab:fab_title="@string/bip47_sign"
-            />
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/bip47_partners"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_loyalty_white_24dp"
-            fab:fab_colorNormal="#FF5c6bc0"
-            fab:fab_colorPressed="#FF3f51b5"
-            fab:fab_title="@string/bip47_partners"
             />
     <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/bip47_add"
