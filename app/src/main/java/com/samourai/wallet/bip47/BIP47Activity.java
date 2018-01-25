@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +76,7 @@ import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
@@ -1551,7 +1554,20 @@ public class BIP47Activity extends Activity {
                                     Log.d("BIP47Activity", strNymName);
 
                                     final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
-                                    Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+
+                                    // get screen width
+                                    Display display = BIP47Activity.this.getWindowManager().getDefaultDisplay();
+                                    Point size = new Point();
+                                    display.getSize(size);
+
+                                    if (size.x > 240) {
+                                        // load avatar
+                                        Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+                                    }
+                                    else {
+                                        // screen too small, hide avatar
+                                        ivAvatar.setVisibility(View.INVISIBLE);
+                                    }
 
                                     ((TextView)findViewById(R.id.nymName)).setText(strNymName);
                                     ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
