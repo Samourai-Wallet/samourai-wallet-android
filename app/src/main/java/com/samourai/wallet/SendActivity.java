@@ -223,17 +223,6 @@ public class SendActivity extends Activity {
             }
         });
 
-        /*
-        tvCurrentFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
-        tvCurrentFeePrompt.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                doCustomFee();
-                return false;
-            }
-        });
-        */
-
         DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());

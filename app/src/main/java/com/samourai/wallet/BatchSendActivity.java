@@ -7,11 +7,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,13 +26,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -36,6 +48,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -48,6 +61,9 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -65,12 +81,14 @@ import net.sourceforge.zbar.Symbol;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
 
 public class BatchSendActivity extends Activity {
 
     private final static int SCAN_QR = 2012;
+    private final static int FEE_SELECT = 2013;
 
     private class DisplayData   {
         private String pcode = null;
@@ -244,8 +262,8 @@ public class BatchSendActivity extends Activity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-//                                    Toast.makeText(SendActivity.this, BIP47Meta.getInstance().getDisplayLabel(entries.get(which)), Toast.LENGTH_SHORT).show();
-//                                    Toast.makeText(SendActivity.this, entries.get(which), Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(BatchSendActivity.this, BIP47Meta.getInstance().getDisplayLabel(entries.get(which)), Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(BatchSendActivity.this, entries.get(which), Toast.LENGTH_SHORT).show();
 
                                     processPCode(entries.get(which), null);
 
@@ -476,7 +494,7 @@ public class BatchSendActivity extends Activity {
             _menu.findItem(R.id.action_new).setVisible(false);
             _menu.findItem(R.id.action_send).setVisible(false);
 
-            doSpend();
+            doFee();
         }
         else {
             ;
@@ -499,6 +517,16 @@ public class BatchSendActivity extends Activity {
             }
         }
         else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == FEE_SELECT)	{
+
+            Log.d("BatchSpendActivity", "selected fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L);
+
+            doSpend();
+
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == FEE_SELECT)	{
             ;
         }
         else {
@@ -644,7 +672,7 @@ public class BatchSendActivity extends Activity {
                     edAddress.setEnabled(false);
                     edAmountBTC.setEnabled(false);
                     edAmountFiat.setEnabled(false);
-//                    Toast.makeText(SendActivity.this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(BatchSendActivity.this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                 }
             }
             catch (NumberFormatException nfe) {
@@ -695,7 +723,7 @@ public class BatchSendActivity extends Activity {
                 }
             }
             else    {
-//                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(BatchSendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
 
                 if(meta != null && meta.startsWith("?") && meta.length() > 1)    {
                     meta = meta.substring(1);
@@ -779,6 +807,11 @@ public class BatchSendActivity extends Activity {
 
     }
 
+    private void doFee() {
+        Intent intent = new Intent(BatchSendActivity.this, FeeActivity.class);
+        startActivityForResult(intent, FEE_SELECT);
+    }
+
     private void doSpend()  {
 
         HashMap<String,BigInteger> receivers = new HashMap<String,BigInteger>();
@@ -793,30 +826,25 @@ public class BatchSendActivity extends Activity {
         Log.d("BatchSendActivity", "amount:" + amount);
 
         List<UTXO> utxos = APIFactory.getInstance(BatchSendActivity.this).getUtxos(true);
-        List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         Collections.sort(utxos, new UTXO.UTXOComparator());
 
+        List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         int p2pkh = 0;
         int p2wpkh = 0;
         long totalValueSelected = 0L;
         int totalSelected = 0;
 
-        //
-        //
-        //
-        SuggestedFee suggestedFee = new SuggestedFee();
-        suggestedFee.setDefaultPerKB(BigInteger.valueOf(9000L));
-        FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+        for(UTXO utxo : utxos)   {
 
-        for(UTXO u : utxos)   {
-            Log.d("BatchSendActivity", "utxo value:" + u.getValue());
-            selectedUTXO.add(u);
-            totalValueSelected += u.getValue();
-            totalSelected += u.getOutpoints().size();
-            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
+            Log.d("BatchSendActivity", "utxo value:" + utxo.getValue());
+            selectedUTXO.add(utxo);
+            totalValueSelected += utxo.getValue();
+            totalSelected += utxo.getOutpoints().size();
+
+            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
             p2pkh += outpointTypes.getLeft();
             p2wpkh += outpointTypes.getRight();
-            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, receivers.size()).longValue()))    {
+            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, receivers.size() + 1).longValue()))    {
                 break;
             }
         }
@@ -827,44 +855,41 @@ public class BatchSendActivity extends Activity {
         List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
         for(UTXO utxo : selectedUTXO)   {
             outpoints.addAll(utxo.getOutpoints());
+
+            for(MyTransactionOutPoint out : utxo.getOutpoints())   {
+                Log.d("BatchSendActivity", "outpoint hash:" + out.getTxHash().toString());
+                Log.d("BatchSendActivity", "outpoint idx:" + out.getTxOutputN());
+                Log.d("BatchSendActivity", "outpoint address:" + out.getAddress());
+            }
+
         }
         Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
-        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size());
+        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size() + 1);
         Log.d("BatchSendActivity", "fee:" + fee.longValue());
 
-        boolean isSegwitChange = (outpointTypes.getRight() > 0) || PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
         long changeAmount = totalValueSelected - (amount + fee.longValue());
-        if(isSegwitChange)    {
+        if(changeAmount > 0L)    {
             String change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);
         }
-        else    {
-            try {
-                String change_address = HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                receivers.put(change_address, BigInteger.valueOf(changeAmount));
-                Log.d("BatchSendActivity", "change output:" + changeAmount);
-                Log.d("BatchSendActivity", "change output:" + change_address);
-            }
-            catch(IOException ioe) {
-                return;
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                return;
-            }
-        }
 
         Transaction tx = SendFactory.getInstance(BatchSendActivity.this).makeTransaction(0, outpoints, receivers);
-
-        tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
         Log.d("BatchSendActivity", "tx unsigned inputs:" + tx.getInputs().size());
         Log.d("BatchSendActivity", "tx unsigned outputs:" + tx.getOutputs().size());
-        final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+        String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+        Log.d("BatchSendActivity", "hex unsigned tx:" + hexTx);
+
+        tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+        hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
         Log.d("BatchSendActivity", "tx signed inputs:" + tx.getInputs().size());
         Log.d("BatchSendActivity", "tx signed outputs:" + tx.getOutputs().size());
+
         Log.d("BatchSendActivity", "tx hash:" + tx.getHashAsString());
-        Log.d("BatchSendActivity", "hex tx:" + hexTx);
+        Log.d("BatchSendActivity", "hex signed tx:" + hexTx);
+
+//        doShowTx(hexTx, tx.getHashAsString());
 
     }
 
@@ -926,6 +951,165 @@ public class BatchSendActivity extends Activity {
             text2.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " BTC");
 
             return view;
+        }
+
+    }
+
+    private void doShowTx(final String hexTx, final String txHash) {
+
+        final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
+
+        TextView showTx = new TextView(BatchSendActivity.this);
+        showTx.setText(hexTx);
+        showTx.setTextIsSelectable(true);
+        showTx.setPadding(40, 10, 40, 10);
+        showTx.setTextSize(18.0f);
+
+        final CheckBox cbMarkInputsUnspent = new CheckBox(BatchSendActivity.this);
+        cbMarkInputsUnspent.setText(R.string.mark_inputs_as_unspendable);
+        cbMarkInputsUnspent.setChecked(false);
+
+        LinearLayout hexLayout = new LinearLayout(BatchSendActivity.this);
+        hexLayout.setOrientation(LinearLayout.VERTICAL);
+        hexLayout.addView(cbMarkInputsUnspent);
+        hexLayout.addView(showTx);
+
+        new AlertDialog.Builder(BatchSendActivity.this)
+                .setTitle(txHash)
+                .setView(hexLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(BatchSendActivity.this).sendBroadcast(intent);
+                        }
+
+                        dialog.dismiss();
+                        BatchSendActivity.this.finish();
+
+                    }
+                })
+                .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(BatchSendActivity.this).sendBroadcast(intent);
+                        }
+
+                        if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
+
+                            final ImageView ivQR = new ImageView(BatchSendActivity.this);
+
+                            Display display = (BatchSendActivity.this).getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            int imgWidth = Math.max(size.x - 240, 150);
+
+                            Bitmap bitmap = null;
+
+                            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(hexTx, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), imgWidth);
+
+                            try {
+                                bitmap = qrCodeEncoder.encodeAsBitmap();
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+                            ivQR.setImageBitmap(bitmap);
+
+                            LinearLayout qrLayout = new LinearLayout(BatchSendActivity.this);
+                            qrLayout.setOrientation(LinearLayout.VERTICAL);
+                            qrLayout.addView(ivQR);
+
+                            new AlertDialog.Builder(BatchSendActivity.this)
+                                    .setTitle(txHash)
+                                    .setView(qrLayout)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            dialog.dismiss();
+                                            BatchSendActivity.this.finish();
+
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.share_qr, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            String strFileName = AppUtil.getInstance(BatchSendActivity.this).getReceiveQRFilename();
+                                            File file = new File(strFileName);
+                                            if(!file.exists()) {
+                                                try {
+                                                    file.createNewFile();
+                                                }
+                                                catch(Exception e) {
+                                                    Toast.makeText(BatchSendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            file.setReadable(true, false);
+
+                                            FileOutputStream fos = null;
+                                            try {
+                                                fos = new FileOutputStream(file);
+                                            }
+                                            catch(FileNotFoundException fnfe) {
+                                                ;
+                                            }
+
+                                            if(file != null && fos != null) {
+                                                Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
+                                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                                                try {
+                                                    fos.close();
+                                                }
+                                                catch(IOException ioe) {
+                                                    ;
+                                                }
+
+                                                Intent intent = new Intent();
+                                                intent.setAction(Intent.ACTION_SEND);
+                                                intent.setType("image/png");
+                                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                                startActivity(Intent.createChooser(intent, BatchSendActivity.this.getText(R.string.send_tx)));
+                                            }
+
+                                        }
+                                    }).show();
+                        }
+                        else    {
+
+                            Toast.makeText(BatchSendActivity.this, R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }
+                }).show();
+
+    }
+
+    private void markUTXOAsUnspendable(String hexTx)    {
+
+        HashMap<String, Long> utxos = new HashMap<String,Long>();
+
+        for(UTXO utxo : APIFactory.getInstance(BatchSendActivity.this).getUtxos(true))   {
+            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
+            }
+        }
+
+        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
+        for(TransactionInput input : tx.getInputs())   {
+            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
         }
 
     }
