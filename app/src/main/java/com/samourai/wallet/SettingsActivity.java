@@ -117,25 +117,16 @@ public class SettingsActivity extends PreferenceActivity	{
     @Override
     protected void onResume() {
         super.onResume();
-
-        AppUtil.getInstance(SettingsActivity.this).setIsInForeground(true);
-
         AppUtil.getInstance(SettingsActivity.this).checkTimeOut();
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if(id == android.R.id.home) {
             finish();
         }
-        else {
-            ;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

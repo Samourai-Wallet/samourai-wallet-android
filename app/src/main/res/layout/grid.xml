@@ -111,7 +111,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_backspace_white_24dp"
+            android:src="@drawable/ic_backspace_white"
             android:background="@color/pinBG" />
 
         <Button android:id="@+id/tj" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"

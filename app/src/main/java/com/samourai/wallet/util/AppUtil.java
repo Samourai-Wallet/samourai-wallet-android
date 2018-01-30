@@ -35,8 +35,6 @@ public class AppUtil {
 
     public static final String TOR_PACKAGE_ID = "org.torproject.android";
     public static final String OPENVPN_PACKAGE_ID = "de.blinkt.openvpn";
-
-    private boolean isInForeground = false;
 	
 	private static AppUtil instance = null;
 	private static Context context = null;
@@ -48,7 +46,7 @@ public class AppUtil {
 
     private static boolean CLIPBOARD_SEEN = false;
 
-    private AppUtil() { ; }
+    private AppUtil() {}
 
 	public static AppUtil getInstance(Context ctx) {
 		
@@ -140,14 +138,6 @@ public class AppUtil {
         return false;
     }
 
-    public boolean isInForeground() {
-        return isInForeground;
-    }
-
-    public void setIsInForeground(boolean foreground) {
-        isInForeground = foreground;
-    }
-
     public String getReceiveQRFilename(){
         return strReceiveQRFilename;
     }
@@ -209,6 +199,10 @@ public class AppUtil {
         }
     }
 
+    /**
+     * Checks if the installed APK was installed by a valid market installer or was side loaded.
+     * @return True if side loaded, false if installed by playstore..
+     */
     public boolean isSideLoaded() {
         List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
         final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());

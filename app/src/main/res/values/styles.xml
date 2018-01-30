@@ -5,9 +5,84 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="UI2Theme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:navigationBarColor">@color/primary_dark</item>
+        <item name="android:colorButtonNormal">@color/accent</item>
+
+        <item name="colorControlNormal">@color/grey</item>
+    </style>
+
+    <style name="UI2Theme.EditText">
+        <item name="colorControlNormal">@color/grey</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
+    </style>
+
+
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="text" parent="UI2Theme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="text.title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="text.editText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="android:theme">@style/UI2Theme.EditText</item>
+    </style>
+
+    <style name="pin_digit">
+        <item name="android:layout_width">@dimen/pin_character_size</item>
+        <item name="android:layout_height">@dimen/pin_character_size</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="grid_item">
+        <item name="android:layout_width">@dimen/grid_item_size</item>
+        <item name="android:layout_height">@dimen/grid_item_size</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:background">@drawable/grid_btn_selector</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
+    </style>
+
+    <style name="button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/btn_selector_color</item>
+    </style>
+
+    <style name="button.intro" parent="button">
+        <item name="android:paddingEnd">50dp</item>
+        <item name="android:paddingStart">50dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">@drawable/intro_btn_background</item>
+    </style>
+
+    <style name="button.tab_navigation" parent="button">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
 </resources>

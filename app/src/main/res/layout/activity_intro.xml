@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.IntroActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/window" />
+
+    <ImageView
+        android:id="@+id/samouraiLogo"
+        android:layout_width="@dimen/intro_logo_size"
+        android:layout_height="@dimen/intro_logo_size"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_samourai_logo_trans2x"
+        android:contentDescription="@string/samourai_logo_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/walletTitle"
+        style="@style/text.title"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/samourai_wallet_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/samouraiLogo" />
+
+    <TextView
+        android:id="@+id/versionNumber"
+        style="@style/text"
+        android:layout_marginTop="8dp"
+        tools:text="v 1.00"
+        app:layout_constraintEnd_toEndOf="@+id/walletTitle"
+        app:layout_constraintTop_toBottomOf="@+id/walletTitle" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/versionNumber">
+
+        <Button
+            android:id="@+id/btn_create_wallet"
+            style="@style/button.intro"
+            android:text="@string/new_wallet_button"
+            android:background="@drawable/intro_btn_background" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right_btn"
+            android:layout_alignEnd="@id/btn_create_wallet"
+            android:layout_alignBottom="@id/btn_create_wallet"
+            android:layout_alignTop="@id/btn_create_wallet"
+            android:layout_marginEnd="8dp"
+            android:clickable="false"
+            tools:ignore="ContentDescription" />
+
+        <Button
+            android:id="@+id/btn_restore_wallet"
+            style="@style/button.intro"
+            android:text="@string/restore_wallet_button"
+            android:background="@drawable/intro_btn_background"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/btn_create_wallet"
+            android:layout_alignStart="@id/btn_create_wallet"
+            android:layout_alignEnd="@id/btn_create_wallet"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right_btn"
+            android:layout_alignEnd="@id/btn_restore_wallet"
+            android:layout_alignBottom="@id/btn_restore_wallet"
+            android:layout_alignTop="@id/btn_restore_wallet"
+            android:layout_marginEnd="8dp"
+            android:clickable="false"
+            tools:ignore="ContentDescription" />
+
+
+
+    </RelativeLayout>
+
+
+</android.support.constraint.ConstraintLayout>

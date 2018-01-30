@@ -3,35 +3,41 @@ package com.samourai.wallet;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
-//import android.util.Log;
 
 public class MainActivity extends Activity {
+    private static final String TAG = LogUtil.getTag();
+
+    public static final String URI_KEY = "uri";
 
     private static boolean genesis = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.main);
+        if (LogUtil.DEBUG) Log.d(TAG, "onCreate");
 
-        if(PrefsUtil.getInstance(MainActivity.this).getValue(PrefsUtil.TESTNET, false) == true)    {
+        if(PrefsUtil.getInstance(MainActivity.this).getValue(PrefsUtil.TESTNET, false)) {
+            if (LogUtil.DEBUG) Log.d(TAG, "setting testnet");
             SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
         }
 
         String action = getIntent().getAction();
         String scheme = getIntent().getScheme();
         String strUri = null;
-        if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
-            strUri = getIntent().getData().toString();
+        if(action != null && Intent.ACTION_VIEW.equals(action) && "bitcoin".equals(scheme)) {
+            if (getIntent().getData() != null) {
+                strUri = getIntent().getData().toString();
+            }
         }
 
         doMain(strUri);
-
     }
 
     @Override
@@ -40,17 +46,21 @@ public class MainActivity extends Activity {
 
         if(genesis)    {
             genesis = false;
+            if (LogUtil.DEBUG) Log.d(TAG, "Genesis done, finishing.");
             finish();
         }
-
     }
 
     private void doMain(String strUri) {
         Intent intent;
-        intent = new Intent(MainActivity.this, MainActivity2.class);
+        if (PayloadUtil.getInstance(MainActivity.this).walletFileExists()) {
+            intent = new Intent(MainActivity.this, MainActivity2.class);
+        } else {
+            intent = new Intent(MainActivity.this, IntroActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if(strUri != null)    {
-            intent.putExtra("uri", strUri);
+            intent.putExtra(URI_KEY, strUri);
         }
         genesis = true;
         startActivity(intent);

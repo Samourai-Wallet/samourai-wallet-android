@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="false"
+        android:color="@color/tab_navigation_secondary" />
+
+    <item android:state_pressed="true"
+        android:color="@color/grey" /> <!-- pressed -->
+
+    <item android:state_enabled="true"
+        android:color="@color/white" />
+
+    <item android:state_focused="true"
+        android:color="@color/white" /> <!-- focused -->
+
+    <item
+        android:color="@color/white" /> <!-- default -->
+
+</selector>
+
+

@@ -10,8 +10,6 @@ import org.bouncycastle.util.encoders.Hex;
 import java.security.MessageDigest;
 import java.util.UUID;
 
-//import android.util.Log;
-
 public class AccessFactory	{
 
     public static final int MIN_PIN_LENGTH = 5;

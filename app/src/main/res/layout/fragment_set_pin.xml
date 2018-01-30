@@ -1,0 +1,77 @@
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context="com.samourai.wallet.create.SetPinFragment">
+
+    <RelativeLayout
+        android:id="@+id/title_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_create_title_icon"
+            android:layout_width="@dimen/create_title_icon_size"
+            android:layout_height="@dimen/create_title_icon_size"
+            android:src="@drawable/ic_dialpad_white"
+            android:contentDescription="@string/lock_icon_description" />
+
+        <TextView
+            android:id="@+id/txt_create_pin_title"
+            style="@style/text.title"
+            android:layout_toEndOf="@+id/img_create_title_icon"
+            android:layout_marginStart="16dp"
+            android:text="@string/create_pin_title" />
+        <TextView
+            android:id="@+id/txt_create_pin_subtitle"
+            style="@style/text"
+            android:layout_toEndOf="@+id/img_create_title_icon"
+            android:layout_below="@id/txt_create_pin_title"
+            android:layout_marginStart="16dp"
+            android:text="@string/create_pin_subtitle" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/pin_digits_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/title_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 8 pin digits indicators -->
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+        <com.samourai.wallet.view.PinDigitImageView
+            style="@style/pin_digit" />
+    </LinearLayout>
+
+    <include
+        layout="@layout/pin_grid_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pin_digits_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
