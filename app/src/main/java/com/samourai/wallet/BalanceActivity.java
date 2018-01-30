@@ -638,6 +638,9 @@ public class BalanceActivity extends Activity {
         if (id == R.id.action_settings) {
             doSettings();
         }
+        else if (id == R.id.action_support) {
+            doSupport();
+        }
         else if (id == R.id.action_sweep) {
             doSweep();
         }
@@ -817,6 +820,11 @@ public class BalanceActivity extends Activity {
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/"));
         startActivity(intent);
     }
 
