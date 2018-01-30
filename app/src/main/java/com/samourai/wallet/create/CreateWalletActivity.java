@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.LogUtil;
@@ -13,6 +16,10 @@ public class CreateWalletActivity extends AppCompatActivity {
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+    private Button mBtnNext;
+    private Button mBtnBack;
+
+    private CreateWalletPagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,25 +28,29 @@ public class CreateWalletActivity extends AppCompatActivity {
 
         findViews();
         initializeTabLayout();
+        setListeners();
     }
 
     private void findViews() {
         mTabLayout = findViewById(R.id.create_wallet_tabLayout);
         mViewPager = findViewById(R.id.create_wallet_viewpager);
+        mBtnBack = findViewById(R.id.btn_tab_back);
+        mBtnNext = findViewById(R.id.btn_tab_next);
     }
-    
+
     private void initializeTabLayout() {
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab1"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab2"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab3"));
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mTabLayout.setEnabled(false);
 
         //Creating our pager adapter
-        CreateWalletPagerAdapter adapter = new CreateWalletPagerAdapter(getSupportFragmentManager());
+        mPagerAdapter = new CreateWalletPagerAdapter(getSupportFragmentManager());
 
         //Adding adapter to pager
-        mViewPager.setAdapter(adapter);
+        mViewPager.setAdapter(mPagerAdapter);
 
+        mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private void setListeners() {
         //Adding onTabSelectedListener to swipe views
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -57,5 +68,22 @@ public class CreateWalletActivity extends AppCompatActivity {
 
             }
         });
+
+        mBtnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (LogUtil.DEBUG) Log.d(TAG, "Next");
+                mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+            }
+        });
+
+        mBtnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (LogUtil.DEBUG) Log.d(TAG, "Back");
+                mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+            }
+        });
     }
+
 }

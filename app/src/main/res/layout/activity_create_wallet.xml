@@ -6,17 +6,44 @@
     android:layout_height="match_parent"
     tools:context="com.samourai.wallet.create.CreateWalletActivity">
 
-    <android.support.v4.view.ViewPager
+    <com.samourai.wallet.ui.custom.LockedViewPager
         android:id="@+id/create_wallet_viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/create_wallet_tabLayout" />
+        app:layout_constraintBottom_toTopOf="@id/create_wallet_tab_container" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/create_wallet_tabLayout"
+    <RelativeLayout
+        android:id="@+id/create_wallet_tab_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/tab_navigation_bg">
+
+        <Button
+            android:id="@+id/btn_tab_back"
+            style="@style/button.tab_navigation"
+            android:text="@string/btn_back"
+            android:drawableStart="@drawable/ic_chevron_left_btn"/>
+
+        <com.samourai.wallet.ui.custom.IndicatorTabLayout
+            android:id="@+id/create_wallet_tabLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            android:clickable="false" />
+
+        <Button
+            android:id="@+id/btn_tab_next"
+            style="@style/button.tab_navigation"
+            android:layout_alignParentEnd="true"
+            android:text="@string/btn_next"
+            android:drawableEnd="@drawable/ic_chevron_right_btn"/>
+
+    </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

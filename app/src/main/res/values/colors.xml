@@ -22,5 +22,8 @@
     <color name="grey">#888888</color>
 
     <color name="grid_bg">#21242b</color>
+    <color name="tab_navigation_secondary">#595959</color>
+    <color name="tab_navigation_bg">#303030</color>
+
 
 </resources>

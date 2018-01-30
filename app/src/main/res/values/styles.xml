@@ -30,16 +30,6 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="main_button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingEnd">50dp</item>
-        <item name="android:paddingStart">50dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:background">@drawable/main_btn_selector</item>
-    </style>
-
     <style name="text" parent="UI2Theme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -73,5 +63,26 @@
         <item name="android:hapticFeedbackEnabled">true</item>
     </style>
 
+    <style name="button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/btn_selector_color</item>
+    </style>
+
+    <style name="button.intro" parent="button">
+        <item name="android:paddingEnd">50dp</item>
+        <item name="android:paddingStart">50dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">@drawable/intro_btn_background</item>
+    </style>
+
+    <style name="button.tab_navigation" parent="button">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 
 </resources>

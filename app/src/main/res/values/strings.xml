@@ -10,6 +10,8 @@
     <string name="restore_wallet_button">RESTORE WALLET</string>
 
     <!-- Create Wallet Activity -->
+    <string name="btn_back">BACK</string>
+    <string name="btn_next">NEXT</string>
 
     <!-- Passphrase Fragment -->
     <string name="passphrase_title">PASSPHRASE</string>

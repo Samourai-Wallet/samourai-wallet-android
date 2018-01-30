@@ -55,14 +55,14 @@
 
         <Button
             android:id="@+id/btn_create_wallet"
-            style="@style/main_button"
+            style="@style/button.intro"
             android:text="@string/new_wallet_button"
-            android:background="@drawable/main_btn_selector" />
+            android:background="@drawable/intro_btn_background" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chevron_right_white"
+            android:src="@drawable/ic_chevron_right_btn"
             android:layout_alignEnd="@id/btn_create_wallet"
             android:layout_alignBottom="@id/btn_create_wallet"
             android:layout_alignTop="@id/btn_create_wallet"
@@ -72,9 +72,9 @@
 
         <Button
             android:id="@+id/btn_restore_wallet"
-            style="@style/main_button"
+            style="@style/button.intro"
             android:text="@string/restore_wallet_button"
-            android:background="@drawable/main_btn_selector"
+            android:background="@drawable/intro_btn_background"
             android:layout_marginTop="8dp"
             android:layout_below="@id/btn_create_wallet"
             android:layout_alignStart="@id/btn_create_wallet"
@@ -83,7 +83,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chevron_right_white"
+            android:src="@drawable/ic_chevron_right_btn"
             android:layout_alignEnd="@id/btn_restore_wallet"
             android:layout_alignBottom="@id/btn_restore_wallet"
             android:layout_alignTop="@id/btn_restore_wallet"
