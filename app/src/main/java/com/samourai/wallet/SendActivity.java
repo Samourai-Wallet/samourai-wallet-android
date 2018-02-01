@@ -1110,14 +1110,20 @@ public class SendActivity extends Activity {
                                                 }
 
                                                 if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
-                                                    try {
-                                                        HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().incAddrIdx();
+
+                                                    if(isSegwitChange)    {
+                                                        BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                                                     }
-                                                    catch(IOException ioe) {
-                                                        ;
-                                                    }
-                                                    catch(MnemonicException.MnemonicLengthException mle) {
-                                                        ;
+                                                    else    {
+                                                        try {
+                                                            HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().incAddrIdx();
+                                                        }
+                                                        catch(IOException ioe) {
+                                                            ;
+                                                        }
+                                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                                            ;
+                                                        }
                                                     }
                                                 }
 
