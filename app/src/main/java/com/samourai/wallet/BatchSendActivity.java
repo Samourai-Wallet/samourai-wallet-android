@@ -62,6 +62,7 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -105,13 +106,7 @@ public class BatchSendActivity extends Activity {
     private final static int SCAN_QR = 2012;
     private final static int FEE_SELECT = 2013;
 
-    private class DisplayData   {
-        private String pcode = null;
-        private String addr = null;
-        private long amount = 0L;
-    }
-
-    private List<DisplayData> data = null;
+    private List<BatchSendUtil.BatchSend> data = null;
     private ListView listView = null;
     private BatchAdapter adapter = null;
 
@@ -154,7 +149,10 @@ public class BatchSendActivity extends Activity {
 
         BatchSendActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-        data = new ArrayList<DisplayData>();
+        data = new ArrayList<BatchSendUtil.BatchSend>();
+        if(BatchSendUtil.getInstance().getSends().size() > 0)    {
+            data.addAll(BatchSendUtil.getInstance().getSends());
+        }
         listView = (ListView)findViewById(R.id.list);
         adapter = new BatchAdapter();
         listView.setAdapter(adapter);
@@ -496,6 +494,8 @@ public class BatchSendActivity extends Activity {
             String strAmount = nf.format(displayBalance / 1e8);
             tvMax.setText(strAmount + " " + getDisplayUnits());
 
+            BatchSendUtil.getInstance().clear();
+
             refreshDisplay();
 
             _menu.findItem(R.id.action_scan_qr).setVisible(true);
@@ -558,7 +558,7 @@ public class BatchSendActivity extends Activity {
 
     private void doAddNew()  {
 
-        DisplayData dd = new DisplayData();
+        BatchSendUtil.BatchSend dd = BatchSendUtil.getInstance().getBatchSend();
         if(FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString()))    {
             dd.addr = edAddress.getText().toString();
             dd.pcode = null;
@@ -589,6 +589,7 @@ public class BatchSendActivity extends Activity {
         dd.amount = amount;
 
         data.add(dd);
+        BatchSendUtil.getInstance().add(dd);
 
         edAmountBTC.setText("");
         edAmountFiat.setText("");
@@ -831,7 +832,7 @@ public class BatchSendActivity extends Activity {
 
         HashMap<String,BigInteger> receivers = new HashMap<String,BigInteger>();
         long amount = 0L;
-        for(DisplayData _data : data)   {
+        for(BatchSendUtil.BatchSend _data : data)   {
             Log.d("BatchSendActivity", "output:" + _data.amount);
             Log.d("BatchSendActivity", "output:" + _data.addr);
             Log.d("BatchSendActivity", "output:" + _data.pcode);
@@ -1010,6 +1011,9 @@ public class BatchSendActivity extends Activity {
                                         }
 
                                         if(isOK)    {
+
+                                            BatchSendUtil.getInstance().clear();
+
                                             if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
                                                 Toast.makeText(BatchSendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
                                             }
@@ -1033,7 +1037,7 @@ public class BatchSendActivity extends Activity {
                                                 RBFUtil.getInstance().add(rbf);
                                             }
 
-                                            for(DisplayData d : data)   {
+                                            for(BatchSendUtil.BatchSend d : data)   {
 
                                                 String address = d.addr;
                                                 String pcode = d.pcode;
