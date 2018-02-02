@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -40,6 +42,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -51,6 +54,9 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.send.RBFSpend;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
@@ -60,6 +66,7 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.SendAddressUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,20 +77,28 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static java.lang.System.currentTimeMillis;
+
 import net.sourceforge.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class BatchSendActivity extends Activity {
 
@@ -868,28 +883,251 @@ public class BatchSendActivity extends Activity {
         Log.d("BatchSendActivity", "fee:" + fee.longValue());
 
         long changeAmount = totalValueSelected - (amount + fee.longValue());
+        String change_address = null;
+        int change_idx = -1;
         if(changeAmount > 0L)    {
-            String change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            change_idx = BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+            change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);
         }
 
         Transaction tx = SendFactory.getInstance(BatchSendActivity.this).makeTransaction(0, outpoints, receivers);
-        Log.d("BatchSendActivity", "tx unsigned inputs:" + tx.getInputs().size());
-        Log.d("BatchSendActivity", "tx unsigned outputs:" + tx.getOutputs().size());
-        String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-        Log.d("BatchSendActivity", "hex unsigned tx:" + hexTx);
 
-        tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
-        hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-        Log.d("BatchSendActivity", "tx signed inputs:" + tx.getInputs().size());
-        Log.d("BatchSendActivity", "tx signed outputs:" + tx.getOutputs().size());
+        if(tx != null)    {
 
-        Log.d("BatchSendActivity", "tx hash:" + tx.getHashAsString());
-        Log.d("BatchSendActivity", "hex signed tx:" + hexTx);
+            final RBFSpend rbf;
+            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
 
-//        doShowTx(hexTx, tx.getHashAsString());
+                rbf = new RBFSpend();
+
+                for(TransactionInput input : tx.getInputs())    {
+
+                    boolean _isBIP49 = false;
+                    String _addr = null;
+                    Address _address = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    if(_address != null)    {
+                        _addr = _address.toString();
+                    }
+                    if(_addr == null)    {
+                        _addr = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        _isBIP49 = true;
+                    }
+
+                    String path = APIFactory.getInstance(BatchSendActivity.this).getUnspentPaths().get(_addr);
+                    if(path != null)    {
+                        if(_isBIP49)    {
+                            rbf.addKey(input.getOutpoint().toString(), path + "/49");
+                        }
+                        else    {
+                            rbf.addKey(input.getOutpoint().toString(), path);
+                        }
+                    }
+                    else    {
+                        String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
+                        int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
+                        rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
+                    }
+
+                }
+
+            }
+            else    {
+                rbf = null;
+            }
+
+            String strChangeIsDust = "";
+            String strPrivacyWarning = "";
+            String strMessage = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " BTC. (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?\n";
+
+            final long _change = changeAmount;
+            final String _change_address = change_address;
+            final int _change_idx = change_idx;
+
+            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+            final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+            final String strTxHash = tx.getHashAsString();
+
+            //        Log.d("BatchSendActivity", "tx hash:" + tx.getHashAsString());
+            //        Log.d("BatchSendActivity", "hex signed tx:" + hexTx);
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(BatchSendActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(strMessage)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
+
+                                doShowTx(hexTx, strTxHash);
+
+                                return;
+
+                            }
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Looper.prepare();
+
+                                    boolean isOK = false;
+                                    String response = null;
+                                    try {
+                                        if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+                                            if(TrustedNodeUtil.getInstance().isSet())    {
+                                                response = PushTx.getInstance(BatchSendActivity.this).trustedNode(hexTx);
+                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if(jsonObject.has("result"))    {
+                                                    if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
+                                                        isOK = true;
+                                                    }
+                                                    else    {
+                                                        Toast.makeText(BatchSendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }
+                                            else    {
+                                                Toast.makeText(BatchSendActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                        else    {
+                                            response = PushTx.getInstance(BatchSendActivity.this).samourai(hexTx);
+
+                                            if(response != null)    {
+                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if(jsonObject.has("status"))    {
+                                                    if(jsonObject.getString("status").equals("ok"))    {
+                                                        isOK = true;
+                                                    }
+                                                }
+                                            }
+                                            else    {
+                                                Toast.makeText(BatchSendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        if(isOK)    {
+                                            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
+                                                Toast.makeText(BatchSendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                            }
+                                            else    {
+                                                Toast.makeText(BatchSendActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            if(_change > 0L)    {
+                                                BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
+                                            }
+
+                                            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+
+                                                if(_change > 0L && _change_address != null)    {
+                                                    rbf.addChangeAddr(_change_address);
+                                                }
+
+                                                rbf.setHash(strTxHash);
+                                                rbf.setSerializedTx(hexTx);
+
+                                                RBFUtil.getInstance().add(rbf);
+                                            }
+
+                                            for(DisplayData d : data)   {
+
+                                                String address = d.addr;
+                                                String pcode = d.pcode;
+                                                // increment counter if BIP47 spend
+                                                if(pcode != null && pcode.length() > 0)    {
+                                                    BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
+                                                    BIP47Meta.getInstance().inc(pcode);
+
+                                                    SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
+                                                    String strTS = sd.format(currentTimeMillis());
+                                                    String event = strTS + " " + BatchSendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) d.amount / 1e8) + " BTC";
+                                                    BIP47Meta.getInstance().setLatestEvent(strPCode, event);
+
+                                                }
+                                            }
+
+                            /*
+                            if(strPrivacyWarning.length() > 0 && cbShowAgain != null)    {
+                                SendAddressUtil.getInstance().add(address, cbShowAgain.isChecked() ? false : true);
+                            }
+                            else if(SendAddressUtil.getInstance().get(address) == 0)    {
+                                SendAddressUtil.getInstance().add(address, false);
+                            }
+                            else    {
+                                SendAddressUtil.getInstance().add(address, true);
+                            }
+                            */
+
+                            /*
+                                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                                            intent.putExtra("notifTx", false);
+                                            intent.putExtra("fetch", true);
+                                            LocalBroadcastManager.getInstance(BatchSendActivity.this).sendBroadcast(intent);
+                                            */
+
+                                            View view = BatchSendActivity.this.getCurrentFocus();
+                                            if (view != null) {
+                                                InputMethodManager imm = (InputMethodManager)BatchSendActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                                            }
+
+                                            Intent _intent = new Intent(BatchSendActivity.this, BalanceActivity.class);
+                                            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                            startActivity(_intent);
+
+                                        }
+                                        else    {
+                                            Toast.makeText(BatchSendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
+                                            // reset change index upon tx fail
+                                            BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_idx);
+                                        }
+                                    }
+                                    catch(JSONException je) {
+                                        Toast.makeText(BatchSendActivity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    catch(DecoderException de) {
+                                        Toast.makeText(BatchSendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    finally {
+                        /*
+                        BatchSendActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                btSend.setActivated(true);
+                                btSend.setClickable(true);
+                                progress.dismiss();
+                                dialog.dismiss();
+                            }
+                        });
+                        */
+                                    }
+
+                                    Looper.loop();
+
+                                }
+                            }).start();
+
+                        }
+                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+
+        }
+        else    {
+//                                Log.d("SendActivity", "tx error");
+            Toast.makeText(BatchSendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
