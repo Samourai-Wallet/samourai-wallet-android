@@ -623,6 +623,7 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
+        menu.findItem(R.id.action_batch).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
