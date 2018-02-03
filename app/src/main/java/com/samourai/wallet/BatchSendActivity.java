@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
@@ -150,9 +151,6 @@ public class BatchSendActivity extends Activity {
         BatchSendActivity.this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
         data = new ArrayList<BatchSendUtil.BatchSend>();
-        if(BatchSendUtil.getInstance().getSends().size() > 0)    {
-            data.addAll(BatchSendUtil.getInstance().getSends());
-        }
         listView = (ListView)findViewById(R.id.list);
         adapter = new BatchAdapter();
         listView.setAdapter(adapter);
@@ -427,6 +425,31 @@ public class BatchSendActivity extends Activity {
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
         validateSpend();
+
+        if(BatchSendUtil.getInstance().getSends().size() > 0)    {
+            List<BatchSendUtil.BatchSend> sends = BatchSendUtil.getInstance().getSends();
+            for(BatchSendUtil.BatchSend send : sends)   {
+                data.add(send);
+                displayBalance -= send.amount;
+            }
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    String strAmount = nf.format(displayBalance / 1e8);
+                    tvMax.setText(strAmount + " " + getDisplayUnits());
+
+                    if(_menu != null)    {
+                        _menu.findItem(R.id.action_scan_qr).setVisible(true);
+                        _menu.findItem(R.id.action_refresh).setVisible(true);
+                        _menu.findItem(R.id.action_new).setVisible(false);
+                        _menu.findItem(R.id.action_send).setVisible(true);
+                    }
+                }
+            }, 1000L);
+        }
 
     }
 
