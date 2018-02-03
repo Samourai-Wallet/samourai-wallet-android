@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
-import com.samourai.wallet.fragments.PasswordEntryFragment;
+import com.samourai.wallet.fragments.PassphraseEntryFragment;
 import com.samourai.wallet.fragments.PinEntryFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -42,17 +42,18 @@ import java.io.IOException;
 import static com.samourai.wallet.R.id.dots;
 
 
-public class CreateWallet extends FragmentActivity implements
+public class CreateWalletActivity extends FragmentActivity implements
         PinEntryFragment.onPinEntryListener,
-        PasswordEntryFragment.onPassPhraseListener {
+        PassphraseEntryFragment.onPassPhraseListener {
     private ViewPager wallet_create_viewpager;
+
     private PagerAdapter adapter;
     private LinearLayout pagerIndicatorContainer;
-    private LinearLayout forwardButton, backwardButton;
+    private LinearLayout forwardButton;
     private ImageView[] indicators;
     private String passPhrase39 = null;
     private String passPhraseConfirm = "";
-    private boolean checkedDesclimer = false;
+    private boolean checkedDisclaimer = false;
     private String pinCode = "", pinCodeConfirm = "";
     private ProgressDialog progressDialog = null;
 
@@ -60,12 +61,11 @@ public class CreateWallet extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_wallet);
-        if (getActionBar() != null)
-            getActionBar().hide();
         wallet_create_viewpager = (ViewPager) findViewById(R.id.wallet_create_viewpager);
         pagerIndicatorContainer = (LinearLayout) findViewById(dots);
         forwardButton = (LinearLayout) findViewById(R.id.wizard_forward);
-        backwardButton = (LinearLayout) findViewById(R.id.wizard_backward);
+        if (getActionBar() != null)
+            getActionBar().hide();
         adapter = new PagerAdapter(getSupportFragmentManager());
         wallet_create_viewpager.enableSwipe(false);
         wallet_create_viewpager.setAdapter(adapter);
@@ -91,7 +91,7 @@ public class CreateWallet extends FragmentActivity implements
         }
         //Setting first ImageView as active indicator
         indicators[0].setImageDrawable(getResources().getDrawable(R.drawable.pager_indicator_dot));
-        indicators[0].getDrawable().setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.OVERLAY);
+        indicators[0].getDrawable().setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.ADD);
         // Viewpager listener is responsible for changing indicator color
         wallet_create_viewpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -106,7 +106,7 @@ public class CreateWallet extends FragmentActivity implements
                 }
                 // here we using PorterDuff mode to overlay color over ImageView to set Active indicator
                 // we don't have to create multiple asset for showing active and inactive states of indicators
-                indicators[position].getDrawable().setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.OVERLAY);
+                indicators[position].getDrawable().setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.ADD);
             }
 
             @Override
@@ -130,7 +130,7 @@ public class CreateWallet extends FragmentActivity implements
                     Toast.makeText(this, R.string.bip39_unmatch, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                if (!checkedDesclimer) {
+                if (!checkedDisclaimer) {
                     Toast.makeText(this, R.string.accept_disclaimer_error, Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -192,11 +192,16 @@ public class CreateWallet extends FragmentActivity implements
         forwardButton.setAlpha(enable ? 1 : 0.2f);
     }
 
+    /**
+     * @param passPhrase
+     * @param confirm
+     * @param checked
+     */
     @Override
     public void passPhraseSet(String passPhrase, String confirm, boolean checked) {
         passPhrase39 = passPhrase;
         passPhraseConfirm = confirm;
-        checkedDesclimer = checked;
+        checkedDisclaimer = checked;
     }
 
     /**
@@ -225,8 +230,7 @@ public class CreateWallet extends FragmentActivity implements
     }
 
     /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
+     * Pager adapter for viewpager
      */
     private class PagerAdapter extends FragmentPagerAdapter {
 
@@ -238,7 +242,7 @@ public class CreateWallet extends FragmentActivity implements
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: {
-                    return new PasswordEntryFragment();
+                    return new PassphraseEntryFragment();
                 }
                 case 1: {
                     return new PinEntryFragment();
@@ -247,8 +251,11 @@ public class CreateWallet extends FragmentActivity implements
                     return PinEntryFragment
                             .newInstance(getString(R.string.pin_5_8_confirm), getString(R.string.re_enter_your_pin_code));
                 }
+                default: {
+                    return null;
+                }
             }
-            return new PasswordEntryFragment();
+
         }
 
         @Override
@@ -264,7 +271,6 @@ public class CreateWallet extends FragmentActivity implements
             progressDialog.setTitle(R.string.app_name);
             progressDialog.setMessage(getString(R.string.please_wait));
             progressDialog.show();
-
         } else {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
@@ -290,15 +296,15 @@ public class CreateWallet extends FragmentActivity implements
 
                 Looper.prepare();
 
-                String guid = AccessFactory.getInstance(CreateWallet.this).createGUID();
-                String hash = AccessFactory.getInstance(CreateWallet.this).getHash(guid, new CharSequenceX(pin), AESUtil.DefaultPBKDF2Iterations);
-                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.ACCESS_HASH, hash);
-                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
+                String guid = AccessFactory.getInstance(CreateWalletActivity.this).createGUID();
+                String hash = AccessFactory.getInstance(CreateWalletActivity.this).getHash(guid, new CharSequenceX(pin), AESUtil.DefaultPBKDF2Iterations);
+                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
+                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
 
                 if (create) {
 
                     try {
-                        HD_WalletFactory.getInstance(CreateWallet.this).newWallet(12, passphrase, SamouraiWallet.NB_ACCOUNTS);
+                        HD_WalletFactory.getInstance(CreateWalletActivity.this).newWallet(12, passphrase, SamouraiWallet.NB_ACCOUNTS);
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     } catch (MnemonicException.MnemonicLengthException mle) {
@@ -312,7 +318,7 @@ public class CreateWallet extends FragmentActivity implements
                 } else {
 
                     try {
-                        HD_WalletFactory.getInstance(CreateWallet.this).restoreWallet(seed, passphrase, SamouraiWallet.NB_ACCOUNTS);
+                        HD_WalletFactory.getInstance(CreateWalletActivity.this).restoreWallet(seed, passphrase, SamouraiWallet.NB_ACCOUNTS);
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     } catch (DecoderException de) {
@@ -331,13 +337,13 @@ public class CreateWallet extends FragmentActivity implements
 
                 }
 
-                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.SCRAMBLE_PIN, true);
+                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.SCRAMBLE_PIN, true);
 
                 try {
 
                     String msg = null;
 
-                    if (HD_WalletFactory.getInstance(CreateWallet.this).get() != null) {
+                    if (HD_WalletFactory.getInstance(CreateWalletActivity.this).get() != null) {
 
                         if (create) {
                             msg = getString(R.string.wallet_created_ok);
@@ -346,15 +352,15 @@ public class CreateWallet extends FragmentActivity implements
                         }
 
                         try {
-                            AccessFactory.getInstance(CreateWallet.this).setPIN(pin);
-                            PayloadUtil.getInstance(CreateWallet.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(CreateWallet.this).getGUID() + pin));
+                            AccessFactory.getInstance(CreateWalletActivity.this).setPIN(pin);
+                            PayloadUtil.getInstance(CreateWalletActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(CreateWalletActivity.this).getGUID() + pin));
 
                             if (create) {
-                                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.WALLET_ORIGIN, "new");
-                                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.FIRST_RUN, true);
+                                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.WALLET_ORIGIN, "new");
+                                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.FIRST_RUN, true);
                             } else {
-                                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.WALLET_ORIGIN, "restored");
-                                PrefsUtil.getInstance(CreateWallet.this).setValue(PrefsUtil.FIRST_RUN, true);
+                                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.WALLET_ORIGIN, "restored");
+                                PrefsUtil.getInstance(CreateWalletActivity.this).setValue(PrefsUtil.FIRST_RUN, true);
                             }
 
                         } catch (JSONException je) {
@@ -368,8 +374,8 @@ public class CreateWallet extends FragmentActivity implements
                         }
 
                         for (int i = 0; i < 2; i++) {
-                            AddressFactory.getInstance().account2xpub().put(i, HD_WalletFactory.getInstance(CreateWallet.this).get().getAccount(i).xpubstr());
-                            AddressFactory.getInstance().xpub2account().put(HD_WalletFactory.getInstance(CreateWallet.this).get().getAccount(i).xpubstr(), i);
+                            AddressFactory.getInstance().account2xpub().put(i, HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(i).xpubstr());
+                            AddressFactory.getInstance().xpub2account().put(HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(i).xpubstr(), i);
                         }
 
                         //
@@ -379,31 +385,31 @@ public class CreateWallet extends FragmentActivity implements
 
                             String seed = null;
                             try {
-                                seed = HD_WalletFactory.getInstance(CreateWallet.this).get().getMnemonic();
+                                seed = HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getMnemonic();
                             } catch (IOException ioe) {
                                 ioe.printStackTrace();
                             } catch (MnemonicException.MnemonicLengthException mle) {
                                 mle.printStackTrace();
                             }
 
-                            new AlertDialog.Builder(CreateWallet.this)
+                            new AlertDialog.Builder(CreateWalletActivity.this)
                                     .setTitle(R.string.app_name)
                                     .setMessage(getString(R.string.alpha_create_wallet) + "\n\n" + seed)
                                     .setCancelable(false)
                                     .setPositiveButton(R.string.alpha_create_confirm_backup, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
 
-                                            AccessFactory.getInstance(CreateWallet.this).setIsLoggedIn(true);
+                                            AccessFactory.getInstance(CreateWalletActivity.this).setIsLoggedIn(true);
                                             TimeOutUtil.getInstance().updatePin();
-                                            AppUtil.getInstance(CreateWallet.this).restartApp();
+                                            AppUtil.getInstance(CreateWalletActivity.this).restartApp();
 
                                         }
                                     }).show();
 
                         } else {
-                            AccessFactory.getInstance(CreateWallet.this).setIsLoggedIn(true);
+                            AccessFactory.getInstance(CreateWalletActivity.this).setIsLoggedIn(true);
                             TimeOutUtil.getInstance().updatePin();
-                            AppUtil.getInstance(CreateWallet.this).restartApp();
+                            AppUtil.getInstance(CreateWalletActivity.this).restartApp();
                         }
 
                     } else {
@@ -414,7 +420,7 @@ public class CreateWallet extends FragmentActivity implements
                         }
                     }
 
-                    Toast.makeText(CreateWallet.this, msg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateWalletActivity.this, msg, Toast.LENGTH_SHORT).show();
 
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
@@ -434,4 +440,5 @@ public class CreateWallet extends FragmentActivity implements
 
 
 }
+
 

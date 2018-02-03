@@ -17,13 +17,6 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.widgets.PinEntryView;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * to handle interaction events.
- * Use the {@link PinEntryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PinEntryFragment extends Fragment {
     private static String ARG_TITLE = "TITLE";
     private static String ARG_DESC = "DESC";

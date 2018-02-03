@@ -171,8 +171,6 @@
 
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize"
         />
 
@@ -204,7 +202,12 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".CreateWallet"></activity>
+        <activity android:name=".CreateWalletActivity" />
+        <activity android:name=".RestoreSeedWalletActivity" />
+        <activity
+            android:name=".LandingActivity"
+            android:theme="@style/AppThemeLanding"
+            ></activity>
     </application>
 
 </manifest>

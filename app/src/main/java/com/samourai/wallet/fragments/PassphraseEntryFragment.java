@@ -18,13 +18,13 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 
-public class PasswordEntryFragment extends Fragment {
+public class PassphraseEntryFragment extends Fragment {
 
     private onPassPhraseListener mListener = null;
     private EditText passPhrase, confirmPassphrase;
     private CheckBox acceptDisclaimer;
 
-    public PasswordEntryFragment() {
+    public PassphraseEntryFragment() {
     }
 
     @Override

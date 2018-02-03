@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
-        tools:context="com.samourai.wallet.fragments.PasswordEntryFragment">
+        tools:context="com.samourai.wallet.fragments.PassphraseEntryFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,8 +50,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="34dp"
-            android:layout_marginTop="34dp"
+            android:layout_marginBottom="26dp"
+            android:layout_marginTop="26dp"
             android:gravity="center"
             android:id="@+id/passphrase_mask_container"
             android:orientation="horizontal">

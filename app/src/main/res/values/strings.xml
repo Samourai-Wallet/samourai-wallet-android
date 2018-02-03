@@ -2,7 +2,6 @@
 <resources>
 
     <string name="version_name">0.97.26</string>
-    <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
@@ -461,7 +460,25 @@
     <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
     <string name="set_pin_code">Set Pin code</string>
     <string name="accept_disclaimer_error">You need to accept disclaimer</string>
+    <string name="import_external_wallet">Import external wallet</string>
+    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="backup_file">Backup file</string>
+    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
     <string name="back">BACK</string>
     <string name="finish">finish</string>
+    <string name="choose_file">choose file</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Add bip39 password</string>
+    <string name="close_bip39_password">Close bip39 password</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider</string>
+    <string name="last_updated">Last updated</string>
+    <string name="get_help">Get help</string>
+    <string name="offline_mode">Offline mode</string>
+    <string name="import_samourai_backup">Import Samourai backup</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
+    <string name="start_new_wallet">Start new wallet</string>
 
 </resources>
