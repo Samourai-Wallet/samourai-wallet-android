@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -117,7 +118,6 @@ public class SendActivity extends Activity {
 
     private TextView tvMaxPrompt = null;
     private TextView tvMax = null;
-    private TextView tvCurrentFeePrompt = null;
     private long balance = 0L;
 
     private EditText edAddress = null;
@@ -131,13 +131,17 @@ public class SendActivity extends Activity {
 
     private String defaultSeparator = null;
 
-    private Button btFee = null;
+    private Button btLowFee = null;
+    private Button btAutoFee = null;
+    private Button btPriorityFee = null;
+    private Button btCustomFee = null;
+    private TextView tvFeePrompt = null;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
     private final static int FEE_PRIORITY = 2;
     private final static int FEE_CUSTOM = 3;
-    private int FEE_TYPE = 0;
+    private int FEE_TYPE = FEE_LOW;
 
     public final static int SPEND_SIMPLE = 0;
     public final static int SPEND_BIP126 = 1;
@@ -219,6 +223,7 @@ public class SendActivity extends Activity {
             }
         });
 
+        /*
         tvCurrentFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
         tvCurrentFeePrompt.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -227,6 +232,7 @@ public class SendActivity extends Activity {
                 return false;
             }
         });
+        */
 
         DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
@@ -454,60 +460,135 @@ public class SendActivity extends Activity {
             }
         });
 
-        btFee = (Button)findViewById(R.id.fee);
+        btLowFee = (Button)findViewById(R.id.low_fee);
+        btAutoFee = (Button)findViewById(R.id.auto_fee);
+        btPriorityFee = (Button)findViewById(R.id.priority_fee);
+        btCustomFee = (Button)findViewById(R.id.custom_fee);
+        tvFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
+
         FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+        if(lo == mi && mi == hi) {
+            lo = (long) ((double) mi * 0.85);
+            hi = (long) ((double) mi * 1.15);
+            SuggestedFee lo_sf = new SuggestedFee();
+            lo_sf.setDefaultPerKB(BigInteger.valueOf(lo * 1000L));
+            FeeUtil.getInstance().setLowFee(lo_sf);
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf(hi * 1000L));
+            FeeUtil.getInstance().setHighFee(hi_sf);
+        }
+        else if(lo == mi || mi == hi)    {
+            mi = (lo + hi) / 2L;
+            SuggestedFee mi_sf = new SuggestedFee();
+            mi_sf.setDefaultPerKB(BigInteger.valueOf(mi * 1000L));
+            FeeUtil.getInstance().setNormalFee(mi_sf);
+        }
+        else    {
+            ;
+        }
+
         switch(FEE_TYPE)    {
-            case FEE_NORMAL:
-                btFee.setText(getString(R.string.auto_fee));
-                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                break;
             case FEE_LOW:
-                btFee.setText(getString(R.string.low_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_low_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
             case FEE_PRIORITY:
-                btFee.setText(getString(R.string.priority_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_high_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
             default:
-                btFee.setText(getString(R.string.auto_fee));
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                tvFeePrompt.setText(getText(R.string.fee_mid_priority) + " " + getText(R.string.blocks_to_cf));
                 break;
         }
 
-        tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+        btLowFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        btPriorityFee.setText((FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        btAutoFee.setText((FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
 
-        btFee.setOnClickListener(new View.OnClickListener() {
+        btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.BOLD);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_low_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
-                switch(FEE_TYPE)    {
-                    case FEE_NORMAL:
-                        FEE_TYPE = FEE_LOW;
-                        btFee.setText(getString(R.string.low_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                        break;
-                    case FEE_LOW:
-                        FEE_TYPE = FEE_PRIORITY;
-                        btFee.setText(getString(R.string.priority_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                        break;
-                    case FEE_PRIORITY:
-                        FEE_TYPE = FEE_NORMAL;
-                        btFee.setText(getString(R.string.auto_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                        break;
-                    case FEE_CUSTOM:
-                    default:
-                        FEE_TYPE = FEE_NORMAL;
-                        btFee.setText(getString(R.string.auto_fee));
-                        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                        break;
-                }
+        btAutoFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.BOLD);
+                btPriorityFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_mid_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
-                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_TYPE == FEE_CUSTOM ? FEE_NORMAL : FEE_TYPE);
-                tvCurrentFeePrompt.setText(getCurrentFeeSetting());
+        btPriorityFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
+                btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+                btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                btLowFee.setTypeface(null, Typeface.NORMAL);
+                btAutoFee.setTypeface(null, Typeface.NORMAL);
+                btPriorityFee.setTypeface(null, Typeface.BOLD);
+                btCustomFee.setTypeface(null, Typeface.NORMAL);
+                btCustomFee.setText(R.string.custom_fee);
+                tvFeePrompt.setText(getText(R.string.fee_high_priority) + " " + getText(R.string.blocks_to_cf));
+            }
+        });
 
+        btCustomFee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                doCustomFee();
             }
         });
 
@@ -911,10 +992,12 @@ public class SendActivity extends Activity {
                                             receivers.put(change_address, BigInteger.valueOf(_change));
                                         }
                                         catch(IOException ioe) {
-                                            ;
+                                            Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                         catch(MnemonicException.MnemonicLengthException mle) {
-                                            ;
+                                            Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                     }
 
@@ -1567,7 +1650,7 @@ public class SendActivity extends Activity {
     private void doCustomFee()   {
 
         long sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
-        final long sanityValue = (long)(sanitySat * 1.25);
+        final long sanityValue = (long)(sanitySat * 1.5);
 
         final EditText etCustomFee = new EditText(SendActivity.this);
 //        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1616,7 +1699,7 @@ public class SendActivity extends Activity {
 
                         }
 
-                        if(customValue < 3 && !strCustomFee.equalsIgnoreCase("noll"))    {
+                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {
@@ -1628,8 +1711,43 @@ public class SendActivity extends Activity {
                             suggestedFee.setOK(true);
                             suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
                             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-                            tvCurrentFeePrompt.setText(getCurrentFeeSetting());
-                            btFee.setText("             ");
+
+                            btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
+                            btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
+
+                            btCustomFee.setText((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+                            btCustomFee.setTypeface(null, Typeface.BOLD);
+                            btLowFee.setTypeface(null, Typeface.NORMAL);
+                            btAutoFee.setTypeface(null, Typeface.NORMAL);
+                            btPriorityFee.setTypeface(null, Typeface.NORMAL);
+
+                            long lowFee = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+                            long normalFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+                            long highFee = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+                            double pct = 0.0;
+                            int nbBlocks = 6;
+                            if(customValue == 0L)    {
+                                customValue = 1L;
+                            }
+                            if(customValue <= lowFee)    {
+                                pct = ((double)lowFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 24.0)).intValue();
+                            }
+                            else if(customValue >= highFee)   {
+                                pct = ((double)highFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 2.0)).intValue();
+                                if(nbBlocks < 1)    {
+                                    nbBlocks = 1;
+                                }
+                            }
+                            else    {
+                                pct = ((double)normalFee / (double)customValue);
+                                nbBlocks = ((Double)Math.ceil(pct * 6.0)).intValue();
+                            }
+                            tvFeePrompt.setText(getText(R.string.fee_custom_priority) + " " + nbBlocks  + " " + getText(R.string.blocks_to_cf));
                         }
 
                         dialog.dismiss();

@@ -47,6 +47,7 @@ public class PrefsUtil {
 	public static final String PAYNYM_CLAIMED = "paynymClaimed";
 	public static final String PAYNYM_REFUSED = "paynymRefused";
 	public static final String IS_RESTORE = "isRestore";
+	public static final String HAPTIC_PIN = "hapticPin";
 
 	public static final String BCC_REPLAY0 = "BCCReplay0";
 	public static final String BCC_REPLAY1 = "BCCReplay1";

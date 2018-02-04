@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.20</string>
+    <string name="version_name">0.97.31</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
@@ -12,6 +12,7 @@
     <string name="decrypting_bip38">Decrypting BIP38 password. Please wait...</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_support">Support</string>
     <string name="action_sweep">Sweep private key</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
@@ -90,6 +91,8 @@
     <string name="options_broadcast_hex2">Broadcast signed transaction supplied in hex format.</string>
     <string name="options_like_typed_change">Receive change to like-typed outputs</string>
     <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
+    <string name="options_haptic">Haptic PIN entry</string>
+    <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -104,6 +107,7 @@
     <string name="receive">Receive</string>
     <string name="cannot_select_utxo">Cannot select unspent outputs</string>
     <string name="error_bip126_output">Error determining output address</string>
+    <string name="error_change_output">Error determining change address</string>
 
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="send_payment_code">Send payment code</string>
@@ -184,6 +188,8 @@
     <string name="auto_fee">NORMAL FEE</string>
     <string name="priority_fee">PRIORITY FEE</string>
     <string name="low_fee">LOW FEE</string>
+    <string name="custom_fee">Custom</string>
+    <string name="sat_b">sat/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
@@ -450,5 +456,12 @@
     <string name="bip47_notif_tx_insufficient_funds_1">Adding a PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain. Deposit</string>
     <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
     <string name="help">Help</string>
+
+    <string name="fee">Miner fee</string>
+    <string name="fee_low_priority">Low priority: estimated 24</string>
+    <string name="fee_mid_priority">Normal priority: estimated 6</string>
+    <string name="fee_high_priority">High priority: estimated 2</string>
+    <string name="fee_custom_priority">Custom fee: estimated</string>
+    <string name="blocks_to_cf">blocks before confirmation</string>
 
 </resources>

@@ -1,13 +1,14 @@
 package com.samourai.wallet.ricochet;
 
 import android.content.Context;
+import android.widget.Toast;
 //import android.util.Log;
 
+import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
@@ -411,10 +412,12 @@ public class RicochetMeta {
                 receivers.put(change_address, BigInteger.valueOf(changeAmount));
             }
             catch(IOException ioe) {
-                ;
+                Toast.makeText(context, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                return null;
             }
             catch(MnemonicException.MnemonicLengthException mle) {
-                ;
+                Toast.makeText(context, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                return null;
             }
         }
         receivers.put(destination, BigInteger.valueOf(spendAmount - samouraiFeeAmount.longValue()));
@@ -486,10 +489,10 @@ public class RicochetMeta {
 
         }
         catch(IOException ioe) {
-            ;
+            return null;
         }
         catch(MnemonicException.MnemonicLengthException mle) {
-            ;
+            return null;
         }
 
         return tx;
