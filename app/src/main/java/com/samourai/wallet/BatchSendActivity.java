@@ -906,6 +906,11 @@ public class BatchSendActivity extends Activity {
         BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size() + 1);
         Log.d("BatchSendActivity", "fee:" + fee.longValue());
 
+        if(amount + fee.longValue() > balance)    {
+            Toast.makeText(BatchSendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         long changeAmount = totalValueSelected - (amount + fee.longValue());
         String change_address = null;
         int change_idx = -1;
@@ -981,7 +986,9 @@ public class BatchSendActivity extends Activity {
                     .setMessage(strMessage)
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
+                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
 
                             if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
 
