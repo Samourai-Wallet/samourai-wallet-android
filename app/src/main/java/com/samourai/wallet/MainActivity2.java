@@ -60,6 +60,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class MainActivity2 extends Activity {
@@ -569,7 +571,10 @@ public class MainActivity2 extends Activity {
                                                         final String seed39 = mnemonic.getText().toString();
                                                         final String passphrase39 = passphrase.getText().toString();
 
-                                                        if (seed39 != null && seed39.length() > 0) {
+                                                        String data = seed39.toLowerCase().replaceAll("[^a-z]+", " ");             // only use for BIP39 English
+                                                        List<String> s = Arrays.asList(data.trim().split("\\s+"));
+
+                                                        if (seed39 != null && seed39.length() > 0 && (s.size() >= 12 && s.size() <= 24 && s.size() % 3 == 0)) {
                                                             Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
                                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                             intent.putExtra("create", true);
