@@ -145,6 +145,8 @@ public class PayloadUtil	{
             mle.printStackTrace();
         }
 
+        HD_WalletFactory.getInstance(context).clear();
+
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File datfile = new File(dir, strFilename);
         File tmpfile = new File(dir, strTmpFilename);
