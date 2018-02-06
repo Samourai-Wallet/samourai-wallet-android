@@ -18,7 +18,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
         android:text="@string/cancel"
-        android:background="@color/blue"
+        android:background="@color/window"
         android:textColor="@color/white"
         />
 
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="@string/ok"
         android:textSize="12sp"
-        android:background="@color/window"
+        android:background="@color/blue"
         android:textColor="@color/white"
         />
 
