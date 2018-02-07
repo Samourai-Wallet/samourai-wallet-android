@@ -40,7 +40,7 @@ public class ImportWalletFragment extends Fragment {
     private onRestoreDataSets mListener;
     private String mode = "mnemonic";
     private ViewSwitcher viewSwitcher;
-    private String smouraiBackup = null;
+    private String samouraiBackup = null;
     private EditText passPhraseMnemonic, passPhraseBackup, mnemonicSeed;
     private TextView lastUpdatedTextView, backupFileTextView;
     private LinearLayout passPhraseContainer;
@@ -116,7 +116,7 @@ public class ImportWalletFragment extends Fragment {
             if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
                 String backup = (String) clipboard.getPrimaryClip().getItemAt(0).getText();
                 backupFileTextView.setText(backup.trim());
-                smouraiBackup = backup.trim();
+                samouraiBackup = backup.trim();
             }
         }
     };
@@ -143,8 +143,8 @@ public class ImportWalletFragment extends Fragment {
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
-            smouraiBackup = sb.toString();
-            mListener.onRestoreData(passPhraseBackup.getText().toString(), smouraiBackup);
+            samouraiBackup = sb.toString();
+            mListener.onRestoreData(passPhraseBackup.getText().toString(), samouraiBackup);
         }
     }
 
@@ -183,7 +183,7 @@ public class ImportWalletFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mListener.onRestoreData(passPhraseBackup.getText().toString(), smouraiBackup);
+                    mListener.onRestoreData(passPhraseBackup.getText().toString(), samouraiBackup);
                     return false;
                 }
                 return false;
@@ -197,7 +197,7 @@ public class ImportWalletFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                mListener.onRestoreData(charSequence.toString(), smouraiBackup);
+                mListener.onRestoreData(charSequence.toString(), samouraiBackup);
             }
 
             @Override
@@ -242,7 +242,7 @@ public class ImportWalletFragment extends Fragment {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        smouraiBackup = sb.toString();
+        samouraiBackup = sb.toString();
     }
 
     @Override
