@@ -38,7 +38,10 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import static com.samourai.wallet.R.id.dots;
 
@@ -174,6 +177,34 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
             case 2: {
                 if (restoreMode.equals("mnemonic")) {
                     if (pinCode.equals(pinCodeConfirm)) {
+                        String BIP39_EN = null;
+                        StringBuilder sb = new StringBuilder();
+                        String mLine = null;
+                        try {
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getAssets().open("BIP39/en.txt")));
+                            mLine = reader.readLine();
+                            while (mLine != null) {
+                                sb.append("\n".concat(mLine));
+                                mLine = reader.readLine();
+                            }
+                            reader.close();
+                            BIP39_EN = sb.toString();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (BIP39_EN != null) {
+                            String validWordList[] = BIP39_EN.split("\\n");
+                            String wordLists[] = mBackupData.trim().split(" ");
+                            for (int i = 0; i < wordLists.length; i++) {
+                                if (!Arrays.asList(validWordList).contains(wordLists[i])) {
+                                    Toast.makeText(this, "Invalid BIP39 word \"".concat(wordLists[i]).concat("\""), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
+                            for (String word : wordLists) {
+
+                            }
+                        }
                         RestoreFromMnemonic(false, pinCode, passphrase, mBackupData);
                     } else {
                         Toast.makeText(this, R.string.pin_error, Toast.LENGTH_SHORT).show();
