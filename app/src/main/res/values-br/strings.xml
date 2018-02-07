@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.30</string>
+    <string name="version_name">0.97.36</string>
     <string name="app_name">Samourai</string>
 
     <string name="alpha_create_wallet">Anote essas palavras e as mantenha seguras. Não perca essas palavras ou esqueça sua senha.</string>
@@ -12,6 +12,7 @@
     <string name="decrypting_bip38">Desencriptando senha BIP38. Por favor aguarde...</string>
 
     <string name="action_settings">Configurações</string>
+	<string name="action_support">Suporte</string>
     <string name="action_sweep">Varrer chave privada</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Ativar todos os códigos de pagamento arquivados.</string>
@@ -106,6 +107,7 @@
     <string name="receive">Receber</string>
     <string name="cannot_select_utxo">Não é possível selecionar saídas não gastas</string>
     <string name="error_bip126_output">Erro determinando endereço de saída</string>
+	<string name="error_change_output">Erro determinando endereço de troco</string>
 
     <string name="copied_to_clipboard">Copiado para a área de transferência</string>
     <string name="send_payment_code">Enviar código de pagamento</string>
@@ -160,6 +162,7 @@
     <string name="insufficient_funds">Fundos insuficientes</string>
     <string name="tx_length_error">A Samourai não trabalha com transações de mais de 100KB. Por favor tente dividir sua transação.</string>
     <string name="invalid_amount">Quantia inválida</string>
+	<string name="amount">Quantia</string>
 
     <string name="receive_address_to_clipboard">Copiar este endereço de recebimento para a área de transferência? Se copiado, ele pode ficar visível para outros aplicativos.</string>
     <string name="receive_address_to_share">Compartilhar este endereço de recebimento? Caso compartilhado, ele pode ser lido por outros aplicativos.</string>
@@ -427,6 +430,7 @@
     <string name="options_display_redeem_script">Exibir script de resgate</string>
     <string name="options_view_tx">Exibir transação</string>
     <string name="options_display_privkey">Exibir chave privada</string>
+	<string name="options_batch">Gastar em lote</string>
 
     <string name="do_not_repeat_sent_to">Marque a caixa para não avisar sobre envios repetidos para este endereço.</string>
 
