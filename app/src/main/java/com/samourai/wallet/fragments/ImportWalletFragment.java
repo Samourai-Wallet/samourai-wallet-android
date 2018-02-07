@@ -128,22 +128,24 @@ public class ImportWalletFragment extends Fragment {
      * @param data
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        StringBuilder sb = new StringBuilder();
-        backupFileTextView.setText(data.getData().getPath());
-        try {
-            BufferedReader in = new BufferedReader((new InputStreamReader(getActivity().getContentResolver().openInputStream(data.getData()))));
-            String str = null;
-            while ((str = in.readLine()) != null) {
-                sb.append(str);
+        if(data != null && data.getData() != null && data.getData().getPath() != null)    {
+            StringBuilder sb = new StringBuilder();
+            backupFileTextView.setText(data.getData().getPath());
+            try {
+                BufferedReader in = new BufferedReader((new InputStreamReader(getActivity().getContentResolver().openInputStream(data.getData()))));
+                String str = null;
+                while ((str = in.readLine()) != null) {
+                    sb.append(str);
+                }
+                in.close();
+            } catch (FileNotFoundException fnfe) {
+                fnfe.printStackTrace();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
-            in.close();
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            smouraiBackup = sb.toString();
+            mListener.onRestoreData(passPhraseBackup.getText().toString(), smouraiBackup);
         }
-        smouraiBackup = sb.toString();
-        mListener.onRestoreData(passPhraseBackup.getText().toString(), smouraiBackup);
     }
 
     @Override
