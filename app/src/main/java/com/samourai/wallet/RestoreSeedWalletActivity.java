@@ -30,6 +30,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.widgets.MnemonicSeedEditText;
 import com.samourai.wallet.widgets.ViewPager;
 
 import org.apache.commons.codec.DecoderException;
@@ -42,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.samourai.wallet.R.id.dots;
 
@@ -51,6 +53,7 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
         ImportWalletFragment.onRestoreDataSets {
     private ViewPager wallet_create_viewpager;
 
+    private List<String> validWordList = null;
 
     public enum Action {
         CREATE, RESTORE
@@ -84,6 +87,24 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
             restoreMode = getIntent().getStringExtra("mode");
             setUpAdapter();
         }
+
+        String BIP39_EN = null;
+        StringBuilder sb = new StringBuilder();
+        String mLine = null;
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getAssets().open("BIP39/en.txt")));
+            mLine = reader.readLine();
+            while (mLine != null) {
+                sb.append("\n".concat(mLine));
+                mLine = reader.readLine();
+            }
+            reader.close();
+            BIP39_EN = sb.toString();
+            validWordList = Arrays.asList(BIP39_EN.split("\\n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -164,7 +185,23 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                         RestoreWalletFromSamouraiBackup(decrypted);
                     }
                 } else {
-                    wallet_create_viewpager.setCurrentItem(count + 1);
+
+                    MnemonicSeedEditText etMnemonic = (MnemonicSeedEditText) wallet_create_viewpager.findViewById(R.id.mnemonic_code_edittext);
+                    String data = etMnemonic.getText().toString().trim();
+                    String[] s = data.split("\\s+");
+
+                    if (!validWordList.contains(s[s.length - 1])) {
+                        Toast.makeText(this, "Invalid BIP39 word \"" + s[s.length - 1]  + "\"", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if(s.length >= 12 && s.length <= 24 && s.length % 3 == 0)    {
+                        wallet_create_viewpager.setCurrentItem(count + 1);
+                    }
+                    else    {
+                        Toast.makeText(RestoreSeedWalletActivity.this, R.string.invalid_mnemonic, Toast.LENGTH_SHORT).show();
+                    }
+
                 }
                 break;
             }
@@ -177,29 +214,11 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
             case 2: {
                 if (restoreMode.equals("mnemonic")) {
                     if (pinCode.equals(pinCodeConfirm)) {
-                        String BIP39_EN = null;
-                        StringBuilder sb = new StringBuilder();
-                        String mLine = null;
-                        try {
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getAssets().open("BIP39/en.txt")));
-                            mLine = reader.readLine();
-                            while (mLine != null) {
-                                sb.append("\n".concat(mLine));
-                                mLine = reader.readLine();
-                            }
-                            reader.close();
-                            BIP39_EN = sb.toString();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        if (BIP39_EN != null) {
-                            String validWordList[] = BIP39_EN.split("\\n");
-                            String wordLists[] = mBackupData.trim().split(" ");
-                            for (int i = 0; i < wordLists.length; i++) {
-                                if (!Arrays.asList(validWordList).contains(wordLists[i])) {
-                                    Toast.makeText(this, "Invalid BIP39 word \"".concat(wordLists[i]).concat("\""), Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
+                        String wordLists[] = mBackupData.trim().split(" ");
+                        for (int i = 0; i < wordLists.length; i++) {
+                            if (!validWordList.contains(wordLists[i])) {
+                                Toast.makeText(this, "Invalid BIP39 word \"".concat(wordLists[i]).concat("\""), Toast.LENGTH_SHORT).show();
+                                return;
                             }
                         }
                         RestoreFromMnemonic(false, pinCode, passphrase, mBackupData);
