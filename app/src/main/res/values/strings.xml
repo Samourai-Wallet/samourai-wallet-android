@@ -495,4 +495,6 @@
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocks before confirmation</string>
 
+  <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
+
 </resources>

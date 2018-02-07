@@ -19,8 +19,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Sarath kumar on 1/23/2018.
@@ -32,8 +39,13 @@ public class MnemonicSeedEditText extends EditText {
 
     String separator = " ";
 
+    private Context context = null;
+
+    private List<String> validWordList = null;
+
     public MnemonicSeedEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         init();
     }
 
@@ -72,8 +84,27 @@ public class MnemonicSeedEditText extends EditText {
             }
         };
         addTextChangedListener(textWatcher);
-    }
 
+        String BIP39_EN = null;
+        StringBuilder sb = new StringBuilder();
+        String mLine = null;
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open("BIP39/en.txt")));
+            mLine = reader.readLine();
+            while (mLine != null) {
+                sb.append("\n".concat(mLine));
+                mLine = reader.readLine();
+            }
+            reader.close();
+            BIP39_EN = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (BIP39_EN != null) {
+            validWordList = Arrays.asList(BIP39_EN.split("\\n"));
+        }
+
+    }
 
     private void format() {
 
@@ -84,10 +115,19 @@ public class MnemonicSeedEditText extends EditText {
 
         for (int i = 0; i < strings.length; i++) {
             String string = strings[i];
+
             sb.append(string.replace("\n", ""));
             if (fullString.charAt(fullString.length() - 1) != separator.charAt(0) && i == strings.length - 1) {
                 break;
             }
+            else if(!validWordList.contains(string.trim()))    {
+                Toast.makeText(context, R.string.invalid_mnemonic_word, Toast.LENGTH_SHORT).show();
+                break;
+            }
+            else    {
+                ;
+            }
+
             BitmapDrawable bd = convertViewToDrawable(createTokenView(string));
             bd.setBounds(0, 0, bd.getIntrinsicWidth(), bd.getIntrinsicHeight());
             int startIdx = sb.length() - (string.length());
