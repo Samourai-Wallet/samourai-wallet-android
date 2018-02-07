@@ -24,6 +24,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
@@ -144,6 +145,8 @@ public class PayloadUtil	{
             mle.printStackTrace();
         }
 
+        HD_WalletFactory.getInstance(context).clear();
+
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File datfile = new File(dir, strFilename);
         File tmpfile = new File(dir, strTmpFilename);
@@ -221,6 +224,7 @@ public class PayloadUtil	{
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
@@ -399,6 +403,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
+                }
+                if(meta.has("batch_send")) {
+                    BatchSendUtil.getInstance().fromJSON((JSONArray) meta.get("batch_send"));
                 }
                 if(meta.has("bip47")) {
                     try {

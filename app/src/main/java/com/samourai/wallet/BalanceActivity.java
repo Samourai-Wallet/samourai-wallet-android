@@ -623,6 +623,7 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
+        menu.findItem(R.id.action_batch).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -637,6 +638,9 @@ public class BalanceActivity extends Activity {
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             doSettings();
+        }
+        else if (id == R.id.action_support) {
+            doSupport();
         }
         else if (id == R.id.action_sweep) {
             doSweep();
@@ -817,6 +821,11 @@ public class BalanceActivity extends Activity {
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();
         Intent intent = new Intent(BalanceActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/"));
         startActivity(intent);
     }
 

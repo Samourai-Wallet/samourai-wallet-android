@@ -904,8 +904,6 @@ public class APIFactory	{
                     return false;
                 }
 
-                List<String> seenOutputs = new ArrayList<String>();
-
                 for (int i = 0; i < utxoArray.length(); i++) {
 
                     JSONObject outDict = utxoArray.getJSONObject(i);
@@ -918,12 +916,9 @@ public class APIFactory	{
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
-                    seenOutputs.add(txHash.toString() + "-" + txOutputN);
-                    Log.d("APIFactory", "seen:" + txHash.toString() + "-" + txOutputN);
-
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-//                        Log.d("APIFactory", "address:" + address);
+                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
@@ -968,21 +963,6 @@ public class APIFactory	{
                         ;
                     }
 
-                }
-
-                for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
-                    Log.d("APIFactory", "not dusted:" + s);
-                    if(!seenOutputs.contains(s))    {
-                        BlockedUTXO.getInstance().removeNotDusted(s);
-                        Log.d("APIFactory", "not dusted removed:" + s);
-                    }
-                }
-                for(String s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
-                    Log.d("APIFactory", "blocked:" + s);
-                    if(!seenOutputs.contains(s))    {
-                        BlockedUTXO.getInstance().remove(s);
-                        Log.d("APIFactory", "blocked removed:" + s);
-                    }
                 }
 
                 return true;
@@ -1103,59 +1083,7 @@ public class APIFactory	{
 
         return jsonObject;
     }
-/*
-    private synchronized boolean parseDynamicFees_21(JSONObject jsonObject) throws JSONException  {
 
-        if(jsonObject != null)  {
-
-            //
-            // 21.co API
-            //
-            List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
-
-            if(jsonObject.has("fastestFee"))    {
-                long fee = jsonObject.getInt("fastestFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(jsonObject.has("halfHourFee"))    {
-                long fee = jsonObject.getInt("halfHourFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(jsonObject.has("hourFee"))    {
-                long fee = jsonObject.getInt("hourFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(suggestedFees.size() > 0)    {
-                FeeUtil.getInstance().setEstimatedFees(suggestedFees);
-
-//                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
-            }
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-*/
     private synchronized boolean parseDynamicFees_bitcoind(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
@@ -1352,6 +1280,32 @@ public class APIFactory	{
                 xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 getUnspentOutputs(xs);
                 getDynamicFees();
+            }
+
+            //
+            //
+            //
+            List<String> seenOutputs = new ArrayList<String>();
+            List<UTXO> _utxos = getUtxos(false);
+            for(UTXO _u : _utxos)   {
+                for(MyTransactionOutPoint _o : _u.getOutpoints())   {
+                    seenOutputs.add(_o.getTxHash().toString() + "-" + _o.getTxOutputN());
+                }
+            }
+
+            for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+                Log.d("APIFactory", "not dusted:" + _s);
+                if(!seenOutputs.contains(_s))    {
+                    BlockedUTXO.getInstance().removeNotDusted(_s);
+                    Log.d("APIFactory", "not dusted removed:" + _s);
+                }
+            }
+            for(String _s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
+                Log.d("APIFactory", "blocked:" + _s);
+                if(!seenOutputs.contains(_s))    {
+                    BlockedUTXO.getInstance().remove(_s);
+                    Log.d("APIFactory", "blocked removed:" + _s);
+                }
             }
 
         }

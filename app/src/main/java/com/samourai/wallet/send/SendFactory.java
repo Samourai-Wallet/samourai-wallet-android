@@ -290,14 +290,14 @@ public class SendFactory	{
             if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
 
                 final SegwitAddress p2shp2wpkh = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
+//                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
 //                final Script scriptPubKey = p2shp2wpkh.segWitOutputScript();
 //                System.out.println("scriptPubKey:" + Hex.toHexString(scriptPubKey.getProgram()));
-                System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+//                System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                 final Script redeemScript = p2shp2wpkh.segWitRedeemScript();
-                System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
+//                System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
                 final Script scriptCode = redeemScript.scriptCode();
-                System.out.println("script code:" + Hex.toHexString(scriptCode.getProgram()));
+//                System.out.println("script code:" + Hex.toHexString(scriptCode.getProgram()));
 
                 sig = transaction.calculateWitnessSignature(i, key, scriptCode, connectedOutput.getValue(), Transaction.SigHash.ALL, false);
                 final TransactionWitness witness = new TransactionWitness(2);
@@ -818,14 +818,13 @@ public class SendFactory	{
                 return change_address;
             }
             catch(IOException ioe) {
-                ;
+                return null;
             }
             catch(MnemonicException.MnemonicLengthException mle) {
-                ;
+                return null;
             }
         }
 
-        return null;
     }
 
     public static ECKey getPrivKey(String address)    {
@@ -834,16 +833,16 @@ public class SendFactory	{
 
         try {
             String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
-            Log.d("APIFactory", "address:" + path);
+//            Log.d("APIFactory", "address:" + path);
             if(path != null)    {
                 String[] s = path.split("/");
                 if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                    Log.d("APIFactory", "address type:" + "bip49");
+//                    Log.d("APIFactory", "address type:" + "bip49");
                     HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                     ecKey = addr.getECKey();
                 }
                 else    {
-                    Log.d("APIFactory", "address type:" + "bip44");
+//                    Log.d("APIFactory", "address type:" + "bip44");
                     int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
                     HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                     String strPrivKey = hd_address.getPrivateKeyString();
@@ -852,7 +851,7 @@ public class SendFactory	{
                 }
             }
             else    {
-                Log.d("APIFactory", "address type:" + "bip47");
+//                Log.d("APIFactory", "address type:" + "bip47");
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
                 int idx = BIP47Meta.getInstance().getIdx4Addr(address);
                 PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);

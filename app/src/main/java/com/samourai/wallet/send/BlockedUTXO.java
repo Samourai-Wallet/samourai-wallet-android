@@ -1,16 +1,14 @@
 package com.samourai.wallet.send;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import android.util.Log;
 
 public class BlockedUTXO {
 
@@ -25,6 +23,9 @@ public class BlockedUTXO {
     public static BlockedUTXO getInstance() {
 
         if(instance == null) {
+
+            Log.d("BlockedUTXO", "create instance");
+
             instance = new BlockedUTXO();
             blockedUTXO = new ConcurrentHashMap<>();
             notDustedUTXO = new CopyOnWriteArrayList<>();
@@ -39,17 +40,20 @@ public class BlockedUTXO {
 
     public void add(String hash, int idx, long value)    {
         blockedUTXO.put(hash + "-" + Integer.toString(idx), value);
+        Log.d("BlockedUTXO", "add:" + hash + "-" + Integer.toString(idx));
     }
 
     public void remove(String hash, int idx)   {
         if(blockedUTXO != null && blockedUTXO.containsKey(hash + "-" + Integer.toString(idx)))  {
             blockedUTXO.remove(hash + "-" + Integer.toString(idx));
+            Log.d("BlockedUTXO", "remove:" + hash + "-" + Integer.toString(idx));
         }
     }
 
     public void remove(String id)   {
         if(blockedUTXO != null && blockedUTXO.containsKey(id))  {
             blockedUTXO.remove(id);
+            Log.d("BlockedUTXO", "remove:" + id);
         }
     }
 
@@ -59,6 +63,7 @@ public class BlockedUTXO {
 
     public void clear()    {
         blockedUTXO.clear();
+        Log.d("BlockedUTXO", "clear");
     }
 
     public long getTotalValueBlocked()  {
@@ -128,6 +133,8 @@ public class BlockedUTXO {
     }
 
     public void fromJSON(JSONObject blockedObj) {
+
+        blockedUTXO.clear();
 
         try {
 
