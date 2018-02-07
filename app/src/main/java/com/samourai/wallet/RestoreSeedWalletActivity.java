@@ -201,9 +201,6 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                                     return;
                                 }
                             }
-                            for (String word : wordLists) {
-
-                            }
                         }
                         RestoreFromMnemonic(false, pinCode, passphrase, mBackupData);
                     } else {
