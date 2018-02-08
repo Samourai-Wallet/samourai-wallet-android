@@ -223,17 +223,6 @@ public class SendActivity extends Activity {
             }
         });
 
-        /*
-        tvCurrentFeePrompt = (TextView)findViewById(R.id.current_fee_prompt);
-        tvCurrentFeePrompt.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                doCustomFee();
-                return false;
-            }
-        });
-        */
-
         DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
@@ -1123,14 +1112,20 @@ public class SendActivity extends Activity {
                                                 }
 
                                                 if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
-                                                    try {
-                                                        HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().incAddrIdx();
+
+                                                    if(isSegwitChange)    {
+                                                        BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                                                     }
-                                                    catch(IOException ioe) {
-                                                        ;
-                                                    }
-                                                    catch(MnemonicException.MnemonicLengthException mle) {
-                                                        ;
+                                                    else    {
+                                                        try {
+                                                            HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().incAddrIdx();
+                                                        }
+                                                        catch(IOException ioe) {
+                                                            ;
+                                                        }
+                                                        catch(MnemonicException.MnemonicLengthException mle) {
+                                                            ;
+                                                        }
                                                     }
                                                 }
 
@@ -1363,6 +1358,9 @@ public class SendActivity extends Activity {
         }
         else if (id == R.id.action_fees) {
             doFees();
+        }
+        else if (id == R.id.action_batch) {
+            doBatchSpend();
         }
         else {
             ;
@@ -1766,6 +1764,11 @@ public class SendActivity extends Activity {
 
     private void doUTXO()	{
         Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
+        startActivity(intent);
+    }
+
+    private void doBatchSpend()	{
+        Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
         startActivity(intent);
     }
 
