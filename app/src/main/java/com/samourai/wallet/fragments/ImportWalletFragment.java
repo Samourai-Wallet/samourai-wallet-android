@@ -113,7 +113,7 @@ public class ImportWalletFragment extends Fragment {
         public void onClick(View view) {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
             lastUpdatedTextView.setVisibility(View.GONE);
-            if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
+            if (clipboard.hasPrimaryClip()) {
                 String backup = (String) clipboard.getPrimaryClip().getItemAt(0).getText();
                 backupFileTextView.setText(backup.trim());
                 samouraiBackup = backup.trim();
