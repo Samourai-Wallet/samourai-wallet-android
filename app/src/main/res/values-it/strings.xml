@@ -12,6 +12,7 @@
     <string name="decrypting_bip38">Decriptando la passphrase BIP38, attendere...</string>
 
     <string name="action_settings">Impostazioni</string>
+    <string name="action_show_addresses">Mostra tutti gli indirizzi</string>
     <string name="action_support">Supporto</string>
     <string name="action_sweep">Ripulisci una Private Key</string>
     <string name="action_bip47">PayNyms</string>
