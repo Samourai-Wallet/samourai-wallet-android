@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -62,6 +63,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ReceiveActivity extends Activity {
@@ -88,6 +90,9 @@ public class ReceiveActivity extends Activity {
     private String addr = null;
     private String addr44 = null;
     private String addr49 = null;
+
+    private ArrayList<String> addrList44 = null;
+    private ArrayList<String> addrList49 = null;
 
     private boolean canRefresh44 = false;
     private boolean canRefresh49 = false;
@@ -161,6 +166,13 @@ public class ReceiveActivity extends Activity {
 
         addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
         addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+
+        addrList44 = new ArrayList<String>();
+        addrList49 = new ArrayList<String>();
+
+        new LoadAddressesTask().execute();
+
+
         if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
             addr = addr49;
         }
@@ -405,6 +417,7 @@ public class ReceiveActivity extends Activity {
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
         menu.findItem(R.id.action_batch).setVisible(false);
+        menu.findItem(R.id.action_show_addresses).setVisible(false);
 
         _menu = menu;
 
@@ -417,6 +430,39 @@ public class ReceiveActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+
+
+        if (id == R.id.action_show_addresses){
+            if(swSegwit.isChecked()){
+                new AlertDialog.Builder(ReceiveActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setItems(addrList49.toArray(new CharSequence[addrList49.size()]), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)ReceiveActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                android.content.ClipData clip = null;
+                                clip = android.content.ClipData.newPlainText("Receive address", addrList49.get(item));
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(ReceiveActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+            else{
+                new AlertDialog.Builder(ReceiveActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setItems(addrList44.toArray(new CharSequence[addrList44.size()]), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)ReceiveActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                android.content.ClipData clip = null;
+                                clip = android.content.ClipData.newPlainText("Receive address", addrList44.get(item));
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(ReceiveActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }).show();
+            }
+        }
 
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_share_receive) {
@@ -630,6 +676,54 @@ public class ReceiveActivity extends Activity {
                 }
             }
         }).start();
+    }
+
+    private class LoadAddressesTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            int addrID44 = 0;
+            int addrID49 = 0;
+
+            try{
+                JSONObject jsonObject;
+
+                while(AddressFactory.getInstance(ReceiveActivity.this).canIncBIP49ReceiveAddress(addrID49)){
+
+                    jsonObject =  APIFactory.getInstance(ReceiveActivity.this).getAddressInfo(AddressFactory.getInstance(ReceiveActivity.this).getBIP49(SamouraiWallet.SAMOURAI_ACCOUNT, AddressFactory.RECEIVE_CHAIN, addrID49).getAddressAsString());
+                    if(jsonObject != null && jsonObject.has("addresses") && jsonObject.getJSONArray("addresses").length() > 0) {
+                        JSONArray addrs = jsonObject.getJSONArray("addresses");
+                        JSONObject _addr = addrs.getJSONObject(0);
+                        if (!(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L)) {
+                            addrList49.add(AddressFactory.getInstance(ReceiveActivity.this).getBIP49(SamouraiWallet.SAMOURAI_ACCOUNT, AddressFactory.RECEIVE_CHAIN, addrID49).getAddressAsString());
+                        }
+                    }
+                    addrID49++;
+                }
+
+                while(AddressFactory.getInstance(ReceiveActivity.this).canIncReceiveAddress(SamouraiWallet.SAMOURAI_ACCOUNT, addrID44)){
+
+                    jsonObject =  APIFactory.getInstance(ReceiveActivity.this).getAddressInfo(AddressFactory.getInstance(ReceiveActivity.this).get(SamouraiWallet.SAMOURAI_ACCOUNT, AddressFactory.RECEIVE_CHAIN, addrID44).getAddressString());
+                    if(jsonObject != null && jsonObject.has("addresses") && jsonObject.getJSONArray("addresses").length() > 0) {
+                        JSONArray addrs = jsonObject.getJSONArray("addresses");
+                        JSONObject _addr = addrs.getJSONObject(0);
+                        if (!(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L)) {
+                            addrList44.add(AddressFactory.getInstance(ReceiveActivity.this).get(SamouraiWallet.SAMOURAI_ACCOUNT, AddressFactory.RECEIVE_CHAIN, addrID44).getAddressString());
+                        }
+                    }
+                    addrID44++;
+                }
+
+            }
+            catch(Exception e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            _menu.findItem(R.id.action_show_addresses).setVisible(true);
+        }
+
     }
 
     public String getDisplayUnits() {

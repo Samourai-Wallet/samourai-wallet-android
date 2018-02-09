@@ -69,6 +69,12 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         />
+    <item android:id="@+id/action_show_addresses"
+        android:visible="false"
+        android:title="@string/action_show_addresses"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"

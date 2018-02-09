@@ -1332,6 +1332,7 @@ public class SendActivity extends Activity {
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_tor).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
+        menu.findItem(R.id.action_show_addresses).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

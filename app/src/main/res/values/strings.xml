@@ -12,6 +12,7 @@
     <string name="decrypting_bip38">Decrypting BIP38 password. Please wait...</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_show_addresses">Show all addresses</string>
     <string name="action_support">Support</string>
     <string name="action_sweep">Sweep private key</string>
     <string name="action_bip47">PayNyms</string>
