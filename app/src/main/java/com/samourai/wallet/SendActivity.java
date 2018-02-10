@@ -18,6 +18,7 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -1647,16 +1648,28 @@ public class SendActivity extends Activity {
 
     private void doCustomFee()   {
 
-        long sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
-        final long sanityValue = (long)(sanitySat * 1.5);
+        double sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
+        final double sanityValue = sanitySat * 1.5;
 
         final EditText etCustomFee = new EditText(SendActivity.this);
-//        etCustomFee.setInputType(InputType.TYPE_CLASS_NUMBER);
-        etCustomFee.setText(Long.toString((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L)));
+//        String val  = null;
+        double d = FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().doubleValue() / 1000.0;
+        NumberFormat decFormat = NumberFormat.getInstance(Locale.US);
+        decFormat.setMaximumFractionDigits(3);
+        decFormat.setMinimumFractionDigits(0);
+        /*
+        if((d - (int)d) != 0.0)    {
+            val = Double.toString(d);
+        }
+        else    {
+            val = Integer.toString((int)d);
+        }
+        */
+        etCustomFee.setText(decFormat.format(d));
 
         InputFilter filter = new InputFilter() {
 
-            String strCharset = "0123456789nollNOLL";
+            String strCharset = "0123456789nollNOLL.";
 
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
 
@@ -1681,15 +1694,15 @@ public class SendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         String strCustomFee = etCustomFee.getText().toString();
-                        long customValue = 0L;
+                        double customValue = 0.0;
 
                         if(strCustomFee.equalsIgnoreCase("noll") && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-                            customValue = 0L;
+                            customValue = 0.0;
                         }
                         else {
 
                             try {
-                                customValue = Long.valueOf(strCustomFee);
+                                customValue = Double.valueOf(strCustomFee);
                             } catch (Exception e) {
                                 Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                                 return;
@@ -1697,7 +1710,7 @@ public class SendActivity extends Activity {
 
                         }
 
-                        if(customValue < 1 && !strCustomFee.equalsIgnoreCase("noll"))    {
+                        if(customValue < 1.0 && !strCustomFee.equalsIgnoreCase("noll"))    {
                             Toast.makeText(SendActivity.this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
                         }
                         else if(customValue > sanityValue)   {
@@ -1707,7 +1720,8 @@ public class SendActivity extends Activity {
                             SuggestedFee suggestedFee = new SuggestedFee();
                             suggestedFee.setStressed(false);
                             suggestedFee.setOK(true);
-                            suggestedFee.setDefaultPerKB(BigInteger.valueOf(customValue * 1000L));
+                            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(customValue * 1000.0)));
+                            Log.d("SendActivity", "custom fee:" + BigInteger.valueOf((long)(customValue * 1000.0)));
                             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
                             btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -1715,7 +1729,7 @@ public class SendActivity extends Activity {
                             btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                             btCustomFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
 
-                            btCustomFee.setText((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+                            btCustomFee.setText((FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().doubleValue() / 1000.0) + "\n" + getString(R.string.sat_b));
                             btCustomFee.setTypeface(null, Typeface.BOLD);
                             btLowFee.setTypeface(null, Typeface.NORMAL);
                             btAutoFee.setTypeface(null, Typeface.NORMAL);
@@ -1727,22 +1741,22 @@ public class SendActivity extends Activity {
 
                             double pct = 0.0;
                             int nbBlocks = 6;
-                            if(customValue == 0L)    {
-                                customValue = 1L;
+                            if(customValue == 0.0)    {
+                                customValue = 1.0;
                             }
-                            if(customValue <= lowFee)    {
-                                pct = ((double)lowFee / (double)customValue);
+                            if(customValue <= (double)lowFee)    {
+                                pct = ((double)lowFee / customValue);
                                 nbBlocks = ((Double)Math.ceil(pct * 24.0)).intValue();
                             }
-                            else if(customValue >= highFee)   {
-                                pct = ((double)highFee / (double)customValue);
+                            else if(customValue >= (double)highFee)   {
+                                pct = ((double)highFee / customValue);
                                 nbBlocks = ((Double)Math.ceil(pct * 2.0)).intValue();
                                 if(nbBlocks < 1)    {
                                     nbBlocks = 1;
                                 }
                             }
                             else    {
-                                pct = ((double)normalFee / (double)customValue);
+                                pct = ((double)normalFee / customValue);
                                 nbBlocks = ((Double)Math.ceil(pct * 6.0)).intValue();
                             }
                             tvFeePrompt.setText(getText(R.string.fee_custom_priority) + " " + nbBlocks  + " " + getText(R.string.blocks_to_cf));
