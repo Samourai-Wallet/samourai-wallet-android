@@ -498,6 +498,9 @@ public class BatchSendActivity extends Activity {
         else if (id == R.id.action_new) {
             doAddNew();
         }
+        else if (id == R.id.action_support) {
+            doSupport();
+        }
         else if (id == R.id.action_refresh) {
 
             data.clear();
@@ -577,6 +580,11 @@ public class BatchSendActivity extends Activity {
         Intent intent = new Intent(BatchSendActivity.this, ZBarScannerActivity.class);
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_QR);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/8-sending-bitcoin"));
+        startActivity(intent);
     }
 
     private void doAddNew()  {

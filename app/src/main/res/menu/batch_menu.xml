@@ -24,4 +24,9 @@
         android:title=""
         android:showAsAction="always"
         />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
 </menu>
