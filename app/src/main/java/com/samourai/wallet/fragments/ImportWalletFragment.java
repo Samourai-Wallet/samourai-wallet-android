@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 
-import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 import static android.content.Context.CLIPBOARD_SERVICE;
 
 
@@ -114,7 +113,7 @@ public class ImportWalletFragment extends Fragment {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
             lastUpdatedTextView.setVisibility(View.GONE);
             if (clipboard.hasPrimaryClip()) {
-                String backup = (String) clipboard.getPrimaryClip().getItemAt(0).getText();
+                String backup =  clipboard.getPrimaryClip().getItemAt(0).getText().toString();
                 backupFileTextView.setText(backup.trim());
                 samouraiBackup = backup.trim();
             }
