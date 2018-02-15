@@ -88,7 +88,7 @@
     <string name="options_segwit">Recibir en direcciones SegWit</string>
     <string name="options_segwit_2">Generar direcciones SegWit diferentes para cada transacción entrante.</string>
     <string name="options_broadcast_hex">Envío de transacciones hexadecimal</string>
-    <string name="options_broadcast_hex2">Enviar una transacción firmadas ingresada en formato hexadecimal.</string>
+    <string name="options_broadcast_hex2">Enviar una transacción firmada ingresada en formato hexadecimal.</string>
     <string name="options_like_typed_change">Direcciones de vuelto</string>
     <string name="options_like_typed_change2">Recibir vuelto en direcciones del mismo tipo que las del envío. Desactivar para recibir el vuelto únicamente en direcciones SegWit.</string>
     <string name="options_haptic">Ingreso PIN táctil</string>
@@ -101,8 +101,8 @@
 
     <string name="tx_sent">Transacción enviada</string>
     <string name="tx_failed">Error enviando transacción</string>
-    <string name="you_received">Recibida</string>
-    <string name="you_sent">Enviada</string>
+    <string name="you_received">Recibido</string>
+    <string name="you_sent">Enviado</string>
     <string name="send">Enviar</string>
     <string name="receive">Recibir</string>
     <string name="cannot_select_utxo">Imposible seleccionar salidas no utilizadas (UTXOs)</string>
@@ -189,7 +189,7 @@
     <string name="auto_fee">Comisión NORMAL</string>
     <string name="priority_fee">Comisión PRIORITARIA</string>
     <string name="low_fee">Comisión BAJA</string>
-    <string name="custom_fee">Comisión Personalizada</string>
+    <string name="custom_fee">Personalizada</string>
     <string name="sat_b">sat/b</string>
 
     <string name="account_Samourai">Wallet</string>
@@ -408,7 +408,7 @@
     <string name="privkey_clipboard">Una clave privada fue detectada en tu portapapeles. Deseas limpiar el contenido del portapapeles?</string>
 
     <string name="tx_hex">Hex de la transacción</string>
-    <string name="enter_tx_hex">Ingresa la transacción en formato hexadecimal</string>
+    <string name="enter_tx_hex">Ingresar manualmente</string>
     <string name="broadcast">Enviar transacción</string>
 
     <string name="dusting_tx">TRANSACTION ÍNFIMA (DUST)</string>
@@ -460,10 +460,10 @@
     <string name="help">Ayuda</string>
 
     <string name="fee">Comisión de mineros</string>
-    <string name="fee_low_priority">Prioridad Baja: estima 24</string>
-    <string name="fee_mid_priority">Prioridad Normal: estima 6</string>
-    <string name="fee_high_priority">Prioridad Alta: estima 2</string>
-    <string name="fee_custom_priority">Comisión personalizada: estima</string>
+    <string name="fee_low_priority">Prioridad Baja: se estiman 24</string>
+    <string name="fee_mid_priority">Prioridad Normal: se estiman 6</string>
+    <string name="fee_high_priority">Prioridad Alta: se estiman 2</string>
+    <string name="fee_custom_priority">Personalizada: se estiman </string>
     <string name="blocks_to_cf">bloques antes de la confirmación.</string>
 
 </resources>
