@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Samourai</string>
-
     <string name="alpha_create_wallet">Scrivi queste parole su un foglio e tienile al sicuro. Perdendo queste parole o la tua passphrase perderai anche l\'accesso ai fondi depositati.</string>
     <string name="alpha_create_confirm_backup">Ho annotato le mie parole</string>
 

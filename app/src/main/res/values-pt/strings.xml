@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Samourai</string>
-
     <string name="alpha_create_wallet">Anote as seguintes palavras de forma segura. Não perca as palavras nem esqueça sua palavra-passe.</string>
     <string name="alpha_create_confirm_backup">Eu anotei as minhas palavras</string>
 

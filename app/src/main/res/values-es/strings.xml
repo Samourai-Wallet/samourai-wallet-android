@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-    <string name="app_name">Samourai</string>
-
 	<string name="alpha_create_wallet">Anote las siguientes 12 palabras y guárdelas en un lugar seguro. Mientras tenga estas 12 palabras y la contraseña que acaba de crear, nunca perderá acceso a sus fondos.</string>
     <string name="alpha_create_confirm_backup">He escrito mis palabras de recuperación.</string>
     
