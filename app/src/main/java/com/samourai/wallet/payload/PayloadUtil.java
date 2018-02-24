@@ -90,7 +90,13 @@ public class PayloadUtil	{
 
     public File getBackupFile()  {
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         File file = new File(dir, strOptionalFilename);
 
         return file;
@@ -724,7 +730,13 @@ public class PayloadUtil	{
     private synchronized void serialize(String data) throws IOException    {
 
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         if(!dir.exists())   {
             dir.mkdirs();
             dir.setWritable(true, true);
