@@ -437,7 +437,6 @@ public class APIFactory	{
                     String sig = ecKey.signMessage(xpub);
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
                         StringBuilder args = new StringBuilder();
                         args.append("message=");
                         args.append(xpub);
@@ -495,53 +494,49 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
-                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
-                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+
+                HD_Address addr = null;
+                if(bip49)    {
+                    addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                }
+                else    {
+                    addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                }
                 ecKey = addr.getECKey();
 
                 if(ecKey != null && ecKey.hasPrivKey())    {
 
-                    String sig = ecKey.signMessage(xpub);
+                    String sig = ecKey.signMessage("lock");
+                    String address = null;
+                    if(bip49)    {
+                        SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        address = segwitAddress.getAddressAsString();
+                    }
+                    else    {
+                        address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                         StringBuilder args = new StringBuilder();
-                        String address = null;
-                        if(bip49)    {
-                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                            address = segwitAddress.getAddressAsString();
-                        }
-                        else    {
-                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                        }
-                        Log.d("APIFactory", "sign using address:" + address);
-                        Log.d("APIFactory", "sign using WIF:" + ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams()));
                         args.append("address=");
                         args.append(address);
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         args.append("&message=");
                         args.append("lock");
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
-                        String address = null;
-                        if(bip49)    {
-                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                            address = segwitAddress.getAddressAsString();
-                        }
-                        else    {
-                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                        }
                         args.put("address", address);
                         args.put("signature", Uri.encode(sig));
                         args.put("message", "lock");
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
