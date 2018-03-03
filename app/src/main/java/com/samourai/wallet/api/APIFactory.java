@@ -18,6 +18,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -504,40 +505,40 @@ public class APIFactory	{
                     String sig = ecKey.signMessage(xpub);
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
                         StringBuilder args = new StringBuilder();
+                        String address = null;
+                        if(bip49)    {
+                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = segwitAddress.getAddressAsString();
+                        }
+                        else    {
+                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        }
+                        Log.d("APIFactory", "sign using address:" + address);
+                        Log.d("APIFactory", "sign using WIF:" + ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams()));
                         args.append("address=");
-                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.append(address);
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         args.append("&message=");
                         args.append("lock");
-                        args.append("&type=");
-                        args.append("restore");
-                        if(bip49)    {
-                            args.append("&segwit=");
-                            args.append("bip49");
-                        }
-                        else    {
-                            args.append("&xpub=");
-                            args.append("bip44");
-                        }
                         Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
                         Log.i("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
-                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        args.put("signature", Uri.encode(sig));
-                        args.put("message", "lock");
-                        args.put("type", "restore");
+                        String address = null;
                         if(bip49)    {
-                            args.put("segwit", "bip49");
+                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = segwitAddress.getAddressAsString();
                         }
                         else    {
-                            args.put("xpub", "bip44");
+                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                         }
+                        args.put("address", address);
+                        args.put("signature", Uri.encode(sig));
+                        args.put("message", "lock");
                         Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
                         Log.i("APIFactory", "lock XPUB response:" + response);
