@@ -496,5 +496,6 @@
 
   <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
   <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
+    <string name="enter_your_code_here">Enter your code here</string>
 
 </resources>
