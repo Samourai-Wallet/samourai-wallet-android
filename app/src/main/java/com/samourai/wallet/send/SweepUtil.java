@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Looper;
 import android.widget.Toast;
+import android.util.Log;
 
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
@@ -29,6 +30,12 @@ public class SweepUtil  {
 
     private static Context context = null;
     private static SweepUtil instance = null;
+
+    private static UTXO utxoP2PKH = null;
+    private static UTXO utxoP2SH_P2WPKH = null;
+
+    private static String addressP2PKH = null;
+    private static String addressP2SH_P2WPKH = null;
 
     private SweepUtil() { ; }
 
@@ -59,14 +66,25 @@ public class SweepUtil  {
                     }
 
                     String address = null;
+                    UTXO utxo = null;
+
                     if(sweepBIP49)    {
-                        address = new SegwitAddress(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
+                        utxo = utxoP2SH_P2WPKH;
+                        address = addressP2SH_P2WPKH;
                     }
                     else    {
-                        address = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        addressP2PKH = privKeyReader.getKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        Log.d("SweepUtil", "address derived P2PKH:" + addressP2PKH);
+                        addressP2SH_P2WPKH = addressP2SH_P2WPKH = new SegwitAddress(privKeyReader.getKey(), SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressAsString();
+                        Log.d("SweepUtil", "address derived P2SH_P2WPKH:" + addressP2SH_P2WPKH);
+
+                        utxoP2PKH = APIFactory.getInstance(context).getUnspentOutputsForSweep(addressP2PKH);
+                        utxoP2SH_P2WPKH = APIFactory.getInstance(context).getUnspentOutputsForSweep(addressP2SH_P2WPKH);
+
+                        utxo = utxoP2PKH;
+                        address = addressP2PKH;
                     }
 
-                    UTXO utxo = APIFactory.getInstance(context).getUnspentOutputsForSweep(address);
                     if(utxo != null)    {
 
                         long total_value = 0L;
