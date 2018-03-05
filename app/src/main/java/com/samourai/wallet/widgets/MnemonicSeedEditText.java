@@ -16,8 +16,8 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,9 +32,9 @@ import java.util.List;
 /**
  * Created by Sarath kumar on 1/23/2018.
  */
-public class MnemonicSeedEditText extends EditText {
+public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
     TextWatcher textWatcher;
-
+    private static final String TAG = "MnemonicSeedEditText";
     String lastString;
 
     String separator = " ";
@@ -66,22 +66,18 @@ public class MnemonicSeedEditText extends EditText {
         requestFocus();
         textWatcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
                 String thisString = s.toString();
-                if (thisString.length() > 0 && !thisString.equals(lastString)) {
+                 if (thisString.length() > 0 && !thisString.equals(lastString)) {
                     format();
                 }
             }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         };
         addTextChangedListener(textWatcher);
 
@@ -124,9 +120,6 @@ public class MnemonicSeedEditText extends EditText {
                 Toast.makeText(context, R.string.invalid_mnemonic_word, Toast.LENGTH_SHORT).show();
                 break;
             }
-            else    {
-                ;
-            }
 
             BitmapDrawable bd = convertViewToDrawable(createTokenView(string));
             bd.setBounds(0, 0, bd.getIntrinsicWidth(), bd.getIntrinsicHeight());
@@ -143,7 +136,7 @@ public class MnemonicSeedEditText extends EditText {
         }
         lastString = sb.toString();
         setText(sb);
-        setSelection(sb.length());
+        setSelection(getText().length());
 
     }
 
@@ -195,4 +188,56 @@ public class MnemonicSeedEditText extends EditText {
         }
 
     }
+
+
+    /**
+     * Tokenizer class for handling autocomplete tokens
+     * SpaceTokenizer splits given text based white space character
+     * when user adds spaces we will show suggestions
+     */
+    public static class SpaceTokenizer implements MultiAutoCompleteTextView.Tokenizer {
+
+        Context mContext;
+
+        public SpaceTokenizer(Context context) {
+            mContext = context;
+        }
+
+        public int findTokenStart(CharSequence text, int cursor) {
+            int i = cursor;
+            while (i > 0 && text.charAt(i - 1) != ' ') {
+                i--;
+            }
+            while (i < cursor && text.charAt(i) == ' ') {
+                i++;
+            }
+            return i;
+        }
+
+        public int findTokenEnd(CharSequence text, int cursor) {
+            int i = cursor;
+            int len = text.length();
+            while (i < len) {
+                if (text.charAt(i) == ' ') {
+                    return i;
+                } else {
+                    i++;
+                }
+            }
+            return len;
+        }
+
+        public CharSequence terminateToken(CharSequence text) {
+            int i = text.length();
+            while (i > 0 && text.charAt(i - 1) == ' ') {
+                i--;
+            }
+            if (i > 0 && text.charAt(i - 1) == ' ') {
+                return text;
+            } else {
+                return text+" ";
+            }
+        }
+    }
+
 }

@@ -74,6 +74,10 @@ public class MainActivity2 extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // FOR DEVELOPMENT
+        startActivity(new Intent(this, RecoveryWordsActivity.class));
+        finish();
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         loadedBalanceFragment = false;

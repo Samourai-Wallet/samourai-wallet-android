@@ -222,6 +222,10 @@
             android:name=".LandingActivity"
             android:theme="@style/AppThemeLanding"
             ></activity>
+        <activity android:name=".RecoveryWordsActivity">
+
+        </activity>
+
     </application>
 
 </manifest>
