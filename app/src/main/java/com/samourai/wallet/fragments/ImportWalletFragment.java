@@ -15,14 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.widgets.MnemonicSeedEditText;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -40,7 +46,8 @@ public class ImportWalletFragment extends Fragment {
     private String mode = "mnemonic";
     private ViewSwitcher viewSwitcher;
     private String samouraiBackup = null;
-    private EditText passPhraseMnemonic, passPhraseBackup, mnemonicSeed;
+    private EditText passPhraseMnemonic, passPhraseBackup;
+    private MultiAutoCompleteTextView mnemonicSeed;
     private TextView lastUpdatedTextView, backupFileTextView;
     private LinearLayout passPhraseContainer;
     private File backUpFile;
@@ -113,7 +120,7 @@ public class ImportWalletFragment extends Fragment {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
             lastUpdatedTextView.setVisibility(View.GONE);
             if (clipboard.hasPrimaryClip()) {
-                String backup =  clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                String backup = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
                 backupFileTextView.setText(backup.trim());
                 samouraiBackup = backup.trim();
             }
@@ -121,13 +128,12 @@ public class ImportWalletFragment extends Fragment {
     };
 
     /**
-     *
      * @param requestCode
      * @param resultCode
      * @param data
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null && data.getData() != null && data.getData().getPath() != null)    {
+        if (data != null && data.getData() != null && data.getData().getPath() != null) {
             StringBuilder sb = new StringBuilder();
             backupFileTextView.setText(data.getData().getPath());
             try {
@@ -151,7 +157,7 @@ public class ImportWalletFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewSwitcher = (ViewSwitcher) view.findViewById(R.id.view_switcher_wallet_restore);
-        mnemonicSeed = (EditText) view.findViewById(R.id.mnemonic_code_edittext);
+        mnemonicSeed = (MultiAutoCompleteTextView) view.findViewById(R.id.mnemonic_code_edittext);
         passPhraseContainer = (LinearLayout) view.findViewById(R.id.passphrase_container);
         addPassphraseBtn = (Button) view.findViewById(R.id.add_bip39_password_btn);
         addPassphraseBtn.setOnClickListener(TogglePassphraseContainer);
@@ -164,6 +170,29 @@ public class ImportWalletFragment extends Fragment {
         pasteButton.setOnClickListener(PasteButtonClick);
         fileChooserButton.setOnClickListener(chooseFileClick);
         setMode();
+        setAutoCompleteText();
+    }
+
+    private void setAutoCompleteText() {
+        String BIP39_EN = null;
+        StringBuilder sb = new StringBuilder();
+        String mLine = null;
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getActivity().getAssets().open("BIP39/en.txt")));
+            mLine = reader.readLine();
+            while (mLine != null) {
+                sb.append("\n".concat(mLine));
+                mLine = reader.readLine();
+            }
+            reader.close();
+            BIP39_EN = sb.toString();
+            List<String> validWordList = Arrays.asList(BIP39_EN.split("\\n"));
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,validWordList);
+            mnemonicSeed.setTokenizer(new MnemonicSeedEditText.SpaceTokenizer(getActivity()));
+            mnemonicSeed.setAdapter(adapter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void RestoreFromBackUp() {
@@ -207,7 +236,6 @@ public class ImportWalletFragment extends Fragment {
     }
 
     private void RestoreFromMnemonicSeed() {
-        Log.i(TAG, "RestoreFromMnemonicSeed: " + lastUpdatedTextView.getVisibility());
         TextWatcher watcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
