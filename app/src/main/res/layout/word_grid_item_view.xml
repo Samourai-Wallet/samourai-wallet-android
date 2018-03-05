@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="160dp"
+    android:elevation="4dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/recovery_word_bg"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="1"
+        android:id="@+id/index_grid_item"
+        android:textAlignment="center"
+        android:textSize="11sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="70"
+        android:id="@+id/word_grid_item"
+        android:background="@drawable/recovery_word_number_bg"
+        android:padding="8dp"
+        android:text="satoshi"
+        android:textStyle="bold"
+        android:textSize="11sp" />
+</LinearLayout>

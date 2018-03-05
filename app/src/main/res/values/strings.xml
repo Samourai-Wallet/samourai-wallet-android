@@ -497,5 +497,8 @@
   <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
   <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
     <string name="enter_your_code_here">Enter your code here</string>
+    <string name="declaimer_recovery_words">I confirm that i have written the above word down and have stored them in a safe and secure location. i understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
+  <string name="return_to_wallet">Return to wallet</string>
+  <string name="caution_message_recovery_words">it is not safe to keep these words backed up on your computer or in th cloud. Write these words down on a piece of paper and keep it secret and secure</string>
 
 </resources>
