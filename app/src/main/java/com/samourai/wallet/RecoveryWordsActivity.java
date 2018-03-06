@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.TimeOutUtil;
 
 public class RecoveryWordsActivity extends Activity {
     private GridView recoveryWordsGrid;
@@ -26,15 +31,16 @@ public class RecoveryWordsActivity extends Activity {
         if (getActionBar() != null) {
             getActionBar().hide();
         }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         recoveryWordsGrid = (GridView) findViewById(R.id.grid_recovery_words);
         returnToWallet = (Button) findViewById(R.id.return_to_wallet);
         returnToWallet.setTextColor(Color.GRAY);
         returnToWallet.setAlpha(0.6f);
         returnToWallet.setClickable(false);
         desclaimerCheckbox = (CheckBox) findViewById(R.id.disclaimer_checkbox);
-//        SAMPLE WORDS
-        String recoveryWords = "wedding tube orphan quarter labor raven brick vicious satisfy choice success aerobic";
-        String words[] = recoveryWords.split(" ");
+        String recoveryWords = getIntent().getExtras().getString("BIP39_WORD_LIST");
+        assert recoveryWords != null;
+        String words[] = recoveryWords.trim().split(" ");
         RecoveryWordGridAdapter adapter = new RecoveryWordGridAdapter(this, words);
         recoveryWordsGrid.setAdapter(adapter);
 
@@ -44,10 +50,17 @@ public class RecoveryWordsActivity extends Activity {
                 returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
                 returnToWallet.setClickable(b);
                 returnToWallet.setAlpha(b ? 1 : 0.6f);
-
             }
         });
 
+        returnToWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AccessFactory.getInstance(RecoveryWordsActivity.this).setIsLoggedIn(true);
+                TimeOutUtil.getInstance().updatePin();
+                AppUtil.getInstance(RecoveryWordsActivity.this).restartApp();
+            }
+        });
     }
 
     private class RecoveryWordGridAdapter extends BaseAdapter {
@@ -78,7 +91,7 @@ public class RecoveryWordsActivity extends Activity {
             } else {
                 holder = (ViewHolder) convertview.getTag();
             }
-            holder.word.setText(this.mWords[position]);
+            holder.word.setText(this.mWords[position].trim());
             holder.number.setText(String.valueOf(position + 1));
             return convertview;
         }
