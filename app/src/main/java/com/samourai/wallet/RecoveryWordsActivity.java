@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.TimeOutUtil;
 
 public class RecoveryWordsActivity extends Activity {
     private GridView recoveryWordsGrid;
@@ -26,12 +31,16 @@ public class RecoveryWordsActivity extends Activity {
         if (getActionBar() != null) {
             getActionBar().hide();
         }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         recoveryWordsGrid = (GridView) findViewById(R.id.grid_recovery_words);
         returnToWallet = (Button) findViewById(R.id.return_to_wallet);
         returnToWallet.setTextColor(Color.GRAY);
+        returnToWallet.setAlpha(0.6f);
         returnToWallet.setClickable(false);
         desclaimerCheckbox = (CheckBox) findViewById(R.id.disclaimer_checkbox);
-        String words[] = {"machine", "marine", "mountain", "document", "mom"};
+        String recoveryWords = getIntent().getExtras().getString("BIP39_WORD_LIST");
+        assert recoveryWords != null;
+        String words[] = recoveryWords.trim().split(" ");
         RecoveryWordGridAdapter adapter = new RecoveryWordGridAdapter(this, words);
         recoveryWordsGrid.setAdapter(adapter);
 
@@ -40,9 +49,18 @@ public class RecoveryWordsActivity extends Activity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
                 returnToWallet.setClickable(b);
+                returnToWallet.setAlpha(b ? 1 : 0.6f);
             }
         });
 
+        returnToWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AccessFactory.getInstance(RecoveryWordsActivity.this).setIsLoggedIn(true);
+                TimeOutUtil.getInstance().updatePin();
+                AppUtil.getInstance(RecoveryWordsActivity.this).restartApp();
+            }
+        });
     }
 
     private class RecoveryWordGridAdapter extends BaseAdapter {
@@ -50,18 +68,15 @@ public class RecoveryWordsActivity extends Activity {
         private Context mContext;
         private String mWords[];
 
-        // 1
         RecoveryWordGridAdapter(Context context, String words[]) {
             this.mContext = context;
             this.mWords = words;
         }
 
-        // 2
         @Override
         public int getCount() {
             return this.mWords.length;
         }
-
 
         @Override
         public View getView(int position, View convertview, ViewGroup viewGroup) {
@@ -76,12 +91,11 @@ public class RecoveryWordsActivity extends Activity {
             } else {
                 holder = (ViewHolder) convertview.getTag();
             }
-            holder.word.setText(this.mWords[position]);
+            holder.word.setText(this.mWords[position].trim());
             holder.number.setText(String.valueOf(position + 1));
             return convertview;
         }
 
-        // 4
         @Override
         public Object getItem(int position) {
             return null;
@@ -95,7 +109,7 @@ public class RecoveryWordsActivity extends Activity {
 
     }
 
-    static class ViewHolder {
+    private static class ViewHolder {
         private TextView number;
         private TextView word;
     }

@@ -1,8 +1,6 @@
 package com.samourai.wallet;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -191,14 +189,13 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                     String[] s = data.split("\\s+");
 
                     if (!validWordList.contains(s[s.length - 1])) {
-                        Toast.makeText(this, "Invalid BIP39 word \"" + s[s.length - 1]  + "\"", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Invalid BIP39 word \"" + s[s.length - 1] + "\"", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    if(s.length >= 12 && s.length <= 24 && s.length % 3 == 0)    {
+                    if (s.length >= 12 && s.length <= 24 && s.length % 3 == 0) {
                         wallet_create_viewpager.setCurrentItem(count + 1);
-                    }
-                    else    {
+                    } else {
                         Toast.makeText(RestoreSeedWalletActivity.this, R.string.invalid_mnemonic, Toast.LENGTH_SHORT).show();
                     }
 
@@ -500,19 +497,11 @@ public class RestoreSeedWalletActivity extends FragmentActivity implements
                                 mle.printStackTrace();
                             }
 
-                            new AlertDialog.Builder(RestoreSeedWalletActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(getString(R.string.alpha_create_wallet) + "\n\n" + seed)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.alpha_create_confirm_backup, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                                            AccessFactory.getInstance(RestoreSeedWalletActivity.this).setIsLoggedIn(true);
-                                            TimeOutUtil.getInstance().updatePin();
-                                            AppUtil.getInstance(RestoreSeedWalletActivity.this).restartApp();
-
-                                        }
-                                    }).show();
+                            Intent intent = new Intent(RestoreSeedWalletActivity.this, RecoveryWordsActivity.class);
+                            intent.putExtra("BIP39_WORD_LIST", seed);
+                            startActivity(intent);
+                            finish();
 
                         } else {
                             AccessFactory.getInstance(RestoreSeedWalletActivity.this).setIsLoggedIn(true);
