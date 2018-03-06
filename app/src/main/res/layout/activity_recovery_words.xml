@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-     android:orientation="vertical">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="22dp"
             android:paddingRight="22dp"
-            android:paddingTop="32dp">
+            android:layout_marginTop="26dp">
 
             <ImageView
                 android:layout_width="38dp"
@@ -25,20 +25,21 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
                 android:orientation="vertical">
 
                 <TextView
                     style="@android:style/TextAppearance.WindowTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="RECOVERY WORDS"
+                    android:text="@string/recovery_words"
                     android:textAllCaps="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="These words are a backup of all the secret keys in your wallet" />
+                    android:text="@string/these_words_are"
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -46,18 +47,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
+            android:layout_marginTop="28dp"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingLeft="22dp"
-            android:paddingRight="22dp">
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
 
             <GridView
                 android:id="@+id/grid_recovery_words"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:horizontalSpacing="12dp"
+                android:layout_height="fill_parent"
+                android:horizontalSpacing="8dp"
                 android:numColumns="3"
+                android:paddingBottom="5dp"
                 android:verticalSpacing="18dp" />
 
             <TextView
@@ -65,9 +67,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="28dp"
                 android:layout_marginTop="28dp"
+                android:gravity=""
                 android:text="@string/caution_message_recovery_words"
                 android:textColor="#8b8c8f"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -116,13 +119,13 @@
             android:clickable="true"
             android:gravity="center"
             android:padding="14dp"
-            android:textSize="12dp"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:text="@string/return_to_wallet"
             android:textAllCaps="true"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-            android:textColor="@color/accent" />
+            android:textColor="@color/accent"
+            android:textSize="12dp" />
 
     </LinearLayout>
 

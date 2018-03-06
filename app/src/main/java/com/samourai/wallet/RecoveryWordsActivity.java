@@ -29,9 +29,12 @@ public class RecoveryWordsActivity extends Activity {
         recoveryWordsGrid = (GridView) findViewById(R.id.grid_recovery_words);
         returnToWallet = (Button) findViewById(R.id.return_to_wallet);
         returnToWallet.setTextColor(Color.GRAY);
+        returnToWallet.setAlpha(0.6f);
         returnToWallet.setClickable(false);
         desclaimerCheckbox = (CheckBox) findViewById(R.id.disclaimer_checkbox);
-        String words[] = {"machine", "marine", "mountain", "document", "mom"};
+//        SAMPLE WORDS
+        String recoveryWords = "wedding tube orphan quarter labor raven brick vicious satisfy choice success aerobic";
+        String words[] = recoveryWords.split(" ");
         RecoveryWordGridAdapter adapter = new RecoveryWordGridAdapter(this, words);
         recoveryWordsGrid.setAdapter(adapter);
 
@@ -40,6 +43,8 @@ public class RecoveryWordsActivity extends Activity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
                 returnToWallet.setClickable(b);
+                returnToWallet.setAlpha(b ? 1 : 0.6f);
+
             }
         });
 
@@ -50,18 +55,15 @@ public class RecoveryWordsActivity extends Activity {
         private Context mContext;
         private String mWords[];
 
-        // 1
         RecoveryWordGridAdapter(Context context, String words[]) {
             this.mContext = context;
             this.mWords = words;
         }
 
-        // 2
         @Override
         public int getCount() {
             return this.mWords.length;
         }
-
 
         @Override
         public View getView(int position, View convertview, ViewGroup viewGroup) {
@@ -81,7 +83,6 @@ public class RecoveryWordsActivity extends Activity {
             return convertview;
         }
 
-        // 4
         @Override
         public Object getItem(int position) {
             return null;
@@ -95,7 +96,7 @@ public class RecoveryWordsActivity extends Activity {
 
     }
 
-    static class ViewHolder {
+    private static class ViewHolder {
         private TextView number;
         private TextView word;
     }
