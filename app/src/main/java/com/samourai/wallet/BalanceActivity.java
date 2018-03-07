@@ -1634,14 +1634,12 @@ public class BalanceActivity extends Activity {
                 }
 
             }
-/*
+
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
                 try {
                     String[] s = HD_WalletFactory.getInstance(BalanceActivity.this).get().getXPUBs();
-                    for(int i = 0; i < s.length; i++)   {
-                        APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
-                    }
+                    APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
                 }
                 catch(IOException | MnemonicException.MnemonicLengthException e) {
                     ;
@@ -1650,9 +1648,9 @@ public class BalanceActivity extends Activity {
             }
 
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
-                ;
+                String ypub = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).ypubstr();
+                APIFactory.getInstance(BalanceActivity.this).lockXPUB(ypub, true);
             }
-*/
 
             return "OK";
         }

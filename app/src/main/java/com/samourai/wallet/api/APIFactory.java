@@ -18,6 +18,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -415,7 +416,7 @@ public class APIFactory	{
 
     }
 
-    public synchronized JSONObject deleteXPUB(String xpub) {
+    public synchronized JSONObject deleteXPUB(String xpub, boolean bip49) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -426,22 +427,35 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
-                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
-                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+
+                HD_Address addr = null;
+                if(bip49)    {
+                    addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                }
+                else    {
+                    addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                }
                 ecKey = addr.getECKey();
 
                 if(ecKey != null && ecKey.hasPrivKey())    {
 
                     String sig = ecKey.signMessage(xpub);
+                    String address = null;
+                    if(bip49)    {
+                        SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        address = segwitAddress.getAddressAsString();
+                    }
+                    else    {
+                        address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
                         StringBuilder args = new StringBuilder();
                         args.append("message=");
                         args.append(xpub);
                         args.append("address=");
-                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.append(address);
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
@@ -451,7 +465,7 @@ public class APIFactory	{
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
                         args.put("message", xpub);
-                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.put("address", address);
                         args.put("signature", Uri.encode(sig));
                         Log.i("APIFactory", "delete XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
@@ -494,53 +508,49 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
-                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
-                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+
+                HD_Address addr = null;
+                if(bip49)    {
+                    addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                }
+                else    {
+                    addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                }
                 ecKey = addr.getECKey();
 
                 if(ecKey != null && ecKey.hasPrivKey())    {
 
-                    String sig = ecKey.signMessage(xpub);
+                    String sig = ecKey.signMessage("lock");
+                    String address = null;
+                    if(bip49)    {
+                        SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        address = segwitAddress.getAddressAsString();
+                    }
+                    else    {
+                        address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
                         StringBuilder args = new StringBuilder();
                         args.append("address=");
-                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.append(address);
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         args.append("&message=");
                         args.append("lock");
-                        args.append("&type=");
-                        args.append("restore");
-                        if(bip49)    {
-                            args.append("&segwit=");
-                            args.append("bip49");
-                        }
-                        else    {
-                            args.append("&xpub=");
-                            args.append("bip44");
-                        }
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
-                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.put("address", address);
                         args.put("signature", Uri.encode(sig));
                         args.put("message", "lock");
-                        args.put("type", "restore");
-                        if(bip49)    {
-                            args.put("segwit", "bip49");
-                        }
-                        else    {
-                            args.put("xpub", "bip44");
-                        }
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
