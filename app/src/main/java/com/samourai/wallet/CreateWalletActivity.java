@@ -1,9 +1,8 @@
 package com.samourai.wallet;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
@@ -392,19 +391,10 @@ public class CreateWalletActivity extends FragmentActivity implements
                                 mle.printStackTrace();
                             }
 
-                            new AlertDialog.Builder(CreateWalletActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(getString(R.string.alpha_create_wallet) + "\n\n" + seed)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.alpha_create_confirm_backup, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            AccessFactory.getInstance(CreateWalletActivity.this).setIsLoggedIn(true);
-                                            TimeOutUtil.getInstance().updatePin();
-                                            AppUtil.getInstance(CreateWalletActivity.this).restartApp();
-
-                                        }
-                                    }).show();
+                            Intent intent = new Intent(CreateWalletActivity.this,  RecoveryWordsActivity.class);
+                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            startActivity(intent);
+                            finish();
 
                         } else {
                             AccessFactory.getInstance(CreateWalletActivity.this).setIsLoggedIn(true);

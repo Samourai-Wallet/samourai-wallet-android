@@ -482,19 +482,10 @@ public class PinEntryActivity extends Activity {
                                 mle.printStackTrace();
                             }
 
-                            new AlertDialog.Builder(PinEntryActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(getString(R.string.alpha_create_wallet) + "\n\n" + seed)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.alpha_create_confirm_backup, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
-                                            TimeOutUtil.getInstance().updatePin();
-                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
-
-                                        }
-                                    }).show();
+                            Intent intent = new Intent(PinEntryActivity.this,  RecoveryWordsActivity.class);
+                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            startActivity(intent);
+                            finish();
 
                         } else {
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
