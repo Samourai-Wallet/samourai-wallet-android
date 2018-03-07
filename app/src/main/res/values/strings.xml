@@ -458,7 +458,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
     <string name="help">Help</string>
 
-    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase</string>
+    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
     <string name="confirm_pin_code">Confirm pin code</string>
     <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
     <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
@@ -478,7 +478,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_bip39_password">Add bip39 password</string>
     <string name="close_bip39_password">Close bip39 password</string>
-    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
     <string name="last_updated">Last updated</string>
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
