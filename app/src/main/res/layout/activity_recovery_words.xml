@@ -116,7 +116,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
             android:gravity="center"
             android:padding="14dp"
             android:paddingBottom="12dp"

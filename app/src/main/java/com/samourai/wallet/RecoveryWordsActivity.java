@@ -40,12 +40,13 @@ public class RecoveryWordsActivity extends Activity {
         String words[] = recoveryWords.trim().split(" ");
         RecoveryWordGridAdapter adapter = new RecoveryWordGridAdapter(this, words);
         recoveryWordsGrid.setAdapter(adapter);
-
         desclaimerCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
                 returnToWallet.setAlpha(b ? 1 : 0.6f);
+                returnToWallet.setClickable(b);
+                returnToWallet.setFocusable(b);
             }
         });
 
@@ -57,6 +58,10 @@ public class RecoveryWordsActivity extends Activity {
                 AppUtil.getInstance(RecoveryWordsActivity.this).restartApp();
             }
         });
+        returnToWallet.setTextColor(Color.GRAY);
+        returnToWallet.setAlpha(0.6f);
+        returnToWallet.setClickable(false);
+        returnToWallet.setFocusable(false);
     }
 
     private class RecoveryWordGridAdapter extends BaseAdapter {
