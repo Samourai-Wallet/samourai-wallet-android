@@ -36,7 +36,7 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
     TextWatcher textWatcher;
     private static final String TAG = "MnemonicSeedEditText";
     String lastString;
-
+    int counter = 0;
     String separator = " ";
 
     private Context context = null;
@@ -62,22 +62,37 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
     private void init() {
         setMovementMethod(LinkMovementMethod.getInstance());
         setSelection(0);
+        setThreshold(2);
         setCursorVisible(true);
         requestFocus();
         textWatcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String thisString = s.toString();
-                 if (thisString.length() > 0 && !thisString.equals(lastString)) {
+                if (thisString.length() > 0 && !thisString.equals(lastString)) {
                     format();
                 }
+//                To control drop down
+                if (thisString.length() != 0) {
+                    String[] arr = thisString.split(" ");
+                    String lastItem = arr[arr.length - 1];
+                    if(lastItem.length() > 1 && lastItem.length() <= 4){
+                        MnemonicSeedEditText.this.showDropDown();
+                    }else {
+                        MnemonicSeedEditText.this.dismissDropDown();
+                    }
+                }
+
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+//                MnemonicSeedEditText.this.showDropDown();
+            }
         };
         addTextChangedListener(textWatcher);
 
@@ -111,16 +126,13 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
 
         for (int i = 0; i < strings.length; i++) {
             String string = strings[i];
-
             sb.append(string.replace("\n", ""));
             if (fullString.charAt(fullString.length() - 1) != separator.charAt(0) && i == strings.length - 1) {
                 break;
-            }
-            else if(!validWordList.contains(string.trim()))    {
+            } else if (!validWordList.contains(string.trim())) {
                 Toast.makeText(context, R.string.invalid_mnemonic_word, Toast.LENGTH_SHORT).show();
                 break;
             }
-
             BitmapDrawable bd = convertViewToDrawable(createTokenView(string));
             bd.setBounds(0, 0, bd.getIntrinsicWidth(), bd.getIntrinsicHeight());
             int startIdx = sb.length() - (string.length());
@@ -152,6 +164,7 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
         tv.setTextColor(Color.WHITE);
         return layout;
     }
+
 
     public BitmapDrawable convertViewToDrawable(View view) {
         int spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -235,7 +248,7 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
             if (i > 0 && text.charAt(i - 1) == ' ') {
                 return text;
             } else {
-                return text+" ";
+                return text + " ";
             }
         }
     }
