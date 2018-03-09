@@ -129,6 +129,14 @@ public class CreateWalletActivity extends FragmentActivity implements
                     Toast.makeText(this, R.string.bip39_unmatch, Toast.LENGTH_SHORT).show();
                     break;
                 }
+                if (passPhrase39.contains(" ")) {
+                    Toast.makeText(this, R.string.bip39_invalid, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                if (passPhrase39.length() == 0) {
+                    Toast.makeText(this, R.string.bip39_empty, Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 if (!checkedDisclaimer) {
                     Toast.makeText(this, R.string.accept_disclaimer_error, Toast.LENGTH_SHORT).show();
                     break;

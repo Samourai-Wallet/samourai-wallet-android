@@ -130,6 +130,7 @@
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
     <string name="bip39_unmatch">Passphrase does not match. Please try again.</string>
     <string name="bip39_invalid">Do not use any space characters in your passphrase. Please try again.</string>
+    <string name="bip39_empty">You must define a passphrase.</string>
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
