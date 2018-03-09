@@ -34,9 +34,6 @@ public class RecoveryWordsActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         recoveryWordsGrid = (GridView) findViewById(R.id.grid_recovery_words);
         returnToWallet = (Button) findViewById(R.id.return_to_wallet);
-        returnToWallet.setTextColor(Color.GRAY);
-        returnToWallet.setAlpha(0.6f);
-        returnToWallet.setClickable(false);
         desclaimerCheckbox = (CheckBox) findViewById(R.id.disclaimer_checkbox);
         String recoveryWords = getIntent().getExtras().getString("BIP39_WORD_LIST");
         assert recoveryWords != null;
@@ -48,7 +45,6 @@ public class RecoveryWordsActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 returnToWallet.setTextColor(b ? getResources().getColor(R.color.accent) : Color.GRAY);
-                returnToWallet.setClickable(b);
                 returnToWallet.setAlpha(b ? 1 : 0.6f);
             }
         });
