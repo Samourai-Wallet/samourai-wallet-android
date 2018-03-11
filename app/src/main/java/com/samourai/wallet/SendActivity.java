@@ -1178,10 +1178,12 @@ public class SendActivity extends Activity {
                                                     SendAddressUtil.getInstance().add(address, true);
                                                 }
 
-                                                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                                intent.putExtra("notifTx", false);
-                                                intent.putExtra("fetch", true);
-                                                LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                                                if(_change == 0L)    {
+                                                    Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                                                    intent.putExtra("notifTx", false);
+                                                    intent.putExtra("fetch", true);
+                                                    LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                                                }
 
                                                 View view = SendActivity.this.getCurrentFocus();
                                                 if (view != null) {
