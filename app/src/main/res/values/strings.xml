@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="version_name">0.98.01</string>
-
   <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
