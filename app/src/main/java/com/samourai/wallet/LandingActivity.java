@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.widget.PopupMenu;
@@ -180,6 +181,14 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
                 startActivity(intent);
                 return false;
             }
+            case R.id.get_help_menu_create: {
+                doSupportCreate();
+                return false;
+            }
+            case R.id.get_help_menu_restore: {
+                doSupportRestore();
+                return false;
+            }
             default: {
                 return false;
             }
@@ -246,6 +255,16 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
 
             }
         }).start();
+    }
+
+    private void doSupportCreate()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/section/1-starting-a-new-wallet"));
+        startActivity(intent);
+    }
+
+    private void doSupportRestore()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/category/3-restore-recovery"));
+        startActivity(intent);
     }
 
 }

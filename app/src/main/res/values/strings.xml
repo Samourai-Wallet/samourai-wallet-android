@@ -485,6 +485,8 @@
     <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
+  <string name="get_help_create">Create wallet: Get help</string>
+  <string name="get_help_restore">Restore wallet: Get help</string>
 
   <string name="fee">Miner fee</string>
     <string name="fee_low_priority">Low priority: estimated 24</string>
