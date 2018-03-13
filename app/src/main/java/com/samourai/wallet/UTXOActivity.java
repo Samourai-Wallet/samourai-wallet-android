@@ -263,9 +263,9 @@ public class UTXOActivity extends Activity {
                                 if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
                                     sel = 0;
                                 }
-                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
+                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).addr));
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).hash));
                                 startActivity(browserIntent);
                             }
 

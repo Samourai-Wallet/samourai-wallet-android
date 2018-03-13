@@ -12,18 +12,14 @@ import android.os.Vibrator;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.crypto.MnemonicException;
-
-import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.access.ScrambledPin;
 import com.samourai.wallet.crypto.AESUtil;
@@ -38,6 +34,8 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -484,19 +482,10 @@ public class PinEntryActivity extends Activity {
                                 mle.printStackTrace();
                             }
 
-                            new AlertDialog.Builder(PinEntryActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(getString(R.string.alpha_create_wallet) + "\n\n" + seed)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.alpha_create_confirm_backup, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
-                                            TimeOutUtil.getInstance().updatePin();
-                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
-
-                                        }
-                                    }).show();
+                            Intent intent = new Intent(PinEntryActivity.this,  RecoveryWordsActivity.class);
+                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            startActivity(intent);
+                            finish();
 
                         } else {
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);

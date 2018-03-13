@@ -17,6 +17,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
@@ -69,8 +70,10 @@ public class AppUtil {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             String[] s = hdw.getXPUBs();
             for(int i = 0; i < s.length; i++)   {
-                APIFactory.getInstance(context).deleteXPUB(s[i]);
+                APIFactory.getInstance(context).deleteXPUB(s[i], false);
             }
+            String _s = BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr();
+            APIFactory.getInstance(context).deleteXPUB(_s, true);
             PayloadUtil.getInstance(context).wipe();
         }
         catch(Exception e) {

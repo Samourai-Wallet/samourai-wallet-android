@@ -90,7 +90,13 @@ public class PayloadUtil	{
 
     public File getBackupFile()  {
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         File file = new File(dir, strOptionalFilename);
 
         return file;
@@ -256,6 +262,8 @@ public class PayloadUtil	{
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
+            meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
+            meta.put("xpublock49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49LOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
 
@@ -512,6 +520,12 @@ public class PayloadUtil	{
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
                 }
+                if(meta.has("xpublock44")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, meta.getBoolean("xpublock44"));
+                }
+                if(meta.has("xpublock49")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, meta.getBoolean("xpublock49"));
+                }
                 if(meta.has("paynym_claimed")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));
                 }
@@ -724,7 +738,13 @@ public class PayloadUtil	{
     private synchronized void serialize(String data) throws IOException    {
 
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         if(!dir.exists())   {
             dir.mkdirs();
             dir.setWritable(true, true);

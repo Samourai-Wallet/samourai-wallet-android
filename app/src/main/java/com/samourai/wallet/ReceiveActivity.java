@@ -503,11 +503,19 @@ public class ReceiveActivity extends Activity {
             }
 
         }
+        else if (id == R.id.action_support) {
+            doSupport();
+        }
         else {
             ;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/7-receiving-bitcoin"));
+        startActivity(intent);
     }
 
     private void displayQRCode() {

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.36</string>
-    <string name="app_name">Samourai</string>
-
-    <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
+  <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
     <string name="creating_wallet">Creating wallet. Please wait...</string>
@@ -131,6 +128,7 @@
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
     <string name="bip39_unmatch">Passphrase does not match. Please try again.</string>
     <string name="bip39_invalid">Do not use any space characters in your passphrase. Please try again.</string>
+    <string name="bip39_empty">You must define a passphrase.</string>
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
@@ -459,11 +457,51 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
     <string name="help">Help</string>
 
-    <string name="fee">Miner fee</string>
+    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
+    <string name="confirm_pin_code">Confirm pin code</string>
+    <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
+    <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
+    <string name="create_a_passphrase">Create a passphrase</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
+    <string name="set_pin_code">Set Pin code</string>
+    <string name="accept_disclaimer_error">You need to accept disclaimer</string>
+    <string name="import_external_wallet">Import external wallet</string>
+    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="backup_file">Backup file</string>
+    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
+    <string name="back">BACK</string>
+    <string name="finish">finish</string>
+    <string name="choose_file">choose file</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Add bip39 password</string>
+    <string name="close_bip39_password">Close bip39 password</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
+    <string name="last_updated">Last updated</string>
+    <string name="get_help">Get help</string>
+    <string name="offline_mode">Offline mode</string>
+    <string name="import_samourai_backup">Import Samourai backup</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
+    <string name="start_new_wallet">Start new wallet</string>
+  <string name="get_help_create">Create wallet: Get help</string>
+  <string name="get_help_restore">Restore wallet: Get help</string>
+
+  <string name="fee">Miner fee</string>
     <string name="fee_low_priority">Low priority: estimated 24</string>
     <string name="fee_mid_priority">Normal priority: estimated 6</string>
     <string name="fee_high_priority">High priority: estimated 2</string>
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocks before confirmation</string>
+
+  <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
+  <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
+    <string name="enter_your_code_here">Enter your code here</string>
+    <string name="declaimer_recovery_words">I confirm that i have written the above word down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
+  <string name="return_to_wallet">Return to wallet</string>
+  <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
+    <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
+  <string name="recovery_words">RECOVERY WORDS</string>
 
 </resources>

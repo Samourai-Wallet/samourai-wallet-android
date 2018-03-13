@@ -493,66 +493,9 @@ public class BalanceActivity extends Activity {
 
         refreshTx(notifTx, fetch, false, true);
 
-        //
-        // user checks mnemonic & passphrase
-        //
-        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CREDS_CHECK, 0L) == 0L)    {
-
-            AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                    .setTitle(R.string.recovery_checkup)
-                    .setMessage(BalanceActivity.this.getText(R.string.recovery_checkup_message))
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            dialog.dismiss();
-
-                            try {
-                                final String seed = HD_WalletFactory.getInstance(BalanceActivity.this).get().getMnemonic();
-                                final String passphrase = HD_WalletFactory.getInstance(BalanceActivity.this).get().getPassphrase();
-
-                                final String message = BalanceActivity.this.getText(R.string.mnemonic) + ":<br><br><b>" + seed + "</b><br><br>" +
-                                        BalanceActivity.this.getText(R.string.passphrase) + ":<br><br><b>" + passphrase + "</b>";
-
-                                AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                                        .setTitle(R.string.recovery_checkup)
-                                        .setMessage(Html.fromHtml(message))
-                                        .setCancelable(false)
-                                        .setPositiveButton(R.string.recovery_checkup_finish, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                dialog.dismiss();
-
-                                                PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.CREDS_CHECK, System.currentTimeMillis() / 1000L);
-
-                                                if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-                                                        PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
-                                                    doClaimPayNym();
-                                                }
-
-                                            }
-                                        });
-                                if(!isFinishing())    {
-                                    dlg.show();
-                                }
-
-                            }
-                            catch(IOException | MnemonicException.MnemonicLengthException e) {
-                                Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    });
-            if(!isFinishing())    {
-                dlg.show();
-            }
-
-        }
-        else    {
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-                    PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
-                doClaimPayNym();
-            }
+        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
+            doClaimPayNym();
         }
 
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
@@ -1634,14 +1577,12 @@ public class BalanceActivity extends Activity {
                 }
 
             }
-/*
+
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
                 try {
                     String[] s = HD_WalletFactory.getInstance(BalanceActivity.this).get().getXPUBs();
-                    for(int i = 0; i < s.length; i++)   {
-                        APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
-                    }
+                    APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
                 }
                 catch(IOException | MnemonicException.MnemonicLengthException e) {
                     ;
@@ -1650,9 +1591,9 @@ public class BalanceActivity extends Activity {
             }
 
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
-                ;
+                String ypub = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).ypubstr();
+                APIFactory.getInstance(BalanceActivity.this).lockXPUB(ypub, true);
             }
-*/
 
             return "OK";
         }

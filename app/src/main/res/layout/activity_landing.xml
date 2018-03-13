@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.LandingActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/menu_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginRight="8dp"
+                android:background="@null"
+                android:onClick="showPopup"
+                android:src="@drawable/ic_more_vert_white_24dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:src="@drawable/ic_samourai_logo_trans2x" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/samourai_bitcoin_wallet"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/version_text_view"
+                    android:layout_width="212dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="end" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginTop="8dp"
+            >
+
+            <Button
+                android:id="@+id/button_create_new_wallet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_button_shape"
+                android:drawableRight="@drawable/ic_navigate_next_white_24dp"
+                android:paddingBottom="18dp"
+                android:paddingRight="25dp"
+                android:paddingTop="18dp"
+                android:text="@string/start_new_wallet"
+                android:textColor="#FFFFFF"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="55dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:visibility="gone"
+        android:id="@+id/snackbar_landing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#323232"
+        android:elevation="5dp"
+        >
+        <TextView
+            android:layout_width="274dp"
+            android:padding="14dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:gravity="center_vertical"
+            android:text="Encrypted backup detected" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:clickable="true"
+            android:padding="14dp"
+            android:id="@+id/restore_textview"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="RESTORE"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+            android:textColor="@color/accent" />
+    </FrameLayout>
+</FrameLayout>

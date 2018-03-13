@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="version_name">0.97.30</string>
-    <string name="app_name">Samourai</string>
-
     <string name="alpha_create_wallet">Anote essas palavras e as mantenha seguras. Não perca essas palavras ou esqueça sua senha.</string>
     <string name="alpha_create_confirm_backup">Eu anotei minhas palavras</string>
 
@@ -12,6 +9,7 @@
     <string name="decrypting_bip38">Desencriptando senha BIP38. Por favor aguarde...</string>
 
     <string name="action_settings">Configurações</string>
+	<string name="action_support">Suporte</string>
     <string name="action_sweep">Varrer chave privada</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Ativar todos os códigos de pagamento arquivados.</string>
@@ -106,6 +104,7 @@
     <string name="receive">Receber</string>
     <string name="cannot_select_utxo">Não é possível selecionar saídas não gastas</string>
     <string name="error_bip126_output">Erro determinando endereço de saída</string>
+	<string name="error_change_output">Erro determinando endereço de troco</string>
 
     <string name="copied_to_clipboard">Copiado para a área de transferência</string>
     <string name="send_payment_code">Enviar código de pagamento</string>
@@ -120,7 +119,7 @@
     <string name="pin_5_8">Criar um código PIN contendo entre 5 e 8 caracteres.</string>
     <string name="pin_5_8_confirm">Confirmar código PIN</string>
     <string name="pin_error">Erro de código PIN</string>
-    <string name="no_internet">Sem conectividade com a Internet. Pro favor tente novamente.</string>
+    <string name="no_internet">Sem conectividade com a Internet. Por favor tente novamente.</string>
     <string name="bip38_pw">Senha BIP38</string>
     <string name="bip38_pw_error">Erro de senha BIP38</string>
     <string name="bip39_safe">Por favor crie uma senha e a mantenha em segredo. Você precisará dessa senha caso perca acesso à sua carteira.</string>
@@ -160,6 +159,7 @@
     <string name="insufficient_funds">Fundos insuficientes</string>
     <string name="tx_length_error">A Samourai não trabalha com transações de mais de 100KB. Por favor tente dividir sua transação.</string>
     <string name="invalid_amount">Quantia inválida</string>
+	<string name="amount">Quantia</string>
 
     <string name="receive_address_to_clipboard">Copiar este endereço de recebimento para a área de transferência? Se copiado, ele pode ficar visível para outros aplicativos.</string>
     <string name="receive_address_to_share">Compartilhar este endereço de recebimento? Caso compartilhado, ele pode ser lido por outros aplicativos.</string>
@@ -175,7 +175,7 @@
 
     <string name="you_must_have_orbot">Você deve ter o Orbot instalado e ativado para direcionar tráfego através dele. Você gostaria de instalar o aplicativo através da Google Play?</string>
 
-    <string name="ssl_pinning_invalid">O pinning do certificado SSL falhou. Isso pode inidicar atividade maliciosa. Por favor verifique sua conexão e seu dispositivo antes de continuar.</string>
+    <string name="ssl_pinning_invalid">O pinning do certificado SSL falhou. Isso pode indicar atividade maliciosa. Por favor verifique sua conexão e seu dispositivo antes de continuar.</string>
     <string name="ssl_no_connection">Nós não fomos capazes de nos conectar ao host para verificar o certificado SSL. Por favor verifique sua conexão e dispositivo antes de continuar.</string>
     <string name="retry">Tentar novamente</string>
     <string name="exit">Sair</string>
@@ -185,7 +185,7 @@
 
     <string name="auto_fee">TAXA NORMAL</string>
     <string name="priority_fee">TAXA PRIORITÁRIA</string>
-    <string name="low_fee">TAIXA BAIXA</string>
+    <string name="low_fee">TAXA BAIXA</string>
     <string name="custom_fee">Personalizada</string>
     <string name="sat_b">sat/b</string>
 
@@ -194,7 +194,7 @@
 
     <string name="max_available">Máx. disponível:</string>
 
-    <string name="first_use_shuffle">Essa é sua Conta Shifted. A This is your Shifted Account. O Bitcoin recebido através do ShapeShift será armazenado nessa conta que não compartilha do mesmo espaço de endereços que sua carteira primária.</string>
+    <string name="first_use_shuffle">Essa é sua Conta Shifted. O Bitcoin recebido através do ShapeShift será armazenado nessa conta que não compartilha do mesmo espaço de endereços que sua carteira primária.</string>
 
     <string name="select_account">Selecionar conta</string>
     <string name="received_bitcoin">Bitcoin recebido</string>
@@ -270,7 +270,7 @@
 
     <string name="tor_routing_on">Samourai está roteando através do Tor.</string>
     <string name="tor_routing_off">Samourai não está roteando através do Tor. Pressione para ativar.</string>
-    <string name="tor_install">Pressione para instsalar o Orbot e rotear a Samourai através do Tor.</string>
+    <string name="tor_install">Pressione para instalar o Orbot e rotear a Samourai através do Tor.</string>
 
     <string name="premium_addons">Addons Premium</string>
 
@@ -278,7 +278,7 @@
     <string name="ricochet_hopping">Ricocheteado para</string>
     <string name="ricochet_spend1">Gasto Ricochet para</string>
     <string name="ricochet_spend2">totalizando</string>
-    <string name="ricochet_spend3">(inclui taxa de 0.001 BTC para Samourai and taxas de mineração)?</string>
+    <string name="ricochet_spend3">(inclui taxa de 0.001 BTC para Samourai e taxas de mineração)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Esvaziar fila Ricochet</string>
@@ -331,7 +331,7 @@
     <string name="current_fee_selection">Sua seleção de taxa está configurada para:</string>
     <string name="current_hi_fee_value">Taxa alta atual:</string>
     <string name="current_mid_fee_value">Taxa normal atual:</string>
-    <string name="current_lo_fee_value">Taxa baita atual:</string>
+    <string name="current_lo_fee_value">Taxa baixa atual:</string>
     <string name="slash_sat">sat/b</string>
     <string name="set_sat">Selecione sua taxa personalizada em sat/b.</string>
     <string name="custom_fee_too_low">Taxa personalizada selecionada está baixa demais.</string>
@@ -400,7 +400,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Endereço Segwit</string>
-    <string name="segwit_switch_prompt">Fundos depositados em endereços Segwit são mais eficientes para se transacionar. Oferecendo taxas de mineradores reduzidas quando envia-se bitcoin de sua carteira.</string>
+    <string name="segwit_switch_prompt">Fundos depositados em endereços Segwit são mais eficientes para se transacionar. Oferecendo taxas de mineradores reduzidas quando envia-se Bitcoin de sua carteira.</string>
 
     <string name="privkey_clipboard">Uma chave privada foi identificada na sua área de transferência. Deletar o conteúdo da área de transferência?</string>
 
@@ -427,6 +427,7 @@
     <string name="options_display_redeem_script">Exibir script de resgate</string>
     <string name="options_view_tx">Exibir transação</string>
     <string name="options_display_privkey">Exibir chave privada</string>
+	<string name="options_batch">Gastar em lote</string>
 
     <string name="do_not_repeat_sent_to">Marque a caixa para não avisar sobre envios repetidos para este endereço.</string>
 
@@ -434,14 +435,14 @@
 
     <string name="copy_to_clipboard">Copiar para área de transferência</string>
 
-    <string name="no_bitpay">Erro: Este não é um pedido válido de Bitcoin. A Samorai suporta apenas envios para endereços bitcoin válidos.</string>
+    <string name="no_bitpay">Erro: Este não é um pedido válido de Bitcoin. A Samourai suporta apenas envios para endereços Bitcoin válidos.</string>
     <string name="learn_more">Aprenda Mais</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Reinvidique sua paynym</string>
     <string name="claim_paynym_title1">Reinvidique sua PayNymID gratuita</string>
-    <string name="claim_paynym_text1">Autorize seus amigos &amp; contatos a encontrar e conectar em seu PayNym diretamente através de carteiras bitcoin compatíveis.</string>
+    <string name="claim_paynym_text1">Autorize seus amigos &amp; contatos a encontrar e conectar em seu PayNym diretamente através de carteiras Bitcoin compatíveis.</string>
     <string name="claim_paynym_title2">Benefícios de uma PayNymID</string>
     <string name="claim_paynym_text2a">Nome e imagem únicos gerados através de um hash de seu código paynym. Não haverão dois iguais nunca!</string>
     <string name="claim_paynym_text2b">Sem verificações de identidade. Seu nome e imagem são baseados em seu código paynim, não em um documento nacional de identidade.</string>

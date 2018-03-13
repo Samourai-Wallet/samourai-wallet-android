@@ -44,6 +44,10 @@ Samourai spends to bech32 addresses P2WPKH based on [original BIP](https://githu
 
 Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
 
+### Spending:
+
+Samourai spends include the possibility of including custom fees as well as the use of batch spending (build up a list of batched outputs for grouped spend and fee savings).
+
 ### Ricochet:
 
 Samourai implementation of multi-hop spend designed to outrun the baying pack of #KYCRunningDogs.

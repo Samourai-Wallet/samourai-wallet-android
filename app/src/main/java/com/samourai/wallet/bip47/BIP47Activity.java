@@ -558,6 +558,9 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_claim_paynym) {
             doClaimPayNym();
         }
+        else if(id == R.id.action_support) {
+            doSupport();
+        }
         else {
             ;
         }
@@ -567,6 +570,11 @@ public class BIP47Activity extends Activity {
 
     private void doClaimPayNym() {
         Intent intent = new Intent(BIP47Activity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/14-payment-codes"));
         startActivity(intent);
     }
 
