@@ -128,8 +128,6 @@ import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class BalanceActivity extends Activity {
 
-    private final static int READ_WRITE_EXTERNAL_PERMISSION_CODE = 0;
-
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
 
@@ -1613,10 +1611,6 @@ public class BalanceActivity extends Activity {
                 }
             }
 
-            if(!hasReadExternalStoragePermission() || !hasWriteExternalStoragePermission()) {
-                showRequestPermissionsInfoAlertDialog();
-            }
-
             List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
             for(UTXO utxo : utxos)   {
                 List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
@@ -2638,50 +2632,6 @@ public class BalanceActivity extends Activity {
 
             return tx;
         }
-
-    }
-
-    private void showRequestPermissionsInfoAlertDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.permission_alert_dialog_title_external);
-        builder.setMessage(R.string.permission_dialog_message_external);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                requestExternalStoragePermission();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
-
-    private boolean hasReadExternalStoragePermission() {
-        return ContextCompat.checkSelfPermission(BalanceActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasWriteExternalStoragePermission() {
-        return ContextCompat.checkSelfPermission(BalanceActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestExternalStoragePermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(BalanceActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) &&
-                ActivityCompat.shouldShowRequestPermissionRationale(BalanceActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                ) {
-            Log.d("BalanceActivity", "shouldShowRequestPermissionRationale(), no permission requested");
-            return;
-        }
-
-        ActivityCompat.requestPermissions(BalanceActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_WRITE_EXTERNAL_PERMISSION_CODE);
 
     }
 
