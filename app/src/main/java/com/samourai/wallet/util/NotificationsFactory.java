@@ -37,7 +37,7 @@ public class NotificationsFactory {
 
         Intent notifyIntent = new Intent(context, cls);
         PendingIntent intent = PendingIntent.getActivity(context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notifyDetails.setLatestEventInfo(context, title, text, intent);
+//        notifyDetails.setLatestEventInfo(context, title, text, intent);
         notifyDetails.flags |= Notification.FLAG_AUTO_CANCEL;
         notifyDetails.number = 0;
 //        notifyDetails.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.alert);

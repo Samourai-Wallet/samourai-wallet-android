@@ -1,21 +1,28 @@
 package com.samourai.wallet;
 
+import android.Manifest;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 import android.view.MenuItem;
 //import android.util.Log;
 
-import com.samourai.wallet.R;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.TimeOutUtil;
 
 public class SettingsActivity extends PreferenceActivity	{
+
+    private static final int SMS_PERMISSION_CODE = 0;
+    private static final int OUTGOING_CALL_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +57,15 @@ public class SettingsActivity extends PreferenceActivity	{
         Preference stealthPref = (Preference) findPreference("stealth");
         stealthPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
-                intent.putExtra("branch", "stealth");
-                startActivity(intent);
+
+                if(!hasProcessOutgoingCallPermission()) {
+                    showRequestPermissionsInfoAlertDialog(false);
+                }
+                else    {
+                    Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
+                    intent.putExtra("branch", "stealth");
+                    startActivity(intent);
+                }
                 return true;
             }
         });
@@ -64,9 +77,14 @@ public class SettingsActivity extends PreferenceActivity	{
         else    {
             remotePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
-                    intent.putExtra("branch", "remote");
-                    startActivity(intent);
+                    if(!hasSendSmsPermission() || !hasReceiveSmsPermission() || !hasReadPhoneStatePermission()) {
+                        showRequestPermissionsInfoAlertDialog(true);
+                    }
+                    else    {
+                        Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
+                        intent.putExtra("branch", "remote");
+                        startActivity(intent);
+                    }
                     return true;
                 }
             });
@@ -137,6 +155,87 @@ public class SettingsActivity extends PreferenceActivity	{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showRequestPermissionsInfoAlertDialog(final boolean smsPermission) {
+
+        String title = null;
+        String message = null;
+
+        if(smsPermission)    {
+            title = getResources().getString(R.string.permission_alert_dialog_title_sms);
+            message = getResources().getString(R.string.permission_dialog_message_sms);
+        }
+        else    {
+            title = getResources().getString(R.string.permission_alert_dialog_title_outgoing);
+            message = getResources().getString(R.string.permission_dialog_message_outgoing);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if(smsPermission)    {
+                    requestSmsPermission();
+                }
+                else    {
+                    requestProcessOutgoingCallPermission();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private boolean hasSendSmsPermission() {
+        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasReceiveSmsPermission() {
+        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasProcessOutgoingCallPermission() {
+        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean hasReadPhoneStatePermission() {
+        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestSmsPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.SEND_SMS) &&
+            ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.RECEIVE_SMS) &&
+            ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.READ_PHONE_STATE))
+            {
+            Log.d("SettingsActivity", "shouldShowRequestPermissionRationale(), no permission requested");
+            return;
+        }
+
+        ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_PHONE_STATE}, SMS_PERMISSION_CODE);
+
+    }
+
+    private void requestProcessOutgoingCallPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
+            Log.d("SettingsActivity", "shouldShowRequestPermissionRationale(), no permission requested");
+            return;
+        }
+
+        ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, OUTGOING_CALL_PERMISSION_CODE);
+
     }
 
 }
