@@ -21,6 +21,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
+import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AppUtil;
@@ -69,6 +70,32 @@ public class MainActivity2 extends Activity {
         }
     };
 
+    BackgroundManager.Listener bgListener = new BackgroundManager.Listener()  {
+
+        public void onBecameForeground()    {
+            ;
+        }
+
+        public void onBecameBackground()    {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        PayloadUtil.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
+                    }
+                    catch(Exception e) {
+                        ;
+                    }
+
+                }
+            }).start();
+
+        }
+
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +104,8 @@ public class MainActivity2 extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         loadedBalanceFragment = false;
+
+        BackgroundManager.get(MainActivity2.this).addListener(bgListener);
 
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
@@ -193,6 +222,8 @@ public class MainActivity2 extends Activity {
 
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
+
+        BackgroundManager.get(this).removeListener(bgListener);
 
         super.onDestroy();
     }
