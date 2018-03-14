@@ -509,4 +509,7 @@
   <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
   <string name="permission_dialog_message_outgoing">The app will now request your permission to process outgoing calls.</string>
 
+  <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
+  <string name="permission_dialog_message_external">The app will now request your permission to read/write your external storage.</string>
+
 </resources>
