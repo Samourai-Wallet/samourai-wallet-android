@@ -17,12 +17,10 @@ import android.util.Log;
 import android.view.MenuItem;
 //import android.util.Log;
 
+import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.util.AppUtil;
 
 public class SettingsActivity extends PreferenceActivity	{
-
-    private static final int SMS_PERMISSION_CODE = 0;
-    private static final int OUTGOING_CALL_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +56,8 @@ public class SettingsActivity extends PreferenceActivity	{
         stealthPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
 
-                if(!hasProcessOutgoingCallPermission()) {
-                    showRequestPermissionsInfoAlertDialog(false);
+                if(!PermissionsUtil.getInstance(SettingsActivity.this).hasPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)) {
+                    PermissionsUtil.getInstance(SettingsActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.OUTGOING_CALL_PERMISSION_CODE);
                 }
                 else    {
                     Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
@@ -77,8 +75,11 @@ public class SettingsActivity extends PreferenceActivity	{
         else    {
             remotePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    if(!hasSendSmsPermission() || !hasReceiveSmsPermission() || !hasReadPhoneStatePermission()) {
-                        showRequestPermissionsInfoAlertDialog(true);
+                    if(!PermissionsUtil.getInstance(SettingsActivity.this).hasPermission(Manifest.permission.SEND_SMS) ||
+                            !PermissionsUtil.getInstance(SettingsActivity.this).hasPermission(Manifest.permission.RECEIVE_SMS) ||
+                            !PermissionsUtil.getInstance(SettingsActivity.this).hasPermission(Manifest.permission.READ_PHONE_STATE)
+                            ) {
+                        PermissionsUtil.getInstance(SettingsActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.SMS_PERMISSION_CODE);
                     }
                     else    {
                         Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
@@ -155,87 +156,6 @@ public class SettingsActivity extends PreferenceActivity	{
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showRequestPermissionsInfoAlertDialog(final boolean smsPermission) {
-
-        String title = null;
-        String message = null;
-
-        if(smsPermission)    {
-            title = getResources().getString(R.string.permission_alert_dialog_title_sms);
-            message = getResources().getString(R.string.permission_dialog_message_sms);
-        }
-        else    {
-            title = getResources().getString(R.string.permission_alert_dialog_title_outgoing);
-            message = getResources().getString(R.string.permission_dialog_message_outgoing);
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if(smsPermission)    {
-                    requestSmsPermission();
-                }
-                else    {
-                    requestProcessOutgoingCallPermission();
-                }
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
-
-    private boolean hasSendSmsPermission() {
-        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasReceiveSmsPermission() {
-        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasProcessOutgoingCallPermission() {
-        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasReadPhoneStatePermission() {
-        return ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestSmsPermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.SEND_SMS) &&
-            ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.RECEIVE_SMS) &&
-            ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.READ_PHONE_STATE))
-            {
-            Log.d("SettingsActivity", "shouldShowRequestPermissionRationale(), no permission requested");
-            return;
-        }
-
-        ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_PHONE_STATE}, SMS_PERMISSION_CODE);
-
-    }
-
-    private void requestProcessOutgoingCallPermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(SettingsActivity.this, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
-            Log.d("SettingsActivity", "shouldShowRequestPermissionRationale(), no permission requested");
-            return;
-        }
-
-        ActivityCompat.requestPermissions(SettingsActivity.this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, OUTGOING_CALL_PERMISSION_CODE);
-
     }
 
 }

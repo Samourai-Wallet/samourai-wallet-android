@@ -36,6 +36,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -53,8 +54,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class LandingActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
-
-    private final static int READ_WRITE_EXTERNAL_PERMISSION_CODE = 0;
 
     private ProgressDialog progressDialog = null;
 
@@ -82,8 +81,8 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
         if (PayloadUtil.getInstance(this).getBackupFile().exists()) {
             snackBarView.setVisibility(View.VISIBLE);
         }
-        if(!hasReadExternalStoragePermission() || !hasWriteExternalStoragePermission()) {
-            showRequestPermissionsInfoAlertDialog();
+        if(!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
         }
 
     }
@@ -275,52 +274,6 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
     private void doSupportRestore()	{
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/category/3-restore-recovery"));
         startActivity(intent);
-    }
-
-    private void showRequestPermissionsInfoAlertDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.permission_alert_dialog_title_external);
-        builder.setMessage(R.string.permission_dialog_message_external);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                requestExternalStoragePermission();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        if(!isFinishing())    {
-            builder.show();
-        }
-
-    }
-
-    private boolean hasReadExternalStoragePermission() {
-        return ContextCompat.checkSelfPermission(LandingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean hasWriteExternalStoragePermission() {
-        return ContextCompat.checkSelfPermission(LandingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestExternalStoragePermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(LandingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) &&
-                ActivityCompat.shouldShowRequestPermissionRationale(LandingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                ) {
-            Log.d("LandingActivity", "shouldShowRequestPermissionRationale(), no permission requested");
-            return;
-        }
-
-        ActivityCompat.requestPermissions(LandingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_WRITE_EXTERNAL_PERMISSION_CODE);
-
     }
 
 }
