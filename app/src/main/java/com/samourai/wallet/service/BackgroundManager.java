@@ -35,15 +35,11 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
             instance = new BackgroundManager();
             Context appCtx = ctx.getApplicationContext();
             if (appCtx instanceof Application) {
-                init((Application)appCtx);
+                ((Application)appCtx).registerActivityLifecycleCallbacks(instance);
             }
 //            throw new IllegalStateException("BackgroundManager is not initialised and cannot obtain the Application object");
         }
         return instance;
-    }
-
-    private static void init(Application application){
-        application.registerActivityLifecycleCallbacks(instance);
     }
 
     public boolean isForeground(){
