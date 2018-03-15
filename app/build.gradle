@@ -52,9 +52,9 @@ android {
             applicationId 'com.samourai.wallet.staging'
             targetSdkVersion 21
             versionCode 95
-            versionName "0.98.15"
+            versionName "0.98.25"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.98.15"
+            resValue "string", "version_name", "0.98.25"
         }
     }
 }
