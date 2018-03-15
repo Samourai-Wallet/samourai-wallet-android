@@ -101,7 +101,7 @@ import java.util.List;
 import java.util.Locale;
 import java.text.DecimalFormatSymbols;
 
-import net.sourceforge.zbar.Symbol;
+import com.yanzhenjie.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.script.Script;

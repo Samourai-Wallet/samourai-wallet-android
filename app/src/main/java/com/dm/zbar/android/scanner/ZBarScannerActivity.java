@@ -9,11 +9,11 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
-import net.sourceforge.zbar.Config;
-import net.sourceforge.zbar.Image;
-import net.sourceforge.zbar.ImageScanner;
-import net.sourceforge.zbar.Symbol;
-import net.sourceforge.zbar.SymbolSet;
+import com.yanzhenjie.zbar.Config;
+import com.yanzhenjie.zbar.Image;
+import com.yanzhenjie.zbar.ImageScanner;
+import com.yanzhenjie.zbar.Symbol;
+import com.yanzhenjie.zbar.SymbolSet;
 
 public class ZBarScannerActivity extends Activity implements Camera.PreviewCallback, ZBarConstants {
 
