@@ -909,7 +909,7 @@ public class BalanceActivity extends Activity {
                                 }
 
                                 if(keyDecoded)    {
-                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr, false);
+                                    SweepUtil.getInstance(BalanceActivity.this).sweep(pvr, SweepUtil.TYPE_P2PKH);
                                 }
 
                             }
@@ -926,7 +926,7 @@ public class BalanceActivity extends Activity {
 
             }
             else if(privKeyReader != null)	{
-                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader, false);
+                SweepUtil.getInstance(BalanceActivity.this).sweep(privKeyReader, SweepUtil.TYPE_P2PKH);
             }
             else    {
                 ;
