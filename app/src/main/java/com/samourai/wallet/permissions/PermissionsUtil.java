@@ -17,6 +17,7 @@ public class PermissionsUtil {
     public final static int READ_WRITE_EXTERNAL_PERMISSION_CODE = 0;
     public static final int SMS_PERMISSION_CODE = 1;
     public static final int OUTGOING_CALL_PERMISSION_CODE = 2;
+    public static final int CAMERA_PERMISSION_CODE = 3;
 
     private static PermissionsUtil instance = null;
     private static Context context = null;
@@ -56,6 +57,10 @@ public class PermissionsUtil {
                 title = context.getString(R.string.permission_alert_dialog_title_outgoing);
                 message = context.getString(R.string.permission_dialog_message_outgoing);
                 break;
+            case CAMERA_PERMISSION_CODE:
+                title = context.getString(R.string.permission_alert_dialog_title_camera);
+                message = context.getString(R.string.permission_dialog_message_camera);
+                break;
             default:
                 break;
         }
@@ -78,9 +83,12 @@ public class PermissionsUtil {
                     case OUTGOING_CALL_PERMISSION_CODE:
                         requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, OUTGOING_CALL_PERMISSION_CODE);
                         break;
+                    case CAMERA_PERMISSION_CODE:
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                        break;
                     default:
                         break;
-            }
+                }
 
             }
         });

@@ -511,5 +511,7 @@
 
   <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
   <string name="permission_dialog_message_external">The app will now request your permission to read/write your external storage.</string>
+  <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
+  <string name="permission_dialog_message_camera">The app will now request your permission to use your camera for QR code scanning.</string>
 
 </resources>
