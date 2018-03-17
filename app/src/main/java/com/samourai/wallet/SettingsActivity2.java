@@ -520,7 +520,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference xpubPref = (Preference) findPreference("xpub");
                 xpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB();
+                        getXPUB(44);
                         return true;
                     }
                 });
@@ -528,7 +528,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference ypubPref = (Preference) findPreference("ypub");
                 ypubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getYPUB();
+                        getXPUB(49);
+                        return true;
+                    }
+                });
+
+                Preference zpubPref = (Preference) findPreference("zpub");
+                zpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84);
                         return true;
                     }
                 });
@@ -1022,100 +1030,25 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB()	{
+    private void getXPUB(int purpose)	{
 
-        final String[] accounts;
-        if(AddressFactory.getInstance(SettingsActivity2.this).getHighestTxReceiveIdx(SamouraiWallet.MIXING_ACCOUNT) == 0)    {
-            accounts = new String[] {
-                    getString(R.string.account_Samourai),
-            };
+        final String xpub;
+
+        switch(purpose)    {
+            case 49:
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+                break;
+            case 84:
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
+                break;
+            default:
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
+                break;
         }
-        else    {
-            accounts = new String[] {
-                    getString(R.string.account_Samourai),
-                    getString(R.string.account_shuffling),
-            };
-        }
-
-        final int sel = 0;
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.select_account)
-                .setSingleChoiceItems(accounts, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                dialog.dismiss();
-
-                                String xpub = null;
-                                try {
-                                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(which).xpubstr();
-                                }
-                                catch (IOException ioe) {
-                                    ioe.printStackTrace();
-                                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                                }
-                                catch (MnemonicException.MnemonicLengthException mle) {
-                                    mle.printStackTrace();
-                                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                                }
-
-                                final String _xpub = xpub;
-
-                                ImageView showQR = new ImageView(SettingsActivity2.this);
-                                Bitmap bitmap = null;
-                                QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-                                try {
-                                    bitmap = qrCodeEncoder.encodeAsBitmap();
-                                }
-                                catch (WriterException e) {
-                                    e.printStackTrace();
-                                }
-                                showQR.setImageBitmap(bitmap);
-
-                                TextView showText = new TextView(SettingsActivity2.this);
-                                showText.setText(xpub);
-                                showText.setTextIsSelectable(true);
-                                showText.setPadding(40, 10, 40, 10);
-                                showText.setTextSize(18.0f);
-
-                                LinearLayout xpubLayout = new LinearLayout(SettingsActivity2.this);
-                                xpubLayout.setOrientation(LinearLayout.VERTICAL);
-                                xpubLayout.addView(showQR);
-                                xpubLayout.addView(showText);
-
-                                new AlertDialog.Builder(SettingsActivity2.this)
-                                        .setTitle(R.string.app_name)
-                                        .setView(xpubLayout)
-                                        .setCancelable(false)
-                                        .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                                                android.content.ClipData clip = null;
-                                                clip = android.content.ClipData.newPlainText("XPUB", _xpub);
-                                                clipboard.setPrimaryClip(clip);
-                                                Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        })
-                                        .show();
-
-                            }
-                        }
-                ).show();
-
-    }
-
-    private void getYPUB()	{
-
-        final String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(ypub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
         }
@@ -1125,7 +1058,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         showQR.setImageBitmap(bitmap);
 
         TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(ypub);
+        showText.setText(xpub);
         showText.setTextIsSelectable(true);
         showText.setPadding(40, 10, 40, 10);
         showText.setTextSize(18.0f);
@@ -1143,7 +1076,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public void onClick(DialogInterface dialog, int whichButton) {
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("YPUB", ypub);
+                        clip = android.content.ClipData.newPlainText("XPUB", xpub);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                     }

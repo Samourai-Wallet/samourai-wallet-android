@@ -89,4 +89,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.yanzhenjie.zbar:camera:1.0.0'
+    implementation files('libs/bitcoinj-core-0.15-Segwit-Samourai-003.jar')
 }

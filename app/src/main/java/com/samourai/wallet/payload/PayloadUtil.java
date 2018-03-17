@@ -22,6 +22,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -192,7 +193,7 @@ public class PayloadUtil	{
 
             JSONArray accts = new JSONArray();
             for(HD_Account acct : HD_WalletFactory.getInstance(context).get().getAccounts()) {
-                accts.put(acct.toJSON(false));
+                accts.put(acct.toJSON(44));
             }
             wallet.put("accounts", accts);
 
@@ -210,8 +211,15 @@ public class PayloadUtil	{
             // export BIP49 account for debug payload
             //
             JSONArray bip49_account = new JSONArray();
-            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(true));
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(49));
             wallet.put("bip49_accounts", bip49_account);
+
+            //
+            // export BIP84 account for debug payload
+            //
+            JSONArray bip84_account = new JSONArray();
+            bip84_account.put(BIP84Util.getInstance(context).getWallet().getAccount(0).toJSON(84));
+            wallet.put("bip84_accounts", bip84_account);
 
             //
             // can remove ???

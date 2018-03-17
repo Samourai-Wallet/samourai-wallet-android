@@ -32,7 +32,9 @@
     <string name="options_xpub">Show BIP44 XPUB</string>
     <string name="options_xpub2">Show extended public key for BIP44 account.</string>
     <string name="options_xpub49">Show Segwit YPUB</string>
-    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account.</string>
+    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
+    <string name="options_xpub84">Show Segwit ZPUB</string>
+    <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
