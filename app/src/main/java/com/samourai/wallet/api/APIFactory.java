@@ -179,7 +179,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized JSONObject registerXPUB(String xpub, boolean isBIP49) {
+    private synchronized JSONObject registerXPUB(String xpub, int purpose) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -201,9 +201,16 @@ public class APIFactory	{
                 else    {
                     args.append("new");
                 }
-                if(isBIP49)    {
+                if(purpose == 49)    {
                     args.append("&segwit=");
                     args.append("bip49");
+                }
+                else if(purpose == 84)   {
+                    args.append("&segwit=");
+                    args.append("bip84");
+                }
+                else    {
+                    ;
                 }
                 Log.i("APIFactory", "XPUB:" + args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "xpub?", args.toString());
@@ -218,8 +225,14 @@ public class APIFactory	{
                 else    {
                     args.put("type", "new");
                 }
-                if(isBIP49)    {
+                if(purpose == 49)    {
                     args.put("segwit", "bip49");
+                }
+                else if(purpose == 84)   {
+                    args.put("segwit", "bip84");
+                }
+                else    {
+                    ;
                 }
                 Log.i("APIFactory", "XPUB:" + args.toString());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "xpub", args);
@@ -229,9 +242,19 @@ public class APIFactory	{
             try {
                 jsonObject = new JSONObject(response);
                 Log.i("APIFactory", "XPUB response:" + jsonObject.toString());
-                if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") && isBIP49)    {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
-                    PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                    if(purpose == 49)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
+                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                    }
+                    else if(purpose == 84)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, true);
+                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                    }
+                    else    {
+                        ;
+                    }
+
                 }
             }
             catch(JSONException je) {
@@ -1264,7 +1287,10 @@ public class APIFactory	{
             }
             */
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false) == false)    {
-                registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), true);
+                registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 49);
+            }
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false) == false)    {
+                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 84);
             }
 
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());

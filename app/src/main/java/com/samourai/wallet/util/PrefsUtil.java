@@ -45,6 +45,7 @@ public class PrefsUtil {
 	public static final String XPUB84LOCK = "xpub84lock";
 	public static final String XPUB44REG = "xpub44reg";
 	public static final String XPUB49REG = "xpub49reg";
+	public static final String XPUB84REG = "xpub84reg";
 	public static final String PAYNYM_CLAIMED = "paynymClaimed";
 	public static final String PAYNYM_REFUSED = "paynymRefused";
 	public static final String IS_RESTORE = "isRestore";
