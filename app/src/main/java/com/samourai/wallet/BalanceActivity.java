@@ -75,6 +75,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
@@ -1594,7 +1595,7 @@ public class BalanceActivity extends Activity {
 
                 try {
                     String[] s = HD_WalletFactory.getInstance(BalanceActivity.this).get().getXPUBs();
-                    APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], false);
+                    APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], 44);
                 }
                 catch(IOException | MnemonicException.MnemonicLengthException e) {
                     ;
@@ -1604,7 +1605,12 @@ public class BalanceActivity extends Activity {
 
             if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
                 String ypub = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).ypubstr();
-                APIFactory.getInstance(BalanceActivity.this).lockXPUB(ypub, true);
+                APIFactory.getInstance(BalanceActivity.this).lockXPUB(ypub, 49);
+            }
+
+            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).zpubstr();
+                APIFactory.getInstance(BalanceActivity.this).lockXPUB(zpub, 84);
             }
 
             return "OK";

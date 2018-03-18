@@ -18,6 +18,7 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
@@ -500,7 +501,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    public synchronized JSONObject lockXPUB(String xpub, boolean bip49) {
+    public synchronized JSONObject lockXPUB(String xpub, int purpose) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -514,11 +515,16 @@ public class APIFactory	{
             if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
 
                 HD_Address addr = null;
-                if(bip49)    {
-                    addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
-                }
-                else    {
-                    addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                switch(purpose)    {
+                    case 49:
+                        addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        break;
+                    case 84:
+                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        break;
+                    default:
+                        addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                        break;
                 }
                 ecKey = addr.getECKey();
 
@@ -526,12 +532,18 @@ public class APIFactory	{
 
                     String sig = ecKey.signMessage("lock");
                     String address = null;
-                    if(bip49)    {
-                        SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                        address = segwitAddress.getAddressAsString();
-                    }
-                    else    {
-                        address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    switch(purpose)    {
+                        case 49:
+                            SegwitAddress p2shp2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = p2shp2wpkh.getAddressAsString();
+                            break;
+                        case 84:
+                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = segwitAddress.getBech32AsString();
+                            break;
+                        default:
+                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            break;
                     }
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
@@ -560,12 +572,18 @@ public class APIFactory	{
                         jsonObject = new JSONObject(response);
 
                         if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
-                            if(bip49)    {
-                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                            switch(purpose)    {
+                                case 49:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                                    break;
+                                case 84:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
+                                    break;
+                                default:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
+                                    break;
                             }
-                            else    {
-                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
-                            }
+
                         }
 
                     }
