@@ -1,6 +1,7 @@
 package com.samourai.wallet.hd;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.util.FormatsUtil;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
@@ -75,7 +76,7 @@ public class HD_Account {
 
         ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
         int version = bb.getInt();
-        if(version != 0x0488B21E && version != 0x043587CF && version != 0x049D7CB2 && version != 0x044A5262 && version != 0x04B24746 && version != 0x045F1CF6)   {
+        if(version != FormatsUtil.MAGIC_XPUB && version != FormatsUtil.MAGIC_TPUB && version != FormatsUtil.MAGIC_YPUB && version != FormatsUtil.MAGIC_UPUB && version != FormatsUtil.MAGIC_ZPUB && version != FormatsUtil.MAGIC_VPUB)   {
             throw new AddressFormatException("invalid xpub version");
         }
 

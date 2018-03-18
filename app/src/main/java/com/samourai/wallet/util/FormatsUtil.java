@@ -33,6 +33,8 @@ public class FormatsUtil {
 	public static final int MAGIC_TPUB = 0x043587CF;
 	public static final int MAGIC_YPUB = 0x049D7CB2;
 	public static final int MAGIC_UPUB = 0x044A5262;
+	public static final int MAGIC_ZPUB = 0x04B24746;
+	public static final int MAGIC_VPUB = 0x045F1CF6;
 
 	public static final String XPUB = "^[xtyu]pub[1-9A-Za-z][^OIl]+$";
     public static final String HEX = "^[0-9A-Fa-f]+$";
