@@ -263,7 +263,7 @@ public class FormatsUtil {
 
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
 			int version = byteBuffer.getInt();
-			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB)   {
+			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB && version != MAGIC_YPUB && version != MAGIC_UPUB)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{
