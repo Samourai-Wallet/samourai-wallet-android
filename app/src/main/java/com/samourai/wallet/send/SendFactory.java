@@ -317,13 +317,7 @@ public class SendFactory	{
                 address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             }
 
-            if(FormatsUtil.getInstance().isValidBech32(address))    {
-                TransactionOutPoint outpoint = transaction.getInput(0).getOutpoint();
-                transaction.clearInputs();
-                Script pubKeyScript = ScriptBuilder.createP2WPKHOutputScript(key);
-                transaction.addSignedInput(outpoint, pubKeyScript, key);
-            }
-            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+            if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
 
                 final SegwitAddress p2shp2wpkh = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 //                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
@@ -341,11 +335,12 @@ public class SendFactory	{
                 witness.setPush(1, key.getPubKey());
                 transaction.setWitness(i, witness);
 
-                final ScriptBuilder sigScript = new ScriptBuilder();
-                sigScript.data(redeemScript.getProgram());
-                transaction.getInput(i).setScriptSig(sigScript.build());
-
-                transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+                if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    final ScriptBuilder sigScript = new ScriptBuilder();
+                    sigScript.data(redeemScript.getProgram());
+                    transaction.getInput(i).setScriptSig(sigScript.build());
+                    transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+                }
 
             }
             else    {
