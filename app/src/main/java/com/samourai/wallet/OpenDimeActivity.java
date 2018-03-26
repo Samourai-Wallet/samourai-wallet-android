@@ -632,7 +632,7 @@ public class OpenDimeActivity extends Activity {
                                 public void run() {
                                     btSweep.setVisibility(View.GONE);
 //                                    btTopUp.setVisibility(View.VISIBLE);
-                                    btView.setVisibility(View.VISIBLE);
+                                    btView.setVisibility(View.GONE);
                                 }
                             });
 
