@@ -839,10 +839,25 @@ public class BIP47Activity extends Activity {
         }
 
         //
-        // use low fee settings
+        // use normal fee settings
         //
         SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
-        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+        if(lo == mi && mi == hi) {
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf((long)(hi * 1.15 * 1000.0)));
+            FeeUtil.getInstance().setSuggestedFee(hi_sf);
+        }
+        else if(lo == mi)    {
+            FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+        }
+        else    {
+            FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+        }
 
         if(selectedUTXO.size() == 0)    {
             // sort in descending order by value
