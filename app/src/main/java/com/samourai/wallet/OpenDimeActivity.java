@@ -630,21 +630,51 @@ public class OpenDimeActivity extends Activity {
                         else    {
                             handler.post(new Runnable() {
                                 public void run() {
-                                    Toast.makeText(OpenDimeActivity.this, "initializing", Toast.LENGTH_LONG).show();
+                                    btSweep.setVisibility(View.GONE);
+//                                    btTopUp.setVisibility(View.VISIBLE);
+                                    btView.setVisibility(View.VISIBLE);
                                 }
                             });
-                            //file would not write if too large.  have to do many small files
-                            for(int i=0;i<556;i++) {
-                                UsbFile file = currentDir.createFile("random"+i+".txt");
-                                OutputStream os = new UsbFileOutputStream(file);
 
-                                SecureRandom random = new SecureRandom();
-                                byte bytes[] = new byte[500];
-                                random.nextBytes(bytes);
+                            AlertDialog.Builder alert = new AlertDialog.Builder(OpenDimeActivity.this);
+                            alert.setTitle("Not initialized");
+                            alert.setMessage("Initialize OpenDime with entropy from phone?");
+                            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-                                os.write(bytes);
-                                os.close();
-                            }
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    try {
+                                        //file would not write if too large.  have to do many small files
+                                        for (int i = 0; i < 520; i++) {
+                                            UsbFile file = currentDir.createFile("random" + i + ".txt");
+                                            OutputStream os = new UsbFileOutputStream(file);
+
+                                            SecureRandom random = new SecureRandom();
+                                            byte bytes[] = new byte[500];
+                                            random.nextBytes(bytes);
+
+                                            os.write(bytes);
+                                            os.close();
+                                        }
+                                    }catch(Throwable e){
+
+                                    }
+
+                                }
+                            });
+
+                            alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            alert.show();
+
+
                         }
 
                         if(hasValidatedSignedMessage() && hasPublicAddress())    {
