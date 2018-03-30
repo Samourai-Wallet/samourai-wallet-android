@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import android.content.Context;
 import android.util.Log;
@@ -24,7 +25,9 @@ import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.util.AddressFactory;
@@ -34,6 +37,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
@@ -95,8 +99,15 @@ public class SendFactory	{
 
             try {
                 byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
-                String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-//                Log.i("address from script", address);
+                String address = null;
+                Log.i("SendFactory", "connected pubkey script:" + Hex.toHexString(scriptBytes));
+                if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                    address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
+                }
+                else    {
+                    address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                }
+                Log.i("SendFactory", "address from script:" + address);
                 ECKey ecKey = null;
                 ecKey = getPrivKey(address);
                 if(ecKey != null) {
@@ -407,8 +418,8 @@ public class SendFactory	{
             double pctThreshold = (100.0 / (double)outputs.size()) / 100.0;
             long _pct = (long)(totalValue.doubleValue() * pctThreshold);
 
-            Pair<Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(selectedOutputs);
-            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getRight(), output_scripts);
+            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutputs));
+            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getMiddle(), outputTypes.getRight(), output_scripts);
 
             if(totalValue.compareTo(totalAmount.add(biFee)) >= 0 && output_scripts >= 3)    {
 
@@ -708,8 +719,8 @@ public class SendFactory	{
             selectedOutputs.addAll(output.getOutpoints());
             totalValue = totalValue.add(BigInteger.valueOf(output.getValue()));
 
-            Pair<Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(selectedOutputs);
-            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getRight(), NB_OUTPUTS);
+            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutputs));
+            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getMiddle(), outputTypes.getRight(), NB_OUTPUTS);
 
             if(totalValue.compareTo(totalAmount.multiply(BigInteger.valueOf(2L)).add(biFee)) >= 0 && selectedOutputs.size() >= 4)    {
                 break;
@@ -860,20 +871,27 @@ public class SendFactory	{
 
     public static ECKey getPrivKey(String address)    {
 
+        Log.d("SendFactory", "get privkey for:" + address);
+
         ECKey ecKey = null;
 
         try {
             String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
-//            Log.d("APIFactory", "address:" + path);
+            Log.d("SendFactory", "address path:" + path);
             if(path != null)    {
                 String[] s = path.split("/");
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-//                    Log.d("APIFactory", "address type:" + "bip49");
+                if(FormatsUtil.getInstance().isValidBech32(address))    {
+                    Log.d("SendFactory", "address type:" + "bip84");
+                    HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    ecKey = addr.getECKey();
+                }
+                else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    Log.d("SendFactory", "address type:" + "bip49");
                     HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                     ecKey = addr.getECKey();
                 }
                 else    {
-//                    Log.d("APIFactory", "address type:" + "bip44");
+                    Log.d("SendFactory", "address type:" + "bip44");
                     int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
                     HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                     String strPrivKey = hd_address.getPrivateKeyString();
@@ -882,7 +900,7 @@ public class SendFactory	{
                 }
             }
             else    {
-//                Log.d("APIFactory", "address type:" + "bip47");
+                Log.d("SendFactory", "address type:" + "bip47");
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
                 int idx = BIP47Meta.getInstance().getIdx4Addr(address);
                 PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
