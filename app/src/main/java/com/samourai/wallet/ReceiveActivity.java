@@ -523,7 +523,7 @@ public class ReceiveActivity extends Activity {
         else if (id == R.id.action_refresh) {
 
             if(swSegwit.isChecked() && cbBech32.isChecked() && canRefresh84) {
-                addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
                 addr = addr84;
                 canRefresh84 = false;
                 item.setVisible(false);
