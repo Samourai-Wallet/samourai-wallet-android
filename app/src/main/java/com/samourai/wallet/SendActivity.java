@@ -41,6 +41,7 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -100,6 +101,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.text.DecimalFormatSymbols;
+import java.util.Vector;
 
 import com.yanzhenjie.zbar.Symbol;
 
@@ -808,6 +810,7 @@ public class SendActivity extends Activity {
                         Collections.sort(_utxos, new UTXO.UTXOComparator());
                         int selected = 0;
                         int p2pkh = 0;
+                        int p2sh_p2wpkh = 0;
                         int p2wpkh = 0;
 
                         // get largest UTXOs > than spend + fee + dust
@@ -820,10 +823,11 @@ public class SendActivity extends Activity {
 //                            Log.d("SendActivity", "value selected:" + u.getValue());
 //                            Log.d("SendActivity", "total value selected/threshold:" + totalValueSelected + "/" + (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()));
 
-                            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
+                            Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(u.getOutpoints()));
                             p2pkh += outpointTypes.getLeft();
+                            p2sh_p2wpkh += outpointTypes.getMiddle();
                             p2wpkh += outpointTypes.getRight();
-                            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, 2).longValue()))    {
+                            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, 2).longValue()))    {
 //                                Log.d("SendActivity", "spend type:" + SPEND_TYPE);
 //                                Log.d("SendActivity", "multiple outputs");
 //                                Log.d("SendActivity", "amount:" + amount);
@@ -883,8 +887,8 @@ public class SendActivity extends Activity {
                         for(UTXO utxo : selectedUTXO)   {
                             outpoints.addAll(utxo.getOutpoints());
                         }
-                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
-                        fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 2);
+                        Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(outpoints));
+                        fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
                     }
 
 //                    Log.d("SendActivity", "spend type:" + SPEND_TYPE);
