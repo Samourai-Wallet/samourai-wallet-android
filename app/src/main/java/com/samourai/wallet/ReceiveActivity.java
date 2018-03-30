@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -78,6 +79,7 @@ public class ReceiveActivity extends Activity {
     private TextWatcher textWatcherBTC = null;
     private TextWatcher textWatcherFiat = null;
     private Switch swSegwit = null;
+    private CheckBox cbBech32 = null;
 
     private String defaultSeparator = null;
 
@@ -88,9 +90,11 @@ public class ReceiveActivity extends Activity {
     private String addr = null;
     private String addr44 = null;
     private String addr49 = null;
+    private String addr84 = null;
 
     private boolean canRefresh44 = false;
     private boolean canRefresh49 = false;
+    private boolean canRefresh84 = false;
     private Menu _menu = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.ReceiveFragment.REFRESH";
@@ -149,9 +153,28 @@ public class ReceiveActivity extends Activity {
 
                 if(isChecked)    {
                     addr = addr49;
+                    cbBech32.setVisibility(View.VISIBLE);
                 }
                 else    {
                     addr = addr44;
+                    cbBech32.setVisibility(View.GONE);
+                }
+
+                displayQRCode();
+
+            }
+        });
+
+        cbBech32 = (CheckBox)findViewById(R.id.bech32);
+        cbBech32.setVisibility(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true ? View.VISIBLE : View.GONE);
+        cbBech32.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked)    {
+                    addr = addr84;
+                }
+                else    {
+                    addr = addr49;
                 }
 
                 displayQRCode();
