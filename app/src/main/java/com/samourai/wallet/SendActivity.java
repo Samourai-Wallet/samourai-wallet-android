@@ -810,8 +810,8 @@ public class SendActivity extends Activity {
 
                     // get smallest 1 UTXO > than spend + fee + dust
                     for(UTXO u : _utxos)   {
-                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(u.getOutpoints());
-                        if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 2).longValue()))    {
+                        Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(u.getOutpoints()));
+                        if(u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2).longValue()))    {
                             selectedUTXO.add(u);
                             totalValueSelected += u.getValue();
 //                            Log.d("SendActivity", "spend type:" + SPEND_TYPE);
