@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
                 />
 
             <TextView
@@ -95,7 +95,7 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="16sp"
                 android:paddingLeft="75dp"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:layout_gravity="left"
                 android:fontFamily="Roboto Regular"
                 android:text="@string/segwit_address"
@@ -123,6 +123,23 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="22dp"
                     android:paddingTop="5dp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="2dp"
+                android:paddingLeft="22dp"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/bech32"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/use_bech32"
                     />
 
             </LinearLayout>

@@ -516,4 +516,6 @@
   <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
   <string name="permission_dialog_message_camera">The app will now request your permission to use your camera for QR code scanning.</string>
 
+  <string name="use_bech32">Use bech32 address</string>
+
 </resources>
