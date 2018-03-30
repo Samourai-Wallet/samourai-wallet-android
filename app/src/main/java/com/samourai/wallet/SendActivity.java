@@ -638,10 +638,14 @@ public class SendActivity extends Activity {
 
                 // get all UTXO
                 List<UTXO> utxos = null;
-                // if possible, get UTXO by input 'type': p2pkh or p2sh-p2wpkh, else get all UTXO
+                // if possible, get UTXO by input 'type': p2pkh, p2sh-p2wpkh or p2wpkh, else get all UTXO
                 long neededAmount = 0L;
-                if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 4).longValue();
+                if(FormatsUtil.getInstance().isValidBech32(address))    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, 0, UTXOFactory.getInstance().getCountP2WPKH(), 4).longValue();
+//                    Log.d("SendActivity", "segwit:" + neededAmount);
+                }
+                else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 0, 4).longValue();
 //                    Log.d("SendActivity", "segwit:" + neededAmount);
                 }
                 else    {
@@ -651,7 +655,11 @@ public class SendActivity extends Activity {
                 neededAmount += amount;
                 neededAmount += SamouraiWallet.bDust.longValue();
 
-                if((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) && (UTXOFactory.getInstance().getP2SH_P2WPKH().size() > 0 && UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
+                if(FormatsUtil.getInstance().isValidBech32(address) && (UTXOFactory.getInstance().getP2WPKH().size() > 0 && UTXOFactory.getInstance().getTotalP2WPKH() > neededAmount))    {
+                    utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
+//                    Log.d("SendActivity", "segwit utxos:" + utxos.size());
+                }
+                else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress() && (UTXOFactory.getInstance().getP2SH_P2WPKH().size() > 0 && UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > neededAmount))    {
                     utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
 //                    Log.d("SendActivity", "segwit utxos:" + utxos.size());
                 }
