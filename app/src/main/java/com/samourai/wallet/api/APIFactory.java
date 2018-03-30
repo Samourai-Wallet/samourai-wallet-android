@@ -993,7 +993,7 @@ public class APIFactory	{
                             String path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
-//                            Log.d("APIFactory", "address:" + path);
+                            Log.d("APIFactory", "address:" + address + "," + path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
                                 unspentBIP49.put(address, 0);   // assume account 0
                             }
@@ -1524,6 +1524,10 @@ public class APIFactory	{
 
     public HashMap<String, Integer> getUnspentBIP49() {
         return unspentBIP49;
+    }
+
+    public HashMap<String, Integer> getUnspentBIP84() {
+        return unspentBIP84;
     }
 
     public List<UTXO> getUtxos(boolean filter) {
