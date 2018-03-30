@@ -1020,7 +1020,10 @@ public class APIFactory	{
 
                         if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
 
-                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                UTXOFactory.getInstance().addP2WPKH(script, utxos.get(script));
+                            }
+                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
                                 UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
                             }
                             else    {

@@ -63,7 +63,7 @@ public class UTXOFactory {
         p2sh_p2wpkh.put(script, utxo);
     }
 
-    public void add_P2WPKH(String script, UTXO utxo)  {
+    public void addP2WPKH(String script, UTXO utxo)  {
         p2wpkh.put(script, utxo);
     }
 
