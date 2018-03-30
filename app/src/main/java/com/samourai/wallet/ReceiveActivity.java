@@ -237,7 +237,14 @@ public class ReceiveActivity extends Activity {
         ivQR.setOnTouchListener(new OnSwipeTouchListener(ReceiveActivity.this) {
             @Override
             public void onSwipeLeft() {
-                if(swSegwit.isChecked() && canRefresh49) {
+                if(swSegwit.isChecked() && cbBech32.isChecked() && canRefresh84) {
+                    addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                    addr = addr84;
+                    canRefresh84 = false;
+                    _menu.findItem(R.id.action_refresh).setVisible(false);
+                    displayQRCode();
+                }
+                else if(swSegwit.isChecked() && !cbBech32.isChecked() && canRefresh49) {
                     addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                     addr = addr49;
                     canRefresh49 = false;
@@ -515,7 +522,14 @@ public class ReceiveActivity extends Activity {
         }
         else if (id == R.id.action_refresh) {
 
-            if(swSegwit.isChecked() && canRefresh49) {
+            if(swSegwit.isChecked() && cbBech32.isChecked() && canRefresh84) {
+                addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                addr = addr84;
+                canRefresh84 = false;
+                item.setVisible(false);
+                displayQRCode();
+            }
+            else if(swSegwit.isChecked() && !cbBech32.isChecked() && canRefresh49) {
                 addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                 addr = addr49;
                 canRefresh49 = false;
@@ -618,7 +632,10 @@ public class ReceiveActivity extends Activity {
                                     JSONObject _addr = addrs.getJSONObject(0);
                                     if(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L) {
                                         Toast.makeText(ReceiveActivity.this, R.string.address_used_previously, Toast.LENGTH_SHORT).show();
-                                        if(swSegwit.isChecked())    {
+                                        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                            canRefresh84 = true;
+                                        }
+                                        else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                             canRefresh49 = true;
                                         }
                                         else    {
@@ -629,7 +646,10 @@ public class ReceiveActivity extends Activity {
                                         }
                                     }
                                     else {
-                                        if(swSegwit.isChecked())    {
+                                        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                            canRefresh84 = false;
+                                        }
+                                        else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                             canRefresh49 = false;
                                         }
                                         else    {
@@ -642,7 +662,10 @@ public class ReceiveActivity extends Activity {
                                 }
 
                             } catch (Exception e) {
-                                if(swSegwit.isChecked())    {
+                                if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                    canRefresh84 = false;
+                                }
+                                else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                     canRefresh49 = false;
                                 }
                                 else    {
@@ -656,7 +679,10 @@ public class ReceiveActivity extends Activity {
                         }
                     });
                 } catch (Exception e) {
-                    if(swSegwit.isChecked())    {
+                    if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                        canRefresh84 = false;
+                    }
+                    else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                         canRefresh49 = false;
                     }
                     else    {
