@@ -61,6 +61,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.BroadcastReceiverService;
@@ -1032,17 +1033,27 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getXPUB(int purpose)	{
 
-        final String xpub;
+        String xpub = "";
 
         switch(purpose)    {
             case 49:
                 xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
                 break;
             case 84:
-                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
+                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
                 break;
             default:
-                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).xpubstr();
+                try {
+                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).xpubstr();
+                }
+                catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                }
+                catch (MnemonicException.MnemonicLengthException mle) {
+                    mle.printStackTrace();
+                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
@@ -1068,6 +1079,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
         xpubLayout.addView(showQR);
         xpubLayout.addView(showText);
 
+        final String _xpub = xpub;
+
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
                 .setView(xpubLayout)
@@ -1076,7 +1089,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public void onClick(DialogInterface dialog, int whichButton) {
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("XPUB", xpub);
+                        clip = android.content.ClipData.newPlainText("XPUB", _xpub);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                     }
