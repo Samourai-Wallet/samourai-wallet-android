@@ -1189,7 +1189,7 @@ public class SendActivity extends Activity {
                                                             }
                                                         }
                                                         catch(NullPointerException npe) {
-                                                            ;   // test for bech32, skip for now as it's not a change address
+                                                            ;
                                                         }
                                                     }
 
