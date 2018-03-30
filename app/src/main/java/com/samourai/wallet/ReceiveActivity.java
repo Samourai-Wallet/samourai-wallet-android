@@ -151,7 +151,11 @@ public class ReceiveActivity extends Activity {
         swSegwit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked)    {
+                if(isChecked && cbBech32.isChecked())    {
+                    addr = addr84;
+                    cbBech32.setVisibility(View.VISIBLE);
+                }
+                else if(isChecked && !cbBech32.isChecked())    {
                     addr = addr49;
                     cbBech32.setVisibility(View.VISIBLE);
                 }
@@ -182,9 +186,13 @@ public class ReceiveActivity extends Activity {
             }
         });
 
+        addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
         addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
         addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-        if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
+        if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true && cbBech32.isChecked())    {
+            addr = addr84;
+        }
+        else if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true && !cbBech32.isChecked())    {
             addr = addr49;
         }
         else    {
