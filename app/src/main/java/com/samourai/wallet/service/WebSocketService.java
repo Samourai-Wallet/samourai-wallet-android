@@ -10,6 +10,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 
 import java.io.IOException;
@@ -60,6 +61,7 @@ public class WebSocketService extends Service {
         addrSubs = new ArrayList<String>();
         addrSubs.add(AddressFactory.getInstance(context).account2xpub().get(0));
         addrSubs.add(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr());
+        addrSubs.add(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr());
         addrSubs.addAll(Arrays.asList(BIP47Meta.getInstance().getIncomingLookAhead(context)));
         String[] addrs = addrSubs.toArray(new String[addrSubs.size()]);
 
