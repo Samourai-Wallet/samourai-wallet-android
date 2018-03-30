@@ -1477,6 +1477,13 @@ public class BalanceActivity extends Activity {
                     BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ChangeIdx());
                 }
 
+                if(AddressFactory.getInstance().getHighestBIP84ReceiveIdx() > BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
+                    BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ReceiveIdx());
+                }
+                if(AddressFactory.getInstance().getHighestBIP84ChangeIdx() > BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
+                    BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ChangeIdx());
+                }
+
             }
             catch(IOException ioe) {
                 ioe.printStackTrace();
