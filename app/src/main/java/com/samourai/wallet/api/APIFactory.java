@@ -1320,21 +1320,24 @@ public class APIFactory	{
             if(hdw != null && hdw.getXPUBs() != null)    {
                 String[] all = null;
                 if(s != null && s.length > 0)    {
-                    all = new String[hdw.getXPUBs().length + 1 + s.length];
+                    all = new String[hdw.getXPUBs().length + 2 + s.length];
                     all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
-                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 1, s.length);
+                    all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
+                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 2, s.length);
                 }
                 else    {
-                    all = new String[hdw.getXPUBs().length + 1];
+                    all = new String[hdw.getXPUBs().length + 2];
                     all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
+                    all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
                 }
                 APIFactory.getInstance(context).getXPUB(all, true);
-                String[] xs = new String[3];
+                String[] xs = new String[4];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
                 xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
                 xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 getUnspentOutputs(xs);
                 getDynamicFees();
             }
