@@ -186,15 +186,18 @@ public class OpenDimeActivity extends Activity {
         btSweep = (Button)findViewById(R.id.sweep);
 
         btTopUp.setVisibility(View.GONE);
-/*
+
         btTopUp = (Button)findViewById(R.id.topup);
         btTopUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
+                if(strAddress != null)    {
+                    Intent intent = new Intent(OpenDimeActivity.this, SendActivity.class);
+                    intent.putExtra("uri", strAddress);
+                    startActivity(intent);
+                }
             }
         });
-*/
+
         btView = (Button)findViewById(R.id.view);
         btView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -600,7 +603,7 @@ public class OpenDimeActivity extends Activity {
 //                                    Toast.makeText(OpenDimeActivity.this, "spendable|consultable", Toast.LENGTH_LONG).show();
                                     tvAddress.setText(strAddress);
                                     btSweep.setVisibility(View.VISIBLE);
-//                                    btTopUp.setVisibility(View.VISIBLE);
+                                    btTopUp.setVisibility(View.GONE);
                                     btView.setVisibility(View.VISIBLE);
                                 }
                             });
@@ -611,7 +614,7 @@ public class OpenDimeActivity extends Activity {
 //                                    Toast.makeText(OpenDimeActivity.this, "not spendable|consultable", Toast.LENGTH_LONG).show();
                                     tvAddress.setText(strAddress);
                                     btSweep.setVisibility(View.GONE);
-//                                    btTopUp.setVisibility(View.VISIBLE);
+                                    btTopUp.setVisibility(View.VISIBLE);
                                     btView.setVisibility(View.VISIBLE);
                                 }
                             });
@@ -622,7 +625,7 @@ public class OpenDimeActivity extends Activity {
 //                                    Toast.makeText(OpenDimeActivity.this, "consultable", Toast.LENGTH_LONG).show();
                                     tvAddress.setText(strAddress);
                                     btSweep.setVisibility(View.GONE);
-//                                    btTopUp.setVisibility(View.VISIBLE);
+                                    btTopUp.setVisibility(View.VISIBLE);
                                     btView.setVisibility(View.VISIBLE);
                                 }
                             });
@@ -631,7 +634,7 @@ public class OpenDimeActivity extends Activity {
                             handler.post(new Runnable() {
                                 public void run() {
                                     btSweep.setVisibility(View.GONE);
-//                                    btTopUp.setVisibility(View.VISIBLE);
+                                    btTopUp.setVisibility(View.GONE);
                                     btView.setVisibility(View.GONE);
                                 }
                             });
