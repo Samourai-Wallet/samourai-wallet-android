@@ -565,22 +565,35 @@ public class ReceiveActivity extends Activity {
 
     private void displayQRCode() {
 
+        String _addr = null;
+        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+            _addr = addr.toUpperCase();
+        }
+        else    {
+            _addr = addr;
+        }
+
         try {
             double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr), Coin.valueOf(lamount), null, null)));
+                if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr, Coin.valueOf(lamount), null, null)));
+                }
+                else    {
+                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
+                }
             }
             else {
-                ivQR.setImageBitmap(generateQRCode(addr));
+                ivQR.setImageBitmap(generateQRCode(_addr));
             }
         }
         catch(NumberFormatException nfe) {
-            ivQR.setImageBitmap(generateQRCode(addr));
+            ivQR.setImageBitmap(generateQRCode(_addr));
         }
         catch(ParseException pe) {
-            ivQR.setImageBitmap(generateQRCode(addr));
+            ivQR.setImageBitmap(generateQRCode(_addr));
         }
 
         tvAddress.setText(addr);
