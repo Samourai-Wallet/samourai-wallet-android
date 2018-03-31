@@ -981,19 +981,16 @@ public class APIFactory	{
                         String address = null;
                         if(Bech32Util.getInstance().isBech32Script(script))    {
                             address = Bech32Util.getInstance().getAddressFromScript(script);
-                            Log.d("address parsed:", address);
                         }
                         else    {
                             address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                         }
-                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
                             String path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
-                            Log.d("APIFactory", "address:" + address + "," + path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
                                 unspentBIP49.put(address, 0);   // assume account 0
                             }
