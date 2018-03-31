@@ -189,8 +189,7 @@ public class UTXOActivity extends Activity {
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
                                 String msg = null;
 
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
-                                        FormatsUtil.getInstance().isValidBech32(addr))    {
+                                if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
 
                                     msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
 
