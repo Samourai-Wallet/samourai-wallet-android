@@ -17,7 +17,6 @@ import org.bitcoinj.uri.BitcoinURIParseException;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import android.util.Log;
@@ -27,7 +26,8 @@ public class FormatsUtil {
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	private Pattern phonePattern = Pattern.compile("(\\+[1-9]{1}[0-9]{1,2}+|00[1-9]{1}[0-9]{1,2}+)[\\(\\)\\.\\-\\s\\d]{6,16}");
 
-	private String URI_BECH32 = "^bitcoin:((tb|TB|bc|BC)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
+	private String URI_BECH32 = "(^bitcoin:(tb|bc)1([qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$)|(^bitcoin:(TB|BC)1([QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]+)(\\?amount\\=([0-9.]+))?$)";
+	private String URI_BECH32_LOWER = "^bitcoin:((tb|TB|bc|BC)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
 
 	public static final int MAGIC_XPUB = 0x0488B21E;
 	public static final int MAGIC_TPUB = 0x043587CF;
@@ -58,7 +58,7 @@ public class FormatsUtil {
 			return address;
 		}
 		else {
-			String addr = uri2BitcoinAddress(address);
+			String addr = getBitcoinAddress(address);
 			if(addr != null) {
 				return addr;
 			}
@@ -85,7 +85,7 @@ public class FormatsUtil {
 				ret = false;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -120,9 +120,9 @@ public class FormatsUtil {
 			ret = uri.getAddress().toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			if(s.matches(URI_BECH32))	{
-				Pattern pattern = Pattern.compile(URI_BECH32);
-				Matcher matcher = pattern.matcher(s);
+			if(s.toLowerCase().matches(URI_BECH32_LOWER))	{
+				Pattern pattern = Pattern.compile(URI_BECH32_LOWER);
+				Matcher matcher = pattern.matcher(s.toLowerCase());
 				if(matcher.find() && matcher.group(1) != null)    {
 					return matcher.group(1);
 				}
@@ -150,9 +150,9 @@ public class FormatsUtil {
 			}
 		}
 		catch(BitcoinURIParseException bupe) {
-			if(s.matches(URI_BECH32))	{
-				Pattern pattern = Pattern.compile(URI_BECH32);
-				Matcher matcher = pattern.matcher(s);
+			if(s.toLowerCase().matches(URI_BECH32_LOWER))	{
+				Pattern pattern = Pattern.compile(URI_BECH32_LOWER);
+				Matcher matcher = pattern.matcher(s.toLowerCase());
 				if(matcher.find() && matcher.group(4) != null)    {
 					String amt = matcher.group(4);
 					try	{
@@ -237,22 +237,6 @@ public class FormatsUtil {
 			ret = false;
 		}
 
-		return ret;
-	}
-
-	private String uri2BitcoinAddress(final String address) {
-		
-		String ret = null;
-		BitcoinURI uri = null;
-		
-		try {
-			uri = new BitcoinURI(address);
-			ret = uri.getAddress().toString();
-		}
-		catch(BitcoinURIParseException bupe) {
-			ret = null;
-		}
-		
 		return ret;
 	}
 
