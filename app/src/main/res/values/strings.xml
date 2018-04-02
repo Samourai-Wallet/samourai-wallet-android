@@ -507,14 +507,14 @@
   <string name="recovery_words">RECOVERY WORDS</string>
 
   <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
-  <string name="permission_dialog_message_sms">The app will now request your permission to send and read SMS related services as well as check the status of your phone.</string>
+  <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote altert features.</string>
   <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
-  <string name="permission_dialog_message_outgoing">The app will now request your permission to process outgoing calls.</string>
+  <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
 
   <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
-  <string name="permission_dialog_message_external">The app will now request your permission to read/write your external storage.</string>
+  <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
   <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
-  <string name="permission_dialog_message_camera">The app will now request your permission to use your camera for QR code scanning.</string>
+  <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
 
   <string name="use_bech32">Use bech32 address</string>
 
