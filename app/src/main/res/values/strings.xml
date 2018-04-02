@@ -507,7 +507,7 @@
   <string name="recovery_words">RECOVERY WORDS</string>
 
   <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
-  <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote altert features.</string>
+  <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
   <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
   <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
 

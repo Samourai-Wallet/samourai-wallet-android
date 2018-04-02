@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 
 import com.samourai.wallet.R;
 
@@ -67,11 +68,11 @@ public class PermissionsUtil {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
+        builder.setCancelable(false);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
 
                 switch(code)    {
                     case READ_WRITE_EXTERNAL_PERMISSION_CODE:
@@ -89,6 +90,8 @@ public class PermissionsUtil {
                     default:
                         break;
                 }
+
+                dialog.dismiss();
 
             }
         });

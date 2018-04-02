@@ -535,6 +535,7 @@ public class SendActivity extends Activity {
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -552,6 +553,7 @@ public class SendActivity extends Activity {
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
@@ -569,6 +571,7 @@ public class SendActivity extends Activity {
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -2057,7 +2060,7 @@ public class SendActivity extends Activity {
     }
 
     private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L == 1L)    {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
             SuggestedFee suggestedFee = new SuggestedFee();
             suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.15 * 1000.0)));
             Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
