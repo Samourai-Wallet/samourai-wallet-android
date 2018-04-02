@@ -931,7 +931,7 @@ public class APIFactory	{
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                        Log.d("APIFactory", "address:" + address);
+//                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
