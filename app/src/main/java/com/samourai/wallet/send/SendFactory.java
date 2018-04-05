@@ -242,18 +242,8 @@ public class SendFactory	{
                 toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(Hex.decode(toAddress)).build();
                 output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(0L), toOutputScript.getProgram());
             }
-            else if(toAddress.toLowerCase().startsWith("tb") || toAddress.toLowerCase().startsWith("bc"))   {
-
-                byte[] scriptPubKey = null;
-
-                try {
-                    Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", toAddress);
-                    scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
-                }
-                catch(Exception e) {
-                    return null;
-                }
-                output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(value.longValue()), scriptPubKey);
+            else if(FormatsUtil.getInstance().isValidBech32(toAddress))   {
+                output = Bech32Util.getInstance().getTransactionOutput(toAddress, value.longValue());
             }
             else    {
                 toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), toAddress));
@@ -508,8 +498,9 @@ public class SendFactory	{
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
                 // spend address here
-                if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
+                if(FormatsUtil.getInstance().isValidBech32(address))   {
 
+                    /*
                     byte[] scriptPubKey = null;
 
                     try {
@@ -520,6 +511,9 @@ public class SendFactory	{
                         return null;
                     }
                     txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), scriptPubKey);
+                    */
+
+                    txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
                 }
                 else    {
                     outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
@@ -582,18 +576,8 @@ public class SendFactory	{
                 // spend address here
 //                Log.d("SendFactory", address + ":" + org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
                 // spend address here
-                if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
-
-                    byte[] scriptPubKey = null;
-
-                    try {
-                        Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", address);
-                        scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
-                    }
-                    catch(Exception e) {
-                        return null;
-                    }
-                    txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), scriptPubKey);
+                if(FormatsUtil.getInstance().isValidBech32(address))   {
+                    txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
                 }
                 else    {
                     outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
@@ -782,18 +766,8 @@ public class SendFactory	{
 //        System.out.println("spend:" + spendAmount.toString());
         try {
             // spend address here
-            if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
-
-                byte[] scriptPubKey = null;
-
-                try {
-                    Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", address);
-                    scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
-                }
-                catch(Exception e) {
-                    return null;
-                }
-                txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), scriptPubKey);
+            if(FormatsUtil.getInstance().isValidBech32(address))   {
+                txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
             }
             else    {
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));

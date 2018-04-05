@@ -14,10 +14,12 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.FormatsUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -462,18 +464,13 @@ public class RicochetMeta {
 
             Script outputScript = null;
             TransactionOutput output = null;
-            if(destination.toLowerCase().startsWith("tb") || destination.toLowerCase().startsWith("bc"))   {
-
-                byte[] bScriptPubKey = null;
-
+            if(FormatsUtil.getInstance().isValidBech32(destination))   {
                 try {
-                    Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", destination);
-                    bScriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
+                    output = Bech32Util.getInstance().getTransactionOutput(destination, spendAmount);
                 }
                 catch(Exception e) {
                     return null;
                 }
-                output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount), bScriptPubKey);
             }
             else    {
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), destination));
