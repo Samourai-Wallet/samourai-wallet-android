@@ -491,28 +491,24 @@ public class SendFactory	{
             try {
                 // change address here
                 changeAddress = getChangeAddress(changeType);
-                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
+                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                    txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, _pct);
+                }
+                else    {
+                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                    txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
+                }
                 // change address here
                 changeAddress = getChangeAddress(changeType);
-                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
+                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                    txOut2 = Bech32Util.getInstance().getTransactionOutput(changeAddress, _pct);
+                }
+                else    {
+                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                    txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
+                }
                 // spend address here
                 if(FormatsUtil.getInstance().isValidBech32(address))   {
-
-                    /*
-                    byte[] scriptPubKey = null;
-
-                    try {
-                        Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", address);
-                        scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
-                    }
-                    catch(Exception e) {
-                        return null;
-                    }
-                    txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), scriptPubKey);
-                    */
-
                     txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
                 }
                 else    {
@@ -588,8 +584,13 @@ public class SendFactory	{
                 //                System.out.println("pair part:" + spendAmount.toString());
                 // change address here
                 changeAddress = getChangeAddress(changeType);
-                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                    txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, spendAmount.longValue());
+                }
+                else    {
+                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                    txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+                }
             }
             catch(Exception e) {
                 return null;
@@ -629,8 +630,13 @@ public class SendFactory	{
 //                    System.out.println("remainder:" + remainder.toString());
                         // change address here
                         changeAddress = getChangeAddress(changeType);
-                        outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                        txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
+                        if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                            txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainder.longValue());
+                        }
+                        else    {
+                            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                            txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
+                        }
 
                         check_total += remainder.longValue();
                         remainder = remainder.subtract(remainder);
@@ -639,8 +645,13 @@ public class SendFactory	{
 //                    System.out.println("remainder:" + remainderPart);
                         // change address here
                         changeAddress = getChangeAddress(changeType);
-                        outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                        txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainderPart.longValue()), outputScript.getProgram());
+                        if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                            txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainderPart.longValue());
+                        }
+                        else    {
+                            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                            txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainderPart.longValue()), outputScript.getProgram());
+                        }
 
                         check_total += remainderPart.longValue();
                         remainder = remainder.subtract(remainderPart);
@@ -776,8 +787,13 @@ public class SendFactory	{
 
             // change address here
             changeAddress = getChangeAddress(changeType);
-            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-            txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+            if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, spendAmount.longValue());
+            }
+            else    {
+                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+            }
         }
         catch(Exception e) {
             return null;
@@ -791,8 +807,13 @@ public class SendFactory	{
         try {
             // change address here
             changeAddress = getChangeAddress(changeType);
-            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-            txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
+            if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+                txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainder.longValue());
+            }
+            else    {
+                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
+                txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
+            }
         }
         catch(Exception e) {
             return null;
