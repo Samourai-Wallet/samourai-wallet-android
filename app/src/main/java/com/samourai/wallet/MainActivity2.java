@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -70,7 +71,7 @@ public class MainActivity2 extends Activity {
         }
     };
 
-    BackgroundManager.Listener bgListener = new BackgroundManager.Listener()  {
+    protected BackgroundManager.Listener bgListener = new BackgroundManager.Listener()  {
 
         public void onBecameForeground()    {
             ;
@@ -105,7 +106,9 @@ public class MainActivity2 extends Activity {
 
         loadedBalanceFragment = false;
 
-        BackgroundManager.get(MainActivity2.this).addListener(bgListener);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            BackgroundManager.get(MainActivity2.this).addListener(bgListener);
+        }
 
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
@@ -223,7 +226,9 @@ public class MainActivity2 extends Activity {
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
 
-        BackgroundManager.get(this).removeListener(bgListener);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            BackgroundManager.get(this).removeListener(bgListener);
+        }
 
         super.onDestroy();
     }

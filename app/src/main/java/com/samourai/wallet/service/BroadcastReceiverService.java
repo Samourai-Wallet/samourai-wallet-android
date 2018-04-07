@@ -1,11 +1,13 @@
 package com.samourai.wallet.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
@@ -38,13 +40,41 @@ public class BroadcastReceiverService extends Service {
 
     @Override
     public void onCreate() {
-        ;
+
+        super.onCreate();
+/*
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String CHANNEL_ID = "c01";
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    "Samourai service", NotificationManager.IMPORTANCE_DEFAULT);
+
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this.getApplicationContext())
+                    .setContentTitle("Samourai Wallet")
+                    .setContentText("starting services...").build();
+
+            startForeground(1001, notification);
+        }
+*/
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //
         context = this.getApplicationContext();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("starting Samourai services...")
+                    .setAutoCancel(true);
+
+            Notification notification = builder.build();
+            startForeground(1001, notification);
+
+        }
 
         boolean hideIcon = PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false);
         boolean acceptRemote = PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false);
@@ -109,7 +139,7 @@ public class BroadcastReceiverService extends Service {
             }.start();
         }
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
