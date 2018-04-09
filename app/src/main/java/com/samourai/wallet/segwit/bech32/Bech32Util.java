@@ -30,13 +30,13 @@ public class Bech32Util {
     }
 
     public boolean isP2WPKHScript(String script) {
-        return script.startsWith("0014");
+        return script.startsWith("0014") && script.length() == (20 * 2 + 2 * 2);
     }
 
     public boolean isP2WSHScript(String script) {
-        return script.startsWith("0020");
+        return script.startsWith("0020") && script.length() == (32 * 2 + 2 * 2);
     }
-
+/*
     public String getAddressFromScript(String script) throws Exception    {
 
         String hrp = null;
@@ -49,7 +49,7 @@ public class Bech32Util {
 
         return Bech32Segwit.encode(hrp, (byte)0x00, Hex.decode(script.substring(4).getBytes()));
     }
-
+*/
     public TransactionOutput getTransactionOutput(String address, long value) throws Exception    {
 
         TransactionOutput output = null;
