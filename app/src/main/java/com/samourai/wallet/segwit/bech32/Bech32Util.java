@@ -9,6 +9,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.script.Script;
 
 public class Bech32Util {
 
@@ -36,7 +37,7 @@ public class Bech32Util {
     public boolean isP2WSHScript(String script) {
         return script.startsWith("0020") && script.length() == (32 * 2 + 2 * 2);
     }
-/*
+
     public String getAddressFromScript(String script) throws Exception    {
 
         String hrp = null;
@@ -49,7 +50,24 @@ public class Bech32Util {
 
         return Bech32Segwit.encode(hrp, (byte)0x00, Hex.decode(script.substring(4).getBytes()));
     }
-*/
+
+    public String getAddressFromScript(Script script) throws Exception    {
+
+        String hrp = null;
+        if(SamouraiWallet.getInstance().getCurrentNetworkParams() instanceof TestNet3Params)    {
+            hrp = "tb";
+        }
+        else    {
+            hrp = "bc";
+        }
+
+        byte[] buf = script.getProgram();
+        byte[] scriptBytes = new byte[buf.length - 2];
+        System.arraycopy(buf, 2, scriptBytes, 0, scriptBytes.length);
+
+        return Bech32Segwit.encode(hrp, (byte)0x00, scriptBytes);
+    }
+
     public TransactionOutput getTransactionOutput(String address, long value) throws Exception    {
 
         TransactionOutput output = null;
