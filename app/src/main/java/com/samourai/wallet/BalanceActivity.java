@@ -45,6 +45,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -77,6 +78,8 @@ import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionInput;
@@ -125,6 +128,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -1792,15 +1796,30 @@ public class BalanceActivity extends Activity {
                     JSONArray outputs = txObj.getJSONArray("outputs");
 
                     int p2pkh = 0;
+                    int p2sh_p2wpkh = 0;
                     int p2wpkh = 0;
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
                             String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
                             Script script = new Script(Hex.decode(scriptpubkey));
-                            Address address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                            if(address.isP2SHAddress())    {
+                            String address = null;
+                            if(Bech32Util.getInstance().isBech32Script(scriptpubkey))    {
+                                try {
+                                    address = Bech32Util.getInstance().getAddressFromScript(scriptpubkey);
+                                }
+                                catch(Exception e) {
+                                    ;
+                                }
+                            }
+                            else    {
+                                address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            }
+                            if(FormatsUtil.getInstance().isValidBech32(address))    {
                                 p2wpkh++;
+                            }
+                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                                p2sh_p2wpkh++;
                             }
                             else    {
                                 p2pkh++;
@@ -1809,7 +1828,7 @@ public class BalanceActivity extends Activity {
                     }
 
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, outputs.length());
+                    BigInteger estimatedFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, outputs.length());
 
                     long total_inputs = 0L;
                     long total_outputs = 0L;
@@ -1867,7 +1886,10 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
                         final String addr = outputs.getJSONObject(0).getString("address");
                         final String ownReceiveAddr;
-                        if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                        if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                            ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                        }
+                        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                         }
                         else    {
@@ -1877,11 +1899,12 @@ public class BalanceActivity extends Activity {
 
                         long totalAmount = utxo.getValue();
                         Log.d("BalanceActivity", "amount before fee:" + totalAmount);
-                        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
-                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), 1);
+                        Triple<Integer,Integer, Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
+                        BigInteger cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 1);
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
 
                         p2pkh = outpointTypes.getLeft();
+                        p2sh_p2wpkh = outpointTypes.getMiddle();
                         p2wpkh = outpointTypes.getRight();
 
                         if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
@@ -1891,10 +1914,11 @@ public class BalanceActivity extends Activity {
                                 totalAmount += _utxo.getValue();
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
-                                outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+                                outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
                                 p2pkh += outpointTypes.getLeft();
+                                p2sh_p2wpkh += outpointTypes.getMiddle();
                                 p2wpkh += outpointTypes.getRight();
-                                cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, 1);
+                                cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, 1);
                                 if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
@@ -1992,7 +2016,11 @@ public class BalanceActivity extends Activity {
                                                             });
 
                                                             // reset receive index upon tx fail
-                                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                            if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                                                                int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                                BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                                            }
+                                                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                                                                 int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                                 BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                             }
@@ -2021,7 +2049,11 @@ public class BalanceActivity extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         try {
-                                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                            if(Bech32Util.getInstance().isBech32Script(addr))    {
+                                                int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
+                                            }
+                                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                                                 int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                 BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                             }
