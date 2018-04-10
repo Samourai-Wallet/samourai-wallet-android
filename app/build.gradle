@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
+    useLibrary 'org.apache.http.legacy'
     flavorDimensions "versionCode"
     defaultConfig {
         applicationId 'com.samourai.wallet'
@@ -69,7 +70,6 @@ dependencies {
     compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     compile 'com.neovisionaries:nv-websocket-client:1.9'
     compile 'com.baoyz.swipemenulistview:library:1.2.1'
-    compile 'org.apache.httpcomponents:httpclient:4.5'
     compile 'org.json:json:20140107'
     compile 'commons-io:commons-io:2.5'
     compile 'commons-codec:commons-codec:1.4'
