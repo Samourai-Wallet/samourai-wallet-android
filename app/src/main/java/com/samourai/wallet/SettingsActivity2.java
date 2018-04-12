@@ -74,7 +74,7 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.TorUtil;
 
-import net.sourceforge.zbar.Symbol;
+import com.yanzhenjie.zbar.Symbol;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

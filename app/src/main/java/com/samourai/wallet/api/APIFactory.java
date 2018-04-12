@@ -19,6 +19,8 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -45,6 +47,7 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 
 import org.json.JSONArray;
@@ -928,7 +931,7 @@ public class APIFactory	{
 
                     try {
                         String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                        Log.d("APIFactory", "address:" + address);
+//                        Log.d("APIFactory", "address:" + address);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
@@ -1514,12 +1517,16 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
+//                Log.d("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+//                Log.d("APIFactory", response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", address);
+//                Log.d("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+//                Log.d("APIFactory", response);
             }
 
             return parseUnspentOutputsForSweep(response);
@@ -1564,7 +1571,15 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     try {
-                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        String address = null;
+
+                        if(Bech32Util.getInstance().isBech32Script(script))    {
+                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                            Log.d("address parsed:", address);
+                        }
+                        else    {
+                            address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        }
 
                         // Construct the output
                         MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);

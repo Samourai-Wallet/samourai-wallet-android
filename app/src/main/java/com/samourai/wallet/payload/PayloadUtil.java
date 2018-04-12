@@ -750,7 +750,7 @@ public class PayloadUtil	{
             dir.setWritable(true, true);
             dir.setReadable(true, true);
         }
-        File newfile = new File(dir, "samourai.txt");
+        File newfile = new File(dir, strOptionalFilename);
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
 

@@ -101,7 +101,7 @@ import java.util.List;
 import java.util.Locale;
 import java.text.DecimalFormatSymbols;
 
-import net.sourceforge.zbar.Symbol;
+import com.yanzhenjie.zbar.Symbol;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.script.Script;
@@ -485,6 +485,7 @@ public class SendActivity extends Activity {
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -497,6 +498,7 @@ public class SendActivity extends Activity {
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
@@ -509,6 +511,7 @@ public class SendActivity extends Activity {
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -528,6 +531,7 @@ public class SendActivity extends Activity {
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -545,6 +549,7 @@ public class SendActivity extends Activity {
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
@@ -562,6 +567,7 @@ public class SendActivity extends Activity {
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -1178,10 +1184,12 @@ public class SendActivity extends Activity {
                                                     SendAddressUtil.getInstance().add(address, true);
                                                 }
 
-                                                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                                intent.putExtra("notifTx", false);
-                                                intent.putExtra("fetch", true);
-                                                LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                                                if(_change == 0L)    {
+                                                    Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                                                    intent.putExtra("notifTx", false);
+                                                    intent.putExtra("fetch", true);
+                                                    LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
+                                                }
 
                                                 View view = SendActivity.this.getCurrentFocus();
                                                 if (view != null) {
@@ -2003,6 +2011,15 @@ public class SendActivity extends Activity {
             BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
         }
 
+    }
+
+    private void sanitizeFee()  {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
+            SuggestedFee suggestedFee = new SuggestedFee();
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.15 * 1000.0)));
+            Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
+            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+        }
     }
 
 }

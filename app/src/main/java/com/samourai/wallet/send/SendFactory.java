@@ -26,6 +26,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -38,7 +39,9 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.core.TransactionWitness;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -136,9 +139,23 @@ public class SendFactory	{
 
             try {
                 byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
-//                String address = new BitcoinScript(scriptBytes).getAddress().toString();
-                String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-//                        Log.i("address from script", address);
+
+                String script = Hex.toHexString(scriptBytes);
+                String address = null;
+                if(Bech32Util.getInstance().isBech32Script(script))    {
+                    try {
+                        address = Bech32Util.getInstance().getAddressFromScript(script);
+                    }
+                    catch(Exception e) {
+                        ;
+                    }
+                }
+                else    {
+                    address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                }
+
+                Log.i("address from script", address);
+
                 ECKey ecKey = null;
                 try {
                     DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), privKeyReader.getKey().getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams()));
@@ -286,8 +303,21 @@ public class SendFactory	{
             connectedOutput = input.getOutpoint().getConnectedOutput();
             scriptPubKey = connectedOutput.getScriptPubKey();
 
-            String address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+            String script = Hex.toHexString(connectedPubKeyScript);
+            String address = null;
+            if(Bech32Util.getInstance().isBech32Script(script))    {
+                try {
+                    address = Bech32Util.getInstance().getAddressFromScript(script);
+                }
+                catch(Exception e) {
+                    ;
+                }
+            }
+            else    {
+                address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+            }
+
+            if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
 
                 final SegwitAddress p2shp2wpkh = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 //                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
@@ -305,11 +335,12 @@ public class SendFactory	{
                 witness.setPush(1, key.getPubKey());
                 transaction.setWitness(i, witness);
 
-                final ScriptBuilder sigScript = new ScriptBuilder();
-                sigScript.data(redeemScript.getProgram());
-                transaction.getInput(i).setScriptSig(sigScript.build());
-
-                transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+                if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    final ScriptBuilder sigScript = new ScriptBuilder();
+                    sigScript.data(redeemScript.getProgram());
+                    transaction.getInput(i).setScriptSig(sigScript.build());
+                    transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
+                }
 
             }
             else    {

@@ -88,7 +88,7 @@ import java.util.Locale;
 
 import static java.lang.System.currentTimeMillis;
 
-import net.sourceforge.zbar.Symbol;
+import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
