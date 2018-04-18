@@ -189,8 +189,7 @@ public class UTXOActivity extends Activity {
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
                                 String msg = null;
 
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
-                                        FormatsUtil.getInstance().isValidBech32(addr))    {
+                                if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
 
                                     msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
 
@@ -230,11 +229,11 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                SegwitAddress p2sh_p2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-                                if(ecKey != null && p2sh_p2wpkh != null) {
+                                if(ecKey != null && segwitAddress != null) {
 
-                                    String redeemScript = Hex.toHexString(p2sh_p2wpkh.segWitRedeemScript().getProgram());
+                                    String redeemScript = Hex.toHexString(segwitAddress.segWitRedeemScript().getProgram());
 
                                     TextView showText = new TextView(UTXOActivity.this);
                                     showText.setText(redeemScript);
@@ -326,7 +325,7 @@ public class UTXOActivity extends Activity {
                 }
 
                 String addr = data.get(position).addr;
-                if(!Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                if(!FormatsUtil.getInstance().isValidBech32(addr) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                     menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
                 }
 

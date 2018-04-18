@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -78,6 +79,7 @@ public class ReceiveActivity extends Activity {
     private TextWatcher textWatcherBTC = null;
     private TextWatcher textWatcherFiat = null;
     private Switch swSegwit = null;
+    private CheckBox cbBech32 = null;
 
     private String defaultSeparator = null;
 
@@ -88,9 +90,11 @@ public class ReceiveActivity extends Activity {
     private String addr = null;
     private String addr44 = null;
     private String addr49 = null;
+    private String addr84 = null;
 
     private boolean canRefresh44 = false;
     private boolean canRefresh49 = false;
+    private boolean canRefresh84 = false;
     private Menu _menu = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.ReceiveFragment.REFRESH";
@@ -147,11 +151,17 @@ public class ReceiveActivity extends Activity {
         swSegwit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked)    {
+                if(isChecked && cbBech32.isChecked())    {
+                    addr = addr84;
+                    cbBech32.setVisibility(View.VISIBLE);
+                }
+                else if(isChecked && !cbBech32.isChecked())    {
                     addr = addr49;
+                    cbBech32.setVisibility(View.VISIBLE);
                 }
                 else    {
                     addr = addr44;
+                    cbBech32.setVisibility(View.GONE);
                 }
 
                 displayQRCode();
@@ -159,9 +169,30 @@ public class ReceiveActivity extends Activity {
             }
         });
 
+        cbBech32 = (CheckBox)findViewById(R.id.bech32);
+        cbBech32.setVisibility(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true ? View.VISIBLE : View.GONE);
+        cbBech32.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked)    {
+                    addr = addr84;
+                }
+                else    {
+                    addr = addr49;
+                }
+
+                displayQRCode();
+
+            }
+        });
+
+        addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
         addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
         addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
-        if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
+        if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true && cbBech32.isChecked())    {
+            addr = addr84;
+        }
+        else if(PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.USE_SEGWIT, true) == true && !cbBech32.isChecked())    {
             addr = addr49;
         }
         else    {
@@ -206,7 +237,14 @@ public class ReceiveActivity extends Activity {
         ivQR.setOnTouchListener(new OnSwipeTouchListener(ReceiveActivity.this) {
             @Override
             public void onSwipeLeft() {
-                if(swSegwit.isChecked() && canRefresh49) {
+                if(swSegwit.isChecked() && cbBech32.isChecked() && canRefresh84) {
+                    addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                    addr = addr84;
+                    canRefresh84 = false;
+                    _menu.findItem(R.id.action_refresh).setVisible(false);
+                    displayQRCode();
+                }
+                else if(swSegwit.isChecked() && !cbBech32.isChecked() && canRefresh49) {
                     addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                     addr = addr49;
                     canRefresh49 = false;
@@ -484,7 +522,14 @@ public class ReceiveActivity extends Activity {
         }
         else if (id == R.id.action_refresh) {
 
-            if(swSegwit.isChecked() && canRefresh49) {
+            if(swSegwit.isChecked() && cbBech32.isChecked() && canRefresh84) {
+                addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                addr = addr84;
+                canRefresh84 = false;
+                item.setVisible(false);
+                displayQRCode();
+            }
+            else if(swSegwit.isChecked() && !cbBech32.isChecked() && canRefresh49) {
                 addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
                 addr = addr49;
                 canRefresh49 = false;
@@ -520,22 +565,35 @@ public class ReceiveActivity extends Activity {
 
     private void displayQRCode() {
 
+        String _addr = null;
+        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+            _addr = addr.toUpperCase();
+        }
+        else    {
+            _addr = addr;
+        }
+
         try {
             double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr), Coin.valueOf(lamount), null, null)));
+                if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr, Coin.valueOf(lamount), null, null)));
+                }
+                else    {
+                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
+                }
             }
             else {
-                ivQR.setImageBitmap(generateQRCode(addr));
+                ivQR.setImageBitmap(generateQRCode(_addr));
             }
         }
         catch(NumberFormatException nfe) {
-            ivQR.setImageBitmap(generateQRCode(addr));
+            ivQR.setImageBitmap(generateQRCode(_addr));
         }
         catch(ParseException pe) {
-            ivQR.setImageBitmap(generateQRCode(addr));
+            ivQR.setImageBitmap(generateQRCode(_addr));
         }
 
         tvAddress.setText(addr);
@@ -587,7 +645,10 @@ public class ReceiveActivity extends Activity {
                                     JSONObject _addr = addrs.getJSONObject(0);
                                     if(_addr.has("n_tx") && _addr.getLong("n_tx") > 0L) {
                                         Toast.makeText(ReceiveActivity.this, R.string.address_used_previously, Toast.LENGTH_SHORT).show();
-                                        if(swSegwit.isChecked())    {
+                                        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                            canRefresh84 = true;
+                                        }
+                                        else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                             canRefresh49 = true;
                                         }
                                         else    {
@@ -598,7 +659,10 @@ public class ReceiveActivity extends Activity {
                                         }
                                     }
                                     else {
-                                        if(swSegwit.isChecked())    {
+                                        if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                            canRefresh84 = false;
+                                        }
+                                        else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                             canRefresh49 = false;
                                         }
                                         else    {
@@ -611,7 +675,10 @@ public class ReceiveActivity extends Activity {
                                 }
 
                             } catch (Exception e) {
-                                if(swSegwit.isChecked())    {
+                                if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                                    canRefresh84 = false;
+                                }
+                                else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                                     canRefresh49 = false;
                                 }
                                 else    {
@@ -625,7 +692,10 @@ public class ReceiveActivity extends Activity {
                         }
                     });
                 } catch (Exception e) {
-                    if(swSegwit.isChecked())    {
+                    if(swSegwit.isChecked() && cbBech32.isChecked())    {
+                        canRefresh84 = false;
+                    }
+                    else if(swSegwit.isChecked() && !cbBech32.isChecked())    {
                         canRefresh49 = false;
                     }
                     else    {

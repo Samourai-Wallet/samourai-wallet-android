@@ -12,6 +12,7 @@ import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 
@@ -81,6 +82,7 @@ public class HD_WalletFactory	{
 
         BIP47Util.getInstance(context).reset();
         BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -126,6 +128,7 @@ public class HD_WalletFactory	{
 
         BIP47Util.getInstance(context).reset();
         BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -175,6 +178,24 @@ public class HD_WalletFactory	{
         }
 
         return hdw49;
+    }
+
+    public HD_Wallet getBIP84() throws IOException, MnemonicException.MnemonicLengthException {
+
+        if(wallets == null || wallets.size() < 1) {
+            return null;
+        }
+
+        HD_Wallet hdw84 = null;
+        InputStream wis = context.getAssets().open("BIP39/en.txt");
+        if (wis != null) {
+            String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
+            String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
+            MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            hdw84 = new HD_Wallet(84, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.bouncycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+        }
+
+        return hdw84;
     }
 
     public void set(HD_Wallet wallet)	{

@@ -190,11 +190,11 @@ public class FeeUtil  {
         int p2pkh = 0;
 
         for(MyTransactionOutPoint out : outpoints)   {
-            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), out.getAddress()).isP2SHAddress())    {
-                p2sh_p2wpkh++;
-            }
-            else if(FormatsUtil.getInstance().isValidBech32(out.getAddress()))    {
+            if(FormatsUtil.getInstance().isValidBech32(out.getAddress()))    {
                 p2wpkh++;
+            }
+            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), out.getAddress()).isP2SHAddress())    {
+                p2sh_p2wpkh++;
             }
             else   {
                 p2pkh++;

@@ -8,6 +8,7 @@ public class UTXOFactory {
 
     private static HashMap<String,UTXO> p2pkh = null;
     private static HashMap<String,UTXO> p2sh_p2wpkh = null;
+    private static HashMap<String,UTXO> p2wpkh = null;
 
     private UTXOFactory() { ; }
 
@@ -18,6 +19,7 @@ public class UTXOFactory {
 
             p2pkh = new HashMap<String,UTXO>();
             p2sh_p2wpkh = new HashMap<String,UTXO>();
+            p2wpkh = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -26,6 +28,7 @@ public class UTXOFactory {
     public void clear() {
         p2pkh.clear();
         p2sh_p2wpkh.clear();
+        p2wpkh.clear();
     }
 
     public HashMap<String,UTXO> getP2PKH() {
@@ -44,12 +47,24 @@ public class UTXOFactory {
         UTXOFactory.p2sh_p2wpkh = p2sh_p2wpkh;
     }
 
+    public HashMap<String,UTXO> getP2WPKH() {
+        return p2wpkh;
+    }
+
+    public void setP2WPKH(HashMap<String,UTXO> p2wpkh) {
+        UTXOFactory.p2wpkh = p2wpkh;
+    }
+
     public void addP2PKH(String script, UTXO utxo)  {
         p2pkh.put(script, utxo);
     }
 
     public void addP2SH_P2WPKH(String script, UTXO utxo)  {
         p2sh_p2wpkh.put(script, utxo);
+    }
+
+    public void addP2WPKH(String script, UTXO utxo)  {
+        p2wpkh.put(script, utxo);
     }
 
     public long getTotalP2PKH() {
@@ -74,6 +89,17 @@ public class UTXOFactory {
         return ret;
     }
 
+    public long getTotalP2WPKH() {
+
+        long ret = 0L;
+
+        for(UTXO utxo : p2wpkh.values())   {
+            ret += utxo.getValue();
+        }
+
+        return ret;
+    }
+
     public int getCountP2PKH() {
 
         int ret = 0;
@@ -90,6 +116,17 @@ public class UTXOFactory {
         int ret = 0;
 
         for(UTXO utxo : p2sh_p2wpkh.values())   {
+            ret += utxo.getOutpoints().size();
+        }
+
+        return ret;
+    }
+
+    public int getCountP2WPKH() {
+
+        int ret = 0;
+
+        for(UTXO utxo : p2wpkh.values())   {
             ret += utxo.getOutpoints().size();
         }
 
