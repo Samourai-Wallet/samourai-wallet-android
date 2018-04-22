@@ -2,6 +2,7 @@ package com.samourai.wallet.send;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -369,12 +370,31 @@ public class SendFactory	{
 
     }
 
-    //
-    // BIP126 hetero
-    //
-    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> heterogeneous(List<UTXO> outputs, BigInteger spendAmount, String address) {
+    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, BigInteger spendAmount, String address) {
 
-        int changeType;
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null);
+        if(set0 == null)    {
+            return null;
+        }
+        Log.d("SendFactory", "set0 utxo returned:" + set0.getRight().toString());
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(set0.getRight(), spendAmount, address, set0.getLeft());
+        if(set1 == null)    {
+            return null;
+        }
+
+        Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> ret = Pair.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>());
+
+        ret.getLeft().addAll(set0.getLeft());
+        ret.getLeft().addAll(set1.getLeft());
+        ret.getRight().addAll(set0.getMiddle());
+        ret.getRight().addAll(set1.getMiddle());
+
+        return ret;
+    }
+
+    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints) {
+
+        int changeType = 49;
         if(FormatsUtil.getInstance().isValidBech32(address))    {
             changeType = 84;
         }
@@ -385,469 +405,175 @@ public class SendFactory	{
             changeType = 44;
         }
 
-        Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> ret = Pair.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>());
-
-        long check_total = 0L;
-
-        long total_wallet = 0L;
-        for(UTXO output : outputs)   {
-            total_wallet += output.getValue();
+        Triple<Integer,Integer,Integer> firstPassOutpointTypes = null;
+        if(firstPassOutpoints != null)    {
+            firstPassOutpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(firstPassOutpoints));
         }
-//        System.out.println("total wallet amount:" + total_wallet);
-//        System.out.println("spend amount:" + spendAmount.toString());
+        else    {
+            firstPassOutpointTypes = Triple.of(0, 0, 0);
+        }
 
-        if(spendAmount.longValue() > (total_wallet / 2L))    {
-//            System.out.println("spend amount larger than 50% of total amount available");
+        long totalOutpointsAmount = 0L;
+        for(UTXO utxo : utxos)   {
+            totalOutpointsAmount += utxo.getValue();
+        }
+        Log.d("SendFactory", "total outputs amount:" + totalOutpointsAmount);
+        Log.d("SendFactory", "spend amount:" + spendAmount.toString());
+        Log.d("SendFactory", "utxos:" + utxos.size());
+
+        if(totalOutpointsAmount <= spendAmount.longValue())    {
+            Log.d("SendFactory", "spend amount must be > total amount available");
             return null;
         }
 
-        List<MyTransactionOutPoint> selectedOutputs = new ArrayList<MyTransactionOutPoint>();
-        BigInteger totalValue = BigInteger.ZERO;
-        BigInteger totalAmount = spendAmount;
-        int output_scripts = 0;
-
+        List<MyTransactionOutPoint> selectedOutpoints = new ArrayList<MyTransactionOutPoint>();
+        BigInteger selectedValue = BigInteger.ZERO;
         BigInteger biFee = BigInteger.ZERO;
+        List<TransactionOutput> txOutputs = new ArrayList<TransactionOutput>();
+        TransactionOutput txSpendOutput = null;
+        TransactionOutput txChangeOutput = null;
+        Script outputScript = null;
+        String changeAddress = null;
+        HashMap<String,MyTransactionOutPoint> seenOutpoints = new HashMap<String,MyTransactionOutPoint>();
 
-        for (UTXO output : outputs) {
+        BigInteger bDust = firstPassOutpoints == null ? BigInteger.ZERO : SamouraiWallet.bDust;
 
-            selectedOutputs.addAll(output.getOutpoints());
-            output_scripts++;
-            totalValue = totalValue.add(BigInteger.valueOf(output.getValue()));
+        // select utxos until > spendAmount * 2
+        // create additional change output(s)
+        int idx = 0;
+        for (int i = 0; i < utxos.size(); i++) {
 
-            double pctThreshold = (100.0 / (double)outputs.size()) / 100.0;
-            long _pct = (long)(totalValue.doubleValue() * pctThreshold);
+            UTXO utxo = utxos.get(i);
 
-            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutputs));
-            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getMiddle(), outputTypes.getRight(), output_scripts);
+            boolean utxoIsSelected = false;
 
-            if(totalValue.compareTo(totalAmount.add(biFee)) >= 0 && output_scripts >= 3)    {
-
-                if(spendAmount.compareTo(BigInteger.valueOf(_pct)) <= 0) {
-//                    System.out.println("spendAmount < _pct, breaking");
-                    break;
+            for(MyTransactionOutPoint op : utxo.getOutpoints())   {
+                String hash = op.getTxHash().toString();
+                if(!seenOutpoints.containsKey(hash))    {
+                    seenOutpoints.put(hash,op);
+                    selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
+                    Log.d("SendFactory", "selected:" + i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
+                    utxoIsSelected = true;
                 }
-                else if(totalValue.compareTo(spendAmount.multiply(BigInteger.valueOf(2L))) > 0)   {
-//                    System.out.println("totalValue > spendAmount * 2, breaking");
-                    break;
+                else if(op.getValue().longValue() > seenOutpoints.get(hash).getValue().longValue()) {
+                    seenOutpoints.put(hash,op);
+                    selectedValue = selectedValue.subtract(BigInteger.valueOf(seenOutpoints.get(hash).getValue().longValue()));
+                    selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
+                    Log.d("SendFactory", "selected (replace):"+ i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
+                    utxoIsSelected = true;
                 }
                 else    {
                     ;
                 }
 
+                selectedOutpoints.clear();
+                selectedOutpoints.addAll(seenOutpoints.values());
             }
 
-        }
-
-        //
-//        System.out.println("total amount (spend + fee):" + totalAmount.toString());
-//        System.out.println("total value selected:" + totalValue.toString());
-//        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
-//        System.out.println("total change:" + totalChange.toString());
-//        System.out.println("output scripts:" + output_scripts);
-//        System.out.println("selected outputs:" + selectedOutputs.size());
-//        System.out.println("tx size:" + txSize);
-//        System.out.println("fixed fee:" + fixedFee);
-//        System.out.println("fee:" + biFee.toString());
-        //
-
-        if(totalValue.compareTo(totalAmount) < 0)    {
-//            System.out.println("Insufficient funds");
-            return null;
-        }
-
-        if(output_scripts < 3)    {
-//            System.out.println("Need at least 3 output scripts");
-            return null;
-        }
-
-//        for (MyTransactionOutPoint selected : selectedOutputs) {
-//            System.out.println("selected value:" + selected.getValue());
-//        }
-
-        ret.getLeft().addAll(selectedOutputs);
-
-        check_total += biFee.longValue();
-
-        double pctThreshold = (100.0 / (double)output_scripts) / 100.0;
-        long _pct = (long)(totalValue.doubleValue() * pctThreshold);
-
-        TransactionOutput txOut1 = null;
-        TransactionOutput txOut2 = null;
-        TransactionOutput txOutSpend = null;
-        Script outputScript = null;
-        String changeAddress = null;
-        BigInteger remainder = totalValue.subtract(biFee);
-        int remainingOutputs = output_scripts;
-        if(spendAmount.compareTo(BigInteger.valueOf(_pct)) <= 0)    {
-
-//            System.out.println("spend not part of pair");
-
-            //
-//            System.out.println("pair part:" + _pct);
-//            System.out.println("pair part:" + _pct);
-//            System.out.println("spend:" + spendAmount.toString());
-            //
-
-            try {
-                // change address here
-                changeAddress = getChangeAddress(changeType);
-                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                    txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, _pct);
-                }
-                else    {
-                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                    txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
-                }
-                // change address here
-                changeAddress = getChangeAddress(changeType);
-                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                    txOut2 = Bech32Util.getInstance().getTransactionOutput(changeAddress, _pct);
-                }
-                else    {
-                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                    txOut2 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(_pct), outputScript.getProgram());
-                }
-                // spend address here
-                if(FormatsUtil.getInstance().isValidBech32(address))   {
-                    txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
-                }
-                else    {
-                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
-                    txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
-                }
-            }
-            catch(Exception e)    {
-                return null;
+            if(utxoIsSelected)    {
+                idx++;
             }
 
-            check_total += _pct;
-            check_total += _pct;
-            check_total += spendAmount.longValue();
-
-            remainder = remainder.subtract(BigInteger.valueOf(_pct));
-            remainder = remainder.subtract(BigInteger.valueOf(_pct));
-            remainder = remainder.subtract(spendAmount);
-
-            remainingOutputs -= 3;
-
-            if(remainingOutputs < 0)    {
-                System.out.println("error");
-                return null;
-            }
-            else if(remainingOutputs == 0)    {
-//                System.out.println("updating pair parts");
-                long part1 = _pct + remainder.divide(BigInteger.valueOf(2L)).longValue();
-                txOut1.setValue(Coin.valueOf(_pct + remainder.divide(BigInteger.valueOf(2L)).longValue()));
-                remainder = remainder.subtract(remainder.divide(BigInteger.valueOf(2L)));
-                long part2 = _pct + remainder.longValue();
-                txOut2.setValue(Coin.valueOf(_pct + remainder.longValue()));
-                remainder = remainder.subtract(remainder);
-                //
-//                System.out.println("part1:" + part1);
-//                System.out.println("part2:" + part2);
-//                System.out.println("remainder:" + remainder.toString());
-                //
-                check_total += part1;
-                check_total += part2;
-                check_total += remainder.longValue();
-            }
-            else    {
-                ;
+            if(firstPassOutpoints != null)    {
+                Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
+                biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
             }
 
-            if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOut2.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
-                return null;
-            }
-
-            ret.getRight().add(txOut1);
-            ret.getRight().add(txOut2);
-            ret.getRight().add(txOutSpend);
-
-        }
-        else    {
-//            System.out.println("spend part of pair");
-
-            try {
-//                System.out.println("spend:" + spendAmount.toString());
-                // spend address here
-//                Log.d("SendFactory", address + ":" + org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
-                // spend address here
-                if(FormatsUtil.getInstance().isValidBech32(address))   {
-                    txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
-                }
-                else    {
-                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
-//                Log.d("SendFactory", address + ":" + outputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()));
-                    txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
-                }
-
-                //                System.out.println("pair part:" + spendAmount.toString());
-                // change address here
-                changeAddress = getChangeAddress(changeType);
-                if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                    txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, spendAmount.longValue());
-                }
-                else    {
-                    outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                    txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
-                }
-            }
-            catch(Exception e) {
-                return null;
-            }
-
-            check_total += spendAmount.longValue();
-            check_total += spendAmount.longValue();
-
-            remainder = remainder.subtract(spendAmount);
-            remainder = remainder.subtract(spendAmount);
-
-            remainingOutputs -= 2;  // remainingOutputs >= 1 as we selected minimum 3 outputs above
-
-            if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
-                return null;
-            }
-
-            ret.getRight().add(txOut1);
-            ret.getRight().add(txOutSpend);
-
-        }
-
-//        System.out.println("remainder for change:" + remainder.toString());
-
-        if(remainingOutputs > 0)    {
-            BigInteger remainderPart = remainder.divide(BigInteger.valueOf(remainingOutputs));
-            if(remainderPart.compareTo(SamouraiWallet.bDust) < 0)    {
-//                System.out.println("dust amounts for change");
-                return null;
-            }
-
-            for(int i = 0; i < remainingOutputs; i++)   {
-
-                TransactionOutput txChange = null;
-                try {
-                    if(i == (remainingOutputs - 1))    {
-//                    System.out.println("remainder:" + remainder.toString());
-                        // change address here
-                        changeAddress = getChangeAddress(changeType);
-                        if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                            txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainder.longValue());
-                        }
-                        else    {
-                            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                            txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
-                        }
-
-                        check_total += remainder.longValue();
-                        remainder = remainder.subtract(remainder);
-                    }
-                    else    {
-//                    System.out.println("remainder:" + remainderPart);
-                        // change address here
-                        changeAddress = getChangeAddress(changeType);
-                        if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                            txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainderPart.longValue());
-                        }
-                        else    {
-                            outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                            txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainderPart.longValue()), outputScript.getProgram());
-                        }
-
-                        check_total += remainderPart.longValue();
-                        remainder = remainder.subtract(remainderPart);
-                    }
-                }
-                catch(Exception e) {
-                    return null;
-                }
-
-                ret.getRight().add(txChange);
-
-            }
-        }
-
-//        System.out.println("remainder after processing:" + remainder.toString());
-//        System.out.println("output amount processed:" + check_total);
-
-        long inValue = 0L;
-        for(MyTransactionOutPoint outpoint : ret.getLeft())   {
-            inValue += outpoint.getValue().longValue();
-        }
-        long outValue = 0L;
-        for(TransactionOutput tOut : ret.getRight())   {
-            outValue += tOut.getValue().longValue();
-        }
-        outValue += biFee.longValue();
-//        System.out.println("inputs:" + inValue);
-//        System.out.println("outputs:" + outValue);
-
-        assert(inValue == outValue);
-
-        return ret;
-
-    }
-
-    //
-    // BIP126 alt
-    //
-    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> altHeterogeneous(List<UTXO> outputs, BigInteger spendAmount, String address) {
-
-        int changeType;
-        if(FormatsUtil.getInstance().isValidBech32(address))    {
-            changeType = 84;
-        }
-        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
-            changeType = 49;
-        }
-        else    {
-            changeType = 44;
-        }
-
-        Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> ret = Pair.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>());
-
-        long check_total = 0L;
-
-        final int NB_OUTPUTS = 3;
-
-        long total_wallet = 0L;
-        for(UTXO output : outputs)   {
-            total_wallet += output.getValue();
-        }
-//        System.out.println("total wallet amount:" + total_wallet);
-//        System.out.println("spend amount:" + spendAmount.toString());
-
-        if(spendAmount.longValue() > (total_wallet / 2L))    {
-//            System.out.println("spend amount larger than 50% of total amount available");
-            return null;
-        }
-
-        List<MyTransactionOutPoint> selectedOutputs = new ArrayList<MyTransactionOutPoint>();
-        BigInteger totalValue = BigInteger.ZERO;
-        BigInteger totalAmount = spendAmount;
-
-        BigInteger biFee = BigInteger.ZERO;
-
-        for (UTXO output : outputs) {
-
-            selectedOutputs.addAll(output.getOutpoints());
-            totalValue = totalValue.add(BigInteger.valueOf(output.getValue()));
-
-            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutputs));
-            biFee = FeeUtil.getInstance().estimatedFeeSegwit(outputTypes.getLeft(), outputTypes.getMiddle(), outputTypes.getRight(), NB_OUTPUTS);
-
-            if(totalValue.compareTo(totalAmount.multiply(BigInteger.valueOf(2L)).add(biFee)) >= 0 && selectedOutputs.size() >= 4)    {
+            if(selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) > 0)    {
                 break;
             }
 
         }
 
-        //
-//        System.out.println("total amount (spend + fee):" + totalAmount.add(biFee).toString());
-//        System.out.println("total value selected:" + totalValue.toString());
-//        BigInteger totalChange = totalValue.subtract(totalAmount).subtract(biFee);
-//        System.out.println("total change:" + totalChange.toString());
-//        System.out.println("output scripts:" + NB_OUTPUTS);
-//        System.out.println("selected outputs:" + selectedOutputs.size());
-//        System.out.println("tx size:" + txSize);
-//        System.out.println("fixed fee:" + fixedFee);
-//        System.out.println("fee:" + biFee.toString());
-        //
-
-        if(totalValue.compareTo(totalAmount) < 0)    {
-//            System.out.println("Insufficient funds");
+        if(selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) <= 0)    {
             return null;
         }
 
-//        for (MyTransactionOutPoint selected : selectedOutputs) {
-//            System.out.println("selected value:" + selected.getValue());
-//        }
+        List<MyTransactionOutPoint> _selectedOutpoints = new ArrayList<MyTransactionOutPoint>();
+        Collections.sort(selectedOutpoints, new UTXO.OutpointComparator());
+        long _value = 0L;
+        for(MyTransactionOutPoint op : selectedOutpoints)   {
+            _selectedOutpoints.add(op);
+            _value += op.getValue().longValue();
+            if(firstPassOutpoints != null)    {
+                Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(_selectedOutpoints));
+                biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
+            }
+            if(_value > spendAmount.add(biFee).add(bDust).longValue())    {
+                break;
+            }
+        }
+        selectedValue = BigInteger.valueOf(_value);
+        selectedOutpoints.clear();
+        selectedOutpoints.addAll(_selectedOutpoints);
 
-        ret.getLeft().addAll(selectedOutputs);
+        Log.d("SendFactory", "utxos idx:" + idx);
 
-        check_total += biFee.longValue();
+        List<UTXO> _utxos = new ArrayList<>(utxos.subList(idx, utxos.size()));
+        Log.d("SendFactory", "utxos after selection:" + _utxos.size());
+        BigInteger changeDue = selectedValue.subtract(spendAmount);
 
-        BigInteger remainder = totalValue.subtract(biFee);
+        if(firstPassOutpoints != null)    {
+            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
+            biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
+        }
 
-        TransactionOutput txOut1 = null;
-        TransactionOutput txOutSpend = null;
-        TransactionOutput txChange = null;
-        Script outputScript = null;
-        String changeAddress = null;
+        if(changeDue.subtract(biFee).compareTo(SamouraiWallet.bDust) > 0)    {
+            changeDue = changeDue.subtract(biFee);
+        }
 
-//        System.out.println("spend:" + spendAmount.toString());
         try {
-            // spend address here
+
+            String _address = null;
+            if(firstPassOutpoints == null)    {
+                _address = address;
+            }
+            else    {
+                _address = getChangeAddress(changeType);
+            }
             if(FormatsUtil.getInstance().isValidBech32(address))   {
-                txOutSpend = Bech32Util.getInstance().getTransactionOutput(address, spendAmount.longValue());
+                txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());
             }
             else    {
-                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address));
-                txOutSpend = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _address));
+                txSpendOutput = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
             }
+            txOutputs.add(txSpendOutput);
 
-            // change address here
             changeAddress = getChangeAddress(changeType);
             if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                txOut1 = Bech32Util.getInstance().getTransactionOutput(changeAddress, spendAmount.longValue());
+                txChangeOutput = Bech32Util.getInstance().getTransactionOutput(changeAddress, changeDue.longValue());
             }
             else    {
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                txOut1 = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
+                txChangeOutput = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(changeDue.longValue()), outputScript.getProgram());
             }
+            txOutputs.add(txChangeOutput);
         }
         catch(Exception e) {
             return null;
         }
-
-        check_total += spendAmount.longValue();
-        check_total += spendAmount.longValue();
-        remainder = remainder.subtract(spendAmount);
-        remainder = remainder.subtract(spendAmount);
-//        System.out.println("change:" + remainder.toString());
-        try {
-            // change address here
-            changeAddress = getChangeAddress(changeType);
-            if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
-                txChange = Bech32Util.getInstance().getTransactionOutput(changeAddress, remainder.longValue());
-            }
-            else    {
-                outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
-                txChange = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(remainder.longValue()), outputScript.getProgram());
-            }
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-        check_total += remainder.longValue();
-        remainder = remainder.subtract(remainder);
-
-        if(txOut1.getValue().longValue() < SamouraiWallet.bDust.longValue() || txChange.getValue().longValue() < SamouraiWallet.bDust.longValue() || txOutSpend.getValue().longValue() < SamouraiWallet.bDust.longValue())    {
-            return null;
-        }
-
-        ret.getRight().add(txOut1);
-        ret.getRight().add(txOutSpend);
-        ret.getRight().add(txChange);
-
-        //
-//        System.out.println("remainder after processing:" + remainder.toString());
-//        System.out.println("output amount processed:" + check_total);
-        //
 
         long inValue = 0L;
-        for(MyTransactionOutPoint outpoint : ret.getLeft())   {
+        for(MyTransactionOutPoint outpoint : selectedOutpoints)   {
             inValue += outpoint.getValue().longValue();
+            Log.d("SendFactory", "input:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getValue().longValue());
         }
         long outValue = 0L;
-        for(TransactionOutput tOut : ret.getRight())   {
+        for(TransactionOutput tOut : txOutputs)   {
             outValue += tOut.getValue().longValue();
+            Log.d("SendFactory", "output:" + tOut.toString() + "," + tOut.getValue().longValue());
         }
-        outValue += biFee.longValue();
-//        System.out.println("inputs:" + inValue);
-//        System.out.println("outputs:" + outValue);
 
-        assert(inValue == outValue);
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> ret = Triple.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>(), new ArrayList<UTXO>());
+        ret.getLeft().addAll(selectedOutpoints);
+        ret.getMiddle().addAll(txOutputs);
+        ret.getRight().addAll(_utxos);
+
+        outValue += biFee.longValue();
+
+        Log.d("SendFactory", "inputs:" + inValue);
+        Log.d("SendFactory", "outputs:" + outValue);
 
         return ret;
 

@@ -241,8 +241,8 @@ public class PayloadUtil	{
             meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
-            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
-            meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
+            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BOLTZMANN));
+            meta.put("use_boltzmann", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BOLTZMANN, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
@@ -406,12 +406,17 @@ public class PayloadUtil	{
                 }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
-                    editor.putBoolean("bip126", meta.getInt("spend_type") == SendActivity.SPEND_BIP126 ? true : false);
+                    editor.putBoolean("boltzmann", meta.getInt("spend_type") == SendActivity.SPEND_BOLTZMANN ? true : false);
                     editor.commit();
                 }
                 if(meta.has("use_bip126")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BIP126, meta.getBoolean("use_bip126"));
-                    editor.putBoolean("bip126", meta.getBoolean("use_bip126"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_bip126"));
+                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
+                    editor.commit();
+                }
+                if(meta.has("use_boltzmann")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_boltzmann"));
+                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
                     editor.commit();
                 }
                 if(meta.has("rbf_opt_in")) {

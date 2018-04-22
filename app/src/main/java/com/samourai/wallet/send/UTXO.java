@@ -58,4 +58,25 @@ public class UTXO {
 
     }
 
+    // sorts in descending order by amount
+    public static class OutpointComparator implements Comparator<MyTransactionOutPoint> {
+
+        public int compare(MyTransactionOutPoint o1, MyTransactionOutPoint o2) {
+
+            final int BEFORE = -1;
+            final int EQUAL = 0;
+            final int AFTER = 1;
+
+            if (o1.getValue().longValue() > o2.getValue().longValue()) {
+                return BEFORE;
+            } else if (o1.getValue().longValue() < o2.getValue().longValue()) {
+                return AFTER;
+            } else {
+                return EQUAL;
+            }
+
+        }
+
+    }
+
 }

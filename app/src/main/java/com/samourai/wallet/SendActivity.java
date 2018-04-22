@@ -149,9 +149,9 @@ public class SendActivity extends Activity {
     private int FEE_TYPE = FEE_LOW;
 
     public final static int SPEND_SIMPLE = 0;
-    public final static int SPEND_BIP126 = 1;
+    public final static int SPEND_BOLTZMANN = 1;
     public final static int SPEND_RICOCHET = 2;
-    private int SPEND_TYPE = SPEND_BIP126;
+    private int SPEND_TYPE = SPEND_BOLTZMANN;
     //    private CheckBox cbSpendType = null;
     private Switch swRicochet = null;
 
@@ -433,10 +433,10 @@ public class SendActivity extends Activity {
         };
         edAmountFiat.addTextChangedListener(textWatcherFiat);
 
-        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BIP126, true) ? SPEND_BIP126 : SPEND_SIMPLE;
-        if(SPEND_TYPE > SPEND_BIP126)    {
-            SPEND_TYPE = SPEND_BIP126;
-            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+        SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+        if(SPEND_TYPE > SPEND_BOLTZMANN)    {
+            SPEND_TYPE = SPEND_BOLTZMANN;
+            PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
         }
 
         swRicochet = (Switch)findViewById(R.id.ricochet);
@@ -448,7 +448,7 @@ public class SendActivity extends Activity {
                     SPEND_TYPE = SPEND_RICOCHET;
                 }
                 else    {
-                    SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BIP126);
+                    SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
                 }
 
             }
@@ -777,24 +777,15 @@ public class SendActivity extends Activity {
 
                     return;
                 }
-                // if BIP126 try both hetero/alt, if fails change type to SPEND_SIMPLE
-                else if(SPEND_TYPE == SPEND_BIP126)   {
+                else if(SPEND_TYPE == SPEND_BOLTZMANN)   {
 
                     List<UTXO> _utxos = utxos;
-
-                    //Collections.shuffle(_utxos);
-                    // sort in descending order by value
-                    Collections.sort(_utxos, new UTXO.UTXOComparator());
-                    // hetero
-                    pair = SendFactory.getInstance(SendActivity.this).heterogeneous(_utxos, BigInteger.valueOf(amount), address);
-                    if(pair == null)    {
-                        //Collections.sort(_utxos, new UTXO.UTXOComparator());
-                        // alt
-                        pair = SendFactory.getInstance(SendActivity.this).altHeterogeneous(_utxos, BigInteger.valueOf(amount), address);
-                    }
+                    Collections.shuffle(_utxos);
+                    // boltzmann spend
+                    pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos, BigInteger.valueOf(amount), address);
 
                     if(pair == null)    {
-                        // can't do BIP126, revert to SPEND_SIMPLE
+                        // can't do boltzmann, revert to SPEND_SIMPLE
                         SPEND_TYPE = SPEND_SIMPLE;
                     }
 
@@ -1025,7 +1016,7 @@ public class SendActivity extends Activity {
                                     }
 
                                 }
-                                else if (SPEND_TYPE == SPEND_BIP126)   {
+                                else if (SPEND_TYPE == SPEND_BOLTZMANN)   {
                                     // do nothing, change addresses included
                                     ;
                                 }

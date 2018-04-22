@@ -162,15 +162,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
+                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("boltzmann");
                 cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                         if (cbPref7.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, false);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, false);
                         }
                         else    {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, true);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, true);
                         }
 
                         return true;

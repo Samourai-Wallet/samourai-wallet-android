@@ -430,7 +430,7 @@ public class UTXOActivity extends Activity {
             String addr = data.get(position).addr;
             text2.setText(addr);
 
-            Log.d("UTXOActivity", "list:" + data.get(position).addr);
+//            Log.d("UTXOActivity", "list:" + data.get(position).addr);
 
             String descr = "";
             Spannable word = null;
@@ -444,25 +444,25 @@ public class UTXOActivity extends Activity {
                 }
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: bip47");
+//                Log.d("UTXOActivity", "list: bip47");
             }
             if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.dust) + " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: dust/do not spend");
+//                Log.d("UTXOActivity", "list: dust/do not spend");
             }
             else if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
                 descr += " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: dust");
+//                Log.d("UTXOActivity", "list: dust");
             }
             else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: do not spend");
+//                Log.d("UTXOActivity", "list: do not spend");
             }
             else    {
                 ;
