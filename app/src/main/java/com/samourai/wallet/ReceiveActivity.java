@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -506,8 +507,15 @@ public class ReceiveActivity extends Activity {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_SEND);
                                 intent.setType("image/png");
-                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                                startActivity(Intent.createChooser(intent, ReceiveActivity.this.getText(R.string.send_payment_code)));
+                                if (android.os.Build.VERSION.SDK_INT >= 24) {
+                                    //From API 24 sending FIle on intent ,require custom file provider
+                                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                            ReceiveActivity.this,
+                                            getApplicationContext()
+                                                    .getPackageName() + ".provider", file));
+                                } else {
+                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                }                                startActivity(Intent.createChooser(intent, ReceiveActivity.this.getText(R.string.send_payment_code)));
                             }
 
                         }

@@ -10,9 +10,11 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.R;
@@ -187,8 +190,16 @@ public class BIP47ShowQR extends Activity {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_SEND);
                                 intent.setType("image/png");
-                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                                startActivity(Intent.createChooser(intent, BIP47ShowQR.this.getText(R.string.send_payment_code)));
+                                if (android.os.Build.VERSION.SDK_INT >= 24) {
+                                    //From API 24 sending FIle on intent ,require custom file provider
+                                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                            BIP47ShowQR.this,
+                                            getApplicationContext()
+                                                    .getPackageName() + ".provider", file));
+                                } else {
+                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                }
+                                 startActivity(Intent.createChooser(intent, BIP47ShowQR.this.getText(R.string.send_payment_code)));
                             }
 
                         }
