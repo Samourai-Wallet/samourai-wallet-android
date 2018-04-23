@@ -101,14 +101,14 @@ public class SendFactory	{
             try {
                 byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                 String address = null;
-                Log.i("SendFactory", "connected pubkey script:" + Hex.toHexString(scriptBytes));
+//                Log.i("SendFactory", "connected pubkey script:" + Hex.toHexString(scriptBytes));
                 if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
                     address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
                 }
                 else    {
                     address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                 }
-                Log.i("SendFactory", "address from script:" + address);
+//                Log.i("SendFactory", "address from script:" + address);
                 ECKey ecKey = null;
                 ecKey = getPrivKey(address);
                 if(ecKey != null) {
@@ -616,7 +616,7 @@ public class SendFactory	{
 
     public static ECKey getPrivKey(String address)    {
 
-        Log.d("SendFactory", "get privkey for:" + address);
+//        Log.d("SendFactory", "get privkey for:" + address);
 
         ECKey ecKey = null;
 

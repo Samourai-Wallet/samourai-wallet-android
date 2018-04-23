@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -56,9 +57,9 @@ public class RicochetActivity extends Activity {
 
         if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
 
+//            new QueueTask().execute(new String[]{ null });
             QueueTask qt = new QueueTask();
             qt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{ null });
-
         }
 
     }
@@ -128,8 +129,12 @@ public class RicochetActivity extends Activity {
                         if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
                             hasConfirmation = true;
                         }
-                        else if(txObj != null)    {
+                        else if(txObj != null && txObj.has("txid"))    {
                             txSeen = true;
+                        }
+                        // not broadcast, not seen
+                        else if(txObj != null && txObj.has("status") && txObj.getString("status").equals("error"))    {
+                            txSeen = false;
                         }
                         else    {
                             ;
@@ -175,7 +180,7 @@ public class RicochetActivity extends Activity {
                                 isOK = false;
 
                                 String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i]);
-//                                Log.d("RicochetActivity", "pushTx:" + response);
+                                Log.d("RicochetActivity", "pushTx:" + response);
                                 JSONObject jsonObject = new JSONObject(response);
                                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                                     isOK = true;
