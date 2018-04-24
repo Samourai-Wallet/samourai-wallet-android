@@ -52,9 +52,9 @@ Samourai spends include the possibility of including custom fees as well as the 
 
 Samourai implementation of multi-hop spend designed to outrun the baying pack of #KYCRunningDogs.
 
-### Stonewall:
+### STONEWALL:
 
-Stonewall spend is designed to increase the number of combinations between inputs and outputs (transaction entropy). It replaces the previously used BIP126. The objective is to obtain a positive entropy score using [Boltzmann](https://github.com/Samourai-Wallet/boltzmann) evaluation of the transaction.
+STONEWALL spend is designed to increase the number of combinations between inputs and outputs (transaction entropy). It replaces the previously used BIP126. The objective is to obtain a positive entropy score using [Boltzmann](https://github.com/Samourai-Wallet/boltzmann) evaluation of the transaction.
 
 ### Tor:
 
