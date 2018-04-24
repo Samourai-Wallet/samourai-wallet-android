@@ -4,13 +4,13 @@ import com.samourai.wallet.SamouraiWallet;
 
 public class BlockExplorerUtil {
 
-    private static CharSequence[] blockExplorers = { "Smartbit", "Blockchain Reader (Yogh)", "BlockCypher", "OXT" };
-    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "http://srv1.yogh.io/#tx:id:", "https://live.blockcypher.com/btc/tx/", "https://m.oxt.me/transaction/" };
-    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "http://srv1.yogh.io/#addr:id:", "https://live.blockcypher.com/btc/address/", "https://live.blockcypher.com/btc/address/" };
+    private static CharSequence[] blockExplorers = { "Smartbit", "Blockchain Reader (Yogh)", "BlockCypher", "OXT", "Blockchain.info" };
+    private static CharSequence[] blockExplorerTxUrls = { "https://www.smartbit.com.au/tx/", "http://srv1.yogh.io/#tx:id:", "https://live.blockcypher.com/btc/tx/", "https://m.oxt.me/transaction/", "https://blockchain.info/tx/" };
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "http://srv1.yogh.io/#addr:id:", "https://live.blockcypher.com/btc/address/", "https://live.blockcypher.com/btc/address/", "https://blockchain.info/address/" };
 
-    private static CharSequence[] tBlockExplorers = { "Smartbit", "BlockCypher" };
-    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/btc-testnet/tx/" };
-    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/btc-testnet/address/" };
+    private static CharSequence[] tBlockExplorers = { "Smartbit", "BlockCypher", "Blockchain.info" };
+    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/btc-testnet/tx/", "https://testnet.blockchain.info/tx/" };
+    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/btc-testnet/address/", "https://testnet.blockchain.info/address/" };
 
     private static BlockExplorerUtil instance = null;
 
