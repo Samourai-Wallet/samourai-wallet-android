@@ -66,8 +66,8 @@
     <string name="options_autosave_backup2">Periodically save passphrase encrypted backup to device storage.</string>
     <string name="options_version">Version</string>
     <string name="options_txs">Transactions</string>
-    <string name="options_boltzmann">Boltzmann spend</string>
-    <string name="options_boltzmann_2">Spends will use Boltzmann algorithm for increased obfuscation.</string>
+    <string name="options_boltzmann">STONEWALL spend</string>
+    <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
     <string name="options_trusted_node">Set trusted node</string>
     <string name="options_trusted_node2">Specify your own bitcoin node to broadcast transactions.</string>
