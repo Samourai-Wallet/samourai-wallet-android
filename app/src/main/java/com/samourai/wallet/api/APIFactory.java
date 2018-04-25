@@ -449,7 +449,7 @@ public class APIFactory	{
         return false;
 
     }
-
+/*
     public synchronized JSONObject deleteXPUB(String xpub, boolean bip49) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
@@ -530,7 +530,7 @@ public class APIFactory	{
 
         return jsonObject;
     }
-
+*/
     public synchronized JSONObject lockXPUB(String xpub, int purpose) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
