@@ -18,6 +18,7 @@ import android.widget.Toast;
 //import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -28,8 +29,6 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.segwit.bech32.Bech32;
-import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
@@ -44,9 +43,7 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.core.TransactionWitness;
-import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.ScriptException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -370,14 +367,37 @@ public class SendFactory	{
 
     }
 
-    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, BigInteger spendAmount, String address) {
+    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address) {
 
         Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null);
         if(set0 == null)    {
             return null;
         }
         Log.d("SendFactory", "set0 utxo returned:" + set0.getRight().toString());
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(set0.getRight(), spendAmount, address, set0.getLeft());
+
+        long set0Value = 0L;
+        for(UTXO u : set0.getRight())   {
+            set0Value += u.getValue();
+        }
+
+        long utxosBisValue = 0L;
+        if(utxosBis != null)    {
+            for(UTXO u : utxosBis)   {
+                utxosBisValue += u.getValue();
+            }
+        }
+
+        List<UTXO> _utxo = null;
+        if(utxosBis != null && utxosBisValue > spendAmount.longValue())   {
+            _utxo = utxosBis;
+        }
+        else if(set0.getRight() != null && set0.getRight().size() > 0 && set0Value > spendAmount.longValue())    {
+            _utxo = set0.getRight();
+        }
+        else    {
+            return null;
+        }
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft());
         if(set1 == null)    {
             return null;
         }
@@ -394,15 +414,40 @@ public class SendFactory	{
 
     public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints) {
 
+        if(utxos == null || utxos.size() == 0)    {
+            return null;
+        }
+
         int changeType = 49;
-        if(FormatsUtil.getInstance().isValidBech32(address))    {
-            changeType = 84;
-        }
-        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
-            changeType = 49;
-        }
-        else    {
-            changeType = 44;
+        int mixedType = 49;
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+            //
+            // inputs are pre-grouped by type
+            // type of address for change must match type of address for inputs
+            //
+            String utxoAddress = utxos.get(0).getOutpoints().get(0).getAddress();
+            if(FormatsUtil.getInstance().isValidBech32(utxoAddress))    {
+                changeType = 84;
+            }
+            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), utxoAddress).isP2SHAddress())   {
+                changeType = 49;
+            }
+            else    {
+                changeType = 44;
+            }
+
+            //
+            // type of address for 'mixed' amount must match type of address for destination
+            //
+            if(FormatsUtil.getInstance().isValidBech32(address))    {
+                mixedType = 84;
+            }
+            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
+                mixedType = 49;
+            }
+            else    {
+                mixedType = 44;
+            }
         }
 
         Triple<Integer,Integer,Integer> firstPassOutpointTypes = null;
@@ -529,7 +574,7 @@ public class SendFactory	{
                 _address = address;
             }
             else    {
-                _address = getChangeAddress(changeType);
+                _address = getChangeAddress(mixedType);
             }
             if(FormatsUtil.getInstance().isValidBech32(address))   {
                 txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());

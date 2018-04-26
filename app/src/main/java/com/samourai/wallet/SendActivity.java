@@ -688,6 +688,10 @@ public class SendActivity extends Activity {
 //                    Log.d("SendActivity", "all filtered utxos:" + utxos.size());
                 }
 
+                List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
+                List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
+                List<UTXO> utxosP2PKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+
                 final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                 long totalValueSelected = 0L;
                 long change = 0L;
@@ -781,10 +785,97 @@ public class SendActivity extends Activity {
                 }
                 else if(SPEND_TYPE == SPEND_BOLTZMANN)   {
 
-                    List<UTXO> _utxos = utxos;
-                    Collections.shuffle(_utxos);
-                    // boltzmann spend
-                    pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos, BigInteger.valueOf(amount), address);
+                    List<UTXO> _utxos1 = null;
+                    List<UTXO> _utxos2 = null;
+
+                    long valueP2WPKH = UTXOFactory.getInstance().getTotalP2WPKH();
+                    long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
+                    long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
+
+                    boolean selectedP2WPKH = false;
+                    boolean selectedP2SH_P2WPKH = false;
+                    boolean selectedP2PKH = false;
+
+                    if((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address))    {
+                        _utxos1 = utxosP2WPKH;
+                        selectedP2WPKH = true;
+                    }
+                    if(_utxos1 == null || (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()))   {
+                        _utxos1 = utxosP2SH_P2WPKH;
+                        selectedP2SH_P2WPKH = true;
+                    }
+                    if(_utxos1 == null || (valueP2PKH > (neededAmount * 2)))    {
+                        _utxos1 = utxosP2PKH;
+                        selectedP2PKH = true;
+                    }
+
+                    if(_utxos1 == null)    {
+                        if(valueP2SH_P2WPKH > neededAmount)    {
+                            _utxos1 = utxosP2SH_P2WPKH;
+                        }
+                        if(valueP2WPKH > neededAmount)    {
+                            if(_utxos1 == null)    {
+                                _utxos1 = utxosP2WPKH;
+                            }
+                            else    {
+                                _utxos2 = utxosP2WPKH;
+                            }
+                        }
+                        if(valueP2PKH > neededAmount)    {
+                            if(_utxos1 == null)    {
+                                _utxos1 = utxosP2PKH;
+                            }
+                            else if(_utxos2 == null)    {
+                                _utxos2 = utxosP2PKH;
+                            }
+                            else    {
+                                ;
+                            }
+                        }
+                    }
+
+                    if(_utxos1.size() == 1 || _utxos2 == null)    {
+                        if(FormatsUtil.getInstance().isValidBech32(address))    {
+                            if(!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount)    {
+                                _utxos2 = utxosP2SH_P2WPKH;
+                            }
+                            else if(!selectedP2PKH && valueP2PKH > neededAmount)    {
+                                _utxos2 = utxosP2PKH;
+                            }
+                            else    {
+                                ;
+                            }
+                        }
+                        else if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
+                            if(!selectedP2WPKH && valueP2WPKH > neededAmount)    {
+                                _utxos2 = utxosP2WPKH;
+                            }
+                            else if(!selectedP2PKH && valueP2PKH > neededAmount)    {
+                                _utxos2 = utxosP2PKH;
+                            }
+                            else    {
+                                ;
+                            }
+                        }
+                        else    {
+                            if(!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount)    {
+                                _utxos2 = utxosP2SH_P2WPKH;
+                            }
+                            else if(!selectedP2WPKH && valueP2WPKH > neededAmount)    {
+                                _utxos2 = utxosP2WPKH;
+                            }
+                            else    {
+                                ;
+                            }
+                        }
+                    }
+
+                    Collections.shuffle(_utxos1);
+                    if(_utxos2 != null)    {
+                        Collections.shuffle(_utxos2);
+                    }
+                    // boltzmann spend (STONEWALL)
+                    pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
 
                     if(pair == null)    {
                         // can't do boltzmann, revert to SPEND_SIMPLE
