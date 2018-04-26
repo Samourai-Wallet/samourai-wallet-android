@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.001 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Empty Ricochet queue</string>
