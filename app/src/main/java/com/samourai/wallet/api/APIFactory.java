@@ -1371,17 +1371,17 @@ public class APIFactory	{
             }
 
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
-                Log.d("APIFactory", "not dusted:" + _s);
+//                Log.d("APIFactory", "not dusted:" + _s);
                 if(!seenOutputs.contains(_s))    {
                     BlockedUTXO.getInstance().removeNotDusted(_s);
-                    Log.d("APIFactory", "not dusted removed:" + _s);
+//                    Log.d("APIFactory", "not dusted removed:" + _s);
                 }
             }
             for(String _s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
-                Log.d("APIFactory", "blocked:" + _s);
+//                Log.d("APIFactory", "blocked:" + _s);
                 if(!seenOutputs.contains(_s))    {
                     BlockedUTXO.getInstance().remove(_s);
-                    Log.d("APIFactory", "blocked removed:" + _s);
+//                    Log.d("APIFactory", "blocked removed:" + _s);
                 }
             }
 

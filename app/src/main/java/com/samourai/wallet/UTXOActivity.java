@@ -361,11 +361,11 @@ public class UTXOActivity extends Activity {
                 displayData.idx = outpoint.getTxOutputN();
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
-                    Log.d("UTXOActivity", "marked as do not spend");
+//                    Log.d("UTXOActivity", "marked as do not spend");
                 }
                 else    {
                     data.add(displayData);
-                    Log.d("UTXOActivity", "unmarked");
+//                    Log.d("UTXOActivity", "unmarked");
                 }
             }
         }
@@ -374,7 +374,7 @@ public class UTXOActivity extends Activity {
 
         if(adapter != null)    {
             adapter.notifyDataSetInvalidated();
-            Log.d("UTXOActivity", "nb:" + data.size());
+//            Log.d("UTXOActivity", "nb:" + data.size());
         }
 
         if(broadcast)    {
