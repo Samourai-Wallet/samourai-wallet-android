@@ -387,12 +387,17 @@ public class SendFactory	{
             }
         }
 
+        Log.d("SendFactory", "set0 value:" + set0Value);
+        Log.d("SendFactory", "utxosBis value:" + utxosBisValue);
+
         List<UTXO> _utxo = null;
-        if(utxosBis != null && utxosBisValue > spendAmount.longValue())   {
-            _utxo = utxosBis;
-        }
-        else if(set0.getRight() != null && set0.getRight().size() > 0 && set0Value > spendAmount.longValue())    {
+        if(set0.getRight() != null && set0.getRight().size() > 0 && set0Value > spendAmount.longValue())    {
+            Log.d("SendFactory", "set0 selected for 2nd pass");
             _utxo = set0.getRight();
+        }
+        else if(utxosBis != null && utxosBisValue > spendAmount.longValue())   {
+            Log.d("SendFactory", "utxosBis selected for 2nd pass");
+            _utxo = utxosBis;
         }
         else    {
             return null;
@@ -480,6 +485,8 @@ public class SendFactory	{
         Script outputScript = null;
         String changeAddress = null;
         HashMap<String,MyTransactionOutPoint> seenOutpoints = new HashMap<String,MyTransactionOutPoint>();
+        List<MyTransactionOutPoint> recycleOutPoints = new ArrayList<MyTransactionOutPoint>();
+        List<UTXO> recycleUTXOs = new ArrayList<UTXO>();
 
         BigInteger bDust = firstPassOutpoints == null ? BigInteger.ZERO : SamouraiWallet.bDust;
 
@@ -492,6 +499,8 @@ public class SendFactory	{
 
             boolean utxoIsSelected = false;
 
+            recycleOutPoints.clear();
+
             for(MyTransactionOutPoint op : utxo.getOutpoints())   {
                 String hash = op.getTxHash().toString();
                 if(!seenOutpoints.containsKey(hash))    {
@@ -501,6 +510,7 @@ public class SendFactory	{
                     utxoIsSelected = true;
                 }
                 else if(op.getValue().longValue() > seenOutpoints.get(hash).getValue().longValue()) {
+                    recycleOutPoints.add(seenOutpoints.get(hash));
                     seenOutpoints.put(hash,op);
                     selectedValue = selectedValue.subtract(BigInteger.valueOf(seenOutpoints.get(hash).getValue().longValue()));
                     selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
@@ -513,6 +523,12 @@ public class SendFactory	{
 
                 selectedOutpoints.clear();
                 selectedOutpoints.addAll(seenOutpoints.values());
+            }
+
+            if(recycleOutPoints.size() > 0)    {
+                UTXO recycleUTXO = new UTXO();
+                recycleUTXO.setOutpoints(recycleOutPoints);
+                recycleUTXOs.add(recycleUTXO);
             }
 
             if(utxoIsSelected)    {
@@ -556,6 +572,8 @@ public class SendFactory	{
 
         List<UTXO> _utxos = new ArrayList<>(utxos.subList(idx, utxos.size()));
         Log.d("SendFactory", "utxos after selection:" + _utxos.size());
+        _utxos.addAll(recycleUTXOs);
+        Log.d("SendFactory", "utxos after adding recycled:" + _utxos.size());
         BigInteger changeDue = selectedValue.subtract(spendAmount);
 
         if(firstPassOutpoints != null)    {
@@ -576,7 +594,7 @@ public class SendFactory	{
             else    {
                 _address = getChangeAddress(mixedType);
             }
-            if(FormatsUtil.getInstance().isValidBech32(address))   {
+            if(FormatsUtil.getInstance().isValidBech32(_address))   {
                 txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());
             }
             else    {

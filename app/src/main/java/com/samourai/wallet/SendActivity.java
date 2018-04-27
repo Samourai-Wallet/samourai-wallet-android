@@ -785,6 +785,8 @@ public class SendActivity extends Activity {
                 }
                 else if(SPEND_TYPE == SPEND_BOLTZMANN)   {
 
+                    Log.d("SendActivity", "needed amount:" + neededAmount);
+
                     List<UTXO> _utxos1 = null;
                     List<UTXO> _utxos2 = null;
 
@@ -792,94 +794,109 @@ public class SendActivity extends Activity {
                     long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
                     long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
 
+                    Log.d("SendActivity", "value P2WPKH:" + valueP2WPKH);
+                    Log.d("SendActivity", "value P2SH_P2WPKH:" + valueP2SH_P2WPKH);
+                    Log.d("SendActivity", "value P2PKH:" + valueP2PKH);
+
                     boolean selectedP2WPKH = false;
                     boolean selectedP2SH_P2WPKH = false;
                     boolean selectedP2PKH = false;
 
                     if((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address))    {
+                        Log.d("SendActivity", "set 1 P2WPKH 2x");
                         _utxos1 = utxosP2WPKH;
                         selectedP2WPKH = true;
                     }
-                    if(_utxos1 == null || (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()))   {
+                    else if(!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
+                        Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                         _utxos1 = utxosP2SH_P2WPKH;
                         selectedP2SH_P2WPKH = true;
                     }
-                    if(_utxos1 == null || (valueP2PKH > (neededAmount * 2)))    {
+                    else if(!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
+                        Log.d("SendActivity", "set 1 P2PKH 2x");
                         _utxos1 = utxosP2PKH;
                         selectedP2PKH = true;
+                    }
+                    else if(valueP2WPKH > (neededAmount * 2))   {
+                        Log.d("SendActivity", "set 1 P2WPKH 2x");
+                        _utxos1 = utxosP2WPKH;
+                        selectedP2WPKH = true;
+                    }
+                    else if(valueP2SH_P2WPKH > (neededAmount * 2))   {
+                        Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
+                        _utxos1 = utxosP2SH_P2WPKH;
+                        selectedP2SH_P2WPKH = true;
+                    }
+                    else if(valueP2PKH > (neededAmount * 2))    {
+                        Log.d("SendActivity", "set 1 P2PKH 2x");
+                        _utxos1 = utxosP2PKH;
+                        selectedP2PKH = true;
+                    }
+                    else    {
+                        ;
                     }
 
                     if(_utxos1 == null)    {
                         if(valueP2SH_P2WPKH > neededAmount)    {
+                            Log.d("SendActivity", "set 1 P2SH_P2WPKH");
                             _utxos1 = utxosP2SH_P2WPKH;
+                            selectedP2SH_P2WPKH = true;
                         }
-                        if(valueP2WPKH > neededAmount)    {
-                            if(_utxos1 == null)    {
-                                _utxos1 = utxosP2WPKH;
-                            }
-                            else    {
-                                _utxos2 = utxosP2WPKH;
-                            }
+                        else if(valueP2WPKH > neededAmount)    {
+                            Log.d("SendActivity", "set 1 P2WPKH");
+                            _utxos1 = utxosP2WPKH;
+                            selectedP2WPKH = true;
                         }
-                        if(valueP2PKH > neededAmount)    {
-                            if(_utxos1 == null)    {
-                                _utxos1 = utxosP2PKH;
-                            }
-                            else if(_utxos2 == null)    {
-                                _utxos2 = utxosP2PKH;
-                            }
-                            else    {
-                                ;
-                            }
-                        }
-                    }
-
-                    if(_utxos1.size() == 1 || _utxos2 == null)    {
-                        if(FormatsUtil.getInstance().isValidBech32(address))    {
-                            if(!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount)    {
-                                _utxos2 = utxosP2SH_P2WPKH;
-                            }
-                            else if(!selectedP2PKH && valueP2PKH > neededAmount)    {
-                                _utxos2 = utxosP2PKH;
-                            }
-                            else    {
-                                ;
-                            }
-                        }
-                        else if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
-                            if(!selectedP2WPKH && valueP2WPKH > neededAmount)    {
-                                _utxos2 = utxosP2WPKH;
-                            }
-                            else if(!selectedP2PKH && valueP2PKH > neededAmount)    {
-                                _utxos2 = utxosP2PKH;
-                            }
-                            else    {
-                                ;
-                            }
+                        else if(valueP2PKH > neededAmount)    {
+                            Log.d("SendActivity", "set 1 P2PKH");
+                            _utxos1 = utxosP2PKH;
+                            selectedP2PKH = true;
                         }
                         else    {
-                            if(!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount)    {
-                                _utxos2 = utxosP2SH_P2WPKH;
-                            }
-                            else if(!selectedP2WPKH && valueP2WPKH > neededAmount)    {
-                                _utxos2 = utxosP2WPKH;
-                            }
-                            else    {
-                                ;
-                            }
+                            ;
+                        }
+
+                    }
+
+                    if(_utxos1 != null && _utxos2 == null)    {
+
+                        if(!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount)    {
+                            Log.d("SendActivity", "set 2 P2SH_P2WPKH");
+                            _utxos2 = utxosP2SH_P2WPKH;
+                        }
+                        else if(!selectedP2WPKH && valueP2WPKH > neededAmount)    {
+                            Log.d("SendActivity", "set 2 P2WPKH");
+                            _utxos2 = utxosP2WPKH;
+                        }
+                        else if(!selectedP2PKH && valueP2PKH > neededAmount)    {
+                            Log.d("SendActivity", "set 2 P2PKH");
+                            _utxos2 = utxosP2PKH;
+                        }
+                        else    {
+                            ;
                         }
                     }
 
-                    Collections.shuffle(_utxos1);
-                    if(_utxos2 != null)    {
-                        Collections.shuffle(_utxos2);
-                    }
-                    // boltzmann spend (STONEWALL)
-                    pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
-
-                    if(pair == null)    {
+                    if(_utxos1 == null && _utxos2 == null)    {
                         // can't do boltzmann, revert to SPEND_SIMPLE
                         SPEND_TYPE = SPEND_SIMPLE;
+                    }
+                    else    {
+
+                        Log.d("SendActivity", "boltzmann spend");
+
+                        Collections.shuffle(_utxos1);
+                        if(_utxos2 != null)    {
+                            Collections.shuffle(_utxos2);
+                        }
+
+                        // boltzmann spend (STONEWALL)
+                        pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
+
+                        if(pair == null)    {
+                            // can't do boltzmann, revert to SPEND_SIMPLE
+                            SPEND_TYPE = SPEND_SIMPLE;
+                        }
                     }
 
                 }
