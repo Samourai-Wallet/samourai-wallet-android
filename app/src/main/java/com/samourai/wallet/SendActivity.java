@@ -1146,19 +1146,35 @@ public class SendActivity extends Activity {
                                 for(TransactionInput input : tx.getInputs())    {
 
                                     boolean _isBIP49 = false;
+                                    boolean _isBIP84 = false;
                                     String _addr = null;
-                                    Address _address = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                                    if(_address != null)    {
-                                        _addr = _address.toString();
+                                    String script = Hex.toHexString(input.getConnectedOutput().getScriptBytes());
+                                    if(Bech32Util.getInstance().isBech32Script(script))    {
+                                        try {
+                                            _addr = Bech32Util.getInstance().getAddressFromScript(script);
+                                            _isBIP84 = true;
+                                        }
+                                        catch(Exception e) {
+                                            ;
+                                        }
+                                    }
+                                    else    {
+                                        Address _address = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                        if(_address != null)    {
+                                            _addr = _address.toString();
+                                            _isBIP49 = true;
+                                        }
                                     }
                                     if(_addr == null)    {
-                                        _addr = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                                        _isBIP49 = true;
+                                        _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                                     }
 
                                     String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
                                     if(path != null)    {
-                                        if(_isBIP49)    {
+                                        if(_isBIP84)    {
+                                            rbf.addKey(input.getOutpoint().toString(), path + "/84");
+                                        }
+                                        else if(_isBIP49)    {
                                             rbf.addKey(input.getOutpoint().toString(), path + "/49");
                                         }
                                         else    {
