@@ -2176,7 +2176,7 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "hash:" + params[0]);
 
             rbf = RBFUtil.getInstance().get(params[0]);
-            Log.d("BalanceActivity", "rbf:" + ((rbf == null) ? "null" : "not null"));
+            Log.d("BalanceActivity", "rbf:" + rbf.toJSON().toString());
             final Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(rbf.getSerializedTx()));
             Log.d("BalanceActivity", "tx serialized:" + rbf.getSerializedTx());
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
@@ -2250,7 +2250,6 @@ public class BalanceActivity extends Activity {
                             if(obj.has("address"))    {
                                 _addr = obj.getString("address");
                             }
-                            // if !obj.has("address"), not a change address -- probably bech32
 
                             selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
@@ -2285,16 +2284,21 @@ public class BalanceActivity extends Activity {
                             String scriptPubKey = Hex.toHexString(script.getProgram());
                             Address _p2sh = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
                             Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                            if(Bech32Util.getInstance().isBech32Script(scriptPubKey) || (_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString())))    {
-                                if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
-                                    output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
-                                    remainder = 0L;
-                                    break;
+                            try {
+                                if((Bech32Util.getInstance().isBech32Script(scriptPubKey) && rbf.getChangeAddrs().contains(Bech32Util.getInstance().getAddressFromScript(scriptPubKey))) || (_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString())))    {
+                                    if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
+                                        output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
+                                        remainder = 0L;
+                                        break;
+                                    }
+                                    else    {
+                                        remainder -= output.getValue().longValue();
+                                        output.setValue(Coin.valueOf(0L));      // output will be discarded later
+                                    }
                                 }
-                                else    {
-                                    remainder -= output.getValue().longValue();
-                                    output.setValue(Coin.valueOf(0L));      // output will be discarded later
-                                }
+                            }
+                            catch(Exception e) {
+                                ;
                             }
 
                         }
@@ -2474,6 +2478,7 @@ public class BalanceActivity extends Activity {
                                     else    {
                                         rbf.addKey(outpoint.toString(), path);
                                     }
+                                    Log.d("BalanceActivity", "outpoint address:" + outpoint.getAddress());
                                 }
                                 else    {
                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outpoint.getAddress());
@@ -2530,7 +2535,7 @@ public class BalanceActivity extends Activity {
                                     Log.d("BalanceActivity", "hex tx:" + hexTx);
 
                                     final String strTxHash = __tx.getHashAsString();
-                                    Log.d("BalanceActivity", "tx hash" + strTxHash);
+                                    Log.d("BalanceActivity", "tx hash:" + strTxHash);
 
                                     if(__tx != null)    {
 
@@ -2636,7 +2641,7 @@ public class BalanceActivity extends Activity {
                 String[] s = keys.get(outpoint).split("/");
                 Log.i("BalanceActivity", "path length:" + s.length);
                 if(s.length == 4)    {
-                    if(s[3].equals("/84"))    {
+                    if(s[3].equals("84"))    {
                         HD_Address addr = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                         ecKey = addr.getECKey();
                     }
@@ -2670,7 +2675,7 @@ public class BalanceActivity extends Activity {
 
                 if(ecKey != null) {
                     if(s.length == 4)    {
-                        if(s[3].equals("/84"))    {
+                        if(s[3].equals("84"))    {
                             keyBag84.put(outpoint, ecKey);
                         }
                         else    {
@@ -2709,13 +2714,13 @@ public class BalanceActivity extends Activity {
                     ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
                     address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                 }
+                Log.d("BalanceActivity", "pubKey:" + Hex.toHexString(ecKey.getPubKey()));
+                Log.d("BalanceActivity", "address:" + address);
 
                 if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()) || keyBag84.containsKey(inputs.get(i).getOutpoint().toString()))    {
 
                     final SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                    System.out.println("pubKey:" + Hex.toHexString(ecKey.getPubKey()));
                     Script scriptPubKey = segwitAddress.segWitOutputScript();
-                    System.out.println("to address from script:" + scriptPubKey.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                     final Script redeemScript = segwitAddress.segWitRedeemScript();
                     System.out.println("redeem script:" + Hex.toHexString(redeemScript.getProgram()));
                     final Script scriptCode = redeemScript.scriptCode();

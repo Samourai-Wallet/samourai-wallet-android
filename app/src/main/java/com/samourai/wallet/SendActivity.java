@@ -1288,27 +1288,26 @@ public class SendActivity extends Activity {
 
                                                     for(TransactionOutput out : _tx.getOutputs())   {
                                                         try {
-                                                            if(changeType == 44 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
+                                                            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(out.getScriptBytes())) && !address.equals(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes()))))    {
+                                                                rbf.addChangeAddr(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
+                                                                Log.d("SendActivity", "added change output:" + Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
+                                                            }
+                                                            else if(changeType == 44 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
                                                                 rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                                Log.d("SendActivity", "added change output:" + out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                             }
                                                             else if(changeType != 44 && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
-                                                                if(changeType == 49)    {
-                                                                    rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                                }
-                                                                else    {
-                                                                    try {
-                                                                        rbf.addChangeAddr(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
-                                                                    }
-                                                                    catch(Exception e) {
-                                                                        ;
-                                                                    }
-                                                                }
+                                                                rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                                Log.d("SendActivity", "added change output:" + out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                                                             }
                                                             else    {
                                                                 ;
                                                             }
                                                         }
                                                         catch(NullPointerException npe) {
+                                                            ;
+                                                        }
+                                                        catch(Exception e) {
                                                             ;
                                                         }
                                                     }
