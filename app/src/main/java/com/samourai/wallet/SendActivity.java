@@ -1682,7 +1682,14 @@ public class SendActivity extends Activity {
 
         }
         else if(FormatsUtil.getInstance().isValidBitcoinAddress(data))	{
-            edAddress.setText(data);
+
+            if(FormatsUtil.getInstance().isValidBech32(data))    {
+                edAddress.setText(data.toLowerCase());
+            }
+            else    {
+                edAddress.setText(data);
+            }
+
         }
         else if(data.indexOf("?") != -1)   {
 
