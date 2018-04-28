@@ -1884,7 +1884,13 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "remaining fee:" + remainingFee);
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
-                        final String addr = outputs.getJSONObject(0).getString("address");
+                        final String addr;
+                        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+                            addr = utxo.getOutpoints().get(0).getAddress();
+                        }
+                        else    {
+                            addr = outputs.getJSONObject(0).getString("address");
+                        }
                         final String ownReceiveAddr;
                         if(FormatsUtil.getInstance().isValidBech32(addr))    {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
