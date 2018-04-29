@@ -192,7 +192,7 @@
 
         <service android:enabled="true" android:name="com.samourai.wallet.service.WebSocketService" />
 
-        <service android:enabled="true" android:name="com.samourai.wallet.service.SamouraiService" />
+        <service android:enabled="true" android:name="com.samourai.wallet.service.RefreshService" />
 
         <receiver android:name="com.samourai.wallet.receivers.BootIntentReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
