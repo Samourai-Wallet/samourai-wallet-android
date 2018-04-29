@@ -19,7 +19,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +29,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,9 +37,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.service.WebSocketHandler;
-import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -50,8 +45,6 @@ import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.uri.BitcoinURI;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -590,10 +583,8 @@ public class ReceiveActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(AppUtil.getInstance(ReceiveActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                    stopService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
-                }
-                startService(new Intent(ReceiveActivity.this.getApplicationContext(), WebSocketService.class));
+                Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+                LocalBroadcastManager.getInstance(ReceiveActivity.this).sendBroadcast(_intent);
             }
         }).start();
 
