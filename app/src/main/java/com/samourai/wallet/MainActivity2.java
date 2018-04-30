@@ -24,6 +24,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.BroadcastReceiverService;
+import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -74,10 +75,25 @@ public class MainActivity2 extends Activity {
     protected BackgroundManager.Listener bgListener = new BackgroundManager.Listener()  {
 
         public void onBecameForeground()    {
-            ;
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                intent.putExtra("notifTx", false);
+                LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(intent);
+
+                Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+                LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(_intent);
+            }
+
         }
 
         public void onBecameBackground()    {
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                    stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
+                }
+            }
 
             new Thread(new Runnable() {
                 @Override
@@ -106,9 +122,9 @@ public class MainActivity2 extends Activity {
 
         loadedBalanceFragment = false;
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             BackgroundManager.get(MainActivity2.this).addListener(bgListener);
-        }
+//        }
 
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
@@ -226,9 +242,9 @@ public class MainActivity2 extends Activity {
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             BackgroundManager.get(this).removeListener(bgListener);
-        }
+//        }
 
         super.onDestroy();
     }

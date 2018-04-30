@@ -91,6 +91,7 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.PushTx;
+import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -156,10 +157,11 @@ public class BalanceActivity extends Activity {
 
     private boolean isBTC = true;
 
-    private RefreshTask refreshTask = null;
     private PoWTask powTask = null;
     private RBFTask rbfTask = null;
     private CPFPTask cpfpTask = null;
+
+    private ProgressDialog progress = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -186,30 +188,44 @@ public class BalanceActivity extends Activity {
                     blkHash = null;
                 }
 
-                BalanceActivity.this.runOnUiThread(new Runnable() {
-                    @Override
+                Handler handler = new Handler();
+                handler.post(new Runnable() {
                     public void run() {
-                        tvBalanceAmount.setText("");
-                        tvBalanceUnits.setText("");
-                        refreshTx(notifTx, fetch, false, false);
+                        refreshTx(notifTx, false, false);
 
                         if(BalanceActivity.this != null)    {
 
-                            try {
-                                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                            if(rbfHash != null)    {
+                                new AlertDialog.Builder(BalanceActivity.this)
+                                        .setTitle(R.string.app_name)
+                                        .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
+                                        .setCancelable(true)
+                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                doExplorerView(rbfHash);
+
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                ;
+                                            }
+                                        }).show();
+
                             }
-                            catch(MnemonicException.MnemonicLengthException mle) {
-                                ;
-                            }
-                            catch(JSONException je) {
-                                ;
-                            }
-                            catch(IOException ioe) {
-                                ;
-                            }
-                            catch(DecryptionException de) {
-                                ;
-                            }
+
+                        }
+                    }
+                });
+                /*
+                BalanceActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        refreshTx(notifTx, false, false);
+
+                        if(BalanceActivity.this != null)    {
 
                             if(rbfHash != null)    {
                                 new AlertDialog.Builder(BalanceActivity.this)
@@ -235,11 +251,13 @@ public class BalanceActivity extends Activity {
 
                     }
                 });
+                */
 
                 if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
 
-                    BalanceActivity.this.runOnUiThread(new Runnable() {
-                        @Override
+//                    BalanceActivity.this.runOnUiThread(new Runnable() {
+//                    @Override
+                    handler.post(new Runnable() {
                         public void run() {
                             if(powTask == null || powTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
                                 powTask = new PoWTask();
@@ -248,6 +266,86 @@ public class BalanceActivity extends Activity {
                         }
 
                     });
+
+                }
+
+            }
+
+        }
+    };
+
+    public static final String DISPLAY_INTENT = "com.samourai.wallet.BalanceFragment.DISPLAY";
+    protected BroadcastReceiver receiverDisplay = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+
+            if(DISPLAY_INTENT.equals(intent.getAction())) {
+
+                updateDisplay();
+
+                List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
+                for(UTXO utxo : utxos)   {
+                    List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
+                    for(MyTransactionOutPoint out : outpoints)   {
+
+                        byte[] scriptBytes = out.getScriptBytes();
+                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
+                        if(path != null && path.startsWith("M/1/"))    {
+                            continue;
+                        }
+
+                        final String hash = out.getHash().toString();
+                        final int idx = out.getTxOutputN();
+                        final long amount = out.getValue().longValue();
+
+                        if(amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
+                                !BlockedUTXO.getInstance().contains(hash, idx) &&
+                                !BlockedUTXO.getInstance().containsNotDusted(hash, idx))    {
+
+//                            BalanceActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+                            Handler handler = new Handler();
+                            handler.post(new Runnable() {
+                                public void run() {
+
+                                    String message = BalanceActivity.this.getString(R.string.dusting_attempt);
+                                    message += "\n\n";
+                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
+                                    message += " ";
+                                    message += Coin.valueOf(amount).toPlainString();
+                                    message += " BTC\n";
+                                    message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
+                                    message += " ";
+                                    message += hash + "-" + idx;
+
+                                    AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
+                                            .setTitle(R.string.dusting_tx)
+                                            .setMessage(message)
+                                            .setCancelable(false)
+                                            .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                    BlockedUTXO.getInstance().add(hash, idx, amount);
+
+                                                }
+                                            }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
+
+                                                }
+                                            });
+                                    if(!isFinishing())    {
+                                        dlg.show();
+                                    }
+
+                                }
+                            });
+
+                        }
+
+                    }
 
                 }
 
@@ -474,7 +572,8 @@ public class BalanceActivity extends Activity {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        refreshTx(false, true, true, false);
+                        refreshTx(false, true, false);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
 
@@ -487,21 +586,11 @@ public class BalanceActivity extends Activity {
 
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+        IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
+        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
 
 //        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
         registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
-
-        boolean notifTx = false;
-        boolean fetch = false;
-        Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.containsKey("notifTx"))	{
-            notifTx = extras.getBoolean("notifTx");
-        }
-        if(extras != null && extras.containsKey("uri"))	{
-            fetch = extras.getBoolean("fetch");
-        }
-
-        refreshTx(notifTx, fetch, false, true);
 
         if(!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
@@ -518,6 +607,36 @@ public class BalanceActivity extends Activity {
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
             doClipboardCheck();
         }
+
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                progress = new ProgressDialog(BalanceActivity.this);
+                progress.setCancelable(true);
+                progress.setTitle(R.string.app_name);
+                progress.setMessage(getText(R.string.refresh_tx_pre));
+                progress.show();
+            }
+        });
+
+        final Handler delayedHandler = new Handler();
+        delayedHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                boolean notifTx = false;
+                Bundle extras = getIntent().getExtras();
+                if(extras != null && extras.containsKey("notifTx"))	{
+                    notifTx = extras.getBoolean("notifTx");
+                }
+
+                refreshTx(notifTx,false, true);
+
+//                updateDisplay();
+            }
+        }, 100L);
 
     }
 
@@ -544,8 +663,6 @@ public class BalanceActivity extends Activity {
     public void onPause() {
         super.onPause();
 
-//        LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
-
         ibQuickSend.collapse();
 
     }
@@ -554,6 +671,7 @@ public class BalanceActivity extends Activity {
     public void onDestroy() {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiverDisplay);
 
         unregisterReceiver(torStatusReceiver);
 
@@ -771,6 +889,24 @@ public class BalanceActivity extends Activity {
         }
 
         return false;
+    }
+
+    private void updateDisplay()    {
+        txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
+        if(txs != null)    {
+            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
+        }
+        tvBalanceAmount.setText("");
+        tvBalanceUnits.setText("");
+        displayBalance();
+        txAdapter.notifyDataSetChanged();
+
+        if(progress != null && progress.isShowing())    {
+            progress.dismiss();
+            progress.cancel();
+            progress = null;
+        }
+
     }
 
     private void doClaimPayNym() {
@@ -1247,12 +1383,13 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void refreshTx(final boolean notifTx, final boolean fetch, final boolean dragged, final boolean launch) {
+    private void refreshTx(final boolean notifTx, final boolean dragged, final boolean launch) {
 
-        if(refreshTask == null || refreshTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
-            refreshTask = new RefreshTask(dragged, launch);
-            refreshTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, notifTx ? "1" : "0", fetch ? "1" : "0");
-        }
+        Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
+        intent.putExtra("notifTx", notifTx);
+        intent.putExtra("dragged", dragged);
+        intent.putExtra("launch", launch);
+        startService(intent);
 
     }
 
@@ -1278,6 +1415,9 @@ public class BalanceActivity extends Activity {
                     catch(MnemonicException.MnemonicLengthException mle)    {
                         ;
                     }
+                    catch(NullPointerException npe)    {
+                        ;
+                    }
                 }
             }
         }
@@ -1292,6 +1432,9 @@ public class BalanceActivity extends Activity {
                     ;
                 }
                 catch(MnemonicException.MnemonicLengthException mle)    {
+                    ;
+                }
+                catch(NullPointerException npe)    {
                     ;
                 }
             }
@@ -1408,301 +1551,6 @@ public class BalanceActivity extends Activity {
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strHash));
             startActivity(browserIntent);
-        }
-
-    }
-
-    private class RefreshTask extends AsyncTask<String, Void, String> {
-
-        private String strProgressTitle = null;
-        private String strProgressMessage = null;
-
-        private ProgressDialog progress = null;
-        private Handler handler = null;
-        private boolean dragged = false;
-        private boolean launch = false;
-
-        public RefreshTask(boolean dragged, boolean launch) {
-            super();
-            Log.d("BalanceActivity", "RefreshTask, dragged==" + dragged);
-            handler = new Handler();
-            this.dragged = dragged;
-            this.launch = launch;
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            Log.d("BalanceActivity", "RefreshTask.preExecute()");
-
-            if(progress != null && progress.isShowing())    {
-                progress.dismiss();
-            }
-
-            if(!dragged)    {
-                strProgressTitle = BalanceActivity.this.getText(R.string.app_name).toString();
-                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx_pre).toString();
-
-                progress = new ProgressDialog(BalanceActivity.this);
-                progress.setCancelable(true);
-                progress.setTitle(strProgressTitle);
-                progress.setMessage(strProgressMessage);
-                progress.show();
-            }
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            Log.d("BalanceActivity", "doInBackground()");
-
-            final boolean notifTx = params[0].equals("1") ? true : false;
-            final boolean fetch = params[1].equals("1") ? true : false;
-
-            //
-            // TBD: check on lookahead/lookbehind for all incoming payment codes
-            //
-            if(fetch || txs.size() == 0)    {
-                APIFactory.getInstance(BalanceActivity.this).initWallet();
-            }
-
-            try {
-                int acc = 0;
-                txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-                if(txs != null)    {
-                    Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
-                }
-
-                if(AddressFactory.getInstance().getHighestTxReceiveIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().getAddrIdx()) {
-                    HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestTxReceiveIdx(acc));
-                }
-                if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().getAddrIdx()) {
-                    HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
-                }
-
-                if(AddressFactory.getInstance().getHighestBIP49ReceiveIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
-                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ReceiveIdx());
-                }
-                if(AddressFactory.getInstance().getHighestBIP49ChangeIdx() > BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
-                    BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ChangeIdx());
-                }
-
-                if(AddressFactory.getInstance().getHighestBIP84ReceiveIdx() > BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
-                    BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ReceiveIdx());
-                }
-                if(AddressFactory.getInstance().getHighestBIP84ChangeIdx() > BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
-                    BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ChangeIdx());
-                }
-
-            }
-            catch(IOException ioe) {
-                ioe.printStackTrace();
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                mle.printStackTrace();
-            }
-            finally {
-                ;
-            }
-
-            if(!dragged)    {
-                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_tx).toString();
-                publishProgress();
-            }
-
-            handler.post(new Runnable() {
-                public void run() {
-                    if(dragged)    {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                    tvBalanceAmount.setText("");
-                    tvBalanceUnits.setText("");
-                    displayBalance();
-                    txAdapter.notifyDataSetChanged();
-                }
-            });
-
-            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.FIRST_RUN, false);
-
-            if(notifTx)    {
-                //
-                // check for incoming payment code notification tx
-                //
-                try {
-                    PaymentCode pcode = BIP47Util.getInstance(BalanceActivity.this).getPaymentCode();
-//                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
-//                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                    APIFactory.getInstance(BalanceActivity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
-                }
-                catch (AddressFormatException afe) {
-                    afe.printStackTrace();
-                    Toast.makeText(BalanceActivity.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                }
-
-                strProgressMessage = BalanceActivity.this.getText(R.string.refresh_incoming_notif_tx).toString();
-                publishProgress();
-
-                //
-                // check on outgoing payment code notification tx
-                //
-                List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
-//                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
-                for(Pair<String,String> pair : outgoingUnconfirmed)   {
-//                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
-//                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
-                    int confirmations = APIFactory.getInstance(BalanceActivity.this).getNotifTxConfirmations(pair.getRight());
-                    if(confirmations > 0)    {
-                        BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
-                    }
-                    if(confirmations == -1)    {
-                        BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
-                    }
-                }
-
-                if(!dragged)    {
-                    strProgressMessage = BalanceActivity.this.getText(R.string.refresh_outgoing_notif_tx).toString();
-                    publishProgress();
-                }
-
-                Intent intent = new Intent("com.samourai.wallet.BalanceActivity.RESTART_SERVICE");
-                LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
-            }
-
-            if(!dragged)    {
-
-                if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
-                    Log.i("BalanceActivity", "guid_v < 4");
-                    try {
-                        String _guid = AccessFactory.getInstance(BalanceActivity.this).createGUID();
-                        String _hash = AccessFactory.getInstance(BalanceActivity.this).getHash(_guid, new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
-
-                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(_guid + AccessFactory.getInstance().getPIN()));
-
-                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH, _hash);
-                        PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
-
-                        Log.i("BalanceActivity", "guid_v == 4");
-                    }
-                    catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
-                        ;
-                    }
-                }
-                else if(!launch)    {
-                    try {
-                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                    }
-                    catch(Exception e) {
-
-                    }
-                }
-                else    {
-                    ;
-                }
-
-            }
-
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
-
-                try {
-                    String[] s = HD_WalletFactory.getInstance(BalanceActivity.this).get().getXPUBs();
-                    APIFactory.getInstance(BalanceActivity.this).lockXPUB(s[0], 44);
-                }
-                catch(IOException | MnemonicException.MnemonicLengthException e) {
-                    ;
-                }
-
-            }
-
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
-                String ypub = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).ypubstr();
-                APIFactory.getInstance(BalanceActivity.this).lockXPUB(ypub, 49);
-            }
-
-            if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
-                String zpub = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).zpubstr();
-                APIFactory.getInstance(BalanceActivity.this).lockXPUB(zpub, 84);
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            if(!dragged)    {
-                if(progress != null && progress.isShowing())    {
-                    progress.dismiss();
-                }
-            }
-
-            List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
-            for(UTXO utxo : utxos)   {
-                List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
-                for(MyTransactionOutPoint out : outpoints)   {
-
-                    byte[] scriptBytes = out.getScriptBytes();
-                    String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                    String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
-                    if(path != null && path.startsWith("M/1/"))    {
-                        continue;
-                    }
-
-                    final String hash = out.getHash().toString();
-                    final int idx = out.getTxOutputN();
-                    final long amount = out.getValue().longValue();
-
-                    if(amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD &&
-                            !BlockedUTXO.getInstance().contains(hash, idx) &&
-                            !BlockedUTXO.getInstance().containsNotDusted(hash, idx))    {
-
-                        String message = BalanceActivity.this.getString(R.string.dusting_attempt);
-                        message += "\n\n";
-                        message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
-                        message += " ";
-                        message += Coin.valueOf(amount).toPlainString();
-                        message += " BTC\n";
-                        message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
-                        message += " ";
-                        message += hash + "-" + idx;
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
-                                .setTitle(R.string.dusting_tx)
-                                .setMessage(message)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.dusting_attempt_mark_unspendable, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        BlockedUTXO.getInstance().add(hash, idx, amount);
-
-                                    }
-                                }).setNegativeButton(R.string.dusting_attempt_ignore, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        BlockedUTXO.getInstance().addNotDusted(hash, idx);
-
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-
-            if(!dragged)    {
-                progress.setTitle(strProgressTitle);
-                progress.setMessage(strProgressMessage);
-            }
-
         }
 
     }
