@@ -2,7 +2,7 @@
 
 ### Features:
 
-[Samourai Wallet features list](https://gist.github.com/SamouraiDev/f4ce0f423fc09fea307be81b3dfafe48)
+[Samourai Wallet features list](https://github.com/Samourai-Wallet/Samourai=Wallet-features.md)
 
 ### Build:
 
