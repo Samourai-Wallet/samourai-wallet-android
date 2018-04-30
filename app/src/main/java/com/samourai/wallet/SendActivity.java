@@ -725,6 +725,7 @@ public class SendActivity extends Activity {
                     ;
                 }
 
+                boolean canDoBoltzmann = false;
                 org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
                 if(SPEND_TYPE == SPEND_RICOCHET)    {
 
@@ -895,7 +896,11 @@ public class SendActivity extends Activity {
 
                         if(pair == null)    {
                             // can't do boltzmann, revert to SPEND_SIMPLE
+                            canDoBoltzmann = false;
                             SPEND_TYPE = SPEND_SIMPLE;
+                        }
+                        else    {
+                            canDoBoltzmann = true;
                         }
                     }
 
@@ -1023,20 +1028,24 @@ public class SendActivity extends Activity {
                     change = totalValueSelected - (amount + fee.longValue());
 //                    Log.d("SendActivity", "change:" + change);
 
-                    boolean changeIsDust = false;
                     if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
 
-                        change = 0L;
-                        fee = fee.add(BigInteger.valueOf(change));
-                        amount = totalValueSelected - fee.longValue();
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.change_is_dust)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
 
-//                        Log.d("SendActivity", "fee:" + fee.longValue());
-//                        Log.d("SendActivity", "change:" + change);
-//                        Log.d("SendActivity", "amount:" + amount);
-                        receivers.put(address, BigInteger.valueOf(amount));
+                                        dialog.dismiss();
 
-                        changeIsDust = true;
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
 
+                        return;
                     }
 
                     final long _change = change;
@@ -1059,15 +1068,26 @@ public class SendActivity extends Activity {
                         strPrivacyWarning = "";
                     }
 
-                    String strChangeIsDust = null;
-                    if(changeIsDust)    {
-                        strChangeIsDust = getString(R.string.change_is_dust) + "\n\n";
+                    String strCannotDoBoltzmann = null;
+                    if(!canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true)    {
+                        strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
                     }
                     else    {
-                        strChangeIsDust = "";
+                        strCannotDoBoltzmann = "";
                     }
 
-                    String message = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
+                    /*
+                    String strNoLikedTypeBoltzmann = null;
+                    if(canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
+                        strNoLikedTypeBoltzmann = getString(R.string.boltzmann_like_typed) + "\n\n";
+                    }
+                    else    {
+                        strNoLikedTypeBoltzmann = "";
+                    }
+                    */
+
+//                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
+                    String message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
                     final long _amount = amount;
 

@@ -269,7 +269,7 @@
     <string name="please_wait_sending">Sending transaction, please wait.</string>
     <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
 
-    <string name="change_is_dust">The change from this transaction is a dust amount and is being added to the miner\'s fee.</string>
+    <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
 
     <string name="tor_routing_on">Samourai is routing via Tor.</string>
     <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
@@ -517,5 +517,8 @@
   <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
 
   <string name="use_bech32">Use bech32 address</string>
+
+  <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
+  <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
 
 </resources>
