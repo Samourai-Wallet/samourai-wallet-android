@@ -40,6 +40,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
@@ -559,11 +560,16 @@ public class ReceiveActivity extends Activity {
 
             long lamount = (long)(amount * 1e8);
             if(lamount != 0L) {
-                if(useSegwit && cbBech32.isChecked())    {
-                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr, Coin.valueOf(lamount), null, null)));
+                if(!FormatsUtil.getInstance().isValidBech32(_addr))    {
+                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
                 }
                 else    {
-                    ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
+                    NumberFormat nf = NumberFormat.getInstance(Locale.US);
+                    nf.setMinimumIntegerDigits(1);
+                    nf.setMinimumFractionDigits(0);
+                    String strURI = "bitcoin:" + _addr;
+                    strURI += "?amount=" + nf.format(amount);
+                    ivQR.setImageBitmap(generateQRCode(strURI));
                 }
             }
             else {
