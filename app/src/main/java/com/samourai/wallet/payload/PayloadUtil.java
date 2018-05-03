@@ -410,9 +410,12 @@ public class PayloadUtil	{
                     editor.putBoolean("boltzmann", meta.getInt("spend_type") == SendActivity.SPEND_BOLTZMANN ? true : false);
                     editor.commit();
                 }
+                //
+                // move BIP126 over to boltzmann spend setting
+                //
                 if(meta.has("use_bip126")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_bip126"));
-                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
+                    editor.putBoolean("boltzmann", meta.getBoolean("use_bip126"));
                     editor.commit();
                 }
                 if(meta.has("use_boltzmann")) {
