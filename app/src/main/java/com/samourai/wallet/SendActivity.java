@@ -909,8 +909,12 @@ public class SendActivity extends Activity {
                     ;
                 }
 
+                if(SPEND_TYPE == SPEND_SIMPLE && amount == balance)    {
+                    // do nothing, utxo selection handles above
+                    ;
+                }
                 // simple spend (less than balance)
-                if(SPEND_TYPE == SPEND_SIMPLE)    {
+                else if(SPEND_TYPE == SPEND_SIMPLE)    {
                     List<UTXO> _utxos = utxos;
 
                     // sort in ascending order by value
@@ -1017,6 +1021,12 @@ public class SendActivity extends Activity {
                         }
                         Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(outpoints));
                         fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
+
+                        if(amount == balance)    {
+                            amount -= fee.longValue();
+                            receivers.clear();
+                            receivers.put(address, BigInteger.valueOf(amount));
+                        }
                     }
 
 //                    Log.d("SendActivity", "spend type:" + SPEND_TYPE);
@@ -1028,7 +1038,7 @@ public class SendActivity extends Activity {
                     change = totalValueSelected - (amount + fee.longValue());
 //                    Log.d("SendActivity", "change:" + change);
 
-                    if(change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
+                    if(change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE)    {
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                                 .setTitle(R.string.app_name)
