@@ -459,21 +459,21 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC nel tuo wallet e riprova.</string>
     <string name="help">Aiuto</string>
     
-    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
-    <string name="confirm_pin_code">Confirm pin code</string>
-    <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
-    <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
-    <string name="create_a_passphrase">Create a passphrase</string>
-    <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
-    <string name="set_pin_code">Set Pin code</string>
-    <string name="accept_disclaimer_error">You need to accept disclaimer</string>
-    <string name="import_external_wallet">Import external wallet</string>
-    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="passphrase_disclaimer">Sono cosciente del fatto che Samourai NON può fornire assistenza in caso di passphrase dimenticate. Samourai non è a conoscenza della tua passphrase in nessun caso.</string>
+    <string name="confirm_pin_code">Conferma codice PIN</string>
+    <string name="re_enter_your_pin_code">Reinserisci codice PIN</string>
+    <string name="re_enter_a_passphrase">Reinserisci la passphrase</string>
+    <string name="create_a_passphrase">Inserisci la tua passphrase</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Inserisci una passphrase sicura per il tuo wallet</string>
+    <string name="set_pin_code">Imposta un codice PIN</string>
+    <string name="accept_disclaimer_error">Devi accettare il disclaimer</string>
+    <string name="import_external_wallet">Importa un wallet esterno</string>
+    <string name="import_samourai_wallet">Importa un backup Samourai</string>
     <string name="backup_file">Backup file</string>
-    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
-    <string name="back">BACK</string>
-    <string name="finish">finish</string>
-    <string name="choose_file">choose file</string>
+    <string name="import_an_encrypted_samourai_wallet">Importa un backup Samourai criptato per ripristinare un wallet con i meta-dati intatti.</string>
+    <string name="back">INDIETRO</string>
+    <string name="finish">Fine</string>
+    <string name="choose_file">Scegli file</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
