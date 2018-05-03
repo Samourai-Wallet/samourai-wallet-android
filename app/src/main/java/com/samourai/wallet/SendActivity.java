@@ -2213,7 +2213,7 @@ public class SendActivity extends Activity {
     private void sanitizeFee()  {
         if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
             SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.15 * 1000.0)));
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.20 * 1000.0)));
             Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
         }
