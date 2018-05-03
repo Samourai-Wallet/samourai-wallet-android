@@ -33,6 +33,8 @@
     <string name="options_xpub2">Visualizza la chiave pubblica estesa per l\'account BIP44.</string>
     <string name="options_xpub49">Visualizza YPUB Segwit</string>
     <string name="options_xpub49_2">Visualizza la chiave pubblica estesa per l\'account BIP49 (Segwit).</string>
+    <string name="options_xpub84">Visualizza ZPUB Segwit</string>
+    <string name="options_xpub84_2">Visualizza la chiave pubblica estesa per l\'account BIP84 (Bech32).</string>
     <string name="options_wipe">Elimina wallet</string>
     <string name="options_wipe2">Cancella in maniera sicura il wallet dal dispositivo.</string>
     <string name="options_stealth_display">Modalità segreta</string>
@@ -128,6 +130,7 @@
     <string name="bip39_must">Il tuo wallet richiede una passphrase. Riprova.</string>
     <string name="bip39_unmatch">La passphrase è errata. Riprova.</string>
     <string name="bip39_invalid">Non usare nessuno spazio nella tua passphrase. Riprova.</string>
+    <string name="bip39_empty">Devi definire una passphrase.</string>
     <string name="please_select">Seleziona...</string>
     <string name="create_wallet">Crea wallet</string>
     <string name="restore_wallet">Ripristina wallet</string>
@@ -286,7 +289,7 @@
     <string name="action_ricochet_script">Visualizza script Ricochet</string>
     <string name="action_ricochet_replay">Reinvia Ricochet</string>
     <string name="ricochet_replay">Vuoi ritrasmettere questa spesa Ricochet?</string>
-    <string name="ricochet_not_broadcast_replay">Si è verificato un problema trasmettendo il tuoRicochet. Vuoi ritrasmettere questa spesa Ricochet?</string>
+    <string name="ricochet_not_broadcast_replay">Si è verificato un problema trasmettendo il tuo Ricochet. Vuoi ritrasmettere questa spesa Ricochet?</string>
     <string name="no_ricochet_replay">Non esiste un Ricochet da reinviare.</string>
     <string name="no_ricochet_display">Non esiste uno script Ricochet da visualizzare.</string>
     <string name="ricochet_broadcast">Il tuo Ricochet è stato trasmesso.</string>
@@ -455,6 +458,37 @@
     <string name="bip47_notif_tx_insufficient_funds_1">Aggiungere un PayNym ai contatti richiede una singola fee di transazione per creare il record sulla blockchain. Deposita</string>
     <string name="bip47_notif_tx_insufficient_funds_2">BTC nel tuo wallet e riprova.</string>
     <string name="help">Aiuto</string>
+    
+    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
+    <string name="confirm_pin_code">Confirm pin code</string>
+    <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
+    <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
+    <string name="create_a_passphrase">Create a passphrase</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
+    <string name="set_pin_code">Set Pin code</string>
+    <string name="accept_disclaimer_error">You need to accept disclaimer</string>
+    <string name="import_external_wallet">Import external wallet</string>
+    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="backup_file">Backup file</string>
+    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
+    <string name="back">BACK</string>
+    <string name="finish">finish</string>
+    <string name="choose_file">choose file</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Aggiungi password BIP39</string>
+    <string name="close_bip39_password">Chiudi password BIP39</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Inserisci il tuo seed mnemonico per importare un wallet di un altro servizio/provider.</string>
+    <string name="last_updated">Ultimo aggiornamento</string>
+    <string name="get_help">Aiuto</string>
+    <string name="offline_mode">Modalità Offline</string>
+    <string name="import_samourai_backup">Importa backup di Samourai</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Inserisci la passphrase del tuo wallet</string>
+    <string name="start_new_wallet">Nuovo wallet</string>
+    <string name="get_help_create">Aiuto per creazione wallet</string>
+    <string name="get_help_restore">Aiuto per ripristino wallet</string>
 
     <string name="fee">Fee miner</string>
     <string name="fee_low_priority">Priorità bassa: stimati 24</string>
@@ -462,5 +496,29 @@
     <string name="fee_high_priority">Priorità alta: stimati 2</string>
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocchi prima della conferma</string>
+    
+    <string name="invalid_mnemonic_word">Parola mnemonica BIP39 non valida</string>
+    <string name="invalid_mnemonic">Mnemonico BIP39 non valido</string>
+    <string name="enter_your_code_here">Inserisci il tuo codice qui</string>
+    <string name="declaimer_recovery_words">Confermo di aver scritto e memorizzato le parole riportate qui sopra in un posto sicuro. Sono cosciente che chiunque abbia accesso alla mia passphrase ed alle parole del mio seed mnemonico avrà completo controllo del mio wallet e dei miei fondi depositati in esso.</string>
+    <string name="return_to_wallet">Ritorna al wallet</string>
+    <string name="caution_message_recovery_words">Non è sicuro conservare queste parole su un computer o sul cloud. Scrivi queste parole su un foglio di carta e tienile al sicuro, in un posto segreto.</string>
+    <string name="these_words_are">Queste parole sono un backup di tutte le chiavi segrete nel tuo wallet.</string>
+    <string name="recovery_words">PAROLE DI RECOVERY (RECOVERY WORDS)</string>
+
+    <string name="permission_alert_dialog_title_sms">Richiesta permessi SMS e stato del telefono</string>
+    <string name="permission_dialog_message_sms">Il tuo wallet ha bisogno dei permessi per inviare e ricevere SMS per la funzionalità di avviso remoto.</string>
+    <string name="permission_alert_dialog_title_outgoing">Richiesta permesso di gestire le chiamate uscenti</string>
+    <string name="permission_dialog_message_outgoing">Il tuo wallet ha bisogno del permesso di gestire le chiamate uscenti per usare la modalità segreta.</string>
+
+    <string name="permission_alert_dialog_title_external">Richiesta permessi lettura/scrittura</string>
+    <string name="permission_dialog_message_external">Il tuo wallet ha bisogno del permesso di accesso alla memoria per salvare automaticamente un backup criptato del tuo wallet.</string>
+    <string name="permission_alert_dialog_title_camera">Richiesta permessi fotocamera</string>
+    <string name="permission_dialog_message_camera">Il tuo wallet ha bisogno del permesso di accedere alla fotocamera per scannerizzare i QR codes.</string>
+
+    <string name="use_bech32">Usa indirizzo bech32</string>
+
+    <string name="boltzmann_cannot">Una transazione STONEWALL non può essere composta con il tuo attuale set di output non spesi. Se hai bisogno di una transazione STONEWALL, scegli \'NO\' e prova ancora con un altro set di output.</string>
+    <string name="boltzmann_like_typed">Nota che \'Ricevi il resto in output di stessa tipologia\' è DISATTIVATO e può risultare in una struttura subottimale per la tua transazione STONEWALL.</string>
 
 </resources>
