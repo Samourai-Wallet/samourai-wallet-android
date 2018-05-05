@@ -43,6 +43,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -52,6 +55,7 @@ import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.uri.BitcoinURI;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,6 +77,7 @@ public class ReceiveActivity extends AppCompatActivity {
 
     private ImageView ivQR = null;
     private TextView tvAddress = null;
+    private TextView tvPath = null;
 
     private EditText edAmountBTC = null;
     private EditText edAmountFiat = null;
@@ -93,6 +98,9 @@ public class ReceiveActivity extends AppCompatActivity {
     private String addr44 = null;
     private String addr49 = null;
     private String addr84 = null;
+    private int idx44 = 0;
+    private int idx49 = 0;
+    private int idx84 = 0;
 
     private boolean canRefresh44 = false;
     private boolean canRefresh49 = false;
@@ -145,6 +153,7 @@ public class ReceiveActivity extends AppCompatActivity {
 
         advanceOptionsContainer = findViewById(R.id.container_advance_options);
         tvAddress = findViewById(R.id.receive_address);
+        tvPath = findViewById(R.id.path);
         addressTypesSpinner = findViewById(R.id.address_type_spinner);
         TextView tvFiatSymbol = findViewById(R.id.tvFiatSymbol);
         ivQR = findViewById(R.id.qr);
@@ -169,9 +178,18 @@ public class ReceiveActivity extends AppCompatActivity {
                 advanceOptionsContainer.setVisibility(visibility);
             }
         });
+        idx84 = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+        idx49 = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+        try {
+            idx44 = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx();
+        }
+        catch(IOException | MnemonicException.MnemonicLengthException e) {
+            ;
+        }
         addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
         addr49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
         addr44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+
         if (useSegwit && isBIP84Selected()) {
             addr = addr84;
         } else if (useSegwit && !isBIP84Selected()) {
@@ -590,6 +608,7 @@ public class ReceiveActivity extends AppCompatActivity {
         }
 
         tvAddress.setText(addr);
+        displayPath();
         checkPrevUse();
 
         new Thread(new Runnable() {
@@ -692,9 +711,35 @@ public class ReceiveActivity extends AppCompatActivity {
         }).start();
     }
 
-    public String getDisplayUnits() {
+    private void displayPath()  {
 
-        return MonetaryUtil.getInstance().getBTCUnits();
+        int sel = addressTypesSpinner.getSelectedItemPosition();
+        String path = "m/";
+        int idx = 0 ;
+
+        switch(sel)    {
+            case 0:
+                path += "49'";
+                idx = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+                break;
+            case 1:
+                path += "84'";
+                idx = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+                break;
+            default:
+                path += "44'";
+                try {
+                    idx = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx();
+                }
+                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                    ;
+                }
+        }
+
+        path += "/0'/0'/0/";
+        path += idx;
+
+        tvPath.setText(path);
 
     }
 
