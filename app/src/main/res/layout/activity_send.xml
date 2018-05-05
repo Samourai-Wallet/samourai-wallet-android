@@ -44,6 +44,7 @@
                     android:textColorHint="@color/primary_light"
                     android:drawableEnd="@android:drawable/ic_menu_search"
                     android:textColor="@color/primary_light"
+                    android:digits="abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     />
 
             </LinearLayout>
