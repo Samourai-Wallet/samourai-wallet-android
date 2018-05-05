@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,8 +79,8 @@ public class ReceiveActivity extends AppCompatActivity {
     private TextWatcher textWatcherBTC = null;
     private TextWatcher textWatcherFiat = null;
     private LinearLayout advancedButton = null;
-    private ConstraintLayout advanceOptionsContainer;
-    private Spinner addressTypesSpinner;
+    private ConstraintLayout advanceOptionsContainer = null;
+    private Spinner addressTypesSpinner = null;
 
     private boolean useSegwit = true;
 
@@ -184,15 +185,18 @@ public class ReceiveActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: {
                         addr = addr49;
+                        break;
                     }
                     case 1: {
                         addr = addr84;
+                        break;
                     }
                     case 2: {
                         addr = addr44;
+                        break;
                     }
                     default: {
-                        addr = addr84;
+                        addr = addr49;
                     }
                 }
                 displayQRCode();
@@ -200,9 +204,16 @@ public class ReceiveActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                ;
             }
         });
+
+        if(useSegwit)    {
+            addressTypesSpinner.setSelection(0);
+        }
+        else    {
+            addressTypesSpinner.setSelection(2);
+        }
 
         tvAddress.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -231,7 +242,6 @@ public class ReceiveActivity extends AppCompatActivity {
                 return false;
             }
         });
-
 
         ivQR.setOnTouchListener(new OnSwipeTouchListener(ReceiveActivity.this) {
             @Override
@@ -409,7 +419,7 @@ public class ReceiveActivity extends AppCompatActivity {
     }
 
     private boolean isBIP84Selected() {
-        return addressTypesSpinner.getSelectedItemPosition() == 0;
+        return addressTypesSpinner.getSelectedItemPosition() == 1;
     }
 
     @Override

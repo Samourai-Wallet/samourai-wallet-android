@@ -524,10 +524,9 @@
     <string name="_0_00">0.00</string>
   <string name="advanced">Advanced</string>
 
-
   <string-array name="address_types">
+    <item>Segwit P2SH (BIP49)</item>
     <item>Segwit native (BIP84)</item>
-    <item>Segwit p2sh-p2wpkh (BIP49)</item>
-    <item>p2pkh (BIP44)</item>
+    <item>Legacy (P2PKH)</item>
   </string-array>
 </resources>
