@@ -569,18 +569,15 @@ public class ReceiveActivity extends AppCompatActivity {
         }
 
         try {
-            double amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString()).doubleValue();
+            Number amount = NumberFormat.getInstance(Locale.US).parse(edAmountBTC.getText().toString().trim());
 
-            long lamount = (long) (amount * 1e8);
+            long lamount = (long) (amount.doubleValue() * 1e8);
             if (lamount != 0L) {
                 if (!FormatsUtil.getInstance().isValidBech32(_addr)) {
                     ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
                 } else {
-                    NumberFormat nf = NumberFormat.getInstance(Locale.US);
-                    nf.setMinimumIntegerDigits(1);
-                    nf.setMinimumFractionDigits(0);
                     String strURI = "bitcoin:" + _addr;
-                    strURI += "?amount=" + nf.format(amount);
+                    strURI += "?amount=" + amount.toString();
                     ivQR.setImageBitmap(generateQRCode(strURI));
                 }
             } else {
