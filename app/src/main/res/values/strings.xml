@@ -520,5 +520,14 @@
 
   <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
   <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+  <string name="advanced">Advanced</string>
 
+
+  <string-array name="address_types">
+    <item>Segwit native (BIP84)</item>
+    <item>Segwit p2sh-p2wpkh (BIP49)</item>
+    <item>p2pkh (BIP44)</item>
+  </string-array>
 </resources>
