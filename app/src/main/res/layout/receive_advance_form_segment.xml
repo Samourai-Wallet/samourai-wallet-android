@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:visibility="invisible"
     android:id="@+id/container_advance_options"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="12dp">
+    android:paddingBottom="12dp"
+    android:visibility="invisible">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -26,12 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="2dp"
             android:layout_weight="50">
-                <EditText
-                    android:id="@+id/amountBTC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/amountBTC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_mono"
+                android:hint="@string/_0_00"
+                android:inputType="numberDecimal" />
 
 
             <TextView
@@ -40,7 +42,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="6dp"
-                android:text="BTC" />
+                android:fontFamily="@font/roboto_mono"
+                android:text="BTC"
+                android:typeface="monospace" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -50,22 +54,25 @@
             android:layout_weight="50">
 
             <TextView
+                android:id="@+id/tvFiatSymbol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:id="@+id/tvFiatSymbol"
                 android:layout_marginStart="6dp"
-                android:text="USD" />
+                android:fontFamily="@font/roboto_mono"
+                android:text="USD"
+                android:typeface="monospace" />
 
 
-                <EditText
-                    android:id="@+id/amountFiat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
+            <EditText
+                android:id="@+id/amountFiat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_mono"
+                android:gravity="right"
+                android:hint="@string/_0_00"
+                android:inputType="numberDecimal" />
 
 
         </RelativeLayout>
@@ -77,9 +84,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_mono"
         android:text="Request Amount"
         android:textColor="@color/text_ui2_grey"
-        android:textStyle="normal"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -109,9 +117,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/roboto_mono"
         android:text="Address Type"
         android:textColor="@color/text_ui2_grey"
-        android:textStyle="normal"
+        android:textStyle="normal|bold"
         app:layout_constraintBottom_toTopOf="@+id/address_type_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -128,9 +137,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/roboto_mono"
         android:text="Path"
         android:textColor="@color/text_ui2_grey"
-        android:textStyle="normal"
+        android:textStyle="normal|bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.01"
@@ -145,6 +155,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_mono"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
