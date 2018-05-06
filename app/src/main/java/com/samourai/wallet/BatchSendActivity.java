@@ -592,8 +592,8 @@ public class BatchSendActivity extends Activity {
     private void doAddNew()  {
 
         BatchSendUtil.BatchSend dd = BatchSendUtil.getInstance().getBatchSend();
-        if(FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString()))    {
-            dd.addr = edAddress.getText().toString();
+        if(FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim()))    {
+            dd.addr = edAddress.getText().toString().trim();
             dd.pcode = null;
         }
         else if(FormatsUtil.getInstance().isValidPaymentCode(strPCode))   {
@@ -829,7 +829,7 @@ public class BatchSendActivity extends Activity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString())) {
+        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
             isValid = true;
         }
         else if(btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
