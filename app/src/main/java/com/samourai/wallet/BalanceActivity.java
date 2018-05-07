@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -1389,7 +1390,12 @@ public class BalanceActivity extends Activity {
         intent.putExtra("notifTx", notifTx);
         intent.putExtra("dragged", dragged);
         intent.putExtra("launch", launch);
-        startService(intent);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        }
+        else    {
+            startService(intent);
+        }
 
     }
 
