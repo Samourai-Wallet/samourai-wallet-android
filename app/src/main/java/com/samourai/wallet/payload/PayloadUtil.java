@@ -199,10 +199,11 @@ public class PayloadUtil	{
             wallet.put("accounts", accts);
 
             //
-            // export BIP47 payment code for debug payload
+            // export BIP47 payment codes for debug payload
             //
             try {
                 wallet.put("payment_code", BIP47Util.getInstance(context).getPaymentCode().toString());
+                wallet.put("payment_code_feature", BIP47Util.getInstance(context).getFeaturePaymentCode().toString());
             }
             catch(AddressFormatException afe) {
                 ;
