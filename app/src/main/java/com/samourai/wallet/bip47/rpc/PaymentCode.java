@@ -30,6 +30,9 @@ public class PaymentCode {
     private static final int CHAIN_LEN = 32;
     private static final int PAYLOAD_LEN = 80;
 
+    private static final int SAMOURAI_FEATURE_BYTE = 79;
+    private static final int SAMOURAI_SEGWIT_BIT = 0;
+
     private String strPaymentCode = null;
     private byte[] pubkey = null;
     private byte[] chain = null;
@@ -169,10 +172,6 @@ public class PaymentCode {
         return make(0x01);
     }
 
-    private String makeV2() {
-      return make(0x02);
-    }
-
     private String make(int type) {
 
         String ret = null;
@@ -201,14 +200,34 @@ public class PaymentCode {
         System.arraycopy(payload, 0, payment_code, 1, payload.length);
 
         // append checksum
-        byte[] checksum = Arrays.copyOfRange(Sha256Hash.hashTwice(payment_code), 0, 4);
-        byte[] payment_code_checksum = new byte[payment_code.length + checksum.length];
-        System.arraycopy(payment_code, 0, payment_code_checksum, 0, payment_code.length);
-        System.arraycopy(checksum, 0, payment_code_checksum, payment_code_checksum.length - 4, checksum.length);
+        return base58EncodeChecked(payment_code);
+    }
 
-        ret = Base58.encode(payment_code_checksum);
+    public String makeSamouraiPaymentCode() throws AddressFormatException {
 
-        return ret;
+        byte[] payload = getPayload();
+        // set bit0 = 1 in 'Samourai byte' for segwit. Can send/receive P2PKH, P2SH-P2WPKH, P2WPKH (bech32)
+        payload[SAMOURAI_FEATURE_BYTE] = setBit(payload[SAMOURAI_FEATURE_BYTE], SAMOURAI_SEGWIT_BIT);
+        byte[] payment_code = new byte[PAYLOAD_LEN + 1];
+        // add version byte
+        payment_code[0] = (byte)0x47;
+        System.arraycopy(payload, 0, payment_code, 1, payload.length);
+
+        // append checksum
+        return base58EncodeChecked(payment_code);
+    }
+
+    private String base58EncodeChecked(byte[] buf)  {
+        byte[] checksum = Arrays.copyOfRange(Sha256Hash.hashTwice(buf), 0, 4);
+        byte[] bufChecked = new byte[buf.length + checksum.length];
+        System.arraycopy(buf, 0, bufChecked, 0, buf.length);
+        System.arraycopy(checksum, 0, bufChecked, bufChecked.length - 4, checksum.length);
+
+        return Base58.encode(bufChecked);
+    }
+
+    private byte setBit(byte b, int pos)    {
+        return (byte)(b | (1 << pos));
     }
 
     private DeterministicKey createMasterPubKeyFromBytes(byte[] pub, byte[] chain) throws AddressFormatException {
