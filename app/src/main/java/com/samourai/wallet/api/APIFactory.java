@@ -851,11 +851,10 @@ public class APIFactory	{
                     //
                     for(int i = 0; i < 3; i++)   {
                         PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(pcode, i);
-//                        Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                        BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
-//                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        Log.i("APIFactory", "receive from " + i + ":" + Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
+                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
+                        BIP47Meta.getInstance().getIdx4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), i);
+                        BIP47Meta.getInstance().getPCode4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), pcode.toString());
                     }
 
                 }
