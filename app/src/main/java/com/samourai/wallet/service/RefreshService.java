@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.List;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -45,6 +48,18 @@ public class RefreshService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("refresh")
+                    .setAutoCancel(true);
+
+            Notification notification = builder.build();
+            startForeground(1001, notification);
+
+        }
 
         dragged = intent.getBooleanExtra("dragged", false);
         launch = intent.getBooleanExtra("launch", false);
