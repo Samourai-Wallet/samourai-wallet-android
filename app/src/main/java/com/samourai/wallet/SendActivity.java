@@ -617,7 +617,7 @@ public class SendActivity extends Activity {
                 long amount = (long)(Math.round(dAmount * 1e8));;
 
 //                Log.i("SendActivity", "amount:" + amount);
-                final String address = strDestinationBTCAddress == null ? edAddress.getText().toString() : strDestinationBTCAddress;
+                final String address = strDestinationBTCAddress == null ? edAddress.getText().toString().trim() : strDestinationBTCAddress;
                 final int accountIdx = selectedAccount;
 
                 final int changeType;
@@ -1807,7 +1807,7 @@ public class SendActivity extends Activity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString())) {
+        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
             isValid = true;
         }
         else if(btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
