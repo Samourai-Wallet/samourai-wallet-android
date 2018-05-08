@@ -1446,12 +1446,11 @@ public class BIP47Activity extends Activity {
                     while(loop) {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
-                            PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
-                            addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            Log.i("BIP47Activity", "sync receive from " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), payment_code.toString());
+                            addrs.add(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Incoming(s);

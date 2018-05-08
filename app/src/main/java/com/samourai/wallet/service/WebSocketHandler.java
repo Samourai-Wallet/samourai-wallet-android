@@ -291,25 +291,23 @@ public class WebSocketHandler {
 
                                                         idx++;
                                                         for(int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++)   {
-                                                            PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
-                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
-                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), i);
-                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), pcode.toString());
+                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
+                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
-                                                            _addrs.add(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
+                                                            _addrs.add(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                         }
 
                                                         idx--;
                                                         if(idx >= 2)    {
                                                             for(int i = idx; i >= (idx - (BIP47Meta.INCOMING_LOOKAHEAD - 1)); i--)   {
-                                                                PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
-                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
-                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), i);
-                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()), pcode.toString());
+                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
+                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
-                                                                _addrs.add(Hex.toHexString(receiveAddress.getReceiveECKey().getPubKey()));
+                                                                _addrs.add(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                             }
                                                         }
 
