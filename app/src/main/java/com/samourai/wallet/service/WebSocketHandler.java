@@ -360,7 +360,9 @@ public class WebSocketHandler {
 
                             }
                         });
-                mConnection.connect();
+                if(mConnection != null)    {
+                    mConnection.connect();
+                }
 
                 subscribe();
 
@@ -382,7 +384,9 @@ public class WebSocketHandler {
                 public void run() {
                     if (mConnection != null) {
                         pingPongSuccess = false;
-                        if (mConnection.isOpen()) mConnection.sendPing();
+                        if(mConnection.isOpen())   {
+                            mConnection.sendPing();
+                        }
                         startPongTimer();
                     }
                 }
