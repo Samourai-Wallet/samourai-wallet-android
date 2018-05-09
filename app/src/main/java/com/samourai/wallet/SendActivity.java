@@ -880,6 +880,7 @@ public class SendActivity extends Activity {
 
                     if(_utxos1 == null && _utxos2 == null)    {
                         // can't do boltzmann, revert to SPEND_SIMPLE
+                        canDoBoltzmann = false;
                         SPEND_TYPE = SPEND_SIMPLE;
                     }
                     else    {
@@ -1013,7 +1014,7 @@ public class SendActivity extends Activity {
                 // do spend here
                 if(selectedUTXO.size() > 0)    {
 
-                    // estimate fee for simple spend, already done if BIP126
+                    // estimate fee for simple spend, already done if boltzmann
                     if(SPEND_TYPE == SPEND_SIMPLE)    {
                         List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
                         for(UTXO utxo : selectedUTXO)   {
