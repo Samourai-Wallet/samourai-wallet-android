@@ -189,8 +189,7 @@ public class UTXOActivity extends Activity {
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
                                 String msg = null;
 
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
-                                        FormatsUtil.getInstance().isValidBech32(addr))    {
+                                if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
 
                                     msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
 
@@ -230,11 +229,11 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                SegwitAddress p2sh_p2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-                                if(ecKey != null && p2sh_p2wpkh != null) {
+                                if(ecKey != null && segwitAddress != null) {
 
-                                    String redeemScript = Hex.toHexString(p2sh_p2wpkh.segWitRedeemScript().getProgram());
+                                    String redeemScript = Hex.toHexString(segwitAddress.segWitRedeemScript().getProgram());
 
                                     TextView showText = new TextView(UTXOActivity.this);
                                     showText.setText(redeemScript);
@@ -326,7 +325,7 @@ public class UTXOActivity extends Activity {
                 }
 
                 String addr = data.get(position).addr;
-                if(!Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                if(!FormatsUtil.getInstance().isValidBech32(addr) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                     menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
                 }
 
@@ -362,11 +361,11 @@ public class UTXOActivity extends Activity {
                 displayData.idx = outpoint.getTxOutputN();
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
-                    Log.d("UTXOActivity", "marked as do not spend");
+//                    Log.d("UTXOActivity", "marked as do not spend");
                 }
                 else    {
                     data.add(displayData);
-                    Log.d("UTXOActivity", "unmarked");
+//                    Log.d("UTXOActivity", "unmarked");
                 }
             }
         }
@@ -375,7 +374,7 @@ public class UTXOActivity extends Activity {
 
         if(adapter != null)    {
             adapter.notifyDataSetInvalidated();
-            Log.d("UTXOActivity", "nb:" + data.size());
+//            Log.d("UTXOActivity", "nb:" + data.size());
         }
 
         if(broadcast)    {
@@ -431,7 +430,7 @@ public class UTXOActivity extends Activity {
             String addr = data.get(position).addr;
             text2.setText(addr);
 
-            Log.d("UTXOActivity", "list:" + data.get(position).addr);
+//            Log.d("UTXOActivity", "list:" + data.get(position).addr);
 
             String descr = "";
             Spannable word = null;
@@ -445,25 +444,25 @@ public class UTXOActivity extends Activity {
                 }
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: bip47");
+//                Log.d("UTXOActivity", "list: bip47");
             }
             if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.dust) + " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: dust/do not spend");
+//                Log.d("UTXOActivity", "list: dust/do not spend");
             }
             else if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
                 descr += " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: dust");
+//                Log.d("UTXOActivity", "list: dust");
             }
             else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Log.d("UTXOActivity", "list: do not spend");
+//                Log.d("UTXOActivity", "list: do not spend");
             }
             else    {
                 ;

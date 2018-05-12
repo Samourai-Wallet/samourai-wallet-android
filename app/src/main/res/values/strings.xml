@@ -32,7 +32,9 @@
     <string name="options_xpub">Show BIP44 XPUB</string>
     <string name="options_xpub2">Show extended public key for BIP44 account.</string>
     <string name="options_xpub49">Show Segwit YPUB</string>
-    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account.</string>
+    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
+    <string name="options_xpub84">Show Segwit ZPUB</string>
+    <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
@@ -64,8 +66,8 @@
     <string name="options_autosave_backup2">Periodically save passphrase encrypted backup to device storage.</string>
     <string name="options_version">Version</string>
     <string name="options_txs">Transactions</string>
-    <string name="options_bip126">Spend using BIP126</string>
-    <string name="options_bip126_2">Spends will use BIP126 for increased obfuscation.</string>
+    <string name="options_boltzmann">STONEWALL spend</string>
+    <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
     <string name="options_trusted_node">Set trusted node</string>
     <string name="options_trusted_node2">Specify your own bitcoin node to broadcast transactions.</string>
@@ -267,7 +269,7 @@
     <string name="please_wait_sending">Sending transaction, please wait.</string>
     <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
 
-    <string name="change_is_dust">The change from this transaction is a dust amount and is being added to the miner\'s fee.</string>
+    <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
 
     <string name="tor_routing_on">Samourai is routing via Tor.</string>
     <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
@@ -279,7 +281,7 @@
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.001 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Empty Ricochet queue</string>
@@ -513,5 +515,10 @@
   <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
   <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
   <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
+
+  <string name="use_bech32">Use bech32 address</string>
+
+  <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
+  <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
 
 </resources>

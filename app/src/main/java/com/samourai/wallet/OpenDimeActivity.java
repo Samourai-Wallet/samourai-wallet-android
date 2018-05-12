@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.FileProvider;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -338,8 +339,15 @@ public class OpenDimeActivity extends Activity {
                                     Intent intent = new Intent();
                                     intent.setAction(Intent.ACTION_SEND);
                                     intent.setType("image/png");
-                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                                    startActivity(Intent.createChooser(intent, OpenDimeActivity.this.getText(R.string.select_app)));
+                                    if (android.os.Build.VERSION.SDK_INT >= 24) {
+                                        //From API 24 sending FIle on intent ,require custom file provider
+                                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                                OpenDimeActivity.this,
+                                                getApplicationContext()
+                                                        .getPackageName() + ".provider", file));
+                                    } else {
+                                        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                    }                                    startActivity(Intent.createChooser(intent, OpenDimeActivity.this.getText(R.string.select_app)));
                                 }
 
                             }

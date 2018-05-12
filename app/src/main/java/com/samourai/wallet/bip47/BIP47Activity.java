@@ -43,6 +43,7 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -989,8 +990,16 @@ public class BIP47Activity extends Activity {
         // get private key corresponding to outpoint
         //
         try {
-            Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
-            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+//            Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
+            byte[] scriptBytes = outPoint.getConnectedPubKeyScript();
+            String address = null;
+            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
+            }
+            else    {
+                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+            }
+//            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             ECKey ecKey = SendFactory.getPrivKey(address);
             if(ecKey == null || !ecKey.hasPrivKey())    {
                 Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
@@ -1026,6 +1035,10 @@ public class BIP47Activity extends Activity {
         }
         catch(NoSuchProviderException nspe) {
             Toast.makeText(BIP47Activity.this, nspe.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        catch(Exception e) {
+            Toast.makeText(BIP47Activity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
 

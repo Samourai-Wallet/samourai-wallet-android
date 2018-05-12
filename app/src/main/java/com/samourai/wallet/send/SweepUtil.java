@@ -13,6 +13,7 @@ import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.R;
@@ -71,7 +72,7 @@ public class SweepUtil  {
                         return;
                     }
 
-                    String address = null;
+                    final String address;
                     UTXO utxo = null;
 
                     if(type == TYPE_P2SH_P2WPKH)    {
@@ -139,7 +140,12 @@ public class SweepUtil  {
 
                                 String receive_address = null;
                                 if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
-                                    receive_address = AddressFactory.getInstance(context).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                                    if(FormatsUtil.getInstance().isValidBech32(address))    {
+                                        receive_address = AddressFactory.getInstance(context).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                                    }
+                                    else    {
+                                        receive_address = AddressFactory.getInstance(context).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                                    }
                                 }
                                 else    {
                                     receive_address = AddressFactory.getInstance(context).get(AddressFactory.RECEIVE_CHAIN).getAddressString();

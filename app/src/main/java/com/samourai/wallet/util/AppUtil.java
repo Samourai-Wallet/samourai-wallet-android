@@ -70,10 +70,10 @@ public class AppUtil {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             String[] s = hdw.getXPUBs();
             for(int i = 0; i < s.length; i++)   {
-                APIFactory.getInstance(context).deleteXPUB(s[i], false);
+//                APIFactory.getInstance(context).deleteXPUB(s[i], false);
             }
             String _s = BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr();
-            APIFactory.getInstance(context).deleteXPUB(_s, true);
+//            APIFactory.getInstance(context).deleteXPUB(_s, true);
             PayloadUtil.getInstance(context).wipe();
         }
         catch(Exception e) {
