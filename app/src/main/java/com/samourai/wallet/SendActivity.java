@@ -1865,7 +1865,13 @@ public class SendActivity extends Activity {
     private void doCustomFee()   {
 
         double sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
-        final double sanityValue = sanitySat * 1.5;
+        final long sanityValue;
+        if(sanitySat < 10.0)    {
+            sanityValue = 15L;
+        }
+        else    {
+            sanityValue = (long)(sanitySat * 1.5);
+        }
 
         final EditText etCustomFee = new EditText(SendActivity.this);
 //        String val  = null;

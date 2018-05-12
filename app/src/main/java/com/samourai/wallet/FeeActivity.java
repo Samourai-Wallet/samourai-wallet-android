@@ -320,8 +320,14 @@ public class FeeActivity extends Activity {
 
     private void doCustomFee()   {
 
-        double sanitySat = (double)FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
-        final long sanityValue = (long)(sanitySat * 1.5);
+        double sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
+        final long sanityValue;
+        if(sanitySat < 10.0)    {
+            sanityValue = 15L;
+        }
+        else    {
+            sanityValue = (long)(sanitySat * 1.5);
+        }
 
         final EditText etCustomFee = new EditText(FeeActivity.this);
         double d = FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().doubleValue() / 1000.0;
