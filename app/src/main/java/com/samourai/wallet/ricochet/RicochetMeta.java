@@ -56,7 +56,7 @@ import org.spongycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
-    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "3F5nwobf5xZeeXXQG5cfwNJFMmwEKDUqSk";
+    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsw3c9cm";
     private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "mhP47HR51VhabBudEihETvKkxfKQPeLqqc";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
