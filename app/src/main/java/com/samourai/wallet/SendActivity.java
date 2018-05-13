@@ -488,6 +488,25 @@ public class SendActivity extends Activity {
             ;
         }
 
+        if(lo < 1L)    {
+            lo = 1L;
+            SuggestedFee lo_sf = new SuggestedFee();
+            lo_sf.setDefaultPerKB(BigInteger.valueOf(lo * 1000L));
+            FeeUtil.getInstance().setLowFee(lo_sf);
+        }
+        if(mi < 1L)    {
+            mi = 1L;
+            SuggestedFee mi_sf = new SuggestedFee();
+            mi_sf.setDefaultPerKB(BigInteger.valueOf(mi * 1000L));
+            FeeUtil.getInstance().setNormalFee(mi_sf);
+        }
+        if(hi < 1L)    {
+            hi = 1L;
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf(hi * 1000L));
+            FeeUtil.getInstance().setHighFee(hi_sf);
+        }
+
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
