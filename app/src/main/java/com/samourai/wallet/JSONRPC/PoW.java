@@ -71,22 +71,22 @@ public class PoW {
         String hash = null;
 
         try {
-            strVersionHex = Hex.toHexString(reverse(Hex.decode(resultObj.getString("versionHex"))));
+            strVersionHex = reverseHexBytes(resultObj.getString("versionHex"));
             Log.i("PoW", "version:" + strVersionHex);
-            strPrevBlock = Hex.toHexString(reverse(Hex.decode(resultObj.getString("previousblockhash"))));
+            strPrevBlock = reverseHexBytes(resultObj.getString("previousblockhash"));
             Log.i("PoW", "prev block:" + strPrevBlock);
-            strMerkleRoot = Hex.toHexString(reverse(Hex.decode(resultObj.getString("merkleroot"))));
+            strMerkleRoot = reverseHexBytes(resultObj.getString("merkleroot"));
             Log.i("PoW", "merkle root:" + strMerkleRoot);
 
             ts = resultObj.getLong("time");
-            strTS = Hex.toHexString(reverse(Hex.decode(String.format("%08X", ts))));
+            strTS = reverseHexBytes(String.format("%08X", ts));
             Log.i("PoW", "timestamp:" + strTS);
 
-            strBits = Hex.toHexString(reverse(Hex.decode(resultObj.getString("bits"))));
+            strBits = reverseHexBytes(resultObj.getString("bits"));
             Log.i("PoW", "bits:" + strBits);
 
             nonce = resultObj.getLong("nonce");
-            strNonce = Hex.toHexString(reverse(Hex.decode(String.format("%08X", nonce))));
+            strNonce = reverseHexBytes(String.format("%08X", nonce));
             Log.i("PoW", "nonce:" + strNonce);
 
             String strHeader = strVersionHex + strPrevBlock + strMerkleRoot + strTS + strBits + strNonce;
@@ -142,4 +142,11 @@ public class PoW {
 
     }
 
+    private static String reverseHexBytes(final String hex) {
+        final StringBuilder sb = new StringBuilder(hex.length());
+        for (int i = hex.length(); i > 0; i -= 2) {
+            sb.append(hex.charAt(i - 2)).append(hex.charAt(i - 1));
+        }
+        return sb.toString();
+    }
 }
