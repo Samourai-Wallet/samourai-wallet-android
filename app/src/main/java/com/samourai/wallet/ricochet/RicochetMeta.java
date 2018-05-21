@@ -450,7 +450,6 @@ public class RicochetMeta {
 
         HD_Address hd_addr = BIP84Util.getInstance(context).getWallet().getAccountAt(RICOCHET_ACCOUNT).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(idx);
         SegwitAddress segwitAddress = new SegwitAddress(hd_addr.getECKey().getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-//        String address = segwitAddress.getAddressAsString();
         String address = segwitAddress.getBech32AsString();
 
         return address;
@@ -517,7 +516,7 @@ public class RicochetMeta {
         HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
 
         if(changeAmount > 0L)    {
-            String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
         }
 
