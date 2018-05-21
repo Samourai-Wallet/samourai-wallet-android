@@ -15,6 +15,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,14 +44,12 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +67,11 @@ public class UTXOActivity extends Activity {
     private List<DisplayData> doNotSpend = null;
     private ListView listView = null;
     private UTXOAdapter adapter = null;
+
+    private long totalP2PKH = 0L;
+    private long totalP2SH_P2WPKH = 0L;
+    private long totalP2WPKH = 0L;
+    private long totalBlocked = 0L;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -315,7 +319,7 @@ public class UTXOActivity extends Activity {
                         return true;
                     }
                 });
-                menu.inflate (R.menu.utxo_menu);
+                menu.inflate (R.menu.utxo_popup_menu);
 
                 if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                     menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
@@ -347,8 +351,35 @@ public class UTXOActivity extends Activity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.utxo_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_utxo_amounts) {
+            doDisplayAmounts();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void update(boolean broadcast)   {
 
+        totalP2SH_P2WPKH = totalP2PKH = totalP2WPKH = totalBlocked = 0L;
         data.clear();
         doNotSpend.clear();
 
@@ -362,10 +393,20 @@ public class UTXOActivity extends Activity {
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
 //                    Log.d("UTXOActivity", "marked as do not spend");
+                    totalBlocked += displayData.amount;
                 }
                 else    {
                     data.add(displayData);
 //                    Log.d("UTXOActivity", "unmarked");
+                    if(FormatsUtil.getInstance().isValidBech32(displayData.addr))    {
+                        totalP2WPKH += displayData.amount;
+                    }
+                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), displayData.addr).isP2SHAddress())  {
+                        totalP2SH_P2WPKH += displayData.amount;
+                    }
+                    else    {
+                        totalP2PKH += displayData.amount;
+                    }
                 }
             }
         }
@@ -501,6 +542,39 @@ public class UTXOActivity extends Activity {
         }
 
         return false;
+    }
+
+    private void doDisplayAmounts() {
+
+        final DecimalFormat df = new DecimalFormat("#");
+        df.setMinimumIntegerDigits(1);
+        df.setMinimumFractionDigits(8);
+        df.setMaximumFractionDigits(8);
+
+        String message = getText(R.string.total_p2pkh) + " " + df.format(((double)(totalP2PKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_p2sh_p2wpkh) + " " + df.format(((double)(totalP2SH_P2WPKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_p2wpkh) + " " + df.format(((double)(totalP2WPKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_blocked) + " " + df.format(((double)(totalBlocked) / 1e8)) + " BTC";
+        message += "\n";
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(UTXOActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
     }
 
 }

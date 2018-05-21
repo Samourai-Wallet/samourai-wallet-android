@@ -521,4 +521,11 @@
   <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
   <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
 
+  <string name="action_utxo_amounts">View amounts by address type</string>
+
+  <string name="total_p2pkh">Total legacy (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+  <string name="total_p2wpkh">Total segwit (bech32):</string>
+  <string name="total_blocked">Total blocked:</string>
+
 </resources>
