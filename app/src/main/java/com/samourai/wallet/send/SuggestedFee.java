@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 public class SuggestedFee {
 
-    private static final BigInteger defaultAmount = BigInteger.valueOf(10000L);
+    private static final BigInteger defaultAmount = BigInteger.valueOf(1200L);
 
     private BigInteger defaultPerKB = defaultAmount;
     private boolean isStressed = false;
