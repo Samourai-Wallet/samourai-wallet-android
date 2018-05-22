@@ -46,6 +46,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOptions;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -506,6 +507,8 @@ public class SendActivity extends Activity {
             hi_sf.setDefaultPerKB(BigInteger.valueOf(hi * 1000L));
             FeeUtil.getInstance().setHighFee(hi_sf);
         }
+
+        sanitizeFee();
 
         switch(FEE_TYPE)    {
             case FEE_LOW:
@@ -1045,6 +1048,24 @@ public class SendActivity extends Activity {
                             amount -= fee.longValue();
                             receivers.clear();
                             receivers.put(address, BigInteger.valueOf(amount));
+
+                            //
+                            // fee sanity check
+                            //
+                            Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outpoints, receivers);
+                            tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
+                            byte[] serialized = tx.bitcoinSerialize();
+                            Log.d("SendActivity", "size:" + serialized.length);
+                            Log.d("SendActivity", "vsize:" + tx.getVirtualTransactionSize());
+                            Log.d("SendActivity", "fee:" + fee.longValue());
+                            if((tx.hasWitness() && (fee.longValue() < tx.getVirtualTransactionSize())) || (!tx.hasWitness() && (fee.longValue() < serialized.length)))    {
+                                Toast.makeText(SendActivity.this, R.string.insufficient_fee, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            //
+                            //
+                            //
+
                         }
                         else    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
@@ -2249,9 +2270,9 @@ public class SendActivity extends Activity {
     }
 
     private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
             SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.20 * 1000.0)));
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
             Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
         }

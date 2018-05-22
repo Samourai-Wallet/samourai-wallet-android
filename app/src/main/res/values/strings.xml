@@ -521,4 +521,6 @@
   <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
   <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
 
+  <string name="insufficient_fee">Insufficient fee</string>
+
 </resources>
