@@ -1184,7 +1184,8 @@ public class BalanceActivity extends Activity {
                         if(privKeyReader.getFormat() != null &&
                                 (privKeyReader.getFormat().equals(PrivKeyReader.WIF_COMPRESSED) ||
                                         privKeyReader.getFormat().equals(PrivKeyReader.WIF_UNCOMPRESSED) ||
-                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38)
+                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38) ||
+                                        FormatsUtil.getInstance().isValidXprv(s[i])
                                 )
                                 )    {
 
