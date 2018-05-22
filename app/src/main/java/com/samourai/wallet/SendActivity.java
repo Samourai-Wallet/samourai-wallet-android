@@ -1040,12 +1040,14 @@ public class SendActivity extends Activity {
                             outpoints.addAll(utxo.getOutpoints());
                         }
                         Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(outpoints));
-                        fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
-
                         if(amount == balance)    {
+                            fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 1);
                             amount -= fee.longValue();
                             receivers.clear();
                             receivers.put(address, BigInteger.valueOf(amount));
+                        }
+                        else    {
+                            fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2);
                         }
                     }
 
