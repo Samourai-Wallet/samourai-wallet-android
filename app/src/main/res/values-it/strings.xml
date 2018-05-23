@@ -66,9 +66,9 @@
     <string name="options_autosave_backup2">Salva periodicamente un backup protetto da password sulla memoria del dispositivo.</string>
     <string name="options_version">Versione</string>
     <string name="options_txs">Transazioni</string>
-    <string name="options_bip126">Spendi usando BIP126</string>
-    <string name="options_bip126_2">Le spese useranno lo standard BIP126 per un offuscamento migliore.</string>
-    <string name="options_utxo">Visualizza output non spesi (UTXO)</string>
+    <string name="options_boltzmann">Transazione STONEWALL</string>
+    <string name="options_boltzmann_2">Le transazioni in uscita useranno l\'algoritmo STONEWALL per una privacy superiore.</string>
+    <string name="options_utxo">Output non spesi (UTXO)</string>
     <string name="options_trusted_node">Definisci nodo affidabile</string>
     <string name="options_trusted_node2">Specifica il tuo nodo bitcoin per il broadcast delle transazioni.</string>
     <string name="options_use_trusted_node">Usa nodo affidabile</string>
@@ -520,5 +520,13 @@
 
     <string name="boltzmann_cannot">Una transazione STONEWALL non può essere composta con il tuo attuale set di output non spesi. Se hai bisogno di una transazione STONEWALL, scegli \'NO\' e prova ancora con un altro set di output.</string>
     <string name="boltzmann_like_typed">Nota che \'Ricevi il resto in output di stessa tipologia\' è DISATTIVATO e può risultare in una struttura subottimale per la tua transazione STONEWALL.</string>
+
+    <string name="insufficient_fee">Fee insufficienti</string>
+    <string name="action_utxo_amounts">Visualizza gli importi per tipo indirizzo</string>
+
+    <string name="total_p2pkh">Totale legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Totale segwit (p2sh):</string>
+    <string name="total_p2wpkh">Totale segwit (bech32):</string>
+    <string name="total_blocked">Totale bloccati:</string>
 
 </resources>
