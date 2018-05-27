@@ -154,22 +154,22 @@
 
     <string name="scan">Tara</string>
     <string name="scan_error">Tarama hatası</string>
-    <string name="enter_privkey">Özel anahtar girin</string>
+    <string name="enter_privkey">Özel anahtar gir</string>
 
     <string name="to">Kime</string>
     <string name="destination">Adres veya ödeme kanalı</string>
 
-    <string name="insufficient_funds">Yetersiz mali kaynak</string>
+    <string name="insufficient_funds">Yetersiz fon</string>
     <string name="tx_length_error">Samuray, 100KB boyutu üzerindeki işlemleri gerçekleştirmemektedir. Lütfen işleminizi bölmeyi deneyin.</string>
     <string name="invalid_amount">Geçersiz tutar</string>
     <string name="amount">Tutar</string>
 
-    <string name="receive_address_to_clipboard">Bu alım adresi panoya kopyalansın mı? Eğer kopyalanırsa diğer uygulamara görünür olabilir.</string>
+    <string name="receive_address_to_clipboard">Bu alım adresi panoya kopyalansın mı? Eğer kopyalanırsa diğer uygulamalara görünür olabilir.</string>
     <string name="receive_address_to_share">Bu alım adresi paylaşılsın mı? Eğer paylaşılırsa diğer uygulamalar tarafından okunabilir.</string>
     <string name="sure_to_erase">Bu cüzdanı silmek istediğinizden emin misiniz?</string>
     <string name="wallet_erased">Cüzdan aygıttan silindi.</string>
 
-    <string name="send_privacy_warning">Gizlilik uyarısı: Lütfen bu adrese daha önce para gönderdiğinizin farkında olun.</string>
+    <string name="send_privacy_warning">Gizlilik uyarısı: Lütfen bu adrese daha önce fon gönderdiğinizin farkında olun.</string>
 
     <string name="securely_wiping_wait">Güvenli bir şekilde cüzdan siliniyor, lütfen bekleyin...</string>
 
@@ -258,7 +258,7 @@
 
     <string name="invalid_passphrase">Geçersiz parola</string>
     <string name="passphrase">Parola</string>
-    <string name="passphrase_needed_for_backup">Cüzdanınız bir parola ile korunmuyor. Cüzdan yedekleri cüzdan parolanız kullanılarak şifrelenir. Eğer şifrelenmiş cüzdan yedekleri ve diğer Samuray Cüzdan özelliklerini kullanmak isterseniz, cüzdanınızı Samuray Cüzdan kullanarak oluşturun ve paranızı aktarın.</string>
+    <string name="passphrase_needed_for_backup">Cüzdanınız bir parola ile korunmuyor. Cüzdan yedekleri cüzdan parolanız kullanılarak şifrelenir. Eğer şifrelenmiş cüzdan yedekleri ve diğer Samuray Cüzdan özelliklerini kullanmak isterseniz, cüzdanınızı Samuray Cüzdan kullanarak oluşturun ve fonlarınızı aktarın.</string>
     <string name="passphrase_required">Bu işlev için bir parola gerekli. Lütfen yeni bir cüzdan oluşturmayı göz önüne alın, bu işlem kendinden parolalı bir cüzdan yaratacaktır.</string>
 
     <string name="cannot_reach_api">Samuray API'lerine ulaşılamıyor. Bağlantınızı doğrulayın ve/veya daha sonra yeniden deneyin.</string>
@@ -403,7 +403,7 @@
     <string name="TestNet">Sınama ağı</string>
 
     <string name="segwit_address">Segwit Adresi</string>
-    <string name="segwit_switch_prompt">Segwit adreslerinde tutulan birikimler ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Bitcoin gönderirken daha az madenci kazım ücreti ödersiniz.</string>
+    <string name="segwit_switch_prompt">Segwit adreslerinde tutulan fonlar ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Bitcoin gönderirken daha az madenci kazım ücreti ödersiniz.</string>
 
     <string name="privkey_clipboard">Panonuzda bir özel anahtar algılandı. Pano içeriği silinsin mi?</string>
 
@@ -500,7 +500,7 @@
   <string name="invalid_mnemonic_word">Geçersiz BIP39 belleten sözcüğü</string>
   <string name="invalid_mnemonic">Geçersiz BIP39 belleteni</string>
     <string name="enter_your_code_here">Kodunuzu buraya girin</string>
-    <string name="declaimer_recovery_words">Yukarıdaki sözcüğü yazdığımı ve gizli ve güvenli bir konumda sakladığımı beyan ederim. Benim parolam ve kurtarma sözcüklerime erişimi olan herkesin cüzdanıma ve tüm kaynaklarıma erişebileceğini anlıyor ve kabul ediyorum.</string>
+    <string name="declaimer_recovery_words">Yukarıdaki sözcüğü yazdığımı ve gizli ve güvenli bir konumda sakladığımı beyan ederim. Benim parolam ve kurtarma sözcüklerime erişimi olan herkesin cüzdanıma ve tüm fonlarıma erişebileceğini anlıyor ve kabul ediyorum.</string>
   <string name="return_to_wallet">Cüzdana dön</string>
   <string name="caution_message_recovery_words">Bu sözcükleri bilgisayarınızda veya bulutta saklamak güvenli değildir. Bu sözcükleri bir kağıda yazın ve gizli ve güvenli bir yerde saklayın.</string>
     <string name="these_words_are">Bu sözcükler cüzdanınızdaki tüm özel anahtarların bir yedeğidir.</string>
