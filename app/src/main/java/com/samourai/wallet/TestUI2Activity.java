@@ -11,30 +11,41 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.samourai.wallet.widgets.ArcProgress;
+import com.samourai.wallet.widgets.TransactionProgressView;
 
 public class TestUI2Activity extends AppCompatActivity {
 
     private ArcProgress progress;
+    TransactionProgressView progressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_ui2);
-        progress = findViewById(R.id.progress);
-        progress.start(2);
+
+        progressView = findViewById(R.id.transactionProgressView);
+
+        progressView.getmArcProgress().start(800);
 
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ImageView v = findViewById(R.id.imageView);
-                Drawable d = v.getDrawable();
-                if (d instanceof Animatable) {
-                    Log.i("SD", "run: AKDO");
-                    ((Animatable) d).start();
-                }
+                progressView.offlineMode(800);
             }
-        },3000);
+        }, 2400);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressView.showCheck();
+            }
+        }, 3800);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressView.toggleOfflineButton();
+            }
+        }, 4800);
 
     }
 }

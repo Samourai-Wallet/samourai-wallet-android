@@ -523,6 +523,8 @@
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Advanced</string>
+    <string name="broadcast_with_txtenna">Broadcast with TxTenna</string>
+    <string name="show_qr_code">Show QR Code</string>
 
     <string-array name="address_types">
         <item>Segwit P2SH (BIP49)</item>

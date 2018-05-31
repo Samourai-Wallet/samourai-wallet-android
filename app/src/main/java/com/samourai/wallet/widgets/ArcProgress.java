@@ -101,10 +101,10 @@ public class ArcProgress extends View {
         canvas.drawBitmap(mBitmap, 0, 0, null);
     }
 
-    public void start(int secs) {
+    public void start(final int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_FIRST_ARC_ANGLE);
-        mTimerAnimator.setDuration(TimeUnit.SECONDS.toMillis(secs));
+        mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));
         mTimerAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mTimerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -121,7 +121,7 @@ public class ArcProgress extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                start2(2);
+                start2(mills);
             }
 
             @Override
@@ -137,10 +137,10 @@ public class ArcProgress extends View {
         mTimerAnimator.start();
     }
 
-    public void start2(int secs) {
+    public void start2(final int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_SECOND_ARC_ANGLE);
-        mTimerAnimator.setDuration(TimeUnit.SECONDS.toMillis(secs));
+        mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));
         mTimerAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mTimerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -157,7 +157,7 @@ public class ArcProgress extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                start3(2);
+                start3(mills);
             }
 
             @Override
@@ -173,38 +173,16 @@ public class ArcProgress extends View {
         mTimerAnimator.start();
     }
 
-    public void start3(int secs) {
+    public void start3(int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_THIRD_ARC_ANGLE);
-        mTimerAnimator.setDuration(TimeUnit.SECONDS.toMillis(secs));
+        mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));
         mTimerAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mTimerAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 thirdAngle = (float) animation.getAnimatedValue();
                 invalidate();
-            }
-        });
-        mTimerAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         mTimerAnimator.start();

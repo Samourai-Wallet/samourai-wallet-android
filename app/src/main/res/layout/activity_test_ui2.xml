@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tx_broadcast_normal_bg"
     tools:context="com.samourai.wallet.TestUI2Activity">
 
     <com.samourai.wallet.widgets.TransactionProgressView
+        android:id="@+id/transactionProgressView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
  </android.support.constraint.ConstraintLayout>
