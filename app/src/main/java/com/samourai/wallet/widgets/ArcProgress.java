@@ -27,7 +27,7 @@ public class ArcProgress extends View {
     private static final int ARC_SECOND_ARC_START_ANGLE = 10;
     private static final int ARC_THIRD_ARC_START_ANGLE = 100;
 
-    private static final float THICKNESS_SCALE = 0.005f;
+    private static final float THICKNESS_SCALE = 0.008f;
 
     private float firstAngle = 0f;
     private float secondAngle = 0f;
