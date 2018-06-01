@@ -27,7 +27,7 @@ public class ArcProgress extends View {
     private static final int ARC_SECOND_ARC_START_ANGLE = 10;
     private static final int ARC_THIRD_ARC_START_ANGLE = 100;
 
-    private static final float THICKNESS_SCALE = 0.008f;
+    private static final float THICKNESS_SCALE = 0.009f;
 
     private float firstAngle = 0f;
     private float secondAngle = 0f;
@@ -101,7 +101,7 @@ public class ArcProgress extends View {
         canvas.drawBitmap(mBitmap, 0, 0, null);
     }
 
-    public void start(final int mills) {
+    public void startArc1(final int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_FIRST_ARC_ANGLE);
         mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));
@@ -113,31 +113,10 @@ public class ArcProgress extends View {
                 invalidate();
             }
         });
-        mTimerAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                start2(mills);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
         mTimerAnimator.start();
     }
 
-    public void start2(final int mills) {
+    public void startArc2(final int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_SECOND_ARC_ANGLE);
         mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));
@@ -149,31 +128,10 @@ public class ArcProgress extends View {
                 invalidate();
             }
         });
-        mTimerAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                start3(mills);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
         mTimerAnimator.start();
     }
 
-    public void start3(int mills) {
+    public void startArc3(int mills) {
         stop();
         mTimerAnimator = ValueAnimator.ofFloat(0f, ARC_THIRD_ARC_ANGLE);
         mTimerAnimator.setDuration(TimeUnit.MILLISECONDS.toMillis(mills));

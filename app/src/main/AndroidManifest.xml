@@ -213,7 +213,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:theme="@style/AppThemeLanding" android:exported="true" android:name=".TestUI2Activity"></activity>
+        <activity android:theme="@style/AppThemeLanding" android:exported="true" android:name=".TxAnimUIActivity"></activity>
     </application>
 
 </manifest>
