@@ -77,6 +77,7 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
@@ -1161,11 +1162,13 @@ public class SendActivity extends Activity {
                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
+                            /*
                             final ProgressDialog progress = new ProgressDialog(SendActivity.this);
                             progress.setCancelable(false);
                             progress.setTitle(R.string.app_name);
                             progress.setMessage(getString(R.string.please_wait_sending));
                             progress.show();
+                            */
 
                             final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
                             for(UTXO u : selectedUTXO)   {
@@ -1207,6 +1210,27 @@ public class SendActivity extends Activity {
                                     ;
                                 }
                             }
+
+                            SendParams.getInstance().setParams(outPoints,
+                                                                receivers,
+                                                                strPCode,
+                                                                SPEND_TYPE,
+                                                                _change,
+                                                                changeType,
+                                                                address,
+                                                                strPrivacyWarning.length() > 0,
+                                                                cbShowAgain != null ? cbShowAgain.isChecked() : false,
+                                                                _amount,
+                                                                _change_index
+                                                                );
+                            Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
+                            startActivity(_intent);
+
+
+                            /*
+
+
+
 
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
@@ -1480,11 +1504,22 @@ public class SendActivity extends Activity {
                                     }
                                 }).start();
 
+
+
+
+
+
+
+
+
+
                             }
                             else    {
 //                                Log.d("SendActivity", "tx error");
                                 Toast.makeText(SendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
                             }
+
+                            */
 
                         }
                     });
@@ -1514,7 +1549,7 @@ public class SendActivity extends Activity {
                                     public void run() {
                                         btSend.setActivated(true);
                                         btSend.setClickable(true);
-                                        dialog.dismiss();
+//                                        dialog.dismiss();
                                     }
                                 });
                             }

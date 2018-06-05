@@ -85,7 +85,9 @@ dependencies {
     implementation 'com.github.mjdev:libaums:0.5.5'
     implementation 'de.mindpipe.android:android-logging-log4j:1.0.3'
     implementation 'com.github.magnusja:java-fs:0.1.3'
-    implementation 'com.android.support:support-v4:21.0.3'
-    implementation 'com.android.support:appcompat-v7:23.1.1'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }
