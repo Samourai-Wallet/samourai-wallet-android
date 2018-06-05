@@ -290,7 +290,18 @@ public class BalanceActivity extends Activity {
                     for(MyTransactionOutPoint out : outpoints)   {
 
                         byte[] scriptBytes = out.getScriptBytes();
-                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        String address = null;
+                        try {
+                            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                                address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
+                            }
+                            else    {
+                                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            }
+                        }
+                        catch(Exception e) {
+                            ;
+                        }
                         String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
                         if(path != null && path.startsWith("M/1/"))    {
                             continue;
