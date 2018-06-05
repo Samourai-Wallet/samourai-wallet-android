@@ -107,6 +107,13 @@ public class SweepUtil  {
                             total_value += outpoint.getValue().longValue();
                         }
 
+                        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
+                            SuggestedFee suggestedFee = new SuggestedFee();
+                            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.20 * 1000.0)));
+                            Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
+                            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+                        }
+
                         final BigInteger fee;
                         if(type == TYPE_P2SH_P2WPKH)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
