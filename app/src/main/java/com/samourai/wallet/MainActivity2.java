@@ -206,6 +206,8 @@ public class MainActivity2 extends Activity {
 
         }
 
+        ReceiversUtil.getInstance(MainActivity2.this).checkSIMSwitch();
+
     }
 
     @Override
