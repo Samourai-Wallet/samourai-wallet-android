@@ -677,6 +677,10 @@ public class BalanceActivity extends Activity {
 
         ibQuickSend.collapse();
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
+
     }
 
     @Override

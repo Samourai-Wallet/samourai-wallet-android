@@ -68,18 +68,6 @@ public class WebSocketService extends Service {
         webSocketHandler = new WebSocketHandler(WebSocketService.this, addrs);
         connectToWebsocketIfNotConnected();
 
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectToWebsocketIfNotConnected();
-                    }
-                });
-            }
-        }, 5000, checkIfNotConnectedDelay);
-
     }
 
     @Override
