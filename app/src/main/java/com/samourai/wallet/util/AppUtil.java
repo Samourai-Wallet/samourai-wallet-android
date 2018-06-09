@@ -19,7 +19,6 @@ import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
-import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.WebSocketService;
 
 import java.io.File;

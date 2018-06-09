@@ -176,8 +176,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
         />
 
-        <service android:enabled="true" android:name="com.samourai.wallet.service.BroadcastReceiverService" />
-
         <service android:enabled="true" android:name="com.samourai.wallet.service.WebSocketService" />
 
         <service android:enabled="true" android:name="com.samourai.wallet.service.RefreshService" />

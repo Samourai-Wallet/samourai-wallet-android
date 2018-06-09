@@ -23,7 +23,6 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
-import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.util.AppUtil;
@@ -31,6 +30,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -57,10 +57,7 @@ public class MainActivity2 extends Activity {
 
             if(ACTION_RESTART.equals(intent.getAction())) {
 
-                if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(BroadcastReceiverService.class)) {
-                    stopService(new Intent(MainActivity2.this.getApplicationContext(), BroadcastReceiverService.class));
-                }
-                startService(new Intent(MainActivity2.this.getApplicationContext(), BroadcastReceiverService.class));
+                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
 
                 if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                     stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
