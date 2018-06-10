@@ -58,10 +58,12 @@ public class MainActivity2 extends Activity {
 
                 ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
 
-                if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                    stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                        stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
+                    }
+                    startService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
                 }
-                startService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
 
             }
 
@@ -72,14 +74,12 @@ public class MainActivity2 extends Activity {
 
         public void onBecameForeground()    {
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                intent.putExtra("notifTx", false);
-                LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(intent);
+            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+            intent.putExtra("notifTx", false);
+            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(intent);
 
-                Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
-                LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(_intent);
-            }
+            Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(_intent);
 
         }
 
@@ -91,19 +91,21 @@ public class MainActivity2 extends Activity {
                 }
             }
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                    try {
-                        PayloadUtil.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
-                    }
-                    catch(Exception e) {
-                        ;
-                    }
+                        try {
+                            PayloadUtil.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
+                        }
+                        catch(Exception e) {
+                            ;
+                        }
 
-                }
-            }).start();
+                    }
+                }).start();
+            }
 
         }
 
