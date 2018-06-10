@@ -650,6 +650,10 @@ public class BalanceActivity extends Activity {
             }
         }, 100L);
 
+        if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
+
     }
 
     @Override
@@ -665,9 +669,8 @@ public class BalanceActivity extends Activity {
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
-        if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-        }
+        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
     }
 

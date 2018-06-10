@@ -12,6 +12,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
