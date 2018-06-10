@@ -6,7 +6,7 @@
 
     <string name="creating_wallet">Creando il wallet, attendere...</string>
     <string name="restoring_wallet">Ripristinando il wallet, attendere...</string>
-    <string name="decrypting_bip38">Decriptando la passphrase BIP38, attendere...</string>
+    <string name="decrypting_bip38">Decriptando password BIP38. Attendere...</string>
 
     <string name="action_settings">Impostazioni</string>
     <string name="action_support">Supporto</string>
@@ -43,8 +43,8 @@
     <string name="options_remote_commands2">Abilita comandi remoti via SMS.</string>
     <string name="options_currency">Tasso di scambio</string>
     <string name="options_currency2">Scegli il tuo exchange e la tua valuta locale.</string>
-    <string name="options_blockexplorer">Explorer di blocchi</string>
-    <string name="options_blockexplorer2">L\'explorer usato per vedere i dettagli delle transazioni.</string>
+    <string name="options_blockexplorer">Block explorer</string>
+    <string name="options_blockexplorer2">Il block explorer usato per visualizzare i dettagli delle transazioni.</string>
     <string name="options_sim_switch">Protezione scambio SIM</string>
     <string name="options_sim_switch2">Manda un SMS ad un numero mobile fidato quando la carta SIM viene sostituita</string>
     <string name="options_use_telno">Usa il numero fidato per comandi remoti</string>
@@ -66,9 +66,9 @@
     <string name="options_autosave_backup2">Salva periodicamente un backup protetto da password sulla memoria del dispositivo.</string>
     <string name="options_version">Versione</string>
     <string name="options_txs">Transazioni</string>
-    <string name="options_bip126">Spendi usando BIP126</string>
-    <string name="options_bip126_2">Le spese useranno lo standard BIP126 per un offuscamento migliore.</string>
-    <string name="options_utxo">Visualizza output non spesi (UTXO)</string>
+    <string name="options_boltzmann">Transazione STONEWALL</string>
+    <string name="options_boltzmann_2">Le transazioni in uscita useranno l\'algoritmo STONEWALL per una privacy superiore.</string>
+    <string name="options_utxo">Output non spesi (UTXO)</string>
     <string name="options_trusted_node">Definisci nodo affidabile</string>
     <string name="options_trusted_node2">Specifica il tuo nodo bitcoin per il broadcast delle transazioni.</string>
     <string name="options_use_trusted_node">Usa nodo affidabile</string>
@@ -90,18 +90,18 @@
     <string name="options_broadcast_hex2">Broadcast della transazione firmata in formato hex.</string>
     <string name="options_like_typed_change">Ricevi il resto in output di stessa tipologia</string>
     <string name="options_like_typed_change2">Ricevi il resto delle tue transazioni nello stesso tipo di indirizzo del destinatario. Deseleziona per ricevere resto solo su indirizzi segwit.</string>
-    <string name="options_haptic">Vibrazione PIN</string>
-    <string name="options_haptic_2">Vibra ad ogni cifra all\'inserimento del PIN.</string>
+    <string name="options_haptic">Vibrazione inserimento PIN</string>
+    <string name="options_haptic_2">Vibra ad ogni cifra nell\'inserimento PIN.</string>
 
     <string name="prompt_send_backup_to_support">Invio il backup del wallet al supporto? Non include nessuna informazione su chiavi private, seed (parole segrete) o passphrase.</string>
 
     <string name="timeline_today">Oggi</string>
-    <string name="timeline_older">Più vecchio</string>
+    <string name="timeline_older">Più vecchie</string>
 
     <string name="tx_sent">Transazione inviata</string>
     <string name="tx_failed">Errore nell\'invio della transazione</string>
-    <string name="you_received">Ricevuta</string>
-    <string name="you_sent">Inviata</string>
+    <string name="you_received">Hai ricevuto</string>
+    <string name="you_sent">Hai inviato</string>
     <string name="send">Invia</string>
     <string name="receive">Ricevi</string>
     <string name="cannot_select_utxo">Impossibile selezionare output non spesi</string>
@@ -109,7 +109,7 @@
     <string name="error_change_output">Errore nella determinazione indirizzo di change (resto)</string>
 
     <string name="copied_to_clipboard">Copiato negli appunti</string>
-    <string name="send_payment_code">Invia codice di pagamento</string>
+    <string name="send_payment_code">Invia codice pagamento</string>
 
     <string name="ask_you_sure_exit">Sei sicuro di voler uscire da Samourai?</string>
     <string name="yes">Sì</string>
@@ -120,7 +120,7 @@
 
     <string name="pin_5_8">Crea un codice PIN da 5 a 8 caratteri.</string>
     <string name="pin_5_8_confirm">Conferma codice PIN</string>
-    <string name="pin_error">Errore codice PIN</string>
+    <string name="pin_error">Codice PIN errato</string>
     <string name="no_internet">Nessuna connessione a Internet. Riprova.</string>
     <string name="bip38_pw">Password BIP38</string>
     <string name="bip38_pw_error">Errore password BIP38</string>
@@ -141,14 +141,14 @@
     <string name="backup_read_ok">File di backup OK.</string>
     <string name="backup_read_error">Errore di lettura del file di backup.</string>
     <string name="mnemonic_hex">Codice mnemonico o entropia hex</string>
-    <string name="pin_enter">Inserire codice PIN</string>
+    <string name="pin_enter">Inserisci codice PIN</string>
     <string name="please_wait">Attendere...</string>
     <string name="random_key_error">Errore chiave casuale</string>
     <string name="login_error">Login fallito</string>
-    <string name="wallet_created_ok">Creazione wallet OK.</string>
-    <string name="wallet_created_ko">Errore creazione wallet.</string>
-    <string name="wallet_restored_ok">Wallet ripristinato OK.</string>
-    <string name="wallet_restored_ko">Errore ripristino wallet.</string>
+    <string name="wallet_created_ok">Creazione wallet andata a buon fine.</string>
+    <string name="wallet_created_ko">Errore nella creazione wallet.</string>
+    <string name="wallet_restored_ok">Wallet ripristinato correttamente.</string>
+    <string name="wallet_restored_ko">Errore nel ripristino wallet.</string>
 
     <string name="address_used_previously">Hai già usato questo indirizzo! Il riuso degli indirizzi può comportare una perdita di privacy.</string>
 
@@ -165,7 +165,7 @@
     <string name="amount">Importo</string>
 
     <string name="receive_address_to_clipboard">Copiare indirizzo negli appunti? Se copiato, potrebbe essere visibile ad altre applicazioni.</string>
-    <string name="receive_address_to_share">Condividere indirizzo negli appunti? Se condiviso, potrebbe essere visibile ad altre applicazioni.</string>
+    <string name="receive_address_to_share">Condividere questo indirizzo di ricezione? Se condiviso, potrebbe essere visibile ad altre applicazioni.</string>
     <string name="sure_to_erase">Sei sicuro di voler eliminare questo wallet?</string>
     <string name="wallet_erased">Wallet eliminato dal dispositivo.</string>
 
@@ -205,7 +205,7 @@
     <string name="sent">Transazione inviata</string>
     <string name="total">Totale</string>
     <string name="export_to_clipboard">Esporta negli appunti</string>
-    <string name="export_to_email">Esporta su email</string>
+    <string name="export_to_email">Esporta in email</string>
     <string name="encryption_error">Si è verificato un errore durante la criptazione del tuo backup del wallet. Riprova.</string>
     <string name="import_backup">Da backup</string>
     <string name="import_mnemonic">Da mnemonico/seed</string>
@@ -520,5 +520,13 @@
 
     <string name="boltzmann_cannot">Una transazione STONEWALL non può essere composta con il tuo attuale set di output non spesi. Se hai bisogno di una transazione STONEWALL, scegli \'NO\' e prova ancora con un altro set di output.</string>
     <string name="boltzmann_like_typed">Nota che \'Ricevi il resto in output di stessa tipologia\' è DISATTIVATO e può risultare in una struttura subottimale per la tua transazione STONEWALL.</string>
+
+    <string name="insufficient_fee">Fee insufficienti</string>
+    <string name="action_utxo_amounts">Visualizza gli importi per tipo indirizzo</string>
+
+    <string name="total_p2pkh">Totale legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Totale segwit (p2sh):</string>
+    <string name="total_p2wpkh">Totale segwit (bech32):</string>
+    <string name="total_blocked">Totale bloccati:</string>
 
 </resources>

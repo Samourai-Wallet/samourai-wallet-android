@@ -794,18 +794,9 @@ public class BIP47Activity extends Activity {
         long amount = SendNotifTxFactory._bNotifTxValue.longValue();
 
         //
-        // calc btc fee from USD Samourai fee
-        //
-        double btc_fx = ExchangeRateFactory.getInstance(BIP47Activity.this).getBitfinexPrice("USD");
-        BigInteger currentSWFee = BigInteger.valueOf((long)((btc_fx / SendNotifTxFactory._dSWFeeUSD) * 1e8));
-        if(currentSWFee.longValue() < SendNotifTxFactory._bSWFee.longValue() || currentSWFee.longValue() > SendNotifTxFactory._bSWCeilingFee.longValue())  {
-            currentSWFee = SendNotifTxFactory._bSWFee;
-        }
-
-        //
         // add Samourai Wallet fee to total amount
         //
-        amount += currentSWFee.longValue();
+        amount += SendNotifTxFactory._bSWFee.longValue();
 
         //
         // get unspents
@@ -1045,7 +1036,7 @@ public class BIP47Activity extends Activity {
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
         receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
-        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, currentSWFee);
+        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {

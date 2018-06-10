@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.samourai.wallet">
-
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="26"
-        />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.samourai.wallet">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -18,8 +15,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.hardware.telephony" android:required="false"/>
-    <uses-feature android:name="android.hardware.usb.host" android:required="false"/>
+    <uses-feature android:name="android.hardware.telephony" android:required="false" tools:node="replace"/>
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" tools:node="replace"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" tools:node="replace"/>
+    <uses-feature android:name="android.hardware.faketouch" android:required="false" tools:node="replace"/>
+    <uses-feature android:name="android.hardware.screen.landscape" android:required="false" tools:node="replace"/>
 
     <application
         android:icon="@drawable/ic_launcher"

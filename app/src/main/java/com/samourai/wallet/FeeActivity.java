@@ -170,6 +170,8 @@ public class FeeActivity extends Activity {
             ;
         }
 
+        sanitizeFee();
+
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
@@ -320,8 +322,14 @@ public class FeeActivity extends Activity {
 
     private void doCustomFee()   {
 
-        double sanitySat = (double)FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
-        final long sanityValue = (long)(sanitySat * 1.5);
+        double sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
+        final long sanityValue;
+        if(sanitySat < 10.0)    {
+            sanityValue = 15L;
+        }
+        else    {
+            sanityValue = (long)(sanitySat * 1.5);
+        }
 
         final EditText etCustomFee = new EditText(FeeActivity.this);
         double d = FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().doubleValue() / 1000.0;
@@ -440,9 +448,9 @@ public class FeeActivity extends Activity {
     }
 
     private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L <= 1L)    {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
             SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(1.20 * 1000.0)));
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
             Log.d("FeeActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
             FeeUtil.getInstance().setSuggestedFee(suggestedFee);
         }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_do_not_spend"
+        android:showAsAction="never"
+        android:title="@string/mark_do_not_spend"
+        android:visible="true"/>
+    <item
+        android:id="@+id/item_sign"
+        android:showAsAction="never"
+        android:title="@string/options_sign_a_message"
+        android:visible="true"/>
+    <item
+        android:id="@+id/item_redeem"
+        android:showAsAction="never"
+        android:title="@string/options_display_redeem_script"
+        android:visible="true"/>
+    <item
+        android:id="@+id/item_view"
+        android:showAsAction="never"
+        android:title="@string/options_view_tx"
+        android:visible="true"/>
+    <item
+        android:id="@+id/item_privkey"
+        android:showAsAction="never"
+        android:title="@string/options_display_privkey"
+        android:visible="true"/>
+</menu>

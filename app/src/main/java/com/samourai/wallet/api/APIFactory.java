@@ -751,7 +751,7 @@ public class APIFactory	{
                     byte[] pubkey = null;
                     String strScript = objInput.getString("sig");
                     Log.i("APIFactory", "scriptsig:" + strScript);
-                    if(strScript.startsWith("160014") && objInput.has("witness"))    {
+                    if((strScript == null || strScript.length() == 0 || strScript.startsWith("160014")) && objInput.has("witness"))    {
                         JSONArray witnessArray = (JSONArray)objInput.get("witness");
                         if(witnessArray.length() == 2)    {
                             pubkey = Hex.decode((String)witnessArray.get(1));
