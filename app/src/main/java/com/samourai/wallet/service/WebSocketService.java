@@ -12,6 +12,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,18 +68,6 @@ public class WebSocketService extends Service {
 
         webSocketHandler = new WebSocketHandler(WebSocketService.this, addrs);
         connectToWebsocketIfNotConnected();
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectToWebsocketIfNotConnected();
-                    }
-                });
-            }
-        }, 5000, checkIfNotConnectedDelay);
 
     }
 
