@@ -1,5 +1,7 @@
 package com.samourai.wallet.send;
 
+import android.util.Log;
+
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.util.FormatsUtil;
 
@@ -163,7 +165,13 @@ public class FeeUtil  {
 
     public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
         double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
-        return BigInteger.valueOf((long)fee);
+        if(Math.ceil(fee) < (double)txSize)    {
+            Log.d("FeeUtil", "adjusted fee:" + BigInteger.valueOf((long)(txSize + (txSize / 20))).longValue());
+            return BigInteger.valueOf((long)(txSize + (txSize / 20)));
+        }
+        else    {
+            return BigInteger.valueOf((long)fee);
+        }
     }
 
     public Pair<Integer,Integer> getOutpointCount(List<MyTransactionOutPoint> outpoints) {

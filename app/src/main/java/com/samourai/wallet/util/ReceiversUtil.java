@@ -1,4 +1,4 @@
-package com.samourai.wallet.service;
+package com.samourai.wallet.util;
 
 import android.app.Notification;
 import android.app.Service;
@@ -22,59 +22,35 @@ import java.util.ArrayList;
 import java.util.List;
 //import android.util.Log;
 
-public class BroadcastReceiverService extends Service {
+public class ReceiversUtil  {
 
-    private Service thisService = this;
+    private static ReceiversUtil instance = null;
 
-    private Context context = null;
-    private ContentResolver contentResolver = null;
+    private static Context context = null;
 
-    private TelephonyManager tm = null;
+    private static TelephonyManager tm = null;
 
-    private IntentFilter ocFilter = null;
-    private BroadcastReceiver ocReceiver = null;
-    private IntentFilter isFilter = null;
-    private BroadcastReceiver isReceiver = null;
+    private static IntentFilter ocFilter = null;
+    private static BroadcastReceiver ocReceiver = null;
+    private static IntentFilter isFilter = null;
+    private static BroadcastReceiver isReceiver = null;
 
     private static List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
 
-    @Override
-    public void onCreate() {
+    private ReceiversUtil() { ; }
 
-        super.onCreate();
-/*
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String CHANNEL_ID = "c01";
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    "Samourai service", NotificationManager.IMPORTANCE_DEFAULT);
+    public static ReceiversUtil getInstance(Context ctx)   {
 
-            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+        context = ctx;
 
-            Notification notification = new NotificationCompat.Builder(this.getApplicationContext())
-                    .setContentTitle("Samourai Wallet")
-                    .setContentText("starting services...").build();
-
-            startForeground(1001, notification);
+        if(instance == null)    {
+            instance = new ReceiversUtil();
         }
-*/
+
+        return instance;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        //
-        context = this.getApplicationContext();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText("starting Samourai services...")
-                    .setAutoCancel(true);
-
-            Notification notification = builder.build();
-            startForeground(1001, notification);
-
-        }
+    public void initReceivers() {
 
         boolean hideIcon = PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false);
         boolean acceptRemote = PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false);
@@ -112,6 +88,10 @@ public class BroadcastReceiverService extends Service {
             }
         }
 
+    }
+
+    public void checkSIMSwitch() {
+
         //
         // check for SIM switch
         //
@@ -139,23 +119,6 @@ public class BroadcastReceiverService extends Service {
             }.start();
         }
 
-        return START_NOT_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    public void stop() {
-        ;
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        stop();
-        super.onDestroy();
     }
 
 }

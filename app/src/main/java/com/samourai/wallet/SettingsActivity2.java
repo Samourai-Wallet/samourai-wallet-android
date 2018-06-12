@@ -64,7 +64,6 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.service.BroadcastReceiverService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -72,6 +71,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.TorUtil;
 
@@ -273,8 +273,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, false);
 
-                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                 AppUtil.getInstance(SettingsActivity2.this).restartApp();
                             }
@@ -294,8 +293,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, true);
 
-                                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                                 try {
                                                     PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
@@ -436,15 +434,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref2.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, false);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
                         else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, true);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
 
                         return true;
