@@ -482,6 +482,7 @@ public class BatchSendActivity extends Activity {
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_new).setVisible(false);
         menu.findItem(R.id.action_send).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }

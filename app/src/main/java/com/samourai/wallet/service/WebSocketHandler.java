@@ -66,7 +66,7 @@ public class WebSocketHandler {
 
         try {
             if (mConnection != null && mConnection.isOpen()) {
-//                    Log.i("WebSocketHandler", "Websocket subscribe:" +message);
+                Log.i("WebSocketHandler", "Websocket subscribe:" + message);
                 mConnection.sendText(message);
             }
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class WebSocketHandler {
         for(int i = 0; i < addrs.length; i++) {
             if(addrs[i] != null && addrs[i].length() > 0) {
                 send("{\"op\":\"addr_sub\", \"addr\":\""+ addrs[i] + "\"}");
-//                Log.i("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
+//                    Log.i("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
             }
         }
 

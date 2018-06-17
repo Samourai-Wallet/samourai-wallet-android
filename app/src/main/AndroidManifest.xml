@@ -26,6 +26,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name="android.support.multidex.MultiDexApplication"
+        android:allowBackup="false"
         >
 
         <activity
@@ -175,8 +176,6 @@
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize"
         />
-
-        <service android:enabled="true" android:name="com.samourai.wallet.service.BroadcastReceiverService" />
 
         <service android:enabled="true" android:name="com.samourai.wallet.service.WebSocketService" />
 
