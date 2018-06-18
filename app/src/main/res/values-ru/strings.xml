@@ -480,53 +480,53 @@
     <string name="add_bip39_password">Add bip39 password</string>
     <string name="close_bip39_password">Close bip39 password</string>
     <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
-    <string name="last_updated">Last updated</string>
-    <string name="get_help">Get help</string>
-    <string name="offline_mode">Offline mode</string>
-    <string name="import_samourai_backup">Import Samourai backup</string>
-    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
-    <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
-    <string name="start_new_wallet">Start new wallet</string>
-  <string name="get_help_create">Create wallet: Get help</string>
-  <string name="get_help_restore">Restore wallet: Get help</string>
+    <string name="last_updated">Последнее обновление</string>
+    <string name="get_help">Помощь</string>
+    <string name="offline_mode">Работа в оффлайн</string>
+    <string name="import_samourai_backup">Импортировать резервную копию Samourai</string>
+    <string name="samourai_bitcoin_wallet">Биткоин кошелёк Samourai</string>
+    <string name="enter_your_wallet_passphrase">Введите парольную фразу для вашего кошелька</string>
+    <string name="start_new_wallet">Создать новый кошелёк</string>
+  <string name="get_help_create">Создать кошелёк: Помощь</string>
+  <string name="get_help_restore">Восстановить кошелёк: Помощь</string>
 
-  <string name="fee">Miner fee</string>
-    <string name="fee_low_priority">Low priority: estimated 24</string>
-    <string name="fee_mid_priority">Normal priority: estimated 6</string>
-    <string name="fee_high_priority">High priority: estimated 2</string>
-    <string name="fee_custom_priority">Custom fee: estimated</string>
-    <string name="blocks_to_cf">blocks before confirmation</string>
+  <string name="fee">Комиссия сети</string>
+    <string name="fee_low_priority">Низкий приоритет: оценка 24</string>
+    <string name="fee_mid_priority">Нормальный приоритет: оценка 6</string>
+    <string name="fee_high_priority">Высокий приоритет: оценка 2</string>
+    <string name="fee_custom_priority">Моя комиссия: оценка</string>
+    <string name="blocks_to_cf">блоков перед подтверждением</string>
 
-  <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
-  <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
-    <string name="enter_your_code_here">Enter your code here</string>
-    <string name="declaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
-  <string name="return_to_wallet">Return to wallet</string>
-  <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
+  <string name="invalid_mnemonic_word">Неправильное слово мнемоники BIP39</string>
+  <string name="invalid_mnemonic">Неправильная мнемоника BIP39</string>
+    <string name="enter_your_code_here">Введите ваш код</string>
+    <string name="declaimer_recovery_words">Я подтверждаю, что я записал вышестоящие слова и сохранил их в надёжном и безопасном месте. Я понимаю, что каждый, кто имеет доступ к парольной фразе и словам для восстановления, будет иметь возможность получить доступ к моему кошельку и всем моим средствам.</string>
+  <string name="return_to_wallet">Возврат к кошельку</string>
+  <string name="caution_message_recovery_words">Небезопасно хранить эти слова на вашем компьютере или облаке. Запишите эти слова на бумаге и храните скрытно в надёжном месте.</string>
     <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
-  <string name="recovery_words">RECOVERY WORDS</string>
+  <string name="recovery_words">СЛОВА ДЛЯ ВОССТАНОВЛЕНИЯ</string>
 
-  <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
-  <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
-  <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
-  <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
+  <string name="permission_alert_dialog_title_sms">Запрашиваю разрешение на доступ к SMS и состоянию телефона</string>
+  <string name="permission_dialog_message_sms">Ваш кошелёк должен иметь доступ к получению и отправке сообщений SMS для задействования функционала удалённого предупреждения.</string>
+  <string name="permission_alert_dialog_title_outgoing">Запрашиваю разрешение на исходящий звонок</string>
+  <string name="permission_dialog_message_outgoing">Ваш кошелёк должен иметь доступ к исходящим звонкам для того чтобы задействовать функционал скрытого запуска.</string>
 
-  <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
-  <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
-  <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
-  <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
+  <string name="permission_alert_dialog_title_external">Запрашиваю разрешение на чтение\запись</string>
+  <string name="permission_dialog_message_external">Ваш кошелёк должен иметь доступ к хранилищу для того чтобы автоматически сохранять зашифрованные резервные копии кошелька на устройство.</string>
+  <string name="permission_alert_dialog_title_camera">Запрашиваю разрешение на использование камеры</string>
+  <string name="permission_dialog_message_camera">Ваш кошелёк должен иметь доступ к камере для сканирования QR кодов.</string>
 
-  <string name="use_bech32">Use bech32 address</string>
+  <string name="use_bech32">Используйте адрес bech32</string>
 
-  <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
-  <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+  <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущим списком выходов транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте снова с изменённым множестовом непотраченных выходов.</string>
+  <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL выходов транзакций.</string>
 
-  <string name="insufficient_fee">Insufficient fee</string>
-  <string name="action_utxo_amounts">View amounts by address type</string>
+  <string name="insufficient_fee">Недостаточная комиссия</string>
+  <string name="action_utxo_amounts">Показать средства по типу адреса</string>
 
-  <string name="total_p2pkh">Total legacy (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-  <string name="total_p2wpkh">Total segwit (bech32):</string>
-  <string name="total_blocked">Total blocked:</string>
+  <string name="total_p2pkh">Все legacy (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Все segwit (p2sh):</string>
+  <string name="total_p2wpkh">Все segwit (bech32):</string>
+  <string name="total_blocked">Все заблокированные:</string>
 
 </resources>
