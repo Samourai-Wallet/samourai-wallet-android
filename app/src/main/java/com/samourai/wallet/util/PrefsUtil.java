@@ -34,6 +34,7 @@ public class PrefsUtil {
 	public static final String USE_BIP126 = "bip126";
 	public static final String USE_BOLTZMANN = "boltzmann";
 	public static final String TRUSTED_NODE = "trustedNode";
+	public static final String USE_RICOCHET = "useRicochet";
 	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";
 	public static final String FEE_PROVIDER_SEL = "feeProviderSel";
