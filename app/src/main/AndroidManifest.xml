@@ -59,11 +59,11 @@
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -73,51 +73,51 @@
         <activity
             android:name=".SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".UTXOActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".BatchSendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".FeeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".SettingsActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
         <activity
             android:name=".PinEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".bip47.BIP47Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".bip47.BIP47Add"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".bip47.BIP47ShowQR"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ricochet.RicochetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".OpenDimeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -135,19 +135,19 @@
         <activity
             android:name=".hf.ReplayProtectionWarningActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".hf.ReplayProtectionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".bip47.paynym.ClaimPayNymActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ExodusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -201,7 +201,7 @@
         <activity
             android:name=".LandingActivity"
             android:theme="@style/AppThemeLanding" />
-        <activity android:name=".RecoveryWordsActivity"></activity>
+        <activity android:name=".RecoveryWordsActivity" />
 
         <provider
             android:name=".util.GenericFileProvider"
@@ -213,7 +213,15 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:theme="@style/AppThemeLanding" android:exported="true" android:name=".TxAnimUIActivity"></activity>
+        <activity
+            android:name=".TxAnimUIActivity"
+            android:exported="true"
+            android:theme="@style/AppThemeLanding" />
+        <activity
+            android:name=".SendNewUIActivity"
+            android:exported="true"
+            android:theme="@style/AppThemeCompat"
+            android:label="@string/title_activity_send_new_ui" />
     </application>
 
 </manifest>

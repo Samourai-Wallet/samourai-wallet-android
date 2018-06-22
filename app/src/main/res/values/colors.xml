@@ -22,5 +22,5 @@
 
     <color name="white">#fafafa</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
-
+    <color name="grey_accent">#6d7789</color>
 </resources>
