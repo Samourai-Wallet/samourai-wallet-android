@@ -21,7 +21,7 @@ public class FeeUtil  {
             "Samourai (bitcoind)",
     };
 
-    private static final int ESTIMATED_INPUT_LEN_P2PKH = 148;       // compressed key (180 uncompressed key)
+    private static final int ESTIMATED_INPUT_LEN_P2PKH = 158;       // (148), compressed key (180 uncompressed key)
     private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 108; // p2sh, includes segwit discount (ex: 146)
     private static final int ESTIMATED_INPUT_LEN_P2WPKH = 85;       // bech32, p2wpkh
     private static final int ESTIMATED_OUTPUT_LEN = 33;

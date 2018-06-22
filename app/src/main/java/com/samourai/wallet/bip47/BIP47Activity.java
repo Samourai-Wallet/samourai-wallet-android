@@ -871,11 +871,13 @@ public class BIP47Activity extends Activity {
                 }
             }
 
-            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+            fee = FeeUtil.getInstance().estimatedFee(selected, 7);
 
         }
         else    {
-            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+            fee = FeeUtil.getInstance().estimatedFee(1, 7);
         }
 
         //
