@@ -450,13 +450,16 @@ public class SendActivity extends Activity {
 
                 if(isChecked)    {
                     SPEND_TYPE = SPEND_RICOCHET;
+                    PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.USE_RICOCHET, true);
                 }
                 else    {
                     SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
+                    PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.USE_RICOCHET, false);
                 }
 
             }
         });
+        swRicochet.setChecked(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_RICOCHET, false));
 
         btLowFee = (Button)findViewById(R.id.low_fee);
         btAutoFee = (Button)findViewById(R.id.auto_fee);
