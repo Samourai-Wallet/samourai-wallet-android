@@ -372,80 +372,80 @@
     <string name="select_app">Select application</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
 
-    <string name="replay_protection">Replay protection</string>
-    <string name="replay_unprotected">Unprotected</string>
-    <string name="replay_in_progress">In progress</string>
-    <string name="replay_protected">Protected</string>
-    <string name="replay_disclaimer">Chain split detected</string>
-    <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
-    <string name="replay_ENABLE">ENABLE REPLAY PROTECTION</string>
+    <string name="replay_protection">Риплей защита</string>
+    <string name="replay_unprotected">Не защищено</string>
+    <string name="replay_in_progress">В процессе</string>
+    <string name="replay_protected">Защищено</string>
+    <string name="replay_disclaimer">Обнаружено расщепление цепочки</string>
+    <string name="replay_text">Монеты на всех адресах будут соединены в одну транзакцию и отправлены на адрес вашего кошелька. Это известно как слияние входов и может негативно сказаться на вашей анонимности.</string>
+    <string name="replay_ENABLE">ВКЛЮЧИТЬ РИПЛЕЙ ЗАЩИТУ</string>
 
-    <string name="replay_broadcast_to_network">broadcast to network...</string>
-    <string name="replay_seen_on_network">seen on network...</string>
-    <string name="replay_split_tx_broadcast">split tx broadcast...</string>
-    <string name="replay_description">Your wallet will send a special transaction to itself that will permanently split your coins from the other chain. This will protect you against replay attacks.</string>
-    <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
-    <string name="replay_confirmed">confirmed</string>
-    <string name="replay_confirmations">confirmations:</string>
+    <string name="replay_broadcast_to_network">отправляю в сеть...</string>
+    <string name="replay_seen_on_network">замечено в сети...</string>
+    <string name="replay_split_tx_broadcast">отправляю сплит транзакцию...</string>
+    <string name="replay_description">Ваш кошелёк будет отсылать специальную транзакцию самому себе, что навсегда разделит ваши монеты с другой сетью. Это защитит вас от риплей атак</string>
+    <string name="replay_waiting_for_confirmations">ожидаем подтверждений</string>
+    <string name="replay_confirmed">подтверждено</string>
+    <string name="replay_confirmations">подтверждения:</string>
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
-    <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
-    <string name="replay_dismiss">DISMISS ALERT</string>
+    <string name="replay_awaiting_confirmation">Риплей защита ожидает подтверждения</string>
+    <string name="replay_dismiss">ОТКЛОНИТЬ ПРЕДУПРЕЖДЕНИЕ</string>
 
-    <string name="show_qr">Show QR</string>
-    <string name="share_qr">Share QR</string>
-    <string name="send_tx">Send raw transaction</string>
-    <string name="tx_too_large_qr">Raw transaction too large to display in QR code.</string>
+    <string name="show_qr">Показать QR</string>
+    <string name="share_qr">Поделиться QR</string>
+    <string name="send_tx">Отправить raw транзакцию</string>
+    <string name="tx_too_large_qr">Транзакция слишком велика для вывода в виде QR кода.</string>
 
-    <string name="select_network">Select network...</string>
-    <string name="MainNet">MainNet</string>
-    <string name="TestNet">TestNet</string>
+    <string name="select_network">Выбрать сеть...</string>
+    <string name="MainNet">Основная сеть</string>
+    <string name="TestNet">Тестовая сеть</string>
 
-    <string name="segwit_address">Segwit Address</string>
-    <string name="segwit_switch_prompt">Funds deposited in Segwit addresses are more efficient to transact with. Offering reduced miner fees when sending bitcoin from your wallet.</string>
+    <string name="segwit_address">Segwit Адреса</string>
+    <string name="segwit_switch_prompt">Средства, внесённые на Segwit адреса являются более эффективными для операций. Комиссии сети будут ниже, когда биткоины отправляются с вашего кошелька.</string>
 
-    <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
+    <string name="privkey_clipboard">Приватный ключ был идентифицирован в буфере обмена. Удалить содержимое буфера?</string>
 
-    <string name="tx_hex">Transaction hex</string>
-    <string name="enter_tx_hex">Enter transaction in hex format</string>
-    <string name="broadcast">Broadcast transaction</string>
+    <string name="tx_hex">Транзакция в шестнадцатиричном формате</string>
+    <string name="enter_tx_hex">Ввести транзакцию в шестнадцатиричном формате</string>
+    <string name="broadcast">Отправить транзакцию</string>
 
-    <string name="dusting_tx">DUST TRANSACTION</string>
-    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\n\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
-    <string name="dusting_attempt_amount">Amount:</string>
-    <string name="dusting_attempt_id">Hash-Index:</string>
-    <string name="dusting_attempt_ignore">Ignore</string>
-    <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
+    <string name="dusting_tx">МИКРОТРАНЗАКЦИЯ</string>
+    <string name="dusting_attempt">Несанкционированная микротранзакция на ваш кошелёк может означать попытку отслеживания ваших адресов и расходов.\n\nОтметьте это микроколичество как не расходуемое для ищбежания рисков отслеживания третьей стороной.</string>
+    <string name="dusting_attempt_amount">Количество:</string>
+    <string name="dusting_attempt_id">Хэш-Индекс:</string>
+    <string name="dusting_attempt_ignore">Игнорировать</string>
+    <string name="dusting_attempt_mark_unspendable">Отметить не расходуемым</string>
     <string name="paycode">PAYNYM</string>
-    <string name="dust">DUST</string>
-    <string name="do_not_spend">Do Not Spend</string>
-    <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
-    <string name="mark_spend">Mark spendable</string>
-    <string name="mark_do_not_spend">Mark do-not-spend</string>
-    <string name="mark_utxo_spend">Make this unspent output spendable?</string>
-    <string name="mark_utxo_do_not_spend">Make this unspent output unspendable?</string>
+    <string name="dust">ПЫЛЬ</string>
+    <string name="do_not_spend">Не Расходовать</string>
+    <string name="dusting_tx_unblock">Это микроколичество в настоящее время заблокировано для расходования. Разблокировать этот непотраченный выход для возможного расходования?</string>
+    <string name="mark_spend">Отметить расходуемым</string>
+    <string name="mark_do_not_spend">Отметить нерасходуемым</string>
+    <string name="mark_utxo_spend">Сделать этот непотраченный выход активным?</string>
+    <string name="mark_utxo_do_not_spend">Заблокировать этот непотраченный выход?</string>
 
-    <string name="options_sign_a_message">Sign a message</string>
-    <string name="options_display_redeem_script">Display redeem script</string>
-    <string name="options_view_tx">View transaction</string>
-    <string name="options_display_privkey">Display private key</string>
-    <string name="options_batch">Batch spend</string>
+    <string name="options_sign_a_message">Подписать сообщение</string>
+    <string name="options_display_redeem_script">Показать высвобождающий скрипт</string>
+    <string name="options_view_tx">Увидеть транзакцию</string>
+    <string name="options_display_privkey">Показать приватный ключ</string>
+    <string name="options_batch">Групповая трата</string>
 
-    <string name="do_not_repeat_sent_to">Check box to not warn about repeat sends to this address.</string>
+    <string name="do_not_repeat_sent_to">Чекбокс блокирования предупреждения о повторных отправлениях на этот адрес.</string>
 
-    <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
+    <string name="mark_inputs_as_unspendable">Отметить непотраченные выходы, которые конструируют входы в эту транзакцию как заблокированные?</string>
 
-    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="copy_to_clipboard">Скопировать в буфер обмена</string>
 
-    <string name="no_bitpay">Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses.</string>
-    <string name="learn_more">Learn More</string>
+    <string name="no_bitpay">Ошибка: Неправильный запрос платежа. Samourai поддерживает отправление только на действительные адреса Биткоин.</string>
+    <string name="learn_more">Узнать больше</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
-    <string name="claim_paynym">Claim your paynym</string>
-    <string name="claim_paynym_title1">Claim your free PayNymID</string>
-    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
+    <string name="claim_paynym">Запросить ваш paynym</string>
+    <string name="claim_paynym_title1">Запросить ваш бесплатный PayNymID</string>
+    <string name="claim_paynym_text1">Позволить вашим друзьям и контактам искать, и соединяться с вашим PayNym напрямую через совместимые Биткоин-кошельки.</string>
     <string name="claim_paynym_title2">Достоинства PayNymID</string>
     <string name="claim_paynym_text2a">Уникальное имя и образ хэшируются с вашим кодом paynym. Повторение идентификаторов исключено!</string>
     <string name="claim_paynym_text2b">Нет проверок! Ваше имя и образ основываются на коде paynym, а не каком-либо национальном идентификационном документе.</string>
