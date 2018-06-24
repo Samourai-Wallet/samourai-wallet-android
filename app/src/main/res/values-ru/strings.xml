@@ -446,40 +446,40 @@
     <string name="claim_paynym">Claim your paynym</string>
     <string name="claim_paynym_title1">Claim your free PayNymID</string>
     <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
-    <string name="claim_paynym_title2">Benefits of a PayNymID</string>
-    <string name="claim_paynym_text2a">Unique name and image generated with a hash of your paynym code. No two will ever be the same!</string>
-    <string name="claim_paynym_text2b">No identity checks! Your name and image are based on your paynym code, not any national ID card.</string>
-    <string name="claim_paynym_text2c">Be found easily! Compatible wallets can search for new contacts and send private secure payments without leaving a trace.</string>
-    <string name="claim_paynym_id">Claim my PayNymID</string>
-    <string name="claim_paynym_id_refused">Not interested. Don\'t ask me again.</string>
+    <string name="claim_paynym_title2">Достоинства PayNymID</string>
+    <string name="claim_paynym_text2a">Уникальное имя и образ хэшируются с вашим кодом paynym. Повторение идентификаторов исключено!</string>
+    <string name="claim_paynym_text2b">Нет проверок! Ваше имя и образ основываются на коде paynym, а не каком-либо национальном идентификационном документе.</string>
+    <string name="claim_paynym_text2c">Находите друг друга легко! Совместимые кошельки могут находить новые контакты и отсылать приватные безопасные транзакции бесследно.</string>
+    <string name="claim_paynym_id">Затребовать мой PayNymID</string>
+    <string name="claim_paynym_id_refused">Не интересно. Не спрашивайте меня повторно.</string>
 
-    <string name="claim_paynym_prompt">Claim my PayNymID and add my public PayNym code to PayNym.is?</string>
+    <string name="claim_paynym_prompt">Затребовать мой PayNymID и добавить мой публичный PayNym код к PayNym.is?</string>
 
-    <string name="bip47_notif_tx_insufficient_funds_1">Adding a PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain. Deposit</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
-    <string name="help">Help</string>
+    <string name="bip47_notif_tx_insufficient_funds_1">Добавление PayNym к вашим контактам требует единовременной комиссии для создания записи в блокчейне. Оплатить</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC в свой кошелёк и попробуйте снова.</string>
+    <string name="help">Помощь</string>
 
-    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
-    <string name="confirm_pin_code">Confirm pin code</string>
-    <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
-    <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
-    <string name="create_a_passphrase">Create a passphrase</string>
-    <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
-    <string name="set_pin_code">Set Pin code</string>
-    <string name="accept_disclaimer_error">You need to accept disclaimer</string>
-    <string name="import_external_wallet">Import external wallet</string>
-    <string name="import_samourai_wallet">Import samourai backup</string>
-    <string name="backup_file">Backup file</string>
-    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
-    <string name="back">BACK</string>
-    <string name="finish">finish</string>
-    <string name="choose_file">choose file</string>
+    <string name="passphrase_disclaimer">Я понимаю, что Samourai не может обеспечить поддержку в случае потерянных или забытых парольных фраз. Samourai не может знать мою парольную фразу.</string>
+    <string name="confirm_pin_code">Подтвердить ПИН</string>
+    <string name="re_enter_your_pin_code">Установить ПИН снова</string>
+    <string name="re_enter_a_passphrase">Ввести парольную фразу снова</string>
+    <string name="create_a_passphrase">Создать парольную фразу</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Создайте безопасную парольную фразу для своего кошелька</string>
+    <string name="set_pin_code">Установить ПИН</string>
+    <string name="accept_disclaimer_error">Вы должны принять разъяснения</string>
+    <string name="import_external_wallet">Импортировать сторонний кошелёк</string>
+    <string name="import_samourai_wallet">Импортировать резервную копию samourai</string>
+    <string name="backup_file">Файл резеврной копии</string>
+    <string name="import_an_encrypted_samourai_wallet">импортировать зашифрованную резервную копию samourai для восстановления кошелька с сохранением всех метаданных</string>
+    <string name="back">НАЗАД</string>
+    <string name="finish">завершить</string>
+    <string name="choose_file">выберите файл</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="add_bip39_password">Add bip39 password</string>
-    <string name="close_bip39_password">Close bip39 password</string>
-    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
+    <string name="hello_blank_fragment">Привет незаполненный фрагмент</string>
+    <string name="add_bip39_password">Добавить bip39 пароль</string>
+    <string name="close_bip39_password">Закрыть bip39 пароль</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Введите свою мнемонику чтобы импортировать кошелёк из другого приложения.</string>
     <string name="last_updated">Последнее обновление</string>
     <string name="get_help">Помощь</string>
     <string name="offline_mode">Работа в оффлайн</string>
@@ -491,9 +491,9 @@
   <string name="get_help_restore">Восстановить кошелёк: Помощь</string>
 
   <string name="fee">Комиссия сети</string>
-    <string name="fee_low_priority">Низкий приоритет: оценка 24</string>
-    <string name="fee_mid_priority">Нормальный приоритет: оценка 6</string>
-    <string name="fee_high_priority">Высокий приоритет: оценка 2</string>
+    <string name="fee_low_priority">Низкий приоритет: оценка 24ч</string>
+    <string name="fee_mid_priority">Нормальный приоритет: оценка 6ч</string>
+    <string name="fee_high_priority">Высокий приоритет: оценка 2ч</string>
     <string name="fee_custom_priority">Моя комиссия: оценка</string>
     <string name="blocks_to_cf">блоков перед подтверждением</string>
 
