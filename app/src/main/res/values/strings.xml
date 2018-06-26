@@ -537,8 +537,8 @@
     <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
 
     <string-array name="address_types">
-        <item>Segwit P2SH (BIP49)</item>
-        <item>Segwit native (BIP84)</item>
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 </resources>
