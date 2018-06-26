@@ -212,4 +212,13 @@ public class FeeUtil  {
         return Triple.of(p2pkh, p2sh_p2wpkh, p2wpkh);
     }
 
+    public void sanitizeFee()  {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
+            SuggestedFee suggestedFee = new SuggestedFee();
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
+            Log.d("FeeUtil", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
+            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+        }
+    }
+
 }

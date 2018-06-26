@@ -170,12 +170,12 @@ public class FeeActivity extends Activity {
             ;
         }
 
-        sanitizeFee();
+        FeeUtil.getInstance().sanitizeFee();
 
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -188,7 +188,7 @@ public class FeeActivity extends Activity {
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
@@ -201,7 +201,7 @@ public class FeeActivity extends Activity {
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -221,7 +221,7 @@ public class FeeActivity extends Activity {
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -239,7 +239,7 @@ public class FeeActivity extends Activity {
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
@@ -257,7 +257,7 @@ public class FeeActivity extends Activity {
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -445,15 +445,6 @@ public class FeeActivity extends Activity {
             dlg.show();
         }
 
-    }
-
-    private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
-            SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
-            Log.d("FeeActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
-            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-        }
     }
 
 }
