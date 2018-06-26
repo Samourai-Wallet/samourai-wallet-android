@@ -63,6 +63,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -1281,7 +1282,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -1297,7 +1298,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -1400,23 +1401,6 @@ public class BatchSendActivity extends Activity {
 
                     }
                 }).show();
-
-    }
-
-    private void markUTXOAsUnspendable(String hexTx)    {
-
-        HashMap<String, Long> utxos = new HashMap<String,Long>();
-
-        for(UTXO utxo : APIFactory.getInstance(BatchSendActivity.this).getUtxos(true))   {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
-            }
-        }
-
-        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
-        for(TransactionInput input : tx.getInputs())   {
-            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
-        }
 
     }
 

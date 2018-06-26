@@ -2167,7 +2167,7 @@ public class SendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(SendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -2183,7 +2183,7 @@ public class SendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(SendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -2287,23 +2287,6 @@ public class SendActivity extends Activity {
 
                     }
                 }).show();
-
-    }
-
-    private void markUTXOAsUnspendable(String hexTx)    {
-
-        HashMap<String, Long> utxos = new HashMap<String,Long>();
-
-        for(UTXO utxo : APIFactory.getInstance(SendActivity.this).getUtxos(true))   {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
-            }
-        }
-
-        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
-        for(TransactionInput input : tx.getInputs())   {
-            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
-        }
 
     }
 
