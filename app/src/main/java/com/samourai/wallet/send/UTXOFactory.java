@@ -3,7 +3,6 @@ package com.samourai.wallet.send;
 import android.content.Context;
 
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
 
 import org.bitcoinj.core.Transaction;
