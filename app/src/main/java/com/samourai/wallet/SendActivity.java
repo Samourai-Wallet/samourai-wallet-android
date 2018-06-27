@@ -2168,6 +2168,17 @@ public class SendActivity extends Activity {
 
                     }
                 })
+                .setNeutralButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SendActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("TX", hexTx);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SendActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+
+                    }
+                })
                 .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
