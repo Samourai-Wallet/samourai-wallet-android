@@ -9,6 +9,7 @@
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="AppThemeCompat" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/window</item>
         <item name="android:colorPrimary">@android:color/black</item>
@@ -37,6 +38,13 @@
 
     <style name="restoreDialogStyle" parent="Base.Theme.AppCompat.Light.Dialog">
 
+    </style>
+
+    <style name="ui_2_theme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorAccent">@android:color/white</item>
+        <item name="android:windowBackground">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/windowDark</item>
+        <item name="android:colorControlActivated">@color/blue</item>
     </style>
 
 </resources>

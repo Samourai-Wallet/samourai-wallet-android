@@ -22,5 +22,10 @@
 
     <color name="white">#fafafa</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
-    <color name="grey_accent">#6d7789</color>
+    <color name="grey_accent">#6c768b</color>
+    <color name="windowDark">#282d33</color>
+    <color name="blue_ui_2">#1561cb</color>
+
+    <color name="cyan_ui_2">#58b9b8</color>
+    <color name="green_ui_2">#0ecf96</color>
 </resources>

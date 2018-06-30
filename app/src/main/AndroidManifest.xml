@@ -220,8 +220,8 @@
         <activity
             android:name=".SendNewUIActivity"
             android:exported="true"
-            android:theme="@style/AppThemeCompat"
-            android:label="@string/title_activity_send_new_ui" />
+            android:theme="@style/ui_2_theme"
+             />
     </application>
 
 </manifest>
