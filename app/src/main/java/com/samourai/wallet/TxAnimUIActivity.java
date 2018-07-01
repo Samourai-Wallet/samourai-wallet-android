@@ -1,15 +1,31 @@
 package com.samourai.wallet;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -22,6 +38,8 @@ import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
+import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
@@ -38,6 +56,9 @@ import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
@@ -161,6 +182,14 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     public void run() {
                         progressView.getmArcProgress().startArc3(arcdelay);
                         progressView.setTxStatusMessage("broadcasting transaction...");
+
+                        if(PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
+
+                            doShowTx(hexTx, strTxHash);
+
+                            return;
+
+                        }
 
                         new Thread(new Runnable() {
                             @Override
@@ -710,6 +739,166 @@ public class TxAnimUIActivity extends AppCompatActivity {
             ;
     }
 
+    }
+
+    private void doShowTx(final String hexTx, final String txHash) {
+
+        final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
+
+        TextView showTx = new TextView(TxAnimUIActivity.this);
+        showTx.setText(hexTx);
+        showTx.setTextIsSelectable(true);
+        showTx.setPadding(40, 10, 40, 10);
+        showTx.setTextSize(18.0f);
+
+        final CheckBox cbMarkInputsUnspent = new CheckBox(TxAnimUIActivity.this);
+        cbMarkInputsUnspent.setText(R.string.mark_inputs_as_unspendable);
+        cbMarkInputsUnspent.setChecked(false);
+
+        LinearLayout hexLayout = new LinearLayout(TxAnimUIActivity.this);
+        hexLayout.setOrientation(LinearLayout.VERTICAL);
+        hexLayout.addView(cbMarkInputsUnspent);
+        hexLayout.addView(showTx);
+
+        new AlertDialog.Builder(TxAnimUIActivity.this)
+                .setTitle(txHash)
+                .setView(hexLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
+                        }
+
+                        dialog.dismiss();
+                        TxAnimUIActivity.this.finish();
+
+                    }
+                })
+                .setNeutralButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxAnimUIActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("TX", hexTx);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(TxAnimUIActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if(cbMarkInputsUnspent.isChecked())    {
+                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
+                        }
+
+                        if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
+
+                            final ImageView ivQR = new ImageView(TxAnimUIActivity.this);
+
+                            Display display = (TxAnimUIActivity.this).getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            int imgWidth = Math.max(size.x - 240, 150);
+
+                            Bitmap bitmap = null;
+
+                            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(hexTx, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), imgWidth);
+
+                            try {
+                                bitmap = qrCodeEncoder.encodeAsBitmap();
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+                            ivQR.setImageBitmap(bitmap);
+
+                            LinearLayout qrLayout = new LinearLayout(TxAnimUIActivity.this);
+                            qrLayout.setOrientation(LinearLayout.VERTICAL);
+                            qrLayout.addView(ivQR);
+
+                            new AlertDialog.Builder(TxAnimUIActivity.this)
+                                    .setTitle(txHash)
+                                    .setView(qrLayout)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            dialog.dismiss();
+                                            TxAnimUIActivity.this.finish();
+
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.share_qr, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            String strFileName = AppUtil.getInstance(TxAnimUIActivity.this).getReceiveQRFilename();
+                                            File file = new File(strFileName);
+                                            if(!file.exists()) {
+                                                try {
+                                                    file.createNewFile();
+                                                }
+                                                catch(Exception e) {
+                                                    Toast.makeText(TxAnimUIActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            file.setReadable(true, false);
+
+                                            FileOutputStream fos = null;
+                                            try {
+                                                fos = new FileOutputStream(file);
+                                            }
+                                            catch(FileNotFoundException fnfe) {
+                                                ;
+                                            }
+
+                                            if(file != null && fos != null) {
+                                                Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
+                                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                                                try {
+                                                    fos.close();
+                                                }
+                                                catch(IOException ioe) {
+                                                    ;
+                                                }
+
+                                                Intent intent = new Intent();
+                                                intent.setAction(Intent.ACTION_SEND);
+                                                intent.setType("image/png");
+                                                if (android.os.Build.VERSION.SDK_INT >= 24) {
+                                                    //From API 24 sending FIle on intent ,require custom file provider
+                                                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                                            TxAnimUIActivity.this,
+                                                            getApplicationContext()
+                                                                    .getPackageName() + ".provider", file));
+                                                } else {
+                                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                                }
+                                                startActivity(Intent.createChooser(intent, TxAnimUIActivity.this.getText(R.string.send_tx)));
+                                            }
+
+                                        }
+                                    }).show();
+                        }
+                        else    {
+
+                            Toast.makeText(TxAnimUIActivity.this, R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }
+                }).show();
 
     }
 
