@@ -244,7 +244,7 @@
     <string name="bip47_no_label_error">Вы должны задать метку для этого платёжного кода</string>
 
     <string name="bip47_status_tbe">Канал ещё не установлен</string>
-    <string name="bip47_status_pending">В ожидании подтверждений - 0/1</string>
+    <string name="bip47_status_pending">В ожидании подтверждений: 0/1</string>
     <string name="bip47_status_active">Готов к отправке</string>
     <string name="bip47_status_incoming">Готов к получению</string>
     <string name="bip47_cannot_scan_own_pcode">Не получается отсканировать собственный платёжный код</string>
@@ -285,7 +285,7 @@
 
     <string name="action_ricochet">Повторить Ricochet</string>
     <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>
-    <string name="ricochet">Ricochet - отправить с четырьмя промежуточными шагами</string>
+    <string name="ricochet">Ricochet &mdash; отправить с четырьмя промежуточными шагами</string>
     <string name="action_ricochet_script">Показать скрипт Ricochet\'а</string>
     <string name="action_ricochet_replay">Отправить Ricochet ещё раз</string>
     <string name="ricochet_replay">Вы хотите повторно отправить эту Ricochet-трату?</string>
@@ -503,7 +503,7 @@
     <string name="declaimer_recovery_words">Я подтверждаю, что я записал вышестоящие слова и сохранил их в надёжном и безопасном месте. Я понимаю, что каждый, кто имеет доступ к моей парольной фразе и словам для восстановления, сможет получить доступ к моему кошельку и всем моим средствам.</string>
   <string name="return_to_wallet">Возврат к кошельку</string>
   <string name="caution_message_recovery_words">Небезопасно хранить эти слова на вашем компьютере или в облаке. Запишите эти слова на бумаге и скрытно храните их в надёжном месте.</string>
-    <string name="these_words_are">Эти слова - резервная копия всех ваших приватных ключей в этом кошельке.</string>
+    <string name="these_words_are">Эти слова &mdash; резервная копия всех ваших приватных ключей в этом кошельке.</string>
   <string name="recovery_words">СЛОВА ДЛЯ ВОССТАНОВЛЕНИЯ</string>
 
   <string name="permission_alert_dialog_title_sms">Запрашиваю разрешение на доступ к SMS и состоянию телефона</string>
