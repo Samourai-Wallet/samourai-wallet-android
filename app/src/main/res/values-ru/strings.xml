@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+пш<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
   <string name="alpha_create_wallet">Перепишите эти слова на бумагу и держите их в надёжном месте. Не теряйте их и не забывайте своё кодовое слово.</string>
@@ -11,7 +11,7 @@
     <string name="action_settings">Настройки</string>
     <string name="action_support">Поддержка</string>
     <string name="action_sweep">Втянуть приватный ключ</string>
-    <string name="action_bip47">PayNym'ы</string>
+    <string name="action_bip47">PayNym\'ы</string>
     <string name="action_unarchive">Активировать все архивированные платёжные коды</string>
     <string name="action_sync_all">Синхронизировать все платёжные коды</string>
 
@@ -25,10 +25,10 @@
     <string name="options_cat_remote">Удалённое управление</string>
     <string name="options_cat_wallet">Кошелёк</string>
     <string name="options_cat_networking">Сеть</string>
-    <string name="options_cat_other">Прочее</string>
+    <string name="options_cat_other">О приложении</string>
 
     <string name="options_mnemonic">Показать мнемонику</string>
-    <string name="options_mnemonic2">Show 12-word seed for this wallet.</string>
+    <string name="options_mnemonic2">Показать мнемонику из 12 слов для этого кошелька.</string>
     <string name="options_xpub">Показать BIP44 XPUB</string>
     <string name="options_xpub2">Показать расширенный приватный ключ для BIP44-аккаунта.</string>
     <string name="options_xpub49">Показать segwit YPUB</string>
@@ -47,7 +47,7 @@
     <string name="options_blockexplorer2">Обозреватель, который будет использоваться для просмотра подробностей о транзакциях.</string>
     <string name="options_sim_switch">Защита от замены SIM</string>
     <string name="options_sim_switch2">Посылать SMS на доверенный номер телефона при замене SIM-карты.</string>
-    <string name="options_use_telno">Использовать довренный номер телефона для удалённого управления.</string>
+    <string name="options_use_telno">Использовать довренный номер телефона для удалённого управления</string>
     <string name="options_use_telno2">Исполнять удалённые команды, полученные только с доверенного номера телефона.</string>
     <string name="options_alert_telno">Довренный номер</string>
     <string name="options_alert_telno2">Доверенный номер телефона, с которого вы можете эксклюзивно разрешить приём команд (в международном формате без пробелов, например: +79990001122).</string>
@@ -57,7 +57,7 @@
     <string name="options_VPN2">Запустить Android-версию OpenVPN.</string>
     <string name="options_Tor">Работать через Tor?</string>
     <string name="options_Tor2">Запустить Orbot (Tor).</string>
-    <string name="options_export">Создать резервную копию кошелька</string>
+    <string name="options_export">Создать резервную копию</string>
     <string name="options_change_pin">Сменить PIN</string>
     <string name="options_change_pin2">Задайте новый PIN-код для доступа к кошельку.</string>
     <string name="options_remote_pin">Скрытый запуск и PIN для удалённого управления</string>
@@ -116,260 +116,260 @@
     <string name="no">Нет</string>
     <string name="close">Закрыть</string>
 
-    <string name="sim_warning">Your Samourai Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
+    <string name="sim_warning">На вашем устройстве с кошельком Samourai была заменена SIM-карта. Это сообщение отправлено с присвоенного ей телефонного номера.</string>
 
-    <string name="pin_5_8">Create a PIN code between 5 and 8 characters.</string>
-    <string name="pin_5_8_confirm">Confirm PIN code</string>
-    <string name="pin_error">Pin code error</string>
-    <string name="no_internet">No Internet connectivity. Please try again.</string>
-    <string name="bip38_pw">BIP38 password</string>
-    <string name="bip38_pw_error">BIP38 password error</string>
-    <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
-    <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
-    <string name="bip39_restore">Enter your mnemonic (or hex entropy) and, if necessary, your BIP39 passphrase. If you do not use a BIP39 passphrase, leave it blank.</string>
-    <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
-    <string name="bip39_unmatch">Passphrase does not match. Please try again.</string>
-    <string name="bip39_invalid">Do not use any space characters in your passphrase. Please try again.</string>
-    <string name="bip39_empty">You must define a passphrase.</string>
-    <string name="please_select">Please select...</string>
-    <string name="create_wallet">Create wallet</string>
-    <string name="restore_wallet">Restore wallet</string>
-    <string name="wallet_passphrase">Enter your wallet passphrase</string>
-    <string name="bip39_passphrase">BIP39 passphrase</string>
-    <string name="bip39_match">BIP39 passphrase verified OK.</string>
-    <string name="bip39_decrypt_test">Wallet passphrase verified OK. Would you like to test decryption of the latest auto backup?</string>
-    <string name="backup_read_ok">Backup file OK.</string>
-    <string name="backup_read_error">Error reading backup file.</string>
-    <string name="mnemonic_hex">Mnemonic or hex entropy</string>
-    <string name="pin_enter">Enter PIN code</string>
-    <string name="please_wait">Please wait...</string>
-    <string name="random_key_error">Random key error</string>
-    <string name="login_error">Login failed</string>
-    <string name="wallet_created_ok">Wallet created OK.</string>
-    <string name="wallet_created_ko">Error creating wallet.</string>
-    <string name="wallet_restored_ok">Wallet restored OK.</string>
-    <string name="wallet_restored_ko">Error restoring wallet.</string>
+    <string name="pin_5_8">Задайте PIN-код (от 5 до 8 знаков).</string>
+    <string name="pin_5_8_confirm">Подтвердить PIN-код</string>
+    <string name="pin_error">Ошибка PIN-кода</string>
+    <string name="no_internet">Нет соединения с интернетом. Пожалуйста, попробуйте ещё раз.</string>
+    <string name="bip38_pw">BIP38-пароль</string>
+    <string name="bip38_pw_error">Ошибка BIP38-пароля</string>
+    <string name="bip39_safe">Пожалуйста, придумайте парольную фразу и держите её в тайне. Она вам понадобится в случае потери доступа к этому кошельку.</string>
+    <string name="bip39_safe2">Пожалуйста, подтвердите свою парольную фразу. Держите её в тайне. Она вам понадобится в случае потери доступа к этому кошельку.</string>
+    <string name="bip39_restore">Введите свою мнемонику (или hex-данные) и, если она нужна, свою BIP39-парольную фразу. Если вы не задавали парольную фразу, то оставьте поле с ней пустым.</string>
+    <string name="bip39_must">Ваш кошлёк должен использовать парольную фразу. Попробуйте ещё раз.</string>
+    <string name="bip39_unmatch">Парольные фразы не совпадают. Попробуйте ещё раз.</string>
+    <string name="bip39_invalid">Не используйте какие-либо виды пробелов в парольной фразу. Попробуйте ещё раз..</string>
+    <string name="bip39_empty">Вы должны задать парольную фразу.</string>
+    <string name="please_select">Выберите...</string>
+    <string name="create_wallet">Создать кошелёк</string>
+    <string name="restore_wallet">Восстановить кошелёк</string>
+    <string name="wallet_passphrase">Введите парольную фразу для вашего кошелька</string>
+    <string name="bip39_passphrase">BIP39-парольная фраза</string>
+    <string name="bip39_match">BIP39-парольная фраза подтверждена.</string>
+    <string name="bip39_decrypt_test">Парольная фраза кошелька подтверждена. Хотите также проверить расшифровку последней автосохранённой резервной копии?</string>
+    <string name="backup_read_ok">Резервная копия в порядке.</string>
+    <string name="backup_read_error">Ошибка чтения файла резервной копии.</string>
+    <string name="mnemonic_hex">Мнемоника или hex-данные</string>
+    <string name="pin_enter">Введите PIN-код</string>
+    <string name="please_wait">Пожалуйста, подождите...</string>
+    <string name="random_key_error">Ошибка случайного ключа</string>
+    <string name="login_error">Ошибка входа</string>
+    <string name="wallet_created_ok">Кошелёк успешно создан.</string>
+    <string name="wallet_created_ko">Ошибка создания кошелька.</string>
+    <string name="wallet_restored_ok">Кошелёк успешно восстановлен.</string>
+    <string name="wallet_restored_ko">Ошибка восстановления кошелька.</string>
 
-    <string name="address_used_previously">You have used this address before! Reusing addresses may result in a loss of privacy.</string>
+    <string name="address_used_previously">Вы уже использовали этот адрес ранее! Повторное использование адресов вредит вашей конфиденциальности.</string>
 
-    <string name="scan">Scan</string>
-    <string name="scan_error">Scan error</string>
-    <string name="enter_privkey">Enter private key</string>
+    <string name="scan">Сканировать</string>
+    <string name="scan_error">Ошибка сканирования</string>
+    <string name="enter_privkey">Введите приватный ключ</string>
 
-    <string name="to">To</string>
-    <string name="destination">Address or payment channel</string>
+    <string name="to">Кому</string>
+    <string name="destination">Адрес или платёжный канал</string>
 
-    <string name="insufficient_funds">Insufficient funds</string>
-    <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
-    <string name="invalid_amount">Invalid amount</string>
-    <string name="amount">Amount</string>
+    <string name="insufficient_funds">Недостаточно средств</string>
+    <string name="tx_length_error">Samourai не работает с транзакциями объёмом больше 100 кб. Попробуйте разделить транзакцию на части.</string>
+    <string name="invalid_amount">Некорректная сумма</string>
+    <string name="amount">Сумма</string>
 
-    <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
-    <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
-    <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
-    <string name="wallet_erased">Wallet erased from device.</string>
+    <string name="receive_address_to_clipboard">Скопировать адрес получения в буфер обмена? В таком случае его смогут увидеть другие приложения.</string>
+    <string name="receive_address_to_share">Поделиться адресом получения? В таком случае его смогут увидеть другие приложения.</string>
+    <string name="sure_to_erase">Вы точно хотите удалить этот кошелёк?</string>
+    <string name="wallet_erased">Кошелёк удалён с устройства.</string>
 
-    <string name="send_privacy_warning">Privacy warning: be aware that you have already sent funds to this address.</string>
+    <string name="send_privacy_warning">Предупреждение о приватности: вы уже отправляли средства на этот адрес.</string>
 
-    <string name="securely_wiping_wait">Securely wiping wallet. Please wait.</string>
+    <string name="securely_wiping_wait">Производится полное удаление кошелька. Пожалуйста, подождите.</string>
 
-    <string name="options_scramble_pin">Scramble PIN Screen</string>
-    <string name="options_scramble_pin2">Use scrambled numerical pad to enter your wallet. </string>
+    <string name="options_scramble_pin">Перемешивать кнопки ввода PIN</string>
+    <string name="options_scramble_pin2">Случайно перемешивать кнопки с цифрами на экране ввода PIN.</string>
 
-    <string name="you_must_have_orbot">You must have Orbot installed and activated to proxy traffic through it. Would you like to install it from Google Play?</string>
+    <string name="you_must_have_orbot">У вас должен быть установлен Orbot и активирован прокси-трафик через него. Хотите установить Orbot из Google Play?</string>
 
-    <string name="ssl_pinning_invalid">SSL certificate pinning has failed. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
-    <string name="ssl_no_connection">We are unable to connect to the host to verify the SSL certificate. Please verify your network connection and device before continuing.</string>
-    <string name="retry">Retry</string>
-    <string name="exit">Exit</string>
+    <string name="ssl_pinning_invalid">Привязка SSL-сертификата не удалась. Это может свидетельствовать о подозрительных действиях третьих лиц. Провертье своё устройство и соединение с интернетом прежде чем продолжить.</string>
+    <string name="ssl_no_connection">Мы не можем связаться с хостом для верификации SSL-сертификата. Провертье своё устройство и соединение с интернетом прежде чем продолжить.</string>
+    <string name="retry">Повторить</string>
+    <string name="exit">Выход</string>
 
-    <string name="create_pin">Create PIN code</string>
-    <string name="confirm_pin">Confirm PIN code</string>
+    <string name="create_pin">Задать PIN-код</string>
+    <string name="confirm_pin">Подтвердить PIN-код</string>
 
-    <string name="auto_fee">NORMAL FEE</string>
-    <string name="priority_fee">PRIORITY FEE</string>
-    <string name="low_fee">LOW FEE</string>
-    <string name="custom_fee">Custom</string>
-    <string name="sat_b">sat/b</string>
+    <string name="auto_fee">НОРМАЛЬНАЯ КОМИССИЯ</string>
+    <string name="priority_fee">ПРИОРИТЕТНАЯ КОМИССИЯ</string>
+    <string name="low_fee">НИЗКАЯ КОМИССИЯ</string>
+    <string name="custom_fee">Своя</string>
+    <string name="sat_b">сат/байт</string>
 
-    <string name="account_Samourai">Wallet</string>
+    <string name="account_Samourai">Кошелёк</string>
     <string name="account_shuffling">Shifted</string>
 
-    <string name="max_available">Max. available:</string>
+    <string name="max_available">Макс. доступно:</string>
 
-    <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
+    <string name="first_use_shuffle">Это ваш Shifted-аккаунт. Биткоины, которые вы получили с ShapeShift, будут храниться здесь. Адреса Shifted-аккаунта не будут пересекаться с адресами вашего основного кошелька.</string>
 
-    <string name="select_account">Select account</string>
-    <string name="received_bitcoin">Received Bitcoin</string>
-    <string name="received">Received</string>
-    <string name="sent">Transaction sent</string>
-    <string name="total">Total</string>
-    <string name="export_to_clipboard">Export to clipboard</string>
-    <string name="export_to_email">Export to email</string>
-    <string name="encryption_error">There was an error while encrypting your wallet backup. Please try again.</string>
-    <string name="import_backup">From backup</string>
-    <string name="import_mnemonic">Mnemonic/seed</string>
-    <string name="encrypted_backup">Encrypted wallet data</string>
-    <string name="decryption_error">There was an error while decrypting your wallet backup. Please try again.</string>
-    <string name="restore_wallet_from_backup">Restore wallet from backup</string>
-    <string name="restore_wallet_from_existing_backup">Backup found on device. To restore from existing backup, tap \'OK\', otherwise copy/paste different backup and tap \'OK\'.</string>
+    <string name="select_account">Выбрать акаунт</string>
+    <string name="received_bitcoin">Получен перевод</string>
+    <string name="received">Получено</string>
+    <string name="sent">Транзакция отправлена</string>
+    <string name="total">Всего</string>
+    <string name="export_to_clipboard">Скопировать в буфер обмена</string>
+    <string name="export_to_email">Переслать на почту</string>
+    <string name="encryption_error">Произошла обишка при шифровании резервной копии вашего кошелька. Попробуйте ещё раз.</string>
+    <string name="import_backup">Из резервной копии</string>
+    <string name="import_mnemonic">Из мнемоники</string>
+    <string name="encrypted_backup">Зашифрованные данные кошелька</string>
+    <string name="decryption_error">Произошла ошибка при расшифровке резервной копии вашего кошелька. Попробуйте ещё раз.</string>
+    <string name="restore_wallet_from_backup">Восстановить кошелёк из резервной копии</string>
+    <string name="restore_wallet_from_existing_backup">На устройстве найдена резервная копия. Чтобы восстановить её, нажмите \'OK\'. Для работы с другой резервной копией скопируйте/вставьте её и нажмите \'OK\'.</string>
 
-    <string name="choose_email_client">Choose an Email client:</string>
+    <string name="choose_email_client">Выберите почтовый клиент:</string>
 
-    <string name="cannot_launch_app">Samourai Wallet cannot be run on this device</string>
-    <string name="confirm_change_pin">Are you sure you want to change your PIN?</string>
-    <string name="success_change_pin">PIN changed</string>
-    <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
-    <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
-    <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
+    <string name="cannot_launch_app">Кошелёк Samourai не может быть запущен на этом устройстве</string>
+    <string name="confirm_change_pin">Вы уверены, что хотите сменить свой PIN-код?</string>
+    <string name="success_change_pin">PIN-код изменён</string>
+    <string name="alternative_pin_create">Вы уверены, что хотите создать альтернативный PIN-код для скрытого запуска и удалённого управления?</string>
+    <string name="alternative_pin_deleted">Вы больше не используете альтернативный PIN-код для скрытого запуска и удалённого управления.</string>
+    <string name="alternative_pin_wait">Дождитесь полной активации режима скрытого запуска прежде чем задавать альтернативный PIN-код.</string>
 
-    <string name="invalid_payment_code">Invalid payment code</string>
-    <string name="error_payment_code">Error generating payment code</string>
+    <string name="invalid_payment_code">Неверный платёжный код</string>
+    <string name="error_payment_code">Ошибка создания платёжного кода</string>
 
-    <string name="bip47_setup1_title">Your PayNym</string>
-    <string name="bip47_setup4_title">Add PayNym contact</string>
-    <string name="bip47_setup4_text1">Adding this PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain.</string>
-    <string name="bip47_setup4_text2">will be deducted from your wallet balance.</string>
+    <string name="bip47_setup1_title">Ваш PayNym</string>
+    <string name="bip47_setup4_title">Добавить PayNym-контакт</string>
+    <string name="bip47_setup4_text1">Добавление этого PayNym в ваши контакты требует разовой уплаты комиссии за транзакцию для создания записи в блокчейне.</string>
+    <string name="bip47_setup4_text2">Будет уплачена с баланса вашего кошелька.</string>
 
-    <string name="bip47_add1_title">New contact</string>
-    <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
+    <string name="bip47_add1_title">Новый контакт</string>
+    <string name="bip47_add1_text">Отсканируйте или вставьте платёжный код чтобы создать новый платёжный канал.</string>
 
-    <string name="paste">Paste</string>
-    <string name="label">Label</string>
-    <string name="next">Next</string>
-    <string name="confirm">Confirm</string>
-    <string name="payment_code">Payment code</string>
-    <string name="payment_channel_init">Notification transaction sent. Your payment channel is being created.</string>
+    <string name="paste">Вставить</string>
+    <string name="label">Пометить</string>
+    <string name="next">Далее</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="payment_code">Платёжный код</string>
+    <string name="payment_channel_init">Транзакция-извещение отправлена. Ваш платёжный канал создаётся.</string>
 
-    <string name="bip47_no_label_error">You must supply a label for this payment code</string>
+    <string name="bip47_no_label_error">Вы должны задать метку для этого платёжного кода</string>
 
-    <string name="bip47_status_tbe">Not yet established</string>
-    <string name="bip47_status_pending">Pending - 0/1 Confirmations</string>
-    <string name="bip47_status_active">Ready to send</string>
-    <string name="bip47_status_incoming">Ready to receive</string>
-    <string name="bip47_cannot_scan_own_pcode">Cannot scan your own payment code</string>
-    <string name="bip47_spend_to_pcode">Send through this payment channel?</string>
-    <string name="bip47_sign">Sign message</string>
-    <string name="bip47_sign_text1">Sign message using BIP47 notification address private key?</string>
-    <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
-    <string name="bip47_wait_for_confirmation_or_retry">This payment channel is waiting for 1 confirmation before sending is activated. Would you like to discard the previous attempt and resend a notification?></string>
+    <string name="bip47_status_tbe">Канал ещё не установлен</string>
+    <string name="bip47_status_pending">В ожидании подтверждений - 0/1</string>
+    <string name="bip47_status_active">Готов к отправке</string>
+    <string name="bip47_status_incoming">Готов к получению</string>
+    <string name="bip47_cannot_scan_own_pcode">Не получается отсканировать собственный платёжный код</string>
+    <string name="bip47_spend_to_pcode">Отправить через этот платёжный канал?</string>
+    <string name="bip47_sign">Подписать сообщение</string>
+    <string name="bip47_sign_text1">Подписать сообщение используя приватный ключ от BIP47 notification-адреса?</string>
+    <string name="bip47_sign_text2">Подписано моим BIP47 notification-адресом.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Этот платёжный канал ожидает одного подтверждения прежде чем разрешить отправку средств. Хотите отказаться от предыдущей попытки и попробовать отправить извещение заново?></string>
 
-    <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>
+    <string name="rbf_incoming">Входящая транзакция поддерживает replace-by-fee. Посмотреть в обозревателе блоков?</string>
 
-    <string name="invalid_passphrase">Invalid passphrase</string>
-    <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
-    <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
+    <string name="invalid_passphrase">Неверная парольная фраза</string>
+    <string name="passphrase">Парольная фраза</string>
+    <string name="passphrase_needed_for_backup">Ваш кошелёк не защищён парольной фразой. Резервные копии вашего кошелька шифруются ею. Если вы хотите использовать зашифрованные резервные копии и другие возможности кошелька Samourai, то создайте новый кошелёк в этом приложении и перешлите на него свои средства.</string>
+    <string name="passphrase_required">Для использования этой функции требуется парольная фраза. Подумайте о том, чтобы создать новый кошелёк, который будет автоматически её поддерживать.</string>
 
-    <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
-    <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+    <string name="cannot_reach_api">Не получается связаться с Samourai API. Проверьте соединение и попробуйте ещё раз или отложите попытку.</string>
+    <string name="api_error">Samourai API возвращают ошибку. Попробуйте ещё раз или отложите попытку.</string>
 
-    <string name="cannot_recognize_privkey">Cannot recognize private key</string>
+    <string name="cannot_recognize_privkey">Не удаётся распознать приватный ключ</string>
     <string name="cannot_sweep_privkey">Ошибка втягивания приватного ключа</string>
-    <string name="please_wait_sending">Sending transaction, please wait.</string>
-    <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
+    <string name="please_wait_sending">Отправляем транзакцию. Пожалуйста, подождите.</string>
+    <string name="please_wait_ricochet">Проходим Ricochet-очередь. Пожалуйста, подождите.</string>
 
-    <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
+    <string name="change_is_dust">Сдача с этой транзакции чересчур мала. Попробуйте ещё раз, уменьшив количество отправляемых средств или потратьте их все.</string>
 
-    <string name="tor_routing_on">Samourai is routing via Tor.</string>
-    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+    <string name="tor_routing_on">Трафик Samourai идёт через Tor.</string>
+    <string name="tor_routing_off">Трафик Samourai не проходит через Tor. Нажмите, чтобы перенаправить.</string>
+    <string name="tor_install">Нажмите, чтобы установить Orbot и пропускать трафик Samourai через Tor.</string>
 
-    <string name="premium_addons">Premium Addons</string>
+    <string name="premium_addons">Премиум-аддоны</string>
 
-    <string name="ricochet_hop">Ricochet Hop</string>
-    <string name="ricochet_hopping">Ricocheted to</string>
-    <string name="ricochet_spend1">Ricochet spend to</string>
-    <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_hop">Ricochet-шаг</string>
+    <string name="ricochet_hopping">Отправлено через Ricochet на</string>
+    <string name="ricochet_spend1">Отправлено через Ricochet на</string>
+    <string name="ricochet_spend2">на общую сумму в</string>
+    <string name="ricochet_spend3">(включая вознаграждение Samourai размером 0,002 BTC и комиссию майнерам)?</string>
 
-    <string name="action_ricochet">Replay Ricochet</string>
-    <string name="action_empty_ricochet">Empty Ricochet queue</string>
-    <string name="ricochet">Ricochet - send with 4 extra hops</string>
-    <string name="action_ricochet_script">Display Ricochet script</string>
-    <string name="action_ricochet_replay">Resend Ricochet</string>
-    <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="ricochet_not_broadcast_replay">There was a problem broadcasting your Ricochet. Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
-    <string name="no_ricochet_display">There is no Ricochet script to display.</string>
-    <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
+    <string name="action_ricochet">Повторить Ricochet</string>
+    <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>
+    <string name="ricochet">Ricochet - отправить с четырьмя промежуточными шагами</string>
+    <string name="action_ricochet_script">Показать скрипт Ricochet\'а</string>
+    <string name="action_ricochet_replay">Отправить Ricochet ещё раз</string>
+    <string name="ricochet_replay">Вы хотите повторно отправить эту Ricochet-трату?</string>
+    <string name="ricochet_not_broadcast_replay">Возникла проблема с отправкой вашей Ricochet-траты. Вы хотите попробовать отправить её повторно?</string>
+    <string name="no_ricochet_replay">Не удалось найти Ricochet-трату для повторной отправки.</string>
+    <string name="no_ricochet_display">Не удалось найти скрипт Ricochet\'а для отображения.</string>
+    <string name="ricochet_broadcast">Ваша Ricochet-трата была отправлена.</string>
 
-    <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
-    <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
+    <string name="bip47_cannot_identify_outpoint">Не удаётся замаскировать отправляемый платёжный код</string>
+    <string name="bip47_cannot_compose_notif_tx">Не удаётся собрать транзакцию-извещение</string>
 
-    <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
+    <string name="pushtx_returns_null">Трата не удалась. Сервер вернул пустое значение.</string>
 
-    <string name="trusted_node">Trusted node</string>
-    <string name="trusted_node_user_hint">rpc user name</string>
-    <string name="trusted_node_ip_hint">IP address</string>
-    <string name="trusted_node_port_hint">Port (8332 default)</string>
-    <string name="trusted_node_password_hint">rpc user password</string>
-    <string name="trusted_node_not_valid">Please supply valid info for your trusted node.</string>
-    <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
-    <string name="trusted_node_error">Error reaching proposed trusted node.</string>
-    <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
-    <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
-    <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
-    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
+    <string name="trusted_node">Доверенная нода</string>
+    <string name="trusted_node_user_hint">rpc-имя пользователя</string>
+    <string name="trusted_node_ip_hint">IP-адрес</string>
+    <string name="trusted_node_port_hint">Порт (по умолчанию 8332)</string>
+    <string name="trusted_node_password_hint">rpc-пароль</string>
+    <string name="trusted_node_not_valid">Пожалуйста, укажите верные данные своей доверенной ноды.</string>
+    <string name="trusted_node_ko">Не удалось определить ноду. Пожалуйста, проверьте конфигурацию.</string>
+    <string name="trusted_node_error">Не удаётся связаться с предложенной доверенной нодой.</string>
+    <string name="trusted_node_tx_error">Транзакция дала сбой на доверенной ноде.</string>
+    <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Samourai поддерживает Bitcoin Core 0.13.1 и выше.</string>
+    <string name="trusted_node_tx_sent">Транзакция отправлена через доверенную ноду.</string>
+    <string name="trusted_node_not_responding">Доверенная нода не отвечает. Пожалуйста, проверьте конфигурацию.</string>
+    <string name="trusted_node_breaks_consensus">Доверенная нода не может быть установлена на биткоин-клиент, нарушающий правила работы сети.</string>
 
-    <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
-    <string name="refresh_tx">Retrieved transactions and balance.</string>
-    <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
-    <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
+    <string name="refresh_tx_pre">Получаем данные о транзакциях и балансе.</string>
+    <string name="refresh_tx">Данные о транзакциях и балансе получены.</string>
+    <string name="refresh_incoming_notif_tx">Получены данные о входящих BIP47-транзакциях-извещениях.</string>
+    <string name="refresh_outgoing_notif_tx">Исходящие BIP47-транзакции-извещения обновлены.</string>
 
-    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
-    <string name="options_block_explorer">View transaction</string>
-    <string name="options_bump_fee">Increase tx fee</string>
+    <string name="options_unconfirmed_tx">Эта транзакция ожидает подтверждения. Выберите, что вы хотите сделать:</string>
+    <string name="options_block_explorer">Посмотреть транзакцию</string>
+    <string name="options_bump_fee">Увеличить комиссию</string>
 
-    <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
-    <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>
-    <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
+    <string name="cpfp_cannot_retrieve_tx">Не удаётся получить данные о транзакции. Попробуйте ещё раз.</string>
+    <string name="fee_bump_not_necessary">Учтите, что в повышении комиссии у этой транзакции, может быть, нет необходимости.</string>
+    <string name="bump_fee">Вы хотите увеличить комиссию майнерам в этой транзакции ради более быстрого подтверждения?\n\nДополнительная комиссия майнерам:</string>
 
-    <string name="options_sign">Sign message</string>
+    <string name="options_sign">Подписать сообщение</string>
 
-    <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
+    <string name="trusted_node_pow_failed">Данные о доказательстве работы, сообщённые вашей доверенной нодой, не проходят проверку. Пожалуйста, проверьте конфигурацию.</string>
 
-    <string name="options_fees">Show current miners\' fees</string>
-    <string name="current_fee_selection">Your fee selection is set to:</string>
-    <string name="current_hi_fee_value">Current high fee:</string>
-    <string name="current_mid_fee_value">Current normal fee:</string>
-    <string name="current_lo_fee_value">Current low fee:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Set your custom fee in sat/b.</string>
-    <string name="custom_fee_too_low">Custom fee is set too low.</string>
-    <string name="custom_fee_too_high">Custom fee is set too high.</string>
+    <string name="options_fees">Показать текущие комиссии майнерам</string>
+    <string name="current_fee_selection">Ваш текущий выбор комиссии:</string>
+    <string name="current_hi_fee_value">Высокая комиссия сейчас:</string>
+    <string name="current_mid_fee_value">Нормальная комиссия сейчас:</string>
+    <string name="current_lo_fee_value">Низкая комиссия сейчас:</string>
+    <string name="slash_sat">сат/байт</string>
+    <string name="set_sat">Установите своё значение комиссии в сат/байт.</string>
+    <string name="custom_fee_too_low">Комиссия слишком мала.</string>
+    <string name="custom_fee_too_high">Комиссия слишком велика.</string>
 
-    <string name="cpfp_spent">CPFP transaction sent.</string>
-    <string name="rbf_spent">RBF transaction sent.</string>
-    <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
-    <string name="cannot_create_change_output">Cannot create change output.</string>
-    <string name="cannot_create_cpfp">Cannot create CPFP transaction.</string>
+    <string name="cpfp_spent">CPFP-транзакция отправлена.</string>
+    <string name="rbf_spent">RBF-транзакция отправлена.</string>
+    <string name="cannot_output_dust">Не удаётся собрать транзакцию со слишком малым выходом.</string>
+    <string name="cannot_create_change_output">Не удаётся создать выход для сдачи.</string>
+    <string name="cannot_create_cpfp">Не удаётся создать CPFP-транзакцию.</string>
 
-    <string name="error_reading_payload">Error reading payload. Please try again.</string>
+    <string name="error_reading_payload">Ошибка чтения полезных данных. Попробуйте ещё раз.</string>
 
-    <string name="utxo_sign">Sign message</string>
-    <string name="utxo_sign_text1">Sign message using this private key?</string>
-    <string name="utxo_sign_text2">Signed using utxo address.</string>
-    <string name="utxo_sign_text3">Signed using utxo address.</string>
+    <string name="utxo_sign">Подписать сообщение</string>
+    <string name="utxo_sign_text1">Подписать сообщение этим приватным ключом?</string>
+    <string name="utxo_sign_text2">Подписано адресом непотраченного выхода.</string>
+    <string name="utxo_sign_text3">Подписано адресом непотраченного выхода.</string>
 
-    <string name="recovery_checkup">Recovery Checkup</string>
-    <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
-    <string name="mnemonic">Mnemonic</string>
-    <string name="recovery_checkup_finish">I\'VE SECURED MY RECOVERY INFO</string>
-    <string name="pin_reminder">As a reminder, your PIN code is:</string>
+    <string name="recovery_checkup">Данные для восстановления</string>
+    <string name="recovery_checkup_message">Сейчас будет показана мнемоника, необходимая для восстановления вашего кошелька, и парольная фраза. Никому не позволяйте видеть ваш экран в этот момент. Эта информация НЕ БУДЕТ показана повторно.</string>
+    <string name="mnemonic">Мнемоника</string>
+    <string name="recovery_checkup_finish">Я ЗАПИСАЛ СВОИ ДАННЫЕ ДЛЯ ВОССТАНОВЛЕНИЯ</string>
+    <string name="pin_reminder">Напоминаем вам ваш PIN-код:</string>
 
-    <string name="opendime_confirmed_balance">Confirmed Balance</string>
-    <string name="opendime_privkey">Private Key</string>
-    <string name="opendime_verified">VERIFIED</string>
-    <string name="opendime_valid_key">Valid private key on device</string>
-    <string name="opendime_not_verified">CANNOT VERIFY</string>
-    <string name="opendime_no_valid_key">Cannot validate private key on device</string>
-    <string name="opendime_view">VIEW</string>
+    <string name="opendime_confirmed_balance">Подтверждённый баланс</string>
+    <string name="opendime_privkey">ПРИВАТНЫЙ КЛЮЧ</string>
+    <string name="opendime_verified">ПРОВЕРЕН</string>
+    <string name="opendime_valid_key">Приватный ключ на устройстве прошёл проверку</string>
+    <string name="opendime_not_verified">НЕ ПОЛУЧАЕТСЯ ПРОВЕРИТЬ</string>
+    <string name="opendime_no_valid_key">Не удаётся проверить приватный ключ на устройстве</string>
+    <string name="opendime_view">ОБЗОР</string>
     <string name="opendime_sweep">ВТЯНУТЬ</string>
-    <string name="opendime_topup">TOP UP</string>
+    <string name="opendime_topup">ПОПОЛНИТь</string>
 
-    <string name="select_app">Select application</string>
+    <string name="select_app">Выберите приложение</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
 
     <string name="replay_protection">Риплей защита</string>
@@ -442,7 +442,7 @@
     <string name="learn_more">Узнать больше</string>
 
     <string name="paynym">PayNym</string>
-    <string name="paynyms">PayNyms</string>
+    <string name="paynyms">PayNym\'ы</string>
     <string name="claim_paynym">Запросить ваш paynym</string>
     <string name="claim_paynym_title1">Запросить ваш бесплатный PayNymID</string>
     <string name="claim_paynym_text1">Позволить вашим друзьям и контактам искать, и соединяться с вашим PayNym напрямую через совместимые Биткоин-кошельки.</string>
@@ -456,13 +456,13 @@
     <string name="claim_paynym_prompt">Затребовать мой PayNymID и добавить мой публичный PayNym код к PayNym.is?</string>
 
     <string name="bip47_notif_tx_insufficient_funds_1">Добавление PayNym к вашим контактам требует единовременной комиссии для создания записи в блокчейне. Оплатить</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC в свой кошелёк и попробуйте снова.</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC в свой кошелёк и попробуйте ещё раз.</string>
     <string name="help">Помощь</string>
 
     <string name="passphrase_disclaimer">Я понимаю, что Samourai не может обеспечить поддержку в случае потерянных или забытых парольных фраз. Samourai не может знать мою парольную фразу.</string>
     <string name="confirm_pin_code">Подтвердить ПИН</string>
-    <string name="re_enter_your_pin_code">Установить ПИН снова</string>
-    <string name="re_enter_a_passphrase">Ввести парольную фразу снова</string>
+    <string name="re_enter_your_pin_code">Установить ПИН ещё раз</string>
+    <string name="re_enter_a_passphrase">Ввести парольную фразу ещё раз</string>
     <string name="create_a_passphrase">Создать парольную фразу</string>
     <string name="create_a_secure_passphrase_for_your_wallet">Создайте безопасную парольную фразу для своего кошелька</string>
     <string name="set_pin_code">Установить ПИН</string>
@@ -518,7 +518,7 @@
 
   <string name="use_bech32">Используйте адрес bech32</string>
 
-  <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущим списком выходов транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте снова с изменённым множестовом непотраченных выходов.</string>
+  <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущим списком выходов транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с изменённым множестовом непотраченных выходов.</string>
   <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL выходов транзакций.</string>
 
   <string name="insufficient_fee">Недостаточная комиссия</string>
