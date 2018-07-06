@@ -145,10 +145,10 @@
     <string name="please_wait">Пожалуйста, подождите...</string>
     <string name="random_key_error">Ошибка случайного ключа</string>
     <string name="login_error">Ошибка входа</string>
-    <string name="wallet_created_ok">Кошелёк успешно создан.</string>
-    <string name="wallet_created_ko">Ошибка создания кошелька.</string>
-    <string name="wallet_restored_ok">Кошелёк успешно восстановлен.</string>
-    <string name="wallet_restored_ko">Ошибка восстановления кошелька.</string>
+    <string name="wallet_created_ok">Кошелёк успешно создан</string>
+    <string name="wallet_created_ko">Ошибка создания кошелька</string>
+    <string name="wallet_restored_ok">Кошелёк успешно восстановлен</string>
+    <string name="wallet_restored_ko">Ошибка восстановления кошелька</string>
 
     <string name="address_used_previously">Вы уже использовали этот адрес ранее! Повторное использование адресов вредит вашей конфиденциальности.</string>
 
@@ -266,8 +266,8 @@
 
     <string name="cannot_recognize_privkey">Не удаётся распознать приватный ключ</string>
     <string name="cannot_sweep_privkey">Ошибка втягивания приватного ключа</string>
-    <string name="please_wait_sending">Отправляем транзакцию. Пожалуйста, подождите.</string>
-    <string name="please_wait_ricochet">Проходим Ricochet-очередь. Пожалуйста, подождите.</string>
+    <string name="please_wait_sending">Отправляем транзакцию. Пожалуйста, подождите</string>
+    <string name="please_wait_ricochet">Проходим Ricochet-очередь. Пожалуйста, подождите</string>
 
     <string name="change_is_dust">Сдача с этой транзакции чересчур мала. Попробуйте ещё раз, уменьшив количество отправляемых средств или потратьте их все.</string>
 
@@ -290,9 +290,9 @@
     <string name="action_ricochet_replay">Отправить Ricochet ещё раз</string>
     <string name="ricochet_replay">Вы хотите повторно отправить эту Ricochet-трату?</string>
     <string name="ricochet_not_broadcast_replay">Возникла проблема с отправкой вашей Ricochet-траты. Вы хотите попробовать отправить её повторно?</string>
-    <string name="no_ricochet_replay">Не удалось найти Ricochet-трату для повторной отправки.</string>
-    <string name="no_ricochet_display">Не удалось найти скрипт Ricochet\'а для отображения.</string>
-    <string name="ricochet_broadcast">Ваша Ricochet-трата была отправлена.</string>
+    <string name="no_ricochet_replay">Не удалось найти Ricochet-трату для повторной отправки</string>
+    <string name="no_ricochet_display">Не удалось найти скрипт Ricochet\'а для отображения</string>
+    <string name="ricochet_broadcast">Ваша Ricochet-трата была отправлена</string>
 
     <string name="bip47_cannot_identify_outpoint">Не удаётся замаскировать отправляемый платёжный код</string>
     <string name="bip47_cannot_compose_notif_tx">Не удаётся собрать транзакцию-извещение</string>
@@ -306,7 +306,7 @@
     <string name="trusted_node_password_hint">rpc-пароль</string>
     <string name="trusted_node_not_valid">Пожалуйста, укажите верные данные своей доверенной ноды.</string>
     <string name="trusted_node_ko">Не удалось определить ноду. Пожалуйста, проверьте конфигурацию.</string>
-    <string name="trusted_node_error">Не удаётся связаться с предложенной доверенной нодой.</string>
+    <string name="trusted_node_error">Не удаётся связаться с предложенной доверенной нодой</string>
     <string name="trusted_node_tx_error">Транзакция дала сбой на доверенной ноде.</string>
     <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Samourai поддерживает Bitcoin Core 0.13.1 и выше.</string>
     <string name="trusted_node_tx_sent">Транзакция отправлена через доверенную ноду.</string>
@@ -336,15 +336,15 @@
     <string name="current_mid_fee_value">Нормальная комиссия сейчас:</string>
     <string name="current_lo_fee_value">Низкая комиссия сейчас:</string>
     <string name="slash_sat">сат/байт</string>
-    <string name="set_sat">Установите своё значение комиссии в сат/байт.</string>
-    <string name="custom_fee_too_low">Комиссия слишком мала.</string>
-    <string name="custom_fee_too_high">Комиссия слишком велика.</string>
+    <string name="set_sat">Установите своё значение комиссии в сат/байт</string>
+    <string name="custom_fee_too_low">Комиссия слишком мала</string>
+    <string name="custom_fee_too_high">Комиссия слишком велика</string>
 
-    <string name="cpfp_spent">CPFP-транзакция отправлена.</string>
-    <string name="rbf_spent">RBF-транзакция отправлена.</string>
-    <string name="cannot_output_dust">Не удаётся собрать транзакцию со слишком малым выходом.</string>
-    <string name="cannot_create_change_output">Не удаётся создать выход для сдачи.</string>
-    <string name="cannot_create_cpfp">Не удаётся создать CPFP-транзакцию.</string>
+    <string name="cpfp_spent">CPFP-транзакция отправлена</string>
+    <string name="rbf_spent">RBF-транзакция отправлена</string>
+    <string name="cannot_output_dust">Не удаётся собрать транзакцию со слишком малым выходом</string>
+    <string name="cannot_create_change_output">Не удаётся создать выход для сдачи</string>
+    <string name="cannot_create_cpfp">Не удаётся создать CPFP-транзакцию</string>
 
     <string name="error_reading_payload">Ошибка чтения основных данных. Попробуйте ещё раз.</string>
 
@@ -445,7 +445,7 @@
     <string name="paynyms">PayNym\'ы</string>
     <string name="claim_paynym">Запросить ваш paynym</string>
     <string name="claim_paynym_title1">Запросить ваш бесплатный PayNymID</string>
-    <string name="claim_paynym_text1">Позволить вашим друзьям и контактам искать и соединяться с вашим PayNym напрямую через совместимые биткоин-кошельки.</string>
+    <string name="claim_paynym_text1">Это позволит вашим друзьям и контактам искать и соединяться с вашим PayNym напрямую через совместимые биткоин-кошельки.</string>
     <string name="claim_paynym_title2">Достоинства PayNymID</string>
     <string name="claim_paynym_text2a">Уникальное имя и образ хэшируются с вашим paynym-кодом. Повторение идентификаторов исключено!</string>
     <string name="claim_paynym_text2b">Нет проверок! Ваше имя и образ основываются на коде paynym, а не каком-либо национальном идентификационном документе.</string>
@@ -459,7 +459,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC и попробуйте ещё раз.</string>
     <string name="help">Помощь</string>
 
-    <string name="passphrase_disclaimer">Я понимаю, что Samourai не сможет мне помочь если я забуду или потеряю свою парольную фразу. У Samourai нет никаких данных о ней.</string>
+    <string name="passphrase_disclaimer">Я понимаю, что Samourai не сможет мне помочь, если я забуду или потеряю свою парольную фразу. У Samourai нет никаких данных о ней.</string>
     <string name="confirm_pin_code">Подтвердить ПИН</string>
     <string name="re_enter_your_pin_code">Введите ПИН ещё раз</string>
     <string name="re_enter_a_passphrase">Введите парольную фразу ещё раз</string>
@@ -491,11 +491,11 @@
   <string name="get_help_restore">Восстановить кошелёк: Помощь</string>
 
   <string name="fee">Комиссия сети</string>
-    <string name="fee_low_priority">Низкий приоритет: оценка 24</string>
-    <string name="fee_mid_priority">Нормальный приоритет: оценка 6</string>
-    <string name="fee_high_priority">Высокий приоритет: оценка 2</string>
-    <string name="fee_custom_priority">Моя комиссия: оценка</string>
-    <string name="blocks_to_cf">блоков перед подтверждением</string>
+    <string name="fee_low_priority">Низкий приоритет: оценка 24 блока</string>
+    <string name="fee_mid_priority">Нормальный приоритет: оценка 6 блоков</string>
+    <string name="fee_high_priority">Высокий приоритет: оценка 2 блока</string>
+    <string name="fee_custom_priority">Моя комиссия: оценка блоков</string>
+    <string name="blocks_to_cf">перед подтверждением</string>
 
   <string name="invalid_mnemonic_word">Неправильное слово BIP39-мнемоники</string>
   <string name="invalid_mnemonic">Неправильная BIP39-мнемоника</string>
@@ -518,7 +518,7 @@
 
   <string name="use_bech32">Используйте bech32-адрес</string>
 
-  <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущим списком выходов транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
+  <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущими выходами транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
   <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL-выходов транзакций.</string>
 
   <string name="insufficient_fee">Недостаточная комиссия</string>
