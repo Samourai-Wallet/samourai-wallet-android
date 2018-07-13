@@ -33,7 +33,7 @@
     <string name="options_xpub2">Показать расширенный приватный ключ для BIP44-аккаунта.</string>
     <string name="options_xpub49">Показать segwit YPUB</string>
     <string name="options_xpub49_2">Показать расширенный приватный ключ для BIP49-segwit-аккаунта (в P2SH-виде).</string>
-    <string name="options_xpub84">Показать ыegwit ZPUB</string>
+    <string name="options_xpub84">Показать segwit ZPUB</string>
     <string name="options_xpub84_2">Показать расширенный приватный ключ для BIP84-segwit-аккаунта (bech32).</string>
     <string name="options_wipe">Безопасное удаление кошелька</string>
     <string name="options_wipe2">Удалить этот кошелёк с телефона надёжным способом.</string>
