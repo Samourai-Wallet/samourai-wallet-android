@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
 
-    <string name="options_cat_prefs">Обозреватель блоков, валюты</string>
+    <string name="options_cat_prefs">Проводник блоков, валюты</string>
     <string name="options_cat_stealth">Маскировка</string>
     <string name="options_cat_remote">Удалённое управление</string>
     <string name="options_cat_wallet">Кошелёк</string>
@@ -43,13 +43,13 @@
     <string name="options_remote_commands2">Разрешить принимать удалённые команды через SMS.</string>
     <string name="options_currency">Местный курс</string>
     <string name="options_currency2">Выберите биржу и вашу местную фиатную валюту.</string>
-    <string name="options_blockexplorer">Обозреватель блоков</string>
-    <string name="options_blockexplorer2">Обозреватель, который будет использоваться для просмотра подробностей о транзакциях.</string>
+    <string name="options_blockexplorer">Проводник блоков</string>
+    <string name="options_blockexplorer2">Проводник, который будет использоваться для просмотра подробностей о транзакциях.</string>
     <string name="options_sim_switch">Защита от замены SIM</string>
     <string name="options_sim_switch2">Посылать SMS на доверенный номер телефона при замене SIM-карты.</string>
-    <string name="options_use_telno">Использовать довренный номер телефона для удалённого управления</string>
+    <string name="options_use_telno">Использовать доверенный номер телефона для удалённого управления</string>
     <string name="options_use_telno2">Исполнять удалённые команды, полученные только с доверенного номера телефона.</string>
-    <string name="options_alert_telno">Довренный номер</string>
+    <string name="options_alert_telno">Доверенный номер</string>
     <string name="options_alert_telno2">Доверенный номер телефона, с которого вы можете эксклюзивно разрешить приём команд (в международном формате без пробелов, например: +79990001122).</string>
     <string name="options_hash">Хэш APK-файла</string>
     <string name="options_hash2">Получить SHA-256-хэш установленного APK-файла этого приложения (может быть скопирован в буфер обмена).</string>
@@ -68,7 +68,7 @@
     <string name="options_txs">Транзакции</string>
     <string name="options_boltzmann">STONEWALL-платежи</string>
     <string name="options_boltzmann_2">Платежи будут использовать алгоритм STONEWALL для запутывания следов.</string>
-    <string name="options_utxo">Показать непотраченные выходы</string>
+    <string name="options_utxo">Показать UTXO</string>
     <string name="options_trusted_node">Указать доверенную ноду</string>
     <string name="options_trusted_node2">Укажите свою собственную биткоин-ноду для отправки транзакций через неё.</string>
     <string name="options_use_trusted_node">Использовать доверенную ноду</string>
@@ -80,7 +80,7 @@
     <string name="options_passphrase_test2">Убедиться в возможности доступа к кошельку и поддержки резервной копии.</string>
     <string name="options_send_backup_to_support">Отправить резервную копию в техподдержку</string>
     <string name="options_send_backup_to_support2">Отослать резервную копию кошелька в техподдержку. Не содержит информации о приватном ключе.</string>
-    <string name="options_fee_provider">Оценщик комиссий</string>
+    <string name="options_fee_provider">Калькулятор комиссий</string>
     <string name="options_fee_provider2">Укажите источник, из которого будут браться данные о комиссиях за транзакцию.</string>
     <string name="options_broadcast_on">Отправлять транзакции</string>
     <string name="options_broadcast_on2">Снимите галку для отключения автоотправки. Подписанная транзакция в текстовом виде будет копироваться в буфер обмена.</string>
@@ -204,7 +204,7 @@
     <string name="received">Получено</string>
     <string name="sent">Транзакция отправлена</string>
     <string name="total">Всего</string>
-    <string name="export_to_clipboard">Скопировать в буфер обмена</string>
+    <string name="export_to_clipboard">Скопировать в буфер</string>
     <string name="export_to_email">Переслать на почту</string>
     <string name="encryption_error">Произошла обишка при шифровании резервной копии вашего кошелька. Попробуйте ещё раз.</string>
     <string name="import_backup">Из резервной копии</string>
@@ -254,7 +254,7 @@
     <string name="bip47_sign_text2">Подписано моим BIP47 notification-адресом.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Этот платёжный канал ожидает одного подтверждения прежде чем разрешить отправку средств. Хотите отказаться от предыдущей попытки и попробовать отправить извещение заново?></string>
 
-    <string name="rbf_incoming">Входящая транзакция поддерживает replace-by-fee. Посмотреть в обозревателе блоков?</string>
+    <string name="rbf_incoming">Входящая транзакция поддерживает replace-by-fee. Посмотреть в проводнике блоков?</string>
 
     <string name="invalid_passphrase">Неверная парольная фраза</string>
     <string name="passphrase">Парольная фраза</string>
