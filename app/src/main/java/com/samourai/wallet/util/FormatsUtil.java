@@ -163,7 +163,7 @@ public class FormatsUtil {
 				if(matcher.find() && matcher.group(4) != null)    {
 					String amt = matcher.group(4);
 					try	{
-						double amount = Double.valueOf(amt);
+						double amount = Double.parseDouble(amt);
 						return Long.toString((long)(amount * 1e8));
 					}
 					catch(NumberFormatException nfe)	{
