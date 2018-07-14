@@ -88,7 +88,7 @@
     <string name="options_segwit_2">Генерировать segwit-адреса для получения входящих транзакций.</string>
     <string name="options_broadcast_hex">Отправлять транзакции в hex</string>
     <string name="options_broadcast_hex2">Отправлять подписанные транзакции в шестнадцатеричном формате.</string>
-    <string name="options_like_typed_change">Сдача на тот же тип адреса/string>
+    <string name="options_like_typed_change">Сдача на тот же тип адреса</string>
     <string name="options_like_typed_change2">Отправлять сдачу на тот же тип адреса, с которого она была отправлена. Отключите, чтобы всегда получать сдачу на segwit-адреса.</string>
     <string name="options_haptic">Вибрация при вводе PIN</string>
     <string name="options_haptic_2">Вибрировать при нажатии на каждую кнопку при вводе PIN.</string>
