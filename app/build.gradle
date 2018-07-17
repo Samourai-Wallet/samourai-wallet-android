@@ -70,7 +70,6 @@ dependencies {
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'com.neovisionaries:nv-websocket-client:1.9'
     implementation 'com.baoyz.swipemenulistview:library:1.2.1'
-    implementation 'org.json:json:20140107'
     implementation 'commons-io:commons-io:2.5'
     implementation 'commons-codec:commons-codec:1.4'
     implementation 'org.apache.commons:commons-lang3:3.3'
