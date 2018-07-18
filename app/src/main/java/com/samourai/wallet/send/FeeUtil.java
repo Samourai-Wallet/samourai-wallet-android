@@ -174,23 +174,6 @@ public class FeeUtil  {
         }
     }
 
-    public Pair<Integer,Integer> getOutpointCount(List<MyTransactionOutPoint> outpoints) {
-
-        int p2sh_p2wpkh = 0;
-        int p2pkh = 0;
-
-        for(MyTransactionOutPoint out : outpoints)   {
-            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), out.getAddress()).isP2SHAddress())    {
-                p2sh_p2wpkh++;
-            }
-            else   {
-                p2pkh++;
-            }
-        }
-
-        return Pair.of(p2pkh, p2sh_p2wpkh);
-    }
-
     public Triple<Integer,Integer,Integer> getOutpointCount(Vector<MyTransactionOutPoint> outpoints) {
 
         int p2wpkh = 0;

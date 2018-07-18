@@ -87,12 +87,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 import static java.lang.System.currentTimeMillis;
 
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
@@ -880,6 +882,7 @@ public class BatchSendActivity extends Activity {
 
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         int p2pkh = 0;
+        int p2sh_p2wpkh = 0;
         int p2wpkh = 0;
         long totalValueSelected = 0L;
         int totalSelected = 0;
@@ -891,10 +894,11 @@ public class BatchSendActivity extends Activity {
             totalValueSelected += utxo.getValue();
             totalSelected += utxo.getOutpoints().size();
 
-            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+            Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
             p2pkh += outpointTypes.getLeft();
+            p2sh_p2wpkh += outpointTypes.getMiddle();
             p2wpkh += outpointTypes.getRight();
-            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, receivers.size() + 1).longValue()))    {
+            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, receivers.size() + 1).longValue()))    {
                 break;
             }
         }
@@ -913,8 +917,8 @@ public class BatchSendActivity extends Activity {
             }
 
         }
-        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
-        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size() + 1);
+        Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(outpoints));
+        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), receivers.size() + 1);
         Log.d("BatchSendActivity", "fee:" + fee.longValue());
 
         if(amount + fee.longValue() > balance)    {
