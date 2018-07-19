@@ -25,7 +25,7 @@ public class ExchangeRateFactory	{
     private static ExchangeRateFactory instance = null;
 
     private static String[] currencies = {
-            "CNY", "EUR", "GBP", "RUB", "USD"
+            "CNY", "EUR", "GBP", "RUB", "USD", "NOK"
     };
 
     private static String[] currencyLabels = {
@@ -33,7 +33,8 @@ public class ExchangeRateFactory	{
             "Euro - EUR",
             "British Pound Sterling - GBP",
             "Chinese Yuan - CNY",
-            "Russian Rouble - RUB"
+            "Russian Rouble - RUB",
+            "Norwegian Krone - NOK"
     };
 
     private static String[] currencyLabelsBTCe = {

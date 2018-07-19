@@ -369,6 +369,16 @@ public class MainActivity2 extends Activity {
 
                 response = null;
                 try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_nok");
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                response = null;
+                try {
                     response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
                     ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
                     ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
