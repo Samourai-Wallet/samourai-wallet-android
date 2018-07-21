@@ -61,12 +61,12 @@
         android:text="@string/ricochet_hops_msg"
         android:textColor="#afd2d2d2"
         android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintEnd_toStartOf="@+id/ricochet_hops_switch"
         app:layout_constraintStart_toStartOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/ricochet_hops_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

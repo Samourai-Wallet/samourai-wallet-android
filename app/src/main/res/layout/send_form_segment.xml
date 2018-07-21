@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_view_switcher"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out"
     android:layout_width="match_parent"
     android:layout_height="160dp">
 
@@ -175,7 +177,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="@font/roboto_mono"
             android:maxLines="2"
-            android:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d"
+            tools:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

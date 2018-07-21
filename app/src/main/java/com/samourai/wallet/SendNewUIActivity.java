@@ -22,6 +22,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -32,13 +34,12 @@ import java.util.Objects;
 
 public class SendNewUIActivity extends AppCompatActivity {
 
-    private Button reviewButton;
-    private ViewSwitcher viewSwitcher;
-    private FrameLayout mainPager;
-    private View main, review;
-    private SendTransactionDetailsView detailsView;
+    private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
-    private EditText toEditText,btcEditText,fiatEditText;
+    private EditText toEditText, btcEditText, fiatEditText;
+    private Button btnReview, btnSend;
+    private Switch ricochetHopsSwitch;
+    private Boolean isOnReviewPage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +48,64 @@ public class SendNewUIActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_send));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
-        detailsView = findViewById(R.id.mainPager);
+
+        //CustomView for showing and hiding body of th UI
+        sendTransactionDetailsView = findViewById(R.id.sendTransactionDetailsView);
+
+        //ViewSwitcher Element for toolbar section of the UI.
+        //we can switch between Form and review screen with this element
         amountViewSwitcher = findViewById(R.id.toolbar_view_switcher);
+
+        //Input elements from toolbar section of the UI
         toEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
         fiatEditText = findViewById(R.id.amountFiat);
 
+        //view elements from review segment and transaction segment can be access through respective
+        //methods which returns root viewGroup
+        btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
+        ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
+
+        btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
 
 
+        btnReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                review();
+            }
+        });
+
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(SendNewUIActivity.this, "Send Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    private void review() {
+        amountViewSwitcher.showNext();
+        sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
+        isOnReviewPage = true;
+    }
+
+    private void backToTransactionView() {
+        amountViewSwitcher.showPrevious();
+        sendTransactionDetailsView.showTransaction();
+        isOnReviewPage = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isOnReviewPage) {
+            backToTransactionView();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

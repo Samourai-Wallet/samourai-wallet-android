@@ -226,6 +226,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="168dp"
+        android:id="@+id/ricochet_hops_layout"
         android:visibility="gone"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">
@@ -318,6 +319,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="140dp"
+        android:id="@+id/stone_wall_review_layout"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">
 
@@ -429,15 +431,15 @@
             android:padding="2dp"
             android:src="@drawable/ic_send_final"
             android:translationZ="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/button2"
+            app:layout_constraintBottom_toTopOf="@+id/send_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/button2"
+            app:layout_constraintTop_toTopOf="@+id/send_btn"
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/send_btn"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:background="@drawable/button_green"
