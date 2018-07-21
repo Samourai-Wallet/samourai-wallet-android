@@ -1,5 +1,6 @@
 package com.samourai.wallet.util;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 
+import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.receivers.InterceptOutgoingReceiver;
 import com.samourai.wallet.receivers.SMSReceiver;
 import com.samourai.wallet.util.PrefsUtil;
@@ -55,7 +57,7 @@ public class ReceiversUtil  {
         boolean hideIcon = PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false);
         boolean acceptRemote = PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false);
 
-        if(hideIcon) {
+        if(hideIcon && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)) {
             if(!receivers.contains(ocReceiver)) {
                 ocFilter = new IntentFilter();
                 ocFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
@@ -72,7 +74,7 @@ public class ReceiversUtil  {
             }
         }
 
-        if(acceptRemote) {
+        if(acceptRemote && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.RECEIVE_SMS)) {
             if(!receivers.contains(isReceiver)) {
                 isFilter = new IntentFilter();
                 isFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
@@ -95,7 +97,7 @@ public class ReceiversUtil  {
         //
         // check for SIM switch
         //
-        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false) == true && PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, "").length() > 0) {
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false) == true && PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, "").length() > 0 && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.READ_PHONE_STATE)) {
 
             new Thread() {
                 public void run() {
