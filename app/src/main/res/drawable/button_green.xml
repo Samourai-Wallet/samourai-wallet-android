@@ -10,8 +10,7 @@
 
     <item>
         <shape android:shape="rectangle">
-            <!-- put your background color here-->
-            <solid android:color="@color/green_ui_2" />
+             <solid android:color="@color/green_ui_2" />
         </shape>
     </item>
 

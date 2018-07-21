@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!-- in drawable folder-->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#FF2349C4">
+    android:color="#fc002393">
 
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
@@ -10,8 +10,7 @@
 
     <item>
         <shape android:shape="rectangle">
-            <!-- put your background color here-->
-            <solid android:color="@color/blue_ui_2" />
+             <solid android:color="@color/blue_ui_2" />
         </shape>
     </item>
 

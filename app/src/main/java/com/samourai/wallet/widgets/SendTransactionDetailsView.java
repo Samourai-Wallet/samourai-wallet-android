@@ -40,6 +40,14 @@ public class SendTransactionDetailsView extends FrameLayout {
         addView(transactionView);
     }
 
+    public View getTransactionReview() {
+        return transactionReview;
+    }
+
+    public View getTransactionView() {
+        return transactionView;
+    }
+
     public void showReview(boolean recochet) {
         TransitionSet set = new TransitionSet();
         set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
