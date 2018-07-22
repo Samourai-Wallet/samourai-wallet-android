@@ -38,7 +38,6 @@ public class EntropyBar extends View {
     public EntropyBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-
     }
 
     private void init() {
@@ -48,19 +47,29 @@ public class EntropyBar extends View {
         mBarPaint.setStrokeCap(Paint.Cap.BUTT);
         mBarWidth = (getWidth() / maxBars) - (mBarWidth * maxBars);
         mBarHeight = (getHeight() / maxBars);
-//        setDisable();
     }
 
-    private void setDisable() {
+    public void disable() {
         disable = true;
         totalBars = maxBars;
         mBarPaint.setColor(ContextCompat.getColor(getContext(), R.color.red));
         invalidate();
     }
 
-    private void setEnable() {
-        disable = true;
+    public void enable() {
+        disable = false;
         mBarPaint.setColor(ContextCompat.getColor(getContext(), R.color.green_ui_2));
+        invalidate();
+    }
+
+    public void setRange(int bars) {
+        this.totalBars = bars;
+        this.enable();
+        invalidate();
+    }
+
+    public void setMaxBars(int maxBars) {
+        this.maxBars = maxBars;
         invalidate();
     }
 
@@ -83,8 +92,7 @@ public class EntropyBar extends View {
         for (int i = 0; i < totalBars; i++) {
             int left = getWidth() - ((mBarWidth * i) + mBarMargin);
             int right = getWidth() - (mBarWidth * (i + 1));
-            int bottom = (mBarHeight * i)+6;
-
+            int bottom = !disable ? (mBarHeight * i) + 6 : getHeight() - 2;
             canvas.drawRect(left, getHeight(), right, bottom, mBarPaint);
         }
     }

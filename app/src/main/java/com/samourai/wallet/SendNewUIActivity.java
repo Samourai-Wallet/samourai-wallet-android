@@ -27,6 +27,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 
 import java.util.Objects;
@@ -40,6 +41,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch;
     private Boolean isOnReviewPage = false;
+    private EntropyBar entropyBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         btcEditText = findViewById(R.id.amountBTC);
         fiatEditText = findViewById(R.id.amountFiat);
 
+        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
         //view elements from review segment and transaction segment can be access through respective
         //methods which returns root viewGroup
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
@@ -91,6 +94,20 @@ public class SendNewUIActivity extends AppCompatActivity {
         amountViewSwitcher.showNext();
         sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
         isOnReviewPage = true;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                entropyBar.disable();
+            }
+        },4000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                entropyBar.setRange(3);
+            }
+        },7000);
     }
 
     private void backToTransactionView() {
