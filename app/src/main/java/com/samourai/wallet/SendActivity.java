@@ -1154,14 +1154,6 @@ public class SendActivity extends Activity {
                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                            /*
-                            final ProgressDialog progress = new ProgressDialog(SendActivity.this);
-                            progress.setCancelable(false);
-                            progress.setTitle(R.string.app_name);
-                            progress.setMessage(getString(R.string.please_wait_sending));
-                            progress.show();
-                            */
-
                             final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
                             for(UTXO u : selectedUTXO)   {
                                 outPoints.addAll(u.getOutpoints());
@@ -1518,6 +1510,7 @@ public class SendActivity extends Activity {
                     builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
+                            /*
                             try {
                                 // reset change index upon 'NO'
                                 if(changeType == 84)    {
@@ -1545,6 +1538,16 @@ public class SendActivity extends Activity {
                                     }
                                 });
                             }
+                            */
+
+                            SendActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btSend.setActivated(true);
+                                    btSend.setClickable(true);
+//                                        dialog.dismiss();
+                                }
+                            });
 
                         }
                     });

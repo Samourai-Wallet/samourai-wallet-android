@@ -537,6 +537,15 @@
     <string name="show_qr_code">Show QR Code</string>
     <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
 
+    <string name="tx_creating_ok">Creating transaction...</string>
+    <string name="tx_creating_ko">Cannot create transaction</string>
+    <string name="tx_signing_ok">Signing transaction...</string>
+    <string name="tx_signing_ko">Cannot sign transaction</string>
+    <string name="tx_broadcast_ok">Broadcasting transaction...</string>
+    <string name="tx_broadcast_ko">Cannot broadcast transaction</string>
+    <string name="tx_sent_ok">Transaction sent</string>
+    <string name="tx_sent_ko">Transaction not sent</string>
+
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>

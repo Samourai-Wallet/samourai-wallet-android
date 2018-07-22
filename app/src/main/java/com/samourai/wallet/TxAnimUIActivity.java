@@ -64,10 +64,7 @@ import java.text.SimpleDateFormat;
 
 public class TxAnimUIActivity extends AppCompatActivity {
 
-    private ArcProgress progress = null;
     private TransactionProgressView progressView = null;
-
-    private boolean showSuccess = false;
 
     private int arcdelay = 800;
     private long signDelay = 2000L;
@@ -82,269 +79,193 @@ public class TxAnimUIActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_ui2);
 
         progressView = findViewById(R.id.transactionProgressView);
-
-        /*
-        progressView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (showSucces) {
-                    successTx();
-                } else {
-                    failureTx();
-                }
-                showSucces = !showSucces;
-            }
-        });
-        */
-
         progressView.reset();
-
-        progressView.setTxStatusMessage("Creating transaction...");
+        progressView.setTxStatusMessage(R.string.tx_creating_ok);
         progressView.getmArcProgress().startArc1(arcdelay);
 
         // make tx
         final Transaction tx = SendFactory.getInstance(TxAnimUIActivity.this).makeTransaction(0, SendParams.getInstance().getOutpoints(), SendParams.getInstance().getReceivers());
-
-        if(tx != null)    {
-            Toast.makeText(TxAnimUIActivity.this, "tx created OK", Toast.LENGTH_SHORT).show();
+        if(tx == null)    {
+            failTx(R.string.tx_creating_ko);
         }
+        else    {
+//            Toast.makeText(TxAnimUIActivity.this, "tx created OK", Toast.LENGTH_SHORT).show();
 
-        final RBFSpend rbf;
-        if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true) {
+            final RBFSpend rbf;
+            if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true) {
 
-            rbf = new RBFSpend();
+                rbf = new RBFSpend();
 
-            for (TransactionInput input : tx.getInputs()) {
+                for (TransactionInput input : tx.getInputs()) {
 
-                boolean _isBIP49 = false;
-                boolean _isBIP84 = false;
-                String _addr = null;
-                String script = Hex.toHexString(input.getConnectedOutput().getScriptBytes());
-                if (Bech32Util.getInstance().isBech32Script(script)) {
-                    try {
-                        _addr = Bech32Util.getInstance().getAddressFromScript(script);
-                        _isBIP84 = true;
-                    } catch (Exception e) {
-                        ;
-                    }
-                } else {
-                    Address _address = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                    if (_address != null) {
-                        _addr = _address.toString();
-                        _isBIP49 = true;
-                    }
-                }
-                if (_addr == null) {
-                    _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                }
-
-                String path = APIFactory.getInstance(TxAnimUIActivity.this).getUnspentPaths().get(_addr);
-                if (path != null) {
-                    if (_isBIP84) {
-                        rbf.addKey(input.getOutpoint().toString(), path + "/84");
-                    } else if (_isBIP49) {
-                        rbf.addKey(input.getOutpoint().toString(), path + "/49");
+                    boolean _isBIP49 = false;
+                    boolean _isBIP84 = false;
+                    String _addr = null;
+                    String script = Hex.toHexString(input.getConnectedOutput().getScriptBytes());
+                    if (Bech32Util.getInstance().isBech32Script(script)) {
+                        try {
+                            _addr = Bech32Util.getInstance().getAddressFromScript(script);
+                            _isBIP84 = true;
+                        } catch (Exception e) {
+                            ;
+                        }
                     } else {
-                        rbf.addKey(input.getOutpoint().toString(), path);
+                        Address _address = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        if (_address != null) {
+                            _addr = _address.toString();
+                            _isBIP49 = true;
+                        }
                     }
-                } else {
-                    String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
-                    int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
-                    rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
+                    if (_addr == null) {
+                        _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
+
+                    String path = APIFactory.getInstance(TxAnimUIActivity.this).getUnspentPaths().get(_addr);
+                    if (path != null) {
+                        if (_isBIP84) {
+                            rbf.addKey(input.getOutpoint().toString(), path + "/84");
+                        } else if (_isBIP49) {
+                            rbf.addKey(input.getOutpoint().toString(), path + "/49");
+                        } else {
+                            rbf.addKey(input.getOutpoint().toString(), path);
+                        }
+                    } else {
+                        String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
+                        int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
+                        rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
+                    }
+
                 }
 
+            } else {
+                rbf = null;
             }
 
-        } else {
-            rbf = null;
-        }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+                    progressView.getmArcProgress().startArc2(arcdelay);
+                    progressView.setTxStatusMessage(R.string.tx_signing_ok);
 
-                progressView.getmArcProgress().startArc2(arcdelay);
-                progressView.setTxStatusMessage("signing transaction...");
+                    final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx);
+                    if(_tx == null)    {
+                        failTx(R.string.tx_signing_ko);
+                    }
+                    else    {
+//                    Toast.makeText(TxAnimUIActivity.this, "tx signed OK", Toast.LENGTH_SHORT).show();
+                    }
+                    final String hexTx = new String(Hex.encode(_tx.bitcoinSerialize()));
+                    Log.d("TxAnimUIActivity", "hex tx:" + hexTx);
+                    final String strTxHash = _tx.getHashAsString();
 
-                final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx);
-                if(_tx != null)    {
-                    Toast.makeText(TxAnimUIActivity.this, "tx signed OK", Toast.LENGTH_SHORT).show();
-                }
-                final String hexTx = new String(Hex.encode(_tx.bitcoinSerialize()));
-                Log.d("TxAnimUIActivity", "hex tx:" + hexTx);
-                final String strTxHash = _tx.getHashAsString();
+                    resultHandler = new Handler();
 
-                resultHandler = new Handler();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressView.getmArcProgress().startArc3(arcdelay);
+                            progressView.setTxStatusMessage(R.string.tx_broadcast_ok);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressView.getmArcProgress().startArc3(arcdelay);
-                        progressView.setTxStatusMessage("broadcasting transaction...");
+                            if(PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
 
-                        if(PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
+                                doShowTx(hexTx, strTxHash);
 
-                            doShowTx(hexTx, strTxHash);
+                                return;
 
-                            return;
+                            }
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Looper.prepare();
+
+                                    boolean isOK = false;
+                                    String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx);
+                                    try {
+                                        if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true) {
+                                            if (TrustedNodeUtil.getInstance().isSet()) {
+                                                response = PushTx.getInstance(TxAnimUIActivity.this).trustedNode(hexTx);
+                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if (jsonObject.has("result")) {
+                                                    if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
+                                                        isOK = true;
+                                                    } else {
+                                                        Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
+                                                        failTx(R.string.tx_broadcast_ko);
+                                                    }
+                                                }
+                                            } else {
+                                                Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                                                failTx(R.string.tx_broadcast_ko);
+                                            }
+                                        } else {
+
+                                            if (response != null) {
+                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                if (jsonObject.has("status")) {
+                                                    if (jsonObject.getString("status").equals("ok")) {
+                                                        isOK = true;
+                                                    }
+                                                }
+                                            } else {
+                                                Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                                failTx(R.string.tx_broadcast_ko);
+                                            }
+                                        }
+                                    }
+                                    catch(JSONException je) {
+                                        failTx(R.string.tx_broadcast_ko);
+                                    }
+
+                                    final boolean _isOK = isOK;
+
+                                    resultHandler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(_isOK)    {
+                                                progressView.showCheck();
+                                                progressView.setTxStatusMessage(R.string.tx_sent_ok);
+                                            }
+                                            else    {
+                                                failTx(R.string.tx_sent_ko);
+                                            }
+
+                                            handleResult(_isOK, rbf, strTxHash, hexTx, _tx);
+
+                                        }
+
+                                    }, resultDelay);
+
+                                    Looper.loop();
+
+                                }
+
+                            }).start();
 
                         }
 
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
+                    }, broadcastDelay);
 
-                                Looper.prepare();
+                }
 
-                                boolean isOK = false;
-                                String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx);
-                                try {
-                                    if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true) {
-                                        if (TrustedNodeUtil.getInstance().isSet()) {
-                                            response = PushTx.getInstance(TxAnimUIActivity.this).trustedNode(hexTx);
-                                            JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if (jsonObject.has("result")) {
-                                                if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
-                                                    isOK = true;
-                                                } else {
-                                                    Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        } else {
-                                            Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                                        }
-                                    } else {
-                                        response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx);
+            }, signDelay);
 
-                                        if (response != null) {
-                                            JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if (jsonObject.has("status")) {
-                                                if (jsonObject.getString("status").equals("ok")) {
-                                                    isOK = true;
-                                                }
-                                            }
-                                        } else {
-                                            Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-                                catch(JSONException je) {
-                                    ;
-                                }
-
-                                final boolean _isOK = isOK;
-
-                                resultHandler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(_isOK)    {
-                                            progressView.showCheck();
-                                            progressView.setTxStatusMessage("transaction sent");
-                                        }
-                                        else    {
-                                            progressView.offlineMode(1200);
-                                            progressView.setTxStatusMessage("transaction signed....");
-                                            progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-                                            progressView.toggleOfflineButton();
-                                        }
-
-                                        handleResult(_isOK, rbf, strTxHash, hexTx, _tx);
-
-                                        }
-
-                                }, resultDelay);
-
-                                Looper.loop();
-
-                            }
-
-                        }).start();
-
-                    }
-
-                }, broadcastDelay);
-
-            }
-
-        }, signDelay);
+        }
 
     }
 
-/*
-    private void successTx() {
+    private void failTx(int id)   {
         progressView.reset();
 
-        progressView.setTxStatusMessage("Creating transaction...");
-        progressView.getmArcProgress().startArc1(800);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressView.getmArcProgress().startArc2(800);
-                progressView.setTxStatusMessage("signing transaction...");
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressView.getmArcProgress().startArc3(800);
-                        progressView.setTxStatusMessage("broadcasting transaction...");
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressView.showCheck();
-                                progressView.setTxStatusMessage("transaction sent");
-
-                            }
-                        }, 1500);
-                    }
-                }, 1599);
-
-            }
-        }, 2000);
-
-
+        progressView.offlineMode(1200);
+        progressView.setTxStatusMessage(R.string.tx_failed);
+        progressView.setTxSubText(id);
+//        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
+//        progressView.toggleOfflineButton();
     }
-*/
-/*
-    private void failureTx() {
-        progressView.reset();
 
-        progressView.setTxStatusMessage("Creating transaction...");
-        progressView.getmArcProgress().startArc1(800);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressView.getmArcProgress().startArc2(800);
-                progressView.setTxStatusMessage("signing transaction...");
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressView.setTxStatusMessage("broadcasting transaction...");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressView.offlineMode(1200);
-                                progressView.setTxStatusMessage("transaction signed....");
-                                progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-                                progressView.toggleOfflineButton();
-                            }
-                        }, 1400);
-                    }
-                }, 1200);
-
-
-            }
-        }, 1200);
-
-
-    }
-*/
     public void stub() {
 
         /*
@@ -676,30 +597,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 } else {
                     SendAddressUtil.getInstance().add(SendParams.getInstance().getDestAddress(), true);
                 }
-
-                /*
-                if (SendParams.getInstance().getChangeAmount() == 0L) {
-                    Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                    intent.putExtra("notifTx", false);
-                    intent.putExtra("fetch", true);
-                    LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
-                }
-
-                View view = TxAnimUIActivity.this.getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) TxAnimUIActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-
-                if (bViaMenu) {
-                    TxAnimUIActivity.this.finish();
-                } else {
-                    Intent _intent = new Intent(TxAnimUIActivity.this, BalanceActivity.class);
-                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(_intent);
-                }
-
-                */
 
                 if (SendParams.getInstance().getChangeAmount() == 0L) {
                     Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
