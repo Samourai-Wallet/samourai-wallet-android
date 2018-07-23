@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +42,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.widgets.ArcProgress;
 import com.samourai.wallet.widgets.TransactionProgressView;
 
 import org.bitcoinj.core.Address;
@@ -76,7 +74,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_ui2);
+        setContentView(R.layout.activity_tx_anim_ui);
 
         progressView = findViewById(R.id.transactionProgressView);
         progressView.reset();
