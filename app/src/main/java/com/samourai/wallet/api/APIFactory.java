@@ -12,6 +12,7 @@ import android.util.Log;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Address;
@@ -277,6 +278,8 @@ public class APIFactory	{
 
         if(jsonObject != null)  {
 
+            HashMap<String,Integer> pubkeys = new HashMap<String,Integer>();
+
             if(jsonObject.has("wallet"))  {
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
                 if(walletObj.has("final_balance"))  {
@@ -335,7 +338,25 @@ public class APIFactory	{
                                     BIP47Meta.getInstance().addUnspent(pcode, idx);
                                 }
                                 else    {
-                                    BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                    if(addrObj.has("pubkey"))    {
+                                        String pubkey = addrObj.getString("pubkey");
+                                        if(pubkeys.containsKey(pubkey))    {
+                                            int count = pubkeys.get(pubkey);
+                                            count++;
+                                            if(count == 3)    {
+                                                BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                            }
+                                            else    {
+                                                pubkeys.put(pubkey, count + 1);
+                                            }
+                                        }
+                                        else    {
+                                            pubkeys.put(pubkey, 1);
+                                        }
+                                    }
+                                    else    {
+                                        BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                    }
                                 }
                                 if(addr != null)  {
                                     bip47_amounts.put(addr, amount);
@@ -1407,11 +1428,14 @@ public class APIFactory	{
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
         JSONObject jsonObject = getXPUB(addresses, false);
+        Log.d("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
         int ret = 0;
 
         try {
 
             if(jsonObject != null && jsonObject.has("addresses"))  {
+
+                HashMap<String,Integer> pubkeys = new HashMap<String,Integer>();
 
                 JSONArray addressArray = (JSONArray)jsonObject.get("addresses");
                 JSONObject addrObj = null;
@@ -1423,23 +1447,54 @@ public class APIFactory	{
                     String pcode = null;
                     int idx = -1;
                     if(addrObj.has("address"))  {
-                        addr = (String)addrObj.get("address");
-                        pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
-                        idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+
+                        if(addrObj.has("pubkey"))    {
+                            addr = (String)addrObj.get("pubkey");
+                            pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                            idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(addrObj.getString("address"), idx);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(addrObj.getString("address"), pcode);
+
+                        }
+                        else    {
+                            addr = (String)addrObj.get("address");
+                            pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                            idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+                        }
 
                         if(addrObj.has("final_balance"))  {
                             amount = addrObj.getLong("final_balance");
                             if(amount > 0L)    {
                                 BIP47Meta.getInstance().addUnspent(pcode, idx);
+                                Log.i("APIFactory", "BIP47 incoming amount:" + idx + ", " + addr + ", " + amount);
                             }
                             else    {
-                                BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                if(addrObj.has("pubkey"))    {
+                                    String pubkey = addrObj.getString("pubkey");
+                                    if(pubkeys.containsKey(pubkey))    {
+                                        int count = pubkeys.get(pubkey);
+                                        count++;
+                                        if(count == 3)    {
+                                            BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                        }
+                                        else    {
+                                            pubkeys.put(pubkey, count + 1);
+                                        }
+                                    }
+                                    else    {
+                                        pubkeys.put(pubkey, 1);
+                                    }
+                                }
+                                else    {
+                                    BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                }
                             }
                         }
                         if(addrObj.has("n_tx"))  {
                             nbTx = addrObj.getInt("n_tx");
                             if(nbTx > 0)    {
-//                                    Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
+                                Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
                                 ret++;
                             }
                         }

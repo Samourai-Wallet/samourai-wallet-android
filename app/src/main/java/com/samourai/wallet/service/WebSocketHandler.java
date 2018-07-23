@@ -267,6 +267,7 @@ public class WebSocketHandler {
                                         }
 
                                         if (objX.has("out")) {
+                                            Log.i("WebSocketHandler", "websocket msg:" + objX.toString());
                                             JSONArray outArray = (JSONArray) objX.get("out");
                                             JSONObject outObj = null;
                                             for (int j = 0; j < outArray.length(); j++) {
@@ -274,13 +275,18 @@ public class WebSocketHandler {
                                                 if (outObj.has("value")) {
                                                     value = outObj.getLong("value");
                                                 }
-                                                if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
+                                                if((outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null) ||
+                                                        (outObj.has("pubkey") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("pubkey")) != null))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
-//                                                    Log.i("WebSocketHandler", "received from " + out_addr);
+                                                    Log.i("WebSocketHandler", "received from " + out_addr);
 
                                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr"));
                                                     int idx = BIP47Meta.getInstance().getIdx4Addr(outObj.getString("addr"));
+                                                    if(outObj.has("pubkey"))    {
+                                                        idx = BIP47Meta.getInstance().getIdx4Addr(outObj.getString("pubkey"));
+                                                        pcode = BIP47Meta.getInstance().getPCode4Addr(outObj.getString("pubkey"));
+                                                    }
                                                     if(pcode != null && idx > -1)    {
 
                                                         SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
@@ -318,6 +324,7 @@ public class WebSocketHandler {
                                                     }
                                                 }
                                                 else if(outObj.has("addr"))   {
+                                                    Log.i("WebSocketHandler", "addr:" + outObj.getString("addr"));
                                                     if(outObj.has("xpub") && outObj.getJSONObject("xpub").has("path") && outObj.getJSONObject("xpub").getString("path").startsWith("M/1/"))    {
                                                         return;
                                                     }
