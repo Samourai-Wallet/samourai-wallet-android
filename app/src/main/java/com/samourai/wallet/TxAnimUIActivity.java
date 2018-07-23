@@ -39,6 +39,7 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
@@ -59,6 +60,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class TxAnimUIActivity extends AppCompatActivity {
 
@@ -584,8 +586,28 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     String strTS = sd.format(System.currentTimeMillis());
                     String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) SendParams.getInstance().getSpendAmount() / 1e8) + " BTC";
                     BIP47Meta.getInstance().setLatestEvent(SendParams.getInstance().getPCode(), event);
+                }
+                else if(SendParams.getInstance().getBatchSend() != null)   {
 
-//                    strPCode = null;
+                    for(BatchSendUtil.BatchSend d : SendParams.getInstance().getBatchSend())   {
+                        String address = d.addr;
+                        String pcode = d.pcode;
+                        // increment counter if BIP47 spend
+                        if(pcode != null && pcode.length() > 0)    {
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
+                            BIP47Meta.getInstance().inc(pcode);
+
+                            SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
+                            String strTS = sd.format(System.currentTimeMillis());
+                            String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) d.amount / 1e8) + " BTC";
+                            BIP47Meta.getInstance().setLatestEvent(pcode, event);
+
+                        }
+                    }
+
+                }
+                else    {
+                    ;
                 }
 
                 if (SendParams.getInstance().hasPrivacyWarning() && SendParams.getInstance().hasPrivacyChecked()) {

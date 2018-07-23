@@ -1030,7 +1030,7 @@ public class BatchSendActivity extends Activity {
 
                             SendParams.getInstance().setParams(outpoints,
                                     receivers,
-                                    strPCode,
+                                    data,
                                     SendActivity.SPEND_SIMPLE,
                                     _change,
                                     49,
