@@ -229,7 +229,28 @@ public class BIP47Activity extends Activity {
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Looper.prepare();
+
+                                            try {
+                                                PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | JSONException | IOException | java.lang.NullPointerException | DecryptionException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                            AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
 
                                 }
 
