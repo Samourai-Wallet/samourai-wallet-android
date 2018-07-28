@@ -80,6 +80,12 @@ public class BlockedUTXO {
         }
     }
 
+    public void addNotDusted(String id)    {
+        if(!notDustedUTXO.contains(id))    {
+            notDustedUTXO.add(id);
+        }
+    }
+
     public void removeNotDusted(String hash, int idx)   {
         if(notDustedUTXO.contains(hash + "-" + Integer.toString(idx)))    {
             notDustedUTXO.remove(hash + "-" + Integer.toString(idx));
@@ -135,6 +141,7 @@ public class BlockedUTXO {
     public void fromJSON(JSONObject blockedObj) {
 
         blockedUTXO.clear();
+        notDustedUTXO.clear();
 
         try {
 
@@ -151,7 +158,7 @@ public class BlockedUTXO {
                 JSONArray array = blockedObj.getJSONArray("notDusted");
 
                 for(int i = 0; i < array.length(); i++)   {
-                    notDustedUTXO.add(array.getString(i));
+                    addNotDusted(array.getString(i));
                 }
             }
 
