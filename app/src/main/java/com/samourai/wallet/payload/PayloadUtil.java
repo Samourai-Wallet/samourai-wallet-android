@@ -627,6 +627,8 @@ public class PayloadUtil	{
 //            secureDelete(tmpfile);
         }
 
+        tmpfile.createNewFile();
+
         String data = null;
         String jsonstr = jsonobj.toString(4);
         if(password != null) {

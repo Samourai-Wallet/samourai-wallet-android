@@ -13,4 +13,10 @@
         android:key="send_backup_support"
         />
 
+    <Preference
+        android:title="@string/options_prune"
+        android:summary="@string/options_prune2"
+        android:key="prune"
+        />
+
 </PreferenceScreen>

@@ -92,6 +92,8 @@
     <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
     <string name="options_haptic">Haptic PIN entry</string>
     <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
+    <string name="options_prune">Prune backup</string>
+    <string name="options_prune2">Prune wallet payload and backup files.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -528,5 +530,7 @@
   <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
   <string name="total_p2wpkh">Total segwit (bech32):</string>
   <string name="total_blocked">Total blocked:</string>
+
+  <string name="prune_backup">Prune payload and backup files?</string>
 
 </resources>
