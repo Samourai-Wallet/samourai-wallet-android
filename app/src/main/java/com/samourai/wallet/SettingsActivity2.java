@@ -1517,7 +1517,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         try {
 
-                            BIP47Meta.getInstance().pruneIncoming();
+//                            BIP47Meta.getInstance().pruneIncoming();
                             SendAddressUtil.getInstance().reset();
                             RicochetMeta.getInstance(SettingsActivity2.this).empty();
                             BatchSendUtil.getInstance().clear();
