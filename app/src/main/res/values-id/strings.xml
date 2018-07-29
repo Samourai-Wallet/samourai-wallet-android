@@ -10,7 +10,7 @@
 
     <string name="action_settings">Pengaturan</string>
     <string name="action_support">Dukungan Pelanggan</string>
-    <string name="action_sweep">Impor & hapus private key</string>
+    <string name="action_sweep">Impor &amp; hapus private key</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Aktifkan seluruh kode pembayaran tersimpan</string>
     <string name="action_sync_all">Singkronisasi seluruh kode pembayayan</string>

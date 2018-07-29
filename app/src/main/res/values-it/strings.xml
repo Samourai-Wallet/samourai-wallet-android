@@ -529,4 +529,29 @@
     <string name="total_p2wpkh">Totale segwit (bech32):</string>
     <string name="total_blocked">Totale bloccati:</string>
 
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avanzate</string>
+    <string name="broadcast_with_txtenna">Broadcast con TxTenna</string>
+    <string name="show_qr_code">Mostra QR Code</string>
+    <string name="tx_connectivity_failure_msg">Impossibile trasmettere la transazione senza connessione dati. Come vuoi procedere?</string>
+
+    <string name="tx_creating_ok">Creazione transazione...</string>
+    <string name="tx_creating_ko">Errore nella creazione della transazione.</string>
+    <string name="tx_signing_ok">Firma della transazione...</string>
+    <string name="tx_signing_ko">Errore nella firma della transazione.</string>
+    <string name="tx_broadcast_ok">Trasmissione broadcast della transazione...</string>
+    <string name="tx_broadcast_ko">Errore nella trasmissione della transazione.</string>
+    <string name="tx_sent_ok">Transazione inviata.</string>
+    <string name="tx_sent_ko">Transazione non inviata.</string>
+
+    <string name="prune_backup">Ridurre il payload e backup dei file?</string>
+
+    <string-array name="address_types">
+        <item>Compatibile Segwit (P2SH)</item>
+        <item>Compatibile Segwit nativo (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+
 </resources>
