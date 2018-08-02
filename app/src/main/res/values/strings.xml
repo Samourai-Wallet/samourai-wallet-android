@@ -507,22 +507,28 @@
   <string name="return_to_wallet">Return to wallet</string>
   <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
     <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
-  <string name="recovery_words">RECOVERY WORDS</string>
+    <string name="recovery_words">RECOVERY WORDS</string>
 
-  <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
-  <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
-  <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
-  <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
+    <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
+    <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
+    <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
+    <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
 
-  <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
-  <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
-  <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
-  <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
+    <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
+    <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
+    <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
+    <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
 
-  <string name="use_bech32">Use bech32 address</string>
+    <string name="use_bech32">Use bech32 address</string>
 
-  <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
-  <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+    <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
+    <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Advanced</string>
+    <string name="broadcast_with_txtenna">Broadcast with TxTenna</string>
+    <string name="show_qr_code">Show QR Code</string>
+    <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
 
   <string name="insufficient_fee">Insufficient fee</string>
   <string name="action_utxo_amounts">View amounts by address type</string>
