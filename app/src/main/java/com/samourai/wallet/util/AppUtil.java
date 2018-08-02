@@ -5,10 +5,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -19,11 +18,8 @@ import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
-import com.samourai.wallet.service.BroadcastReceiverService;
-import com.samourai.wallet.service.WebSocketService;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,12 +130,16 @@ public class AppUtil {
     }
 
     public boolean isServiceRunning(Class<?> serviceClass) {
+
         ActivityManager manager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.d("AppUtil", "service class name:" + serviceClass.getName() + " is running");
                 return true;
             }
         }
+
+        Log.d("AppUtil", "service class name:" + serviceClass.getName() + " is not running");
         return false;
     }
 

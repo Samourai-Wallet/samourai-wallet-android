@@ -290,7 +290,18 @@ public class BalanceActivity extends Activity {
                     for(MyTransactionOutPoint out : outpoints)   {
 
                         byte[] scriptBytes = out.getScriptBytes();
-                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        String address = null;
+                        try {
+                            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                                address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
+                            }
+                            else    {
+                                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            }
+                        }
+                        catch(Exception e) {
+                            ;
+                        }
                         String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
                         if(path != null && path.startsWith("M/1/"))    {
                             continue;
@@ -639,6 +650,10 @@ public class BalanceActivity extends Activity {
             }
         }, 100L);
 
+        if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
+
     }
 
     @Override
@@ -654,9 +669,8 @@ public class BalanceActivity extends Activity {
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
-        if(!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-        }
+        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
     }
 
@@ -665,6 +679,10 @@ public class BalanceActivity extends Activity {
         super.onPause();
 
         ibQuickSend.collapse();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
 
     }
 
@@ -1184,7 +1202,8 @@ public class BalanceActivity extends Activity {
                         if(privKeyReader.getFormat() != null &&
                                 (privKeyReader.getFormat().equals(PrivKeyReader.WIF_COMPRESSED) ||
                                         privKeyReader.getFormat().equals(PrivKeyReader.WIF_UNCOMPRESSED) ||
-                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38)
+                                        privKeyReader.getFormat().equals(PrivKeyReader.BIP38) ||
+                                        FormatsUtil.getInstance().isValidXprv(s[i])
                                 )
                                 )    {
 

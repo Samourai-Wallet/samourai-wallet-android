@@ -208,7 +208,28 @@ public class BIP47Activity extends Activity {
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    doNotifTx(itemValue);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Looper.prepare();
+
+                                            try {
+                                                PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | JSONException | IOException | java.lang.NullPointerException | DecryptionException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                            doNotifTx(itemValue);
+
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
 
                                 }
                             }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -229,7 +250,28 @@ public class BIP47Activity extends Activity {
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Looper.prepare();
+
+                                            try {
+                                                PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | JSONException | IOException | java.lang.NullPointerException | DecryptionException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                            AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
 
                                 }
 
@@ -794,18 +836,9 @@ public class BIP47Activity extends Activity {
         long amount = SendNotifTxFactory._bNotifTxValue.longValue();
 
         //
-        // calc btc fee from USD Samourai fee
-        //
-        double btc_fx = ExchangeRateFactory.getInstance(BIP47Activity.this).getBitfinexPrice("USD");
-        BigInteger currentSWFee = BigInteger.valueOf((long)((btc_fx / SendNotifTxFactory._dSWFeeUSD) * 1e8));
-        if(currentSWFee.longValue() < SendNotifTxFactory._bSWFee.longValue() || currentSWFee.longValue() > SendNotifTxFactory._bSWCeilingFee.longValue())  {
-            currentSWFee = SendNotifTxFactory._bSWFee;
-        }
-
-        //
         // add Samourai Wallet fee to total amount
         //
-        amount += currentSWFee.longValue();
+        amount += SendNotifTxFactory._bSWFee.longValue();
 
         //
         // get unspents
@@ -880,11 +913,13 @@ public class BIP47Activity extends Activity {
                 }
             }
 
-            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+            fee = FeeUtil.getInstance().estimatedFee(selected, 7);
 
         }
         else    {
-            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+            fee = FeeUtil.getInstance().estimatedFee(1, 7);
         }
 
         //
@@ -1045,7 +1080,7 @@ public class BIP47Activity extends Activity {
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
         receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
-        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, currentSWFee);
+        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
@@ -1446,16 +1481,16 @@ public class BIP47Activity extends Activity {
                     while(loop) {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
-                            PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
-                            addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            Log.i("BIP47Activity", "sync receive from " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), payment_code.toString());
+                            addrs.add(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            Log.i("BIP47Activity", "p2pkh " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i).getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Incoming(s);
-//                        Log.i("BIP47Activity", "sync receive idx:" + idx + ", nb == " + nb);
+                        Log.i("BIP47Activity", "sync receive idx:" + idx + ", nb == " + nb);
                         if(nb == 0)    {
                             loop = false;
                         }

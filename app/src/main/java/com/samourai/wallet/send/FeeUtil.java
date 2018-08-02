@@ -1,5 +1,7 @@
 package com.samourai.wallet.send;
 
+import android.util.Log;
+
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.util.FormatsUtil;
 
@@ -19,9 +21,9 @@ public class FeeUtil  {
             "Samourai (bitcoind)",
     };
 
-    private static final int ESTIMATED_INPUT_LEN_P2PKH = 148; // compressed key
-    private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 102; // p2sh, includes segwit discount (ex: 146)
-    private static final int ESTIMATED_INPUT_LEN_P2WPKH = 102;
+    private static final int ESTIMATED_INPUT_LEN_P2PKH = 158;       // (148), compressed key (180 uncompressed key)
+    private static final int ESTIMATED_INPUT_LEN_P2SH_P2WPKH = 108; // p2sh, includes segwit discount (ex: 146)
+    private static final int ESTIMATED_INPUT_LEN_P2WPKH = 85;       // bech32, p2wpkh
     private static final int ESTIMATED_OUTPUT_LEN = 33;
 
     private static SuggestedFee suggestedFee = null;
@@ -163,24 +165,13 @@ public class FeeUtil  {
 
     public BigInteger calculateFee(int txSize, BigInteger feePerKb)   {
         double fee = ((double)txSize / 1000.0 ) * feePerKb.doubleValue();
-        return BigInteger.valueOf((long)fee);
-    }
-
-    public Pair<Integer,Integer> getOutpointCount(List<MyTransactionOutPoint> outpoints) {
-
-        int p2sh_p2wpkh = 0;
-        int p2pkh = 0;
-
-        for(MyTransactionOutPoint out : outpoints)   {
-            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), out.getAddress()).isP2SHAddress())    {
-                p2sh_p2wpkh++;
-            }
-            else   {
-                p2pkh++;
-            }
+        if(Math.ceil(fee) < (double)txSize)    {
+            Log.d("FeeUtil", "adjusted fee:" + BigInteger.valueOf((long)(txSize + (txSize / 20))).longValue());
+            return BigInteger.valueOf((long)(txSize + (txSize / 20)));
         }
-
-        return Pair.of(p2pkh, p2sh_p2wpkh);
+        else    {
+            return BigInteger.valueOf((long)fee);
+        }
     }
 
     public Triple<Integer,Integer,Integer> getOutpointCount(Vector<MyTransactionOutPoint> outpoints) {
@@ -202,6 +193,15 @@ public class FeeUtil  {
         }
 
         return Triple.of(p2pkh, p2sh_p2wpkh, p2wpkh);
+    }
+
+    public void sanitizeFee()  {
+        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
+            SuggestedFee suggestedFee = new SuggestedFee();
+            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
+            Log.d("FeeUtil", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
+            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+        }
     }
 
 }

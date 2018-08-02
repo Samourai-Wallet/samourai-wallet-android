@@ -6,7 +6,7 @@
 
     <string name="creating_wallet">Creando il wallet, attendere...</string>
     <string name="restoring_wallet">Ripristinando il wallet, attendere...</string>
-    <string name="decrypting_bip38">Decriptando la passphrase BIP38, attendere...</string>
+    <string name="decrypting_bip38">Decriptando password BIP38. Attendere...</string>
 
     <string name="action_settings">Impostazioni</string>
     <string name="action_support">Supporto</string>
@@ -33,6 +33,8 @@
     <string name="options_xpub2">Visualizza la chiave pubblica estesa per l\'account BIP44.</string>
     <string name="options_xpub49">Visualizza YPUB Segwit</string>
     <string name="options_xpub49_2">Visualizza la chiave pubblica estesa per l\'account BIP49 (Segwit).</string>
+    <string name="options_xpub84">Visualizza ZPUB Segwit</string>
+    <string name="options_xpub84_2">Visualizza la chiave pubblica estesa per l\'account BIP84 (Bech32).</string>
     <string name="options_wipe">Elimina wallet</string>
     <string name="options_wipe2">Cancella in maniera sicura il wallet dal dispositivo.</string>
     <string name="options_stealth_display">Modalità segreta</string>
@@ -41,8 +43,8 @@
     <string name="options_remote_commands2">Abilita comandi remoti via SMS.</string>
     <string name="options_currency">Tasso di scambio</string>
     <string name="options_currency2">Scegli il tuo exchange e la tua valuta locale.</string>
-    <string name="options_blockexplorer">Explorer di blocchi</string>
-    <string name="options_blockexplorer2">L\'explorer usato per vedere i dettagli delle transazioni.</string>
+    <string name="options_blockexplorer">Block explorer</string>
+    <string name="options_blockexplorer2">Il block explorer usato per visualizzare i dettagli delle transazioni.</string>
     <string name="options_sim_switch">Protezione scambio SIM</string>
     <string name="options_sim_switch2">Manda un SMS ad un numero mobile fidato quando la carta SIM viene sostituita</string>
     <string name="options_use_telno">Usa il numero fidato per comandi remoti</string>
@@ -64,9 +66,9 @@
     <string name="options_autosave_backup2">Salva periodicamente un backup protetto da password sulla memoria del dispositivo.</string>
     <string name="options_version">Versione</string>
     <string name="options_txs">Transazioni</string>
-    <string name="options_bip126">Spendi usando BIP126</string>
-    <string name="options_bip126_2">Le spese useranno lo standard BIP126 per un offuscamento migliore.</string>
-    <string name="options_utxo">Visualizza output non spesi (UTXO)</string>
+    <string name="options_boltzmann">Transazione STONEWALL</string>
+    <string name="options_boltzmann_2">Le transazioni in uscita useranno l\'algoritmo STONEWALL per una privacy superiore.</string>
+    <string name="options_utxo">Output non spesi (UTXO)</string>
     <string name="options_trusted_node">Definisci nodo affidabile</string>
     <string name="options_trusted_node2">Specifica il tuo nodo bitcoin per il broadcast delle transazioni.</string>
     <string name="options_use_trusted_node">Usa nodo affidabile</string>
@@ -88,18 +90,18 @@
     <string name="options_broadcast_hex2">Broadcast della transazione firmata in formato hex.</string>
     <string name="options_like_typed_change">Ricevi il resto in output di stessa tipologia</string>
     <string name="options_like_typed_change2">Ricevi il resto delle tue transazioni nello stesso tipo di indirizzo del destinatario. Deseleziona per ricevere resto solo su indirizzi segwit.</string>
-    <string name="options_haptic">Vibrazione PIN</string>
-    <string name="options_haptic_2">Vibra ad ogni cifra all\'inserimento del PIN.</string>
+    <string name="options_haptic">Vibrazione inserimento PIN</string>
+    <string name="options_haptic_2">Vibra ad ogni cifra nell\'inserimento PIN.</string>
 
     <string name="prompt_send_backup_to_support">Invio il backup del wallet al supporto? Non include nessuna informazione su chiavi private, seed (parole segrete) o passphrase.</string>
 
     <string name="timeline_today">Oggi</string>
-    <string name="timeline_older">Più vecchio</string>
+    <string name="timeline_older">Più vecchie</string>
 
     <string name="tx_sent">Transazione inviata</string>
     <string name="tx_failed">Errore nell\'invio della transazione</string>
-    <string name="you_received">Ricevuta</string>
-    <string name="you_sent">Inviata</string>
+    <string name="you_received">Hai ricevuto</string>
+    <string name="you_sent">Hai inviato</string>
     <string name="send">Invia</string>
     <string name="receive">Ricevi</string>
     <string name="cannot_select_utxo">Impossibile selezionare output non spesi</string>
@@ -107,7 +109,7 @@
     <string name="error_change_output">Errore nella determinazione indirizzo di change (resto)</string>
 
     <string name="copied_to_clipboard">Copiato negli appunti</string>
-    <string name="send_payment_code">Invia codice di pagamento</string>
+    <string name="send_payment_code">Invia codice pagamento</string>
 
     <string name="ask_you_sure_exit">Sei sicuro di voler uscire da Samourai?</string>
     <string name="yes">Sì</string>
@@ -118,7 +120,7 @@
 
     <string name="pin_5_8">Crea un codice PIN da 5 a 8 caratteri.</string>
     <string name="pin_5_8_confirm">Conferma codice PIN</string>
-    <string name="pin_error">Errore codice PIN</string>
+    <string name="pin_error">Codice PIN errato</string>
     <string name="no_internet">Nessuna connessione a Internet. Riprova.</string>
     <string name="bip38_pw">Password BIP38</string>
     <string name="bip38_pw_error">Errore password BIP38</string>
@@ -128,6 +130,7 @@
     <string name="bip39_must">Il tuo wallet richiede una passphrase. Riprova.</string>
     <string name="bip39_unmatch">La passphrase è errata. Riprova.</string>
     <string name="bip39_invalid">Non usare nessuno spazio nella tua passphrase. Riprova.</string>
+    <string name="bip39_empty">Devi definire una passphrase.</string>
     <string name="please_select">Seleziona...</string>
     <string name="create_wallet">Crea wallet</string>
     <string name="restore_wallet">Ripristina wallet</string>
@@ -138,14 +141,14 @@
     <string name="backup_read_ok">File di backup OK.</string>
     <string name="backup_read_error">Errore di lettura del file di backup.</string>
     <string name="mnemonic_hex">Codice mnemonico o entropia hex</string>
-    <string name="pin_enter">Inserire codice PIN</string>
+    <string name="pin_enter">Inserisci codice PIN</string>
     <string name="please_wait">Attendere...</string>
     <string name="random_key_error">Errore chiave casuale</string>
     <string name="login_error">Login fallito</string>
-    <string name="wallet_created_ok">Creazione wallet OK.</string>
-    <string name="wallet_created_ko">Errore creazione wallet.</string>
-    <string name="wallet_restored_ok">Wallet ripristinato OK.</string>
-    <string name="wallet_restored_ko">Errore ripristino wallet.</string>
+    <string name="wallet_created_ok">Creazione wallet andata a buon fine.</string>
+    <string name="wallet_created_ko">Errore nella creazione wallet.</string>
+    <string name="wallet_restored_ok">Wallet ripristinato correttamente.</string>
+    <string name="wallet_restored_ko">Errore nel ripristino wallet.</string>
 
     <string name="address_used_previously">Hai già usato questo indirizzo! Il riuso degli indirizzi può comportare una perdita di privacy.</string>
 
@@ -162,7 +165,7 @@
     <string name="amount">Importo</string>
 
     <string name="receive_address_to_clipboard">Copiare indirizzo negli appunti? Se copiato, potrebbe essere visibile ad altre applicazioni.</string>
-    <string name="receive_address_to_share">Condividere indirizzo negli appunti? Se condiviso, potrebbe essere visibile ad altre applicazioni.</string>
+    <string name="receive_address_to_share">Condividere questo indirizzo di ricezione? Se condiviso, potrebbe essere visibile ad altre applicazioni.</string>
     <string name="sure_to_erase">Sei sicuro di voler eliminare questo wallet?</string>
     <string name="wallet_erased">Wallet eliminato dal dispositivo.</string>
 
@@ -202,7 +205,7 @@
     <string name="sent">Transazione inviata</string>
     <string name="total">Totale</string>
     <string name="export_to_clipboard">Esporta negli appunti</string>
-    <string name="export_to_email">Esporta su email</string>
+    <string name="export_to_email">Esporta in email</string>
     <string name="encryption_error">Si è verificato un errore durante la criptazione del tuo backup del wallet. Riprova.</string>
     <string name="import_backup">Da backup</string>
     <string name="import_mnemonic">Da mnemonico/seed</string>
@@ -286,7 +289,7 @@
     <string name="action_ricochet_script">Visualizza script Ricochet</string>
     <string name="action_ricochet_replay">Reinvia Ricochet</string>
     <string name="ricochet_replay">Vuoi ritrasmettere questa spesa Ricochet?</string>
-    <string name="ricochet_not_broadcast_replay">Si è verificato un problema trasmettendo il tuoRicochet. Vuoi ritrasmettere questa spesa Ricochet?</string>
+    <string name="ricochet_not_broadcast_replay">Si è verificato un problema trasmettendo il tuo Ricochet. Vuoi ritrasmettere questa spesa Ricochet?</string>
     <string name="no_ricochet_replay">Non esiste un Ricochet da reinviare.</string>
     <string name="no_ricochet_display">Non esiste uno script Ricochet da visualizzare.</string>
     <string name="ricochet_broadcast">Il tuo Ricochet è stato trasmesso.</string>
@@ -455,6 +458,37 @@
     <string name="bip47_notif_tx_insufficient_funds_1">Aggiungere un PayNym ai contatti richiede una singola fee di transazione per creare il record sulla blockchain. Deposita</string>
     <string name="bip47_notif_tx_insufficient_funds_2">BTC nel tuo wallet e riprova.</string>
     <string name="help">Aiuto</string>
+    
+    <string name="passphrase_disclaimer">Sono cosciente del fatto che Samourai NON può fornire assistenza in caso di passphrase dimenticate. Samourai non è a conoscenza della tua passphrase in nessun caso.</string>
+    <string name="confirm_pin_code">Conferma codice PIN</string>
+    <string name="re_enter_your_pin_code">Reinserisci codice PIN</string>
+    <string name="re_enter_a_passphrase">Reinserisci la passphrase</string>
+    <string name="create_a_passphrase">Inserisci la tua passphrase</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Inserisci una passphrase sicura per il tuo wallet</string>
+    <string name="set_pin_code">Imposta un codice PIN</string>
+    <string name="accept_disclaimer_error">Devi accettare il disclaimer</string>
+    <string name="import_external_wallet">Importa un wallet esterno</string>
+    <string name="import_samourai_wallet">Importa un backup Samourai</string>
+    <string name="backup_file">Backup file</string>
+    <string name="import_an_encrypted_samourai_wallet">Importa un backup Samourai criptato per ripristinare un wallet con i meta-dati intatti.</string>
+    <string name="back">INDIETRO</string>
+    <string name="finish">Fine</string>
+    <string name="choose_file">Scegli file</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Aggiungi password BIP39</string>
+    <string name="close_bip39_password">Chiudi password BIP39</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Inserisci il tuo seed mnemonico per importare un wallet di un altro servizio/provider.</string>
+    <string name="last_updated">Ultimo aggiornamento</string>
+    <string name="get_help">Aiuto</string>
+    <string name="offline_mode">Modalità Offline</string>
+    <string name="import_samourai_backup">Importa backup di Samourai</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Inserisci la passphrase del tuo wallet</string>
+    <string name="start_new_wallet">Nuovo wallet</string>
+    <string name="get_help_create">Aiuto per creazione wallet</string>
+    <string name="get_help_restore">Aiuto per ripristino wallet</string>
 
     <string name="fee">Fee miner</string>
     <string name="fee_low_priority">Priorità bassa: stimati 24</string>
@@ -462,5 +496,62 @@
     <string name="fee_high_priority">Priorità alta: stimati 2</string>
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocchi prima della conferma</string>
+    
+    <string name="invalid_mnemonic_word">Parola mnemonica BIP39 non valida</string>
+    <string name="invalid_mnemonic">Mnemonico BIP39 non valido</string>
+    <string name="enter_your_code_here">Inserisci il tuo codice qui</string>
+    <string name="declaimer_recovery_words">Confermo di aver scritto e memorizzato le parole riportate qui sopra in un posto sicuro. Sono cosciente che chiunque abbia accesso alla mia passphrase ed alle parole del mio seed mnemonico avrà completo controllo del mio wallet e dei miei fondi depositati in esso.</string>
+    <string name="return_to_wallet">Ritorna al wallet</string>
+    <string name="caution_message_recovery_words">Non è sicuro conservare queste parole su un computer o sul cloud. Scrivi queste parole su un foglio di carta e tienile al sicuro, in un posto segreto.</string>
+    <string name="these_words_are">Queste parole sono un backup di tutte le chiavi segrete nel tuo wallet.</string>
+    <string name="recovery_words">PAROLE DI RECOVERY (RECOVERY WORDS)</string>
+
+    <string name="permission_alert_dialog_title_sms">Richiesta permessi SMS e stato del telefono</string>
+    <string name="permission_dialog_message_sms">Il tuo wallet ha bisogno dei permessi per inviare e ricevere SMS per la funzionalità di avviso remoto.</string>
+    <string name="permission_alert_dialog_title_outgoing">Richiesta permesso di gestire le chiamate uscenti</string>
+    <string name="permission_dialog_message_outgoing">Il tuo wallet ha bisogno del permesso di gestire le chiamate uscenti per usare la modalità segreta.</string>
+
+    <string name="permission_alert_dialog_title_external">Richiesta permessi lettura/scrittura</string>
+    <string name="permission_dialog_message_external">Il tuo wallet ha bisogno del permesso di accesso alla memoria per salvare automaticamente un backup criptato del tuo wallet.</string>
+    <string name="permission_alert_dialog_title_camera">Richiesta permessi fotocamera</string>
+    <string name="permission_dialog_message_camera">Il tuo wallet ha bisogno del permesso di accedere alla fotocamera per scannerizzare i QR codes.</string>
+
+    <string name="use_bech32">Usa indirizzo bech32</string>
+
+    <string name="boltzmann_cannot">Una transazione STONEWALL non può essere composta con il tuo attuale set di output non spesi. Se hai bisogno di una transazione STONEWALL, scegli \'NO\' e prova ancora con un altro set di output.</string>
+    <string name="boltzmann_like_typed">Nota che \'Ricevi il resto in output di stessa tipologia\' è DISATTIVATO e può risultare in una struttura subottimale per la tua transazione STONEWALL.</string>
+
+    <string name="insufficient_fee">Fee insufficienti</string>
+    <string name="action_utxo_amounts">Visualizza gli importi per tipo indirizzo</string>
+
+    <string name="total_p2pkh">Totale legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Totale segwit (p2sh):</string>
+    <string name="total_p2wpkh">Totale segwit (bech32):</string>
+    <string name="total_blocked">Totale bloccati:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avanzate</string>
+    <string name="broadcast_with_txtenna">Broadcast con TxTenna</string>
+    <string name="show_qr_code">Mostra QR Code</string>
+    <string name="tx_connectivity_failure_msg">Impossibile trasmettere la transazione senza connessione dati. Come vuoi procedere?</string>
+
+    <string name="tx_creating_ok">Creazione transazione...</string>
+    <string name="tx_creating_ko">Errore nella creazione della transazione.</string>
+    <string name="tx_signing_ok">Firma della transazione...</string>
+    <string name="tx_signing_ko">Errore nella firma della transazione.</string>
+    <string name="tx_broadcast_ok">Trasmissione broadcast della transazione...</string>
+    <string name="tx_broadcast_ko">Errore nella trasmissione della transazione.</string>
+    <string name="tx_sent_ok">Transazione inviata.</string>
+    <string name="tx_sent_ko">Transazione non inviata.</string>
+
+    <string name="prune_backup">Ridurre il payload e backup dei file?</string>
+
+    <string-array name="address_types">
+        <item>Compatibile Segwit (P2SH)</item>
+        <item>Compatibile Segwit nativo (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
 
 </resources>

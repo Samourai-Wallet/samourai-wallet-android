@@ -222,7 +222,7 @@ public class CreateWalletActivity extends FragmentActivity implements
     public void PinEntry(String pin) {
         if (wallet_create_viewpager.getCurrentItem() == 1) {
             pinCode = pin;
-            if (pinCode.length() >= 5) {
+            if (pinCode.length() >= AccessFactory.MIN_PIN_LENGTH && pinCode.length() <= AccessFactory.MAX_PIN_LENGTH) {
                 setForwardButtonEnable(true);
             } else {
                 setForwardButtonEnable(false);

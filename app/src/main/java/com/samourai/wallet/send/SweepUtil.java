@@ -107,11 +107,21 @@ public class SweepUtil  {
                             total_value += outpoint.getValue().longValue();
                         }
 
+                        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() <= 1000L)    {
+                            SuggestedFee suggestedFee = new SuggestedFee();
+                            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1100L));
+                            Log.d("SweepUtil", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
+                            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+                        }
+
+                        Log.d("SweepUtil", "outpoints:" + outpoints.size());
+                        Log.d("SweepUtil", "type:" + type);
+
                         final BigInteger fee;
                         if(type == TYPE_P2SH_P2WPKH)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
                         }
-                        else if(type == TYPE_P2PKH)    {
+                        else if(type == TYPE_P2WPKH)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, 0, outpoints.size(), 1);
                         }
                         else    {
@@ -121,7 +131,7 @@ public class SweepUtil  {
                         final long amount = total_value - fee.longValue();
 //                        Log.d("BalanceActivity", "Total value:" + total_value);
 //                        Log.d("BalanceActivity", "Amount:" + amount);
-//                        Log.d("BalanceActivity", "Fee:" + fee.toString());
+                        Log.d("SweepUtil", "Fee:" + fee.toString());
 
                         String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
 
@@ -155,6 +165,7 @@ public class SweepUtil  {
                                 org.bitcoinj.core.Transaction tx = SendFactory.getInstance(context).makeTransaction(0, outpoints, receivers);
 
                                 tx = SendFactory.getInstance(context).signTransactionForSweep(tx, privKeyReader);
+                                Log.d("SweepUtil", "tx size:" + tx.bitcoinSerialize().length);
                                 final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
 //                                Log.d("BalanceActivity", hexTx);
 

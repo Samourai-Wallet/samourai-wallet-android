@@ -56,23 +56,28 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.service.BroadcastReceiverService;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
+import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.TorUtil;
 
 import com.yanzhenjie.zbar.Symbol;
@@ -273,8 +278,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, false);
 
-                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                 AppUtil.getInstance(SettingsActivity2.this).restartApp();
                             }
@@ -294,8 +298,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, true);
 
-                                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                                 try {
                                                     PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
@@ -436,15 +439,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref2.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, false);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
                         else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, true);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
 
                         return true;
@@ -874,6 +873,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             }
                         }).show();
 
+                        return true;
+                    }
+                });
+
+                Preference prunePref = (Preference) findPreference("prune");
+                prunePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPrune();
                         return true;
                     }
                 });
@@ -1495,6 +1502,55 @@ public class SettingsActivity2 extends PreferenceActivity	{
         catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doPrune()   {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.prune_backup)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        try {
+
+//                            BIP47Meta.getInstance().pruneIncoming();
+                            SendAddressUtil.getInstance().reset();
+                            RicochetMeta.getInstance(SettingsActivity2.this).empty();
+                            BatchSendUtil.getInstance().clear();
+                            RBFUtil.getInstance().clear();
+
+                            PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+
+                        }
+                        catch(JSONException je) {
+                            je.printStackTrace();
+                            Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            ;
+                        }
+                        catch(IOException ioe) {
+                            ;
+                        }
+                        catch(DecryptionException de) {
+                            ;
+                        }
+
+                    }
+
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        ;
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
         }
 
     }

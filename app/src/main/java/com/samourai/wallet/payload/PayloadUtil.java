@@ -199,10 +199,11 @@ public class PayloadUtil	{
             wallet.put("accounts", accts);
 
             //
-            // export BIP47 payment code for debug payload
+            // export BIP47 payment codes for debug payload
             //
             try {
                 wallet.put("payment_code", BIP47Util.getInstance(context).getPaymentCode().toString());
+                wallet.put("payment_code_feature", BIP47Util.getInstance(context).getFeaturePaymentCode().toString());
             }
             catch(AddressFormatException afe) {
                 ;
@@ -245,6 +246,7 @@ public class PayloadUtil	{
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BOLTZMANN));
             meta.put("use_boltzmann", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BOLTZMANN, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
+            meta.put("use_ricochet", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_RICOCHET, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
@@ -427,6 +429,9 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.RBF_OPT_IN, meta.getBoolean("rbf_opt_in"));
                     editor.putBoolean("rbf", meta.getBoolean("rbf_opt_in") ? true : false);
                     editor.commit();
+                }
+                if(meta.has("use_ricochet")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_RICOCHET, meta.getBoolean("use_ricochet"));
                 }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
@@ -626,6 +631,8 @@ public class PayloadUtil	{
             tmpfile.delete();
 //            secureDelete(tmpfile);
         }
+
+        tmpfile.createNewFile();
 
         String data = null;
         String jsonstr = jsonobj.toString(4);

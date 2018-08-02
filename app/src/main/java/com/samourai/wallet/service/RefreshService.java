@@ -100,6 +100,9 @@ public class RefreshService extends IntentService {
         catch(MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
         }
+        catch(NullPointerException npe) {
+            npe.printStackTrace();
+        }
         finally {
             Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
             LocalBroadcastManager.getInstance(RefreshService.this).sendBroadcast(_intent);

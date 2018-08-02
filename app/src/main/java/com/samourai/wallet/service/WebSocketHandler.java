@@ -30,6 +30,7 @@ import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
 
 import org.bitcoinj.params.MainNetParams;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +67,7 @@ public class WebSocketHandler {
 
         try {
             if (mConnection != null && mConnection.isOpen()) {
-//                    Log.i("WebSocketHandler", "Websocket subscribe:" +message);
+                Log.i("WebSocketHandler", "Websocket subscribe:" + message);
                 mConnection.sendText(message);
             }
         } catch (Exception e) {
@@ -82,7 +83,7 @@ public class WebSocketHandler {
         for(int i = 0; i < addrs.length; i++) {
             if(addrs[i] != null && addrs[i].length() > 0) {
                 send("{\"op\":\"addr_sub\", \"addr\":\""+ addrs[i] + "\"}");
-//                Log.i("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
+//                    Log.i("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
             }
         }
 
@@ -266,6 +267,7 @@ public class WebSocketHandler {
                                         }
 
                                         if (objX.has("out")) {
+                                            Log.i("WebSocketHandler", "websocket msg:" + objX.toString());
                                             JSONArray outArray = (JSONArray) objX.get("out");
                                             JSONObject outObj = null;
                                             for (int j = 0; j < outArray.length(); j++) {
@@ -273,13 +275,18 @@ public class WebSocketHandler {
                                                 if (outObj.has("value")) {
                                                     value = outObj.getLong("value");
                                                 }
-                                                if(outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null)   {
+                                                if((outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null) ||
+                                                        (outObj.has("pubkey") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("pubkey")) != null))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
-//                                                    Log.i("WebSocketHandler", "received from " + out_addr);
+                                                    Log.i("WebSocketHandler", "received from " + out_addr);
 
                                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr"));
                                                     int idx = BIP47Meta.getInstance().getIdx4Addr(outObj.getString("addr"));
+                                                    if(outObj.has("pubkey"))    {
+                                                        idx = BIP47Meta.getInstance().getIdx4Addr(outObj.getString("pubkey"));
+                                                        pcode = BIP47Meta.getInstance().getPCode4Addr(outObj.getString("pubkey"));
+                                                    }
                                                     if(pcode != null && idx > -1)    {
 
                                                         SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
@@ -290,25 +297,23 @@ public class WebSocketHandler {
 
                                                         idx++;
                                                         for(int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++)   {
-                                                            PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-//                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
+                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
+                                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
-                                                            _addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                            _addrs.add(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                         }
 
                                                         idx--;
                                                         if(idx >= 2)    {
                                                             for(int i = idx; i >= (idx - (BIP47Meta.INCOMING_LOOKAHEAD - 1)); i--)   {
-                                                                PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), i);
-//                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
+                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                                BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
+                                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
-                                                                _addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                                                _addrs.add(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                             }
                                                         }
 
@@ -319,6 +324,7 @@ public class WebSocketHandler {
                                                     }
                                                 }
                                                 else if(outObj.has("addr"))   {
+                                                    Log.i("WebSocketHandler", "addr:" + outObj.getString("addr"));
                                                     if(outObj.has("xpub") && outObj.getJSONObject("xpub").has("path") && outObj.getJSONObject("xpub").getString("path").startsWith("M/1/"))    {
                                                         return;
                                                     }
@@ -360,7 +366,9 @@ public class WebSocketHandler {
 
                             }
                         });
-                mConnection.connect();
+                if(mConnection != null)    {
+                    mConnection.connect();
+                }
 
                 subscribe();
 
@@ -382,7 +390,9 @@ public class WebSocketHandler {
                 public void run() {
                     if (mConnection != null) {
                         pingPongSuccess = false;
-                        if (mConnection.isOpen()) mConnection.sendPing();
+                        if(mConnection.isOpen())   {
+                            mConnection.sendPing();
+                        }
                         startPongTimer();
                     }
                 }
