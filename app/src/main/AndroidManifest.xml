@@ -218,7 +218,7 @@
             android:exported="true"
             android:theme="@style/AppThemeLanding" />
         <activity
-            android:name=".SendNewUIActivity"
+            android:name=".spend.SendNewUIActivity"
             android:exported="true"
             android:theme="@style/ui_2_theme"
              />

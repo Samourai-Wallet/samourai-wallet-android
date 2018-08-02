@@ -1,34 +1,20 @@
-package com.samourai.wallet;
+package com.samourai.wallet.spend;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.ChangeBounds;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionManager;
-import android.transition.TransitionSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.samourai.wallet.widgets.EntropyBar;
-import com.samourai.wallet.widgets.SendTransactionDetailsView;
+import com.samourai.wallet.R;
+import com.samourai.wallet.spend.widgets.EntropyBar;
+import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 
 import java.util.Objects;
 
