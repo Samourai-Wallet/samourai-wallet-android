@@ -560,5 +560,6 @@
     <string name="ricochet_hops_msg">Additional hops between your wallet and the final destination for increased fungibility</string>
     <string name="review_transaction">REVIEW TRANSACTION</string>
     <string name="stonewall_increases_deniability">STONEWALL Increases deniability and   reduce linkability of this transaction.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
 
 </resources>

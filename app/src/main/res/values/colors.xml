@@ -29,4 +29,9 @@
 
     <color name="cyan_ui_2">#58b9b8</color>
     <color name="green_ui_2">#0ecf96</color>
+
+
+    <color name="teal" >#4caa9f</color>
+    <color name="orange" >#ce723e</color>
+    <color name="sea" >#3b90cf</color>
 </resources>
