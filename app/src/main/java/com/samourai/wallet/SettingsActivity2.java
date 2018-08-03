@@ -1612,7 +1612,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
     }
 
     private void doPayNymCalc()    {
-        ;
+        Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
+        startActivity(intent);
     }
 
     private void doBroadcastHex()    {

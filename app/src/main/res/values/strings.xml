@@ -560,4 +560,13 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Receive addresses</string>
+    <string name="send_addresses">Send addresses</string>
+    <string name="display_receive_redeem">Receive redeem script</string>
+    <string name="display_receive_privkey">Receive private key</string>
+    <string name="invalid_index">Invalid index</string>
+
 </resources>
