@@ -94,6 +94,10 @@
     <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
     <string name="options_prune">Prune backup</string>
     <string name="options_prune2">Prune wallet payload and backup files.</string>
+    <string name="options_address_calc">Address calculator</string>
+    <string name="options_address_calc2">Calculate addresses derived from your wallet seed.</string>
+    <string name="options_paynym_calc">PayNym calculator</string>
+    <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
