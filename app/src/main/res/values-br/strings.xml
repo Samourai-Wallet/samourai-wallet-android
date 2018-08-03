@@ -484,12 +484,9 @@
   <string name="permission_alert_dialog_title_camera">Solicitando permissão para acessar a câmera</string>
   <string name="permission_dialog_message_camera">Sua carteira precisa de permissão para acessar a câmera para que possa escanear os códigos QR.</string>
 
-  <string name="use_bech32">Use endereço bech32</string>Um gasto STONEWALL não pode ser composto com seu conjunto atual de unspents. Se você precisar de um gasto de STONEWALL, toque em \'NÃO\' e tente novamente com um conjunto modificado de unspents.</string>
-
-  <string name="boltzmann_like_typed"> Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.</string>
-
-Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.
-
+  <string name="use_bech32">Use endereço bech32</string>
+  <string name="boltzmann_cannot">Um gasto STONEWALL não pode ser composto com seu conjunto atual de unspents. Se você precisar de um gasto de STONEWALL, toque em \'NÃO\' e tente novamente com um conjunto modificado de unspents.</string>
+  <string name="boltzmann_like_typed">Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.</string>
 
   <string name="insufficient_fee">Taxa insuficiente</string>
   <string name="action_utxo_amounts">Ver valores por tipo de endereço</string>
