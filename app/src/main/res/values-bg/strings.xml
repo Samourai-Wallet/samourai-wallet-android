@@ -18,7 +18,7 @@
     <string name="about_us">За Самурай портфейл</string>
 
     <string name="ok">Добре</string>
-    <string name="Отказ">Cancel</string>
+    <string name="cancel">Отказ</string>
 
     <string name="options_cat_prefs">Валута, Block explorer</string>
     <string name="options_cat_stealth">Потайност</string>
