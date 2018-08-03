@@ -5,36 +5,36 @@
     <string name="alpha_create_confirm_backup">Написах думите си</string>
 
     <string name="creating_wallet">Създаване на портфейл. Моля изчакайте...</string>
-    <string name="restoring_wallet">Въстановяване на портфейл. Моля изчакайте...</string>
+    <string name="restoring_wallet">Възстановяване на портфейл. Моля изчакайте...</string>
     <string name="decrypting_bip38">Декриптиране на BIP38 парола. Моля изчакайте...</string>
 
     <string name="action_settings">Настройки</string>
-    <string name="action_support">Support</string>
-    <string name="action_sweep">Sweep private key</string>
+    <string name="action_support">Поддръжка</string>
+    <string name="action_sweep">Прехвърли целия баланс на частен ключ към портфейла</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Активирай всички архивирани кодове за плащане</string>
     <string name="action_sync_all">Синхронизирай всички кодове за плащане</string>
 
-    <string name="about_us">About Samourai Wallet</string>
+    <string name="about_us">За Самурай портфейл</string>
 
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <string name="ok">Добре</string>
+    <string name="Отказ">Cancel</string>
 
     <string name="options_cat_prefs">Currency, Block explorer</string>
     <string name="options_cat_stealth">Stealth</string>
     <string name="options_cat_remote">Remote</string>
-    <string name="options_cat_wallet">Wallet</string>
-    <string name="options_cat_networking">Networking</string>
-    <string name="options_cat_other">About</string>
+    <string name="options_cat_wallet">Портфейл</string>
+    <string name="options_cat_networking">Мрежови</string>
+    <string name="options_cat_other">За портфейла</string>
 
-    <string name="options_mnemonic">Show mnemonic</string>
-    <string name="options_mnemonic2">Show 12-word seed for this wallet.</string>
-    <string name="options_xpub">Show BIP44 XPUB</string>
-    <string name="options_xpub2">Show extended public key for BIP44 account.</string>
-    <string name="options_xpub49">Show Segwit YPUB</string>
-    <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
-    <string name="options_xpub84">Show Segwit ZPUB</string>
-    <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
+    <string name="options_mnemonic">Покажи тайните думи</string>
+    <string name="options_mnemonic2">Покажи 12-те думи за този портфейл.</string>
+    <string name="options_xpub">Покажи BIP44 XPUB</string>
+    <string name="options_xpub2">Покажи разширен публичен ключ за BIP44 акаунт.</string>
+    <string name="options_xpub49">Покажи SegWit YPUB</string>
+    <string name="options_xpub49_2">Покажи разширен публичен ключ за BIP49 SegWit акаунт(P2SH-wrapped).</string>
+    <string name="options_xpub84">Покажи SegWit ZPUB</string>
+    <string name="options_xpub84_2">Покажи разширен публичен ключ за BIP84 SegWit акаунт (Bech32).</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
