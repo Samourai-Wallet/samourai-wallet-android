@@ -1608,7 +1608,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
     }
 
     private void doAddressCalc()    {
-        ;
+        Intent intent = new Intent(SettingsActivity2.this, AddressCalcActivity.class);
+        startActivity(intent);
     }
 
     private void doPayNymCalc()    {

@@ -150,6 +150,10 @@ public class RicochetMeta {
         RicochetMeta.lastRicochet = lastRicochet;
     }
 
+    public int getRicochetAccount() {
+        return RICOCHET_ACCOUNT;
+    }
+
     public JSONObject toJSON() {
 
         JSONObject jsonPayload = new JSONObject();

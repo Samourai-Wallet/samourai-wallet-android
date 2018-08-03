@@ -568,5 +568,17 @@
     <string name="display_receive_redeem">Receive redeem script</string>
     <string name="display_receive_privkey">Receive private key</string>
     <string name="invalid_index">Invalid index</string>
+    <string name="type_address">Type of address</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+    </string-array>
+
+    <string name="chain_id">Address chain</string>
+    <string name="receive_chain">Receive addresse</string>
+    <string name="change_chain">Change addresse</string>
 
 </resources>
