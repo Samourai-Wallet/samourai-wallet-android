@@ -561,5 +561,11 @@
     <string name="review_transaction">REVIEW TRANSACTION</string>
     <string name="stonewall_increases_deniability">STONEWALL Increases deniability and   reduce linkability of this transaction.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Cycling bitcoin through the \n whirlpool will cover the tracks your \n transactions leave behind</string>
+    <string name="metadata_cleaner">metadata cleaner</string>
+    <string name="end_to_end_trustless">end-to-end trustlessness</string>
+    <string name="your_private_keys">Your private keys never leave the\n device at any point during the\n Whirlpool cycle</string>
+    <string name="different_cycles_for">different cycles for different needs</string>
+    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or a\n earn a small BTC reward when you\n complete a slow cycle</string>
 
 </resources>
