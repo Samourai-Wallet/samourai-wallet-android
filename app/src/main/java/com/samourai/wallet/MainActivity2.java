@@ -179,7 +179,7 @@ public class MainActivity2 extends Activity {
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
-            exchangeRateThread();
+            ExchangeRateFactory.getInstance(MainActivity2.this).exchangeRateThread();
 
             boolean isDial = false;
             String strUri = null;
@@ -308,78 +308,6 @@ public class MainActivity2 extends Activity {
             }
         }).start();
 
-    }
-
-    private void exchangeRateThread() {
-
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                String response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.LBC_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataLBC(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseLBC();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ;
-                    }
-                });
-
-                Looper.loop();
-
-            }
-        }).start();
     }
 
     private void doAppInit(boolean isDial, final String strUri, final String strPCode) {

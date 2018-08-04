@@ -204,75 +204,7 @@ public class RefreshService extends IntentService {
         Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
         LocalBroadcastManager.getInstance(RefreshService.this).sendBroadcast(_intent);
 
-        doExchangeRates();
-
-    }
-
-    private void doExchangeRates()  {
-
-        if(!AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    String response = null;
-                    try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.LBC_EXCHANGE_URL);
-                        ExchangeRateFactory.getInstance(RefreshService.this).setDataLBC(response);
-                        ExchangeRateFactory.getInstance(RefreshService.this).parseLBC();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    response = null;
-                    try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
-                        ExchangeRateFactory.getInstance(RefreshService.this).setDataBTCe(response);
-                        ExchangeRateFactory.getInstance(RefreshService.this).parseBTCe();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    response = null;
-                    try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
-                        ExchangeRateFactory.getInstance(RefreshService.this).setDataBTCe(response);
-                        ExchangeRateFactory.getInstance(RefreshService.this).parseBTCe();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    response = null;
-                    try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                        ExchangeRateFactory.getInstance(RefreshService.this).setDataBTCe(response);
-                        ExchangeRateFactory.getInstance(RefreshService.this).parseBTCe();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    response = null;
-                    try {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
-                        ExchangeRateFactory.getInstance(RefreshService.this).setDataBFX(response);
-                        ExchangeRateFactory.getInstance(RefreshService.this).parseBFX();
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    Looper.loop();
-
-                }
-            }).start();
-
-        }
+        ExchangeRateFactory.getInstance(RefreshService.this).exchangeRateThread();
 
     }
 
