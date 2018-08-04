@@ -227,13 +227,6 @@ public class ExchangeRateFactory	{
                     e.printStackTrace();
                 }
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ;
-                    }
-                });
-
                 Looper.loop();
 
             }
