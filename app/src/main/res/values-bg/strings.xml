@@ -140,29 +140,29 @@
     <string name="wallet_passphrase">Въведете Вашата тайна фраза за портфейла</string>
     <string name="bip39_passphrase">BIP39 парола</string>
     <string name="bip39_match">BIP39 паролата успешно потвърдена.</string>
-    <string name="bip39_decrypt_test">Wallet passphrase verified OK. Would you like to test decryption of the latest auto backup?</string>
-    <string name="backup_read_ok">Backup file OK.</string>
-    <string name="backup_read_error">Error reading backup file.</string>
-    <string name="mnemonic_hex">Mnemonic or hex entropy</string>
-    <string name="pin_enter">Enter PIN code</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="bip39_decrypt_test">Тайната фраза на портфейла беше потвърдена успешно. Бихте ли искали да тествате декриптирането на най-скорошнотонай-скорошното автоматично запазено резервно копие?</string>
+    <string name="backup_read_ok">Резервното копие е наред.</string>
+    <string name="backup_read_error">Грешка при четенето на файла с резервното копие.</string>
+    <string name="mnemonic_hex">Тайни думи или hex ентропия</string>
+    <string name="pin_enter">Въведете PIN код</string>
+    <string name="please_wait">Моля изчакайте...</string>
     <string name="random_key_error">Random key error</string>
-    <string name="login_error">Login failed</string>
-    <string name="wallet_created_ok">Wallet created OK.</string>
-    <string name="wallet_created_ko">Error creating wallet.</string>
-    <string name="wallet_restored_ok">Wallet restored OK.</string>
-    <string name="wallet_restored_ko">Error restoring wallet.</string>
+    <string name="login_error">Влизането неуспешно</string>
+    <string name="wallet_created_ok">Портфейлът беше създаден успешно.</string>
+    <string name="wallet_created_ko">Грешка при създаването на портфейла.</string>
+    <string name="wallet_restored_ok">Портфейлът беше възстановен успешно.</string>
+    <string name="wallet_restored_ko">Грешка при възстановяването на портфейла.</string>
 
-    <string name="address_used_previously">You have used this address before! Reusing addresses may result in a loss of privacy.</string>
+    <string name="address_used_previously">Вече сте използвали този адрес преди! Повторното използване на адреси може да доведе до загуба на потайност.</string>
 
-    <string name="scan">Scan</string>
-    <string name="scan_error">Scan error</string>
-    <string name="enter_privkey">Enter private key</string>
+    <string name="scan">Сканирай</string>
+    <string name="scan_error">Грешка при сканирането</string>
+    <string name="enter_privkey">Въведете частен ключ</string>
 
-    <string name="to">To</string>
-    <string name="destination">Address or payment channel</string>
+    <string name="to">До</string>
+    <string name="destination">Адрес или канал за плащания</string>
 
-    <string name="insufficient_funds">Insufficient funds</string>
+    <string name="insufficient_funds">Недостатъчни средства</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
     <string name="amount">Amount</string>
