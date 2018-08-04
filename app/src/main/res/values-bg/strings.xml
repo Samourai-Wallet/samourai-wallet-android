@@ -44,7 +44,8 @@
     <string name="options_currency">Цена</string>
     <string name="options_currency2">Изберете борса и местна валута.</string>
     <string name="options_blockexplorer">Block explorer</string>
-    <string name="options_blockexplorer2">Block explorer, използван за гледане на детайли, свързани с транзакциите.</string>
+    <string name="options_blockexplorer2">Block explorer, използван за преглед 
+        на детайли, свързани с транзакциите.</string>
     <string name="options_sim_switch">Защита срещу смяна на СИМ карта</string>
     <string name="options_sim_switch2"> изпрати SMS до доверен телефонен номер когато Сим картата е сменена.</string>
     <string name="options_use_telno">Използване на доверен телефонен номер за дистанционно управление</string>
@@ -80,14 +81,14 @@
     <string name="options_passphrase_test2">Потвърждаване на достъпа до портфейла и резервното копие.</string>
     <string name="options_send_backup_to_support">Изпрати резервното копие до отдел техническа поддръжка</string>
     <string name="options_send_backup_to_support2">Изпращане на резервното копие до отдел техническа поддръжка. Не съдържа частни ключове.</string>
-    <string name="options_fee_provider">Fee Estimation Source</string>
-    <string name="options_fee_provider2">Select your preferred transaction fee estimation provider.</string>
-    <string name="options_broadcast_on">Broadcast transactions</string>
-    <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy raw signed transaction to the clipboard.</string>
-    <string name="options_segwit">Receive to segwit addresses</string>
-    <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
-    <string name="options_broadcast_hex">Broadcast transaction hex</string>
-    <string name="options_broadcast_hex2">Broadcast signed transaction supplied in hex format.</string>
+    <string name="options_fee_provider">Източник за преценка на подходящи такси</string>
+    <string name="options_fee_provider2">Изберете предпочитаният Ви източник за преценка на таксите.</string>
+    <string name="options_broadcast_on">Изпращане на транзакции</string>
+    <string name="options_broadcast_on2">Махнете тикчето (изпращането ИЗКЛЮЧЕНО), за да копирате подписана транзакция в клипборда to copy raw signed transaction to the clipboard.</string>
+    <string name="options_segwit">Получаване чрез SegWit адреси</string>
+    <string name="options_segwit_2">Генериране на SegWit адреси за входящи транзакции.</string>
+    <string name="options_broadcast_hex">Изпращане на hex транзакция</string>
+    <string name="options_broadcast_hex2">Изпращане на подписана транзакция, предоставена в hex формат.</string>
     <string name="options_like_typed_change">Receive change to like-typed outputs</string>
     <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
     <string name="options_haptic">Haptic PIN entry</string>
