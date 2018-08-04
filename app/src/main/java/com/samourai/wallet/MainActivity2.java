@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -170,19 +171,10 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if(!ConnectivityStatus.hasConnectivity(MainActivity2.this) &&
+        if(AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
         !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
-
-            new AlertDialog.Builder(MainActivity2.this)
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.no_internet)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            AppUtil.getInstance(MainActivity2.this).restartApp();
-                        }
-                    }).show();
-
+            Toast.makeText(MainActivity2.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            doAppInit(false, null, null);
         }
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();

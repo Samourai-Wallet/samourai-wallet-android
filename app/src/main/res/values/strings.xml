@@ -556,4 +556,6 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
+    <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+
 </resources>
