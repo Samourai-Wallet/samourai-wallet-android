@@ -45,6 +45,7 @@ public class AppUtil {
 
     private static boolean CLIPBOARD_SEEN = false;
 
+    private static boolean isOfflineMode = false;
     private static boolean isUserOfflineMode = false;
 
     private AppUtil() { ; }
@@ -61,6 +62,17 @@ public class AppUtil {
 		
 		return instance;
 	}
+
+    public boolean isOfflineMode() {
+
+        isOfflineMode = (!ConnectivityStatus.hasConnectivity(context) || isUserOfflineMode()) ? true : false;
+
+        return isOfflineMode;
+    }
+
+    public void setOfflineMode(boolean offline) {
+        isOfflineMode = offline;
+    }
 
     public boolean isUserOfflineMode() {
         return isUserOfflineMode;
