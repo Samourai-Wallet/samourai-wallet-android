@@ -1269,7 +1269,7 @@ public class APIFactory	{
             public void run() {
                 Looper.prepare();
 
-                if(ConnectivityStatus.hasConnectivity(context)) {
+                if(!AppUtil.getInstance(context).isOfflineMode()) {
 
                     try {
                         String response = WebUtil.getInstance(context).getURL(WebUtil.SAMOURAI_API_CHECK);

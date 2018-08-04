@@ -25,6 +25,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.ExchangeRateFactory;
@@ -209,7 +210,7 @@ public class RefreshService extends IntentService {
 
     private void doExchangeRates()  {
 
-        if(ConnectivityStatus.hasConnectivity(RefreshService.this))    {
+        if(!AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
 
             new Thread(new Runnable() {
                 @Override
