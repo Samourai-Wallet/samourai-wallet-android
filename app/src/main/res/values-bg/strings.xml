@@ -89,45 +89,45 @@
     <string name="options_segwit_2">Генериране на SegWit адреси за входящи транзакции.</string>
     <string name="options_broadcast_hex">Изпращане на hex транзакция</string>
     <string name="options_broadcast_hex2">Изпращане на подписана транзакция, предоставена в hex формат.</string>
-    <string name="options_like_typed_change">Receive change to like-typed outputs</string>
-    <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
-    <string name="options_haptic">Haptic PIN entry</string>
-    <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
-    <string name="options_prune">Prune backup</string>
-    <string name="options_prune2">Prune wallet payload and backup files.</string>
+    <string name="options_like_typed_change">Получаване на ресто чрез същия тип адрес</string>
+    <string name="options_like_typed_change2">Получавайте рестото чрез същия тип адрес като изхарчения output. ИЗКЛЮЧЕТЕ, за да получавате само чрез SegWit адреси за ресто.</string>
+    <string name="options_haptic">Осезателна обратна връзка при въвеждането на PIN код</string>
+    <string name="options_haptic_2">Вибриране при въвеждането на всяка цифра от PIN кода.</string>
+    <string name="options_prune">Премахване на резервното копие</string>
+    <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
 
-    <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
+    <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническатехническа поддръжка? Не съдържа никаква информация за частните ви ключове, тайните Ви думи или тайната ви фраза.</string>
 
-    <string name="timeline_today">Today</string>
-    <string name="timeline_older">Older</string>
+    <string name="timeline_today">Днес</string>
+    <string name="timeline_older">По-стари</string>
 
-    <string name="tx_sent">Transaction sent</string>
-    <string name="tx_failed">Error sending transaction</string>
-    <string name="you_received">Received</string>
-    <string name="you_sent">Sent</string>
-    <string name="send">Send</string>
-    <string name="receive">Receive</string>
-    <string name="cannot_select_utxo">Cannot select unspent outputs</string>
-    <string name="error_bip126_output">Error determining output address</string>
-    <string name="error_change_output">Error determining change address</string>
+    <string name="tx_sent">Транзакцията изпратена</string>
+    <string name="tx_failed">Грешка при изпращането на транзакцията</string>
+    <string name="you_received">Получени</string>
+    <string name="you_sent">Изпратени</string>
+    <string name="send">Изпращане</string>
+    <string name="receive">Получаване</string>
+    <string name="cannot_select_utxo">Неизхарчените средства не могат да бъдат избрани</string>
+    <string name="error_bip126_output">Грешка при определянето на output адрес</string>
+    <string name="error_change_output">Грешка при определянето на адрес за ресто</string>
 
-    <string name="copied_to_clipboard">Copied to clipboard</string>
-    <string name="send_payment_code">Send payment code</string>
+    <string name="copied_to_clipboard">Копирано в клипборда</string>
+    <string name="send_payment_code">Изпращане на код за плащане</string>
 
-    <string name="ask_you_sure_exit">Are you sure you want to exit Samourai?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="close">Close</string>
+    <string name="ask_you_sure_exit">Сигурни ли сте, че искате да излезете от Самурай?</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="close">Затвори</string>
 
-    <string name="sim_warning">Your Samourai Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
+    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от който сте получили това Съобщение.</string>
 
-    <string name="pin_5_8">Create a PIN code between 5 and 8 characters.</string>
-    <string name="pin_5_8_confirm">Confirm PIN code</string>
-    <string name="pin_error">Pin code error</string>
-    <string name="no_internet">No Internet connectivity. Please try again.</string>
-    <string name="bip38_pw">BIP38 password</string>
-    <string name="bip38_pw_error">BIP38 password error</string>
-    <string name="bip39_safe">Please create a passphrase and keep it secret. You will need this passphrase if you lose access to your wallet.</string>
+    <string name="pin_5_8">Създайте PIN код с дължина между 5 и 8 цифри</string>
+    <string name="pin_5_8_confirm">Потвърдете PIN кода</string>
+    <string name="pin_error">Грешен PIN код</string>
+    <string name="no_internet">Няма връзка с Интернет. Моля опитайте отново.</string>
+    <string name="bip38_pw">BIP38 парола</string>
+    <string name="bip38_pw_error">Грешна BIP38 парола</string>
+    <string name="bip39_safe">Моля създайте тайна фраза и не я споделяйте с никого. Тази тайна фраза ще ви трябва ако загубите достъп до портфейла Ви.</string>
     <string name="bip39_safe2">Please confirm your passphrase. Keep it secret. You will need this passphrase if you lose access to your wallet.</string>
     <string name="bip39_restore">Enter your mnemonic (or hex entropy) and, if necessary, your BIP39 passphrase. If you do not use a BIP39 passphrase, leave it blank.</string>
     <string name="bip39_must">Your wallet must use a passphrase. Please try again.</string>
