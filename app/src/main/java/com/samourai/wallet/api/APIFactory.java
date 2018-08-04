@@ -15,9 +15,11 @@ import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -144,7 +146,10 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!ConnectivityStatus.hasConnectivity(context))    {
+                response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
+            }
+            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -461,6 +466,13 @@ public class APIFactory	{
                     }
                 }
 
+            }
+
+            try {
+                PayloadUtil.getInstance(context).serializeMultiAddr(jsonObject);
+            }
+            catch(IOException | DecryptionException e) {
+                ;
             }
 
             return true;
@@ -946,7 +958,10 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!ConnectivityStatus.hasConnectivity(context))    {
+                response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+            }
+            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
@@ -1064,6 +1079,13 @@ public class APIFactory	{
                         ;
                     }
 
+                }
+
+                try {
+                    PayloadUtil.getInstance(context).serializeUTXO(jsonObj);
+                }
+                catch(IOException | DecryptionException e) {
+                    ;
                 }
 
                 return true;
