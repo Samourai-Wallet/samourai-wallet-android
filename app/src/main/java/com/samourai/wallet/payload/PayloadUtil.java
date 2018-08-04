@@ -25,6 +25,7 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -68,6 +69,9 @@ public class PayloadUtil	{
     private final static String strFilename = "samourai.dat";
     private final static String strTmpFilename = "samourai.tmp";
     private final static String strBackupFilename = "samourai.sav";
+
+    private final static String strMultiAddrFilename = "samourai.multi";
+    private final static String strUTXOFilename = "samourai.utxo";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -128,6 +132,22 @@ public class PayloadUtil	{
         }
 
         return false;
+    }
+
+    public void serializeMultiAddr(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        serializeAux(obj, null, strMultiAddrFilename);
+    }
+
+    public void serializeUTXO(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        serializeAux(obj, null, strUTXOFilename);
+    }
+
+    public JSONObject deserializeMultiAddr()  throws IOException, JSONException {
+        return deserializeAux(null, strMultiAddrFilename);
+    }
+
+    public JSONObject deserializeUTXO()  throws IOException, JSONException  {
+        return deserializeAux(null, strUTXOFilename);
     }
 
     public synchronized void wipe() throws IOException	{
@@ -279,6 +299,7 @@ public class PayloadUtil	{
             meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
+            meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -562,6 +583,9 @@ public class PayloadUtil	{
                 if(meta.has("paynym_refused")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_REFUSED, meta.getBoolean("paynym_refused"));
                 }
+                if(meta.has("user_offline")) {
+                    AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
+                }
 
                 /*
                 if(obj.has("passphrase")) {
@@ -668,6 +692,87 @@ public class PayloadUtil	{
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File file = new File(dir, useBackup ? strBackupFilename : strFilename);
 //        Log.i("PayloadUtil", "wallet file exists: " + file.exists());
+        StringBuilder sb = new StringBuilder();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+        String str = null;
+
+        while((str = in.readLine()) != null) {
+            sb.append(str);
+        }
+
+        in.close();
+
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(sb.toString());
+        }
+        catch(JSONException je)   {
+            ;
+        }
+        String payload = null;
+        if(jsonObj != null && jsonObj.has("payload"))    {
+            payload = jsonObj.getString("payload");
+        }
+
+        // not a json stream, assume v0
+        if(payload == null)    {
+            payload = sb.toString();
+        }
+
+        JSONObject node = null;
+        if(password == null) {
+            node = new JSONObject(payload);
+        }
+        else {
+            String decrypted = null;
+            try {
+                decrypted = AESUtil.decrypt(payload, password, AESUtil.DefaultPBKDF2Iterations);
+            }
+            catch(Exception e) {
+                return null;
+            }
+            if(decrypted == null) {
+                return null;
+            }
+            node = new JSONObject(decrypted);
+        }
+
+        return node;
+    }
+
+    private synchronized void serializeAux(JSONObject jsonobj, CharSequenceX password, String filename) throws IOException, JSONException, DecryptionException, UnsupportedEncodingException {
+
+        File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
+        File newfile = new File(dir, filename);
+        newfile.setWritable(true, true);
+
+        newfile.createNewFile();
+
+        String data = null;
+        String jsonstr = jsonobj.toString(4);
+        if(password != null) {
+            data = AESUtil.encrypt(jsonstr, password, AESUtil.DefaultPBKDF2Iterations);
+        }
+        else {
+            data = jsonstr;
+        }
+
+        JSONObject jsonObj = putPayload(data, false);
+        if(jsonObj != null)    {
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newfile), "UTF-8"));
+            try {
+                out.write(jsonObj.toString());
+            } finally {
+                out.close();
+            }
+        }
+    }
+
+    private synchronized JSONObject deserializeAux(CharSequenceX password, String filename) throws IOException, JSONException {
+
+        File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
+        File file = new File(dir, filename);
         StringBuilder sb = new StringBuilder();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));

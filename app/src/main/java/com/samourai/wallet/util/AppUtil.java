@@ -45,6 +45,8 @@ public class AppUtil {
 
     private static boolean CLIPBOARD_SEEN = false;
 
+    private static boolean isUserOfflineMode = false;
+
     private AppUtil() { ; }
 
 	public static AppUtil getInstance(Context ctx) {
@@ -60,7 +62,15 @@ public class AppUtil {
 		return instance;
 	}
 
-	public void wipeApp() {
+    public boolean isUserOfflineMode() {
+        return isUserOfflineMode;
+    }
+
+    public void setUserOfflineMode(boolean offline) {
+        isUserOfflineMode = offline;
+    }
+
+    public void wipeApp() {
 
         try {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
