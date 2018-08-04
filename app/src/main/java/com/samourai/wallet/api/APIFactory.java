@@ -33,6 +33,7 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -146,7 +147,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!ConnectivityStatus.hasConnectivity(context))    {
+            if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
@@ -958,7 +959,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!ConnectivityStatus.hasConnectivity(context))    {
+            if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
