@@ -141,35 +141,51 @@ public class PayloadUtil	{
     }
 
     public void serializeMultiAddr(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strMultiAddrFilename);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strMultiAddrFilename);
+        }
     }
 
     public void serializeUTXO(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strUTXOFilename);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strUTXOFilename);
+        }
     }
 
     public void serializeFX_LBC(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFX_LBC);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFX_LBC);
+        }
     }
 
     public void serializeFX_BTCe_USD(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFX_BTCe_USD);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFX_BTCe_USD);
+        }
     }
 
     public void serializeFX_BTCe_RUR(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFX_BTCe_RUR);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFX_BTCe_RUR);
+        }
     }
 
     public void serializeFX_BTCe_EUR(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFX_BTCe_EUR);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFX_BTCe_EUR);
+        }
     }
 
     public void serializeFX_BFX(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFX_BFX);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFX_BFX);
+        }
     }
 
     public void serializeFees(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        serializeAux(obj, null, strFeesFilename);
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, null, strFeesFilename);
+        }
     }
 
     public JSONObject deserializeMultiAddr()  throws IOException, JSONException {
