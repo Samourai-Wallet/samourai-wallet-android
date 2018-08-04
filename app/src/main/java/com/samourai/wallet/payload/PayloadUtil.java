@@ -77,6 +77,7 @@ public class PayloadUtil	{
     private final static String strFX_BTCe_USD = "samourai.fx_btce_usd";
     private final static String strFX_BTCe_RUR = "samourai.fx_btce_rur";
     private final static String strFX_BTCe_EUR = "samourai.fx_btce_eur";
+    private final static String strFeesFilename = "samourai.fees";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -167,6 +168,10 @@ public class PayloadUtil	{
         serializeAux(obj, null, strFX_BFX);
     }
 
+    public void serializeFees(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        serializeAux(obj, null, strFeesFilename);
+    }
+
     public JSONObject deserializeMultiAddr()  throws IOException, JSONException {
         return deserializeAux(null, strMultiAddrFilename);
     }
@@ -193,6 +198,10 @@ public class PayloadUtil	{
 
     public JSONObject deserializeFX_BFX()  throws IOException, JSONException  {
         return deserializeAux(null, strFX_BFX);
+    }
+
+    public JSONObject deserializeFees()  throws IOException, JSONException  {
+        return deserializeAux(null, strFeesFilename);
     }
 
     public synchronized void wipe() throws IOException	{

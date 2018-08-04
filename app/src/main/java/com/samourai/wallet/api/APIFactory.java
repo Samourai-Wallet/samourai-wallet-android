@@ -1188,7 +1188,13 @@ public class APIFactory	{
             else    {
                 StringBuilder url = new StringBuilder(WebUtil.BITCOIND_FEE_URL);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
-                String response = WebUtil.getInstance(null).getURL(url.toString());
+                String response = null;
+                if(!AppUtil.getInstance(context).isOfflineMode())    {
+                    response = WebUtil.getInstance(null).getURL(url.toString());
+                }
+                else    {
+                    response = PayloadUtil.getInstance(context).deserializeFees().toString();
+                }
 //            Log.i("APIFactory", "Dynamic fees response:" + response);
                 try {
                     jsonObject = new JSONObject(response);
@@ -1250,6 +1256,13 @@ public class APIFactory	{
 //                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
 //                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
 //                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
+            }
+
+            try {
+                PayloadUtil.getInstance(context).serializeFees(jsonObject);
+            }
+            catch(IOException | DecryptionException e) {
+                ;
             }
 
             return true;

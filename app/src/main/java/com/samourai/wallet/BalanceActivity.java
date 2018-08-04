@@ -20,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -1404,6 +1406,15 @@ public class BalanceActivity extends Activity {
     }
 
     private void refreshTx(final boolean notifTx, final boolean dragged, final boolean launch) {
+
+        if(AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
+            Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            /*
+            CoordinatorLayout coordinatorLayout = new CoordinatorLayout(BalanceActivity.this);
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.in_offline_mode, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            */
+        }
 
         Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
         intent.putExtra("notifTx", notifTx);

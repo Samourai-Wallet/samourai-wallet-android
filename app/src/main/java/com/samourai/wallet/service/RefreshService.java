@@ -111,7 +111,7 @@ public class RefreshService extends IntentService {
 
         PrefsUtil.getInstance(RefreshService.this).setValue(PrefsUtil.FIRST_RUN, false);
 
-        if(notifTx)    {
+        if(notifTx && !AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
             //
             // check for incoming payment code notification tx
             //
