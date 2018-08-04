@@ -16,10 +16,10 @@
         />
 
     <CheckBoxPreference
-        android:title="@string/options_bip126"
-        android:summary="@string/options_bip126_2"
+        android:title="@string/options_boltzmann"
+        android:summary="@string/options_boltzmann_2"
         android:defaultValue="true"
-        android:key="bip126"
+        android:key="boltzmann"
         />
 
     <CheckBoxPreference

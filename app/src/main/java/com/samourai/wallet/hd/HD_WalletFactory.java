@@ -1,54 +1,26 @@
 package com.samourai.wallet.hd;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 //import android.util.Log;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
-import com.samourai.wallet.crypto.AESUtil;
-import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.SIMUtil;
-import com.samourai.wallet.util.SendAddressUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,11 +34,6 @@ public class HD_WalletFactory	{
 
     private static HD_WalletFactory instance = null;
     private static List<HD_Wallet> wallets = null;
-
-    private static String dataDir = "wallet";
-    private static String strFilename = "samourai.dat";
-    private static String strTmpFilename = "samourai.tmp";
-    private static String strBackupFilename = "samourai.sav";
 
     private static Context context = null;
 
@@ -115,6 +82,7 @@ public class HD_WalletFactory	{
 
         BIP47Util.getInstance(context).reset();
         BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -160,6 +128,7 @@ public class HD_WalletFactory	{
 
         BIP47Util.getInstance(context).reset();
         BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
         wallets.clear();
         wallets.add(hdw);
 
@@ -211,6 +180,24 @@ public class HD_WalletFactory	{
         return hdw49;
     }
 
+    public HD_Wallet getBIP84() throws IOException, MnemonicException.MnemonicLengthException {
+
+        if(wallets == null || wallets.size() < 1) {
+            return null;
+        }
+
+        HD_Wallet hdw84 = null;
+        InputStream wis = context.getAssets().open("BIP39/en.txt");
+        if (wis != null) {
+            String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
+            String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
+            MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            hdw84 = new HD_Wallet(84, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.bouncycastle.util.encoders.Hex.decode(seed), passphrase, 1);
+        }
+
+        return hdw84;
+    }
+
     public void set(HD_Wallet wallet)	{
 
         if(wallet != null)	{
@@ -226,6 +213,12 @@ public class HD_WalletFactory	{
 
     public List<HD_Wallet> getWallets()    {
         return wallets;
+    }
+
+    public void clear() {
+        wallets = null;
+        context = null;
+        instance = null;
     }
 
 }

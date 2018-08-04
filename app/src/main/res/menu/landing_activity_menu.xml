@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+      <item android:id="@+id/import_external_wallet_menu"
+        android:visible="true"
+        android:title="@string/import_external_wallet"
+        />
+    <item android:id="@+id/import_samourai_backup_menu"
+        android:visible="true"
+        android:title="@string/import_samourai_backup"
+        />
+    <item android:id="@+id/get_help_menu_create"
+        android:visible="true"
+        android:title="@string/get_help_create"
+        />
+    <item android:id="@+id/get_help_menu_restore"
+        android:visible="true"
+        android:title="@string/get_help_restore"
+        />
+</menu>

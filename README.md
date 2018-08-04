@@ -2,7 +2,7 @@
 
 ### Features:
 
-[Samourai Wallet features list](https://gist.github.com/SamouraiDev/f4ce0f423fc09fea307be81b3dfafe48)
+[Samourai Wallet features list](Samourai-Wallet-features.md)
 
 ### Build:
 
@@ -28,13 +28,13 @@ Samourai P2SH-P2WPKH implementation based on [original BIP](https://github.com/b
 
 Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0069.mediawiki) by Kristov Atlas.
 
+### BIP84 (Segwit):
+
+Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0084.mediawiki) by Pavol Rusnak.
+
 ### BIP125 (Replace-by-fee, RBF):
 
 Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki) by David A. Harding and Peter Todd.
-
-### BIP126:
-
-Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0126.mediawiki) by Kristov Atlas.
 
 ### BIP141 (Segwit):
 
@@ -44,9 +44,17 @@ Samourai spends to bech32 addresses P2WPKH based on [original BIP](https://githu
 
 Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
 
+### Spending:
+
+Samourai spends include the possibility of including custom fees as well as the use of batch spending (build up a list of batched outputs for grouped spend and fee savings).
+
 ### Ricochet:
 
 Samourai implementation of multi-hop spend designed to outrun the baying pack of #KYCRunningDogs.
+
+### STONEWALL:
+
+STONEWALL spend is designed to increase the number of combinations between inputs and outputs (transaction entropy). It replaces the previously used BIP126. The objective is to obtain a positive entropy score using [Boltzmann](https://github.com/Samourai-Wallet/boltzmann) evaluation of the transaction.
 
 ### Tor:
 

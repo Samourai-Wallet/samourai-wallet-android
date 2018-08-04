@@ -17,7 +17,6 @@ import org.bitcoinj.uri.BitcoinURIParseException;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import android.util.Log;
@@ -27,18 +26,28 @@ public class FormatsUtil {
 	private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 	private Pattern phonePattern = Pattern.compile("(\\+[1-9]{1}[0-9]{1,2}+|00[1-9]{1}[0-9]{1,2}+)[\\(\\)\\.\\-\\s\\d]{6,16}");
 
-	private String URI_BECH32 = "^bitcoin:((tb|TB|bc|BC)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
+	private String URI_BECH32 = "(^bitcoin:(tb|bc)1([qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$)|(^bitcoin:(TB|BC)1([QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]+)(\\?amount\\=([0-9.]+))?$)";
+	private String URI_BECH32_LOWER = "^bitcoin:((tb|bc)1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]+)(\\?amount\\=([0-9.]+))?$";
 
 	public static final int MAGIC_XPUB = 0x0488B21E;
 	public static final int MAGIC_TPUB = 0x043587CF;
 	public static final int MAGIC_YPUB = 0x049D7CB2;
 	public static final int MAGIC_UPUB = 0x044A5262;
+	public static final int MAGIC_ZPUB = 0x04B24746;
+	public static final int MAGIC_VPUB = 0x045F1CF6;
+
+	public static final int MAGIC_XPRV = 0x0488ADE4;
+	public static final int MAGIC_TPRV = 0x04358394;
+	public static final int MAGIC_YPRV = 0x049D7878;
+	public static final int MAGIC_UPRV = 0x044A4E28;
+	public static final int MAGIC_ZPRV = 0x04B2430C;
+	public static final int MAGIC_VPRV = 0x045F18BC;
 
 	public static final String XPUB = "^[xtyu]pub[1-9A-Za-z][^OIl]+$";
-    public static final String HEX = "^[0-9A-Fa-f]+$";
+	public static final String HEX = "^[0-9A-Fa-f]+$";
 
 	private static FormatsUtil instance = null;
-	
+
 	private FormatsUtil() { ; }
 
 	public static FormatsUtil getInstance() {
@@ -51,12 +60,12 @@ public class FormatsUtil {
 	}
 
 	public String validateBitcoinAddress(final String address) {
-		
+
 		if(isValidBitcoinAddress(address)) {
 			return address;
 		}
 		else {
-			String addr = uri2BitcoinAddress(address);
+			String addr = getBitcoinAddress(address);
 			if(addr != null) {
 				return addr;
 			}
@@ -70,7 +79,7 @@ public class FormatsUtil {
 
 		boolean ret = false;
 		BitcoinURI uri = null;
-		
+
 		try {
 			uri = new BitcoinURI(s);
 			ret = true;
@@ -83,7 +92,7 @@ public class FormatsUtil {
 				ret = false;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -91,7 +100,7 @@ public class FormatsUtil {
 
 		String ret = null;
 		BitcoinURI uri = null;
-		
+
 		try {
 			uri = new BitcoinURI(s);
 			ret = uri.toString();
@@ -104,7 +113,7 @@ public class FormatsUtil {
 				ret = null;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -112,15 +121,15 @@ public class FormatsUtil {
 
 		String ret = null;
 		BitcoinURI uri = null;
-		
+
 		try {
 			uri = new BitcoinURI(s);
 			ret = uri.getAddress().toString();
 		}
 		catch(BitcoinURIParseException bupe) {
-			if(s.matches(URI_BECH32))	{
-				Pattern pattern = Pattern.compile(URI_BECH32);
-				Matcher matcher = pattern.matcher(s);
+			if(s.toLowerCase().matches(URI_BECH32_LOWER))	{
+				Pattern pattern = Pattern.compile(URI_BECH32_LOWER);
+				Matcher matcher = pattern.matcher(s.toLowerCase());
 				if(matcher.find() && matcher.group(1) != null)    {
 					return matcher.group(1);
 				}
@@ -137,7 +146,7 @@ public class FormatsUtil {
 
 		String ret = null;
 		BitcoinURI uri = null;
-		
+
 		try {
 			uri = new BitcoinURI(s);
 			if(uri.getAmount() != null) {
@@ -148,14 +157,13 @@ public class FormatsUtil {
 			}
 		}
 		catch(BitcoinURIParseException bupe) {
-			if(s.matches(URI_BECH32))	{
-				Pattern pattern = Pattern.compile(URI_BECH32);
-				Matcher matcher = pattern.matcher(s);
+			if(s.toLowerCase().matches(URI_BECH32_LOWER))	{
+				Pattern pattern = Pattern.compile(URI_BECH32_LOWER);
+				Matcher matcher = pattern.matcher(s.toLowerCase());
 				if(matcher.find() && matcher.group(4) != null)    {
 					String amt = matcher.group(4);
 					try	{
-						double amount = Double.valueOf(amt);
-						return Long.toString((long)(amount * 1e8));
+						return Long.toString(Math.round(Double.valueOf(amt) * 1e8));
 					}
 					catch(NumberFormatException nfe)	{
 						ret = "0.0000";
@@ -238,30 +246,18 @@ public class FormatsUtil {
 		return ret;
 	}
 
-	private String uri2BitcoinAddress(final String address) {
-		
-		String ret = null;
-		BitcoinURI uri = null;
-		
-		try {
-			uri = new BitcoinURI(address);
-			ret = uri.getAddress().toString();
-		}
-		catch(BitcoinURIParseException bupe) {
-			ret = null;
-		}
-		
-		return ret;
-	}
-
 	public boolean isValidXpub(String xpub){
 
 		try {
 			byte[] xpubBytes = Base58.decodeChecked(xpub);
 
+			if(xpubBytes.length != 78)	{
+				return false;
+			}
+
 			ByteBuffer byteBuffer = ByteBuffer.wrap(xpubBytes);
 			int version = byteBuffer.getInt();
-			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB)   {
+			if(version != MAGIC_XPUB && version != MAGIC_TPUB && version != MAGIC_YPUB && version != MAGIC_UPUB && version != MAGIC_ZPUB && version != MAGIC_VPUB)   {
 				throw new AddressFormatException("invalid version: " + xpub);
 			}
 			else	{
@@ -284,6 +280,31 @@ public class FormatsUtil {
 				}else{
 					return false;
 				}
+			}
+		}
+		catch(Exception e)	{
+			return false;
+		}
+	}
+
+	public boolean isValidXprv(String xprv){
+
+		try {
+			byte[] xprvBytes = Base58.decodeChecked(xprv);
+
+			if(xprvBytes.length != 78)	{
+				return false;
+			}
+
+			ByteBuffer byteBuffer = ByteBuffer.wrap(xprvBytes);
+			int version = byteBuffer.getInt();
+			if(version != MAGIC_XPRV && version != MAGIC_TPRV && version != MAGIC_YPRV && version != MAGIC_UPRV && version != MAGIC_ZPRV && version != MAGIC_VPRV)   {
+				throw new AddressFormatException("invalid version: " + xprv);
+			}
+			else	{
+
+				return true;
+
 			}
 		}
 		catch(Exception e)	{

@@ -16,6 +16,9 @@
     <color name="balance">#FF13181f</color>
     <color name="pinBG">#FF212429</color>
     <color name="pinGreen">#FF4a9c52</color>
+    <color name="text_ui2_grey">#96979a</color>
+    <color name="tx_broadcast_normal_bg">#0ecf96</color>
+    <color name="tx_broadcast_offline_bg">#d8b77d</color>
 
     <color name="white">#fafafa</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>

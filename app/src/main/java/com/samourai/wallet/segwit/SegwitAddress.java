@@ -11,6 +11,11 @@ import org.bitcoinj.script.Script;
 
 public class SegwitAddress {
 
+    public static final int TYPE_P2SH_P2WPKH = 0;
+    public static final int TYPE_P2WPKH = 1;
+
+    private int DEFAULT_TO = TYPE_P2SH_P2WPKH;
+
     private ECKey ecKey = null;
     private NetworkParameters params = null;
 
@@ -33,6 +38,26 @@ public class SegwitAddress {
         this.params = params;
     }
 
+    public SegwitAddress(ECKey ecKey, NetworkParameters params, int type) {
+        this.ecKey = ecKey;
+        this.params = params;
+        this.DEFAULT_TO = type;
+    }
+
+    public SegwitAddress(byte[] pubkey, NetworkParameters params, int type) {
+        this.ecKey = ECKey.fromPublicOnly(pubkey);
+        this.params = params;
+        this.DEFAULT_TO = type;
+    }
+
+    public int getDefaultTo() {
+        return DEFAULT_TO;
+    }
+
+    public void setDefaultTo(int type) {
+        this.DEFAULT_TO = type;
+    }
+
     public ECKey getECKey() {
         return ecKey;
     }
@@ -41,15 +66,9 @@ public class SegwitAddress {
         this.ecKey = ecKey;
     }
 
-    public Address segWitAddress()    {
-
-        return Address.fromP2SHScript(params, segWitOutputScript());
-
-    }
-
     public String getAddressAsString()    {
 
-        return segWitAddress().toString();
+        return Address.fromP2SHScript(params, segWitOutputScript()).toString();
 
     }
 
@@ -58,13 +77,24 @@ public class SegwitAddress {
         String address = null;
 
         try {
-            address = Bech32Segwit.encode(params instanceof TestNet3Params ? "tb" : "bc", (byte)0x00, getHash160());
+            address = Bech32Segwit.encode(params instanceof TestNet3Params ? "tb" : "bc", (byte)0x00, Utils.sha256hash160(ecKey.getPubKey()));
         }
         catch(Exception e) {
             ;
         }
 
         return address;
+    }
+
+    public String getDefaultToAddressAsString()  {
+
+        if(DEFAULT_TO == TYPE_P2SH_P2WPKH)    {
+            return getAddressAsString();
+        }
+        else    {
+            return getBech32AsString();
+        }
+
     }
 
     public Script segWitOutputScript()    {
@@ -87,28 +117,13 @@ public class SegwitAddress {
         //
         // The P2SH segwit redeemScript is always 22 bytes. It starts with a OP_0, followed by a canonical push of the keyhash (i.e. 0x0014{20-byte keyhash})
         //
-        byte[] hash = getHash160();
+        byte[] hash = Utils.sha256hash160(ecKey.getPubKey());
         byte[] buf = new byte[2 + hash.length];
         buf[0] = (byte)0x00;  // OP_0
         buf[1] = (byte)0x14;  // push 20 bytes
         System.arraycopy(hash, 0, buf, 2, hash.length); // keyhash
 
         return new Script(buf);
-    }
-
-    public byte[] getHash160()  {
-        return Utils.sha256hash160(ecKey.getPubKey());
-    }
-
-    private boolean hasPrivKey() {
-
-        if(ecKey != null && ecKey.hasPrivKey())    {
-            return true;
-        }
-        else    {
-            return false;
-        }
-
     }
 
 }

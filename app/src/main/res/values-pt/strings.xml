@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">Anote as seguintes palavras de forma segura. Não perca as palavras nem esqueça sua palavra-passe.</string>
+    <string name="alpha_create_confirm_backup">Eu anotei as minhas palavras</string>
+
+    <string name="creating_wallet">A criar a carteira. Por favor aguarde...</string>
+    <string name="restoring_wallet">A restaurar a carteira. Por favor aguarde...</string>
+    <string name="decrypting_bip38">Desencriptando a senha BIP38. Por favor aguarde...</string>
+
+    <string name="action_settings">Configurações</string>
+    <string name="action_sweep">Varrer chave privada</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Ativar todos os códigos de pagamento arquivados.</string>
+    <string name="action_sync_all">Sincronizar todos os códigos de pagamento</string>
+
+    <string name="about_us">Sobre a Samourai Wallet</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="options_cat_prefs">Moeda, Explorador de blocos</string>
+    <string name="options_cat_stealth">Furtividade</string>
+    <string name="options_cat_remote">Controlo Remoto</string>
+    <string name="options_cat_wallet">Carteira</string>
+    <string name="options_cat_networking">Rede</string>
+    <string name="options_cat_other">Sobre</string>
+
+    <string name="options_mnemonic">Mostrar mnemónica</string>
+    <string name="options_mnemonic2">Mostrar semente de 12 palavras para esta carteira.</string>
+    <string name="options_xpub">Mostrar BIP44 XPUB</string>
+    <string name="options_xpub2">Mostrar chave pública extendida para conta BIP44.</string>
+    <string name="options_xpub49">Mostrar Segwit YPUB</string>
+    <string name="options_xpub49_2">Mostrar chave pública extendida para conta Segwit BIP49.</string>
+    <string name="options_wipe">Apagar carteira de forma segura</string>
+    <string name="options_wipe2">Apagar esta carteira de forma segura do dispositivo.</string>
+    <string name="options_stealth_display">Lançador Furtivo</string>
+    <string name="options_stealth_display2">Remove a Samourai do lançador e da tela inicial. Você deve digitar **O_SEU_CÓDIGO_PIN# do teclado do telefone para iniciar a Samourai.</string>
+    <string name="options_remote_commands">Activa controles remotos</string>
+    <string name="options_remote_commands2">Permite comandos remotos por SMS.</string>
+    <string name="options_currency">Preço de rua</string>
+    <string name="options_currency2">Escolha a sua exchange e a sua moeda local.</string>
+    <string name="options_blockexplorer">Explorador de blocos</string>
+    <string name="options_blockexplorer2">O explorador de blocos utilizado para ver detalhes da transação.</string>
+    <string name="options_sim_switch">Defesa contra troca de chip SIM</string>
+    <string name="options_sim_switch2">Enviar SMS para um número de telemóvel confiado quando o chip SIM for trocado.</string>
+    <string name="options_use_telno">Usar número de telemóvel confiado para controle remoto</string>
+    <string name="options_use_telno2">Permita comandos remotos enviados apenas pelo seu número confiado.</string>
+    <string name="options_alert_telno">Número confiado</string>
+    <string name="options_alert_telno2">Um número de telemóvel confiado que você pode usar para restringir o acesso remoto (use o formato internacional sem espaços ex:. +351912344321).</string>
+    <string name="options_hash">Hash do APK</string>
+    <string name="options_hash2">Obter hash SHA-256 deste arquivo APK instalado (pode ser copiado para a área de transferência).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">Iniciar OpenVPN para Android.</string>
+    <string name="options_Tor">Encaminhar através do Tor?</string>
+    <string name="options_Tor2">Iniciar Orbot (Tor).</string>
+    <string name="options_export">Exportar backup da carteira</string>
+    <string name="options_change_pin">Mudar PIN</string>
+    <string name="options_change_pin2">Definir um novo código PIN; usado para desbloquear a sua carteira.</string>
+    <string name="options_remote_pin">Lançador furtivo e PIN remoto</string>
+    <string name="options_remote_pin2">Definir PIN alternativo para início furtivo e funções remotas.</string>
+    <string name="options_autosave_backup">Guardar automaticamente a cópia de segurança no armazenamento do dispositivo</string>
+    <string name="options_autosave_backup2">Guardar periodicamente a cópia de segurança cifrada por palavra-passe no armazenamento do dispositivo.</string>
+    <string name="options_version">Versão</string>
+    <string name="options_txs">Transações</string>
+    <string name="options_bip126">Transferir usando a BIP126</string>
+    <string name="options_bip126_2">Transferências irão usar a BIP126 para aumentar a obfuscação.</string>
+    <string name="options_utxo">Mostrar saídas não gastas</string>
+    <string name="options_trusted_node">Definir nó confiado</string>
+    <string name="options_trusted_node2">Especifique o seu nó para transmitir as transações.</string>
+    <string name="options_use_trusted_node">Usar nó confiado</string>
+    <string name="options_use_trusted_node2">Trasmitir transações através de seu próprio nó.</string>
+    <string name="options_rbf0">Gastar usando RBF (substituir via taxa)</string>
+    <string name="options_rbf0_2">Gastos irão usar RBF (substituir via taxa) para permitir aumentar a taxa.</string>
+    <string name="options_troubleshoot">Resolver problemas</string>
+    <string name="options_passphrase_test">Teste de palavra-passe/backup</string>
+    <string name="options_passphrase_test2">Verificar o acesso à carteira e suporte para backup.</string>
+    <string name="options_send_backup_to_support">Enviar backup para o suporte técnico</string>
+    <string name="options_send_backup_to_support2">Enviar o backup da carteira para o suporte técnico. Não contém informação da chave privada.</string>
+    <string name="options_fee_provider">Fonte da Estimativa de Taxa</string>
+    <string name="options_fee_provider2">Selecione a sua fonte de estimativas de taxas preferida.</string>
+    <string name="options_broadcast_on">Transmitir transações</string>
+    <string name="options_broadcast_on2">Desmarque (transmissão DESLIGADA) para copiar a transação assinada para a área de transferência.</string>
+    <string name="options_segwit">Receber em endereços segwit</string>
+    <string name="options_segwit_2">Gerar endereços segwit para as transações a receber.</string>
+    <string name="options_broadcast_hex">Transmitir hex da transação</string>
+    <string name="options_broadcast_hex2">Transmite transação assinada em formato hexadecimal.</string>
+    <string name="options_like_typed_change">Receber o troco em saídas de tipo igual</string>
+    <string name="options_like_typed_change2">Receber o troco no mesmo tipo de endereço que o gasto de saída. DESLIGUE para receber apenas em endereços segwit.</string>
+    <string name="options_haptic">Resposta táctil do PIN</string>
+    <string name="options_haptic_2">Vibração a cada dígito na entrada do PIN.</string>
+
+    <string name="prompt_send_backup_to_support">Mandar o backup da carteira para o suporte técnico? Não contém qualquer informação de chave privada, semente ou palavra-passe.</string>
+
+    <string name="timeline_today">Hoje</string>
+    <string name="timeline_older">Mais antigas</string>
+
+    <string name="tx_sent">Transação enviada</string>
+    <string name="tx_failed">Erro enviando transação</string>
+    <string name="you_received">Recebido</string>
+    <string name="you_sent">Enviado</string>
+    <string name="send">Enviar</string>
+    <string name="receive">Receber</string>
+    <string name="cannot_select_utxo">Não é possível selecionar saídas não gastas</string>
+    <string name="error_bip126_output">Erro a determinar o endereço de saída</string>
+
+    <string name="copied_to_clipboard">Copiado para a área de transferência</string>
+    <string name="send_payment_code">Enviar código de pagamento</string>
+
+    <string name="ask_you_sure_exit">Você tem a certeza que quer sair da Samourai?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="close">Fechar</string>
+
+    <string name="sim_warning">O seu dispositivo com a carteira Samourai tem agora um novo cartão SIM que corresponde ao número que enviou esta SMS.</string>
+
+    <string name="pin_5_8">Criar um código PIN contendo entre 5 e 8 caracteres.</string>
+    <string name="pin_5_8_confirm">Confirmar código PIN</string>
+    <string name="pin_error">Erro de código PIN</string>
+    <string name="no_internet">Sem conectividade com a Internet. Por favor tente novamente.</string>
+    <string name="bip38_pw">Senha BIP38</string>
+    <string name="bip38_pw_error">Erro de senha BIP38</string>
+    <string name="bip39_safe">Por favor crie uma senha e mantenha-a secreta. Vai precisar dessa senha caso perca acesso à sua carteira.</string>
+    <string name="bip39_safe2">Por favor confirme a sua senha. Não revele esta senha a ninguém. Vai precisar da senha caso perca acesso à sua carteira.</string>
+    <string name="bip39_restore">Escreva a sua frase mnemónica (ou a entropia hexadecimal dela) e, se necessário, a sua senha BIP39. Se você não utiliza uma senha BIP39, deixe em branco.</string>
+    <string name="bip39_must">A sua carteira precisa de uma senha. Por favor tente novamente.</string>
+    <string name="bip39_unmatch">A senha não corresponde. Por favor tente novamente.</string>
+    <string name="bip39_invalid">Não use nenhum caracter de espaço na sua senha. Por favor tente novamente.</string>
+    <string name="please_select">Por favor selecione...</string>
+    <string name="create_wallet">Criar carteira</string>
+    <string name="restore_wallet">Restaurar carteira</string>
+    <string name="wallet_passphrase">Insira a senha de sua carteira</string>
+    <string name="bip39_passphrase">Senha BIP39</string>
+    <string name="bip39_match">Senha BIP39 verificada.</string>
+    <string name="bip39_decrypt_test">Senha da carteira verificada. Quer testar a desencriptação do último backup automático?</string>
+    <string name="backup_read_ok">Arquivo de backup OK.</string>
+    <string name="backup_read_error">Erro a ler arquivo de backup.</string>
+    <string name="mnemonic_hex">Frase mnemónica ou entropia hexadecimal</string>
+    <string name="pin_enter">Insira o código PIN</string>
+    <string name="please_wait">Por favor espere...</string>
+    <string name="random_key_error">Erro de chave aleatória</string>
+    <string name="login_error">Autenticação falhou</string>
+    <string name="wallet_created_ok">Carteira criada OK.</string>
+    <string name="wallet_created_ko">Erro a criar a carteira.</string>
+    <string name="wallet_restored_ok">Carteira restaurada OK.</string>
+    <string name="wallet_restored_ko">Erro a restaurar a carteira.</string>
+
+    <string name="address_used_previously">Você já usou este endereço antes! Reutilizar endereços pode resultar em perda de privacidade.</string>
+
+    <string name="scan">Examinar</string>
+    <string name="scan_error">Erro a examinar</string>
+    <string name="enter_privkey">Insira a chave privada</string>
+
+    <string name="to">Para</string>
+    <string name="destination">Endereço ou canal de pagamento</string>
+
+    <string name="insufficient_funds">Fundos insuficientes</string>
+    <string name="tx_length_error">A Samourai não trabalha com transações de mais de 100KB. Por favor tente dividir a sua transação.</string>
+    <string name="invalid_amount">Quantia inválida</string>
+
+    <string name="receive_address_to_clipboard">Copiar este endereço de recebimento para a área de transferência? Se for copiado, ele pode ficar visível para outras aplicações.</string>
+    <string name="receive_address_to_share">Partilhar este endereço de recebimento? Se for partilhado, ele pode ser lido por outras aplicações.</string>
+    <string name="sure_to_erase">Você tem a certeza de que deseja apagar essa carteira?</string>
+    <string name="wallet_erased">Carteira apagada do dispositivo.</string>
+
+    <string name="send_privacy_warning">Aviso de privacidade: Você já enviou fundos para este endereço.</string>
+
+    <string name="securely_wiping_wait">Limpando a carteira de forma segura. Por favor aguarde.</string>
+
+    <string name="options_scramble_pin">Baralhar o teclado de PIN</string>
+    <string name="options_scramble_pin2">Usar um teclado númerico baralhado para entrar na sua carteira.</string>
+
+    <string name="you_must_have_orbot">Você deve ter o Orbot instalado e ativado para direcionar tráfego através dele. Quer instalar o aplicativo através da Google Play?</string>
+
+    <string name="ssl_pinning_invalid">O pinning do certificado SSL falhou. Isso pode indicar atividade maliciosa. Por favor verifique a sua ligação e o seu dispositivo antes de continuar.</string>
+    <string name="ssl_no_connection">Nós não fomos capazes de nos ligar ao host para verificar o certificado SSL. Por favor verifique a sua ligação e o seu dispositivo antes de continuar.</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="exit">Sair</string>
+
+    <string name="create_pin">Criar código PIN</string>
+    <string name="confirm_pin">Confirmar código PIN</string>
+
+    <string name="auto_fee">TAXA NORMAL</string>
+    <string name="priority_fee">TAXA PRIORITÁRIA</string>
+    <string name="low_fee">TAXA BAIXA</string>
+    <string name="custom_fee">Personalizada</string>
+    <string name="sat_b">sat/b</string>
+
+    <string name="account_Samourai">Carteira</string>
+    <string name="account_shuffling">Shifted</string>
+
+    <string name="max_available">Máx. disponível:</string>
+
+    <string name="first_use_shuffle">Esta é sua Conta Shifted. As Bitcoins recebidas através do ShapeShift serão guardadas nesta conta que não faz parte do espaço de endereços da sua carteira principal.</string>
+
+    <string name="select_account">Selecionar conta</string>
+    <string name="received_bitcoin">Bitcoin recebido</string>
+    <string name="received">Recebido</string>
+    <string name="sent">Transação enviada</string>
+    <string name="total">Total</string>
+    <string name="export_to_clipboard">Exportar para a área de transferência</string>
+    <string name="export_to_email">Exportar para e-mail</string>
+    <string name="encryption_error">Houve um erro durante a encriptação do backup da sua carteira. Por favor tente novamente.</string>
+    <string name="import_backup">Do backup</string>
+    <string name="import_mnemonic">Mnemónica/semente</string>
+    <string name="encrypted_backup">Dados cifrados da carteira</string>
+    <string name="decryption_error">Houve um erro durante a desencriptação do backup da sua carteira. Por favor tente novamente.</string>
+    <string name="restore_wallet_from_backup">Restaurar carteira de backup</string>
+    <string name="restore_wallet_from_existing_backup">Backup encontrado no dispositivo. Para o restaurar, toque em \'OK\', caso contrário copie/cole um backup diferente e toque \'OK\'.</string>
+
+    <string name="choose_email_client">Escolha um cliente de e-mail:</string>
+
+    <string name="cannot_launch_app">A Carteira Samourai não pode correr neste dispositivo</string>
+    <string name="confirm_change_pin">Você tem a certeza de que quer mudar o seu PIN?</string>
+    <string name="success_change_pin">PIN alterado</string>
+    <string name="alternative_pin_create">Você tem a certeza de que quer criar um PIN alternativo para ser usado no início furtivo e nos comandos remotos?</string>
+    <string name="alternative_pin_deleted">Você não está a usar nenhum código PIN alternativo para as funções remotas e modo furtivo.</string>
+    <string name="alternative_pin_wait">Espere pela ativação completa do modo furtivo antes de definir um PIN alternativo.</string>
+
+    <string name="invalid_payment_code">Código de pagamento inválido</string>
+    <string name="error_payment_code">Erro gerando código de pagamento</string>
+
+    <string name="bip47_setup1_title">Seu PayNym</string>
+    <string name="bip47_setup4_title">Adicionar contato PayNym</string>
+    <string name="bip47_setup4_text1">Adicionar esse PayNym aos seus contactos requer uma taxa única de transação para criar o registo na blockchain.</string>
+    <string name="bip47_setup4_text2">será deduzido do saldo da sua carteira.</string>
+
+    <string name="bip47_add1_title">Novo contacto</string>
+    <string name="bip47_add1_text">Examinar ou colar um código de pagamento para criar novo canal de pagamento.</string>
+
+    <string name="paste">Colar</string>
+    <string name="label">Rótulo</string>
+    <string name="next">Próximo</string>
+    <string name="confirm">Confirmar</string>
+    <string name="payment_code">Código de pagamento</string>
+    <string name="payment_channel_init">Transação de notificação enviada. O seu canal de pagamento está a ser criado.</string>
+
+    <string name="bip47_no_label_error">Você deve introduzir um rótulo para este código de pagamento</string>
+
+    <string name="bip47_status_tbe">Ainda não estabelecido</string>
+    <string name="bip47_status_pending">Pendente - 0/1 Confirmações</string>
+    <string name="bip47_status_active">Pronto para enviar</string>
+    <string name="bip47_status_incoming">Pronto para receber</string>
+    <string name="bip47_cannot_scan_own_pcode">Não é possível examinar o seu próprio código de pagamento</string>
+    <string name="bip47_spend_to_pcode">Enviar através deste canal de pagamento?</string>
+    <string name="bip47_sign">Assinar mensagem</string>
+    <string name="bip47_sign_text1">Assinar mensagem utilizando endereço de notificação BIP47?</string>
+    <string name="bip47_sign_text2">Assinado utilizando o meu endereço de notificação BIP47.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Este canal de pagamento está à espera de 1 confirmação antes do envio ser ativado. Quer descartar a tentativa anterior e reenviar a notificação?</string>
+
+    <string name="rbf_incoming">A transação recebida é RBF (substituir via taxa). Ver no explorador de blocos?</string>
+
+    <string name="invalid_passphrase">Senha inválida</string>
+    <string name="passphrase">Senha</string>
+    <string name="passphrase_needed_for_backup">A sua carteira não está protegida por uma senha. Backups da carteira são cifrados utilizando a sua senha. Se você quer usar backups cifrados e outras funções da carteira Samourai crie a sua carteira usando esta aplicação e transfira os seus fundos.</string>
+    <string name="passphrase_required">Uma senha é necessária para utilizar esta função. Por favor considere criar uma nova carteira que irá automaticamente conter uma senha.</string>
+
+    <string name="cannot_reach_api">Os APIs da Samourai não podem ser acedidos. Por favor verifique a sua ligação e tente novamente ou tente mais tarde.</string>
+    <string name="api_error">As APIs da Samourai estão a retornar um erro. Tente novamente ou mais tarde.</string>
+
+    <string name="cannot_recognize_privkey">Não é possível reconhecer a chave privada</string>
+    <string name="cannot_sweep_privkey">Erro a varrer a chave privada</string>
+    <string name="please_wait_sending">A enviar transação, por favor aguarde.</string>
+    <string name="please_wait_ricochet">A processar a fila Ricochet, por favor aguarde.</string>
+
+    <string name="change_is_dust">O troco desta transação é irrisório e vai ser adicionado à taxa dos mineiros.</string>
+
+    <string name="tor_routing_on">A Samourai está a encaminhar através do Tor.</string>
+    <string name="tor_routing_off">A Samourai não está a encaminhar através do Tor. Pressione para ativar.</string>
+    <string name="tor_install">Pressione para instalar o Orbot e encaminhar a Samourai através do Tor.</string>
+
+    <string name="premium_addons">Extensões Premium</string>
+
+    <string name="ricochet_hop">Salto Ricochet</string>
+    <string name="ricochet_hopping">Ricocheteado para</string>
+    <string name="ricochet_spend1">Gasto Ricochet para</string>
+    <string name="ricochet_spend2">totalizando</string>
+    <string name="ricochet_spend3">(inclui taxa de 0.001 BTC para Samourai e taxas dos mineiros)?</string>
+
+    <string name="action_ricochet">Repetir Ricochet</string>
+    <string name="action_empty_ricochet">Esvaziar a fila Ricochet</string>
+    <string name="ricochet">Ricochet - enviar com 4 saltos extra</string>
+    <string name="action_ricochet_script">Exibir script Ricochet</string>
+    <string name="action_ricochet_replay">Reenviar Ricochet</string>
+    <string name="ricochet_replay">Você deseja retransmitir este gasto Ricochet?</string>
+    <string name="ricochet_not_broadcast_replay">Houve um problema a transmitir o seu Ricochet. Quer retransmitir este gasto Ricochet?</string>
+    <string name="no_ricochet_replay">Não há Ricochet para ser reenviado.</string>
+    <string name="no_ricochet_display">Não há script Ricochet para exibir.</string>
+    <string name="ricochet_broadcast">O seu Ricochet foi transmitido.</string>
+
+    <string name="bip47_cannot_identify_outpoint">Não foi possível esconder o código de pagamento</string>
+    <string name="bip47_cannot_compose_notif_tx">Não foi possível compôr a transação de notificação</string>
+
+    <string name="pushtx_returns_null">Gasto falhou. O servidor retornou um valor nulo.</string>
+
+    <string name="trusted_node">Nó confiável</string>
+    <string name="trusted_node_user_hint">nome de utilizador do rpc</string>
+    <string name="trusted_node_ip_hint">Endereço de IP</string>
+    <string name="trusted_node_port_hint">Porta (8332 padrão)</string>
+    <string name="trusted_node_password_hint">senha do rpc</string>
+    <string name="trusted_node_not_valid">Por favor forneça informação válida para o seu nó confiável.</string>
+    <string name="trusted_node_ko">Nó confiável não reconhecido. Por favor verifique a instalação.</string>
+    <string name="trusted_node_error">Erro ao aceder ao nó confiável proposto.</string>
+    <string name="trusted_node_tx_error">Transação falhou no nó confiável.</string>
+    <string name="trusted_node_not_core_131">Nó confiável está definido. Note que a Samourai suporta Bitcoin Core 0.13.1 e posteriores.</string>
+    <string name="trusted_node_tx_sent">Transação enviada através de nó confiável.</string>
+    <string name="trusted_node_not_responding">O nó confiável não está a responder. Por favor verifique a instalação.</string>
+    <string name="trusted_node_breaks_consensus">O nó confiável não pode ser configurado num cliente bitcoin que quebre o consenso.</string>
+
+    <string name="refresh_tx_pre">Recuperando transações e saldo.</string>
+    <string name="refresh_tx">Transações e saldo recuperados.</string>
+    <string name="refresh_incoming_notif_tx">Transações de notificação de entrada BIP47 recuperadas.</string>
+    <string name="refresh_outgoing_notif_tx">Transações de notificação de saída atualizadas.</string>
+
+    <string name="options_unconfirmed_tx">Essa transação está à espera de confirmação. Por favor selecione uma opção:</string>
+    <string name="options_block_explorer">Visualizar transação</string>
+    <string name="options_bump_fee">Aumentar a taxa de transação</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Não é possível obter a informação da transação. Por favor tente novamente.</string>
+    <string name="fee_bump_not_necessary">Aumentar o valor da taxa pode não ser necessário para esta transação.</string>
+    <string name="bump_fee">Você gostaria de aumentar a taxa dos mineiros desta transação para obter confirmação mais rápida?\n\nTaxa Adicional de Mineração:</string>
+
+    <string name="options_sign">Assinar mensagem</string>
+
+    <string name="trusted_node_pow_failed">A prova de trabalho sendo reportada pelo seu nó confiável não está a ser verificada. Por favor verifique a sua instalação.</string>
+
+    <string name="options_fees">Exibe as taxas dos mineiros atuais</string>
+    <string name="current_fee_selection">A sua seleção de taxa está configurada para:</string>
+    <string name="current_hi_fee_value">Taxa alta atual:</string>
+    <string name="current_mid_fee_value">Taxa normal atual:</string>
+    <string name="current_lo_fee_value">Taxa baixa atual:</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">Selecione a sua taxa personalizada em sat/b.</string>
+    <string name="custom_fee_too_low">Taxa personalizada selecionada está baixa demais.</string>
+    <string name="custom_fee_too_high">Taxa personalizada selecionada está alta demais.</string>
+
+    <string name="cpfp_spent">Transação CPFP enviada.</string>
+    <string name="rbf_spent">Transação RBF enviada.</string>
+    <string name="cannot_output_dust">Não é possível fazer uma transação com saída irrisória.</string>
+    <string name="cannot_create_change_output">Não é possível criar saída de troco.</string>
+    <string name="cannot_create_cpfp">Não é possível criar transação CPFP.</string>
+
+    <string name="error_reading_payload">Erro ao ler a payload. Por favor tente novamente.</string>
+
+    <string name="utxo_sign">Assinar mensagem</string>
+    <string name="utxo_sign_text1">Assinar mensagem usando esta chave privada?</string>
+    <string name="utxo_sign_text2">Assinada usando endereço utxo.</string>
+    <string name="utxo_sign_text3">Assinada usando endereço utxo.</string>
+
+    <string name="recovery_checkup">Verificação de Recuperação</string>
+    <string name="recovery_checkup_message">As palavras de recuperação e a sua senha serão exibidas. Não deixe que ninguém veja o seu ecrã. Isto NÃO será exibido novamente.</string>
+    <string name="mnemonic">Mnemónica</string>
+    <string name="recovery_checkup_finish">EU GUARDEI A MINHA INFORMAÇÃO DE RECUPERAÇÃO</string>
+    <string name="pin_reminder">Como lembrete, o seu código PIN é:</string>
+
+    <string name="opendime_confirmed_balance">Saldo confirmado</string>
+    <string name="opendime_privkey">Chave Privada</string>
+    <string name="opendime_verified">VERIFICADO</string>
+    <string name="opendime_valid_key">Chave privada válida no dispositivo</string>
+    <string name="opendime_not_verified">NÃO É POSSÍVEL VERIFICAR</string>
+    <string name="opendime_no_valid_key">Não é possível validar chave privada no dispositivo</string>
+    <string name="opendime_view">EXIBIR</string>
+    <string name="opendime_sweep">LIMPAR</string>
+    <string name="opendime_topup">COMPLETAR</string>
+
+    <string name="select_app">Selecione a aplicação</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Protecção de repetição</string>
+    <string name="replay_unprotected">Desprotegido</string>
+    <string name="replay_in_progress">Em progresso</string>
+    <string name="replay_protected">Protegido</string>
+    <string name="replay_disclaimer">Conflito de correntes de blocos detectedo</string>
+    <string name="replay_text">Todos os endereços serão combinados em uma única transação na sua carteira. Este processo chama-se combinar entradas e pode diminuir a sua privacidade.</string>
+    <string name="replay_ENABLE">PROTECÇÃO DE REPETIÇÃO ACTIVADO</string>
+
+    <string name="replay_broadcast_to_network">transmitir para rede...</string>
+    <string name="replay_seen_on_network">visto na rede...</string>
+    <string name="replay_split_tx_broadcast">transmissão de transacção dividida...</string>
+    <string name="replay_description">A sua carteira vai enviar uma transação especial para ela mesma que irá permanentemente dividir as suas moedas da outra corrente de blocos, o que irá proteger contra attaques de repetição.</string>
+    <string name="replay_waiting_for_confirmations">a aguardar confirmações</string>
+    <string name="replay_confirmed">confirmado</string>
+    <string name="replay_confirmations">confirmações</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">Replay protection a aguardar confirmação</string>
+    <string name="replay_dismiss">IGNORAR ALERTA</string>
+
+    <string name="show_qr">Mostrar código QR</string>
+    <string name="share_qr">Partilhar código QR</string>
+    <string name="send_tx">Enviar transação primária</string>
+    <string name="tx_too_large_qr">Transação primária grande demais para exibir em QR code.</string>
+
+    <string name="select_network">Seleccionar rede...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">Endereço Segwit</string>
+    <string name="segwit_switch_prompt">Fundos depositados em endereços Segwit são mais eficientes ao enviar. Oferecendo taxas de mineiros reduzidas quando envia Bitcoin da sua carteira.</string>
+
+    <string name="privkey_clipboard">Uma chave privada foi identificada na sua área de transferência. Apagar o conteúdo da área de transferência?</string>
+
+    <string name="tx_hex">Hex da transação</string>
+    <string name="enter_tx_hex">Inserir transação no formato hexadecimal</string>
+    <string name="broadcast">Transmitir transação</string>
+
+    <string name="dusting_tx">TRANSAÇÃO IRRISÓRIA</string>
+    <string name="dusting_attempt">Uma transação irrisória não esperada na sua carteira pode indicar uma tentativa de seguir os seus endereços e gastos.\n\nMarcar esta transação como inutilizável para dificultar tentativas de seguimento por parte de terceiros?.</string>
+    <string name="dusting_attempt_amount">Quantia:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Ignorar</string>
+    <string name="dusting_attempt_mark_unspendable">Marcar como inutilizável</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">TRANSAÇÃO IRRISÓRIA</string>
+    <string name="do_not_spend">Não Gastar</string>
+    <string name="dusting_tx_unblock">Essa transação irrisória actualmente está impedida de ser gasta. Desbloquear para possibilitar gastar?</string>
+    <string name="mark_spend">Marcar como utilizável</string>
+    <string name="mark_do_not_spend">Marcar Inutilizável</string>
+    <string name="mark_utxo_spend">Tornar utilizável esta saída não gasta.</string>
+    <string name="mark_utxo_do_not_spend">Tornar inutilizável esta saída não gasta.</string>
+
+    <string name="options_sign_a_message">Assinar uma mensagem</string>
+    <string name="options_display_redeem_script">Exibir script de resgate</string>
+    <string name="options_view_tx">Exibir transação</string>
+    <string name="options_display_privkey">Exibir chave privada</string>
+
+    <string name="do_not_repeat_sent_to">Marque a caixa para não avisar sobre envios repetidos para este endereço.</string>
+
+    <string name="mark_inputs_as_unspendable">Marcar as saídas não gastas que compõem as entradas desta transação como inutilizáveis?</string>
+
+    <string name="copy_to_clipboard">Copiar para área de transferência</string>
+
+    <string name="no_bitpay">Erro: Este não é um pedido válido de Bitcoin. A Samourai suporta apenas envios para endereços Bitcoin válidos.</string>
+    <string name="learn_more">Aprenda Mais</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Reinvidique a sua paynym</string>
+    <string name="claim_paynym_title1">Reinvidique a sua PayNymID gratuita</string>
+    <string name="claim_paynym_text1">Autorize os seus amigos &amp; contactos a encontrar e conectar ao seu PayNym diretamente através de carteiras Bitcoin compatíveis.</string>
+    <string name="claim_paynym_title2">Benefícios de uma PayNymID</string>
+    <string name="claim_paynym_text2a">Nome e imagem únicos gerados através de um hash de seu código paynym. Nunca haverá dois iguais!</string>
+    <string name="claim_paynym_text2b">Sem verificações de identidade. O seu nome e imagem são baseados em seu código paynim, não num documento nacional de identidade.</string>
+    <string name="claim_paynym_text2c">Seja encontrado facilmente! Carteiras compatíveis podem procurar por novos contactos e enviar pagamentos seguros sem deixar qualquer rasto.</string>
+    <string name="claim_paynym_id">Reinvidicar a minha PayNymID</string>
+    <string name="claim_paynym_id_refused">Não estou interesaddo. Não pergunte novamente.</string>
+
+    <string name="claim_paynym_prompt">Reinvidicar a minha PayNymID e adicionar o meu código PayNym público a PayNym.is?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Adicionar um PayNym aos seus contactos requer uma taxa de transação única para criação do registo na corrente de blocos. Deposite</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC na sua carteira e tente novamente.</string>
+    <string name="help">Ajuda</string>
+
+    <string name="fee">Taxa dos mineiros</string>
+    <string name="fee_low_priority">Baixa prioridade: estimado 24</string>
+    <string name="fee_mid_priority">Prioridade normal: estimado 6</string>
+    <string name="fee_high_priority">Alta prioridade: estimado 2</string>
+    <string name="fee_custom_priority">Taxa personalizada: estimado</string>
+    <string name="blocks_to_cf">blocos antes da confirmação</string>
+
+</resources>

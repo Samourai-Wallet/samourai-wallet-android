@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- fee layout -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_horizontal"
+    android:background="@color/primary_dark"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="@string/fee"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_light"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="left"
+        android:gravity="left"
+        >
+
+        <Button
+            android:id="@+id/low_fee"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/low_fee"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/auto_fee"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/auto_fee"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/priority_fee"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/priority_fee"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/custom_fee"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/custom_fee"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/current_fee_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:textColor="@color/primary_light"
+        />
+
+</LinearLayout>

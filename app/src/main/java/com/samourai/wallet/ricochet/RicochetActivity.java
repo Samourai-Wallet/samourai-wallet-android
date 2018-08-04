@@ -30,7 +30,6 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.send.PushTx;
 
 import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.params.MainNetParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,8 +57,9 @@ public class RicochetActivity extends Activity {
 
         if(RicochetMeta.getInstance(RicochetActivity.this).size() > 0)    {
 
-            new QueueTask().execute(new String[]{ null });
-
+//            new QueueTask().execute(new String[]{ null });
+            QueueTask qt = new QueueTask();
+            qt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{ null });
         }
 
     }
@@ -126,11 +126,8 @@ public class RicochetActivity extends Activity {
                         String txHash = jHop.getString("hash");
 
                         JSONObject txObj = APIFactory.getInstance(RicochetActivity.this).getTxInfo(txHash);
-                        if(txObj != null && txObj.has("block"))    {
-                            JSONObject blockObj = txObj.getJSONObject("block");
-                            if(blockObj != null && blockObj.has("height") && blockObj.getInt("height") > 0)    {
-                                hasConfirmation = true;
-                            }
+                        if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                            hasConfirmation = true;
                         }
                         else if(txObj != null && txObj.has("txid"))    {
                             txSeen = true;
@@ -183,7 +180,7 @@ public class RicochetActivity extends Activity {
                                 isOK = false;
 
                                 String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i]);
-//                                Log.d("RicochetActivity", "pushTx:" + response);
+                                Log.d("RicochetActivity", "pushTx:" + response);
                                 JSONObject jsonObject = new JSONObject(response);
                                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                                     isOK = true;
@@ -225,11 +222,13 @@ public class RicochetActivity extends Activity {
                                         // increment BIP47 donation if fee to BIP47 donation
                                         //
                                         if(samouraiFeeViaBIP47)    {
-                                            PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
-                                            PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
-                                            String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                                            BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
-                                            BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
+                                            for(int j = 0; j < 4; j++)   {
+                                                PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
+                                                PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
+                                                String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
+                                                BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
+                                            }
                                         }
 
                                     }
@@ -354,7 +353,8 @@ public class RicochetActivity extends Activity {
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
-                            new QueueTask().execute(new String[]{ null });
+                            QueueTask qt = new QueueTask();
+                            qt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{ null });
 
                         }
                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

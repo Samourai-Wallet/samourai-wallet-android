@@ -22,8 +22,10 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
@@ -89,7 +91,13 @@ public class PayloadUtil	{
 
     public File getBackupFile()  {
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         File file = new File(dir, strOptionalFilename);
 
         return file;
@@ -127,6 +135,7 @@ public class PayloadUtil	{
         BIP47Util.getInstance(context).reset();
         BIP47Meta.getInstance().clear();
         BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
         APIFactory.getInstance(context).reset();
 
         try	{
@@ -143,6 +152,8 @@ public class PayloadUtil	{
         catch(MnemonicException.MnemonicLengthException mle)	{
             mle.printStackTrace();
         }
+
+        HD_WalletFactory.getInstance(context).clear();
 
         File dir = context.getDir(dataDir, Context.MODE_PRIVATE);
         File datfile = new File(dir, strFilename);
@@ -183,15 +194,16 @@ public class PayloadUtil	{
 
             JSONArray accts = new JSONArray();
             for(HD_Account acct : HD_WalletFactory.getInstance(context).get().getAccounts()) {
-                accts.put(acct.toJSON(false));
+                accts.put(acct.toJSON(44));
             }
             wallet.put("accounts", accts);
 
             //
-            // export BIP47 payment code for debug payload
+            // export BIP47 payment codes for debug payload
             //
             try {
                 wallet.put("payment_code", BIP47Util.getInstance(context).getPaymentCode().toString());
+                wallet.put("payment_code_feature", BIP47Util.getInstance(context).getFeaturePaymentCode().toString());
             }
             catch(AddressFormatException afe) {
                 ;
@@ -201,8 +213,15 @@ public class PayloadUtil	{
             // export BIP49 account for debug payload
             //
             JSONArray bip49_account = new JSONArray();
-            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(true));
+            bip49_account.put(BIP49Util.getInstance(context).getWallet().getAccount(0).toJSON(49));
             wallet.put("bip49_accounts", bip49_account);
+
+            //
+            // export BIP84 account for debug payload
+            //
+            JSONArray bip84_account = new JSONArray();
+            bip84_account.put(BIP84Util.getInstance(context).getWallet().getAccount(0).toJSON(84));
+            wallet.put("bip84_accounts", bip84_account);
 
             //
             // can remove ???
@@ -221,11 +240,13 @@ public class PayloadUtil	{
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
-            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BIP126));
-            meta.put("use_bip126", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BIP126, true));
+            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BOLTZMANN));
+            meta.put("use_boltzmann", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BOLTZMANN, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
+            meta.put("use_ricochet", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_RICOCHET, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
@@ -252,6 +273,10 @@ public class PayloadUtil	{
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
 //            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
+            meta.put("xpubreg84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false));
+            meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
+            meta.put("xpublock49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49LOCK, false));
+            meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
 
@@ -384,12 +409,20 @@ public class PayloadUtil	{
                 }
                 if(meta.has("spend_type")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.SPEND_TYPE, meta.getInt("spend_type"));
-                    editor.putBoolean("bip126", meta.getInt("spend_type") == SendActivity.SPEND_BIP126 ? true : false);
+                    editor.putBoolean("boltzmann", meta.getInt("spend_type") == SendActivity.SPEND_BOLTZMANN ? true : false);
                     editor.commit();
                 }
+                //
+                // move BIP126 over to boltzmann spend setting
+                //
                 if(meta.has("use_bip126")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BIP126, meta.getBoolean("use_bip126"));
-                    editor.putBoolean("bip126", meta.getBoolean("use_bip126"));
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_bip126"));
+                    editor.putBoolean("boltzmann", meta.getBoolean("use_bip126"));
+                    editor.commit();
+                }
+                if(meta.has("use_boltzmann")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_boltzmann"));
+                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
                     editor.commit();
                 }
                 if(meta.has("rbf_opt_in")) {
@@ -397,8 +430,14 @@ public class PayloadUtil	{
                     editor.putBoolean("rbf", meta.getBoolean("rbf_opt_in") ? true : false);
                     editor.commit();
                 }
+                if(meta.has("use_ricochet")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_RICOCHET, meta.getBoolean("use_ricochet"));
+                }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
+                }
+                if(meta.has("batch_send")) {
+                    BatchSendUtil.getInstance().fromJSON((JSONArray) meta.get("batch_send"));
                 }
                 if(meta.has("bip47")) {
                     try {
@@ -505,6 +544,18 @@ public class PayloadUtil	{
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
                 }
+                if(meta.has("xpubreg84")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, meta.getBoolean("xpubreg84"));
+                }
+                if(meta.has("xpublock44")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, meta.getBoolean("xpublock44"));
+                }
+                if(meta.has("xpublock49")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, meta.getBoolean("xpublock49"));
+                }
+                if(meta.has("xpublock84")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, meta.getBoolean("xpublock84"));
+                }
                 if(meta.has("paynym_claimed")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));
                 }
@@ -580,6 +631,8 @@ public class PayloadUtil	{
             tmpfile.delete();
 //            secureDelete(tmpfile);
         }
+
+        tmpfile.createNewFile();
 
         String data = null;
         String jsonstr = jsonobj.toString(4);
@@ -717,13 +770,19 @@ public class PayloadUtil	{
     private synchronized void serialize(String data) throws IOException    {
 
         String directory = Environment.DIRECTORY_DOCUMENTS;
-        File dir = Environment.getExternalStoragePublicDirectory(directory + "/samourai");
+        File dir = null;
+        if(context.getPackageName().contains("staging"))    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir + "/staging");
+        }
+        else    {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
+        }
         if(!dir.exists())   {
             dir.mkdirs();
             dir.setWritable(true, true);
             dir.setReadable(true, true);
         }
-        File newfile = new File(dir, "samourai.txt");
+        File newfile = new File(dir, strOptionalFilename);
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
 

@@ -12,8 +12,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,14 +44,12 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,11 +68,19 @@ public class UTXOActivity extends Activity {
     private ListView listView = null;
     private UTXOAdapter adapter = null;
 
+    private long totalP2PKH = 0L;
+    private long totalP2SH_P2WPKH = 0L;
+    private long totalP2WPKH = 0L;
+    private long totalBlocked = 0L;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utxo);
         setTitle(R.string.options_utxo);
+
+        data = new ArrayList<DisplayData>();
+        doNotSpend = new ArrayList<DisplayData>();
 
         listView = (ListView)findViewById(R.id.list);
 
@@ -81,6 +89,9 @@ public class UTXOActivity extends Activity {
         listView.setAdapter(adapter);
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                Log.d("UTXOActivity", "menu:" + data.get(position).addr);
+                Log.d("UTXOActivity", "menu:" + data.get(position).hash + "-" + data.get(position).idx);
 
                 PopupMenu menu = new PopupMenu (UTXOActivity.this, view, Gravity.RIGHT);
                 menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()   {
@@ -99,11 +110,7 @@ public class UTXOActivity extends Activity {
                                     builder.setCancelable(true);
                                     builder.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
-
-//                                            BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
-//                                            update(true);
                                             ;
-
                                         }
                                     });
                                     builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -132,6 +139,8 @@ public class UTXOActivity extends Activity {
 
                                             BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
 
+                                            Log.d("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
+
                                             update(true);
 
                                         }
@@ -156,6 +165,8 @@ public class UTXOActivity extends Activity {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
                                             BlockedUTXO.getInstance().add(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+
+                                            Log.d("UTXOActivity", "added:" + data.get(position).hash + "-" + data.get(position).idx);
 
                                             update(true);
 
@@ -182,8 +193,7 @@ public class UTXOActivity extends Activity {
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
                                 String msg = null;
 
-                                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress() ||
-                                        FormatsUtil.getInstance().isValidBech32(addr))    {
+                                if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
 
                                     msg = UTXOActivity.this.getString(R.string.utxo_sign_text3);
 
@@ -223,11 +233,11 @@ public class UTXOActivity extends Activity {
                             {
                                 String addr = data.get(position).addr;
                                 ECKey ecKey = SendFactory.getPrivKey(addr);
-                                SegwitAddress p2sh_p2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                                SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-                                if(ecKey != null && p2sh_p2wpkh != null) {
+                                if(ecKey != null && segwitAddress != null) {
 
-                                    String redeemScript = Hex.toHexString(p2sh_p2wpkh.segWitRedeemScript().getProgram());
+                                    String redeemScript = Hex.toHexString(segwitAddress.segWitRedeemScript().getProgram());
 
                                     TextView showText = new TextView(UTXOActivity.this);
                                     showText.setText(redeemScript);
@@ -256,9 +266,9 @@ public class UTXOActivity extends Activity {
                                 if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
                                     sel = 0;
                                 }
-                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
+                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).addr));
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).hash));
                                 startActivity(browserIntent);
                             }
 
@@ -309,7 +319,7 @@ public class UTXOActivity extends Activity {
                         return true;
                     }
                 });
-                menu.inflate (R.menu.utxo_menu);
+                menu.inflate (R.menu.utxo_popup_menu);
 
                 if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                     menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
@@ -319,7 +329,7 @@ public class UTXOActivity extends Activity {
                 }
 
                 String addr = data.get(position).addr;
-                if(!Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                if(!FormatsUtil.getInstance().isValidBech32(addr) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
                     menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
                 }
 
@@ -341,14 +351,40 @@ public class UTXOActivity extends Activity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.utxo_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_utxo_amounts) {
+            doDisplayAmounts();
+        }
+        else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void update(boolean broadcast)   {
 
-        data = new ArrayList<DisplayData>();
-        doNotSpend = new ArrayList<DisplayData>();
+        totalP2SH_P2WPKH = totalP2PKH = totalP2WPKH = totalBlocked = 0L;
+        data.clear();
+        doNotSpend.clear();
 
         for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                Pair pair = Pair.of(outpoint.getAddress(), BigInteger.valueOf(outpoint.getValue().longValue()));
                 DisplayData displayData = new DisplayData();
                 displayData.addr = outpoint.getAddress();
                 displayData.amount = outpoint.getValue().longValue();
@@ -356,9 +392,21 @@ public class UTXOActivity extends Activity {
                 displayData.idx = outpoint.getTxOutputN();
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
+//                    Log.d("UTXOActivity", "marked as do not spend");
+                    totalBlocked += displayData.amount;
                 }
                 else    {
                     data.add(displayData);
+//                    Log.d("UTXOActivity", "unmarked");
+                    if(FormatsUtil.getInstance().isValidBech32(displayData.addr))    {
+                        totalP2WPKH += displayData.amount;
+                    }
+                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), displayData.addr).isP2SHAddress())  {
+                        totalP2SH_P2WPKH += displayData.amount;
+                    }
+                    else    {
+                        totalP2PKH += displayData.amount;
+                    }
                 }
             }
         }
@@ -367,6 +415,7 @@ public class UTXOActivity extends Activity {
 
         if(adapter != null)    {
             adapter.notifyDataSetInvalidated();
+//            Log.d("UTXOActivity", "nb:" + data.size());
         }
 
         if(broadcast)    {
@@ -422,6 +471,8 @@ public class UTXOActivity extends Activity {
             String addr = data.get(position).addr;
             text2.setText(addr);
 
+//            Log.d("UTXOActivity", "list:" + data.get(position).addr);
+
             String descr = "";
             Spannable word = null;
             if(isBIP47(addr))    {
@@ -434,21 +485,25 @@ public class UTXOActivity extends Activity {
                 }
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                Log.d("UTXOActivity", "list: bip47");
             }
             if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
-                descr = " " + UTXOActivity.this.getText(R.string.dust) + " " + UTXOActivity.this.getText(R.string.do_not_spend);
+                descr += " " + UTXOActivity.this.getText(R.string.dust) + " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                Log.d("UTXOActivity", "list: dust/do not spend");
             }
             else if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
-                descr = " " + UTXOActivity.this.getText(R.string.dust);
+                descr += " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                Log.d("UTXOActivity", "list: dust");
             }
             else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
-                descr = " " + UTXOActivity.this.getText(R.string.do_not_spend);
+                descr += " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                Log.d("UTXOActivity", "list: do not spend");
             }
             else    {
                 ;
@@ -487,6 +542,39 @@ public class UTXOActivity extends Activity {
         }
 
         return false;
+    }
+
+    private void doDisplayAmounts() {
+
+        final DecimalFormat df = new DecimalFormat("#");
+        df.setMinimumIntegerDigits(1);
+        df.setMinimumFractionDigits(8);
+        df.setMaximumFractionDigits(8);
+
+        String message = getText(R.string.total_p2pkh) + " " + df.format(((double)(totalP2PKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_p2sh_p2wpkh) + " " + df.format(((double)(totalP2SH_P2WPKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_p2wpkh) + " " + df.format(((double)(totalP2WPKH) / 1e8)) + " BTC";
+        message += "\n";
+        message += getText(R.string.total_blocked) + " " + df.format(((double)(totalBlocked) / 1e8)) + " BTC";
+        message += "\n";
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(UTXOActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
     }
 
 }

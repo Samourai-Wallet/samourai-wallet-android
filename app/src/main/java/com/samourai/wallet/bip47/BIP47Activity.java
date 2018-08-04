@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +43,8 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
-import net.sourceforge.zbar.Symbol;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
+import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bitcoinj.core.AddressFormatException;
@@ -74,6 +77,7 @@ import java.util.TimerTask;
 
 import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
@@ -204,7 +208,28 @@ public class BIP47Activity extends Activity {
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    doNotifTx(itemValue);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Looper.prepare();
+
+                                            try {
+                                                PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | JSONException | IOException | java.lang.NullPointerException | DecryptionException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                            doNotifTx(itemValue);
+
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
 
                                 }
                             }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -225,7 +250,28 @@ public class BIP47Activity extends Activity {
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Looper.prepare();
+
+                                            try {
+                                                PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | JSONException | IOException | java.lang.NullPointerException | DecryptionException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                            AppUtil.getInstance(BIP47Activity.this).restartApp("pcode", itemValue);
+
+                                            Looper.loop();
+
+                                        }
+                                    }).start();
 
                                 }
 
@@ -555,6 +601,9 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_claim_paynym) {
             doClaimPayNym();
         }
+        else if(id == R.id.action_support) {
+            doSupport();
+        }
         else {
             ;
         }
@@ -564,6 +613,11 @@ public class BIP47Activity extends Activity {
 
     private void doClaimPayNym() {
         Intent intent = new Intent(BIP47Activity.this, ClaimPayNymActivity.class);
+        startActivity(intent);
+    }
+
+    private void doSupport()	{
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/14-payment-codes"));
         startActivity(intent);
     }
 
@@ -782,18 +836,9 @@ public class BIP47Activity extends Activity {
         long amount = SendNotifTxFactory._bNotifTxValue.longValue();
 
         //
-        // calc btc fee from USD Samourai fee
-        //
-        double btc_fx = ExchangeRateFactory.getInstance(BIP47Activity.this).getBitfinexPrice("USD");
-        BigInteger currentSWFee = BigInteger.valueOf((long)((btc_fx / SendNotifTxFactory._dSWFeeUSD) * 1e8));
-        if(currentSWFee.longValue() < SendNotifTxFactory._bSWFee.longValue() || currentSWFee.longValue() > SendNotifTxFactory._bSWCeilingFee.longValue())  {
-            currentSWFee = SendNotifTxFactory._bSWFee;
-        }
-
-        //
         // add Samourai Wallet fee to total amount
         //
-        amount += currentSWFee.longValue();
+        amount += SendNotifTxFactory._bSWFee.longValue();
 
         //
         // get unspents
@@ -828,10 +873,25 @@ public class BIP47Activity extends Activity {
         }
 
         //
-        // use low fee settings
+        // use normal fee settings
         //
         SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
-        FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
+
+        long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+
+        if(lo == mi && mi == hi) {
+            SuggestedFee hi_sf = new SuggestedFee();
+            hi_sf.setDefaultPerKB(BigInteger.valueOf((long)(hi * 1.15 * 1000.0)));
+            FeeUtil.getInstance().setSuggestedFee(hi_sf);
+        }
+        else if(lo == mi)    {
+            FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+        }
+        else    {
+            FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+        }
 
         if(selectedUTXO.size() == 0)    {
             // sort in descending order by value
@@ -853,11 +913,13 @@ public class BIP47Activity extends Activity {
                 }
             }
 
-            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(selected, 4);
+            fee = FeeUtil.getInstance().estimatedFee(selected, 7);
 
         }
         else    {
-            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+//            fee = FeeUtil.getInstance().estimatedFee(1, 4);
+            fee = FeeUtil.getInstance().estimatedFee(1, 7);
         }
 
         //
@@ -963,8 +1025,16 @@ public class BIP47Activity extends Activity {
         // get private key corresponding to outpoint
         //
         try {
-            Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
-            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+//            Script inputScript = new Script(outPoint.getConnectedPubKeyScript());
+            byte[] scriptBytes = outPoint.getConnectedPubKeyScript();
+            String address = null;
+            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
+            }
+            else    {
+                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+            }
+//            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             ECKey ecKey = SendFactory.getPrivKey(address);
             if(ecKey == null || !ecKey.hasPrivKey())    {
                 Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
@@ -1002,11 +1072,15 @@ public class BIP47Activity extends Activity {
             Toast.makeText(BIP47Activity.this, nspe.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
+        catch(Exception e) {
+            Toast.makeText(BIP47Activity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
         receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
-        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, currentSWFee);
+        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
@@ -1407,16 +1481,16 @@ public class BIP47Activity extends Activity {
                     while(loop) {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
-                            PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
-                            addrs.add(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            Log.i("BIP47Activity", "sync receive from " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), payment_code.toString());
+                            addrs.add(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            Log.i("BIP47Activity", "p2pkh " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i).getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Incoming(s);
-//                        Log.i("BIP47Activity", "sync receive idx:" + idx + ", nb == " + nb);
+                        Log.i("BIP47Activity", "sync receive idx:" + idx + ", nb == " + nb);
                         if(nb == 0)    {
                             loop = false;
                         }
@@ -1551,7 +1625,20 @@ public class BIP47Activity extends Activity {
                                     Log.d("BIP47Activity", strNymName);
 
                                     final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
-                                    Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+
+                                    // get screen width
+                                    Display display = BIP47Activity.this.getWindowManager().getDefaultDisplay();
+                                    Point size = new Point();
+                                    display.getSize(size);
+
+                                    if (size.x > 240) {
+                                        // load avatar
+                                        Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+                                    }
+                                    else {
+                                        // screen too small, hide avatar
+                                        ivAvatar.setVisibility(View.INVISIBLE);
+                                    }
 
                                     ((TextView)findViewById(R.id.nymName)).setText(strNymName);
                                     ((TextView)findViewById(R.id.pcode)).setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));

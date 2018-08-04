@@ -56,25 +56,31 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.service.BroadcastReceiverService;
+import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
+import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.TorUtil;
 
-import net.sourceforge.zbar.Symbol;
+import com.yanzhenjie.zbar.Symbol;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -161,15 +167,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("bip126");
+                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("boltzmann");
                 cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                         if (cbPref7.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, false);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, false);
                         }
                         else    {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BIP126, true);
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, true);
                         }
 
                         return true;
@@ -272,8 +278,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, false);
 
-                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                 AppUtil.getInstance(SettingsActivity2.this).restartApp();
                             }
@@ -293,8 +298,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                 getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ICON_HIDDEN, true);
 
-                                                stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                                                startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                                                ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                                 try {
                                                     PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
@@ -435,15 +439,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref2.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, false);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
                         else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, true);
-
-                            stopService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
-                            startService(new Intent(SettingsActivity2.this, BroadcastReceiverService.class));
+                            ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
 
                         return true;
@@ -520,7 +520,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference xpubPref = (Preference) findPreference("xpub");
                 xpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB();
+                        getXPUB(44);
                         return true;
                     }
                 });
@@ -528,7 +528,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference ypubPref = (Preference) findPreference("ypub");
                 ypubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getYPUB();
+                        getXPUB(49);
+                        return true;
+                    }
+                });
+
+                Preference zpubPref = (Preference) findPreference("zpub");
+                zpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84);
                         return true;
                     }
                 });
@@ -869,6 +877,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference prunePref = (Preference) findPreference("prune");
+                prunePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPrune();
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
@@ -1022,100 +1038,35 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB()	{
+    private void getXPUB(int purpose)	{
 
-        final String[] accounts;
-        if(AddressFactory.getInstance(SettingsActivity2.this).getHighestTxReceiveIdx(SamouraiWallet.MIXING_ACCOUNT) == 0)    {
-            accounts = new String[] {
-                    getString(R.string.account_Samourai),
-            };
+        String xpub = "";
+
+        switch(purpose)    {
+            case 49:
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+                break;
+            case 84:
+                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
+                break;
+            default:
+                try {
+                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).xpubstr();
+                }
+                catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                }
+                catch (MnemonicException.MnemonicLengthException mle) {
+                    mle.printStackTrace();
+                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
-        else    {
-            accounts = new String[] {
-                    getString(R.string.account_Samourai),
-                    getString(R.string.account_shuffling),
-            };
-        }
-
-        final int sel = 0;
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.select_account)
-                .setSingleChoiceItems(accounts, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                dialog.dismiss();
-
-                                String xpub = null;
-                                try {
-                                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(which).xpubstr();
-                                }
-                                catch (IOException ioe) {
-                                    ioe.printStackTrace();
-                                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                                }
-                                catch (MnemonicException.MnemonicLengthException mle) {
-                                    mle.printStackTrace();
-                                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                                }
-
-                                final String _xpub = xpub;
-
-                                ImageView showQR = new ImageView(SettingsActivity2.this);
-                                Bitmap bitmap = null;
-                                QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-                                try {
-                                    bitmap = qrCodeEncoder.encodeAsBitmap();
-                                }
-                                catch (WriterException e) {
-                                    e.printStackTrace();
-                                }
-                                showQR.setImageBitmap(bitmap);
-
-                                TextView showText = new TextView(SettingsActivity2.this);
-                                showText.setText(xpub);
-                                showText.setTextIsSelectable(true);
-                                showText.setPadding(40, 10, 40, 10);
-                                showText.setTextSize(18.0f);
-
-                                LinearLayout xpubLayout = new LinearLayout(SettingsActivity2.this);
-                                xpubLayout.setOrientation(LinearLayout.VERTICAL);
-                                xpubLayout.addView(showQR);
-                                xpubLayout.addView(showText);
-
-                                new AlertDialog.Builder(SettingsActivity2.this)
-                                        .setTitle(R.string.app_name)
-                                        .setView(xpubLayout)
-                                        .setCancelable(false)
-                                        .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                                                android.content.ClipData clip = null;
-                                                clip = android.content.ClipData.newPlainText("XPUB", _xpub);
-                                                clipboard.setPrimaryClip(clip);
-                                                Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        })
-                                        .show();
-
-                            }
-                        }
-                ).show();
-
-    }
-
-    private void getYPUB()	{
-
-        final String ypub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
 
         ImageView showQR = new ImageView(SettingsActivity2.this);
         Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(ypub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
         }
@@ -1125,7 +1076,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         showQR.setImageBitmap(bitmap);
 
         TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(ypub);
+        showText.setText(xpub);
         showText.setTextIsSelectable(true);
         showText.setPadding(40, 10, 40, 10);
         showText.setTextSize(18.0f);
@@ -1135,6 +1086,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
         xpubLayout.addView(showQR);
         xpubLayout.addView(showText);
 
+        final String _xpub = xpub;
+
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
                 .setView(xpubLayout)
@@ -1143,7 +1096,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public void onClick(DialogInterface dialog, int whichButton) {
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("YPUB", ypub);
+                        clip = android.content.ClipData.newPlainText("XPUB", _xpub);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                     }
@@ -1549,6 +1502,55 @@ public class SettingsActivity2 extends PreferenceActivity	{
         catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void doPrune()   {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.prune_backup)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        try {
+
+//                            BIP47Meta.getInstance().pruneIncoming();
+                            SendAddressUtil.getInstance().reset();
+                            RicochetMeta.getInstance(SettingsActivity2.this).empty();
+                            BatchSendUtil.getInstance().clear();
+                            RBFUtil.getInstance().clear();
+
+                            PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
+
+                        }
+                        catch(JSONException je) {
+                            je.printStackTrace();
+                            Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            ;
+                        }
+                        catch(IOException ioe) {
+                            ;
+                        }
+                        catch(DecryptionException de) {
+                            ;
+                        }
+
+                    }
+
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        ;
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
         }
 
     }

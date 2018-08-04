@@ -32,4 +32,8 @@ Thumbs.db
 build/
 
 app/release/
+app/production/
+app/staging/
+
+app/output.json
 

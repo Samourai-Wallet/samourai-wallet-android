@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_scan_qr"
+        android:icon="@drawable/ic_crop_free_white_24dp"
+        android:visible="true"
+        android:title=""
+        android:showAsAction="always"
+        />
+    <item android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_action_delete_sweep"
+        android:visible="true"
+        android:title=""
+        android:showAsAction="always"
+        />
+    <item android:id="@+id/action_new"
+        android:icon="@drawable/ic_action_playlist_add"
+        android:visible="true"
+        android:title=""
+        android:showAsAction="always"
+        />
+    <item android:id="@+id/action_send"
+        android:icon="@drawable/ic_action_send"
+        android:visible="true"
+        android:title=""
+        android:showAsAction="always"
+        />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+</menu>

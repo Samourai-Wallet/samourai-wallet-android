@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_marginBottom="28dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/enter_your_wallet_passphrase" />
+
+    <EditText
+        android:id="@+id/restore_dialog_password_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/passphrase"
+        android:textColor="@color/darkgrey"
+        android:inputType="textPassword" />
+
+</LinearLayout>

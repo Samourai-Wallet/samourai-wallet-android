@@ -12,12 +12,17 @@ import android.util.Log;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -44,6 +49,7 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
 
 import org.json.JSONArray;
@@ -77,6 +83,7 @@ public class APIFactory	{
     private static HashMap<String,List<Tx>> xpub_txs = null;
     private static HashMap<String,Integer> unspentAccounts = null;
     private static HashMap<String,Integer> unspentBIP49 = null;
+    private static HashMap<String,Integer> unspentBIP84 = null;
     private static HashMap<String,String> unspentPaths = null;
     private static HashMap<String,UTXO> utxos = null;
 
@@ -105,6 +112,7 @@ public class APIFactory	{
             unspentPaths = new HashMap<String, String>();
             unspentAccounts = new HashMap<String, Integer>();
             unspentBIP49 = new HashMap<String, Integer>();
+            unspentBIP84 = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
             instance = new APIFactory();
         }
@@ -120,6 +128,7 @@ public class APIFactory	{
         unspentPaths = new HashMap<String, String>();
         unspentAccounts = new HashMap<String, Integer>();
         unspentBIP49 = new HashMap<String, Integer>();
+        unspentBIP84 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
 
         UTXOFactory.getInstance().clear();
@@ -174,7 +183,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized JSONObject registerXPUB(String xpub, boolean isBIP49) {
+    private synchronized JSONObject registerXPUB(String xpub, int purpose) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -196,9 +205,16 @@ public class APIFactory	{
                 else    {
                     args.append("new");
                 }
-                if(isBIP49)    {
+                if(purpose == 49)    {
                     args.append("&segwit=");
                     args.append("bip49");
+                }
+                else if(purpose == 84)   {
+                    args.append("&segwit=");
+                    args.append("bip84");
+                }
+                else    {
+                    ;
                 }
                 Log.i("APIFactory", "XPUB:" + args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "xpub?", args.toString());
@@ -213,8 +229,14 @@ public class APIFactory	{
                 else    {
                     args.put("type", "new");
                 }
-                if(isBIP49)    {
+                if(purpose == 49)    {
                     args.put("segwit", "bip49");
+                }
+                else if(purpose == 84)   {
+                    args.put("segwit", "bip84");
+                }
+                else    {
+                    ;
                 }
                 Log.i("APIFactory", "XPUB:" + args.toString());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "xpub", args);
@@ -224,9 +246,19 @@ public class APIFactory	{
             try {
                 jsonObject = new JSONObject(response);
                 Log.i("APIFactory", "XPUB response:" + jsonObject.toString());
-                if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") && isBIP49)    {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
-                    PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                    if(purpose == 49)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
+                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                    }
+                    else if(purpose == 84)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, true);
+                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                    }
+                    else    {
+                        ;
+                    }
+
                 }
             }
             catch(JSONException je) {
@@ -245,6 +277,8 @@ public class APIFactory	{
     private synchronized boolean parseXPUB(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
+
+            HashMap<String,Integer> pubkeys = new HashMap<String,Integer>();
 
             if(jsonObject.has("wallet"))  {
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
@@ -276,7 +310,11 @@ public class APIFactory	{
                     if(addrObj != null && addrObj.has("final_balance") && addrObj.has("address"))  {
                         if(FormatsUtil.getInstance().isValidXpub((String)addrObj.get("address")))    {
                             xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
-                            if(addrObj.getString("address").equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                            if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                                AddressFactory.getInstance().setHighestBIP84ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                AddressFactory.getInstance().setHighestBIP84ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                            }
+                            else if(addrObj.getString("address").equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
                                 AddressFactory.getInstance().setHighestBIP49ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestBIP49ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
@@ -300,7 +338,25 @@ public class APIFactory	{
                                     BIP47Meta.getInstance().addUnspent(pcode, idx);
                                 }
                                 else    {
-                                    BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                    if(addrObj.has("pubkey"))    {
+                                        String pubkey = addrObj.getString("pubkey");
+                                        if(pubkeys.containsKey(pubkey))    {
+                                            int count = pubkeys.get(pubkey);
+                                            count++;
+                                            if(count == 3)    {
+                                                BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                            }
+                                            else    {
+                                                pubkeys.put(pubkey, count + 1);
+                                            }
+                                        }
+                                        else    {
+                                            pubkeys.put(pubkey, 1);
+                                        }
+                                    }
+                                    else    {
+                                        BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                    }
                                 }
                                 if(addr != null)  {
                                     bip47_amounts.put(addr, amount);
@@ -414,76 +470,89 @@ public class APIFactory	{
         return false;
 
     }
+    /*
+        public synchronized JSONObject deleteXPUB(String xpub, boolean bip49) {
 
-    public synchronized JSONObject deleteXPUB(String xpub) {
+            String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+            JSONObject jsonObject  = null;
 
-        JSONObject jsonObject  = null;
+            try {
 
-        try {
+                String response = null;
+                ECKey ecKey = null;
 
-            String response = null;
-            ECKey ecKey = null;
+                if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
-                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
-                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
-                ecKey = addr.getECKey();
-
-                if(ecKey != null && ecKey.hasPrivKey())    {
-
-                    String sig = ecKey.signMessage(xpub);
-
-                    if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
-                        StringBuilder args = new StringBuilder();
-                        args.append("message=");
-                        args.append(xpub);
-                        args.append("address=");
-                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        args.append("&signature=");
-                        args.append(Uri.encode(sig));
-                        Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).deleteURL(_url + "delete/" + xpub, args.toString());
-                        Log.i("APIFactory", "delete XPUB response:" + response);
+                    HD_Address addr = null;
+                    if(bip49)    {
+                        addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
                     }
                     else    {
-                        HashMap<String,String> args = new HashMap<String,String>();
-                        args.put("message", xpub);
-                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        args.put("signature", Uri.encode(sig));
-                        Log.i("APIFactory", "delete XPUB:" + args.toString());
-                        response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
-                        Log.i("APIFactory", "delete XPUB response:" + response);
+                        addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
                     }
+                    ecKey = addr.getECKey();
 
-                    try {
-                        jsonObject = new JSONObject(response);
+                    if(ecKey != null && ecKey.hasPrivKey())    {
 
-                        if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
-                            ;
+                        String sig = ecKey.signMessage(xpub);
+                        String address = null;
+                        if(bip49)    {
+                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = segwitAddress.getAddressAsString();
+                        }
+                        else    {
+                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        }
+
+                        if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                            StringBuilder args = new StringBuilder();
+                            args.append("message=");
+                            args.append(xpub);
+                            args.append("address=");
+                            args.append(address);
+                            args.append("&signature=");
+                            args.append(Uri.encode(sig));
+                            Log.i("APIFactory", "delete XPUB:" + args.toString());
+                            response = WebUtil.getInstance(context).deleteURL(_url + "delete/" + xpub, args.toString());
+                            Log.i("APIFactory", "delete XPUB response:" + response);
+                        }
+                        else    {
+                            HashMap<String,String> args = new HashMap<String,String>();
+                            args.put("message", xpub);
+                            args.put("address", address);
+                            args.put("signature", Uri.encode(sig));
+                            Log.i("APIFactory", "delete XPUB:" + args.toString());
+                            response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
+                            Log.i("APIFactory", "delete XPUB response:" + response);
+                        }
+
+                        try {
+                            jsonObject = new JSONObject(response);
+
+                            if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                                ;
+                            }
+
+                        }
+                        catch(JSONException je) {
+                            je.printStackTrace();
+                            jsonObject = null;
                         }
 
                     }
-                    catch(JSONException je) {
-                        je.printStackTrace();
-                        jsonObject = null;
-                    }
-
                 }
+
+            }
+            catch(Exception e) {
+                jsonObject = null;
+                e.printStackTrace();
             }
 
+            return jsonObject;
         }
-        catch(Exception e) {
-            jsonObject = null;
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-    public synchronized JSONObject lockXPUB(String xpub, boolean bip49) {
+    */
+    public synchronized JSONObject lockXPUB(String xpub, int purpose) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
@@ -494,65 +563,78 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null)    {
-                int account = AddressFactory.getInstance(context).xpub2account().get(xpub);
-                HD_Address addr = HD_WalletFactory.getInstance(context).get().getAccount(account).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+
+                HD_Address addr = null;
+                switch(purpose)    {
+                    case 49:
+                        addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        break;
+                    case 84:
+                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        break;
+                    default:
+                        addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
+                        break;
+                }
                 ecKey = addr.getECKey();
 
                 if(ecKey != null && ecKey.hasPrivKey())    {
 
-                    String sig = ecKey.signMessage(xpub);
+                    String sig = ecKey.signMessage("lock");
+                    String address = null;
+                    switch(purpose)    {
+                        case 49:
+                            SegwitAddress p2shp2wpkh = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = p2shp2wpkh.getAddressAsString();
+                            break;
+                        case 84:
+                            SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                            address = segwitAddress.getBech32AsString();
+                            break;
+                        default:
+                            address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            break;
+                    }
 
                     if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                        // use DELETE
                         StringBuilder args = new StringBuilder();
                         args.append("address=");
-                        args.append(ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.append(address);
                         args.append("&signature=");
                         args.append(Uri.encode(sig));
                         args.append("&message=");
                         args.append("lock");
-                        args.append("&type=");
-                        args.append("restore");
-                        if(bip49)    {
-                            args.append("&segwit=");
-                            args.append("bip49");
-                        }
-                        else    {
-                            args.append("&xpub=");
-                            args.append("bip44");
-                        }
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
-                        args.put("address", ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        args.put("address", address);
                         args.put("signature", Uri.encode(sig));
                         args.put("message", "lock");
-                        args.put("type", "restore");
-                        if(bip49)    {
-                            args.put("segwit", "bip49");
-                        }
-                        else    {
-                            args.put("xpub", "bip44");
-                        }
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
                         jsonObject = new JSONObject(response);
 
                         if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
-                            if(bip49)    {
-                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                            switch(purpose)    {
+                                case 49:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                                    break;
+                                case 84:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
+                                    break;
+                                default:
+                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
+                                    break;
                             }
-                            else    {
-                                PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
-                            }
+
                         }
 
                     }
@@ -690,7 +772,7 @@ public class APIFactory	{
                     byte[] pubkey = null;
                     String strScript = objInput.getString("sig");
                     Log.i("APIFactory", "scriptsig:" + strScript);
-                    if(strScript.startsWith("160014") && objInput.has("witness"))    {
+                    if((strScript == null || strScript.length() == 0 || strScript.startsWith("160014")) && objInput.has("witness"))    {
                         JSONArray witnessArray = (JSONArray)objInput.get("witness");
                         if(witnessArray.length() == 2)    {
                             pubkey = Hex.decode((String)witnessArray.get(1));
@@ -789,12 +871,10 @@ public class APIFactory	{
                     // initial lookup
                     //
                     for(int i = 0; i < 3; i++)   {
-                        PaymentAddress receiveAddress = BIP47Util.getInstance(context).getReceiveAddress(pcode, i);
-//                        Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                        BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                        BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), pcode.toString());
-//                        Log.i("APIFactory", "send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                        Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
+                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
+                        BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), i);
+                        BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), pcode.toString());
                     }
 
                 }
@@ -870,7 +950,9 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                Log.d("APIFactory", "UTXO args:" + args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+                Log.d("APIFactory", "UTXO:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
@@ -904,8 +986,6 @@ public class APIFactory	{
                     return false;
                 }
 
-                List<String> seenOutputs = new ArrayList<String>();
-
                 for (int i = 0; i < utxoArray.length(); i++) {
 
                     JSONObject outDict = utxoArray.getJSONObject(i);
@@ -918,25 +998,38 @@ public class APIFactory	{
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
-                    seenOutputs.add(txHash.toString() + "-" + txOutputN);
-                    Log.d("APIFactory", "seen:" + txHash.toString() + "-" + txOutputN);
-
                     try {
-                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-//                        Log.d("APIFactory", "address:" + address);
+                        String address = null;
+                        if(Bech32Util.getInstance().isBech32Script(script))    {
+                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                        }
+                        else    {
+                            address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        }
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
                             String path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
-//                            Log.d("APIFactory", "address:" + path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
                                 unspentBIP49.put(address, 0);   // assume account 0
+                            }
+                            else if(m.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                                unspentBIP84.put(address, 0);   // assume account 0
                             }
                             else    {
                                 unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
                             }
+                        }
+                        else if(outDict.has("pubkey"))    {
+                            int idx = BIP47Meta.getInstance().getIdx4AddrLookup().get(outDict.getString("pubkey"));
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(address, idx);
+                            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(outDict.getString("pubkey"));
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
+                        }
+                        else    {
+                            ;
                         }
 
                         // Construct the output
@@ -954,7 +1047,10 @@ public class APIFactory	{
 
                         if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
 
-                            if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                UTXOFactory.getInstance().addP2WPKH(script, utxos.get(script));
+                            }
+                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
                                 UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
                             }
                             else    {
@@ -968,21 +1064,6 @@ public class APIFactory	{
                         ;
                     }
 
-                }
-
-                for(String s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
-                    Log.d("APIFactory", "not dusted:" + s);
-                    if(!seenOutputs.contains(s))    {
-                        BlockedUTXO.getInstance().removeNotDusted(s);
-                        Log.d("APIFactory", "not dusted removed:" + s);
-                    }
-                }
-                for(String s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
-                    Log.d("APIFactory", "blocked:" + s);
-                    if(!seenOutputs.contains(s))    {
-                        BlockedUTXO.getInstance().remove(s);
-                        Log.d("APIFactory", "blocked removed:" + s);
-                    }
                 }
 
                 return true;
@@ -1103,59 +1184,7 @@ public class APIFactory	{
 
         return jsonObject;
     }
-/*
-    private synchronized boolean parseDynamicFees_21(JSONObject jsonObject) throws JSONException  {
 
-        if(jsonObject != null)  {
-
-            //
-            // 21.co API
-            //
-            List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
-
-            if(jsonObject.has("fastestFee"))    {
-                long fee = jsonObject.getInt("fastestFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(jsonObject.has("halfHourFee"))    {
-                long fee = jsonObject.getInt("halfHourFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(jsonObject.has("hourFee"))    {
-                long fee = jsonObject.getInt("hourFee");
-                SuggestedFee suggestedFee = new SuggestedFee();
-                suggestedFee.setDefaultPerKB(BigInteger.valueOf(fee * 1000L));
-                suggestedFee.setStressed(false);
-                suggestedFee.setOK(true);
-                suggestedFees.add(suggestedFee);
-            }
-
-            if(suggestedFees.size() > 0)    {
-                FeeUtil.getInstance().setEstimatedFees(suggestedFees);
-
-//                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
-            }
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-*/
     private synchronized boolean parseDynamicFees_bitcoind(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
@@ -1305,7 +1334,10 @@ public class APIFactory	{
             }
             */
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false) == false)    {
-                registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), true);
+                registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 49);
+            }
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false) == false)    {
+                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 84);
             }
 
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());
@@ -1335,23 +1367,52 @@ public class APIFactory	{
             if(hdw != null && hdw.getXPUBs() != null)    {
                 String[] all = null;
                 if(s != null && s.length > 0)    {
-                    all = new String[hdw.getXPUBs().length + 1 + s.length];
+                    all = new String[hdw.getXPUBs().length + 2 + s.length];
                     all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
-                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 1, s.length);
+                    all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
+                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 2, s.length);
                 }
                 else    {
-                    all = new String[hdw.getXPUBs().length + 1];
+                    all = new String[hdw.getXPUBs().length + 2];
                     all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                    System.arraycopy(hdw.getXPUBs(), 0, all, 1, hdw.getXPUBs().length);
+                    all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                    System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
                 }
                 APIFactory.getInstance(context).getXPUB(all, true);
-                String[] xs = new String[3];
+                String[] xs = new String[4];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
                 xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
                 xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 getUnspentOutputs(xs);
                 getDynamicFees();
+            }
+
+            //
+            //
+            //
+            List<String> seenOutputs = new ArrayList<String>();
+            List<UTXO> _utxos = getUtxos(false);
+            for(UTXO _u : _utxos)   {
+                for(MyTransactionOutPoint _o : _u.getOutpoints())   {
+                    seenOutputs.add(_o.getTxHash().toString() + "-" + _o.getTxOutputN());
+                }
+            }
+
+            for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+//                Log.d("APIFactory", "not dusted:" + _s);
+                if(!seenOutputs.contains(_s))    {
+                    BlockedUTXO.getInstance().removeNotDusted(_s);
+//                    Log.d("APIFactory", "not dusted removed:" + _s);
+                }
+            }
+            for(String _s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
+//                Log.d("APIFactory", "blocked:" + _s);
+                if(!seenOutputs.contains(_s))    {
+                    BlockedUTXO.getInstance().remove(_s);
+//                    Log.d("APIFactory", "blocked removed:" + _s);
+                }
             }
 
         }
@@ -1367,11 +1428,14 @@ public class APIFactory	{
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
         JSONObject jsonObject = getXPUB(addresses, false);
+        Log.d("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
         int ret = 0;
 
         try {
 
             if(jsonObject != null && jsonObject.has("addresses"))  {
+
+                HashMap<String,Integer> pubkeys = new HashMap<String,Integer>();
 
                 JSONArray addressArray = (JSONArray)jsonObject.get("addresses");
                 JSONObject addrObj = null;
@@ -1383,23 +1447,54 @@ public class APIFactory	{
                     String pcode = null;
                     int idx = -1;
                     if(addrObj.has("address"))  {
-                        addr = (String)addrObj.get("address");
-                        pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
-                        idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+
+                        if(addrObj.has("pubkey"))    {
+                            addr = (String)addrObj.get("pubkey");
+                            pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                            idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(addrObj.getString("address"), idx);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(addrObj.getString("address"), pcode);
+
+                        }
+                        else    {
+                            addr = (String)addrObj.get("address");
+                            pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                            idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+                        }
 
                         if(addrObj.has("final_balance"))  {
                             amount = addrObj.getLong("final_balance");
                             if(amount > 0L)    {
                                 BIP47Meta.getInstance().addUnspent(pcode, idx);
+                                Log.i("APIFactory", "BIP47 incoming amount:" + idx + ", " + addr + ", " + amount);
                             }
                             else    {
-                                BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                if(addrObj.has("pubkey"))    {
+                                    String pubkey = addrObj.getString("pubkey");
+                                    if(pubkeys.containsKey(pubkey))    {
+                                        int count = pubkeys.get(pubkey);
+                                        count++;
+                                        if(count == 3)    {
+                                            BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                        }
+                                        else    {
+                                            pubkeys.put(pubkey, count + 1);
+                                        }
+                                    }
+                                    else    {
+                                        pubkeys.put(pubkey, 1);
+                                    }
+                                }
+                                else    {
+                                    BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                                }
                             }
                         }
                         if(addrObj.has("n_tx"))  {
                             nbTx = addrObj.getInt("n_tx");
                             if(nbTx > 0)    {
-//                                    Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
+                                Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
                                 ret++;
                             }
                         }
@@ -1495,6 +1590,10 @@ public class APIFactory	{
         return unspentBIP49;
     }
 
+    public HashMap<String, Integer> getUnspentBIP84() {
+        return unspentBIP84;
+    }
+
     public List<UTXO> getUtxos(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
@@ -1550,12 +1649,16 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
+//                Log.d("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+//                Log.d("APIFactory", response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", address);
+//                Log.d("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+//                Log.d("APIFactory", response);
             }
 
             return parseUnspentOutputsForSweep(response);
@@ -1600,7 +1703,15 @@ public class APIFactory	{
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
 
                     try {
-                        String address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        String address = null;
+
+                        if(Bech32Util.getInstance().isBech32Script(script))    {
+                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                            Log.d("address parsed:", address);
+                        }
+                        else    {
+                            address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        }
 
                         // Construct the output
                         MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);

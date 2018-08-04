@@ -1,0 +1,192 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.fragments.PinEntryFragment">
+
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3">
+
+        <Button
+            android:id="@+id/ta"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="0"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="0"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/tb"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="1"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="0"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/tc"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="2"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="0"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/td"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="0"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="1"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/te"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="1"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="1"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/tf"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="2"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="1"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/tg"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="0"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="2"
+            android:background="@drawable/keypad_rectangle_shape"
+             android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/th"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="1"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="2"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <Button
+            android:id="@+id/ti"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="2"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="2"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <ImageButton
+            android:id="@+id/tback"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="0"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="3"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_backspace_white_24dp" />
+
+        <Button
+            android:id="@+id/tj"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_column="1"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="3"
+            android:background="@drawable/keypad_rectangle_shape"
+            android:textColor="@color/primary_light"
+            android:textSize="42sp"
+            android:typeface="sans" />
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/tsend"-->
+            <!--android:layout_width="68dp"-->
+            <!--android:layout_height="68dp"-->
+            <!--android:layout_column="2"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_row="3"-->
+            <!--android:background="@drawable/rounded_rectangle_green"-->
+            <!--android:src="@drawable/ic_done_white_24dp" />-->
+
+    </GridLayout>
+
+</FrameLayout>
