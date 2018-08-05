@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -175,6 +176,14 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                             }
 
+                            if(AppUtil.getInstance(TxAnimUIActivity.this).isOfflineMode())    {
+
+                                offlineTx(R.string.offline_mode, hexTx, strTxHash);
+
+                                return;
+
+                            }
+
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -264,6 +273,29 @@ public class TxAnimUIActivity extends AppCompatActivity {
         progressView.setTxSubText(id);
 //        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
 //        progressView.toggleOfflineButton();
+    }
+
+    private void offlineTx(int id, final String hex, final String hash)   {
+        progressView.reset();
+
+        progressView.offlineMode(1200);
+        progressView.setTxStatusMessage(R.string.tx_standby);
+        progressView.setTxSubText(id);
+        progressView.setTxSubText(R.string.in_offline_mode);
+        progressView.toggleOfflineButton();
+
+        progressView.getShowQRButton().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                doShowTx(hex, hash);
+            }
+        });
+
+        progressView.getTxTennaButton().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(TxAnimUIActivity.this, R.string.tx_tenna_coming_soon, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void stub() {
