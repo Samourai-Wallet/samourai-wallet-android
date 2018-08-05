@@ -65,7 +65,7 @@ public class AppUtil {
 
     public boolean isOfflineMode() {
 
-        isOfflineMode = (!ConnectivityStatus.hasConnectivity(context) || isUserOfflineMode()) ? true : false;
+        isOfflineMode = (isUserOfflineMode() || !ConnectivityStatus.hasConnectivity(context)) ? true : false;
 
         return isOfflineMode;
     }
