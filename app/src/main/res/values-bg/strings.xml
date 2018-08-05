@@ -234,72 +234,72 @@
     <string name="bip47_setup4_text2">Ще бъдат приспаднати от баланса на портфейла Ви.</string>
 
     <string name="bip47_add1_title">Нов контакт</string>
-    <string name="bip47_add1_text">Сканирайте или поставете код за плащания, за да създадете нов канал за плащания.</string>
+    <string name="bip47_add1_text">Сканирайте или поставете код за разплащания, за да създадете нов канал за плащания.</string>
 
     <string name="paste">Поставяне</string>
     <string name="label">Надпис</string>
-    <string name="next">Next</string>
-    <string name="confirm">Confirm</string>
-    <string name="payment_code">Payment code</string>
-    <string name="payment_channel_init">Notification transaction sent. Your payment channel is being created.</string>
+    <string name="next">Следващ</string>
+    <string name="confirm">Потвърждаване</string>
+    <string name="payment_code">Код за плащания</string>
+    <string name="payment_channel_init">Известяваща транзакция изпратена. Вашият канал за разплащания е в процес на създаване.</string>
 
-    <string name="bip47_no_label_error">You must supply a label for this payment code</string>
+    <string name="bip47_no_label_error">Трябва да предоставите надпис за този код за разплащания</string>
 
-    <string name="bip47_status_tbe">Not yet established</string>
-    <string name="bip47_status_pending">Pending - 0/1 Confirmations</string>
-    <string name="bip47_status_active">Ready to send</string>
-    <string name="bip47_status_incoming">Ready to receive</string>
-    <string name="bip47_cannot_scan_own_pcode">Cannot scan your own payment code</string>
-    <string name="bip47_spend_to_pcode">Send through this payment channel?</string>
-    <string name="bip47_sign">Sign message</string>
+    <string name="bip47_status_tbe">Все още неустановен</string>
+    <string name="bip47_status_pending">В процес на създаване - 0/1 Потвърждения</string>
+    <string name="bip47_status_active">В готовност за изпращане</string>
+    <string name="bip47_status_incoming">В готовност за получаване</string>
+    <string name="bip47_cannot_scan_own_pcode">Не можете да сканирате собствения си код за разплащания</string>
+    <string name="bip47_spend_to_pcode">Изпращане през този канал за разплащания?</string>
+    <string name="bip47_sign">Подписване на съобщение</string>
     <string name="bip47_sign_text1">Sign message using BIP47 notification address private key?</string>
     <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
-    <string name="bip47_wait_for_confirmation_or_retry">This payment channel is waiting for 1 confirmation before sending is activated. Would you like to discard the previous attempt and resend a notification?></string>
+    <string name="bip47_wait_for_confirmation_or_retry">Този канал за разплащания очаква 1 потвърждение преди изпращането да бъде активирано. Искате ли да се откажете от предишния опит и да изпратите нова известяваща транзакция?></string>
 
-    <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>
+    <string name="rbf_incoming">Входящата транзакция е replace-by-fee. Преглед в block explorer?</string>
 
-    <string name="invalid_passphrase">Invalid passphrase</string>
-    <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
-    <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
+    <string name="invalid_passphrase">Невалидна тайна фраза</string>
+    <string name="passphrase">Тайна фраза</string>
+    <string name="passphrase_needed_for_backup">Вашият портфейл не е защитен от тайна фраза. Резервните копия на портфейла са криптирани с помощта на тайна фраза. Ако желаете да използвате криптирани резервни копия и други функции на Самурай портфейл, създайте портфейл със Самурай и прехвърлете средствата си тук.</string>
+    <string name="passphrase_required">Изисква се тайна фраза за използването на тази функция. Моля обмислете създаването на нов портфейл, който автоматично ще включва тайна фраза.</string>
 
-    <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
-    <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+    <string name="cannot_reach_api">APIs на Самурай не могат да бъдат достигнати. Моля проверете връзката си и опитайте отново или опитайте по-късно.</string>
+    <string name="api_error">APIs на Самурай връщат грешка. Моля опитайте отново или опитайте по-късно.</string>
 
-    <string name="cannot_recognize_privkey">Cannot recognize private key</string>
-    <string name="cannot_sweep_privkey">Error sweeping private key</string>
-    <string name="please_wait_sending">Sending transaction, please wait.</string>
-    <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
+    <string name="cannot_recognize_privkey">Неразпознат частен ключ.</string>
+    <string name="cannot_sweep_privkey">Грешка при прехвърлянето на баланса на частния ключ към портфейла.</string>
+    <string name="please_wait_sending">Транзакцията се изпраща, моля изчакайте.</string>
+    <string name="please_wait_ricochet">Информацията за Рикошета се обработва, Моля изчакайте.</string>
 
-    <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
+    <string name="change_is_dust">Рестото от тази транзакция е твърде малко. Опитайте отново като или промените количеството за изпращане, или изпратите целия си баланс.</string>
 
-    <string name="tor_routing_on">Samourai is routing via Tor.</string>
-    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+    <string name="tor_routing_on">Самурай рутира през Tor.</string>
+    <string name="tor_routing_off">Самурай не рутира през Tor. Натиснете, за да активирате.</string>
+    <string name="tor_install">Натиснете, за да инсталирате Orbot и Самурай да рутира през Tor.</string>
 
-    <string name="premium_addons">Premium Addons</string>
+    <string name="premium_addons">Премиум добавки</string>
 
-    <string name="ricochet_hop">Ricochet Hop</string>
-    <string name="ricochet_hopping">Ricocheted to</string>
-    <string name="ricochet_spend1">Ricochet spend to</string>
-    <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_hop">Рикошет</string>
+    <string name="ricochet_hopping">Рикоширано до</string>
+    <string name="ricochet_spend1">Изпращане чрез Рикошет</string>
+    <string name="ricochet_spend2">на общо количество от</string>
+    <string name="ricochet_spend3">(включва такса от 0.002 BTC към Самурай и копачите)?</string>
 
-    <string name="action_ricochet">Replay Ricochet</string>
-    <string name="action_empty_ricochet">Empty Ricochet queue</string>
-    <string name="ricochet">Ricochet - send with 4 extra hops</string>
-    <string name="action_ricochet_script">Display Ricochet script</string>
-    <string name="action_ricochet_replay">Resend Ricochet</string>
-    <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="ricochet_not_broadcast_replay">There was a problem broadcasting your Ricochet. Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
-    <string name="no_ricochet_display">There is no Ricochet script to display.</string>
-    <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
+    <string name="action_ricochet">Повтаряне на Рикошет</string>
+    <string name="action_empty_ricochet">Изпразни опашката за Рикошет</string>
+    <string name="ricochet">Рикошет - изпращане с 4 допълнителни отблъсквания</string>
+    <string name="action_ricochet_script">Покажи скрипта за Рикошет</string>
+    <string name="action_ricochet_replay">Повторно изпращане на Рикошет</string>
+    <string name="ricochet_replay">Искате ли да опитате да изпратите този Рикошет отново?</string>
+    <string name="ricochet_not_broadcast_replay">Имаше проблем с изпращането на Рикошета Ви. Искате ли да се опитате да го изпратите отново?</string>
+    <string name="no_ricochet_replay">Няма Рикошет, който да бъде изпратен отново.</string>
+    <string name="no_ricochet_display">Няма скрипт за Рикошет, който да бъде показан.</string>
+    <string name="ricochet_broadcast">Вашият Рикошет беше изпратен.</string>
 
-    <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
-    <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
+    <string name="bip47_cannot_identify_outpoint">Изходящият код за разплащания не можеше да бъде идентифициран</string>
+    <string name="bip47_cannot_compose_notif_tx">Известяващата транзакция не можеше да бъде създадена</string>
 
-    <string name="pushtx_returns_null">Spend failed. Server returned null value.</string>
+    <string name="pushtx_returns_null">Неуспешно изпращане. Сървърът върна нулева стойност.</string>
 
     <string name="trusted_node">Trusted node</string>
     <string name="trusted_node_user_hint">rpc user name</string>
