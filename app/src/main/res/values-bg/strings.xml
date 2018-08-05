@@ -44,9 +44,8 @@
     <string name="options_currency">Цена</string>
     <string name="options_currency2">Изберете борса и местна валута.</string>
     <string name="options_blockexplorer">Block explorer</string>
-    <string name="options_blockexplorer2">Block explorer, използван за преглед 
-        на детайли, свързани с транзакциите.</string>
-    <string name="options_sim_switch">Защита срещу смяна на СИМ карта</string>
+    <string name="options_blockexplorer2">Block explorer, използван за преглед на детайли, свързани с транзакциите.</string>
+    <string name="options_sim_switch">Защита срещу смяна на СИМ картата</string>
     <string name="options_sim_switch2"> изпрати SMS до доверен телефонен номер когато Сим картата е сменена.</string>
     <string name="options_use_telno">Използване на доверен телефонен номер за дистанционно управление</string>
     <string name="options_use_telno2">Позволи дистанционни команди, изпратени само от доверения Ви телефонен номер.</string>
@@ -177,68 +176,68 @@
     <string name="securely_wiping_wait">Безопасно изтриване на портфейла. Моля изчакайте.</string>
 
     <string name="options_scramble_pin">Разбъркване на PIN код екрана</string>
-    <string. </string>
+    <string.name="options_scramble_pin2">Използвайте разбъркани цифри за въеждане на PIN код и влизане в портфейла</string>
 
     <string name="you_must_have_orbot">Трябва да имате Orbot инсталиран и настроен да рутира трафика през него. Искате ли да го инсталирате от Google Play?</string>
 
-    <string name="ssl_pinning_invalid">SSL certificate pinning has failed. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
-    <string name="ssl_no_connection">We are unable to connect to the host to verify the SSL certificate. Please verify your network connection and device before continuing.</string>
-    <string name="retry">Retry</string>
-    <string name="exit">Exit</string>
+    <string name="ssl_pinning_invalid">Грешка със SSL сертификата. Това може да е индикация за злонамерена дейност. Моля проверете връзката си с Интернет и подсигурете устройството си преди да продължите.</string>
+    <string name="ssl_no_connection">Не можем да се свържем с хоста, за да потвърдим SSL сертификата. Моля проверете връзката си с Интернет и устройството си преди да продължите.</string>
+    <string name="retry">Повторен опит</string>
+    <string name="exit">Изход</string>
 
-    <string name="create_pin">Create PIN code</string>
-    <string name="confirm_pin">Confirm PIN code</string>
+    <string name="create_pin">Създайте PIN код</string>
+    <string name="confirm_pin">Потвърдете PIN кода</string>
 
-    <string name="auto_fee">NORMAL FEE</string>
-    <string name="priority_fee">PRIORITY FEE</string>
-    <string name="low_fee">LOW FEE</string>
-    <string name="custom_fee">Custom</string>
+    <string name="auto_fee">НОРМАЛНА ТАКСА</string>
+    <string name="priority_fee">ПРИОРИТЕТНА ТАКСА</string>
+    <string name="low_fee">НИСКА ТАКСА</string>
+    <string name="custom_fee">Такса по избор</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Wallet</string>
+    <string name="account_Samourai">Портфейл</string>
     <string name="account_shuffling">Shifted</string>
 
-    <string name="max_available">Max. available:</string>
+    <string name="max_available">Макс. налични:</string>
 
     <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
-    <string name="select_account">Select account</string>
-    <string name="received_bitcoin">Received Bitcoin</string>
-    <string name="received">Received</string>
-    <string name="sent">Transaction sent</string>
-    <string name="total">Total</string>
-    <string name="export_to_clipboard">Export to clipboard</string>
-    <string name="export_to_email">Export to email</string>
-    <string name="encryption_error">There was an error while encrypting your wallet backup. Please try again.</string>
-    <string name="import_backup">From backup</string>
-    <string name="import_mnemonic">Mnemonic/seed</string>
-    <string name="encrypted_backup">Encrypted wallet data</string>
-    <string name="decryption_error">There was an error while decrypting your wallet backup. Please try again.</string>
-    <string name="restore_wallet_from_backup">Restore wallet from backup</string>
-    <string name="restore_wallet_from_existing_backup">Backup found on device. To restore from existing backup, tap \'OK\', otherwise copy/paste different backup and tap \'OK\'.</string>
+    <string name="select_account">Изберете акаунт</string>
+    <string name="received_bitcoin">Получени биткойни</string>
+    <string name="received">Получено</string>
+    <string name="sent">Транзакцията изпратена</string>
+    <string name="total">Общо</string>
+    <string name="export_to_clipboard">Експортиране в клипборда</string>
+    <string name="export_to_email">Експортиране чрез имейл</string>
+    <string name="encryption_error">Грешка при криптирането на резервното копие на портфейла. Моля опитайте отново.</string>
+    <string name="import_backup">От резервно копие</string>
+    <string name="import_mnemonic">Тайни думи(Seed)</string>
+    <string name="encrypted_backup">Криптирани данни за портфейла</string>
+    <string name="decryption_error">Грешка при декриптирането на резервното Ви копие. Моля опитайте отново.</string>
+    <string name="restore_wallet_from_backup">Възстановяване на портфейла от резервно копие</string>
+    <string name="restore_wallet_from_existing_backup">Резервно копие намерено на устройството. За да възстановите от съществуващото резервно копие, натиснете \'OK\', в противен случай копирайте/поставете друго резервно копие и натиснете \'OK\'.</string>
 
-    <string name="choose_email_client">Choose an Email client:</string>
+    <string name="choose_email_client">Изберете имейл клиент:</string>
 
-    <string name="cannot_launch_app">Samourai Wallet cannot be run on this device</string>
-    <string name="confirm_change_pin">Are you sure you want to change your PIN?</string>
-    <string name="success_change_pin">PIN changed</string>
-    <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
-    <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
-    <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
+    <string name="cannot_launch_app">Самурай портфейл не може да работи на това устройство</string>
+    <string name="confirm_change_pin">Сигурни ли сте, че искате да промените PIN кода си?</string>
+    <string name="success_change_pin">PIN кодът сменен</string>
+    <string name="alternative_pin_create">Сигурни ли сте, че искате да създадете алтернативен PIN код, който да бъде използван за скрито стартиране и дистанционни команди?</string>
+    <string name="alternative_pin_deleted">В момента не използвате алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
+    <string name="alternative_pin_wait">Изчакайте режим на скрито стартиране да се активира напълно преди да дефинирате алтернативен PIN код.</string>
 
-    <string name="invalid_payment_code">Invalid payment code</string>
-    <string name="error_payment_code">Error generating payment code</string>
+    <string name="invalid_payment_code">Невалиден код за плащания</string>
+    <string name="error_payment_code">Грешка при генерирането на код за плащания</string>
 
-    <string name="bip47_setup1_title">Your PayNym</string>
-    <string name="bip47_setup4_title">Add PayNym contact</string>
-    <string name="bip47_setup4_text1">Adding this PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain.</string>
-    <string name="bip47_setup4_text2">will be deducted from your wallet balance.</string>
+    <string name="bip47_setup1_title">Вашият PayNym</string>
+    <string name="bip47_setup4_title">Добавете PayNym контакт</string>
+    <string name="bip47_setup4_text1">Добавянето на този PayNym към контактите Ви изисква еднократна такса за транзакция за създаването на записа на блокчейна.</string>
+    <string name="bip47_setup4_text2">Ще бъдат приспаднати от баланса на портфейла Ви.</string>
 
-    <string name="bip47_add1_title">New contact</string>
-    <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
+    <string name="bip47_add1_title">Нов контакт</string>
+    <string name="bip47_add1_text">Сканирайте или поставете код за плащания, за да създадете нов канал за плащания.</string>
 
-    <string name="paste">Paste</string>
-    <string name="label">Label</string>
+    <string name="paste">Поставяне</string>
+    <string name="label">Надпис</string>
     <string name="next">Next</string>
     <string name="confirm">Confirm</string>
     <string name="payment_code">Payment code</string>
