@@ -163,23 +163,23 @@
     <string name="destination">Адрес или канал за плащания</string>
 
     <string name="insufficient_funds">Недостатъчни средства</string>
-    <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
-    <string name="invalid_amount">Invalid amount</string>
-    <string name="amount">Amount</string>
+    <string name="tx_length_error">Самурай не работи с транзакции с размер по-голям от 100KB.Моля опитайте да разделите транзакцията си.</string>
+    <string name="invalid_amount">Невалидно количество</string>
+    <string name="amount">Количество</string>
 
-    <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
-    <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
-    <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
-    <string name="wallet_erased">Wallet erased from device.</string>
+    <string name="receive_address_to_clipboard">Копиране на този адрес за получаване в клипборда? Ако се копира, може да бъде видян от други приложения.</string>
+    <string name="receive_address_to_share">Споделяне на този адрес за получаване? Ако се сподели, може да бъде прочетен от други приложения.</string>
+    <string name="sure_to_erase">Сигурни ли сте, че искате да изтриете този портфейл?</string>
+    <string name="wallet_erased">Портфейлът беше изтрит от устройството.</string>
 
-    <string name="send_privacy_warning">Privacy warning: be aware that you have already sent funds to this address.</string>
+    <string name="send_privacy_warning">Предупреждение за секретността Ви: Знайте, че вече сте изпращали средства до този адрес.</string>
 
-    <string name="securely_wiping_wait">Securely wiping wallet. Please wait.</string>
+    <string name="securely_wiping_wait">Безопасно изтриване на портфейла. Моля изчакайте.</string>
 
-    <string name="options_scramble_pin">Scramble PIN Screen</string>
-    <string name="options_scramble_pin2">Use scrambled numerical pad to enter your wallet. </string>
+    <string name="options_scramble_pin">Разбъркване на PIN код екрана</string>
+    <string. </string>
 
-    <string name="you_must_have_orbot">You must have Orbot installed and activated to proxy traffic through it. Would you like to install it from Google Play?</string>
+    <string name="you_must_have_orbot">Трябва да имате Orbot инсталиран и настроен да рутира трафика през него. Искате ли да го инсталирате от Google Play?</string>
 
     <string name="ssl_pinning_invalid">SSL certificate pinning has failed. This might indicate malicious activity. Please verify your network connection and device before continuing.</string>
     <string name="ssl_no_connection">We are unable to connect to the host to verify the SSL certificate. Please verify your network connection and device before continuing.</string>
