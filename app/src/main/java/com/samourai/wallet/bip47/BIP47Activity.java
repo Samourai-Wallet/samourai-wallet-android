@@ -308,7 +308,12 @@ public class BIP47Activity extends Activity {
 
                     case 1:
 
-                        doSync(pcodes[position]);
+                        if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                            doSync(pcodes[position]);
+                        }
+                        else    {
+                            Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+                        }
 
                         break;
 
@@ -596,10 +601,20 @@ public class BIP47Activity extends Activity {
             doUnArchive();
         }
         else if(id == R.id.action_sync_all) {
-            doSyncAll();
+            if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                doSyncAll();
+            }
+            else    {
+                Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if(id == R.id.action_claim_paynym) {
-            doClaimPayNym();
+            if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                doClaimPayNym();
+            }
+            else    {
+                Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if(id == R.id.action_support) {
             doSupport();
