@@ -176,7 +176,7 @@
     <string name="securely_wiping_wait">Безопасно изтриване на портфейла. Моля изчакайте.</string>
 
     <string name="options_scramble_pin">Разбъркване на PIN код екрана</string>
-    <string.name="options_scramble_pin2">Използвайте разбъркани цифри за въеждане на PIN код и влизане в портфейла</string>
+    <string name="options_scramble_pin2">Използвайте разбъркани цифри за въеждане на PIN код и влизане в портфейла</string>
 
     <string name="you_must_have_orbot">Трябва да имате Orbot инсталиран и настроен да рутира трафика през него. Искате ли да го инсталирате от Google Play?</string>
 
