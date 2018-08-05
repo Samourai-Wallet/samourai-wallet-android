@@ -143,13 +143,13 @@ public class PayloadUtil	{
 
     public void serializeMultiAddr(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strMultiAddrFilename);
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrFilename);
         }
     }
 
     public void serializeUTXO(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strUTXOFilename);
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
         }
     }
 
@@ -191,16 +191,16 @@ public class PayloadUtil	{
 
     public void serializePayNyms(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strPayNymFilename);
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strPayNymFilename);
         }
     }
 
     public JSONObject deserializeMultiAddr()  throws IOException, JSONException {
-        return deserializeAux(null, strMultiAddrFilename);
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrFilename);
     }
 
     public JSONObject deserializeUTXO()  throws IOException, JSONException  {
-        return deserializeAux(null, strUTXOFilename);
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
     }
 
     public JSONObject deserializeFX_LBC()  throws IOException, JSONException  {
@@ -228,7 +228,7 @@ public class PayloadUtil	{
     }
 
     public JSONObject deserializePayNyms()  throws IOException, JSONException  {
-        return deserializeAux(null, strPayNymFilename);
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strPayNymFilename);
     }
 
     public synchronized void wipe() throws IOException	{
