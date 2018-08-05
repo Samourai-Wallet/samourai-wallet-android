@@ -742,7 +742,12 @@ public class BalanceActivity extends Activity {
             doSupport();
         }
         else if (id == R.id.action_sweep) {
-            doSweep();
+            if(!AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
+                doSweep();
+            }
+            else    {
+                Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if (id == R.id.action_utxo) {
             doUTXO();
