@@ -9,7 +9,7 @@
     <string name="decrypting_bip38">Декриптиране на BIP38 парола. Моля изчакайте...</string>
 
     <string name="action_settings">Настройки</string>
-    <string name="action_support">Поддръжка</string>
+    <string name="action_support">Помощ и поддръжка</string>
     <string name="action_sweep">Прехвърли целия баланс на частен ключ към портфейла</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Активирай всички архивирани кодове за плащане</string>
@@ -21,7 +21,7 @@
     <string name="cancel">Отказ</string>
 
     <string name="options_cat_prefs">Валута, Block explorer</string>
-    <string name="options_cat_stealth">Потайност</string>
+    <string name="options_cat_stealth">Прикритост</string>
     <string name="options_cat_remote">Дистанционно управление</string>
     <string name="options_cat_wallet">Портфейл</string>
     <string name="options_cat_networking">Мрежови</string>
@@ -36,9 +36,9 @@
     <string name="options_xpub84">Покажи SegWit ZPUB</string>
     <string name="options_xpub84_2">Покажи разширен публичен ключ за BIP84 SegWit акаунт (Bech32).</string>
     <string name="options_wipe">Безопасно изтриване на портфейла</string>
-    <string name="options_wipe2">Безопасно изтрий този портфейл от устройството.</string>
-    <string name="options_stealth_display">Потайно стартиране</string>
-    <string name="options_stealth_display2">Премахни Самурай от менюто и началния екран. Трябва да наберете**ВАШИЯ_ПИН_КОД# от телефона Ви за да стартирате Самурай.</string>
+    <string name="options_wipe2">Безопасно изтриване на този портфейл от устройството.</string>
+    <string name="options_stealth_display">Скрито стартиране</string>
+    <string name="options_stealth_display2">Премахване на Самурай от менюто и началния екран. Трябва да наберете **ВАШИЯ_ПИН_КОД# от телефона си, за да стартирате Самурай.</string>
     <string name="options_remote_commands">Разреши дистанционните команди</string>
     <string name="options_remote_commands2">Позволи дистанционни команди чрез SMS.</string>
     <string name="options_currency">Цена</string>
@@ -46,7 +46,7 @@
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">Block explorer, използван за преглед на детайли, свързани с транзакциите.</string>
     <string name="options_sim_switch">Защита срещу смяна на СИМ картата</string>
-    <string name="options_sim_switch2"> изпрати SMS до доверен телефонен номер когато Сим картата е сменена.</string>
+    <string name="options_sim_switch2">Изпрати SMS до доверения телефонен номер, когато Сим картата е сменена.</string>
     <string name="options_use_telno">Използване на доверен телефонен номер за дистанционно управление</string>
     <string name="options_use_telno2">Позволи дистанционни команди, изпратени само от доверения Ви телефонен номер.</string>
     <string name="options_alert_telno">Доверен номер</string>
@@ -55,23 +55,23 @@
     <string name="options_hash2">Получаване на SHA-256 хеш на този инсталиран APK файл (може да бъде копиран в клипборда).</string>
     <string name="options_VPN">VPN</string>
     <string name="options_VPN2">Стартиране на OpenVPN за Андроид.</string>
-    <string name="options_Tor">Прекарай през Tor?</string>
+    <string name="options_Tor">Прекарване през Tor?</string>
     <string name="options_Tor2">Стартиране на Orbot (Tor).</string>
     <string name="options_export">Експортиране на резервно копие на портфейла</string>
     <string name="options_change_pin">Смяна на PIN код</string>
     <string name="options_change_pin2">Дефиниране на нов PIN код; използван за отключване на Вашия портфейл.</string>
-    <string name="options_remote_pin">PIN код за потайно стартиране и дистанционни функции</string>
-    <string name="options_remote_pin2">Дефиниране на алтернативен PIN код за потайно стартиране и дистанционни функции.</string>
+    <string name="options_remote_pin">PIN код за скрито стартиране и дистанционни функции</string>
+    <string name="options_remote_pin2">Дефиниране на алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
     <string name="options_autosave_backup">Автоматично запазване на резервно копие в паметта на устройството.</string>
     <string name="options_autosave_backup2">Переодично запазвай резервно копие, криптирано с тайната фраза, в паметта на устройството.</string>
     <string name="options_version">Версия</string>
     <string name="options_txs">Транзакции</string>
-    <string name="options_boltzmann">STONEWALL харч</string>
+    <string name="options_boltzmann">STONEWALL Харч</string>
     <string name="options_boltzmann_2">Харчовете ще използват STONEWALL алгоритъм за повишено замаскиране.</string>
-    <string name="options_utxo">Покажи неизхарчени средства(UTXOs)</string>
+    <string name="options_utxo">Покажи неизхарчени средства UTXO</string>
     <string name="options_trusted_node">Задаване на доверен node</string>
     <string name="options_trusted_node2">Посочете свой собствен Биткойн node, чрез който да изпращате транзакции.</string>
-    <string name="options_use_trusted_node">Използвай доверения node</string>
+    <string name="options_use_trusted_node">Използване на доверения node</string>
     <string name="options_use_trusted_node2">Изпращайте транзакции през Вашия собствен node.</string>
     <string name="options_rbf0">Изпращайте, използвайки RBF</string>
     <string name="options_rbf0_2">Харчовете ще използват replace-by-fee за евентуално увеличаване на таксата.</string>
@@ -83,7 +83,7 @@
     <string name="options_fee_provider">Източник за преценка на подходящи такси</string>
     <string name="options_fee_provider2">Изберете предпочитаният Ви източник за преценка на таксите.</string>
     <string name="options_broadcast_on">Изпращане на транзакции</string>
-    <string name="options_broadcast_on2">Махнете тикчето (изпращането ИЗКЛЮЧЕНО), за да копирате подписана транзакция в клипборда to copy raw signed transaction to the clipboard.</string>
+    <string name="options_broadcast_on2">Махнете тикчето (изпращането ИЗКЛЮЧЕНО), за да копирате подписана транзакция в клипборда.</string>
     <string name="options_segwit">Получаване чрез SegWit адреси</string>
     <string name="options_segwit_2">Генериране на SegWit адреси за входящи транзакции.</string>
     <string name="options_broadcast_hex">Изпращане на hex транзакция</string>
@@ -159,7 +159,7 @@
     <string name="enter_privkey">Въведете частен ключ</string>
 
     <string name="to">До</string>
-    <string name="destination">Адрес или канал за плащания</string>
+    <string name="destination">Биткойн адрес или канал за разплащания</string>
 
     <string name="insufficient_funds">Недостатъчни средства</string>
     <string name="tx_length_error">Самурай не работи с транзакции с размер по-голям от 100KB.Моля опитайте да разделите транзакцията си.</string>
@@ -191,7 +191,7 @@
     <string name="auto_fee">НОРМАЛНА ТАКСА</string>
     <string name="priority_fee">ПРИОРИТЕТНА ТАКСА</string>
     <string name="low_fee">НИСКА ТАКСА</string>
-    <string name="custom_fee">Такса по избор</string>
+    <string name="custom_fee">По избор</string>
     <string name="sat_b">sat/b</string>
 
     <string name="account_Samourai">Портфейл</string>
@@ -225,8 +225,8 @@
     <string name="alternative_pin_deleted">В момента не използвате алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
     <string name="alternative_pin_wait">Изчакайте режим на скрито стартиране да се активира напълно преди да дефинирате алтернативен PIN код.</string>
 
-    <string name="invalid_payment_code">Невалиден код за плащания</string>
-    <string name="error_payment_code">Грешка при генерирането на код за плащания</string>
+    <string name="invalid_payment_code">Невалиден код за разплащания</string>
+    <string name="error_payment_code">Грешка при генерирането на код за разплащания</string>
 
     <string name="bip47_setup1_title">Вашият PayNym</string>
     <string name="bip47_setup4_title">Добавете PayNym контакт</string>
@@ -234,13 +234,13 @@
     <string name="bip47_setup4_text2">Ще бъдат приспаднати от баланса на портфейла Ви.</string>
 
     <string name="bip47_add1_title">Нов контакт</string>
-    <string name="bip47_add1_text">Сканирайте или поставете код за разплащания, за да създадете нов канал за плащания.</string>
+    <string name="bip47_add1_text">Сканирайте или поставете код за разплащания, за да създадете нов канал за разплащания.</string>
 
     <string name="paste">Поставяне</string>
     <string name="label">Надпис</string>
     <string name="next">Следващ</string>
     <string name="confirm">Потвърждаване</string>
-    <string name="payment_code">Код за плащания</string>
+    <string name="payment_code">Код за разплащания</string>
     <string name="payment_channel_init">Известяваща транзакция изпратена. Вашият канал за разплащания е в процес на създаване.</string>
 
     <string name="bip47_no_label_error">Трябва да предоставите надпис за този код за разплащания</string>
