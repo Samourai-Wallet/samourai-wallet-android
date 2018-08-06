@@ -301,132 +301,132 @@
 
     <string name="pushtx_returns_null">Неуспешно изпращане. Сървърът върна нулева стойност.</string>
 
-    <string name="trusted_node">Trusted node</string>
+    <string name="trusted_node">Доверен node</string>
     <string name="trusted_node_user_hint">rpc user name</string>
     <string name="trusted_node_ip_hint">IP address</string>
     <string name="trusted_node_port_hint">Port (8332 default)</string>
     <string name="trusted_node_password_hint">rpc user password</string>
-    <string name="trusted_node_not_valid">Please supply valid info for your trusted node.</string>
-    <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
-    <string name="trusted_node_error">Error reaching proposed trusted node.</string>
-    <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
-    <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
-    <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
-    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
+    <string name="trusted_node_not_valid">Моля предоставете валидна информация за Вашия доверен node.</string>
+    <string name="trusted_node_ko">Довереният node неразпознат. Моля проверете инсталацията.</string>
+    <string name="trusted_node_error">Грешка при свързването с доверения node</string>
+    <string name="trusted_node_tx_error">Грешка с транзакцията от страна на доверения node</string>
+    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Bitcoin Core 0.13.1 и нагоре.</string>
+    <string name="trusted_node_tx_sent">Транзакцията изпратена чрез доверения node</string>
+    <string name="trusted_node_not_responding">Довереният node не отговаря. Моля проверете инсталацията.</string>
+    <string name="trusted_node_breaks_consensus">Довереният node не може да бъде зададен на Биткойн клиент, който нарушава консенсуса!</string>
 
-    <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
-    <string name="refresh_tx">Retrieved transactions and balance.</string>
-    <string name="refresh_incoming_notif_tx">Retrieved incoming BIP47 notification transactions.</string>
-    <string name="refresh_outgoing_notif_tx">Updated outgoing BIP47 notification transactions.</string>
+    <string name="refresh_tx_pre">Извличане на транзакции и баланс.</string>
+    <string name="refresh_tx">Транзакциите и балансът извлечени.</string>
+    <string name="refresh_incoming_notif_tx">Извлечени входящи BIP47 известяващи транзакции.</string>
+    <string name="refresh_outgoing_notif_tx">Обновени изходяши BIP47 известяващи транзакции.</string>
 
-    <string name="options_unconfirmed_tx">This transaction is awaiting confirmation. Please select an option:</string>
-    <string name="options_block_explorer">View transaction</string>
-    <string name="options_bump_fee">Increase tx fee</string>
+    <string name="options_unconfirmed_tx">Тази транзакция очаква потвърждение. Моля изберете опция:</string>
+    <string name="options_block_explorer">Преглед на транзакцията</string>
+    <string name="options_bump_fee">Увеличаване на таксата</string>
 
-    <string name="cpfp_cannot_retrieve_tx">Cannot retrieve transaction information. Please try again.</string>
-    <string name="fee_bump_not_necessary">Be advised that bumping the fee may not be necessary for this transaction.</string>
-    <string name="bump_fee">Would you like to increase the miner fee of this transaction for quicker confirmation?\n\nAdditional Miner Fee:</string>
+    <string name="cpfp_cannot_retrieve_tx">Информацията за транзакцията не може да бъде извлечена. Моля опитайте отново.</string>
+    <string name="fee_bump_not_necessary">Имайте предвид, че увеличаването на таксата за тази транзакция може да не е необходимо.</string>
+    <string name="bump_fee">Искате ли да увеличите таксата към копачите за тази транзакция за по-бързо потвърждение?\n\nДопълнителна такса към копачите:</string>
 
-    <string name="options_sign">Sign message</string>
+    <string name="options_sign">Подписване на съобщение</string>
 
-    <string name="trusted_node_pow_failed">The proof-of-work being reported by your trusted node is not verifying. Please check your installation.</string>
+    <string name="trusted_node_pow_failed">Proof-of-work-ът, докладван от Вашия доверен node не се потвърждава. Моля проверете инсталацията.</string>
 
-    <string name="options_fees">Show current miners\' fees</string>
-    <string name="current_fee_selection">Your fee selection is set to:</string>
-    <string name="current_hi_fee_value">Current high fee:</string>
-    <string name="current_mid_fee_value">Current normal fee:</string>
-    <string name="current_lo_fee_value">Current low fee:</string>
+    <string name="options_fees">Показване на сегашните такси към копачите</string>
+    <string name="current_fee_selection">Вашата избрана такса е:</string>
+    <string name="current_hi_fee_value">Сегашна висока такса:</string>
+    <string name="current_mid_fee_value">Сегашна нормална такса:</string>
+    <string name="current_lo_fee_value">Сегашна ниска такса:</string>
     <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Set your custom fee in sat/b.</string>
-    <string name="custom_fee_too_low">Custom fee is set too low.</string>
-    <string name="custom_fee_too_high">Custom fee is set too high.</string>
+    <string name="set_sat">Задайте такса по избор в sat/b(сатошита за байт).</string>
+    <string name="custom_fee_too_low">Таксата по избор е твърде ниска</string>
+    <string name="custom_fee_too_high">Таксата по избор е твърде висока</string>
 
-    <string name="cpfp_spent">CPFP transaction sent.</string>
-    <string name="rbf_spent">RBF transaction sent.</string>
-    <string name="cannot_output_dust">Cannot make transaction with dust output.</string>
+    <string name="cpfp_spent">CPFP транзакция изпратена.</string>
+    <string name="rbf_spent">RBF транзакция изпратена.</string>
+    <string name="cannot_output_dust">Не може да се направи транзакция с твърде малък output(dust)</string>
     <string name="cannot_create_change_output">Cannot create change output.</string>
-    <string name="cannot_create_cpfp">Cannot create CPFP transaction.</string>
+    <string name="cannot_create_cpfp">CPFP транзакцията не може да се направи.</string>
 
-    <string name="error_reading_payload">Error reading payload. Please try again.</string>
+    <string name="error_reading_payload">Грешка при четенето на payload. Моля опитайте отново.</string>
 
-    <string name="utxo_sign">Sign message</string>
-    <string name="utxo_sign_text1">Sign message using this private key?</string>
-    <string name="utxo_sign_text2">Signed using utxo.</string>
-    <string name="utxo_sign_text3">Signed using utxo.</string>
+    <string name="utxo_sign">Подписване на съобщение</string>
+    <string name="utxo_sign_text1">Подписване, използвайки този частен ключ?</string>
+    <string name="utxo_sign_text2">Подписано, използвайки utxo.</string>
+    <string name="utxo_sign_text3">Подпиасно, използвайки utxo.</string>
 
-    <string name="recovery_checkup">Recovery Checkup</string>
-    <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
-    <string name="mnemonic">Mnemonic</string>
-    <string name="recovery_checkup_finish">I\'VE SECURED MY RECOVERY INFO</string>
-    <string name="pin_reminder">As a reminder, your PIN code is:</string>
+    <string name="recovery_checkup">Проверка на данните за възстановяване</string>
+    <string name="recovery_checkup_message">Вашите тайни думи и тайна фраза ще бъдат показани. Не позволявайте на никого да гледа в екрана Ви. Това НЯМА да бъде показано отново.</string>
+    <string name="mnemonic">Тайни думи</string>
+    <string name="recovery_checkup_finish">ЗАЩИТИХ ДАННИТЕ СИ ЗА ВЪЗСТАНОВЯВАНЕ</string>
+    <string name="pin_reminder">Напомняне - Вашият PIN код е:</string>
 
-    <string name="opendime_confirmed_balance">Confirmed Balance</string>
-    <string name="opendime_privkey">Private Key</string>
-    <string name="opendime_verified">VERIFIED</string>
-    <string name="opendime_valid_key">Valid private key on device</string>
-    <string name="opendime_not_verified">CANNOT VERIFY</string>
-    <string name="opendime_no_valid_key">Cannot validate private key on device</string>
-    <string name="opendime_view">VIEW</string>
+    <string name="opendime_confirmed_balance">Потвърден баланс</string>
+    <string name="opendime_privkey">Частен ключ</string>
+    <string name="opendime_verified">ВЕРИФИЦИРАН</string>
+    <string name="opendime_valid_key">Валиден частен ключ на устройството</string>
+    <string name="opendime_not_verified">НЕ МОЖЕ ДА БЪДЕ ВЕРИФИЦИРАН</string>
+    <string name="opendime_no_valid_key">Частният ключ на устройството не може да бъде валидиран.</string>
+    <string name="opendime_view">ПРЕГЛЕД</string>
     <string name="opendime_sweep">SWEEP</string>
     <string name="opendime_topup">TOP UP</string>
 
-    <string name="select_app">Select application</string>
+    <string name="select_app">Избор на приложение:</string>
     <string name="samourai_opendime">Samourai: OpenDime</string>
 
-    <string name="replay_protection">Replay protection</string>
-    <string name="replay_unprotected">Unprotected</string>
-    <string name="replay_in_progress">In progress</string>
-    <string name="replay_protected">Protected</string>
-    <string name="replay_disclaimer">Chain split detected</string>
-    <string name="replay_text">All addresses will be merged into a single transaction and sent to an address in your wallet. This is referred to as merging inputs and may degrade your privacy.</string>
-    <string name="replay_ENABLE">ENABLE REPLAY PROTECTION</string>
+    <string name="replay_protection">Replay защита</string>
+    <string name="replay_unprotected">Незащитен</string>
+    <string name="replay_in_progress">В процес на защитаване</string>
+    <string name="replay_protected">Защитен</string>
+    <string name="replay_disclaimer">Засечено разделяне на блокчейна(chain split).</string>
+    <string name="replay_text">Всички адреси ще бъдат обединени в една транзакция и изпратени до друг адрес в портфейла Ви. Това може да деградира секретността Ви.</string>
+    <string name="replay_ENABLE">ВКЛЮЧВАНЕ НА REPLAY ЗАЩИТАТА</string>
 
-    <string name="replay_broadcast_to_network">broadcast to network...</string>
-    <string name="replay_seen_on_network">seen on network...</string>
-    <string name="replay_split_tx_broadcast">split tx broadcast...</string>
-    <string name="replay_description">Your wallet will send a special transaction to itself that will permanently split your coins from the other chain. This will protect you against replay attacks.</string>
-    <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
-    <string name="replay_confirmed">confirmed</string>
-    <string name="replay_confirmations">confirmations:</string>
+    <string name="replay_broadcast_to_network">Изпращане до мрежа...</string>
+    <string name="replay_seen_on_network">Видяно от мрежата...</string>
+    <string name="replay_split_tx_broadcast">Изпращане на разделяща транзакция...</string>
+    <string name="replay_description">Портфейлът Ви ще изпрати специална транзакция до себе си, която перманентно ще раздели койните ви от другата верига. Това ще Ви защити от Replay атаки</string>
+    <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
+    <string name="replay_confirmed">Потвърдено</string>
+    <string name="replay_confirmations">Потвърждения:</string>
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+    <string name="replay_bcc_user_agent">BCash (Bitcoin ABC)</string>
 
-    <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
-    <string name="replay_dismiss">DISMISS ALERT</string>
+    <string name="replay_awaiting_confirmation">Replay защита в очакване на потвърждение</string>
+    <string name="replay_dismiss">ОТХВЪРЛИ ПРЕДУПРЕЖДЕНИЕТО</string>
 
-    <string name="show_qr">Show QR</string>
-    <string name="share_qr">Share QR</string>
-    <string name="send_tx">Send raw transaction</string>
-    <string name="tx_too_large_qr">Raw transaction too large to display in QR code.</string>
+    <string name="show_qr">Покажи QR</string>
+    <string name="share_qr">Сподели QR</string>
+    <string name="send_tx">Изпрати подписана транзакция</string>
+    <string name="tx_too_large_qr">Транзакцията е твърде голяма за да бъде показана в QR код</string>
 
-    <string name="select_network">Select network...</string>
+    <string name="select_network">Изберете мрежа...</string>
     <string name="MainNet">MainNet</string>
     <string name="TestNet">TestNet</string>
 
-    <string name="segwit_address">Segwit Address</string>
-    <string name="segwit_switch_prompt">Funds deposited in Segwit addresses are more efficient to transact with. Offering reduced miner fees when sending bitcoin from your wallet.</string>
+    <string name="segwit_address">SegWit адрес</string>
+    <string name="segwit_switch_prompt">Средства, депозирани в SegWit адреси, са по-ефективни за транзактиране. Предлагат понижени такси към копачите, когато изпращате Биткойн от портфейла си.</string>
 
-    <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
+    <string name="privkey_clipboard">Частен ключ беше засечен в клипборда Ви. Да се изтрие ли клипборда?</string>
 
-    <string name="tx_hex">Transaction hex</string>
-    <string name="enter_tx_hex">Enter transaction in hex format</string>
-    <string name="broadcast">Broadcast transaction</string>
+    <string name="tx_hex">hex на транзакцията</string>
+    <string name="enter_tx_hex">Въведете транзакцията в hex формат</string>
+    <string name="broadcast">Изпращане на транзакцията</string>
 
-    <string name="dusting_tx">DUST TRANSACTION</string>
-    <string name="dusting_attempt">An unexpected dust transaction into your wallet can indicate an attempt to track your wallet addresses and spending.\n\nMark this dust as unspendable to mitigate against 3rd party tracking attempts.</string>
-    <string name="dusting_attempt_amount">Amount:</string>
-    <string name="dusting_attempt_id">Hash-Index:</string>
-    <string name="dusting_attempt_ignore">Ignore</string>
-    <string name="dusting_attempt_mark_unspendable">Mark unspendable</string>
+    <string name="dusting_tx">DUST ТРАНЗАКЦИЯ</string>
+    <string name="dusting_attempt">Неочаквана dust транзакция може да е индикация, че някой се опитва да следи адресите и харчовете Ви.\n\nМаркирайте този dust като неизхарчим, за да предотвратите шпионаж от трети страни.</string>
+    <string name="dusting_attempt_amount">Количество:</string>
+    <string name="dusting_attempt_id">Хеш-Индекс:</string>
+    <string name="dusting_attempt_ignore">Игнорирай</string>
+    <string name="dusting_attempt_mark_unspendable">Маркирай като неизхарчим</string>
     <string name="paycode">PAYNYM</string>
     <string name="dust">DUST</string>
-    <string name="do_not_spend">Do Not Spend</string>
-    <string name="dusting_tx_unblock">This dust transaction is currently blocked from spending. Unblock this unspent entry for possible spending?</string>
-    <string name="mark_spend">Mark spendable</string>
-    <string name="mark_do_not_spend">Mark do-not-spend</string>
-    <string name="mark_utxo_spend">Make this unspent output spendable?</string>
-    <string name="mark_utxo_do_not_spend">Make this unspent output unspendable?</string>
+    <string name="do_not_spend">Да</string>
+    <string name="dusting_tx_unblock">Тази dust транзакция е блокирана. Отблокиране за евентуално изхарчване?</string>
+    <string name="mark_spend">Маркирай като изхарчимо</string>
+    <string name="mark_do_not_spend">Маркирай "Да-не-се-харчи"</string>
+    <string name="mark_utxo_spend">Да се направи ли това UTXO харчимо?</string>
+    <string name="mark_utxo_do_not_spend">Да се направи ли това UTXO нехарчимо?</string>
 
     <string name="options_sign_a_message">Sign a message</string>
     <string name="options_display_redeem_script">Display redeem script</string>
