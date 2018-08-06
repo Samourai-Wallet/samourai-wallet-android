@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="alpha_create_wallet">Bu sözcükleri bir yere yazın ve saklayın. Bu sözcükleri sakın kaybetmeyin veya parolanızı sakın unutmayın.</string>
+  <string name="alpha_create_wallet">Bu sözcükleri bir yere yazın ve saklayın. Bu sözcükleri sakın kaybetmeyin ve parolanızı sakın unutmayın.</string>
   <string name="alpha_create_confirm_backup">Sözcükleri güvenli bir yere yazdım.</string>
 
   <string name="creating_wallet">Cüzdan oluşturuluyor, lütfen bekleyin...</string>
@@ -22,26 +22,26 @@
 
   <string name="options_cat_prefs">Para birimi, Blok gezgini</string>
   <string name="options_cat_stealth">Gizlilik</string>
-  <string name="options_cat_remote">Uzaktan erişim</string>
+  <string name="options_cat_remote">Uzaktan Erişim</string>
   <string name="options_cat_wallet">Cüzdan</string>
-  <string name="options_cat_networking">Ağ iletişimi</string>
+  <string name="options_cat_networking">Ağ İletişimi</string>
   <string name="options_cat_other">Hakkında</string>
 
-  <string name="options_mnemonic">Belleteni göster</string>
-  <string name="options_mnemonic2">Bu cüzdanın 12 sözcüklük açarsözünü gösterir.</string>
+  <string name="options_mnemonic">Sözcükleri göster</string>
+  <string name="options_mnemonic2">Bu cüzdana ait 12 sözcüğü göster.</string>
   <string name="options_xpub">BIP44 XPUB göster</string>
-  <string name="options_xpub2">BIP44 hesabı için genişletilmiş özel anahtarı gösterir.</string>
+  <string name="options_xpub2">BIP44 hesabı için genişletilmiş özel anahtarı göster.</string>
   <string name="options_xpub49">Segwit YPUB göster</string>
-  <string name="options_xpub49_2">BIP49 Segwit hesabı için genişletilmiş özel anahtarı gösterir (P2SH sarılı).</string>
+  <string name="options_xpub49_2">BIP49 Segwit hesabı için genişletilmiş özel anahtarı göster (P2SH sarılı).</string>
   <string name="options_xpub84">Segwit ZPUB göster</string>
-  <string name="options_xpub84_2">BIP84 Segwit hesabı için genişletilmiş özel anahtarı gösterir (Bech32).</string>
+  <string name="options_xpub84_2">BIP84 Segwit hesabı için genişletilmiş özel anahtarı göster (Bech32).</string>
   <string name="options_wipe">Cüzdanı güvenli bir şekilde sil</string>
-  <string name="options_wipe2">Bu aygıttan cüzdanı güvenli bir şekilde kaldırır.</string>
+  <string name="options_wipe2">Cüzdanı bu aygıttan güvenli bir şekilde sil.</string>
   <string name="options_stealth_display">Gizli başlatıcı</string>
   <string name="options_stealth_display2">Samourai\'ı başlatıcıdan ve ana ekranınızdan kaldırır. Telefon çeviriciden **PIN_KODUNUZU# girerek Samourai\'ı başlatabilirsiniz.</string>
-  <string name="options_remote_commands">Uzaktan komutları etkinleştir</string>
-  <string name="options_remote_commands2">SMS ile uzaktan komutlara izin verin.</string>
-  <string name="options_currency">Tahtakale borsası</string>
+  <string name="options_remote_commands">Uzaktan erişim komutlarını etkinleştir</string>
+  <string name="options_remote_commands2">SMS ile uzaktan erişim komutlarına izin verin.</string>
+  <string name="options_currency">Sokak fiyatı</string>
   <string name="options_currency2">Fiyatı hesaplamak için yeğlediğiniz borsayı ve para biriminizi seçin.</string>
   <string name="options_blockexplorer">Blok gezgini</string>
   <string name="options_blockexplorer2">İşlem ayrıntılarını göstermek için kullanacağınız blok gezginini seçin.</string>
@@ -62,8 +62,8 @@
   <string name="options_change_pin2">Cüzdanınızın kilidini açmak için kullanacağınız yeni bir PIN kodu tanımlayın.</string>
   <string name="options_remote_pin">Gizli başlatma ve uzaktan PIN kullanımı</string>
   <string name="options_remote_pin2">Gizli başlatma ve uzaktan işlemler için başka bir PIN kodu tanımlayın.</string>
-  <string name="options_autosave_backup">Aygıt depolamasına yedeği otomatik kaydet</string>
-  <string name="options_autosave_backup2">Belirli aralıklarla şifreli açarsözünüzü aygıt depolamasına kaydeder.</string>
+  <string name="options_autosave_backup">Cihaz hafızasına yedeği otomatik kaydet</string>
+  <string name="options_autosave_backup2">Belirli aralıklarla şifreli yedeği cihaz hafızasına kaydeder.</string>
   <string name="options_version">Sürüm</string>
   <string name="options_txs">İşlemler</string>
   <string name="options_boltzmann">STONEWALL harcaması</string>
@@ -73,11 +73,11 @@
   <string name="options_trusted_node2">İşlemleri yayınlamak için kendi Bitcoin düğümünüzü tanımlayın.</string>
   <string name="options_use_trusted_node">Güvenilen düğüm kullan</string>
   <string name="options_use_trusted_node2">İşlemleri kendi düğümünüzden yayınlayın.</string>
-  <string name="options_rbf0">Masraf yenileme kullanarak harca</string>
-  <string name="options_rbf0_2">Harcamalar masraf arttırımını etkinleştirmek için masraf yenileme kullanır.</string>
-  <string name="options_troubleshoot">Sorun giderme</string>
-  <string name="options_passphrase_test">Açarsöz/yedek sınama</string>
-  <string name="options_passphrase_test2">Cüzdan erişimini ve yedek desteğini doğrulayın.</string>
+  <string name="options_rbf0">RBF kullanarak harca</string>
+  <string name="options_rbf0_2">Harcamalar masraf arttırımını etkinleştirmek için RBF kullanır.</string>
+  <string name="options_troubleshoot">Sorun Giderme</string>
+  <string name="options_passphrase_test">Parola/yedek sınama</string>
+  <string name="options_passphrase_test2">Cüzdan erişiminizi ve yedeğinizi doğrulayın.</string>
   <string name="options_send_backup_to_support">Yedeği teknik desteğe gönder</string>
   <string name="options_send_backup_to_support2">Cüzdan yedeğini teknik desteğe gönderin. Özel anahtar bilgisi içermez.</string>
   <string name="options_fee_provider">Masraf tahmin kaynağı</string>
@@ -85,15 +85,17 @@
   <string name="options_broadcast_on">Harcamaları yayınla</string>
   <string name="options_broadcast_on2">Ham imzalanmış işlemleri panoya kopyalamak için kutunun imini kaldırın (yayınlama KAPALI).</string>
   <string name="options_segwit">Segwit adreslerine al</string>
-  <string name="options_segwit_2">Gelen işlemler için Segwit adresleri oluşturur.</string>
+  <string name="options_segwit_2">Gelen işlemler için segwit adresleri oluşturur.</string>
   <string name="options_broadcast_hex">İşlem onaltılığını yayınla</string>
   <string name="options_broadcast_hex2">İmzalanmış işlemi onaltılık formatta yayınlar.</string>
   <string name="options_like_typed_change">Para üstünü aynı çıktıda kabul et</string>
-  <string name="options_like_typed_change2">Para üstünü harcama çıktısı ile aynı türde adrese kabul eder. Yalnızca Segwit adreslerine kabul etmek için etkisizleştirin.</string>
+  <string name="options_like_typed_change2">Para üstünü harcama çıktısı ile aynı türde adrese kabul eder. Yalnızca segwit adreslerine kabul etmek için etkisizleştirin.</string>
   <string name="options_haptic">Titreşimli PIN girişi</string>
   <string name="options_haptic_2">PIN kodu girerken her basışta titretir.</string>
-
-  <string name="prompt_send_backup_to_support">Cüzdan yedeği teknik desteğe gönderilsin mi? Hiçbir özel anahtar, açarsöz veya parola bilgisi içermez.</string>
+  <string name="options_prune">Yedek Temizle</string>
+  <string name="options_prune2">Yedek dosyalarını temizle.</string>
+  
+<string name="prompt_send_backup_to_support">Cüzdan yedeği teknik desteğe gönderilsin mi? Hiçbir özel anahtar, sözcük veya parola bilgisi içermez.</string>
 
   <string name="timeline_today">Bugün</string>
   <string name="timeline_older">Daha eski</string>
@@ -116,7 +118,7 @@
   <string name="no">Hayır</string>
   <string name="close">Kapat</string>
 
-  <string name="sim_warning">Samourai Cüzdan aygıtınız şimdi bu metin mesajının geldiği numaranın ilişik olduğu başka bir SIM kart kullanıyor.</string>
+  <string name="sim_warning">Samourai Cüzdan cihazınıza gelen bu metin mesajının geldiği numaranın ilişik olduğu başka bir SIM kart kullanıyor.</string>
 
   <string name="pin_5_8">5 ve 8 karakter arası uzunlukta bir PIN kodu oluşturun.</string>
   <string name="pin_5_8_confirm">PIN kodunuzu doğrulayın</string>
@@ -126,9 +128,9 @@
   <string name="bip38_pw_error">BIP38 şifre hatası</string>
   <string name="bip39_safe">Lütfen bir parola oluşturun ve gizli tutun. Cüzdanınıza erişiminizi kaybederseniz bu parolaya gereksiniminiz olacak.</string>
   <string name="bip39_safe2">Lütfen parolanızı doğrulayın ve gizli tutun. Cüzdanınıza erişiminizi kaybederseniz bu parolaya gereksiniminiz olacak.</string>
-  <string name="bip39_restore">Belleteninizi (veya onaltılık dağıntınızı) ve eğer gerekliyse BIP39 parolanızı girin. Eğer bir BIP39 parolası kullanmıyorsanız, boş bırakın.</string>
+  <string name="bip39_restore">Sözcüklerinizi (veya onaltılık dağıntınızı) ve eğer gerekliyse BIP39 parolanızı girin. Eğer bir BIP39 parolası kullanmıyorsanız, boş bırakın.</string>
   <string name="bip39_must">Cüzdanınız bir parola kullanmalıdır. Lütfen yeniden deneyin.</string>
-  <string name="bip39_unmatch">Parolalar birbirini tutmuyor. Lütfen yeniden deneyin.</string>
+  <string name="bip39_unmatch">Parolalar birbirleriyle uyuşmuyor. Lütfen yeniden deneyin.</string>
   <string name="bip39_invalid">Parolanızda boşluk kullanmayın. Lütfen yeniden deneyin.</string>
   <string name="bip39_empty">Bir parola belirlemelisiniz.</string>
   <string name="please_select">Lütfen seçin...</string>
@@ -137,20 +139,20 @@
   <string name="wallet_passphrase">Cüzdan parolanızı girin</string>
   <string name="bip39_passphrase">BIP39 parolası</string>
   <string name="bip39_match">BIP39 parola doğrulaması başarılı</string>
-  <string name="bip39_decrypt_test">Cüzdan parola doğrulaması tamam. Son oluşturulan otomatik yedeğin şifre çözülmesini sınamak ister misiniz?</string>
+  <string name="bip39_decrypt_test">Cüzdanın parola doğrulaması tamam. Son oluşturulan otomatik yedeğin şifrelemesini sınamak ister misiniz?</string>
   <string name="backup_read_ok">Yedek dosyası düzgün</string>
   <string name="backup_read_error">Yedek dosyasını okurken hata oluştu.</string>
-  <string name="mnemonic_hex">Belleten veya onaltılık dağıntı</string>
+  <string name="mnemonic_hex">Sözcükler veya onaltılık dağıntı</string>
   <string name="pin_enter">PIN kodunuzu girin</string>
   <string name="please_wait">Lütfen bekleyin...</string>
   <string name="random_key_error">Rastgele anahtar hatası</string>
   <string name="login_error">Giriş başarısız</string>
   <string name="wallet_created_ok">Cüzdan oluşturulması başarılı</string>
   <string name="wallet_created_ko">Cüzdan oluşturulurken hata</string>
-  <string name="wallet_restored_ok">Cüzdan geri getirmesi başarılı</string>
+  <string name="wallet_restored_ok">Cüzdan başarıyla geri getirildi</string>
   <string name="wallet_restored_ko">Cüzdan geri getirilirken hata</string>
 
-  <string name="address_used_previously">Bu adresi daha önce kullandınız! Adresleri yeniden kullanmak mahremiyetiniz kaybolmasına neden olabilir.</string>
+  <string name="address_used_previously">Bu adresi daha önce kullandınız! Adresleri yeniden kullanmak mahremiyetinizin kaybolmasına neden olabilir.</string>
 
   <string name="scan">Tara</string>
   <string name="scan_error">Tarama hatası</string>
@@ -167,7 +169,7 @@
   <string name="receive_address_to_clipboard">Bu alım adresi panoya kopyalansın mı? Eğer kopyalanırsa diğer uygulamalara görünür olabilir.</string>
   <string name="receive_address_to_share">Bu alım adresi paylaşılsın mı? Eğer paylaşılırsa diğer uygulamalar tarafından okunabilir.</string>
   <string name="sure_to_erase">Bu cüzdanı silmek istediğinizden emin misiniz?</string>
-  <string name="wallet_erased">Cüzdan aygıttan silindi.</string>
+  <string name="wallet_erased">Cüzdan cihazdan silindi.</string>
 
   <string name="send_privacy_warning">Gizlilik uyarısı: Lütfen bu adrese daha önce fon gönderdiğinizin farkında olun.</string>
 
@@ -176,11 +178,11 @@
   <string name="options_scramble_pin">PIN ekranını karıştır</string>
   <string name="options_scramble_pin2">PIN girmek için karıştırılmış numara ekranı kullanın.</string>
 
-  <string name="you_must_have_orbot">Aygıtınızda Orbot yüklü ve üzerinden trafik yönlendirecek biçimde etkinleştirilmiş olması gerekir. Google Play\'den yüklemek ister misiniz?</string>
+  <string name="you_must_have_orbot">Cihazınıza Orbot yüklü ve üzerinden trafik yönlendirecek biçimde etkinleştirilmiş olması gerekir. Google Play\'den yüklemek ister misiniz?</string>
 
   <string name="ssl_pinning_invalid">SSL sertifika tutturması başarısız oldu. Bu kötü amaçlı bir etkinlik belirtebilir. Lütfen devam etmeden önce ağ bağlantınızı ve aygıtınızın güvenli olduğunu doğrulayın.</string>
   <string name="ssl_no_connection">SSL sertifikasını doğrulamak için ana bilgisayara bağlanamıyoruz. Lütfen devam etmeden önce ağ bağlantınızı ve aygıtınızın ayarlarını doğrulayın.</string>
-  <string name="retry">Yeniden dene</string>
+  <string name="retry">Yeniden Dene</string>
   <string name="exit">Çık</string>
 
   <string name="create_pin">PIN kodu oluştur</string>
@@ -208,7 +210,7 @@
   <string name="export_to_email">E-postaya aktar</string>
   <string name="encryption_error">Cüzdan yedeğinizi şifrelerken bir hata oluştu. Lütfen yeniden deneyin.</string>
   <string name="import_backup">Yedekten</string>
-  <string name="import_mnemonic">Belleten açarsöz</string>
+  <string name="import_mnemonic">Cüzdan Sözcükleri</string>
   <string name="encrypted_backup">Şifrelenmiş cüzdan verisi</string>
   <string name="decryption_error">Cüzdan yedeğinizin şifresi çözülürken bir hata oluştu. Lütfen yeniden deneyin.</string>
   <string name="restore_wallet_from_backup">Yedekten cüzdanı geri getirin</string>
@@ -216,7 +218,7 @@
 
   <string name="choose_email_client">E-posta istemcisi seçin:</string>
 
-  <string name="cannot_launch_app">Samourai Cüzdan bu aygıtta çalıştırılamaz.</string>
+  <string name="cannot_launch_app">Samourai Cüzdan bu cihazda çalıştırılamaz.</string>
   <string name="confirm_change_pin">PIN\'inizi değiştirmek istediğinizden emin misiniz?</string>
   <string name="success_change_pin">PIN değiştirildi</string>
   <string name="alternative_pin_create">Gizli başlatma ve uzaktan erişim işlevleri için başka bir PIN kodu oluşturmak istediğinize emin misiniz?</string>
@@ -254,7 +256,7 @@
   <string name="bip47_sign_text2">BIP47 bildirim adresim kullanarak imzalandı.</string>
   <string name="bip47_wait_for_confirmation_or_retry">Bu ödeme kanalı gönderme etkinleştirilmeden önce 1 onay için bekliyor. Önceki denemeyi yok sayıp yeniden bir bildirim göndermek ister misiniz?</string>
 
-  <string name="rbf_incoming">Gelen işlem masraf yenilemeli. Blok gezgininde görmek ister misiniz?</string>
+  <string name="rbf_incoming">Gelen işlem RBF. Blok gezgininde görmek ister misiniz?</string>
 
   <string name="invalid_passphrase">Geçersiz parola</string>
   <string name="passphrase">Parola</string>
@@ -275,13 +277,13 @@
   <string name="tor_routing_off">Samourai Tor üzerinden yönlendirilmiyor. Etkinleştirmek için dokunun.</string>
   <string name="tor_install">Orbot\'u yüklemek ve Samourai\'ı Tor üzerinden yönlendirmek için dokunun.</string>
 
-  <string name="premium_addons">Premium eklentiler</string>
+  <string name="premium_addons">Premium Eklentiler</string>
 
   <string name="ricochet_hop">Ricochet Sektirmesi</string>
   <string name="ricochet_hopping">Ricochet yapılan:</string>
   <string name="ricochet_spend1">Harcanacak Ricochet</string>
   <string name="ricochet_spend2">toplam tutar</string>
-  <string name="ricochet_spend3">(Samourai ve kazıcıların\' 0.002 BTC işlem masrafını içerir)?</string>
+  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.002 BTC işlem masrafını içerir)?</string>
 
   <string name="action_ricochet">Ricochet\'i tekrarla</string>
   <string name="action_empty_ricochet">Ricochet kuyruğunu boşalt</string>
@@ -292,7 +294,7 @@
   <string name="ricochet_not_broadcast_replay">Ricochet\'inizi yayınlarken bir sorun oluştu. Bu Ricochet harcamasını yeniden yayınlamak istiyor musunuz?</string>
   <string name="no_ricochet_replay">Yeniden gönderecek bir Ricochet bulunmuyor.</string>
   <string name="no_ricochet_display">Görüntülenecek bir Ricochet betiği bulunmuyor.</string>
-  <string name="ricochet_broadcast">Ricochet\'iniz yayınlandı.Your Ricochet has been broadcast.</string>
+  <string name="ricochet_broadcast">Ricochet\'iniz yayınlandı.</string>
 
   <string name="bip47_cannot_identify_outpoint">Giden ödeme kodu maskelenemiyor</string>
   <string name="bip47_cannot_compose_notif_tx">Bildirim işlemi oluşturulamıyor</string>
@@ -323,14 +325,14 @@
   <string name="options_bump_fee">İşlem masrafını arttır</string>
 
   <string name="cpfp_cannot_retrieve_tx">İşlem bilgisi alınamıyor. Lütfen yeniden deneyin.</string>
-  <string name="fee_bump_not_necessary">Bu işlem için masrafı arttırmak gerekli olmayabilir, aklınızda olsun.</string>
-  <string name="bump_fee">Daha hızlı onay için bu işlemdeki kazıcı ücretini arttırmak ister misiniz?\n\nEk kazıcı ücreti:</string>
+  <string name="fee_bump_not_necessary">Bu işlem için masrafı arttırmak gerekli olmayabilir, aklınızda bulunsun.</string>
+  <string name="bump_fee">Daha hızlı onay için bu işlemdeki madenci masrafını arttırmak ister misiniz?\n\nEk madenci ücreti:</string>
 
   <string name="options_sign">Mesajı imzala</string>
 
   <string name="trusted_node_pow_failed">Güvenilen düğümünüz tarafından rapor edilen iş raporu geçerli görünmüyor. Lütfen kurulumunuzu denetleyin.</string>
 
-  <string name="options_fees">Güncel kazıcı ücretlerini\' göster</string>
+  <string name="options_fees">Güncel madenci ücretlerini\' göster</string>
   <string name="current_fee_selection">Masraf seçiminiz:</string>
   <string name="current_hi_fee_value">Güncel yüksek masraf:</string>
   <string name="current_mid_fee_value">Güncel normal masraf:</string>
@@ -355,16 +357,16 @@
 
   <string name="recovery_checkup">Kurtarma Denetimi</string>
   <string name="recovery_checkup_message">Cüzdanınızın kurtarma sözcükleri ve parolası görüntülenecek. Sizden başkasının ekranınızı görmesine izin vermeyin. Bu yeniden GÖRÜNTÜLENMEYECEK.</string>
-  <string name="mnemonic">Belleten</string>
+  <string name="mnemonic">Sözcükler</string>
   <string name="recovery_checkup_finish">KURTARMA BİLGİLERİMİ GÜVENE ALDIM</string>
   <string name="pin_reminder">Bir hatırlatma olarak, PIN kodunuz:</string>
 
   <string name="opendime_confirmed_balance">Onaylanmış Hesap Özeti</string>
   <string name="opendime_privkey">Özel anahtar</string>
   <string name="opendime_verified">DOĞRULANDI</string>
-  <string name="opendime_valid_key">Aygıttakı geçerli özel anahtar</string>
+  <string name="opendime_valid_key">Cihazdaki geçerli özel anahtar</string>
   <string name="opendime_not_verified">DOĞRULANAMIYOR</string>
-  <string name="opendime_no_valid_key">AYgıttaki özel anahtar doğrulanamıyor</string>
+  <string name="opendime_no_valid_key">Cihazdaki özel anahtar doğrulanamıyor</string>
   <string name="opendime_view">GÖRÜNTÜLE</string>
   <string name="opendime_sweep">GEÇİR</string>
   <string name="opendime_topup">TÜMLE</string>
@@ -403,7 +405,7 @@
   <string name="TestNet">Sınama ağı</string>
 
   <string name="segwit_address">Segwit Adresi</string>
-  <string name="segwit_switch_prompt">Segwit adreslerinde tutulan fonlar ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Bitcoin gönderirken daha az madenci kazım ücreti ödersiniz.</string>
+  <string name="segwit_switch_prompt">Segwit adreslerinde tutulan fonlar ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Bitcoin gönderirken daha az madenci masrafı ödersiniz.</string>
 
   <string name="privkey_clipboard">Panonuzda bir özel anahtar algılandı. Pano içeriği silinsin mi?</string>
 
@@ -429,7 +431,7 @@
   <string name="options_sign_a_message">Mesaj imzala</string>
   <string name="options_display_redeem_script">Redeem betiğini görüntüle</string>
   <string name="options_view_tx">İşlemi görüntüle</string>
-  <string name="options_display_privkey">özel anahtarı görüntüle</string>
+  <string name="options_display_privkey">Özel anahtarı görüntüle</string>
   <string name="options_batch">Toplu harcama</string>
 
   <string name="do_not_repeat_sent_to">Bu adrese tekrarlı gönderimler için uyarmama onay kutusu</string>
@@ -479,7 +481,7 @@
   <string name="hello_blank_fragment">Merhaba boş parçacık</string>
   <string name="add_bip39_password">BIP39 şifresi ekle</string>
   <string name="close_bip39_password">BIP39 şifresini kapat</string>
-  <string name="enter_your_mnemonic_seed_to_import_a_wallet">Başka bir sağlayıcıdan olan cüzdanı içe aktarmak için belleten açarsözlerinizi girin.</string>
+  <string name="enter_your_mnemonic_seed_to_import_a_wallet">Başka bir sağlayıcıdan olan cüzdanı içe aktarmak için sözcükleri girin.</string>
   <string name="last_updated">Son güncelleme</string>
   <string name="get_help">Yardım al</string>
   <string name="offline_mode">Çevrimdışı kip</string>
@@ -490,19 +492,19 @@
   <string name="get_help_create">Cüzdan oluşturma: Yardım alın</string>
   <string name="get_help_restore">Cüzdanı geri getirme: Yardım alın</string>
 
-  <string name="fee">Madenci ücretleri</string>
+  <string name="fee">Madenci masrafları</string>
   <string name="fee_low_priority">Düşük öncelik: onaydan önce tahmini 24</string>
   <string name="fee_mid_priority">Normal öncelik: onaydan önce tahmini 6</string>
   <string name="fee_high_priority">Yüksek öncelik: onaydan önce tahmini 2</string>
   <string name="fee_custom_priority">Özel masraf: onaydan önce tahmini</string>
-  <string name="blocks_to_cf">blok</string>
+  <string name="blocks_to_cf">onaylamada önceki bloklar</string>
 
-  <string name="invalid_mnemonic_word">Geçersiz BIP39 belleten sözcüğü</string>
-  <string name="invalid_mnemonic">Geçersiz BIP39 belleteni</string>
+  <string name="invalid_mnemonic_word">Geçersiz BIP39 sözcükleri</string>
+  <string name="invalid_mnemonic">Geçersiz BIP39 sözcüğü</string>
   <string name="enter_your_code_here">Kodunuzu buraya girin</string>
-  <string name="declaimer_recovery_words">Yukarıdaki sözcüğü yazdığımı ve gizli ve güvenli bir konumda sakladığımı beyan ederim. Benim parolam ve kurtarma sözcüklerime erişimi olan herkesin cüzdanıma ve tüm fonlarıma erişebileceğini anlıyor ve kabul ediyorum.</string>
+  <string name="declaimer_recovery_words">Yukarıdaki sözcükleri yazdığımı ve gizli, güvenli bir konumda sakladığımı beyan ederim. Benim parolam ve kurtarma sözcüklerime erişimi olan herkesin cüzdanıma ve tüm fonlarıma erişebileceğini anlıyor ve kabul ediyorum.</string>
   <string name="return_to_wallet">Cüzdana dön</string>
-  <string name="caution_message_recovery_words">Bu sözcükleri bilgisayarınızda veya bulutta saklamak güvenli değildir. Bu sözcükleri bir kağıda yazın ve gizli ve güvenli bir yerde saklayın.</string>
+  <string name="caution_message_recovery_words">Bu sözcükleri bilgisayarınızda veya bulutta saklamak güvenli değildir. Bu sözcükleri bir kağıda yazın ve gizli, güvenli bir yerde saklayın.</string>
   <string name="these_words_are">Bu sözcükler cüzdanınızdaki tüm özel anahtarların bir yedeğidir.</string>
   <string name="recovery_words">KURTARMA SÖZCÜKLERİ</string>
 
@@ -521,12 +523,36 @@
   <string name="boltzmann_cannot">Sizin şu anki harcanmamışlarınızla bir STONEWALL harcaması oluşturulamıyor. Eğer bir STONEWALL harcaması gerekiyorsa \'HAYIR\'a basın ve değiştirilmiş bir harcanmamışlar seti ile yeniden deneyin.</string>
   <string name="boltzmann_like_typed">Lütfen \'Para üstünü aynı çıktıda kabul et\' işlevinin KAPALI olduğunu ve STONEWALL harcamanız için daha az tercih edilebilir bir işlem yapısına neden olabileceğini aklınızdan çıkarmayın.</string>
 
-  <string name="insufficient_fee">Yetersiz ücret</string>
+  <string name="insufficient_fee">Yetersiz masraf</string>
   <string name="action_utxo_amounts">Tutarları adres tipine göre görüntüle</string>
 
-  <string name="total_p2pkh">Toplam eski yöntem (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Toplam segwit (p2sh):</string>
-  <string name="total_p2wpkh">Toplam segwit (bech32):</string>
+  <string name="total_p2pkh">Eski tip adreslerde (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Uyumlu segwit adreslerde (p2sh):</string>
+  <string name="total_p2wpkh">Yerli segwit adreslerde (bech32):</string>
   <string name="total_blocked">Toplam engellenen:</string>
+
+<string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Gelişmiş</string>
+    <string name="broadcast_with_txtenna">TxTenna ile yayınla</string>
+    <string name="show_qr_code">QR Kod Göster</string>
+    <string name="tx_connectivity_failure_msg">Bağlantı olmadan işlem yayınlanamıyor. Nasıl devam etmek istersiniz?</string>
+
+    <string name="tx_creating_ok">İşlem oluşturuluyor...</string>
+    <string name="tx_creating_ko">İşlem oluşturulamıyor</string>
+    <string name="tx_signing_ok">İşlem imzalanıyor...</string>
+    <string name="tx_signing_ko">İşlem imzalanamıyor</string>
+    <string name="tx_broadcast_ok">İşlem yayınlanıyor...</string>
+    <string name="tx_broadcast_ko">İşlem yayınlanamıyor</string>
+    <string name="tx_sent_ok">İşlem gönderildi</string>
+    <string name="tx_sent_ko">İşlem gönderilmedi</string>
+
+    <string name="prune_backup">Yedek dosyalarını temizlemek ister misiniz?</string>
+
+    <string-array name="address_types">
+        <item>Uyumlu segwit (P2SH)</item>
+        <item>Yerli segwit (bech32)</item>
+        <item>Eski (P2PKH)</item>
+    </string-array>
 
 </resources>
