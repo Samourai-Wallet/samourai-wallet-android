@@ -95,7 +95,7 @@
     <string name="options_prune">Премахване на резервното копие</string>
     <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
 
-    <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническатехническа поддръжка? Не съдържа никаква информация за частните ви ключове, тайните Ви думи или тайната ви фраза.</string>
+    <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническа поддръжка? Не съдържа никаква информация за частните Ви ключове, тайните Ви думи или тайната Ви фраза.</string>
 
     <string name="timeline_today">Днес</string>
     <string name="timeline_older">По-стари</string>
@@ -118,7 +118,7 @@
     <string name="no">Не</string>
     <string name="close">Затвори</string>
 
-    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от който сте получили това Съобщение.</string>
+    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от когото сте получили това съобщение. Vasheto ustroystvo sus Samourai portfeil sega ima druga SIM karta, suotvetstvashta s nomera, ot kogoto ste poluchili tova suobshtenie.</string>
 
     <string name="pin_5_8">Създайте PIN код с дължина между 5 и 8 цифри</string>
     <string name="pin_5_8_confirm">Потвърдете PIN кода</string>
@@ -126,9 +126,9 @@
     <string name="no_internet">Няма връзка с Интернет. Моля опитайте отново.</string>
     <string name="bip38_pw">BIP38 парола</string>
     <string name="bip38_pw_error">Грешна BIP38 парола</string>
-    <string name="bip39_safe">Моля създайте тайна фраза и не я споделяйте с никого. Тази тайна фраза ще ви трябва ако загубите достъп до портфейла Ви.</string>
-    <string name="bip39_safe2">Моля потвърдете тайната си фраза. Пазете я на скришно. Тази тайна фраза ще ви трябва ако загубите достъп до портфейла Ви.</string>
-    <string name="bip39_restore">Въведете тайните си думи (или hex ентропия) и, ако е нужно, вашата BIP39 парола. Ако не използвате BIP39 парола, оставете полето празно.</string>
+    <string name="bip39_safe">Моля създайте тайна фраза и не я споделяйте с никого. Тази тайна фраза ще Ви трябва ако загубите достъп до портфейла си.</string>
+    <string name="bip39_safe2">Моля потвърдете тайната си фраза. Пазете я на скришно място. Тази тайна фраза ще Ви трябва ако загубите достъп до портфейла си.</string>
+    <string name="bip39_restore">Въведете тайните си думи (или hex ентропия) и, ако е нужно, Вашата BIP39 парола. Ако не използвате BIP39 парола, оставете полето празно.</string>
     <string name="bip39_must">Вашият портфейл трябва да използва тайна фраза. Моля опитайте отново.</string>
     <string name="bip39_unmatch">Тайната фраза не съвпада. Моля опитайте отново.</string>
     <string name="bip39_invalid">Не използвайте никакви интервали във Вашата тайна фраза. Моля опитайте отново.</string>
@@ -139,7 +139,7 @@
     <string name="wallet_passphrase">Въведете Вашата тайна фраза за портфейла</string>
     <string name="bip39_passphrase">BIP39 парола</string>
     <string name="bip39_match">BIP39 паролата успешно потвърдена.</string>
-    <string name="bip39_decrypt_test">Тайната фраза на портфейла беше потвърдена успешно. Бихте ли искали да тествате декриптирането на най-скорошнотонай-скорошното автоматично запазено резервно копие?</string>
+    <string name="bip39_decrypt_test">Тайната фраза на портфейла беше потвърдена успешно. Бихте ли искали да тествате декриптирането на най-скорошното автоматично запазено резервно копие?</string>
     <string name="backup_read_ok">Резервното копие е наред.</string>
     <string name="backup_read_error">Грешка при четенето на файла с резервното копие.</string>
     <string name="mnemonic_hex">Тайни думи или hex ентропия</string>
@@ -379,7 +379,7 @@
     <string name="replay_in_progress">В процес на защитаване</string>
     <string name="replay_protected">Защитен</string>
     <string name="replay_disclaimer">Засечено разделяне на блокчейна(chain split).</string>
-    <string name="replay_text">Всички адреси ще бъдат обединени в една транзакция и изпратени до друг адрес в портфейла Ви. Това може да деградира секретността Ви.</string>
+    <string name="replay_text">Всички адреси ще бъдат обединени в една транзакция и изпратени до друг адрес в портфейла Ви. Това може да намали секретността Ви.</string>
     <string name="replay_ENABLE">ВКЛЮЧВАНЕ НА REPLAY ЗАЩИТАТА</string>
 
     <string name="replay_broadcast_to_network">Изпращане до мрежа...</string>
@@ -522,7 +522,7 @@
   <string name="use_bech32">Използвай bech32 адрес</string>
 
   <string name="boltzmann_cannot">STONEWALL Харч не може да бъде създаден със сегашните Ви неизхарчени средства. Ако Ви трябва STONEWALL Харч, натиснете \'НЕ\' и опитайте отново с други неизхарчени средства.</string>
-  <string name="boltzmann_like_typed">Имайте впредвид, че  \'Получаване на ресто до същия тип адрес\' е ИЗКЛЮЧЕНО и може да доведе до по-неоптимална структура за Вашата STONEWALL транзакция.</string>
+  <string name="boltzmann_like_typed">Имайте предвид, че  \'Получаване на ресто до същия тип адрес\' е ИЗКЛЮЧЕНО и може да доведе до по-несъвършена структура за Вашата STONEWALL транзакция.</string>
 
   <string name="insufficient_fee">Недостатъчна такса</string>
   <string name="action_utxo_amounts">Вижте количествата по тип адреси</string>
