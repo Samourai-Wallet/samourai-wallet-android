@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">Напишете тези думи на хартия и ги пазете на сигурно. Не губете думите и не забравяйте Вашата тайна фраза.</string>
+    <string name="alpha_create_confirm_backup">Написах думите си</string>
+
+    <string name="creating_wallet">Създаване на портфейл. Моля изчакайте...</string>
+    <string name="restoring_wallet">Възстановяване на портфейл. Моля изчакайте...</string>
+    <string name="decrypting_bip38">Декриптиране на BIP38 парола. Моля изчакайте...</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_support">Помощ и поддръжка</string>
+    <string name="action_sweep">Прехвърли целия баланс на частен ключ към портфейла</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Активирай всички архивирани кодове</string>
+    <string name="action_sync_all">Синхронизирай всички кодове</string>
+
+    <string name="about_us">За Самурай портфейл</string>
+
+    <string name="ok">Добре</string>
+    <string name="cancel">Отказ</string>
+
+    <string name="options_cat_prefs">Валута, Block explorer</string>
+    <string name="options_cat_stealth">Прикритост</string>
+    <string name="options_cat_remote">Дистанционно управление</string>
+    <string name="options_cat_wallet">Портфейл</string>
+    <string name="options_cat_networking">Мрежови</string>
+    <string name="options_cat_other">За портфейла</string>
+
+    <string name="options_mnemonic">Покажи тайните думи</string>
+    <string name="options_mnemonic2">Покажи 12-те думи за този портфейл.</string>
+    <string name="options_xpub">Покажи BIP44 XPUB</string>
+    <string name="options_xpub2">Покажи разширен публичен ключ за BIP44 акаунт.</string>
+    <string name="options_xpub49">Покажи SegWit YPUB</string>
+    <string name="options_xpub49_2">Покажи разширен публичен ключ за BIP49 SegWit акаунт(P2SH-wrapped).</string>
+    <string name="options_xpub84">Покажи SegWit ZPUB</string>
+    <string name="options_xpub84_2">Покажи разширен публичен ключ за BIP84 SegWit акаунт (Bech32).</string>
+    <string name="options_wipe">Безопасно изтриване на портфейла</string>
+    <string name="options_wipe2">Безопасно изтриване на този портфейл от устройството.</string>
+    <string name="options_stealth_display">Скрито стартиране</string>
+    <string name="options_stealth_display2">Премахване на Самурай от менюто и началния екран. Трябва да наберете **ВАШИЯ_ПИН_КОД# от телефона си, за да стартирате Самурай.</string>
+    <string name="options_remote_commands">Разреши дистанционните команди</string>
+    <string name="options_remote_commands2">Позволи дистанционни команди чрез SMS.</string>
+    <string name="options_currency">Цена</string>
+    <string name="options_currency2">Изберете борса и местна валута.</string>
+    <string name="options_blockexplorer">Block explorer</string>
+    <string name="options_blockexplorer2">Block explorer, използван за преглед на детайли, свързани с транзакциите.</string>
+    <string name="options_sim_switch">Защита срещу смяна на СИМ картата</string>
+    <string name="options_sim_switch2">Изпрати SMS до доверения телефонен номер, когато Сим картата е сменена.</string>
+    <string name="options_use_telno">Използване на доверен телефонен номер за дистанционно управление</string>
+    <string name="options_use_telno2">Позволи дистанционни команди, изпратени само от доверения Ви телефонен номер.</string>
+    <string name="options_alert_telno">Доверен номер</string>
+    <string name="options_alert_telno2">Доверен телефонен номер, до който можете да ограничите дистанционния достъп. (Използвайте формат без интервали например: +359888696969).</string>
+    <string name="options_hash">Хеш на APK</string>
+    <string name="options_hash2">Получаване на SHA-256 хеш на този инсталиран APK файл (може да бъде копиран в клипборда).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">Стартиране на OpenVPN за Андроид.</string>
+    <string name="options_Tor">Прекарване през Tor?</string>
+    <string name="options_Tor2">Стартиране на Orbot (Tor).</string>
+    <string name="options_export">Експортиране на резервно копие на портфейла</string>
+    <string name="options_change_pin">Смяна на PIN код</string>
+    <string name="options_change_pin2">Дефиниране на нов PIN код; използван за отключване на Вашия портфейл.</string>
+    <string name="options_remote_pin">PIN код за скрито стартиране и дистанционни функции</string>
+    <string name="options_remote_pin2">Дефиниране на алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
+    <string name="options_autosave_backup">Автоматично запазване на резервно копие в паметта на устройството.</string>
+    <string name="options_autosave_backup2">Переодично запазвай резервно копие, криптирано с тайната фраза, в паметта на устройството.</string>
+    <string name="options_version">Версия</string>
+    <string name="options_txs">Транзакции</string>
+    <string name="options_boltzmann">STONEWALL Харч</string>
+    <string name="options_boltzmann_2">Харчовете ще използват STONEWALL алгоритъм за повишено замаскиране.</string>
+    <string name="options_utxo">Покажи неизхарчени средства UTXO</string>
+    <string name="options_trusted_node">Задаване на доверен node</string>
+    <string name="options_trusted_node2">Посочете свой собствен Биткойн node, чрез който да изпращате транзакции.</string>
+    <string name="options_use_trusted_node">Използване на доверения node</string>
+    <string name="options_use_trusted_node2">Изпращайте транзакции през Вашия собствен node.</string>
+    <string name="options_rbf0">Изпращайте, използвайки RBF</string>
+    <string name="options_rbf0_2">Харчовете ще използват replace-by-fee за евентуално увеличаване на таксата.</string>
+    <string name="options_troubleshoot">Откриване на проблеми</string>
+    <string name="options_passphrase_test">Тест на тайната фраза/резервното копие</string>
+    <string name="options_passphrase_test2">Потвърждаване на достъпа до портфейла и резервното копие.</string>
+    <string name="options_send_backup_to_support">Изпрати резервното копие до отдел техническа поддръжка</string>
+    <string name="options_send_backup_to_support2">Изпращане на резервното копие до отдел техническа поддръжка. Не съдържа частни ключове.</string>
+    <string name="options_fee_provider">Източник за преценка на подходящи такси</string>
+    <string name="options_fee_provider2">Изберете предпочитаният Ви източник за преценка на таксите.</string>
+    <string name="options_broadcast_on">Изпращане на транзакции</string>
+    <string name="options_broadcast_on2">Махнете тикчето (изпращането ИЗКЛЮЧЕНО), за да копирате подписана транзакция в клипборда.</string>
+    <string name="options_segwit">Получаване чрез SegWit адреси</string>
+    <string name="options_segwit_2">Генериране на SegWit адреси за входящи транзакции.</string>
+    <string name="options_broadcast_hex">Изпращане на hex транзакция</string>
+    <string name="options_broadcast_hex2">Изпращане на подписана транзакция, предоставена в hex формат.</string>
+    <string name="options_like_typed_change">Получаване на ресто чрез същия тип адрес</string>
+    <string name="options_like_typed_change2">Получавайте рестото чрез същия тип адрес като изхарчения output. ИЗКЛЮЧЕТЕ, за да получавате само чрез SegWit адреси за ресто.</string>
+    <string name="options_haptic">Осезателна обратна връзка при въвеждането на PIN код</string>
+    <string name="options_haptic_2">Вибриране при въвеждането на всяка цифра от PIN кода.</string>
+    <string name="options_prune">Премахване на резервното копие</string>
+    <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
+
+    <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническа поддръжка? Не съдържа никаква информация за частните Ви ключове, тайните Ви думи или тайната Ви фраза.</string>
+
+    <string name="timeline_today">Днес</string>
+    <string name="timeline_older">По-стари</string>
+
+    <string name="tx_sent">Транзакцията изпратена</string>
+    <string name="tx_failed">Грешка при изпращането на транзакцията</string>
+    <string name="you_received">Получени</string>
+    <string name="you_sent">Изпратени</string>
+    <string name="send">Изпращане</string>
+    <string name="receive">Получаване</string>
+    <string name="cannot_select_utxo">Неизхарчените средства не могат да бъдат избрани</string>
+    <string name="error_bip126_output">Грешка при определянето на output адрес</string>
+    <string name="error_change_output">Грешка при определянето на адрес за ресто</string>
+
+    <string name="copied_to_clipboard">Копирано в клипборда</string>
+    <string name="send_payment_code">Изпращане на код за плащане</string>
+
+    <string name="ask_you_sure_exit">Сигурни ли сте, че искате да излезете от Самурай?</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="close">Затвори</string>
+
+    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от когото сте получили това съобщение. Vasheto ustroystvo sus Samourai portfeil sega ima druga SIM karta, suotvetstvashta s nomera, ot kogoto ste poluchili tova suobshtenie.</string>
+
+    <string name="pin_5_8">Създайте PIN код с дължина между 5 и 8 цифри</string>
+    <string name="pin_5_8_confirm">Потвърдете PIN кода</string>
+    <string name="pin_error">Грешен PIN код</string>
+    <string name="no_internet">Няма връзка с Интернет. Моля опитайте отново.</string>
+    <string name="bip38_pw">BIP38 парола</string>
+    <string name="bip38_pw_error">Грешна BIP38 парола</string>
+    <string name="bip39_safe">Моля създайте тайна фраза и не я споделяйте с никого. Тази тайна фраза ще Ви трябва ако загубите достъп до портфейла си.</string>
+    <string name="bip39_safe2">Моля потвърдете тайната си фраза. Пазете я на скришно място. Тази тайна фраза ще Ви трябва ако загубите достъп до портфейла си.</string>
+    <string name="bip39_restore">Въведете тайните си думи (или hex ентропия) и, ако е нужно, Вашата BIP39 парола. Ако не използвате BIP39 парола, оставете полето празно.</string>
+    <string name="bip39_must">Вашият портфейл трябва да използва тайна фраза. Моля опитайте отново.</string>
+    <string name="bip39_unmatch">Тайната фраза не съвпада. Моля опитайте отново.</string>
+    <string name="bip39_invalid">Не използвайте никакви интервали във Вашата тайна фраза. Моля опитайте отново.</string>
+    <string name="bip39_empty">Трябва да дефинирате тайна фраза.</string>
+    <string name="please_select">Моля изберете...</string>
+    <string name="create_wallet">Създай нов портфейл</string>
+    <string name="restore_wallet">Възстанови портфейл</string>
+    <string name="wallet_passphrase">Въведете Вашата тайна фраза за портфейла</string>
+    <string name="bip39_passphrase">BIP39 парола</string>
+    <string name="bip39_match">BIP39 паролата успешно потвърдена.</string>
+    <string name="bip39_decrypt_test">Тайната фраза на портфейла беше потвърдена успешно. Бихте ли искали да тествате декриптирането на най-скорошното автоматично запазено резервно копие?</string>
+    <string name="backup_read_ok">Резервното копие е наред.</string>
+    <string name="backup_read_error">Грешка при четенето на файла с резервното копие.</string>
+    <string name="mnemonic_hex">Тайни думи или hex ентропия</string>
+    <string name="pin_enter">Въведете PIN код</string>
+    <string name="please_wait">Моля изчакайте...</string>
+    <string name="random_key_error">Random key error</string>
+    <string name="login_error">Влизането неуспешно</string>
+    <string name="wallet_created_ok">Портфейлът беше създаден успешно.</string>
+    <string name="wallet_created_ko">Грешка при създаването на портфейла.</string>
+    <string name="wallet_restored_ok">Портфейлът беше възстановен успешно.</string>
+    <string name="wallet_restored_ko">Грешка при възстановяването на портфейла.</string>
+
+    <string name="address_used_previously">Вече сте използвали този адрес преди! Повторното използване на адреси може да доведе до загуба на потайност.</string>
+
+    <string name="scan">Сканирай</string>
+    <string name="scan_error">Грешка при сканирането</string>
+    <string name="enter_privkey">Въведете частен ключ</string>
+
+    <string name="to">До</string>
+    <string name="destination">Биткойн адрес или канал за разплащания</string>
+
+    <string name="insufficient_funds">Недостатъчни средства</string>
+    <string name="tx_length_error">Самурай не работи с транзакции с размер по-голям от 100KB.Моля опитайте да разделите транзакцията си.</string>
+    <string name="invalid_amount">Невалидно количество</string>
+    <string name="amount">Количество</string>
+
+    <string name="receive_address_to_clipboard">Копиране на този адрес за получаване в клипборда? Ако се копира, може да бъде видян от други приложения.</string>
+    <string name="receive_address_to_share">Споделяне на този адрес за получаване? Ако се сподели, може да бъде прочетен от други приложения.</string>
+    <string name="sure_to_erase">Сигурни ли сте, че искате да изтриете този портфейл?</string>
+    <string name="wallet_erased">Портфейлът беше изтрит от устройството.</string>
+
+    <string name="send_privacy_warning">Предупреждение за секретността Ви: Знайте, че вече сте изпращали средства до този адрес.</string>
+
+    <string name="securely_wiping_wait">Безопасно изтриване на портфейла. Моля изчакайте.</string>
+
+    <string name="options_scramble_pin">Разбъркване на PIN код екрана</string>
+    <string name="options_scramble_pin2">Използвайте разбъркани цифри за въеждане на PIN код и влизане в портфейла</string>
+
+    <string name="you_must_have_orbot">Трябва да имате Orbot инсталиран и настроен да рутира трафика през него. Искате ли да го инсталирате от Google Play?</string>
+
+    <string name="ssl_pinning_invalid">Грешка със SSL сертификата. Това може да е индикация за злонамерена дейност. Моля проверете връзката си с Интернет и подсигурете устройството си преди да продължите.</string>
+    <string name="ssl_no_connection">Не можем да се свържем с хоста, за да потвърдим SSL сертификата. Моля проверете връзката си с Интернет и устройството си преди да продължите.</string>
+    <string name="retry">Повторен опит</string>
+    <string name="exit">Изход</string>
+
+    <string name="create_pin">Създайте PIN код</string>
+    <string name="confirm_pin">Потвърдете PIN кода</string>
+
+    <string name="auto_fee">НОРМАЛНА ТАКСА</string>
+    <string name="priority_fee">ПРИОРИТЕТНА ТАКСА</string>
+    <string name="low_fee">НИСКА ТАКСА</string>
+    <string name="custom_fee">По избор</string>
+    <string name="sat_b">sat/b</string>
+
+    <string name="account_Samourai">Портфейл</string>
+    <string name="account_shuffling">Shifted</string>
+
+    <string name="max_available">Макс. налични:</string>
+
+    <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
+
+    <string name="select_account">Изберете акаунт</string>
+    <string name="received_bitcoin">Получени биткойни</string>
+    <string name="received">Получено</string>
+    <string name="sent">Транзакцията изпратена</string>
+    <string name="total">Общо</string>
+    <string name="export_to_clipboard">Експортиране в клипборда</string>
+    <string name="export_to_email">Експортиране чрез имейл</string>
+    <string name="encryption_error">Грешка при криптирането на резервното копие на портфейла. Моля опитайте отново.</string>
+    <string name="import_backup">От резервно копие</string>
+    <string name="import_mnemonic">Тайни думи(Seed)</string>
+    <string name="encrypted_backup">Криптирани данни за портфейла</string>
+    <string name="decryption_error">Грешка при декриптирането на резервното Ви копие. Моля опитайте отново.</string>
+    <string name="restore_wallet_from_backup">Възстановяване на портфейла от резервно копие</string>
+    <string name="restore_wallet_from_existing_backup">Резервно копие намерено на устройството. За да възстановите от съществуващото резервно копие, натиснете \'OK\', в противен случай копирайте/поставете друго резервно копие и натиснете \'OK\'.</string>
+
+    <string name="choose_email_client">Изберете имейл клиент:</string>
+
+    <string name="cannot_launch_app">Самурай портфейл не може да работи на това устройство</string>
+    <string name="confirm_change_pin">Сигурни ли сте, че искате да промените PIN кода си?</string>
+    <string name="success_change_pin">PIN кодът сменен</string>
+    <string name="alternative_pin_create">Сигурни ли сте, че искате да създадете алтернативен PIN код, който да бъде използван за скрито стартиране и дистанционни команди?</string>
+    <string name="alternative_pin_deleted">В момента не използвате алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
+    <string name="alternative_pin_wait">Изчакайте режим на скрито стартиране да се активира напълно преди да дефинирате алтернативен PIN код.</string>
+
+    <string name="invalid_payment_code">Невалиден код за разплащания</string>
+    <string name="error_payment_code">Грешка при генерирането на код за разплащания</string>
+
+    <string name="bip47_setup1_title">Вашият PayNym</string>
+    <string name="bip47_setup4_title">Добавете PayNym контакт</string>
+    <string name="bip47_setup4_text1">Добавянето на този PayNym към контактите Ви изисква еднократна такса за транзакция за създаването на записа на блокчейна.</string>
+    <string name="bip47_setup4_text2">Ще бъдат приспаднати от баланса на портфейла Ви.</string>
+
+    <string name="bip47_add1_title">Нов контакт</string>
+    <string name="bip47_add1_text">Сканирайте или поставете код за разплащания, за да създадете нов канал за разплащания.</string>
+
+    <string name="paste">Поставяне</string>
+    <string name="label">Надпис</string>
+    <string name="next">Следващ</string>
+    <string name="confirm">Потвърждаване</string>
+    <string name="payment_code">Код за разплащания</string>
+    <string name="payment_channel_init">Известяваща транзакция изпратена. Вашият канал за разплащания е в процес на създаване.</string>
+
+    <string name="bip47_no_label_error">Трябва да предоставите надпис за този код за разплащания</string>
+
+    <string name="bip47_status_tbe">Все още неустановен</string>
+    <string name="bip47_status_pending">В процес на създаване - 0/1 Потвърждения</string>
+    <string name="bip47_status_active">В готовност за изпращане</string>
+    <string name="bip47_status_incoming">В готовност за получаване</string>
+    <string name="bip47_cannot_scan_own_pcode">Не можете да сканирате собствения си код за разплащания</string>
+    <string name="bip47_spend_to_pcode">Изпращане през този канал за разплащания?</string>
+    <string name="bip47_sign">Подписване на съобщение</string>
+    <string name="bip47_sign_text1">Sign message using BIP47 notification address private key?</string>
+    <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Този канал за разплащания очаква 1 потвърждение преди изпращането да бъде активирано. Искате ли да се откажете от предишния опит и да изпратите нова известяваща транзакция?></string>
+
+    <string name="rbf_incoming">Входящата транзакция е replace-by-fee. Преглед в block explorer?</string>
+
+    <string name="invalid_passphrase">Невалидна тайна фраза</string>
+    <string name="passphrase">Тайна фраза</string>
+    <string name="passphrase_needed_for_backup">Вашият портфейл не е защитен от тайна фраза. Резервните копия на портфейла са криптирани с помощта на тайна фраза. Ако желаете да използвате криптирани резервни копия и други функции на Самурай портфейл, създайте портфейл със Самурай и прехвърлете средствата си тук.</string>
+    <string name="passphrase_required">Изисква се тайна фраза за използването на тази функция. Моля обмислете създаването на нов портфейл, който автоматично ще включва тайна фраза.</string>
+
+    <string name="cannot_reach_api">APIs на Самурай не могат да бъдат достигнати. Моля проверете връзката си и опитайте отново или опитайте по-късно.</string>
+    <string name="api_error">APIs на Самурай връщат грешка. Моля опитайте отново или опитайте по-късно.</string>
+
+    <string name="cannot_recognize_privkey">Неразпознат частен ключ.</string>
+    <string name="cannot_sweep_privkey">Грешка при прехвърлянето на баланса на частния ключ към портфейла.</string>
+    <string name="please_wait_sending">Транзакцията се изпраща, моля изчакайте.</string>
+    <string name="please_wait_ricochet">Информацията за Рикошета се обработва, Моля изчакайте.</string>
+
+    <string name="change_is_dust">Рестото от тази транзакция е твърде малко. Опитайте отново като или промените количеството за изпращане, или изпратите целия си баланс.</string>
+
+    <string name="tor_routing_on">Самурай рутира през Tor.</string>
+    <string name="tor_routing_off">Самурай не рутира през Tor. Натиснете, за да активирате.</string>
+    <string name="tor_install">Натиснете, за да инсталирате Orbot и Самурай да рутира през Tor.</string>
+
+    <string name="premium_addons">Премиум добавки</string>
+
+    <string name="ricochet_hop">Рикошет</string>
+    <string name="ricochet_hopping">Рикоширано до</string>
+    <string name="ricochet_spend1">Изпращане чрез Рикошет</string>
+    <string name="ricochet_spend2">на общо количество от</string>
+    <string name="ricochet_spend3">(включва такса от 0.002 BTC към Самурай и копачите)?</string>
+
+    <string name="action_ricochet">Повтаряне на Рикошет</string>
+    <string name="action_empty_ricochet">Изпразни опашката за Рикошет</string>
+    <string name="ricochet">Рикошет - изпращане с 4 допълнителни отблъсквания</string>
+    <string name="action_ricochet_script">Покажи скрипта за Рикошет</string>
+    <string name="action_ricochet_replay">Повторно изпращане на Рикошет</string>
+    <string name="ricochet_replay">Искате ли да опитате да изпратите този Рикошет отново?</string>
+    <string name="ricochet_not_broadcast_replay">Имаше проблем с изпращането на Рикошета Ви. Искате ли да се опитате да го изпратите отново?</string>
+    <string name="no_ricochet_replay">Няма Рикошет, който да бъде изпратен отново.</string>
+    <string name="no_ricochet_display">Няма скрипт за Рикошет, който да бъде показан.</string>
+    <string name="ricochet_broadcast">Вашият Рикошет беше изпратен.</string>
+
+    <string name="bip47_cannot_identify_outpoint">Изходящият код за разплащания не можеше да бъде идентифициран</string>
+    <string name="bip47_cannot_compose_notif_tx">Известяващата транзакция не можеше да бъде създадена</string>
+
+    <string name="pushtx_returns_null">Неуспешно изпращане. Сървърът върна нулева стойност.</string>
+
+    <string name="trusted_node">Доверен node</string>
+    <string name="trusted_node_user_hint">rpc user name</string>
+    <string name="trusted_node_ip_hint">IP address</string>
+    <string name="trusted_node_port_hint">Port (8332 default)</string>
+    <string name="trusted_node_password_hint">rpc user password</string>
+    <string name="trusted_node_not_valid">Моля предоставете валидна информация за Вашия доверен node.</string>
+    <string name="trusted_node_ko">Довереният node неразпознат. Моля проверете инсталацията.</string>
+    <string name="trusted_node_error">Грешка при свързването с доверения node</string>
+    <string name="trusted_node_tx_error">Грешка с транзакцията от страна на доверения node</string>
+    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Bitcoin Core 0.13.1 и нагоре.</string>
+    <string name="trusted_node_tx_sent">Транзакцията изпратена чрез доверения node</string>
+    <string name="trusted_node_not_responding">Довереният node не отговаря. Моля проверете инсталацията.</string>
+    <string name="trusted_node_breaks_consensus">Довереният node не може да бъде зададен на Биткойн клиент, който нарушава консенсуса!</string>
+
+    <string name="refresh_tx_pre">Извличане на транзакции и баланс.</string>
+    <string name="refresh_tx">Транзакциите и балансът извлечени.</string>
+    <string name="refresh_incoming_notif_tx">Извлечени входящи BIP47 известяващи транзакции.</string>
+    <string name="refresh_outgoing_notif_tx">Обновени изходяши BIP47 известяващи транзакции.</string>
+
+    <string name="options_unconfirmed_tx">Тази транзакция очаква потвърждение. Моля изберете опция:</string>
+    <string name="options_block_explorer">Преглед на транзакцията</string>
+    <string name="options_bump_fee">Увеличаване на таксата</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Информацията за транзакцията не може да бъде извлечена. Моля опитайте отново.</string>
+    <string name="fee_bump_not_necessary">Имайте предвид, че увеличаването на таксата за тази транзакция може да не е необходимо.</string>
+    <string name="bump_fee">Искате ли да увеличите таксата към копачите за тази транзакция за по-бързо потвърждение?\n\nДопълнителна такса към копачите:</string>
+
+    <string name="options_sign">Подписване на съобщение</string>
+
+    <string name="trusted_node_pow_failed">Proof-of-work-ът, докладван от Вашия доверен node не се потвърждава. Моля проверете инсталацията.</string>
+
+    <string name="options_fees">Показване на сегашните такси</string>
+    <string name="current_fee_selection">Вашата избрана такса е:</string>
+    <string name="current_hi_fee_value">Сегашната висока такса е:</string>
+    <string name="current_mid_fee_value">Сегашната нормална такса е:</string>
+    <string name="current_lo_fee_value">Сегашната ниска такса е:</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">Задайте такса по избор в sat/b(сатошита за байт).</string>
+    <string name="custom_fee_too_low">Таксата по избор е твърде ниска</string>
+    <string name="custom_fee_too_high">Таксата по избор е твърде висока</string>
+
+    <string name="cpfp_spent">CPFP транзакция изпратена.</string>
+    <string name="rbf_spent">RBF транзакция изпратена.</string>
+    <string name="cannot_output_dust">Не може да се направи транзакция с твърде малък output(dust)</string>
+    <string name="cannot_create_change_output">Cannot create change output.</string>
+    <string name="cannot_create_cpfp">CPFP транзакцията не може да се направи.</string>
+
+    <string name="error_reading_payload">Грешка при четенето на payload. Моля опитайте отново.</string>
+
+    <string name="utxo_sign">Подписване на съобщение</string>
+    <string name="utxo_sign_text1">Подписване, използвайки този частен ключ?</string>
+    <string name="utxo_sign_text2">Подписано, използвайки utxo.</string>
+    <string name="utxo_sign_text3">Подпиасно, използвайки utxo.</string>
+
+    <string name="recovery_checkup">Проверка на данните за възстановяване</string>
+    <string name="recovery_checkup_message">Вашите тайни думи и тайна фраза ще бъдат показани. Не позволявайте на никого да гледа в екрана Ви. Това НЯМА да бъде показано отново.</string>
+    <string name="mnemonic">Тайни думи</string>
+    <string name="recovery_checkup_finish">ЗАЩИТИХ ДАННИТЕ СИ ЗА ВЪЗСТАНОВЯВАНЕ</string>
+    <string name="pin_reminder">Напомняне - Вашият PIN код е:</string>
+
+    <string name="opendime_confirmed_balance">Потвърден баланс</string>
+    <string name="opendime_privkey">Частен ключ</string>
+    <string name="opendime_verified">ВЕРИФИЦИРАН</string>
+    <string name="opendime_valid_key">Валиден частен ключ на устройството</string>
+    <string name="opendime_not_verified">НЕ МОЖЕ ДА БЪДЕ ВЕРИФИЦИРАН</string>
+    <string name="opendime_no_valid_key">Частният ключ на устройството не може да бъде валидиран.</string>
+    <string name="opendime_view">ПРЕГЛЕД</string>
+    <string name="opendime_sweep">SWEEP</string>
+    <string name="opendime_topup">TOP UP</string>
+
+    <string name="select_app">Избор на приложение:</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay защита</string>
+    <string name="replay_unprotected">Незащитен</string>
+    <string name="replay_in_progress">В процес на защитаване</string>
+    <string name="replay_protected">Защитен</string>
+    <string name="replay_disclaimer">Засечено разделяне на блокчейна(chain split).</string>
+    <string name="replay_text">Всички адреси ще бъдат обединени в една транзакция и изпратени до друг адрес в портфейла Ви. Това може да намали секретността Ви.</string>
+    <string name="replay_ENABLE">ВКЛЮЧВАНЕ НА REPLAY ЗАЩИТАТА</string>
+
+    <string name="replay_broadcast_to_network">Изпращане до мрежа...</string>
+    <string name="replay_seen_on_network">Видяно от мрежата...</string>
+    <string name="replay_split_tx_broadcast">Изпращане на разделяща транзакция...</string>
+    <string name="replay_description">Портфейлът Ви ще изпрати специална транзакция до себе си, която перманентно ще раздели койните Ви от другата верига. Това ще Ви защити от Replay атаки</string>
+    <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
+    <string name="replay_confirmed">Потвърдено</string>
+    <string name="replay_confirmations">Потвърждения:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">BCash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">Replay защита в очакване на потвърждение</string>
+    <string name="replay_dismiss">ОТХВЪРЛИ ПРЕДУПРЕЖДЕНИЕТО</string>
+
+    <string name="show_qr">Покажи QR</string>
+    <string name="share_qr">Сподели QR</string>
+    <string name="send_tx">Изпрати подписана транзакция</string>
+    <string name="tx_too_large_qr">Транзакцията е твърде голяма за да бъде показана в QR код</string>
+
+    <string name="select_network">Изберете мрежа...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">SegWit адрес</string>
+    <string name="segwit_switch_prompt">Средства, депозирани в SegWit адреси, са по-ефективни за транзактиране. Предлагат понижени такси към копачите, когато изпращате Биткойн от портфейла си.</string>
+
+    <string name="privkey_clipboard">Частен ключ беше засечен в клипборда Ви. Да се изтрие ли клипборда?</string>
+
+    <string name="tx_hex">hex на транзакцията</string>
+    <string name="enter_tx_hex">Въведете транзакцията в hex формат</string>
+    <string name="broadcast">Изпращане на транзакцията</string>
+
+    <string name="dusting_tx">DUST ТРАНЗАКЦИЯ</string>
+    <string name="dusting_attempt">Неочаквана dust транзакция може да е индикация, че някой се опитва да следи адресите и харчовете Ви.\n\nМаркирайте този dust като неизхарчим, за да предотвратите шпионаж от трети страни.</string>
+    <string name="dusting_attempt_amount">Количество:</string>
+    <string name="dusting_attempt_id">Хеш-Индекс:</string>
+    <string name="dusting_attempt_ignore">Игнорирай</string>
+    <string name="dusting_attempt_mark_unspendable">Маркирай като неизхарчим</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">DUST</string>
+    <string name="do_not_spend">Да</string>
+    <string name="dusting_tx_unblock">Тази dust транзакция е блокирана. Отблокиране за евентуално изхарчване?</string>
+    <string name="mark_spend">Маркирай като изхарчимо</string>
+    <string name="mark_do_not_spend">Маркирай "Да-не-се-харчи"</string>
+    <string name="mark_utxo_spend">Да се направи ли това UTXO харчимо?</string>
+    <string name="mark_utxo_do_not_spend">Да се направи ли това UTXO нехарчимо?</string>
+
+    <string name="options_sign_a_message">Подписване на съобщение</string>
+    <string name="options_display_redeem_script">Показване на redeem скрипта</string>
+    <string name="options_view_tx">Преглед на транзакцията</string>
+    <string name="options_display_privkey">Покажи частния ключ</string>
+    <string name="options_batch">Масово изпращане</string>
+
+    <string name="do_not_repeat_sent_to">Сложете тикче, за да спрете предупрежденията за повторни изпращания към този адрес</string>
+
+    <string name="mark_inputs_as_unspendable">Маркриане на неизхарчените средства, които композират тази транзакция като неизхарчими?</string>
+
+    <string name="copy_to_clipboard">Копирай в клипборда</string>
+
+    <string name="no_bitpay">Грешка: това не е валидна Биткойн заявка. Самурай поддържа изпращане само до валидни Биткойн адреси.</string>
+    <string name="learn_more">Научете повече</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Вземете Вашия paynym</string>
+    <string name="claim_paynym_title1">Вземете Вашия безплатен PayNymID</string>
+    <string name="claim_paynym_text1">Позволете на приятелите Ви и контактите Ви да се свързват с Вашия PayNym директно чрез съвместими Биткойн портфейли.</string>
+    <string name="claim_paynym_title2">Предимствата на PayNymID</string>
+    <string name="claim_paynym_text2a">Уникално име и изображение, генерирано с хеша на paynym кода Ви. Никога няма да има две еднакви!</string>
+    <string name="claim_paynym_text2b">Без проверка на самоличността! Името и изображението Ви са базирани на Вашия paynym код, а не на каквато и да е лична карта.</string>
+    <string name="claim_paynym_text2c">Бъдете намерени лесно! Съвместими портфейли могат да търсят нови контакти и да изпращат тайни и сигурни плащания, без да оставят и следа.</string>
+    <string name="claim_paynym_id">Получаване на моя PayNymID</string>
+    <string name="claim_paynym_id_refused">Не ме интересува. Не ме питай отново.</string>
+
+    <string name="claim_paynym_prompt"> Получаване на моя PayNymID и добавяне на моя публичен PayNym код в PayNym.is?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Добавянето на PayNym към контактите Ви изисква еднократна такса към копачите за създаване на записа на блокчейна. Депозирайте</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC в портфейла си и опитайте отново</string>
+    <string name="help">Помощ</string>
+
+    <string name="passphrase_disclaimer">Разбирам, че Самурай не може да ми асистира ако забравя тайната си фраза. Самурай никога не знае нищо за моята тайна фраза.</string>
+    <string name="confirm_pin_code">Потвърдете PIN кода</string>
+    <string name="re_enter_your_pin_code">Въведете PIN кода си отново</string>
+    <string name="re_enter_a_passphrase">Въведете тайната си фраза отново</string>
+    <string name="create_a_passphrase">Създайте тайна фраза</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Създайте сигурна тайна фраза за портфейла си</string>
+    <string name="set_pin_code">Задайте PIN код</string>
+    <string name="accept_disclaimer_error">Трябва да приемете предупреждението</string>
+    <string name="import_external_wallet">Импортиране на външен портфейл</string>
+    <string name="import_samourai_wallet">Импортиране на Самурай резервно копие</string>
+    <string name="backup_file">Файл с резервното копие</string>
+    <string name="import_an_encrypted_samourai_wallet">Импортирайте резервно копие, за да възстановите портфейла си и всичките му данни</string>
+    <string name="back">НАЗАД</string>
+    <string name="finish">край</string>
+    <string name="choose_file">изберете файл</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Добавете bip39 парола</string>
+    <string name="close_bip39_password">Затвори bip39 парола</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Въведете тайните си думи, за да импортирате портфейл от друго приложение</string>
+    <string name="last_updated">Последно обновено</string>
+    <string name="get_help">Получаване на помощ</string>
+    <string name="offline_mode">Офлайн режим</string>
+    <string name="import_samourai_backup">Импортиране на Самурай резервно копие</string>
+    <string name="samourai_bitcoin_wallet">Самурай Биткойн Портфейл</string>
+    <string name="enter_your_wallet_passphrase">Въведете тайната си фраза</string>
+    <string name="start_new_wallet">Направи нов портфейл</string>
+    <string name="get_help_create">Създаване на портфейл: получаване на помощ</string>
+    <string name="get_help_restore">Възстановяване на портфейл: Получаване на помощ</string>
+
+    <string name="fee">Такса към копачите</string>
+    <string name="fee_low_priority">Нисък приоритет: около 24</string>
+    <string name="fee_mid_priority">Нормален приоритет: около 6</string>
+    <string name="fee_high_priority">Висок приоритет: около 2</string>
+    <string name="fee_custom_priority">Такса по избор: около</string>
+    <string name="blocks_to_cf">блока преди потвърждение</string>
+
+    <string name="invalid_mnemonic_word">Невалидна BIP39 дума</string>
+    <string name="invalid_mnemonic">Невалиден BIP39 mnemonic</string>
+    <string name="enter_your_code_here">Въведете кода си тук</string>
+
+    <string name="declaimer_recovery_words">Потвърждавам, че съм записал(а) показаните думи и съм ги съхранил(а) на сигурно място. Разбирам, че всеки, който научи моите тайни думи и тайната ми фраза ще има достъп до портфейла ми и всичките ми средства.</string>
+  <string name="return_to_wallet">Назад към портфейла</string>
+  <string name="caution_message_recovery_words">Не е безопасно да държите тези думи на компютъра си или в облака. Напишете тези думи на лист хартия и ги пазете в тайна и на сигурно.</string>
+    <string name="these_words_are">Тези думи служат като резервно копие на всичките Ви частни ключове от портфейла Ви.</string>
+  <string name="recovery_words">ТАЙНИ ДУМИ</string>
+
+  <string name="permission_alert_dialog_title_sms">Искане на разрешение за SMS и Телефон..</string>
+  <string name="permission_dialog_message_sms">На Вашия портфейл му трябва достъп до получаване и изпращане на SMS-и, за да работят дистанционните функции.</string>
+  <string name="permission_alert_dialog_title_outgoing">Искане на разрешение за обработка на изходящите обаждания..</string>
+  <string name="permission_dialog_message_outgoing">На Вашия портфейл му трябва достъп до изходящите обаждания, за да работи функцията "Скрито стартиране"</string>
+
+  <string name="permission_alert_dialog_title_external">Искане на разрешение за писане/четене..</string>
+  <string name="permission_dialog_message_external">Вашият портфейл се нуждае от достъп до паметта на устройството, за да може автоматично да запазва криптирано резервно копие на портфейла Ви</string>
+  <string name="permission_alert_dialog_title_camera">Искане на разрешение за камерата..</string>
+  <string name="permission_dialog_message_camera">Вашият портфейл се нуждае от достъп до камерата, за да може да сканира QR кодове</string>
+
+  <string name="use_bech32">Използвай bech32 адрес</string>
+
+  <string name="boltzmann_cannot">STONEWALL Харч не може да бъде създаден със сегашните Ви неизхарчени средства. Ако Ви трябва STONEWALL Харч, натиснете \'НЕ\' и опитайте отново с други неизхарчени средства.</string>
+  <string name="boltzmann_like_typed">Имайте предвид, че  \'Получаване на ресто до същия тип адрес\' е ИЗКЛЮЧЕНО и може да доведе до по-несъвършена структура за Вашата STONEWALL транзакция.</string>
+
+  <string name="insufficient_fee">Недостатъчна такса</string>
+  <string name="action_utxo_amounts">Вижте количествата по тип адреси</string>
+
+  <string name="total_p2pkh">Общо Legacy (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Общо SegWit (p2sh):</string>
+  <string name="total_p2wpkh">Общо SegWit (bech32):</string>
+  <string name="total_blocked">Общо блокирани:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Разширени</string>
+    <string name="broadcast_with_txtenna">Изпращане с TxTenna</string>
+    <string name="show_qr_code">Покажи QR код</string>
+    <string name="tx_connectivity_failure_msg">Транзакцията не може да бъде изпратена без Интернет връзка. Как искате да процедирате?</string>
+
+    <string name="tx_creating_ok">Създаване на транзакцията...</string>
+    <string name="tx_creating_ko">Транзакцията не може да бъде създадена</string>
+    <string name="tx_signing_ok">Подписване на транзакцията...</string>
+    <string name="tx_signing_ko">Транзакцията не може да бъде подписана</string>
+    <string name="tx_broadcast_ok">Изпращане на транзакцията...</string>
+    <string name="tx_broadcast_ko">Транзакцията не може да бъде изпратена</string>
+    <string name="tx_sent_ok">Транзакцията изпратена</string>
+    <string name="tx_sent_ko">Транзакцията не беше изпратена :(</string>
+
+    <string name="prune_backup">Премахване на файловете с резервното копие?</string>
+
+    <string-array name="address_types">
+        <item>SegWit compatibility (P2SH)</item>
+        <item>SegWit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+</resources>
