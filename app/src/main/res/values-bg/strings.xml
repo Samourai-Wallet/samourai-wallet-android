@@ -385,7 +385,7 @@
     <string name="replay_broadcast_to_network">Изпращане до мрежа...</string>
     <string name="replay_seen_on_network">Видяно от мрежата...</string>
     <string name="replay_split_tx_broadcast">Изпращане на разделяща транзакция...</string>
-    <string name="replay_description">Портфейлът Ви ще изпрати специална транзакция до себе си, която перманентно ще раздели койните ви от другата верига. Това ще Ви защити от Replay атаки</string>
+    <string name="replay_description">Портфейлът Ви ще изпрати специална транзакция до себе си, която перманентно ще раздели койните Ви от другата верига. Това ще Ви защити от Replay атаки</string>
     <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
     <string name="replay_confirmed">Потвърдено</string>
     <string name="replay_confirmations">Потвърждения:</string>
