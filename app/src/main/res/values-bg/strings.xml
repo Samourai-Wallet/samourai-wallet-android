@@ -12,8 +12,8 @@
     <string name="action_support">Помощ и поддръжка</string>
     <string name="action_sweep">Прехвърли целия баланс на частен ключ към портфейла</string>
     <string name="action_bip47">PayNyms</string>
-    <string name="action_unarchive">Активирай всички архивирани кодове за плащане</string>
-    <string name="action_sync_all">Синхронизирай всички кодове за плащане</string>
+    <string name="action_unarchive">Активирай всички архивирани кодове</string>
+    <string name="action_sync_all">Синхронизирай всички кодове</string>
 
     <string name="about_us">За Самурай портфейл</string>
 
@@ -332,11 +332,11 @@
 
     <string name="trusted_node_pow_failed">Proof-of-work-ът, докладван от Вашия доверен node не се потвърждава. Моля проверете инсталацията.</string>
 
-    <string name="options_fees">Показване на сегашните такси към копачите</string>
+    <string name="options_fees">Показване на сегашните такси</string>
     <string name="current_fee_selection">Вашата избрана такса е:</string>
-    <string name="current_hi_fee_value">Сегашна висока такса:</string>
-    <string name="current_mid_fee_value">Сегашна нормална такса:</string>
-    <string name="current_lo_fee_value">Сегашна ниска такса:</string>
+    <string name="current_hi_fee_value">Сегашната висока такса е:</string>
+    <string name="current_mid_fee_value">Сегашната нормална такса е:</string>
+    <string name="current_lo_fee_value">Сегашната ниска такса е:</string>
     <string name="slash_sat">sat/b</string>
     <string name="set_sat">Задайте такса по избор в sat/b(сатошита за байт).</string>
     <string name="custom_fee_too_low">Таксата по избор е твърде ниска</string>
@@ -527,7 +527,7 @@
   <string name="insufficient_fee">Недостатъчна такса</string>
   <string name="action_utxo_amounts">Вижте количествата по тип адреси</string>
 
-  <string name="total_p2pkh">Общо legacy (p2pkh):</string>
+  <string name="total_p2pkh">Общо Legacy (p2pkh):</string>
   <string name="total_p2sh_p2wpkh">Общо SegWit (p2sh):</string>
   <string name="total_p2wpkh">Общо SegWit (bech32):</string>
   <string name="total_blocked">Общо блокирани:</string>
