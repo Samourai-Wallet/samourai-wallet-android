@@ -104,7 +104,7 @@
     <string name="receive">Receber</string>
     <string name="cannot_select_utxo">Não é possível selecionar saídas não gastas</string>
     <string name="error_bip126_output">Erro determinando endereço de saída</string>
-	<string name="error_change_output">Erro determinando endereço de troco</string>
+    <string name="error_change_output">Erro determinando endereço de troco</string>
 
     <string name="copied_to_clipboard">Copiado para a área de transferência</string>
     <string name="send_payment_code">Enviar código de pagamento</string>
@@ -159,7 +159,7 @@
     <string name="insufficient_funds">Fundos insuficientes</string>
     <string name="tx_length_error">A Samourai não trabalha com transações de mais de 100KB. Por favor tente dividir sua transação.</string>
     <string name="invalid_amount">Quantia inválida</string>
-	<string name="amount">Quantia</string>
+    <string name="amount">Quantia</string>
 
     <string name="receive_address_to_clipboard">Copiar este endereço de recebimento para a área de transferência? Se copiado, ele pode ficar visível para outros aplicativos.</string>
     <string name="receive_address_to_share">Compartilhar este endereço de recebimento? Caso compartilhado, ele pode ser lido por outros aplicativos.</string>
@@ -427,7 +427,7 @@
     <string name="options_display_redeem_script">Exibir script de resgate</string>
     <string name="options_view_tx">Exibir transação</string>
     <string name="options_display_privkey">Exibir chave privada</string>
-	<string name="options_batch">Gastar em lote</string>
+    <string name="options_batch">Gastar em lote</string>
 
     <string name="do_not_repeat_sent_to">Marque a caixa para não avisar sobre envios repetidos para este endereço.</string>
 
@@ -472,49 +472,49 @@
     <string name="caution_message_recovery_words">Não é seguro manter essas palavras salvas no seu computador ou na nuvem. Escreva essas palavras em um pedaço de papel e mantenha elas em segredo e seguras.
 </string>
     <string name="these_words_are">Estas palavras são um backup de todas as chaves secretas em sua carteira.</string>
-  <string name="recovery_words">PALAVRAS DE RECUPERAÇÃO</string>
+    <string name="recovery_words">PALAVRAS DE RECUPERAÇÃO</string>
 
-  <string name="permission_alert_dialog_title_sms">Solicitando permissão de uso do telefone e do serviço de SMS</string>
+    <string name="permission_alert_dialog_title_sms">Solicitando permissão de uso do telefone e do serviço de SMS</string>
 <string name="permission_dialog_message_sms">Sua carteira precisa acessar o envio e recebimento de SMS para conseguir utilizar recursos de alerta remoto.</string>
-  <string name="permission_alert_dialog_title_outgoing">Solicitando permissão para recebimento de chamadas</string>
-  <string name="permission_dialog_message_outgoing">Sua carteira precisa de acesso para recebimento de chamadas para que possa utilizar o recurso de abrir o aplicativo pelo modo de furtividade.</string>
+    <string name="permission_alert_dialog_title_outgoing">Solicitando permissão para recebimento de chamadas</string>
+    <string name="permission_dialog_message_outgoing">Sua carteira precisa de acesso para recebimento de chamadas para que possa utilizar o recurso de abrir o aplicativo pelo modo de furtividade.</string>
 
-  <string name="permission_alert_dialog_title_external">Solicitando permissão para ler/escrever</string>
-  <string name="permission_dialog_message_external">Sua carteira precisa de acesso ao armazenamento de arquivos, para poder salvar automaticamente um backup criptografado de sua carteira no seu dispositivo.</string>
-  <string name="permission_alert_dialog_title_camera">Solicitando permissão para acessar a câmera</string>
-  <string name="permission_dialog_message_camera">Sua carteira precisa de permissão para acessar a câmera para que possa escanear os códigos QR.</string>
+    <string name="permission_alert_dialog_title_external">Solicitando permissão para ler/escrever</string>
+    <string name="permission_dialog_message_external">Sua carteira precisa de acesso ao armazenamento de arquivos, para poder salvar automaticamente um backup criptografado de sua carteira no seu dispositivo.</string>
+    <string name="permission_alert_dialog_title_camera">Solicitando permissão para acessar a câmera</string>
+    <string name="permission_dialog_message_camera">Sua carteira precisa de permissão para acessar a câmera para que possa escanear os códigos QR.</string>
 
-  <string name="use_bech32">Use endereço bech32</string>
-  <string name="boltzmann_cannot">Um gasto STONEWALL não pode ser composto com seu conjunto atual de unspents. Se você precisar de um gasto de STONEWALL, toque em \'NÃO\' e tente novamente com um conjunto modificado de unspents.</string>
-  <string name="boltzmann_like_typed">Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.</string>
+    <string name="use_bech32">Use endereço bech32</string>
+    <string name="boltzmann_cannot">Um gasto STONEWALL não pode ser composto com seu conjunto atual de unspents. Se você precisar de um gasto de STONEWALL, toque em \'NÃO\' e tente novamente com um conjunto modificado de unspents.</string>
+    <string name="boltzmann_like_typed">Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.</string>
 
-  <string name="insufficient_fee">Taxa insuficiente</string>
-  <string name="action_utxo_amounts">Ver valores por tipo de endereço</string>
+    <string name="insufficient_fee">Taxa insuficiente</string>
+    <string name="action_utxo_amounts">Ver valores por tipo de endereço</string>
 
-  <string name="total_p2pkh">Total legacy (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Total SegWit (p2sh):</string>
-  <string name="total_p2wpkh">Total SegWit (bech32):</string>
-  <string name="total_blocked">Total bloqueado:</string>
+    <string name="total_p2pkh">Total legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Total SegWit (p2sh):</string>
+    <string name="total_p2wpkh">Total SegWit (bech32):</string>
+    <string name="total_blocked">Total bloqueado:</string>
 
   <string name="title_activity_main3">Main3Activity</string>
   <string name="_0_00">0.00</string>
   <string name="advanced">Avançado</string>
   <string name="broadcast_with_txtenna">Transmitir com TxTenna</string>
   <string name="show_qr_code">Mostrar código QR</string>
-    <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa.Como você gostaria de proceder</string>
+  <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa.Como você gostaria de proceder</string>
 
-    <string name="tx_creating_ok">Criando transação...</string>
-    <string name="tx_creating_ko">Não é possível criar transação</string>
-    <string name="tx_signing_ok">Assinando transação...</string>
-    <string name="tx_signing_ko">Não pode assinar transação </string>
-    <string name="tx_broadcast_ok">Transmitindo transação...</string>
-    <string name="tx_broadcast_ko">Não é possível transmitir a transação</string>
-    <string name="tx_sent_ok">Transação enviada</string>
-    <string name="tx_sent_ko">Transação não enviada</string>
+  <string name="tx_creating_ok">Criando transação...</string>
+  <string name="tx_creating_ko">Não é possível criar transação</string>
+  <string name="tx_signing_ok">Assinando transação...</string>
+  <string name="tx_signing_ko">Não pode assinar transação </string>
+  <string name="tx_broadcast_ok">Transmitindo transação...</string>
+  <string name="tx_broadcast_ko">Não é possível transmitir a transação</string>
+  <string name="tx_sent_ok">Transação enviada</string>
+  <string name="tx_sent_ko">Transação não enviada</string>
 
-    <string name="prune_backup">Reduzir payload e backup de arquivos?</string>
+  <string name="prune_backup">Reduzir payload e backup de arquivos?</string>
 
-    <string-array name="address_types">
+  <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
         <item>Legacy (P2PKH)</item>
