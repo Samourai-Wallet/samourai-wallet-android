@@ -885,6 +885,22 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference addressCalcPref = (Preference) findPreference("acalc");
+                addressCalcPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doAddressCalc();
+                        return true;
+                    }
+                });
+
+                Preference paynymCalcPref = (Preference) findPreference("pcalc");
+                paynymCalcPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPayNymCalc();
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
@@ -1589,6 +1605,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
         Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_HEX_TX);
+    }
+
+    private void doAddressCalc()    {
+        Intent intent = new Intent(SettingsActivity2.this, AddressCalcActivity.class);
+        startActivity(intent);
+    }
+
+    private void doPayNymCalc()    {
+        Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
+        startActivity(intent);
     }
 
     private void doBroadcastHex()    {

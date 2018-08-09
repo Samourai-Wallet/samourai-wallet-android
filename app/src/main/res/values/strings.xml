@@ -94,6 +94,10 @@
     <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
     <string name="options_prune">Prune backup</string>
     <string name="options_prune2">Prune wallet payload and backup files.</string>
+    <string name="options_address_calc">Address calculator</string>
+    <string name="options_address_calc2">Calculate addresses derived from your wallet seed.</string>
+    <string name="options_paynym_calc">PayNym calculator</string>
+    <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -560,5 +564,25 @@
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Receive addresses</string>
+    <string name="send_addresses">Send addresses</string>
+    <string name="display_receive_redeem">Receive redeem script</string>
+    <string name="display_receive_privkey">Receive private key</string>
+    <string name="invalid_index">Invalid index</string>
+    <string name="type_address">Type of address</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+    </string-array>
+
+    <string name="chain_id">Address chain</string>
+    <string name="receive_chain">Receive addresse</string>
+    <string name="change_chain">Change addresse</string>
 
 </resources>
