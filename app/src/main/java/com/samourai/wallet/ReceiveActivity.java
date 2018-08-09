@@ -609,7 +609,9 @@ public class ReceiveActivity extends AppCompatActivity {
 
         tvAddress.setText(addr);
         displayPath();
-        checkPrevUse();
+        if(!AppUtil.getInstance(ReceiveActivity.this).isOfflineMode())    {
+            checkPrevUse();
+        }
 
         new Thread(new Runnable() {
             @Override

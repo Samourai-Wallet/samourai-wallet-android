@@ -23,6 +23,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -158,6 +159,10 @@ public class WebSocketHandler {
     private class ConnectionTask extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... args) {
+
+            if(AppUtil.getInstance(context).isOfflineMode())    {
+                return null;
+            }
 
             try {
 

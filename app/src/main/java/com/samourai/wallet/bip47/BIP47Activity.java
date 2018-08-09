@@ -308,7 +308,12 @@ public class BIP47Activity extends Activity {
 
                     case 1:
 
-                        doSync(pcodes[position]);
+                        if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                            doSync(pcodes[position]);
+                        }
+                        else    {
+                            Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+                        }
 
                         break;
 
@@ -596,10 +601,20 @@ public class BIP47Activity extends Activity {
             doUnArchive();
         }
         else if(id == R.id.action_sync_all) {
-            doSyncAll();
+            if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                doSyncAll();
+            }
+            else    {
+                Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if(id == R.id.action_claim_paynym) {
-            doClaimPayNym();
+            if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                doClaimPayNym();
+            }
+            else    {
+                Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if(id == R.id.action_support) {
             doSupport();
@@ -1611,7 +1626,13 @@ public class BIP47Activity extends Activity {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("nym", strPaymentCode);
-                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                    String res = null;
+                    if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                    }
+                    else    {
+                        res = PayloadUtil.getInstance(BIP47Activity.this).deserializePayNyms().toString();
+                    }
                     Log.d("BIP47Activity", res);
 
                     JSONObject responseObj = new JSONObject(res);
@@ -1631,7 +1652,7 @@ public class BIP47Activity extends Activity {
                                     Point size = new Point();
                                     display.getSize(size);
 
-                                    if (size.x > 240) {
+                                    if (size.x > 240 && !AppUtil.getInstance(BIP47Activity.this).isOfflineMode()) {
                                         // load avatar
                                         Picasso.with(BIP47Activity.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
                                     }
