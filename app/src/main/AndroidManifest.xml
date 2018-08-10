@@ -224,10 +224,15 @@
             android:exported="true"
             android:theme="@style/ui_2_theme" />
         <activity
-            android:exported="true"
             android:name=".whirlpool.EmptyWhirlPool"
+            android:exported="true"
+            android:label="@string/title_activity_empty_whirl_pool"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".whirlpool.NewWhirlpoolCycle"
             android:theme="@style/ui_2_theme"
-            android:label="@string/title_activity_empty_whirl_pool" />
+            android:label="New Cycle"
+            android:exported="true" />
     </application>
 
 </manifest>
