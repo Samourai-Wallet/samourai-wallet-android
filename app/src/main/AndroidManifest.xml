@@ -233,6 +233,11 @@
             android:theme="@style/ui_2_theme"
             android:label="New Cycle"
             android:exported="true" />
+        <activity
+            android:name=".whirlpool.ChooseCycleType"
+            android:theme="@style/ui_2_theme"
+            android:label="New Cycle"
+            android:exported="true" />
     </application>
 
 </manifest>
