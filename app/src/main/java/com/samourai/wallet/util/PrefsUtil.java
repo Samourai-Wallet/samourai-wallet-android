@@ -47,7 +47,7 @@ public class PrefsUtil {
 	public static final String XPUB84REG = "xpub84reg";
 	public static final String PAYNYM_CLAIMED = "paynymClaimed";
 	public static final String PAYNYM_REFUSED = "paynymRefused";
-	public static final String PAYNYM_FEATURED = "paynymFeatured";
+	public static final String PAYNYM_FEATURED_SEGWIT = "paynymFeatured_v1";
 	public static final String IS_RESTORE = "isRestore";
 	public static final String HAPTIC_PIN = "hapticPin";
 
