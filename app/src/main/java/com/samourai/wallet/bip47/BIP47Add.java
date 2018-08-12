@@ -68,10 +68,6 @@ public class BIP47Add extends Activity {
 
                 final String userInput = edPCode.getText().toString();
 
-                if(FormatsUtil.getInstance().isValidPaymentCode(userInput))    {
-//                    new PaymentCodeIOTask().execute(new String[] { userInput });
-                }
-
                 edPCode.addTextChangedListener(twPCode);
             }
 
