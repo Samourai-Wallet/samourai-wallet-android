@@ -101,6 +101,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -611,9 +612,15 @@ public class BalanceActivity extends Activity {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
 
-        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false)    {
+            doFeaturePayNymUpdate();
+        }
+        else if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
                 PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
             doClaimPayNym();
+        }
+        else    {
+            ;
         }
 
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
@@ -2627,6 +2634,73 @@ public class BalanceActivity extends Activity {
 
             return tx;
         }
+
+    }
+
+    private void doFeaturePayNymUpdate() {
+
+        new Thread(new Runnable() {
+
+            private Handler handler = new Handler();
+
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                try {
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+//                    Log.d("BalanceActivity", obj.toString());
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+//                    Log.d("BalanceActivity", res);
+
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("token"))    {
+                        String token = responseObj.getString("token");
+
+                        String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
+//                        Log.d("BalanceActivity", sig);
+
+                        obj = new JSONObject();
+                        obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+                        obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
+                        obj.put("signature", sig);
+
+//                        Log.d("BalanceActivity", "nym/add:" + obj.toString());
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
+//                        Log.d("BalanceActivity", res);
+
+                        responseObj = new JSONObject(res);
+                        if(responseObj.has("segwit") && responseObj.has("token"))    {
+                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                        }
+                        else if(responseObj.has("claimed") && responseObj.getBoolean("claimed") == true)    {
+                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                        }
+                        else    {
+                            ;
+                        }
+
+                    }
+                    else    {
+                        ;
+                    }
+
+                }
+                catch(JSONException je) {
+                    je.printStackTrace();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                Looper.loop();
+
+            }
+
+        }).start();
 
     }
 
