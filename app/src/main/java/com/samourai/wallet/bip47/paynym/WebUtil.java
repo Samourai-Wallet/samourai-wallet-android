@@ -30,7 +30,7 @@ import info.guardianproject.netcipher.client.StrongHttpsClient;
 
 public class WebUtil	{
 
-    public static final String PAYNYM_API = "https://paynym.is/";
+    public static final String PAYNYM_API = "https://dev.paynym.is/";
 
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;

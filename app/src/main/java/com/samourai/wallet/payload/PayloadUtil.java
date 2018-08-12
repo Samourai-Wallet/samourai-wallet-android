@@ -380,6 +380,7 @@ public class PayloadUtil	{
             meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
+            meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
 
             JSONObject obj = new JSONObject();
@@ -663,6 +664,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("paynym_refused")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_REFUSED, meta.getBoolean("paynym_refused"));
+                }
+                if(meta.has("paynym_featured_v1")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, meta.getBoolean("paynym_featured_v1"));
                 }
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
