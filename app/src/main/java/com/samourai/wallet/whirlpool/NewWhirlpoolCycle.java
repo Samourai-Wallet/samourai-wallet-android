@@ -73,6 +73,10 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
     private void loadDummyCoins() {
         for (int i = 0; i <= 100; i++) {
             Coin coin = new Coin();
+            if(i/2==4){
+                // generating disabled coin
+                coin.setBlocked(true);
+            }
             coin.setAddress("16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5");
             coin.setValue(3.1F);
             coins.add(coin);

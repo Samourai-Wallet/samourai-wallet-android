@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,12 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         holder.btcTxView.setText(String.valueOf(coin.getValue()).concat(" BTC"));
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
+
+        if(coin.getBlocked()){
+            holder.btcTxView.setAlpha(.6f);
+            holder.addressTxView.setAlpha(.5f);
+            holder.checkBox.setEnabled(false);
+        }
 
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
