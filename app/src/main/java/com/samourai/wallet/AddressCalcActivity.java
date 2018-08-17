@@ -101,6 +101,7 @@ import java.util.Vector;
 
 import static java.lang.System.currentTimeMillis;
 
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -139,7 +140,7 @@ public class AddressCalcActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 
-                if(position == 3)    {
+                if(position == 3 || position == 4)    {
                     tvChain.setVisibility(View.INVISIBLE);
                     rChain.setVisibility(View.INVISIBLE);
                 }
@@ -199,6 +200,10 @@ public class AddressCalcActivity extends Activity {
                     }
                     else if(spType.getSelectedItemPosition() == 3)    {
                         hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(RicochetMeta.getInstance(AddressCalcActivity.this).getRicochetAccount()).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(index);
+                        segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    }
+                    else if(spType.getSelectedItemPosition() == 4)    {
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolAccount()).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(index);
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else    {
