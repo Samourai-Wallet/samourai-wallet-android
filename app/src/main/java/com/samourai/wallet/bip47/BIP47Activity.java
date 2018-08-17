@@ -440,9 +440,9 @@ public class BIP47Activity extends Activity {
 
         }
 
-//        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_DIRECTORY, false) == false)    {
+        if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
             doDirectoryTask();
-//        }
+        }
 
     }
 
@@ -491,7 +491,7 @@ public class BIP47Activity extends Activity {
             if(data.hasExtra("pcode"))    {
 
                 String pcode = data.getStringExtra("pcode");
-                if(pcode != null && pcode.length() > 0 && FormatsUtil.getInstance().isValidPaymentCode(pcode))    {
+                if(pcode != null && pcode.length() > 0 && FormatsUtil.getInstance().isValidPaymentCode(pcode) && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
                     doUpdatePayNymInfo(pcode);
                 }
 
