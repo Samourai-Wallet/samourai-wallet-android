@@ -582,7 +582,7 @@
     </string-array>
 
     <string name="chain_id">Address chain</string>
-    <string name="receive_chain">Receive addresse</string>
-    <string name="change_chain">Change addresse</string>
+    <string name="receive_chain">Receive address</string>
+    <string name="change_chain">Change address</string>
 
 </resources>
