@@ -95,6 +95,7 @@ import java.util.Vector;
 
 import static java.lang.System.currentTimeMillis;
 
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -113,6 +114,7 @@ public class PayNymCalcActivity extends Activity {
 
     private EditText edPayNym = null;
     private EditText edIndex = null;
+    private CheckBox cbPostMix = null;
 
     private Button btOK = null;
     private Button btCancel = null;
@@ -196,34 +198,56 @@ public class PayNymCalcActivity extends Activity {
                 try {
                     int index = Integer.parseInt(strIndex);
 
-                    PaymentAddress receiveAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getReceiveAddress(new PaymentCode(strPayNym), index);
-                    PaymentAddress sendAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getSendAddress(new PaymentCode(strPayNym), index);
-                    final ECKey receiveECKey = receiveAddress.getReceiveECKey();
-                    ECKey sendECKey = sendAddress.getSendECKey();
-
-                    final SegwitAddress receiveSegwit = new SegwitAddress(receiveECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
-                    SegwitAddress sendSegwit = new SegwitAddress(sendECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
-
                     String message = strPayNym;
-                    message += "\n";
-                    message += index + ":";
-                    message += "\n";
-                    message += "\n";
-                    message += PayNymCalcActivity.this.getText(R.string.receive_addresses).toString() + ":";
-                    message += "\n";
-                    message += receiveECKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                    message += "\n";
-                    message += receiveSegwit.getAddressAsString();
-                    message += "\n";
-                    message += receiveSegwit.getBech32AsString();
-                    message += "\n";
-                    message += PayNymCalcActivity.this.getText(R.string.send_addresses).toString() + ":";
-                    message += "\n";
-                    message += sendECKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                    message += "\n";
-                    message += sendSegwit.getAddressAsString();
-                    message += "\n";
-                    message += sendSegwit.getBech32AsString();
+                    final ECKey receiveECKey;
+                    final SegwitAddress receiveSegwit;
+
+                    if(cbPostMix.isChecked())    {
+
+                        PaymentCode paymentCodeCP = BIP47Util.getInstance(PayNymCalcActivity.this).getPaymentCode(WhirlpoolMeta.getInstance(PayNymCalcActivity.this).getWhirlpoolPostmixCP());
+                        PaymentAddress receiveAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getReceiveAddress(paymentCodeCP, WhirlpoolMeta.getInstance(PayNymCalcActivity.this).getWhirlpoolPostmix(), index);
+                        receiveECKey = receiveAddress.getReceiveECKey();
+
+                        receiveSegwit = new SegwitAddress(receiveECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
+
+                        message += "\n";
+                        message += index + ":";
+                        message += "\n";
+                        message += "\n";
+                        message += PayNymCalcActivity.this.getText(R.string.receive_addresses).toString() + ":";
+                        message += "\n";
+                        message += receiveSegwit.getBech32AsString();
+                    }
+                    else    {
+                        PaymentAddress receiveAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getReceiveAddress(new PaymentCode(strPayNym), index);
+                        PaymentAddress sendAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getSendAddress(new PaymentCode(strPayNym), index);
+                        receiveECKey = receiveAddress.getReceiveECKey();
+                        ECKey sendECKey = sendAddress.getSendECKey();
+
+                        receiveSegwit = new SegwitAddress(receiveECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        SegwitAddress sendSegwit = new SegwitAddress(sendECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
+
+                        message += "\n";
+                        message += index + ":";
+                        message += "\n";
+                        message += "\n";
+                        message += PayNymCalcActivity.this.getText(R.string.receive_addresses).toString() + ":";
+                        message += "\n";
+                        message += receiveECKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        message += "\n";
+                        message += receiveSegwit.getAddressAsString();
+                        message += "\n";
+                        message += receiveSegwit.getBech32AsString();
+                        message += "\n";
+                        message += PayNymCalcActivity.this.getText(R.string.send_addresses).toString() + ":";
+                        message += "\n";
+                        message += sendECKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                        message += "\n";
+                        message += sendSegwit.getAddressAsString();
+                        message += "\n";
+                        message += sendSegwit.getBech32AsString();
+                    }
+
                     message += "\n";
 
                     final TextView tvText = new TextView(getApplicationContext());
