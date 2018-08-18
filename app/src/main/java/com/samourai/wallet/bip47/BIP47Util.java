@@ -70,8 +70,17 @@ public class BIP47Util {
         return wallet.getAccount(0).getNotificationAddress();
     }
 
+    public HD_Address getNotificationAddress(int account) {
+        return wallet.getAccount(account).getNotificationAddress();
+    }
+
     public PaymentCode getPaymentCode() throws AddressFormatException   {
         String payment_code = wallet.getAccount(0).getPaymentCode();
+        return new PaymentCode(payment_code);
+    }
+
+    public PaymentCode getPaymentCode(int account) throws AddressFormatException   {
+        String payment_code = wallet.getAccount(account).getPaymentCode();
         return new PaymentCode(payment_code);
     }
 
@@ -80,8 +89,18 @@ public class BIP47Util {
         return new PaymentCode(payment_code.makeSamouraiPaymentCode());
     }
 
+    public PaymentCode getFeaturePaymentCode(int account) throws AddressFormatException   {
+        PaymentCode payment_code = getPaymentCode(account);
+        return new PaymentCode(payment_code.makeSamouraiPaymentCode());
+    }
+
     public PaymentAddress getReceiveAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
         HD_Address address = wallet.getAccount(0).addressAt(idx);
+        return getPaymentAddress(pcode, 0, address);
+    }
+
+    public PaymentAddress getReceiveAddress(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception {
+        HD_Address address = wallet.getAccount(account).addressAt(idx);
         return getPaymentAddress(pcode, 0, address);
     }
 
@@ -90,8 +109,18 @@ public class BIP47Util {
         return Hex.toHexString(paymentAddress.getReceiveECKey().getPubKey());
     }
 
+    public String getReceivePubKey(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+        PaymentAddress paymentAddress = getReceiveAddress(pcode, account, idx);
+        return Hex.toHexString(paymentAddress.getReceiveECKey().getPubKey());
+    }
+
     public PaymentAddress getSendAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
         HD_Address address = wallet.getAccount(0).addressAt(0);
+        return getPaymentAddress(pcode, idx, address);
+    }
+
+    public PaymentAddress getSendAddress(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception {
+        HD_Address address = wallet.getAccount(account).addressAt(0);
         return getPaymentAddress(pcode, idx, address);
     }
 
@@ -100,9 +129,25 @@ public class BIP47Util {
         return Hex.toHexString(paymentAddress.getSendECKey().getPubKey());
     }
 
+    public String getSendPubKey(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+        PaymentAddress paymentAddress = getSendAddress(pcode, account, idx);
+        return Hex.toHexString(paymentAddress.getSendECKey().getPubKey());
+    }
+
     public byte[] getIncomingMask(byte[] pubkey, byte[] outPoint) throws AddressFormatException, Exception    {
 
         HD_Address notifAddress = getNotificationAddress();
+        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
+        ECKey inputKey = dpk.getKey();
+        byte[] privkey = inputKey.getPrivKeyBytes();
+        byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
+
+        return mask;
+    }
+
+    public byte[] getIncomingMask(byte[] pubkey, int account, byte[] outPoint) throws AddressFormatException, Exception    {
+
+        HD_Address notifAddress = getNotificationAddress(account);
         DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
         ECKey inputKey = dpk.getKey();
         byte[] privkey = inputKey.getPrivKeyBytes();
