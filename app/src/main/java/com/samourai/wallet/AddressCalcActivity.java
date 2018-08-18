@@ -203,7 +203,7 @@ public class AddressCalcActivity extends Activity {
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else if(spType.getSelectedItemPosition() == 4)    {
-                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolAccount()).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(index);
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPremixAccount()).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(index);
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else    {
