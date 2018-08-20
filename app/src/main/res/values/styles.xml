@@ -46,5 +46,11 @@
         <item name="android:statusBarColor">@color/windowDark</item>
         <item name="android:colorControlActivated">@color/blue</item>
     </style>
+    <style name="whirlpool_theme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorAccent">@android:color/white</item>
+        <item name="android:windowBackground">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/windowDark</item>
+        <item name="android:colorControlActivated">@color/blue</item>
+    </style>
 
 </resources>

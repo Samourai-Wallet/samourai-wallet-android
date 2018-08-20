@@ -222,22 +222,28 @@
         <activity
             android:name=".whirlpool.WhirlPoolActivity"
             android:exported="true"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/whirlpool_theme" />
         <activity
             android:name=".whirlpool.EmptyWhirlPool"
             android:exported="true"
             android:label="@string/title_activity_empty_whirl_pool"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/whirlpool_theme" />
         <activity
             android:name=".whirlpool.NewWhirlpoolCycle"
-            android:theme="@style/ui_2_theme"
+            android:exported="true"
             android:label="New Cycle"
-            android:exported="true" />
+            android:theme="@style/whirlpool_theme" />
         <activity
             android:name=".whirlpool.ChooseCycleType"
-            android:theme="@style/ui_2_theme"
+            android:exported="true"
             android:label="New Cycle"
-            android:exported="true" />
+            android:parentActivityName=".whirlpool.EmptyWhirlPool"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.WhirlpoolMain"
+            android:exported="true"
+            android:theme="@style/whirlpool_theme"
+            android:label=""/>
     </application>
 
 </manifest>

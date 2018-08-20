@@ -36,4 +36,7 @@
     <color name="sea" >#3b90cf</color>
 
     <color name="item_separator_grey">#333940</color>
+
+
+    <color name="whirlpool_window_dark">#262c33</color>
 </resources>
