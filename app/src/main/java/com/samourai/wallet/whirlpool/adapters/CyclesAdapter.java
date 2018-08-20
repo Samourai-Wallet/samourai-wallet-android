@@ -36,8 +36,13 @@ public class CyclesAdapter extends RecyclerView.Adapter<CyclesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Cycle cycle = mCycles.get(position);
-
-
+        if(cycle.getStatus() == Cycle.CycleStatus.PENDING){
+            holder.status.setText("Pending");
+        }
+        if(cycle.getStatus() == Cycle.CycleStatus.SUCCESS){
+            holder.status.setText("Completed");
+        }
+        holder.btcAmount.setText(String.valueOf(cycle.getAmount()).concat(" BTC"));
 
     }
 
@@ -55,13 +60,14 @@ public class CyclesAdapter extends RecyclerView.Adapter<CyclesAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView btcTxView, addressTxView;
-        private CheckBox checkBox;
+        private TextView btcAmount, status, date;
 
         ViewHolder(View itemView) {
             super(itemView);
-
-        }
+            btcAmount = itemView.findViewById(R.id.cycle_amount);
+            status = itemView.findViewById(R.id.cycle_status);
+            date = itemView.findViewById(R.id.cycle_date);
+         }
     }
 
 }

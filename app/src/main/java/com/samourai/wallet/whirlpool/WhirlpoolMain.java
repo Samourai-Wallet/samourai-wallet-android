@@ -52,6 +52,8 @@ public class WhirlpoolMain extends AppCompatActivity {
     private void loadDummyCycles() {
         for (int i = 0; i <= 62; i++) {
             Cycle cycle = new Cycle();
+            cycle.setAmount(300+0.0030f+i);
+            cycle.setStatus(Cycle.CycleStatus.PENDING);
             cycles.add(cycle);
         }
     }
