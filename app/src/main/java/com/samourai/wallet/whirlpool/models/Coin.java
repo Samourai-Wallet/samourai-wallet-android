@@ -3,6 +3,7 @@ package com.samourai.wallet.whirlpool.models;
 public class Coin {
     private String address = "";
     private Float value = 0F;
+    //States for recycler view
     private Boolean isSelected = false, blocked = false;
 
     public String getAddress() {
