@@ -547,7 +547,7 @@
         <item>Ricochet Segwit</item>
     </string-array>
 
-    <string name="chain_id">Cadeia de edenreços</string>
+    <string name="chain_id">Cadeia de endereços</string>
     <string name="receive_chain">Endereço de recebimento</string>
     <string name="change_chain">Endereço de troco</string>
     
