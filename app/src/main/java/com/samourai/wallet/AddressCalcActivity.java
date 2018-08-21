@@ -199,7 +199,7 @@ public class AddressCalcActivity extends Activity {
                         hd_addr = HD_WalletFactory.getInstance(AddressCalcActivity.this).get().getAccount(0).getChain(chain).getAddressAt(index);
                     }
                     else if(spType.getSelectedItemPosition() == 3)    {
-                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(RicochetMeta.getInstance(AddressCalcActivity.this).getRicochetAccount()).getChain(AddressFactory.RECEIVE_CHAIN).getAddressAt(index);
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(RicochetMeta.getInstance(AddressCalcActivity.this).getRicochetAccount()).getChain(chain).getAddressAt(index);
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else if(spType.getSelectedItemPosition() == 4)    {
