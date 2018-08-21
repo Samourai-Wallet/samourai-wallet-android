@@ -534,7 +534,7 @@
     <string name="enter_index">Index</string>
 
     <string name="receive_addresses">Receber endereços</string>
-    <string name="send_addresses">Enviad endereços</string>
+    <string name="send_addresses">Enviar endereços</string>
     <string name="display_receive_redeem">Receba um script de resgate</string>
     <string name="display_receive_privkey">Receber uma private key</string>
     <string name="invalid_index">Index inválido</string>
