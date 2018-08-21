@@ -90,7 +90,7 @@
     <string name="options_broadcast_hex2">Émettre la transaction signée établie sous format hexadécimal.</string>
     <string name="options_like_typed_change">Recevoir la monnaie à une adresse de même type que l\'adresse expéditrice</string>
     <string name="options_like_typed_change2">Recevoir la monnaie à une adresse de même type que l\'adresse expéditrice. Appuyez sur OFF pour l\'envoi de la monnaie à des adresses segwit uniquement.</string>
-    <string name="options_haptic">Déverouillage de l\'écran par saisie de code PIN avec retour tactile</string>
+    <string name="options_haptic">Déverrouillage de l\'écran par saisie de code PIN avec retour tactile</string>
     <string name="options_haptic_2">Émettre une vibration à chaque pression de touche lors de la saisie du code.</string>
 
     <string name="prompt_send_backup_to_support">Envoyer une sauvegarde du portefeuille à l\'assistance technique? Ne comporte aucune information relative à la clé privée, la phrase de récupération ou la passphrase.</string>
@@ -100,8 +100,8 @@
 
     <string name="tx_sent">Transaction envoyée</string>
     <string name="tx_failed">Une erreur est survenue lors de l\'envoi de la transaction</string>
-    <string name="you_received">Reçue</string>
-    <string name="you_sent">Envoyée</string>
+    <string name="you_received">Reçu</string>
+    <string name="you_sent">Envoyé</string>
     <string name="send">Envoyer</string>
     <string name="receive">Recevoir</string>
     <string name="cannot_select_utxo">Ne peut sélectionner les sorties de transactions non dépensées</string>
@@ -482,7 +482,7 @@
     <string name="enter_your_mnemonic_seed_to_import_a_wallet">Saisir votre phrase de récupération à 12 mots pour importer un portefeuille à partir d\'un autre fournisseur.</string>
     <string name="last_updated">Dernière mise à jour</string>
     <string name="get_help">Obtenir de l\'aide</string>
-    <string name="offline_mode">Mode hors connexion</string>
+    <string name="offline_mode">Mode hors-ligne</string>
     <string name="import_samourai_backup">Importer sauvegarde Samourai</string>
     <string name="samourai_bitcoin_wallet">Portefeuille Bitcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
@@ -541,5 +541,39 @@
   <string name="options_prune">Réduire taille sauvegarde</string>
   <string name="options_prune2">Réduire taille charge utile portefeuille et fichiers de sauvegarde.</string>
   <string name="prune_backup">Réduire taille charge utile et fichiers de sauvegarde?</string>
+    
+    
+  <string name="options_address_calc">Calculateur d\'adresses</string>
+  <string name="options_address_calc2">Calculer les adresses dérivées de la phrase de récupération de votre portefeuille.</string>
+  <string name="options_paynym_calc">Calculateur PayNym</string>
+  <string name="options_paynym_calc2">Calculer les adresses partagées avec d\'autres PayNyms.</string>
+    
+  <string name="enter_paynym">PayNym</string>
+  <string name="enter_index">Index</string>
+  <string name="receive_addresses">Recevoir les adresses</string>
+  <string name="send_addresses">Envoyer les adresses</string>
+  <string name="display_receive_redeem">Recevoir le script de règlement</string>
+  <string name="display_receive_privkey">Recevoir la clé privée</string>
+  <string name="invalid_index">Index invalide</string>
+    
+  <string name="type_address">Type d\'adresse</string>
+  <string-array name="account_types">
+  <item>BIP49 Segwit</item>
+  <item>BIP84 Segwit</item>
+  <item>BIP44 P2PKH</item>
+  <item>Ricochet Segwit</item>
+  </string-array>
+  <string name="chain_id">Chaîne d'adresses</string>
+  <string name="receive_chain">Recevoir l\'adresse</string>
+  <string name="change_chain">Changer l\'adresse</string>
+    
+  <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
+    
+  <string name="tx_standby">Transaction en attente</string>
+  <string name="show_hex">Afficher Code Hex</string>
+  <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
+    
+      
+    
     
 </resources>
