@@ -90,9 +90,15 @@
     <string name="options_like_typed_change2">Muda o recebimento para o mesmo tipo de endereço que o gasto de saída. DESLIGUE para receber apenas em endereços SegWit.</string>
     <string name="options_haptic">Resposta táctil do PIN</string>
     <string name="options_haptic_2">Vibração a cada dígito na entrada do PIN.</string>
-
+    <string name="options_prune">Reduzir backup</string>
+    <string name="options_prune2">Reduzir payload da carteira e backup dos arquivos.</string>
+    <string name="options_address_calc">Calculadora de endereço</string>
+    <string name="options_address_calc2">Calcule endereços derivados de sua seed da carteira.</string>
+    <string name="options_paynym_calc">Calculadora PayNym</string>
+    <string name="options_paynym_calc2">Calcular endereços compartilhados com outros PayNyms.</string>
+    
     <string name="prompt_send_backup_to_support">Mandar o backup da carteira para o suporte técnico? Não contém qualquer informação de chave privada, seed ou senha.</string>
-
+   
     <string name="timeline_today">Hoje</string>
     <string name="timeline_older">Mais antigas</string>
 
@@ -496,30 +502,54 @@
     <string name="total_p2wpkh">Total SegWit (bech32):</string>
     <string name="total_blocked">Total bloqueado:</string>
 
-  <string name="title_activity_main3">Main3Activity</string>
-  <string name="_0_00">0.00</string>
-  <string name="advanced">Avançado</string>
-  <string name="broadcast_with_txtenna">Transmitir com TxTenna</string>
-  <string name="show_qr_code">Mostrar código QR</string>
-  <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa.Como você gostaria de proceder</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avançado</string>
+    <string name="broadcast_with_txtenna">Transmitir com TxTenna</string>
+    <string name="show_qr_code">Mostrar código QR</string>
+    <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa.Como você gostaria de proceder</string>
 
-  <string name="tx_creating_ok">Criando transação...</string>
-  <string name="tx_creating_ko">Não é possível criar transação</string>
-  <string name="tx_signing_ok">Assinando transação...</string>
-  <string name="tx_signing_ko">Não pode assinar transação </string>
-  <string name="tx_broadcast_ok">Transmitindo transação...</string>
-  <string name="tx_broadcast_ko">Não é possível transmitir a transação</string>
-  <string name="tx_sent_ok">Transação enviada</string>
-  <string name="tx_sent_ko">Transação não enviada</string>
+    <string name="tx_creating_ok">Criando transação...</string>
+    <string name="tx_creating_ko">Não é possível criar transação</string>
+    <string name="tx_signing_ok">Assinando transação...</string>
+    <string name="tx_signing_ko">Não pode assinar transação </string>
+    <string name="tx_broadcast_ok">Transmitindo transação...</string>
+    <string name="tx_broadcast_ko">Não é possível transmitir a transação</string>
+    <string name="tx_sent_ok">Transação enviada</string>
+    <string name="tx_sent_ko">Transação não enviada</string>
 
-  <string name="prune_backup">Reduzir payload e backup de arquivos?</string>
+    <string name="prune_backup">Reduzir payload e backup de arquivos?</string>
 
-  <string-array name="address_types">
+    <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
 
+    <string name="in_offline_mode">A carteira Samourai está no modo offline.</string>
+    <string name="tx_standby">Transação em stand-by</string>
+    <string name="show_hex">Exibir Hex Code</string>
+    <string name="tx_tenna_coming_soon">txTenna no Android em breve</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
 
+    <string name="receive_addresses">Receber endereços</string>
+    <string name="send_addresses">Enviar endereços</string>
+    <string name="display_receive_redeem">Receba um script de resgate</string>
+    <string name="display_receive_privkey">Receber uma private key</string>
+    <string name="invalid_index">Index inválido</string>
+    <string name="type_address">Tipo de endereço</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+    </string-array>
+
+    <string name="chain_id">Cadeia de endereços</string>
+    <string name="receive_chain">Endereço de recebimento</string>
+    <string name="change_chain">Endereço de troco</string>
+    
 </resources>
 
