@@ -1604,6 +1604,8 @@ public class BIP47Activity extends Activity {
                     }
                 });
 
+                doUpdatePayNymInfo(pcode);
+
             }
         }).start();
 
@@ -1761,6 +1763,8 @@ public class BIP47Activity extends Activity {
                             ;
                         }
 
+                        doUpdatePayNymInfo(pcode);
+
                     }
                     else    {
                         ;
@@ -1810,7 +1814,11 @@ public class BIP47Activity extends Activity {
                         });
                     }
 
-                }
+                    if(responseObj.has("segwit"))    {
+                        BIP47Meta.getInstance().setSegwit(pcode, responseObj.getBoolean("segwit"));
+                    }
+
+                    }
                 catch(Exception e) {
                     e.printStackTrace();
                 }
