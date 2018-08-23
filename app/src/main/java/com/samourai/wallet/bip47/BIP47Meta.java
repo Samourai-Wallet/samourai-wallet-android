@@ -48,6 +48,7 @@ public class BIP47Meta {
     private static ConcurrentHashMap<String,ArrayList<Integer>> pcodeIncomingUnspent = null;
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
     private static ConcurrentHashMap<String,String> pcodeLatestEvent = null;
+    private static ConcurrentHashMap<String,Boolean> pcodeSegwit = null;
 
     private static BIP47Meta instance = null;
 
@@ -66,6 +67,7 @@ public class BIP47Meta {
             pcodeIncomingUnspent = new ConcurrentHashMap<String,ArrayList<Integer>>();
             pcodeIncomingStatus = new ConcurrentHashMap<String,String>();
             pcodeLatestEvent = new ConcurrentHashMap<String,String>();
+            pcodeSegwit = new ConcurrentHashMap<String,Boolean>();
 
             instance = new BIP47Meta();
         }
@@ -84,6 +86,7 @@ public class BIP47Meta {
         pcodeIncomingUnspent.clear();
         pcodeIncomingStatus.clear();
         pcodeLatestEvent.clear();
+        pcodeSegwit.clear();
     }
 
     public String getLabel(String pcode)   {
@@ -184,6 +187,20 @@ public class BIP47Meta {
 
     public void setArchived(String pcode, boolean archived)   {
         pcodeArchived.put(pcode, archived);
+    }
+
+    public boolean getSegwit(String pcode)   {
+        if(!pcodeSegwit.containsKey(pcode))    {
+            pcodeSegwit.put(pcode, false);
+            return false;
+        }
+        else    {
+            return pcodeSegwit.get(pcode);
+        }
+    }
+
+    public void setSegwit(String pcode, boolean segwit)   {
+        pcodeSegwit.put(pcode, segwit);
     }
 
     public void inc(String pcode)   {
@@ -488,6 +505,7 @@ public class BIP47Meta {
                 pobj.put("payment_code", pcode);
                 pobj.put("label", pcodeLabels.get(pcode));
                 pobj.put("archived", pcodeArchived.get(pcode));
+                pobj.put("segwit", pcodeSegwit.get(pcode));
 
                 if(pcodeIncomingIdxs.containsKey(pcode))    {
                     ConcurrentHashMap<String,Integer> incoming = pcodeIncomingIdxs.get(pcode);
@@ -571,6 +589,7 @@ public class BIP47Meta {
 
                 pcodeLabels.put(obj.getString("payment_code"), obj.getString("label"));
                 pcodeArchived.put(obj.getString("payment_code"), obj.has("archived") ? obj.getBoolean("archived") : false);
+                pcodeSegwit.put(obj.getString("payment_code"), obj.has("segwit") ? obj.getBoolean("segwit") : false);
 
                 if(obj.has("in_idx"))    {
                     ConcurrentHashMap<String,Integer> incoming = new ConcurrentHashMap<String,Integer>();
