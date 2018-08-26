@@ -62,6 +62,7 @@ import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
@@ -1823,7 +1824,14 @@ public class SendActivity extends Activity {
                     PaymentCode _pcode = new PaymentCode(pcode);
                     PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(_pcode, BIP47Meta.getInstance().getOutgoingIdx(pcode));
 
-                    strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    if(BIP47Meta.getInstance().getSegwit(pcode))    {
+                        SegwitAddress segwitAddress = new SegwitAddress(paymentAddress.getSendECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        strDestinationBTCAddress = segwitAddress.getBech32AsString();
+                    }
+                    else    {
+                        strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
+
                     strPCode = _pcode.toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     edAddress.setEnabled(false);
