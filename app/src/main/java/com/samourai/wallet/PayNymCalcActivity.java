@@ -95,6 +95,7 @@ import java.util.Vector;
 
 import static java.lang.System.currentTimeMillis;
 
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -196,15 +197,18 @@ public class PayNymCalcActivity extends Activity {
                 try {
                     int index = Integer.parseInt(strIndex);
 
+                    String message = strPayNym;
+                    final ECKey receiveECKey;
+                    final SegwitAddress receiveSegwit;
+
                     PaymentAddress receiveAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getReceiveAddress(new PaymentCode(strPayNym), index);
                     PaymentAddress sendAddress = BIP47Util.getInstance(PayNymCalcActivity.this).getSendAddress(new PaymentCode(strPayNym), index);
-                    final ECKey receiveECKey = receiveAddress.getReceiveECKey();
+                    receiveECKey = receiveAddress.getReceiveECKey();
                     ECKey sendECKey = sendAddress.getSendECKey();
 
-                    final SegwitAddress receiveSegwit = new SegwitAddress(receiveECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    receiveSegwit = new SegwitAddress(receiveECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
                     SegwitAddress sendSegwit = new SegwitAddress(sendECKey, SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-                    String message = strPayNym;
                     message += "\n";
                     message += index + ":";
                     message += "\n";
