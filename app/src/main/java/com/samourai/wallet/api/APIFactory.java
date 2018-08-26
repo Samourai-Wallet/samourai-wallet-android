@@ -576,7 +576,7 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) || xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()))    {
 
                 HD_Address addr = null;
                 switch(purpose)    {
