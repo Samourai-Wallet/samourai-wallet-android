@@ -1604,8 +1604,6 @@ public class BIP47Activity extends Activity {
                     }
                 });
 
-                doUpdatePayNymInfo(pcode);
-
             }
         }).start();
 
@@ -1693,6 +1691,9 @@ public class BIP47Activity extends Activity {
                         JSONArray _following = responseObj.getJSONArray("following");
                         for(int i = 0; i < _following.length(); i++)   {
                             following.add(((JSONObject)_following.get(i)).getString("code"));
+                            if(((JSONObject)_following.get(i)).has("segwit"))    {
+                                BIP47Meta.getInstance().setSegwit(((JSONObject)_following.get(i)).getString("code"), ((JSONObject)_following.get(i)).getBoolean("segwit"));
+                            }
                         }
                     }
 
@@ -1812,10 +1813,6 @@ public class BIP47Activity extends Activity {
                                 adapter.notifyDataSetChanged();
                             }
                         });
-                    }
-
-                    if(responseObj.has("segwit"))    {
-                        BIP47Meta.getInstance().setSegwit(pcode, responseObj.getBoolean("segwit"));
                     }
 
                     }
