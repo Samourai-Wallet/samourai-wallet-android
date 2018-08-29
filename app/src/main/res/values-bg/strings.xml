@@ -94,6 +94,11 @@
     <string name="options_haptic_2">Вибриране при въвеждането на всяка цифра от PIN кода.</string>
     <string name="options_prune">Премахване на резервното копие</string>
     <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
+    
+    <string name="options_address_calc">Калкулатор на адреси</string>
+    <string name="options_address_calc2">Намиране на адресите, извлечени от тайните Ви думи.</string>
+    <string name="options_paynym_calc">PayNym калкулатор</string>
+    <string name="options_paynym_calc2">Намиране на адресите, споделени с други PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническа поддръжка? Не съдържа никаква информация за частните Ви ключове, тайните Ви думи или тайната Ви фраза.</string>
 
