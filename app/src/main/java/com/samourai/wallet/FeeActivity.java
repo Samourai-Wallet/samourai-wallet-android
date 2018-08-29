@@ -3,114 +3,28 @@ package com.samourai.wallet;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
 import android.text.Spanned;
-import android.util.Log;
-import android.view.Display;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.Toast;
-//import android.util.Log;
+import android.util.Log;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.bitcoinj.core.Address;
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionInput;
-import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.crypto.MnemonicException;
-
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.android.Contents;
-import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Activity;
-import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.rpc.PaymentAddress;
-import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.payload.PayloadUtil;
-import com.samourai.wallet.ricochet.RicochetActivity;
-import com.samourai.wallet.ricochet.RicochetMeta;
-import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
-import com.samourai.wallet.send.MyTransactionOutPoint;
-import com.samourai.wallet.send.RBFSpend;
-import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
-import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.send.UTXOFactory;
-import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ExchangeRateFactory;
-import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.util.SendAddressUtil;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.text.DecimalFormatSymbols;
-
-import com.yanzhenjie.zbar.Symbol;
-
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.script.Script;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.bouncycastle.util.encoders.DecoderException;
-import org.bouncycastle.util.encoders.Hex;
-
-import static java.lang.System.currentTimeMillis;
 
 public class FeeActivity extends Activity {
 
@@ -170,12 +84,12 @@ public class FeeActivity extends Activity {
             ;
         }
 
-        sanitizeFee();
+        FeeUtil.getInstance().sanitizeFee();
 
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -188,7 +102,7 @@ public class FeeActivity extends Activity {
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
@@ -201,7 +115,7 @@ public class FeeActivity extends Activity {
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -221,7 +135,7 @@ public class FeeActivity extends Activity {
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -239,7 +153,7 @@ public class FeeActivity extends Activity {
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.blue));
@@ -257,7 +171,7 @@ public class FeeActivity extends Activity {
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(FeeActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(FeeActivity.this.getResources().getColor(R.color.darkgrey));
@@ -445,15 +359,6 @@ public class FeeActivity extends Activity {
             dlg.show();
         }
 
-    }
-
-    private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
-            SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
-            Log.d("FeeActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
-            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-        }
     }
 
 }

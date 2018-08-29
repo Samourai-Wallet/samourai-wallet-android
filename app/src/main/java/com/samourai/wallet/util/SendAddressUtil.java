@@ -23,6 +23,10 @@ public class SendAddressUtil {
         return instance;
     }
 
+    public void reset() {
+        sendAddresses.clear();
+    }
+
     public void add(String addr, boolean showAgain) {
         if(addr.length() >= 12)    {
             sendAddresses.put(addr.substring(0, 12), showAgain);

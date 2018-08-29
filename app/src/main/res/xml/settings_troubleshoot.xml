@@ -13,4 +13,22 @@
         android:key="send_backup_support"
         />
 
+    <Preference
+        android:title="@string/options_prune"
+        android:summary="@string/options_prune2"
+        android:key="prune"
+        />
+
+    <Preference
+        android:title="@string/options_address_calc"
+        android:summary="@string/options_address_calc2"
+        android:key="acalc"
+        />
+
+    <Preference
+        android:title="@string/options_paynym_calc"
+        android:summary="@string/options_paynym_calc2"
+        android:key="pcalc"
+        />
+
 </PreferenceScreen>

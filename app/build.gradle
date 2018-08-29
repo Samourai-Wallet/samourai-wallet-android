@@ -9,8 +9,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 111
-        versionName "0.98.61"
+        versionCode 116
+        versionName "0.98.81"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -40,22 +40,22 @@ android {
     }
     productFlavors {
         production {
-            minSdkVersion 21
             applicationId 'com.samourai.wallet'
+            minSdkVersion 21
             targetSdkVersion 26
-            versionCode 111
-            versionName "0.98.61"
+            versionCode 116
+            versionName "0.98.81"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.98.61"
+            resValue "string", "version_name", "0.98.81"
         }
         staging {
-            minSdkVersion 21
             applicationId 'com.samourai.wallet.staging'
+            minSdkVersion 21
             targetSdkVersion 26
-            versionCode 111
-            versionName "0.98.61"
+            versionCode 116
+            versionName "0.98.81"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.98.61"
+            resValue "string", "version_name", "0.98.81"
         }
     }
 }
@@ -70,7 +70,6 @@ dependencies {
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'com.neovisionaries:nv-websocket-client:1.9'
     implementation 'com.baoyz.swipemenulistview:library:1.2.1'
-    implementation 'org.json:json:20140107'
     implementation 'commons-io:commons-io:2.5'
     implementation 'commons-codec:commons-codec:1.4'
     implementation 'org.apache.commons:commons-lang3:3.3'
@@ -88,4 +87,6 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }

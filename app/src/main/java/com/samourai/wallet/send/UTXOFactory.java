@@ -1,8 +1,19 @@
 package com.samourai.wallet.send;
 
+import android.content.Context;
+
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.APIFactory;
+
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
+import org.bouncycastle.util.encoders.Hex;
+
 import java.util.HashMap;
 
 public class UTXOFactory {
+
+    private static Context context = null;
 
     private static UTXOFactory instance = null;
 
@@ -13,6 +24,21 @@ public class UTXOFactory {
     private UTXOFactory() { ; }
 
     public static UTXOFactory getInstance() {
+
+        if(instance == null) {
+            instance = new UTXOFactory();
+
+            p2pkh = new HashMap<String,UTXO>();
+            p2sh_p2wpkh = new HashMap<String,UTXO>();
+            p2wpkh = new HashMap<String,UTXO>();
+        }
+
+        return instance;
+    }
+
+    public static UTXOFactory getInstance(Context ctx) {
+
+        context = ctx;
 
         if(instance == null) {
             instance = new UTXOFactory();
@@ -131,6 +157,23 @@ public class UTXOFactory {
         }
 
         return ret;
+    }
+
+    public void markUTXOAsUnspendable(String hexTx)    {
+
+        HashMap<String, Long> utxos = new HashMap<String,Long>();
+
+        for(UTXO utxo : APIFactory.getInstance(context).getUtxos(true))   {
+            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
+            }
+        }
+
+        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
+        for(TransactionInput input : tx.getInputs())   {
+            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
+        }
+
     }
 
 }

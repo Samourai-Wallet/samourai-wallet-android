@@ -20,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -101,6 +103,7 @@ import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
@@ -611,9 +614,15 @@ public class BalanceActivity extends Activity {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
 
-        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false)    {
+            doFeaturePayNymUpdate();
+        }
+        else if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
                 PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
             doClaimPayNym();
+        }
+        else    {
+            ;
         }
 
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
@@ -740,7 +749,12 @@ public class BalanceActivity extends Activity {
             doSupport();
         }
         else if (id == R.id.action_sweep) {
-            doSweep();
+            if(!AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
+                doSweep();
+            }
+            else    {
+                Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            }
         }
         else if (id == R.id.action_utxo) {
             doUTXO();
@@ -1404,6 +1418,15 @@ public class BalanceActivity extends Activity {
     }
 
     private void refreshTx(final boolean notifTx, final boolean dragged, final boolean launch) {
+
+        if(AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
+            Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            /*
+            CoordinatorLayout coordinatorLayout = new CoordinatorLayout(BalanceActivity.this);
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.in_offline_mode, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            */
+        }
 
         Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
         intent.putExtra("notifTx", notifTx);
@@ -2627,6 +2650,73 @@ public class BalanceActivity extends Activity {
 
             return tx;
         }
+
+    }
+
+    private void doFeaturePayNymUpdate() {
+
+        new Thread(new Runnable() {
+
+            private Handler handler = new Handler();
+
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                try {
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+//                    Log.d("BalanceActivity", obj.toString());
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+//                    Log.d("BalanceActivity", res);
+
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("token"))    {
+                        String token = responseObj.getString("token");
+
+                        String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
+//                        Log.d("BalanceActivity", sig);
+
+                        obj = new JSONObject();
+                        obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+                        obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
+                        obj.put("signature", sig);
+
+//                        Log.d("BalanceActivity", "nym/add:" + obj.toString());
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
+//                        Log.d("BalanceActivity", res);
+
+                        responseObj = new JSONObject(res);
+                        if(responseObj.has("segwit") && responseObj.has("token"))    {
+                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                        }
+                        else if(responseObj.has("claimed") && responseObj.getBoolean("claimed") == true)    {
+                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                        }
+                        else    {
+                            ;
+                        }
+
+                    }
+                    else    {
+                        ;
+                    }
+
+                }
+                catch(JSONException je) {
+                    je.printStackTrace();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                Looper.loop();
+
+            }
+
+        }).start();
 
     }
 

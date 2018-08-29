@@ -3,8 +3,6 @@ package com.samourai.wallet;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -14,7 +12,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
@@ -26,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -41,12 +37,9 @@ import android.widget.Button;
 import android.widget.Toast;
 //import android.util.Log;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionInput;
-import org.bitcoinj.core.TransactionOptions;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -56,12 +49,10 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.bip47.BIP47ShowQR;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -71,12 +62,11 @@ import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.segwit.bech32.Bech32Util;
-import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
@@ -449,13 +439,16 @@ public class SendActivity extends Activity {
 
                 if(isChecked)    {
                     SPEND_TYPE = SPEND_RICOCHET;
+                    PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.USE_RICOCHET, true);
                 }
                 else    {
                     SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
+                    PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.USE_RICOCHET, false);
                 }
 
             }
         });
+        swRicochet.setChecked(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_RICOCHET, false));
 
         btLowFee = (Button)findViewById(R.id.low_fee);
         btAutoFee = (Button)findViewById(R.id.auto_fee);
@@ -508,12 +501,12 @@ public class SendActivity extends Activity {
             FeeUtil.getInstance().setHighFee(hi_sf);
         }
 
-        sanitizeFee();
+        FeeUtil.getInstance().sanitizeFee();
 
         switch(FEE_TYPE)    {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -526,7 +519,7 @@ public class SendActivity extends Activity {
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
@@ -539,7 +532,7 @@ public class SendActivity extends Activity {
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btPriorityFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -559,7 +552,7 @@ public class SendActivity extends Activity {
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_LOW);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -577,7 +570,7 @@ public class SendActivity extends Activity {
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.blue));
@@ -595,7 +588,7 @@ public class SendActivity extends Activity {
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
-                sanitizeFee();
+                FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
                 btAutoFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -1161,12 +1154,6 @@ public class SendActivity extends Activity {
                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                            final ProgressDialog progress = new ProgressDialog(SendActivity.this);
-                            progress.setCancelable(false);
-                            progress.setTitle(R.string.app_name);
-                            progress.setMessage(getString(R.string.please_wait_sending));
-                            progress.show();
-
                             final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
                             for(UTXO u : selectedUTXO)   {
                                 outPoints.addAll(u.getOutpoints());
@@ -1207,6 +1194,27 @@ public class SendActivity extends Activity {
                                     ;
                                 }
                             }
+
+                            SendParams.getInstance().setParams(outPoints,
+                                                                receivers,
+                                                                strPCode,
+                                                                SPEND_TYPE,
+                                                                _change,
+                                                                changeType,
+                                                                address,
+                                                                strPrivacyWarning.length() > 0,
+                                                                cbShowAgain != null ? cbShowAgain.isChecked() : false,
+                                                                _amount,
+                                                                _change_index
+                                                                );
+                            Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
+                            startActivity(_intent);
+
+
+                            /*
+
+
+
 
                             // make tx
                             Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
@@ -1480,17 +1488,29 @@ public class SendActivity extends Activity {
                                     }
                                 }).start();
 
+
+
+
+
+
+
+
+
+
                             }
                             else    {
 //                                Log.d("SendActivity", "tx error");
                                 Toast.makeText(SendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
                             }
 
+                            */
+
                         }
                     });
                     builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
 
+                            /*
                             try {
                                 // reset change index upon 'NO'
                                 if(changeType == 84)    {
@@ -1514,10 +1534,20 @@ public class SendActivity extends Activity {
                                     public void run() {
                                         btSend.setActivated(true);
                                         btSend.setClickable(true);
-                                        dialog.dismiss();
+//                                        dialog.dismiss();
                                     }
                                 });
                             }
+                            */
+
+                            SendActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btSend.setActivated(true);
+                                    btSend.setClickable(true);
+//                                        dialog.dismiss();
+                                }
+                            });
 
                         }
                     });
@@ -2100,182 +2130,6 @@ public class SendActivity extends Activity {
             }
         }).start();
 
-    }
-
-    private void doShowTx(final String hexTx, final String txHash) {
-
-        final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
-
-        TextView showTx = new TextView(SendActivity.this);
-        showTx.setText(hexTx);
-        showTx.setTextIsSelectable(true);
-        showTx.setPadding(40, 10, 40, 10);
-        showTx.setTextSize(18.0f);
-
-        final CheckBox cbMarkInputsUnspent = new CheckBox(SendActivity.this);
-        cbMarkInputsUnspent.setText(R.string.mark_inputs_as_unspendable);
-        cbMarkInputsUnspent.setChecked(false);
-
-        LinearLayout hexLayout = new LinearLayout(SendActivity.this);
-        hexLayout.setOrientation(LinearLayout.VERTICAL);
-        hexLayout.addView(cbMarkInputsUnspent);
-        hexLayout.addView(showTx);
-
-        new AlertDialog.Builder(SendActivity.this)
-                .setTitle(txHash)
-                .setView(hexLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
-                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                            intent.putExtra("notifTx", false);
-                            intent.putExtra("fetch", true);
-                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
-                        }
-
-                        dialog.dismiss();
-                        SendActivity.this.finish();
-
-                    }
-                })
-                .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
-                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                            intent.putExtra("notifTx", false);
-                            intent.putExtra("fetch", true);
-                            LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
-                        }
-
-                        if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
-
-                            final ImageView ivQR = new ImageView(SendActivity.this);
-
-                            Display display = (SendActivity.this).getWindowManager().getDefaultDisplay();
-                            Point size = new Point();
-                            display.getSize(size);
-                            int imgWidth = Math.max(size.x - 240, 150);
-
-                            Bitmap bitmap = null;
-
-                            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(hexTx, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), imgWidth);
-
-                            try {
-                                bitmap = qrCodeEncoder.encodeAsBitmap();
-                            } catch (WriterException e) {
-                                e.printStackTrace();
-                            }
-
-                            ivQR.setImageBitmap(bitmap);
-
-                            LinearLayout qrLayout = new LinearLayout(SendActivity.this);
-                            qrLayout.setOrientation(LinearLayout.VERTICAL);
-                            qrLayout.addView(ivQR);
-
-                            new AlertDialog.Builder(SendActivity.this)
-                                    .setTitle(txHash)
-                                    .setView(qrLayout)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            dialog.dismiss();
-                                            SendActivity.this.finish();
-
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.share_qr, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            String strFileName = AppUtil.getInstance(SendActivity.this).getReceiveQRFilename();
-                                            File file = new File(strFileName);
-                                            if(!file.exists()) {
-                                                try {
-                                                    file.createNewFile();
-                                                }
-                                                catch(Exception e) {
-                                                    Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                            file.setReadable(true, false);
-
-                                            FileOutputStream fos = null;
-                                            try {
-                                                fos = new FileOutputStream(file);
-                                            }
-                                            catch(FileNotFoundException fnfe) {
-                                                ;
-                                            }
-
-                                            if(file != null && fos != null) {
-                                                Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
-                                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
-
-                                                try {
-                                                    fos.close();
-                                                }
-                                                catch(IOException ioe) {
-                                                    ;
-                                                }
-
-                                                Intent intent = new Intent();
-                                                intent.setAction(Intent.ACTION_SEND);
-                                                intent.setType("image/png");
-                                                if (android.os.Build.VERSION.SDK_INT >= 24) {
-                                                    //From API 24 sending FIle on intent ,require custom file provider
-                                                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                                                            SendActivity.this,
-                                                            getApplicationContext()
-                                                                    .getPackageName() + ".provider", file));
-                                                } else {
-                                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                                                }
-                                                startActivity(Intent.createChooser(intent, SendActivity.this.getText(R.string.send_tx)));
-                                            }
-
-                                        }
-                                    }).show();
-                        }
-                        else    {
-
-                            Toast.makeText(SendActivity.this, R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
-
-                        }
-
-                    }
-                }).show();
-
-    }
-
-    private void markUTXOAsUnspendable(String hexTx)    {
-
-        HashMap<String, Long> utxos = new HashMap<String,Long>();
-
-        for(UTXO utxo : APIFactory.getInstance(SendActivity.this).getUtxos(true))   {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
-            }
-        }
-
-        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
-        for(TransactionInput input : tx.getInputs())   {
-            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
-        }
-
-    }
-
-    private void sanitizeFee()  {
-        if(FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() < 1000L)    {
-            SuggestedFee suggestedFee = new SuggestedFee();
-            suggestedFee.setDefaultPerKB(BigInteger.valueOf(1200L));
-            Log.d("SendActivity", "adjusted fee:" + suggestedFee.getDefaultPerKB().longValue());
-            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-        }
     }
 
 }

@@ -92,6 +92,12 @@
     <string name="options_like_typed_change2">Ricevi il resto delle tue transazioni nello stesso tipo di indirizzo del destinatario. Deseleziona per ricevere resto solo su indirizzi segwit.</string>
     <string name="options_haptic">Vibrazione inserimento PIN</string>
     <string name="options_haptic_2">Vibra ad ogni cifra nell\'inserimento PIN.</string>
+    <string name="options_prune">Riduci backup</string>
+    <string name="options_prune2">Riduce il payload del wallet e del backup dei files.</string>
+    <string name="options_address_calc">Calcolatore di Indirizzi</string>
+    <string name="options_address_calc2">Calccola gli indirizzi derivati dal seed del tuo wallet.</string>
+    <string name="options_paynym_calc">Calcolatore del PayNym</string>
+    <string name="options_paynym_calc2">Calcola gli indirizzi condivisi con gli altri PayNym.</string>
 
     <string name="prompt_send_backup_to_support">Invio il backup del wallet al supporto? Non include nessuna informazione su chiavi private, seed (parole segrete) o passphrase.</string>
 
@@ -106,7 +112,7 @@
     <string name="receive">Ricevi</string>
     <string name="cannot_select_utxo">Impossibile selezionare output non spesi</string>
     <string name="error_bip126_output">Errore nella determinazione indirizzo di output</string>
-    <string name="error_change_output">Errore nella determinazione indirizzo di change (resto)</string>
+    <string name="error_change_output">Errore nella determinazione indirizzo di resto</string>
 
     <string name="copied_to_clipboard">Copiato negli appunti</string>
     <string name="send_payment_code">Invia codice pagamento</string>
@@ -500,6 +506,7 @@
     <string name="invalid_mnemonic_word">Parola mnemonica BIP39 non valida</string>
     <string name="invalid_mnemonic">Mnemonico BIP39 non valido</string>
     <string name="enter_your_code_here">Inserisci il tuo codice qui</string>
+
     <string name="declaimer_recovery_words">Confermo di aver scritto e memorizzato le parole riportate qui sopra in un posto sicuro. Sono cosciente che chiunque abbia accesso alla mia passphrase ed alle parole del mio seed mnemonico avrà completo controllo del mio wallet e dei miei fondi depositati in esso.</string>
     <string name="return_to_wallet">Ritorna al wallet</string>
     <string name="caution_message_recovery_words">Non è sicuro conservare queste parole su un computer o sul cloud. Scrivi queste parole su un foglio di carta e tienile al sicuro, in un posto segreto.</string>
@@ -528,5 +535,54 @@
     <string name="total_p2sh_p2wpkh">Totale segwit (p2sh):</string>
     <string name="total_p2wpkh">Totale segwit (bech32):</string>
     <string name="total_blocked">Totale bloccati:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avanzate</string>
+    <string name="broadcast_with_txtenna">Broadcast con TxTenna</string>
+    <string name="show_qr_code">Mostra QR Code</string>
+    <string name="tx_connectivity_failure_msg">Impossibile trasmettere la transazione senza connessione dati. Come vuoi procedere?</string>
+
+    <string name="tx_creating_ok">Creazione transazione...</string>
+    <string name="tx_creating_ko">Errore nella creazione della transazione.</string>
+    <string name="tx_signing_ok">Firma della transazione...</string>
+    <string name="tx_signing_ko">Errore nella firma della transazione.</string>
+    <string name="tx_broadcast_ok">Trasmissione broadcast della transazione...</string>
+    <string name="tx_broadcast_ko">Errore nella trasmissione della transazione.</string>
+    <string name="tx_sent_ok">Transazione inviata.</string>
+    <string name="tx_sent_ko">Transazione non inviata.</string>
+
+    <string name="prune_backup">Ridurre il payload e backup dei file?</string>
+
+    <string-array name="address_types">
+        <item>Compatibile Segwit (P2SH)</item>
+        <item>Compatibile Segwit nativo (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">Samourai Wallet è in modalità offline.</string>
+    <string name="tx_standby">Transazione in stand-by</string>
+    <string name="show_hex">Visualizza Hex Code</string>
+    <string name="tx_tenna_coming_soon">txTenna su Android in arrivo presto!</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Indice</string>
+
+    <string name="receive_addresses">Indirizzi di ricezione</string>
+    <string name="send_addresses">Indirizzi di invio</string>
+    <string name="display_receive_redeem">Redeem script di ricezione</string>
+    <string name="display_receive_privkey">Chiave privata di ricezione</string>
+    <string name="invalid_index">Indice non valido</string>
+    <string name="type_address">Tipo di Indirizzo</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+    </string-array>
+
+    <string name="chain_id">Catena di indirizzi</string>
+    <string name="receive_chain">Indirizzo di ricezione</string>
+    <string name="change_chain">Indirizzo di resto</string>
 
 </resources>

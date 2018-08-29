@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
+    <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
 
     <string name="creating_wallet">Creating wallet. Please wait...</string>
@@ -92,6 +92,12 @@
     <string name="options_like_typed_change2">Receive change to same type of address as spend output. Turn OFF to receive only to segwit change addresses.</string>
     <string name="options_haptic">Haptic PIN entry</string>
     <string name="options_haptic_2">Vibrate each digit on PIN code entry.</string>
+    <string name="options_prune">Prune backup</string>
+    <string name="options_prune2">Prune wallet payload and backup files.</string>
+    <string name="options_address_calc">Address calculator</string>
+    <string name="options_address_calc2">Calculate addresses derived from your wallet seed.</string>
+    <string name="options_paynym_calc">PayNym calculator</string>
+    <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -350,8 +356,8 @@
 
     <string name="utxo_sign">Sign message</string>
     <string name="utxo_sign_text1">Sign message using this private key?</string>
-    <string name="utxo_sign_text2">Signed using utxo address.</string>
-    <string name="utxo_sign_text3">Signed using utxo address.</string>
+    <string name="utxo_sign_text2">Signed using utxo.</string>
+    <string name="utxo_sign_text3">Signed using utxo.</string>
 
     <string name="recovery_checkup">Recovery Checkup</string>
     <string name="recovery_checkup_message">Your wallet recovery words and passphrase will be displayed. Do not allow anyone to view your screen. This will NOT be displayed again.</string>
@@ -487,20 +493,21 @@
     <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
-  <string name="get_help_create">Create wallet: Get help</string>
-  <string name="get_help_restore">Restore wallet: Get help</string>
+    <string name="get_help_create">Create wallet: Get help</string>
+    <string name="get_help_restore">Restore wallet: Get help</string>
 
-  <string name="fee">Miner fee</string>
+    <string name="fee">Miner fee</string>
     <string name="fee_low_priority">Low priority: estimated 24</string>
     <string name="fee_mid_priority">Normal priority: estimated 6</string>
     <string name="fee_high_priority">High priority: estimated 2</string>
     <string name="fee_custom_priority">Custom fee: estimated</string>
     <string name="blocks_to_cf">blocks before confirmation</string>
 
-  <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
-  <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
+    <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
+    <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
     <string name="enter_your_code_here">Enter your code here</string>
-    <string name="declaimer_recovery_words">I confirm that I have written the above word down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
+
+    <string name="declaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
   <string name="return_to_wallet">Return to wallet</string>
   <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
     <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
@@ -528,5 +535,54 @@
   <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
   <string name="total_p2wpkh">Total segwit (bech32):</string>
   <string name="total_blocked">Total blocked:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Advanced</string>
+    <string name="broadcast_with_txtenna">Broadcast with TxTenna</string>
+    <string name="show_qr_code">Show QR Code</string>
+    <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
+
+    <string name="tx_creating_ok">Creating transaction...</string>
+    <string name="tx_creating_ko">Cannot create transaction</string>
+    <string name="tx_signing_ok">Signing transaction...</string>
+    <string name="tx_signing_ko">Cannot sign transaction</string>
+    <string name="tx_broadcast_ok">Broadcasting transaction...</string>
+    <string name="tx_broadcast_ko">Cannot broadcast transaction</string>
+    <string name="tx_sent_ok">Transaction sent</string>
+    <string name="tx_sent_ko">Transaction not sent</string>
+
+    <string name="prune_backup">Prune payload and backup files?</string>
+
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+    <string name="tx_standby">Transaction in stand-by</string>
+    <string name="show_hex">Display Hex Code</string>
+    <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Receive addresses</string>
+    <string name="send_addresses">Send addresses</string>
+    <string name="display_receive_redeem">Receive redeem script</string>
+    <string name="display_receive_privkey">Receive private key</string>
+    <string name="invalid_index">Invalid index</string>
+    <string name="type_address">Type of address</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+    </string-array>
+
+    <string name="chain_id">Address chain</string>
+    <string name="receive_chain">Receive addresse</string>
+    <string name="change_chain">Change addresse</string>
 
 </resources>

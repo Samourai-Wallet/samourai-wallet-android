@@ -54,15 +54,15 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
-import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -70,7 +70,6 @@ import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.SendAddressUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,17 +86,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 import static java.lang.System.currentTimeMillis;
 
 import com.yanzhenjie.zbar.Symbol;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
-import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
@@ -864,7 +863,7 @@ public class BatchSendActivity extends Activity {
 
     private void doSpend()  {
 
-        HashMap<String,BigInteger> receivers = new HashMap<String,BigInteger>();
+        final HashMap<String,BigInteger> receivers = new HashMap<String,BigInteger>();
         long amount = 0L;
         for(BatchSendUtil.BatchSend _data : data)   {
             Log.d("BatchSendActivity", "output:" + _data.amount);
@@ -880,6 +879,7 @@ public class BatchSendActivity extends Activity {
 
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         int p2pkh = 0;
+        int p2sh_p2wpkh = 0;
         int p2wpkh = 0;
         long totalValueSelected = 0L;
         int totalSelected = 0;
@@ -891,10 +891,11 @@ public class BatchSendActivity extends Activity {
             totalValueSelected += utxo.getValue();
             totalSelected += utxo.getOutpoints().size();
 
-            Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(utxo.getOutpoints());
+            Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
             p2pkh += outpointTypes.getLeft();
+            p2sh_p2wpkh += outpointTypes.getMiddle();
             p2wpkh += outpointTypes.getRight();
-            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2wpkh, receivers.size() + 1).longValue()))    {
+            if(totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, receivers.size() + 1).longValue()))    {
                 break;
             }
         }
@@ -902,7 +903,7 @@ public class BatchSendActivity extends Activity {
         Log.d("BatchSendActivity", "totalSelected:" + totalSelected);
         Log.d("BatchSendActivity", "totalValueSelected:" + totalValueSelected);
 
-        List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
+        final List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
         for(UTXO utxo : selectedUTXO)   {
             outpoints.addAll(utxo.getOutpoints());
 
@@ -913,8 +914,8 @@ public class BatchSendActivity extends Activity {
             }
 
         }
-        Pair<Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(outpoints);
-        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getRight(), receivers.size() + 1);
+        Triple<Integer,Integer,Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(outpoints));
+        BigInteger fee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), receivers.size() + 1);
         Log.d("BatchSendActivity", "fee:" + fee.longValue());
 
         if(amount + fee.longValue() > balance)    {
@@ -1001,6 +1002,8 @@ public class BatchSendActivity extends Activity {
             final String _change_address = change_address;
             final int _change_idx = change_idx;
 
+            final long _amount = amount;
+
             tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
             final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
             final String strTxHash = tx.getHashAsString();
@@ -1024,6 +1027,27 @@ public class BatchSendActivity extends Activity {
                                 return;
 
                             }
+
+                            SendParams.getInstance().setParams(outpoints,
+                                    receivers,
+                                    data,
+                                    SendActivity.SPEND_SIMPLE,
+                                    _change,
+                                    49,
+                                    "",
+                                    false,
+                                    false,
+                                    _amount,
+                                    _change_idx
+                            );
+                            Intent _intent = new Intent(BatchSendActivity.this, TxAnimUIActivity.class);
+                            startActivity(_intent);
+
+
+
+
+                            /*
+
 
                             new Thread(new Runnable() {
                                 @Override
@@ -1111,25 +1135,6 @@ public class BatchSendActivity extends Activity {
                                                 }
                                             }
 
-                            /*
-                            if(strPrivacyWarning.length() > 0 && cbShowAgain != null)    {
-                                SendAddressUtil.getInstance().add(address, cbShowAgain.isChecked() ? false : true);
-                            }
-                            else if(SendAddressUtil.getInstance().get(address) == 0)    {
-                                SendAddressUtil.getInstance().add(address, false);
-                            }
-                            else    {
-                                SendAddressUtil.getInstance().add(address, true);
-                            }
-                            */
-
-                            /*
-                                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                            intent.putExtra("notifTx", false);
-                                            intent.putExtra("fetch", true);
-                                            LocalBroadcastManager.getInstance(BatchSendActivity.this).sendBroadcast(intent);
-                                            */
-
                                             View view = BatchSendActivity.this.getCurrentFocus();
                                             if (view != null) {
                                                 InputMethodManager imm = (InputMethodManager)BatchSendActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1154,23 +1159,19 @@ public class BatchSendActivity extends Activity {
                                         Toast.makeText(BatchSendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                     finally {
-                        /*
-                        BatchSendActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                btSend.setActivated(true);
-                                btSend.setClickable(true);
-                                progress.dismiss();
-                                dialog.dismiss();
-                            }
-                        });
-                        */
+                                        ;
                                     }
 
                                     Looper.loop();
 
                                 }
                             }).start();
+
+                            */
+
+
+
+
 
                         }
                     }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -1281,7 +1282,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -1297,7 +1298,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -1400,23 +1401,6 @@ public class BatchSendActivity extends Activity {
 
                     }
                 }).show();
-
-    }
-
-    private void markUTXOAsUnspendable(String hexTx)    {
-
-        HashMap<String, Long> utxos = new HashMap<String,Long>();
-
-        for(UTXO utxo : APIFactory.getInstance(BatchSendActivity.this).getUtxos(true))   {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                utxos.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
-            }
-        }
-
-        Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(hexTx));
-        for(TransactionInput input : tx.getInputs())   {
-            BlockedUTXO.getInstance().add(input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex(), utxos.get(input.getOutpoint().getHash().toString() + "-" + (int)input.getOutpoint().getIndex()));
-        }
 
     }
 

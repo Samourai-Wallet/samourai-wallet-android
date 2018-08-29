@@ -1,154 +1,129 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
+    android:orientation="vertical"
     android:background="@color/primary_dark"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="#6c768b"
+        android:paddingBottom="15dp"
+        android:textAlignment="center">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/receive_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="10dp">
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/roboto_mono"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:typeface="monospace" />
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="20dp"
-                android:background="@color/primary"
-                android:focusable="false"
-                android:elevation="2dp">
+    </android.support.design.widget.AppBarLayout>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_dark"
+        android:fitsSystemWindows="true">
 
-                    <EditText
-                        android:layout_weight="4"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number|numberDecimal"
-                        android:digits="0123456789."
-                        android:ems="10"
-                        android:id="@+id/amountBTC"
-                        android:hint="0.0000"
-                        android:layout_marginRight="8dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:maxLength="17"
-                        />
-
-                    <TextView
-                        android:layout_weight="3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="BTC-USD"
-                        android:gravity="center_horizontal"
-                        android:textAlignment="gravity"
-                        android:id="@+id/fiatSymbol" />
-
-                    <EditText
-                        android:layout_weight="4"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number|numberDecimal"
-                        android:digits="0123456789."
-                        android:ems="10"
-                        android:id="@+id/amountFiat"
-                        android:hint="0.00"
-                        android:layout_marginLeft="8dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:maxLength="17"
-                        />
-
-                </LinearLayout>
-
-            </LinearLayout>
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            android:background="@color/primary_dark"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
             <ImageView
                 android:id="@+id/qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                />
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.037"
+                app:srcCompat="@drawable/border_button_shape" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:paddingTop="20dp"
-                android:paddingLeft="22dp"
-                android:layout_height="wrap_content">
+                android:id="@+id/advance_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/qr"
+                app:layout_constraintVertical_bias="0.0">
 
-                <CheckBox
-                    android:id="@+id/bech32"
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="6dp"
+                    android:background="@null"
+                    android:contentDescription="TODO"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_settings_applications_white_24dp" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/use_bech32"
-                    />
-
+                    android:fontFamily="@font/roboto_mono"
+                    android:text="@string/advanced" />
             </LinearLayout>
 
-        </LinearLayout>
+            <include
+                layout="@layout/receive_advance_form_segment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/advance_button"
+                app:layout_goneMarginBottom="10dp" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
     </ScrollView>
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="5dp">
+</LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/receive_address_layout"
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_secondary"
-                android:textSize="16sp"
-                android:paddingLeft="22dp"
-                android:fontFamily="Roboto Regular"
-                android:text="Address"
-                />
-
-            <TextView
-                android:id="@+id/receive_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffffff"
-                android:autoText="false"
-                android:textSize="14sp"
-                android:paddingLeft="22dp"
-                android:fontFamily="Roboto Regular"
-                android:textStyle="italic"
-                />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-</RelativeLayout>
