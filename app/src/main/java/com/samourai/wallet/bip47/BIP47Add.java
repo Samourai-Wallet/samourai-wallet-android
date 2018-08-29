@@ -68,10 +68,6 @@ public class BIP47Add extends Activity {
 
                 final String userInput = edPCode.getText().toString();
 
-                if(FormatsUtil.getInstance().isValidPaymentCode(userInput))    {
-//                    new PaymentCodeIOTask().execute(new String[] { userInput });
-                }
-
                 edPCode.addTextChangedListener(twPCode);
             }
 
@@ -176,56 +172,6 @@ public class BIP47Add extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private class PaymentCodeIOTask extends AsyncTask<String, Void, String> {
-
-        private ProgressDialog progress = null;
-        private String title = null;
-
-        @Override
-        protected void onPreExecute() {
-            progress = new ProgressDialog(BIP47Add.this);
-            progress.setCancelable(false);
-            progress.setTitle(R.string.app_name);
-            progress.setMessage(getString(R.string.please_wait));
-            progress.show();
-        }
-
-        @Override
-        protected String doInBackground(String... s) {
-
-            String result = null;
-            String url = WebUtil.PAYMENTCODE_IO_SEARCH + s[0];
-            try {
-                result = WebUtil.getInstance(BIP47Add.this).getURL(url);
-
-                JSONObject obj = new JSONObject(result);
-                if(obj.has("title"))    {
-                    title = StringEscapeUtils.unescapeHtml4(obj.getString("title"));
-                }
-
-            }
-            catch(Exception e) {
-                ;
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            if(progress != null && progress.isShowing())    {
-                progress.dismiss();
-            }
-
-            if(title != null)    {
-                edLabel.setText(title);
-            }
-
-        }
-
     }
 
 }

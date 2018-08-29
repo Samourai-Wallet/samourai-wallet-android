@@ -29,7 +29,8 @@ public class TransactionProgressView extends FrameLayout {
     private ArcProgress mArcProgress;
     private ConstraintLayout mTransactionProgressContainer;
     private ImageView mCheckMark;
-    private Button mTennaBroadCastBtn, mShowQRBtn;
+    private Button mTennaBroadCastBtn;
+    private Button mShowQRBtn;
     private TextView txProgressText, txSubText;
 
     public TransactionProgressView(@NonNull Context context) {
@@ -126,4 +127,13 @@ public class TransactionProgressView extends FrameLayout {
     public void reset() {
         init();
     }
+
+    public Button getTxTennaButton() {
+        return mTennaBroadCastBtn;
+    }
+
+    public Button getShowQRButton() {
+        return mShowQRBtn;
+    }
+
 }

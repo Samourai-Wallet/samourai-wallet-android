@@ -609,7 +609,9 @@ public class ReceiveActivity extends AppCompatActivity {
 
         tvAddress.setText(addr);
         displayPath();
-        checkPrevUse();
+        if(!AppUtil.getInstance(ReceiveActivity.this).isOfflineMode())    {
+            checkPrevUse();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -720,16 +722,16 @@ public class ReceiveActivity extends AppCompatActivity {
         switch(sel)    {
             case 0:
                 path += "49'";
-                idx = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+                idx = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx() - 1;
                 break;
             case 1:
                 path += "84'";
-                idx = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
+                idx = BIP84Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx() - 1;
                 break;
             default:
                 path += "44'";
                 try {
-                    idx = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx();
+                    idx = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx() -1;
                 }
                 catch(IOException | MnemonicException.MnemonicLengthException e) {
                     ;

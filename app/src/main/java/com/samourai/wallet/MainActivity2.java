@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -170,24 +171,15 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if(!ConnectivityStatus.hasConnectivity(MainActivity2.this) &&
+        if(AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
         !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
-
-            new AlertDialog.Builder(MainActivity2.this)
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.no_internet)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            AppUtil.getInstance(MainActivity2.this).restartApp();
-                        }
-                    }).show();
-
+            Toast.makeText(MainActivity2.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
+            doAppInit(false, null, null);
         }
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
-            exchangeRateThread();
+            ExchangeRateFactory.getInstance(MainActivity2.this).exchangeRateThread();
 
             boolean isDial = false;
             String strUri = null;
@@ -316,78 +308,6 @@ public class MainActivity2 extends Activity {
             }
         }).start();
 
-    }
-
-    private void exchangeRateThread() {
-
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                String response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.LBC_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataLBC(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseLBC();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBTCe();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                response = null;
-                try {
-                    response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBFX(response);
-                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBFX();
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ;
-                    }
-                });
-
-                Looper.loop();
-
-            }
-        }).start();
     }
 
     private void doAppInit(boolean isDial, final String strUri, final String strPCode) {

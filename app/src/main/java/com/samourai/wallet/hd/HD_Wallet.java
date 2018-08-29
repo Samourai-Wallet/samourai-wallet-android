@@ -52,7 +52,8 @@ public class HD_Wallet {
         byte[] hd_seed = MnemonicCode.toSeed(mWordList, strPassphrase);
         mKey = HDKeyDerivation.createMasterPrivateKey(hd_seed);
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
-        mRoot = HDKeyDerivation.deriveChildKey(t1, ChildNumber.HARDENED_BIT);
+        int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : ChildNumber.HARDENED_BIT;
+        mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
 
         mAccounts = new ArrayList<HD_Account>();
         for(int i = 0; i < nbAccounts; i++) {
