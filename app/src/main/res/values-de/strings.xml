@@ -28,8 +28,8 @@
     <string name="options_cat_networking">Netzwerk</string>
     <string name="options_cat_other">Über</string>
 
-    <string name="options_mnemonic">Merksatz anzeigen</string>
-    <string name="options_mnemonic2">Zeigt den Merksatz (12 Worte) deiner Wallet.</string>
+    <string name="options_mnemonic">Geheimsatz anzeigen</string>
+    <string name="options_mnemonic2">Zeigt den Geheimsatz (12 Worte) deiner Wallet.</string>
     <string name="options_xpub">BIP44 XPUB anzeigen</string>
     <string name="options_xpub2">Zeigt den Extended Public Key des BIP44 Accounts.</string>
     <string name="options_xpub49">Segwit YPUB anzeigen</string>
@@ -94,13 +94,13 @@
     <string name="options_haptic">Haptische PIN-Eingabe</string>
     <string name="options_haptic_2">Vibrationsfeedback während der PIN-Eingabe.</string>
     <string name="options_prune">Backup verkleinern</string>
-    <string name="options_prune2">Verringert Metadaten und Backup-Dateien.</string>
+    <string name="options_prune2">Entfernt nicht unbedingt nötige Metadaten aus dem Backup, um es zu verkleinern.</string>
 	<string name="options_address_calc">Adress-Rechner</string>
     <string name="options_address_calc2">Berechne Adressen, die von deiner Wallet-Seed abgeleitet werden.</string>
     <string name="options_paynym_calc">PayNym-Rechner</string>
     <string name="options_paynym_calc2">Berechne Adressen, die mit anderen PayNyms geteilt werden.</string>
 
-    <string name="prompt_send_backup_to_support">Wallet Backup an den Tech-Support senden? Enthält keine Informationen über Private Keys, den Merksatz oder die Passphrase.</string>
+    <string name="prompt_send_backup_to_support">Wallet Backup an den Tech-Support senden? Enthält keine Informationen über Private Keys, den Geheimsatz oder die Passphrase.</string>
 
     <string name="timeline_today">Heute</string>
     <string name="timeline_older">Älter</string>
@@ -133,7 +133,7 @@
     <string name="bip38_pw_error">BIP38 Passwort Fehler</string>
     <string name="bip39_safe">Bitte erstelle eine Passphrase (Passwort) und halte sie geheim. Du wirst sie brauchen, wenn du den Zugriff auf deine Wallet verlierst.</string>
     <string name="bip39_safe2">Bitte bestätige deine Passphrase (Passwort). Halte sie geheim. Du wirst sie brauchen, wenn du den Zugriff auf deine Wallet verlierst.</string>
-    <string name="bip39_restore">Gib deinen Merksatz (oder deine Hex-Entropie) und deine BIP39 Passphrase ein. Falls du keine BIP39 Passphrase nutzt, einfach leer lassen.</string>
+    <string name="bip39_restore">Gib deinen Geheimsatz (oder deine Hex-Entropie) und deine BIP39 Passphrase ein. Falls du keine BIP39 Passphrase nutzt, einfach leer lassen.</string>
     <string name="bip39_must">Deine Wallet muss eine Passphrase verwenden. Bitte nochmal versuchen.</string>
     <string name="bip39_unmatch">Die Passphrase stimmt nicht überein. Bitte nochmal versuchen.</string>
     <string name="bip39_invalid">Bitte keine Leerzeichen in der Passphrase verwenden. Bitte nochmal versuchen.</string>
@@ -147,7 +147,7 @@
     <string name="bip39_decrypt_test">Die eingegebene Wallet Passphrase war korrekt. Möchtest du die Entschlüsselung deines neusten Autobackups testen?</string>
     <string name="backup_read_ok">Backup in Ordnung.</string>
     <string name="backup_read_error">Fehler beim Lesen der Backup-Datei.</string>
-    <string name="mnemonic_hex">Merksatz oder Hex-Entropie</string>
+    <string name="mnemonic_hex">Geheimsatz oder Hex-Entropie</string>
     <string name="pin_enter">PIN eingeben</string>
     <string name="please_wait">Bitte warten...</string>
     <string name="random_key_error">Random Key Fehler</string>
@@ -215,7 +215,7 @@
     <string name="export_to_email">Als E-Mail exportieren</string>
     <string name="encryption_error">Beim Verschlüsseln deines Wallet Backups ist ein Fehler aufgetreten. Bitte nochmal versuchen.</string>
     <string name="import_backup">Backup</string>
-    <string name="import_mnemonic">Merksatz/Seed</string>
+    <string name="import_mnemonic">Geheimsatz/Seed</string>
     <string name="encrypted_backup">Verschlüsselte Wallet Daten</string>
     <string name="decryption_error">Beim Entschlüsseln des Wallet Backups ist ein Fehler aufgetreten. Bitte nochmal versuchen.</string>
     <string name="restore_wallet_from_backup">Wallet aus Backup wiederherstellen</string>
@@ -361,8 +361,8 @@
     <string name="utxo_sign_text3">Mit ungenutztem Output signiert.</string>
 
     <string name="recovery_checkup">Wiederherstellung überprüfen</string>
-    <string name="recovery_checkup_message">Dein Wallet Merksatz und deine Passphrase werden angezeigt. Achte darauf, dass niemand deinen Bildschirm sehen kann. Diese Information wird später NICHT mehr angezeigt.</string>
-    <string name="mnemonic">Merksatz</string>
+    <string name="recovery_checkup_message">Dein Geheimsatz und deine Passphrase werden angezeigt. Achte darauf, dass niemand deinen Bildschirm sehen kann. Diese Information wird später NICHT mehr angezeigt.</string>
+    <string name="mnemonic">Geheimsatz</string>
     <string name="recovery_checkup_finish">ICH HABE MEINE WIEDERHERSTELLUNGSINFORMATIONEN GESICHERT</string>
     <string name="pin_reminder">Zur Erinnerung, deine PIN ist:</string>
 
@@ -486,7 +486,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_bip39_password">Bip39 Passphrase hinzufügen</string>
     <string name="close_bip39_password">Bip39 Passphrase entfernen</string>
-    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Gib deinen Merksatz ein, um eine Wallet eines anderen Anbieters zu importieren.</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Gib deinen Geheimsatz ein, um eine Wallet eines anderen Anbieters zu importieren.</string>
     <string name="last_updated">Zuletzt aktualisiert</string>
     <string name="get_help">Hilfe</string>
     <string name="offline_mode">Offline-Modus</string>
@@ -504,15 +504,15 @@
     <string name="fee_custom_priority">Eigene Gebühr: voraussichtlich</string>
     <string name="blocks_to_cf">Blöcke bis zur Bestätigung</string>
 
-    <string name="invalid_mnemonic_word">Ungültiges Merksatz-Wort nach BIP39</string>
-    <string name="invalid_mnemonic">Ungültiger BIP39 Merksatz</string>
+    <string name="invalid_mnemonic_word">Ungültiges Gheimsatz-Wort nach BIP39</string>
+    <string name="invalid_mnemonic">Ungültiger BIP39 Geheimsatz</string>
     <string name="enter_your_code_here">Gib hier deinen Code ein</string>
 
-    <string name="declaimer_recovery_words">Ich bestätige, dass ich die oben genannten Worte aufgeschrieben habe und sie an einem sicheren Ort aufbewahre. Ich verstehen, dass jeder, der sowohl Zugriff auf meinen Merksatz als auch meine Passphrase hat, vollen Zugriff auf meine Wallet und mein gesamtes Guthaben hat.</string>
+    <string name="declaimer_recovery_words">Ich bestätige, dass ich die oben genannten Worte aufgeschrieben habe und sie an einem sicheren Ort aufbewahre. Ich verstehen, dass jeder, der sowohl Zugriff auf meinen Geheimsatz als auch meine Passphrase hat, vollen Zugriff auf meine Wallet und mein gesamtes Guthaben hat.</string>
 	<string name="return_to_wallet">Zurück zur Wallet</string>
     <string name="caution_message_recovery_words">Es ist nicht sicher, diese Wörter auf dem Computer oder in der Cloud zu speichern. Notiere sie auf ein Stück Papier und bewahre es an einem sicheren und geheimen Ort auf.</string>
     <string name="these_words_are">Diese Worte sind ein Backup aller geheimen Schlüssel (Private Keys) deiner Wallet.</string>
-	<string name="recovery_words">MERKSATZ</string>
+	<string name="recovery_words">GEHEIMSATZ</string>
 
 	<string name="permission_alert_dialog_title_sms">Zugriff auf SMS und Telefonstatus erforderlich</string>
 	<string name="permission_dialog_message_sms">Deine Wallet benötigt Zugriff auf SMS (senden und empfangen), um die Fernzugriffsfunktionen nutzen zu können.</string>
@@ -553,7 +553,7 @@
     <string name="tx_sent_ok">Transaktion gesendet</string>
     <string name="tx_sent_ko">Transaktion nicht gesendet</string>
 
-    <string name="prune_backup">Metadaten und Backup-Dateien verringern?</string>
+    <string name="prune_backup">Nicht unbedingt nötige Daten wirklich aus dem Backup entfernen?</string>
 
     <string-array name="address_types">
         <item>SegWit Kompatibilität (P2SH)</item>
@@ -582,7 +582,7 @@
         <item>Ricochet SegWit</item>
     </string-array>
 
-    <string name="chain_id">Addresskette</string>
+    <string name="chain_id">Addresszweig</string>
     <string name="receive_chain">Empfangsadresse</string>
     <string name="change_chain">Wechseladresse</string>
 
@@ -590,12 +590,14 @@
 
 
 <!-- Hinweis: 
+
+	Last updated for Version: 0.98.81
 	
 	Einige Fachbegriffe oder bereits eingedeutschte Wörter habe ich englisch gelassen, da es meiner Meinung nach sinnvoller ist.
 	
 	Folgende Begriffe sind betroffen: 
-	Ricochet, Chain, Replay, Chain Split, Wallet, Private Key, Public Key, PayNyms, 
-	Payment-Code, Exchange, Block-Explorer, STONEWALL, MainNet, TestNet, Dust, 
-	Proof-of-Work, replace-by-fee, Bitcoin-Node, Backup, Premium Addons
+	Backup, Bitcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,       
+	Exchange, Payment-Code, MainNet, PayNym, Premium Addons, Private Key, Proof-of-Work,    
+	Public Key, replace-by-fee, Replay, Ricochet, STONEWALL, TestNet, Wallet
 
 -->
