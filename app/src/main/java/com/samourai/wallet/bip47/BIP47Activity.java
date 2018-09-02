@@ -1807,7 +1807,9 @@ public class BIP47Activity extends Activity {
                     JSONObject responseObj = new JSONObject(res);
                     if(responseObj.has("nymName"))    {
                         final String strNymName = responseObj.getString("nymName");
-                        BIP47Meta.getInstance().setLabel(pcode, strNymName);
+                        if(FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcode)))    {
+                            BIP47Meta.getInstance().setLabel(pcode, strNymName);
+                        }
                         handler.post(new Runnable() {
                             public void run() {
                                 adapter.notifyDataSetChanged();
