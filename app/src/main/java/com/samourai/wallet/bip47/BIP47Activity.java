@@ -493,6 +493,7 @@ public class BIP47Activity extends Activity {
                 String pcode = data.getStringExtra("pcode");
                 if(pcode != null && pcode.length() > 0 && FormatsUtil.getInstance().isValidPaymentCode(pcode) && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
                     doUpdatePayNymInfo(pcode);
+                    adapter.notifyDataSetChanged();
                 }
 
                 if(BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT)    {
@@ -1810,7 +1811,7 @@ public class BIP47Activity extends Activity {
                         if(FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcode)))    {
                             BIP47Meta.getInstance().setLabel(pcode, strNymName);
                         }
-                        handler.post(new Runnable() {
+                        BIP47Activity.this.runOnUiThread(new Runnable() {
                             public void run() {
                                 adapter.notifyDataSetChanged();
                             }
