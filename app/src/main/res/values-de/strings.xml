@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="alpha_create_wallet">Notiere diese Wörter und bewahre sie sicher auf. Verliere diese Wörter nicht und vergiss deine Passphrase nicht.</string>
+    <string name="alpha_create_confirm_backup">Ich habe meine Wörter aufgeschrieben</string>
+
+    <string name="creating_wallet">Wallet wird erstellt. Bitte warten...</string>
+    <string name="restoring_wallet">Wallet wird wiederhergestellt. Bitte warten...</string>
+    <string name="decrypting_bip38">BIP38 Passwort wird entschlüsselt. Bitte warten...</string>
+
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_support">Hilfe</string>
+    <string name="action_sweep">Private Key übertragen</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Alle archivierten Payment-Codes aktivieren</string>
+    <string name="action_sync_all">Alle Payment-Codes synchronisieren</string>
+
+    <string name="about_us">Über Samourai Wallet</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+
+    <string name="options_cat_prefs">Währung, Block-Explorer</string>
+    <string name="options_cat_stealth">Unsichtbar-Modus</string>
+    <string name="options_cat_remote">Fernzugriff</string>
+    <string name="options_cat_wallet">Wallet</string>
+    <string name="options_cat_networking">Netzwerk</string>
+    <string name="options_cat_other">Über</string>
+
+    <string name="options_mnemonic">Geheimsatz anzeigen</string>
+    <string name="options_mnemonic2">Zeigt den Geheimsatz (12 Worte) deiner Wallet.</string>
+    <string name="options_xpub">BIP44 XPUB anzeigen</string>
+    <string name="options_xpub2">Zeigt den Extended Public Key des BIP44 Accounts.</string>
+    <string name="options_xpub49">Segwit YPUB anzeigen</string>
+    <string name="options_xpub49_2">Zeigt den Extended Public Key des BIP49 SegWit Accounts (P2SH).</string>
+    <string name="options_xpub84">Segwit ZPUB anzeigen</string>
+    <string name="options_xpub84_2">Zeigt den Extended Public Key des BIP84 SegWit Accounts (Bech32).</string>
+    <string name="options_wipe">Wallet sicher löschen</string>
+    <string name="options_wipe2">Entfernt diese Wallet sicher vom Gerät.</string>
+    <string name="options_stealth_display">Unsichtbarer Start</string>
+    <string name="options_stealth_display2">Entfernt Samourai aus der App-Übersicht und vom Startbildschirm. Du musst danach **DEIN_PIN_CODE# anrufen, um Samourai zu starten.</string>
+    <string name="options_remote_commands">Fernzugriff ermöglichen</string>
+    <string name="options_remote_commands2">Erlaubt den Fernzugriff per SMS.</string>
+    <string name="options_currency">Lokale Währung</string>
+    <string name="options_currency2">Wähle deine Exchange und deine lokale Fiat-Währung.</string>
+    <string name="options_blockexplorer">Block-Explorer</string>
+    <string name="options_blockexplorer2">Externer Block-Explorer, der für die Anzeige von Transaktionsdetails verwendet wird.</string>
+    <string name="options_sim_switch">Gegen SIM-Wechsel schützen</string>
+    <string name="options_sim_switch2">Sendet eine SMS an die vertrauenswürdige Handynummer, sobald die SIM-Karte getauscht wird.</string>
+    <string name="options_use_telno">Fernzugriff über vertrauensw. Nummer</string>
+    <string name="options_use_telno2">Beschränkt den Fernzugriff auf die vertrauenswürdige Handynummer.</string>
+    <string name="options_alert_telno">Vertrauenswürdige Nummer</string>
+    <string name="options_alert_telno2">Eine vertrauenswürdige Handynummer, auf die der Fernzugriff begrenzt werden kann. (Verwende das int\'l Format ohne Leerzeichen  z.B: +447385555555).</string>
+    <string name="options_hash">APK Hash</string>
+    <string name="options_hash2">Zeigt den SHA-256-Hash der installierten APK-Datei (Kann in die Zwischenablage kopiert werden).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">Starte OpenVPN für Android.</string>
+    <string name="options_Tor">Verbindung über Tor?</string>
+    <string name="options_Tor2">Starte Orbot (Tor).</string>
+    <string name="options_export">Wallet Backup exportieren</string>
+    <string name="options_change_pin">PIN ändern</string>
+    <string name="options_change_pin2">Erstelle eine neue PIN, um dein Wallet zu entsperren.</string>
+    <string name="options_remote_pin">Unsichtbar-Modus und Fernzugriff PIN</string>
+    <string name="options_remote_pin2">Erstelle eine alternative PIN für den Unsichtbar-Modus und den Fernzugriff.</string>
+    <string name="options_autosave_backup">Automatische Backups aktivieren</string>
+    <string name="options_autosave_backup2">Speichert regelmäßig ein mit der Passphrase verschlüsseltes Backup auf dem Gerät.</string>
+    <string name="options_version">Version</string>
+    <string name="options_txs">Transaktionen</string>
+    <string name="options_boltzmann">STONEWALL für Zahlungen verwenden</string>
+    <string name="options_boltzmann_2">Zahlungen werden den STONEWALL Algorithmus verwenden, um die Privatsphäre zu erhöhen.</string>
+    <string name="options_utxo">Ungenutzte Outputs anzeigen</string>
+    <string name="options_trusted_node">Vertrauenswürdigen Peer festlegen</string>
+    <string name="options_trusted_node2">Gib deine eigene Bitcoin-Node an, um Transaktionen darüber zu veröffentlichen.</string>
+    <string name="options_use_trusted_node">Vertrauenswürdigen Peer verwenden</string>
+    <string name="options_use_trusted_node2">Transaktionen über den eigenen, vertrauenswürdigen Peer veröffentlichen.</string>
+    <string name="options_rbf0">RBF für Zahlungen verwenden</string>
+    <string name="options_rbf0_2">Replace-by-fee für Zahlungen verwenden, um nachträgliche Gebührenerhöhungen zu ermöglichen.</string>
+    <string name="options_troubleshoot">Problembehandlung</string>
+    <string name="options_passphrase_test">Passphrase/Backup Test</string>
+    <string name="options_passphrase_test2">Wallet Zugriff und Backup überprüfen.</string>
+    <string name="options_send_backup_to_support">Backup an den Tech-Support senden</string>
+    <string name="options_send_backup_to_support2">Wallet Backup an den Tech-Support senden. Enthält keine Private Key Informationen.</string>
+    <string name="options_fee_provider">Gebühren-Schätzungs-Service</string>
+    <string name="options_fee_provider2">Wähle deinen bevorzugten Gebühren-Schätzungs-Service.</string>
+    <string name="options_broadcast_on">Transaktionen veröffentlichen</string>
+    <string name="options_broadcast_on2">Ausschalten (veröffentlichen AUS) um signierte RAW-Transaktionen in die Zwischenablage zu kopieren.</string>
+    <string name="options_segwit">Empfange auf SegWit Adressen</string>
+    <string name="options_segwit_2">Generiert SegWit Adressen für eingehende Transaktionen.</string>
+    <string name="options_broadcast_hex">Hex-Transaktion veröffentlichen</string>
+    <string name="options_broadcast_hex2">Eine signierte Hex-Transaktion veröffentlichen.</string>
+    <string name="options_like_typed_change">Wechselgeld auf gleichartige Adressen</string>
+    <string name="options_like_typed_change2">Wechselgeld auf Adressen empfangen, die dem Adress-Typ der Senderadresse entsprechen. Diese Option Ausschalten um Wechselgeld immer auf SegWit Adressen zu empfangen.</string>
+    <string name="options_haptic">Haptische PIN-Eingabe</string>
+    <string name="options_haptic_2">Vibrationsfeedback während der PIN-Eingabe.</string>
+    <string name="options_prune">Backup verkleinern</string>
+    <string name="options_prune2">Entfernt nicht unbedingt nötige Metadaten aus dem Backup, um es zu verkleinern.</string>
+	<string name="options_address_calc">Adress-Rechner</string>
+    <string name="options_address_calc2">Berechne Adressen, die von deiner Wallet-Seed abgeleitet werden.</string>
+    <string name="options_paynym_calc">PayNym-Rechner</string>
+    <string name="options_paynym_calc2">Berechne Adressen, die mit anderen PayNyms geteilt werden.</string>
+
+    <string name="prompt_send_backup_to_support">Wallet Backup an den Tech-Support senden? Enthält keine Informationen über Private Keys, den Geheimsatz oder die Passphrase.</string>
+
+    <string name="timeline_today">Heute</string>
+    <string name="timeline_older">Älter</string>
+
+    <string name="tx_sent">Transaktion erfolgreich</string>
+    <string name="tx_failed">Transaktion fehlgeschlagen</string>
+    <string name="you_received">Empfangen</string>
+    <string name="you_sent">Gesendet</string>
+    <string name="send">Senden</string>
+    <string name="receive">Empfangen</string>
+    <string name="cannot_select_utxo">Ungenutzte Outputs können nicht ausgewählt werden</string>
+    <string name="error_bip126_output">Fehler beim Ermitteln der Output-Adresse</string>
+    <string name="error_change_output">Fehler beim Ermitteln der Wechselgeld-Adresse</string>
+
+    <string name="copied_to_clipboard">In die Zwischenablage kopiert</string>
+    <string name="send_payment_code">Payment-Code senden</string>
+
+    <string name="ask_you_sure_exit">Samourai wirklich verlassen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="close">Schließen</string>
+
+    <string name="sim_warning">Das Gerät mit deiner Samourai Wallet hat jetzt eine neue SIM-Karte, die mit der eingehenden Nummer dieser Textnachricht übereinstimmt.</string>
+
+    <string name="pin_5_8">Erstelle eine PIN mit 5 bis 8 Ziffern.</string>
+    <string name="pin_5_8_confirm">PIN bestätigen</string>
+    <string name="pin_error">PIN-Code Fehler</string>
+    <string name="no_internet">Keine Internetverbindung. Bitte nochmal versuchen.</string>
+    <string name="bip38_pw">BIP38 Passwort</string>
+    <string name="bip38_pw_error">BIP38 Passwort Fehler</string>
+    <string name="bip39_safe">Bitte erstelle eine Passphrase (Passwort) und halte sie geheim. Du wirst sie brauchen, wenn du den Zugriff auf deine Wallet verlierst.</string>
+    <string name="bip39_safe2">Bitte bestätige deine Passphrase (Passwort). Halte sie geheim. Du wirst sie brauchen, wenn du den Zugriff auf deine Wallet verlierst.</string>
+    <string name="bip39_restore">Gib deinen Geheimsatz (oder deine Hex-Entropie) und deine BIP39 Passphrase ein. Falls du keine BIP39 Passphrase nutzt, einfach leer lassen.</string>
+    <string name="bip39_must">Deine Wallet muss eine Passphrase verwenden. Bitte nochmal versuchen.</string>
+    <string name="bip39_unmatch">Die Passphrase stimmt nicht überein. Bitte nochmal versuchen.</string>
+    <string name="bip39_invalid">Bitte keine Leerzeichen in der Passphrase verwenden. Bitte nochmal versuchen.</string>
+    <string name="bip39_empty">Du musst eine Passphrase verwenden.</string>
+    <string name="please_select">Bitte auswählen...</string>
+    <string name="create_wallet">Neue Wallet erstellen</string>
+    <string name="restore_wallet">Wallet wiederherstellen</string>
+    <string name="wallet_passphrase">Wallet Passphrase eingeben</string>
+    <string name="bip39_passphrase">BIP39 Passphrase</string>
+    <string name="bip39_match">Die eingegebene BIP39 Passphrase war korrekt.</string>
+    <string name="bip39_decrypt_test">Die eingegebene Wallet Passphrase war korrekt. Möchtest du die Entschlüsselung deines neusten Autobackups testen?</string>
+    <string name="backup_read_ok">Backup in Ordnung.</string>
+    <string name="backup_read_error">Fehler beim Lesen der Backup-Datei.</string>
+    <string name="mnemonic_hex">Geheimsatz oder Hex-Entropie</string>
+    <string name="pin_enter">PIN eingeben</string>
+    <string name="please_wait">Bitte warten...</string>
+    <string name="random_key_error">Random Key Fehler</string>
+    <string name="login_error">Login fehlgeschlagen</string>
+    <string name="wallet_created_ok">Wallet erfolgreich erstellt.</string>
+    <string name="wallet_created_ko">Fehler beim Erstellen der Wallet.</string>
+    <string name="wallet_restored_ok">Wallet erfolgreich wiederhergestellt.</string>
+    <string name="wallet_restored_ko">Fehler beim Wiederherstellen der Wallet.</string>
+
+    <string name="address_used_previously">Du hast diese Adresse bereits verwendet! Das erneute Verwenden von Adressen kann zum Verlust der Privatspähre führen.</string>
+
+    <string name="scan">Scannen</string>
+    <string name="scan_error">Scannen fehlgeschlagen</string>
+    <string name="enter_privkey">Private Key eingeben</string>
+
+    <string name="to">An</string>
+    <string name="destination">Adresse oder Payment-Channel</string>
+
+    <string name="insufficient_funds">Nicht genügend Guthaben</string>
+    <string name="tx_length_error">Samourai verarbeitet keine Transaktionen mit einer Größe von über 100KB. Bitte versuch deine Transaktion aufzuteilen.</string>
+    <string name="invalid_amount">Ungültiger Betrag</string>
+    <string name="amount">Betrag</string>
+
+    <string name="receive_address_to_clipboard">Diese Empfangsadresse in die Zwischenablage kopieren? Wenn sie kopiert wird, kann sie möglicherweise von anderen Programmen gesehen werden.</string>
+    <string name="receive_address_to_share">Diese Empfangsadresse teilen? Wenn sie geteilt wird, kann sie möglicherweise von anderen Programmen gelesen werden.</string>
+    <string name="sure_to_erase">Diese Wallet wirklich löschen?</string>
+    <string name="wallet_erased">Wallet vom Gerät entfernt.</string>
+
+    <string name="send_privacy_warning">Achtung, Privatsphäre: Sei dir bewusst, dass du schon einmal Geld an diese Adresse gesendet hast.</string>
+
+    <string name="securely_wiping_wait">Wallet wird sicher gelöscht. Bitte warten.</string>
+
+    <string name="options_scramble_pin">PIN-Eingabe durchmischen</string>
+    <string name="options_scramble_pin2">Durchmischt das Zahlenfeld der Pin-Eingabe. </string>
+
+    <string name="you_must_have_orbot">Du musst Orbot installieren und aktivieren, dass der Datenverkehr durch Orbot geleitet wird. Willst du Orbot über Google Play installieren?</string>
+
+    <string name="ssl_pinning_invalid">Das Verankern des SSL-Zertifikats ist fehlgeschlagen. Dies könnte auf bösartige Aktivitäten hinweisen. Bitte überprüfe deine Netzwerkverbindung und dein Gerät, bevor du fortfährst.</string>
+    <string name="ssl_no_connection">Es kann keine Verbindung zum Host hergestellt werden, um das SSL-Zertifikat zu überprüfen. Bitte überprüfe deine Netzwerkverbindung und dein Gerät, bevor du fortfährst.</string>
+    <string name="retry">Wiederholen</string>
+    <string name="exit">Verlassen</string>
+
+    <string name="create_pin">PIN erstellen</string>
+    <string name="confirm_pin">PIN bestätigen</string>
+
+    <string name="auto_fee">NORMALE GEBÜHR</string>
+    <string name="priority_fee">HOHE GEBÜHR</string>
+    <string name="low_fee">NIEDRIGE GEBÜHR</string>
+    <string name="custom_fee">Eigene</string>
+    <string name="sat_b">sat/b</string>
+
+    <string name="account_Samourai">Wallet</string>
+    <string name="account_shuffling">Getauscht</string>
+
+    <string name="max_available">Max. verfügbar:</string>
+
+    <string name="first_use_shuffle">Dies ist dein Tausch-Account. Bitcoin, die du über ShapeShift erhältst, werden in diesem Account gespeichert. Dieser Account teilt seinen Adressbereich nicht mit deiner primären Wallet.</string>
+
+    <string name="select_account">Account wählen</string>
+    <string name="received_bitcoin">Empfangene Bitcoin</string>
+    <string name="received">Empfangen</string>
+    <string name="sent">Transaktion gesendet</string>
+    <string name="total">Gesamt</string>
+    <string name="export_to_clipboard">In die Zwischenablage exportieren</string>
+    <string name="export_to_email">Als E-Mail exportieren</string>
+    <string name="encryption_error">Beim Verschlüsseln deines Wallet Backups ist ein Fehler aufgetreten. Bitte nochmal versuchen.</string>
+    <string name="import_backup">Backup</string>
+    <string name="import_mnemonic">Geheimsatz/Seed</string>
+    <string name="encrypted_backup">Verschlüsselte Wallet Daten</string>
+    <string name="decryption_error">Beim Entschlüsseln des Wallet Backups ist ein Fehler aufgetreten. Bitte nochmal versuchen.</string>
+    <string name="restore_wallet_from_backup">Wallet aus Backup wiederherstellen</string>
+    <string name="restore_wallet_from_existing_backup">Backup auf dem Gerät gefunden. Um das vorhandene Backup wiederherzustellen, auf \'OK\' tippen, ansonsten ersetze es druch ein anderes Backup und tippe dann auf \'OK\'.</string>
+
+    <string name="choose_email_client">E-Mail-Programm wählen:</string>
+
+    <string name="cannot_launch_app">Samourai Wallet kann auf diesem Gerät nicht gestartet werden</string>
+    <string name="confirm_change_pin">PIN wirklich ändern?</string>
+    <string name="success_change_pin">PIN geändert</string>
+    <string name="alternative_pin_create">Wirklich eine alternative PIN für den unsichtbaren Start und den Fernzugriff erstellen?</string>
+    <string name="alternative_pin_deleted">Es wird jetzt keine alternative PIN mehr für den unsichtbaren Start und den Fernzugriff verwendet.</string>
+    <string name="alternative_pin_wait">Bitte warte, bis der Unsichtbar-Modus voll aktiv ist, bevor du eine alternative PIN erstellst.</string>
+
+    <string name="invalid_payment_code">Ungültiger Payment-Code</string>
+    <string name="error_payment_code">Fehler beim Erstellen des Payment-Codes</string>
+
+    <string name="bip47_setup1_title">Dein PayNym</string>
+    <string name="bip47_setup4_title">PayNym Kontakt hinzufügen</string>
+    <string name="bip47_setup4_text1">Um dieses PayNym zu deinen Kontakten hinzuzufügen, ist eine einmalige Transaktionsgebühr nötig, die für den Blockchain Eintrag verwendet wird.</string>
+    <string name="bip47_setup4_text2">werden von deinem Wallet-Guthaben abgezogen.</string>
+
+    <string name="bip47_add1_title">Neuer Kontakt</string>
+    <string name="bip47_add1_text">Payment-Code scannen oder einfügen, um einen neuen Payment-Channel zu erstellen.</string>
+
+    <string name="paste">Einfügen</string>
+    <string name="label">Name</string>
+    <string name="next">Weiter</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="payment_code">Payment-Code</string>
+    <string name="payment_channel_init">Benachrichtigungstransaktion gesendet. Dein Payment-Channel wird erstellt.</string>
+
+    <string name="bip47_no_label_error">Du musst einen Namen für diesen Payment-Code angeben</string>
+
+    <string name="bip47_status_tbe">Noch nicht eingerichtet</string>
+    <string name="bip47_status_pending">Noch nicht erledigt - 0/1 Bestätigungen</string>
+    <string name="bip47_status_active">Senden möglich</string>
+    <string name="bip47_status_incoming">Empfangen möglich</string>
+    <string name="bip47_cannot_scan_own_pcode">Der eigene Payment-Code kann nicht eingescannt werden</string>
+    <string name="bip47_spend_to_pcode">Über diesen Payment-Channel senden?</string>
+    <string name="bip47_sign">Nachricht signieren</string>
+    <string name="bip47_sign_text1">Nachricht mit dem Private Key der BIP47 Benachrichtigungsadresse signieren?</string>
+    <string name="bip47_sign_text2">Mit meiner BIP47 Benachrichtigungsadresse signiert.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Dieser Payment-Channel wartet auf eine Bestätigung, bevor das Senden aktiviert wird. Möchtest du den vorherigen Versuch verwerfen und erneut eine Benachrichtigung schicken?</string>
+
+    <string name="rbf_incoming">Die eingehende Transaktion ist eine replace-by-fee Transaktion. Im Block-Explorer anzeigen?</string>
+
+    <string name="invalid_passphrase">Ungültige Passphrase</string>
+    <string name="passphrase">Passphrase</string>
+    <string name="passphrase_needed_for_backup">Deine Wallet ist nicht durch eine Passphrase geschützt. Backups einer Wallet werden mit der Wallet Passphrase verschlüsselt. Wenn du verschlüsselte Backups und andere Samourai Features nutzen möchtest, erstelle deine Wallet mit Samourai und übertrage dein Guthaben.</string>
+    <string name="passphrase_required">Eine Passphrase ist erforderlich um diese Funktion zu nutzen. Bitte erwäge eine neue Wallet zu erstellen, die automatisch eine Passphrase beinhalten wird.</string>
+
+    <string name="cannot_reach_api">Samourai APIs können nicht erreicht werden. Bitte überprüfe die Verbindung und versuche es erneut oder später noch einmal.</string>
+    <string name="api_error">Samourai APIs melden einen Fehler. Bitte versuche es erneut oder später noch einmal.</string>
+
+    <string name="cannot_recognize_privkey">Private Key kann nicht erkannt werden</string>
+    <string name="cannot_sweep_privkey">Fehler beim Übertragen des Private Keys</string>
+    <string name="please_wait_sending">Transaktion wird gesendet, bitte warten.</string>
+    <string name="please_wait_ricochet">Ricochet-Kette wird bearbeitet, bitte warten.</string>
+
+    <string name="change_is_dust">Das Wechselgeld dieser Transaktion ist ein Dust-Betrag (sehr wenig). Versuche es erneut und ändere entweder den Betrag oder sende das gesamte Guthaben der Inputs.</string>
+
+    <string name="tor_routing_on">Samourai kommuniziert über Tor.</string>
+    <string name="tor_routing_off">Samourai kommuniziert nicht über Tor. Hier tippen um Tor zu aktivieren.</string>
+    <string name="tor_install">Hier tippen um Orbot zu installieren und Samourai über Tor zu verbinden.</string>
+
+    <string name="premium_addons">Premium Addons</string>
+
+    <string name="ricochet_hop">Ricochet Station</string>
+    <string name="ricochet_hopping">Weitergeleited an</string>
+    <string name="ricochet_spend1">Ricochet Zahlung an</string>
+    <string name="ricochet_spend2">für einen Gesamtbetrag von</string>
+    <string name="ricochet_spend3">(beinhaltet 0.002 BTC Gebühren an Samourai und Miner) ausführen?</string>
+
+    <string name="action_ricochet">Ricochet Wiederholen</string>
+    <string name="action_empty_ricochet">Ricochet-Kette leeren</string>
+    <string name="ricochet">Ricochet - senden über 4 Zwischenstationen</string>
+    <string name="action_ricochet_script">Ricochet-Script anzeigen</string>
+    <string name="action_ricochet_replay">Ricochet-Zahlung erneut senden</string>
+    <string name="ricochet_replay">Diese Ricochet-Zahlung erneut veröffentlichen?</string>
+    <string name="ricochet_not_broadcast_replay">Die Ricochet-Zahlung konnte nicht veröffentlicht werden. Möchtest du diese Ricochet-Zahlung erneut veröffentlichen?</string>
+    <string name="no_ricochet_replay">Es ist keine Ricochet-Zahlung vorhanden, die erneut geschickt werden könnte.</string>
+    <string name="no_ricochet_display">Kein Ricochet-Skript vorhanden.</string>
+    <string name="ricochet_broadcast">Die Ricochet-Zahlung wurde veröffentlicht.</string>
+
+    <string name="bip47_cannot_identify_outpoint">Ausgehender Payment-Code kann nicht identifiziert werden</string>
+    <string name="bip47_cannot_compose_notif_tx">Benachrichtigungstransaktion kann nicht erstellt werden</string>
+
+    <string name="pushtx_returns_null">Zahlung fehlgeschlagen. Der Server gibt einen leeren Wert zurück.</string>
+
+    <string name="trusted_node">Vertrauenswürdiger Peer</string>
+    <string name="trusted_node_user_hint">RPC Benutzername</string>
+    <string name="trusted_node_ip_hint">IP Adresse</string>
+    <string name="trusted_node_port_hint">Port (8332 Standard)</string>
+    <string name="trusted_node_password_hint">RPC Beutzerpasswort</string>
+    <string name="trusted_node_not_valid">Bitte gültige Informationen für den vertrauenswürdigen Peer eingeben.</string>
+    <string name="trusted_node_ko">Vertrauenswürdiger Peer nicht erkannt. Bitte überprüfe die Installation.</string>
+    <string name="trusted_node_error">Vertrauenswürdiger Peer kann nicht erreicht werden.</string>
+    <string name="trusted_node_tx_error">Transaktion auf dem vertrauenswürdigen Peer fehlgeschlagen.</string>
+    <string name="trusted_node_not_core_131">Vertrauenswürdiger Peer eingestellt. Samourai Wallet unterstützt Bitcoin Core 0.13.1 und höher.</string>
+    <string name="trusted_node_tx_sent">Transaktion über vertrauenswürdigen Peer gesendet.</string>
+    <string name="trusted_node_not_responding">Der vertrauenswürdige Peer antwortet nicht. Bitte überprüfe die Installation.</string>
+    <string name="trusted_node_breaks_consensus">Ein Peer, der die Konsensregeln bricht, kann nicht als vertrauenswürdiger Peer gewählt werden.</string>
+
+    <string name="refresh_tx_pre">Transaktionen und Guthaben werden abgerufen.</string>
+    <string name="refresh_tx">Transaktionen und Guthaben abgefrufen.</string>
+    <string name="refresh_incoming_notif_tx">Eingehende BIP47 Benachrichtigungstransaktionen abgefragt.</string>
+    <string name="refresh_outgoing_notif_tx">Ausgehende BIP47 Benachrichtigungstransaktionen aktualisiert.</string>
+
+    <string name="options_unconfirmed_tx">Diese Transaktion wartet auf Bestätigung. Bitte eine Option wählen:</string>
+    <string name="options_block_explorer">Transaktion anzeigen</string>
+    <string name="options_bump_fee">Transaktionsgebühr erhöhen</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Transaktionsinformationen können nicht abgerufen werden. Bitte nochmal versuchen.</string>
+    <string name="fee_bump_not_necessary">Hinweis: Es ist möglicherweise nicht nötig die Gebühr für diese Transaktion zu erhöhen.</string>
+    <string name="bump_fee">Transaktionsgebühr für schnellere Bestätigung erhöhen?\n\nZusätzliche Gebühr:</string>
+
+    <string name="options_sign">Nachricht signieren</string>
+
+    <string name="trusted_node_pow_failed">Der Proof-of-Work, den dein vertrauenswürdiger Peer meldet, lässt sich nicht verifizieren. Bitte überprüfe die Installation.</string>
+
+    <string name="options_fees">Derzeitige Transaktionsgebühren zeigen</string>
+    <string name="current_fee_selection">Du hast momentan diese Gebühr gewählt:</string>
+    <string name="current_hi_fee_value">Derzeitig hohe Gebühr:</string>
+    <string name="current_mid_fee_value">Derzeitig normale Gebühr:</string>
+    <string name="current_lo_fee_value">Derzeitig niedrige Gebühr:</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">Eigene Gebühr in sat/b festlegen.</string>
+    <string name="custom_fee_too_low">Eigene Gebühr ist zu niedrig.</string>
+    <string name="custom_fee_too_high">Eigene Gebühr ist zu hoch.</string>
+
+    <string name="cpfp_spent">CPFP-Transaktion gesendet.</string>
+    <string name="rbf_spent">RBF-Transaktion gesendet.</string>
+    <string name="cannot_output_dust">Transaktion mit Dust-Output kann nicht erstellt werden.</string>
+    <string name="cannot_create_change_output">Wechselgeld-Output kann nicht erstellt werden.</string>
+    <string name="cannot_create_cpfp">CPFP-Transaktion kann nicht erstellt werden.</string>
+
+    <string name="error_reading_payload">Lesen der Metadaten fehlgeschlagen. Bitte nochmal versuchen.</string>
+
+    <string name="utxo_sign">Nachricht signieren</string>
+    <string name="utxo_sign_text1">Nachricht mit diesem Private Key signieren?</string>									
+    <string name="utxo_sign_text2">Mit ungenutztem Output signiert.</string>
+    <string name="utxo_sign_text3">Mit ungenutztem Output signiert.</string>
+
+    <string name="recovery_checkup">Wiederherstellung überprüfen</string>
+    <string name="recovery_checkup_message">Dein Geheimsatz und deine Passphrase werden angezeigt. Achte darauf, dass niemand deinen Bildschirm sehen kann. Diese Information wird später NICHT mehr angezeigt.</string>
+    <string name="mnemonic">Geheimsatz</string>
+    <string name="recovery_checkup_finish">ICH HABE MEINE WIEDERHERSTELLUNGSINFORMATIONEN GESICHERT</string>
+    <string name="pin_reminder">Zur Erinnerung, deine PIN ist:</string>
+
+    <string name="opendime_confirmed_balance">Bestätigtes Guthaben</string>
+    <string name="opendime_privkey">Private Key</string>
+    <string name="opendime_verified">BESTÄTIGT</string>
+    <string name="opendime_valid_key">Gültiger Private Key auf dem Gerät</string>
+    <string name="opendime_not_verified">VERIFIZIEREN NICHT MÖGLICH</string>
+    <string name="opendime_no_valid_key">Private Key auf dem Gerät kann nicht verifiziert werden.</string>
+    <string name="opendime_view">ANZEIGEN</string>
+    <string name="opendime_sweep">ÜBERTRAGEN</string>
+    <string name="opendime_topup">AUFLADEN</string>
+
+    <string name="select_app">Programm auswählen</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay Schutz</string>
+    <string name="replay_unprotected">Ungeschützt</string>
+    <string name="replay_in_progress">In Bearbeitung</string>
+    <string name="replay_protected">Geschützt</string>
+    <string name="replay_disclaimer">Chain Split erkannt</string>
+    <string name="replay_text">Alle Adressen werden werden in einer einzigen Transaktion gebündelt und auf eine andere Adresse deiner Wallet gesendet. Durch das Zusammenführen der Adressen kann sich deine Privatspähre verringern.</string>
+    <string name="replay_ENABLE">REPLAY SCHUTZ AKTIVIEREN</string>
+
+    <string name="replay_broadcast_to_network">Im Netzwerk veröffentlichen...</string>
+    <string name="replay_seen_on_network">Vom Netzwerk gesehen...</string>
+    <string name="replay_split_tx_broadcast">Teilungstransaktion veröffentlichen...</string>
+    <string name="replay_description">Deine Wallet wird eine spezielle Transaktion an sich selbst senden, wodurch deine Coins permanent von der anderen Chain getrennt werden. Das bietet Schutz gegen Replay-Angriffe.</string>
+    <string name="replay_waiting_for_confirmations">warten auf Bestätigungen</string>
+    <string name="replay_confirmed">bestätigt</string>
+    <string name="replay_confirmations">Bestätigungen:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">Replay Schutz wartet auf Bestätigung</string>
+    <string name="replay_dismiss">WARNUNG SCHLIEßEN</string>
+
+    <string name="show_qr">QR-Code anzeigen</string>
+    <string name="share_qr">QR-Code teilen</string>
+    <string name="send_tx">RAW-Transaktion senden</string>
+    <string name="tx_too_large_qr">Die RAW-Transaktion ist zu groß, um sie in einem QR-Code anzuzeigen.</string>
+
+    <string name="select_network">Netzwerk wählen...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">SegWit Adresse</string>
+    <string name="segwit_switch_prompt">Guthaben auf einer SegWit Adresse kann effizienter versendet werden. Dies ermöglicht geringere Transaktionsgebühren beim Versenden von Bitcoins.</string>
+
+    <string name="privkey_clipboard">Ein Private Key wurde in deiner Zwischenablage gefunden. Zwischenablage leeren?</string>
+
+    <string name="tx_hex">Hex-Transaktion</string>
+	<string name="enter_tx_hex">Transaktion im Hex-Format eingeben</string>
+    <string name="broadcast">Transaktion veröffentlichen</string>
+
+    <string name="dusting_tx">DUST-TRANSAKTION</string>
+    <string name="dusting_attempt">Eine unerwartete Dust-Transaktion auf deine Wallet kann auf einen Versuch hinweisen, deine Adressen und dein Zahlungsverhalten zu überwachen. \n\nMarkiere diesen Dust als nicht verfügbar, um gegen Überwachung durch Andere geschützt zu sein.</string>
+    <string name="dusting_attempt_amount">Betrag:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Ignorieren</string>
+    <string name="dusting_attempt_mark_unspendable">Als nicht verfügbar markieren</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">DUST</string>
+    <string name="do_not_spend">Nicht ausgeben</string>
+    <string name="dusting_tx_unblock">Diese Dust-Transaktion ist momentan blockiert. Diesen ungenutzten Output freigeben um Transaktionen damit zu ermöglichen?</string>
+    <string name="mark_spend">Als verfügbar markieren</string>
+    <string name="mark_do_not_spend">Als nicht verfügbar markieren</string>
+    <string name="mark_utxo_spend">Diesen ungenutzten Output als verfügbar markieren?</string>
+    <string name="mark_utxo_do_not_spend">Diesen ungenutzten Output als nicht verfügbar markieren?</string>
+
+    <string name="options_sign_a_message">Eine Nachricht signieren</string>
+    <string name="options_display_redeem_script">Redeem Script anzeigen</string>
+    <string name="options_view_tx">Transaktion anzeigen</string>
+    <string name="options_display_privkey">Private Key anzeigen</string>
+    <string name="options_batch">Stapel-Zahlung</string>
+
+    <string name="do_not_repeat_sent_to">Haken setzen, um nicht mehr vor mehrfachem Senden an diese Adresse zu warnen.</string>
+
+    <string name="mark_inputs_as_unspendable">Die ungenutzten Outputs, die zur Erstellung dieser Transaktion verwendet werden, als nicht verfügbar markieren?</string>
+
+    <string name="copy_to_clipboard">In die Zwischenablage kopieren</string>
+
+    <string name="no_bitpay">Fehler: Das ist keine gültige Bitcoin Anfrage. Samourai unterstützt nur das Senden an gültige Bitcoin Adressen.</string>
+    <string name="learn_more">Mehr erfahren</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Dein PayNym anfordern</string>
+    <string name="claim_paynym_title1">Fordere deine kostenlose PayNymID an</string>
+    <string name="claim_paynym_text1">Erlaube deinen Freunden und Kontakten dich direkt über kompatible Bitcoin Wallets zu finden und sich mit deinem PayNym zu verbinden.</string>
+    <string name="claim_paynym_title2">Vorteile einer PayNymID</string>
+    <string name="claim_paynym_text2a">Name und Bild sind einzigartig, da sie mit dem Hash deines PayNym-Codes generiert werden. Es wird nie zwei gleiche geben!</string>
+    <string name="claim_paynym_text2b">Keine Identitätsprüfung! Dein Name und dein Bild basieren auf deinem PayNym-Code, nicht auf irgendeinem Ausweis.</string>
+    <string name="claim_paynym_text2c">Werde einfach gefunden! Kompatible Wallets können nach neuen Kontakten suchen und private, sichere Zahlungen senden, ohne eine Spur zu hinterlassen.</string>
+    <string name="claim_paynym_id">Meine PayNymID anfordern</string>
+    <string name="claim_paynym_id_refused">Nicht interessiert. Nicht mehr nachfragen.</string>
+
+    <string name="claim_paynym_prompt">Meine PayNymID anfordern und meinen öffentlichen PayNym-Code auf PayNym.is hinzufügen?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Um ein PayNym zu deinen Kontakten hinzuzufügen, ist eine einmalige Transaktionsgebühr nötig, die für den Blockchain Eintrag verwendet wird. Hinterlege</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC auf deiner Wallet und versuche es erneut.</string>
+    <string name="help">Hilfe</string>
+
+    <string name="passphrase_disclaimer">Ich verstehe, dass Samourai mir nicht helfen kann, wenn ich meine Passphrase verliere oder vergesse. Samourai hat zu keinem Zeitpunkt Kenntnis über meine Passphrase.</string>
+    <string name="confirm_pin_code">PIN bestätigen</string>
+    <string name="re_enter_your_pin_code">PIN erneut eingeben</string>
+    <string name="re_enter_a_passphrase">Passphrase erneut eingeben</string>
+    <string name="create_a_passphrase">Passphrase erstellen</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Erstelle eine sichere Passphrase für deine Wallet</string>
+    <string name="set_pin_code">PIN erstellen</string>
+    <string name="accept_disclaimer_error">Du musst die Bedingungen akzeptieren</string>
+    <string name="import_external_wallet">Externe Wallet importieren</string>
+    <string name="import_samourai_wallet">Samourai Backup importieren</string>
+    <string name="backup_file">Backup-Datei</string>
+    <string name="import_an_encrypted_samourai_wallet">Ein verschlüsseltes Samourai Backup importieren, um die Wallet mit all ihren Metadaten wiederherzustellen.</string>
+    <string name="back">ZURÜCK</string>
+    <string name="finish">fertig</string>
+    <string name="choose_file">Datei wählen</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Bip39 Passphrase hinzufügen</string>
+    <string name="close_bip39_password">Bip39 Passphrase entfernen</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Gib deinen Geheimsatz ein, um eine Wallet eines anderen Anbieters zu importieren.</string>
+    <string name="last_updated">Zuletzt aktualisiert</string>
+    <string name="get_help">Hilfe</string>
+    <string name="offline_mode">Offline-Modus</string>
+    <string name="import_samourai_backup">Samourai Backup importieren</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Wallet Passphrase eingeben</string>
+    <string name="start_new_wallet">Neue Wallet erstellen</string>
+    <string name="get_help_create">Wallet erstellen: Hilfe</string>
+    <string name="get_help_restore">Wallet wiederherstellen: Hilfe</string>
+
+    <string name="fee">Transaktionsgebühr</string>
+    <string name="fee_low_priority">Niedrige Priorität: voraussichtlich 24</string>
+    <string name="fee_mid_priority">Normale Priorität: voraussichtlich 6</string>
+    <string name="fee_high_priority">Hohe Priorität: voraussichtlich 2</string>
+    <string name="fee_custom_priority">Eigene Gebühr: voraussichtlich</string>
+    <string name="blocks_to_cf">Blöcke bis zur Bestätigung</string>
+
+    <string name="invalid_mnemonic_word">Ungültiges Gheimsatz-Wort nach BIP39</string>
+    <string name="invalid_mnemonic">Ungültiger BIP39 Geheimsatz</string>
+    <string name="enter_your_code_here">Gib hier deinen Code ein</string>
+
+    <string name="declaimer_recovery_words">Ich bestätige, dass ich die oben genannten Worte aufgeschrieben habe und sie an einem sicheren Ort aufbewahre. Ich verstehen, dass jeder, der sowohl Zugriff auf meinen Geheimsatz als auch meine Passphrase hat, vollen Zugriff auf meine Wallet und mein gesamtes Guthaben hat.</string>
+	<string name="return_to_wallet">Zurück zur Wallet</string>
+    <string name="caution_message_recovery_words">Es ist nicht sicher, diese Wörter auf dem Computer oder in der Cloud zu speichern. Notiere sie auf ein Stück Papier und bewahre es an einem sicheren und geheimen Ort auf.</string>
+    <string name="these_words_are">Diese Worte sind ein Backup aller geheimen Schlüssel (Private Keys) deiner Wallet.</string>
+	<string name="recovery_words">GEHEIMSATZ</string>
+
+	<string name="permission_alert_dialog_title_sms">Zugriff auf SMS und Telefonstatus erforderlich</string>
+	<string name="permission_dialog_message_sms">Deine Wallet benötigt Zugriff auf SMS (senden und empfangen), um die Fernzugriffsfunktionen nutzen zu können.</string>
+	<string name="permission_alert_dialog_title_outgoing">Zugrif auf abgehende Gespräche erforderlich</string>
+	<string name="permission_dialog_message_outgoing">Deine Wallet benötigt Zugriff auf abgehende Gespräche, um den Unsichtbar-Modus nutzen zu können.</string>
+
+	<string name="permission_alert_dialog_title_external">Lese- und Schreibzugriff erforderlich</string>
+	<string name="permission_dialog_message_external">Deine Wallet benötigt Zugriff auf den Speicher des Geräts, um regelmäßig verschlüsselte Sicherungen darauf zu speichern.</string>
+	<string name="permission_alert_dialog_title_camera">Zugriff auf Kamera erforderlich</string>
+	<string name="permission_dialog_message_camera">Deine Wallet benötigt Zugriff auf die Kamera, um QR-Codes scannen zu können.</string>
+
+	<string name="use_bech32">Bech32 Adresse verwenden</string>
+
+    <string name="boltzmann_cannot">Eine STONEWALL-Zahlung konnte mit deinem aktuellen Set an ungenutzten Outputs nicht erzeugt werden. Wenn du auf STONEWALL bestehst, tippe auf \'Nein\' und versuche es mit einem modifizierten Set an ungenutzten Outputs erneut.</string>
+    <string name="boltzmann_like_typed">Hinweis: \'Wechselgeld auf gleichartige Adressen\' ist aus und kann zu einer weniger optimalen Transaktionsstruktur deiner STONEWALL-Zahlung führen.</string>
+
+	<string name="insufficient_fee">Zu niedrige Transaktionsgebühr</string>
+	<string name="action_utxo_amounts">Beträge nach Adresstyp anzeigen</string>
+
+	<string name="total_p2pkh">Gesamt veraltet (p2pkh):</string>
+	<string name="total_p2sh_p2wpkh">Gesamt SegWit (p2sh):</string>
+	<string name="total_p2wpkh">Gesamt SegWit (bech32):</string>
+	<string name="total_blocked">Gesamt blockiert:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Erweitert</string>
+    <string name="broadcast_with_txtenna">Übertragung mit TxTenna</string>
+    <string name="show_qr_code">QR-Code anzeigen</string>
+    <string name="tx_connectivity_failure_msg">Die Transaktion kann ohne eine Datenverbindung nicht veröffentlicht werden. Was möchtest du tun?</string>
+
+    <string name="tx_creating_ok">Transaktion wird erstellt...</string>
+    <string name="tx_creating_ko">Transaktion kann nicht erstellt werden</string>
+    <string name="tx_signing_ok">Transaktion wird signiert...</string>
+    <string name="tx_signing_ko">Transaktion kann nicht signiert werden</string>
+    <string name="tx_broadcast_ok">Transaktion wird veröffentlicht...</string>
+    <string name="tx_broadcast_ko">Transaktion kann nicht veröffentlicht werden</string>
+    <string name="tx_sent_ok">Transaktion gesendet</string>
+    <string name="tx_sent_ko">Transaktion nicht gesendet</string>
+
+    <string name="prune_backup">Nicht unbedingt nötige Daten wirklich aus dem Backup entfernen?</string>
+
+    <string-array name="address_types">
+        <item>SegWit Kompatibilität (P2SH)</item>
+        <item>SegWit Nativ (bech32)</item>
+        <item>Veraltet (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">Samourai Wallet ist im Offline-Modus.</string>
+    <string name="tx_standby">Transaktion im Standby-Modus</string>
+    <string name="show_hex">Hex-Code anzeigen</string>
+    <string name="tx_tenna_coming_soon">TxTenna bald auf Android verfügbar</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Empfangsadressen</string>
+    <string name="send_addresses">Sendeadressen</string>
+    <string name="display_receive_redeem">Empfangs Redeem Script</string>
+    <string name="display_receive_privkey">Empfangs Private Key</string>
+    <string name="invalid_index">Ungültiger Index</string>
+    <string name="type_address">Adress-Typ</string>
+
+    <string-array name="account_types">
+        <item>BIP49 SegWit</item>
+        <item>BIP84 SegWit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet SegWit</item>
+    </string-array>
+
+    <string name="chain_id">Addresszweig</string>
+    <string name="receive_chain">Empfangsadresse</string>
+    <string name="change_chain">Wechseladresse</string>
+
+</resources>
+
+
+<!-- Hinweis: 
+
+	Last updated for Version: 0.98.81
+	
+	Einige Fachbegriffe oder bereits eingedeutschte Wörter habe ich englisch gelassen, da es meiner Meinung nach sinnvoller ist.
+	
+	Folgende Begriffe sind betroffen: 
+	Backup, Bitcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,       
+	Exchange, Payment-Code, MainNet, PayNym, Premium Addons, Private Key, Proof-of-Work,    
+	Public Key, replace-by-fee, Replay, Ricochet, STONEWALL, TestNet, Wallet
+
+-->
