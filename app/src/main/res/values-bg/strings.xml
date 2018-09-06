@@ -94,6 +94,11 @@
     <string name="options_haptic_2">Вибриране при въвеждането на всяка цифра от PIN кода.</string>
     <string name="options_prune">Премахване на резервното копие</string>
     <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
+    
+    <string name="options_address_calc">Калкулатор на адреси</string>
+    <string name="options_address_calc2">Намиране на адресите, извлечени от тайните Ви думи.</string>
+    <string name="options_paynym_calc">PayNym калкулатор</string>
+    <string name="options_paynym_calc2">Намиране на адресите, споделени с други PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Да бъде ли резервното копие изпратено до отдел техническа поддръжка? Не съдържа никаква информация за частните Ви ключове, тайните Ви думи или тайната Ви фраза.</string>
 
@@ -555,5 +560,30 @@
         <item>SegWit native (bech32)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
+    
+    <string name="in_offline_mode">Самурай портфейл сега е в офлайн режим.</string>
+    <string name="tx_standby">Транзакцията е в готовност</string>
+    <string name="show_hex">Показване на hex кода</string>
+    <string name="tx_tenna_coming_soon">txTenna за Андроид - очаквайте скоро.</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Индекс</string>
+
+    <string name="receive_addresses">Адреси за получаване</string>
+    <string name="send_addresses">Send addresses</string>
+    <string name="display_receive_redeem">Получаване на redeem скрипта</string>
+    <string name="display_receive_privkey">Получаване на частния ключ</string>
+    <string name="invalid_index">Невалиден индекс</string>
+    <string name="type_address">Тип на адреса</string>
+
+    <string-array name="account_types">
+        <item>BIP49 SegWit</item>
+        <item>BIP84 SegWit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet SegWit</item>
+    </string-array>
+
+    <string name="chain_id">Верига на адресите</string>
+    <string name="receive_chain">Адрес за получаване</string>
+    <string name="change_chain">Адрес за ресто</string>
 
 </resources>
