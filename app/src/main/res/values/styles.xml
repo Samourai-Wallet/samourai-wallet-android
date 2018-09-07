@@ -46,11 +46,20 @@
         <item name="android:statusBarColor">@color/windowDark</item>
         <item name="android:colorControlActivated">@color/blue</item>
     </style>
+
     <style name="whirlpool_theme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:colorAccent">@android:color/white</item>
         <item name="android:windowBackground">@color/windowDark</item>
         <item name="android:statusBarColor">@color/windowDark</item>
         <item name="android:colorControlActivated">@color/blue</item>
+    </style>
+
+
+    <style name="WhirlPoolHorizontalProgress" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">@color/whirlpool_window_dark</item>
+        <item name="android:progressTint">@color/green_ui_2</item>
+        <!--<item name="android:minHeight">8dip</item>-->
+        <!--<item name="android:maxHeight">22dip</item>-->
     </style>
 
 </resources>

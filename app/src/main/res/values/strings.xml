@@ -570,5 +570,6 @@
     <string name="your_coins_will_be_added">Your coins will be added to the top of the queue for immediate processing</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string>
 
 </resources>
