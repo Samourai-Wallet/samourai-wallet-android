@@ -579,10 +579,13 @@
         <item>BIP84 Segwit</item>
         <item>BIP44 P2PKH</item>
         <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
     </string-array>
 
     <string name="chain_id">Catena di indirizzi</string>
     <string name="receive_chain">Indirizzo di ricezione</string>
     <string name="change_chain">Indirizzo di resto</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
 
 </resources>
