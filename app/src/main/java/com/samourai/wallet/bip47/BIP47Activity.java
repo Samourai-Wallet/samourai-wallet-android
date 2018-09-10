@@ -1742,7 +1742,7 @@ public class BIP47Activity extends Activity {
                     JSONObject obj = new JSONObject();
                     obj.put("code", BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
 //                    Log.d("BIP47Activity", obj.toString());
-                    String res = WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
 //                    Log.d("BIP47Activity", res);
 
                     JSONObject responseObj = new JSONObject(res);
@@ -1757,7 +1757,7 @@ public class BIP47Activity extends Activity {
                         obj.put("signature", sig);
 
 //                        Log.d("BIP47Activity", "follow:" + obj.toString());
-                        res = WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, WebUtil.PAYNYM_API + "api/v1/follow", obj.toString());
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/follow", obj.toString());
 //                        Log.d("BIP47Activity", res);
 
                         responseObj = new JSONObject(res);
@@ -1811,12 +1811,16 @@ public class BIP47Activity extends Activity {
                         if(FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcode)))    {
                             BIP47Meta.getInstance().setLabel(pcode, strNymName);
                         }
-                        BIP47Activity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
                     }
+                    if(responseObj.has("segwit") && responseObj.getBoolean("segwit") == true)    {
+                        BIP47Meta.getInstance().setSegwit(pcode, true);
+                    }
+
+                    BIP47Activity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
 
                     }
                 catch(Exception e) {
