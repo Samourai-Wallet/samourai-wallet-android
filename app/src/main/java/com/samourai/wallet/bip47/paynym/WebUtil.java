@@ -123,7 +123,7 @@ public class WebUtil	{
                 }
                 else if (connection.getResponseCode() == 400) {
 //					System.out.println("postURL:return code 200");
-                    return "{\"status\":\"error\", \"result\", 400}";
+                    return "{\"status\":\"error\", \"result\":400}";
                 }
                 else {
                     error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
