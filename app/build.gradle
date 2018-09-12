@@ -89,4 +89,5 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.samouraiwallet:whirlpool-client:0.0.1-android-SNAPSHOT'
 }
