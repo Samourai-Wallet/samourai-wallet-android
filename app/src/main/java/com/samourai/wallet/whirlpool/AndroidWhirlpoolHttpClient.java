@@ -8,11 +8,11 @@ import com.samourai.whirlpool.client.whirlpool.httpClient.WhirlpoolHttpException
 /**
  * HTTP client used by Whirlpool.
  */
-public class WhirlpoolHttpClient implements IWhirlpoolHttpClient {
+public class AndroidWhirlpoolHttpClient implements IWhirlpoolHttpClient {
     private Gson gson;
     private WebUtil webUtil;
 
-    public WhirlpoolHttpClient(WebUtil webUtil) {
+    public AndroidWhirlpoolHttpClient(WebUtil webUtil) {
         this.webUtil = webUtil;
         this.gson = new Gson();
     }
