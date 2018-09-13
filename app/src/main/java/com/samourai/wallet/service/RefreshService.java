@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -119,7 +120,7 @@ public class RefreshService extends IntentService {
                 PaymentCode pcode = BIP47Util.getInstance(RefreshService.this).getPaymentCode();
 //                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
 //                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString());
             }
             catch (AddressFormatException afe) {
                 afe.printStackTrace();

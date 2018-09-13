@@ -14,6 +14,10 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -89,5 +93,14 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    implementation 'com.samouraiwallet:whirlpool-client:0.0.1-android-SNAPSHOT'
+    implementation ('com.github.Samourai-Wallet:extlibj:adapt-for-whirlpool-SNAPSHOT') {
+        exclude group:'com.google.code.findbugs', module:'jsr305'
+        exclude group:'com.google.protobuf', module:'protobuf-java'
+        exclude group:'net.jcip', module:'jcip-annotations'
+        exclude group:'com.squareup.okhttp', module:'okhttp'
+        exclude group:'org.slf4j', module:'slf4j-api'
+        //
+        exclude group:'org.apache.commons', module:'commons-lang3'
+        exclude group:'org.json', module:'json'
+    }
 }
