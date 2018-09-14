@@ -24,11 +24,26 @@ import org.bitcoinj.core.NetworkParameters;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.Callable;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
 public class WhirlpoolClientTest {
     private WhirlpoolClient whirlpoolClient;
 
     @Before
     public void setUp() {
+        // mock main thread
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler(new Function<Callable<Scheduler>, Scheduler>() {
+            @Override
+            public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
+                return Schedulers.trampoline();
+            }
+        });
+
         // client configuration (server...)
         AndroidWhirlpoolHttpClient whirlpoolHttpClient = new AndroidWhirlpoolHttpClient(WebUtil.getInstance(null));
         AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
