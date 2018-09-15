@@ -1,10 +1,17 @@
-package com.samourai.wallet.whirlpool;
+package whirlpool;
+
+import android.content.Context;
+import android.test.mock.MockContext;
 
 import com.google.common.util.concurrent.SettableFuture;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.AndroidWhirlpoolHttpClient;
+import com.samourai.wallet.whirlpool.AndroidWhirlpoolStompClient;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
 import com.samourai.whirlpool.client.mix.handler.IMixHandler;
@@ -20,10 +27,14 @@ import com.samourai.whirlpool.client.whirlpool.listener.WhirlpoolClientListener;
 
 import junit.framework.Assert;
 
+import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.params.TestNet3Params;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Callable;
 
@@ -33,10 +44,15 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class WhirlpoolClientTest {
+    private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
 
     private static final String SERVER = "127.0.0.1:8080";
-    private BIP47Util bip47Util = BIP47Util.getInstance(null);
+    private static final NetworkParameters networkParameters = TestNet3Params.get();
+
+    private Context context = new MockContext();
+    private BIP47Util bip47Util = BIP47Util.getInstance(context);
+    private HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
 
     @Before
     public void setUp() {
@@ -48,10 +64,12 @@ public class WhirlpoolClientTest {
             }
         });
 
+        // init Samourai Wallet
+        SamouraiWallet.getInstance().setCurrentNetworkParams(networkParameters);
+
         // client configuration (server...)
         AndroidWhirlpoolHttpClient whirlpoolHttpClient = new AndroidWhirlpoolHttpClient(WebUtil.getInstance(null));
         AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
-        NetworkParameters networkParameters = SamouraiWallet.getInstance().getCurrentNetworkParams();
         WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClient, SERVER, networkParameters);
 
         // instanciate client
@@ -68,26 +86,34 @@ public class WhirlpoolClientTest {
             }
             Assert.assertFalse(pools.getPools().isEmpty());
         } catch(Exception e) {
-            e.printStackTrace();
+            log.error("", e);
         }
     }
 
     @Test
     public void testMix() throws Exception {
-        // mix handler
-        ECKey ecKey = null; // TODO
-        BIP47Wallet bip47w = null; // TODO
-        int paymentCodeIndex = 0; // TODO
-        IMixHandler mixHandler = new MixHandler(ecKey, bip47w, paymentCodeIndex, bip47Util);
+        // pool
+        Pool pool = findPool("0.1btc");
 
-        // mix params (input, output)
+        // input
         String utxoHash = "5369dfb71b36ed2b91ca43f388b869e617558165e4f8306b80857d88bdd624f2";
+        String utxoKey = "cN27hV14EEjmwVowfzoeZ9hUGwJDxspuT7N4bQDz651LKmqMUdVs";
+        String seedWords = "all all all all all all all all all all all all";
         long utxoIndex = 3;
-        long utxoBalance = 0; // TODO
-        MixParams mixParams = new MixParams(utxoHash, utxoIndex, utxoBalance, mixHandler);
+        long utxoBalance = 10000102;
 
-        String poolId = "0.1btc";
-        long denomination = 100000102;
+        // output
+        int paymentCodeIndex = 0; // TODO always increment
+        HD_Wallet bip44w = hdWalletFactory.newWallet(12, seedWords, 1);
+        BIP47Wallet bip47w = hdWalletFactory.getBIP47();
+
+        // input utxo key
+        DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(networkParameters, utxoKey);
+        ECKey ecKey = dumpedPrivateKey.getKey();
+
+        // mix params
+        IMixHandler mixHandler = new MixHandler(ecKey, bip47w, paymentCodeIndex, bip47Util);
+        MixParams mixParams = new MixParams(utxoHash, utxoIndex, utxoBalance, mixHandler);
 
         // listener will be notified of whirlpool progress in realtime
         final SettableFuture<Boolean> success = SettableFuture.create();
@@ -128,7 +154,7 @@ public class WhirlpoolClientTest {
 
         // start mixing
         int nbMixs = 1; // number of mixs to achieve
-        whirlpoolClient.whirlpool(poolId, denomination, mixParams, nbMixs, listener);
+        whirlpoolClient.whirlpool(pool.getPoolId(), pool.getDenomination(), mixParams, nbMixs, listener);
 
         do {
             if (success.get() != null) {
@@ -146,6 +172,11 @@ public class WhirlpoolClientTest {
             Thread.sleep(1000);
         }
         while(success.get() == null);
+    }
+
+    private Pool findPool(String poolId) throws Exception {
+        Pools pools = whirlpoolClient.fetchPools();
+        return pools.findPoolById(poolId);
     }
 
 }

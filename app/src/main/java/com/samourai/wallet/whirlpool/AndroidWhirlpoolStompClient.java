@@ -8,6 +8,8 @@ import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,12 +25,13 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import ua.naiksoftware.stomp.LifecycleEvent;
 import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
+import ua.naiksoftware.stomp.client.StompCommand;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
     private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
-    private static final String HEADER_DESTINATION = "destination";
     private static final long TIMEOUT = 20000;
     private Gson gson;
     private StompClient stompClient;
@@ -43,36 +46,38 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
             log.info("connecting to " + url);
             stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
             stompClient.lifecycle()
-                    .timeout(TIMEOUT, TimeUnit.MILLISECONDS, new Flowable<LifecycleEvent>() {
-                        @Override
-                        protected void subscribeActual(Subscriber<? super LifecycleEvent> s) {
-                            log.error("timeout");
-                            disconnect();
-                            onDisconnect.onMessage(new Exception("disconnected"));
+                .timeout(TIMEOUT, TimeUnit.MILLISECONDS, new Flowable<LifecycleEvent>() {
+                    @Override
+                    protected void subscribeActual(Subscriber<? super LifecycleEvent> s) {
+                        log.error("timeout");
+                        disconnect();
+                        onDisconnect.onMessage(new Exception("disconnected"));
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<LifecycleEvent>() {
+                    @Override
+                    public void accept(LifecycleEvent lifecycleEvent) {
+                        log.info("connect accept: "+lifecycleEvent.getMessage());
+                        switch (lifecycleEvent.getType()) {
+                            case OPENED:
+                                log.info("connected");
+                                String stompUsername = "foo"; // TODO
+                                onConnect.onMessage(stompUsername);
+                                break;
+                            case ERROR:
+                                log.error("Stomp connection error", lifecycleEvent.getException());
+                                break;
+                            case CLOSED:
+                                log.info("disconnected");
+                                disconnect();
+                                onDisconnect.onMessage(new Exception("disconnected"));
                         }
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<LifecycleEvent>() {
-                        @Override
-                        public void accept(LifecycleEvent lifecycleEvent) {
-                            log.info("connect accept: "+lifecycleEvent.getMessage());
-                            switch (lifecycleEvent.getType()) {
-                                case OPENED:
-                                    log.info("connected");
-                                    String stompUsername = "foo"; // TODO
-                                    onConnect.onMessage(stompUsername);
-                                    break;
-                                case ERROR:
-                                    log.error("Stomp connection error", lifecycleEvent.getException());
-                                    break;
-                                case CLOSED:
-                                    log.info("disconnected");
-                                    disconnect();
-                                    onDisconnect.onMessage(new Exception("disconnected"));
-                            }
-                        }
-                    });
+                    }
+                });
+            List<StompHeader> myHeaders = computeHeaders(stompHeaders);
+            stompClient.connect(myHeaders);
         }catch(Exception e) {
             log.error("connect error", e);
             onDisconnect.onMessage(new Exception("connect error"));
@@ -89,8 +94,9 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
     public void subscribe(Map<String, String> stompHeaders, final MessageHandler.Whole<Object> onMessage, MessageHandler.Whole<String> onError) {
         try {
             String destination = getDestination(stompHeaders);
+            List<StompHeader> myHeaders = computeHeaders(stompHeaders);
             log.info("subscribing " + destination);
-            stompClient.topic(destination)
+            stompClient.topic(destination, myHeaders)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<StompMessage>() {
@@ -98,7 +104,7 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
                         public void accept(StompMessage stompMessage) throws Exception {
                             log.info("subscribe accept");
                             String messageType = stompMessage.findHeader(WhirlpoolProtocol.HEADER_MESSAGE_TYPE);
-                            log.info("messageType" + messageType);
+                            log.info("messageType: " + messageType);
                             String jsonPayload = stompMessage.getPayload();
                             Object whirlpoolMessage = gson.fromJson(jsonPayload, Class.forName(messageType));
                             onMessage.onMessage(whirlpoolMessage);
@@ -115,9 +121,12 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
     public void send(Map<String, String> stompHeaders, Object payload) {
         try {
             String destination = getDestination(stompHeaders);
-            log.info("sending " + destination);
+            List<StompHeader> myHeaders = computeHeaders(stompHeaders);
             String jsonPayload = gson.toJson(payload);
-            stompClient.send(destination, jsonPayload)
+            StompMessage stompMessage = new StompMessage(StompCommand.SEND, myHeaders, jsonPayload);
+
+            log.info("sending " + destination + ": " + jsonPayload);
+            stompClient.send(stompMessage)
                     .compose(applySchedulers())
                     .subscribe(new Action() {
                         @Override
@@ -145,7 +154,7 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
     }
 
     private String getDestination(Map<String, String> stompHeaders) {
-        return stompHeaders.get(HEADER_DESTINATION);
+        return stompHeaders.get(StompHeader.DESTINATION);
     }
 
     private CompletableTransformer applySchedulers() {
@@ -158,6 +167,15 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
+    }
+
+    private List<StompHeader> computeHeaders(Map<String,String> mapHeaders) {
+        List<StompHeader> stompHeaders = new ArrayList<>();
+        for (Map.Entry<String,String> entry : mapHeaders.entrySet()) {
+            StompHeader stompHeader = new StompHeader(entry.getKey(), entry.getValue());
+            stompHeaders.add(stompHeader);
+        }
+        return stompHeaders;
     }
 
     /*@Override // TODO
