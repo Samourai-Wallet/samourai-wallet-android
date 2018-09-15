@@ -62,6 +62,9 @@ android {
             resValue "string", "version_name", "0.98.86"
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -94,7 +97,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation ('com.samouraiwallet:whirlpool-client:0.0.1-android-SNAPSHOT') {
+    implementation ('com.samouraiwallet:whirlpool-client:0.0.1-SNAPSHOT') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
