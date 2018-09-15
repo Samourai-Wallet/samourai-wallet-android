@@ -2,6 +2,7 @@ package com.samourai.wallet.whirlpool;
 
 import com.google.common.util.concurrent.SettableFuture;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.WhirlpoolClient;
@@ -34,6 +35,9 @@ import io.reactivex.schedulers.Schedulers;
 public class WhirlpoolClientTest {
     private WhirlpoolClient whirlpoolClient;
 
+    private static final String SERVER = "127.0.0.1:8080";
+    private BIP47Util bip47Util = BIP47Util.getInstance(null);
+
     @Before
     public void setUp() {
         // mock main thread
@@ -47,9 +51,8 @@ public class WhirlpoolClientTest {
         // client configuration (server...)
         AndroidWhirlpoolHttpClient whirlpoolHttpClient = new AndroidWhirlpoolHttpClient(WebUtil.getInstance(null));
         AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
-        String server = "server:port";
         NetworkParameters networkParameters = SamouraiWallet.getInstance().getCurrentNetworkParams();
-        WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClient, server, networkParameters);
+        WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClient, SERVER, networkParameters);
 
         // instanciate client
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
@@ -75,7 +78,7 @@ public class WhirlpoolClientTest {
         ECKey ecKey = null; // TODO
         BIP47Wallet bip47w = null; // TODO
         int paymentCodeIndex = 0; // TODO
-        IMixHandler mixHandler = new MixHandler(ecKey, bip47w, paymentCodeIndex);
+        IMixHandler mixHandler = new MixHandler(ecKey, bip47w, paymentCodeIndex, bip47Util);
 
         // mix params (input, output)
         String utxoHash = "5369dfb71b36ed2b91ca43f388b869e617558165e4f8306b80857d88bdd624f2";
