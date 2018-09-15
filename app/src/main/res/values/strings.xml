@@ -587,5 +587,10 @@
     <string name="receive_chain">Receive address</string>
     <string name="change_chain">Change address</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+    <string name="encrypted_backup_detected">Encrypted backup detected</string>
+    <string name="restore">RESTORE</string>
+    <string name="request_amount">Request Amount</string>
+    <string name="address_type">Address Type</string>
+    <string name="path">Path</string>
 
 </resources>

@@ -586,6 +586,11 @@
     <string name="chain_id">Adres zinciri</string>
     <string name="receive_chain">Alınacak Adres</string>
     <string name="change_chain">Para üstü adresi</string>
-<string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+  <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+  <string name="encrypted_backup_detected">Şifrelenmiş yedek bulundu</string>
+  <string name="restore">YEDEĞİ YÜKLE</string>
+  <string name="request_amount">İstenilen Miktar</string>
+  <string name="address_type">Adres Tipi</string>
+  <string name="path">Yol</string>
 
 </resources>
