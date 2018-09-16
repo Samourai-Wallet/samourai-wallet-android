@@ -73,6 +73,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/ic_bubbles_add" />
+        android:src="@drawable/ic_add_bubble" />
 
 </android.support.design.widget.CoordinatorLayout>
