@@ -30,12 +30,14 @@ import junit.framework.Assert;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.params.TestNet3Params;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Scheduler;
@@ -55,7 +57,7 @@ public class WhirlpoolClientTest {
     private HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         // mock main thread
         RxAndroidPlugins.setInitMainThreadSchedulerHandler(new Function<Callable<Scheduler>, Scheduler>() {
             @Override
@@ -63,6 +65,12 @@ public class WhirlpoolClientTest {
                 return Schedulers.trampoline();
             }
         });
+
+        // resolve mnemonicCode
+        InputStream wis = getClass().getResourceAsStream("/BIP39/en.txt");
+        MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+        hdWalletFactory.__setMnemonicCode(mc);
+        wis.close();
 
         // init Samourai Wallet
         SamouraiWallet.getInstance().setCurrentNetworkParams(networkParameters);
