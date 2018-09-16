@@ -80,6 +80,9 @@ public class WhirlpoolClientTest {
         AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
         WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClient, SERVER, networkParameters);
 
+        boolean testMode = true; // TODO skipping utxo validations
+        config.setTestMode(testMode);
+
         // instanciate client
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
     }
@@ -101,14 +104,14 @@ public class WhirlpoolClientTest {
     @Test
     public void testMix() throws Exception {
         // pool
-        Pool pool = findPool("0.1btc");
+        Pool pool = findPool("1btc");
 
         // input
-        String utxoHash = "5369dfb71b36ed2b91ca43f388b869e617558165e4f8306b80857d88bdd624f2";
-        String utxoKey = "cN27hV14EEjmwVowfzoeZ9hUGwJDxspuT7N4bQDz651LKmqMUdVs";
+        String utxoHash = "7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16";
+        String utxoKey = "cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j";
         String seedWords = "all all all all all all all all all all all all";
-        long utxoIndex = 3;
-        long utxoBalance = 10000102;
+        long utxoIndex = 2;
+        long utxoBalance = 100000102;
 
         // output
         int paymentCodeIndex = 0; // TODO always increment
