@@ -10,8 +10,9 @@
 
 
     <com.samourai.wallet.whirlpool.views.CycleProgressHeader
+        android:id="@+id/cycleProgressHeader"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="186dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,26 +22,182 @@
 
     </com.samourai.wallet.whirlpool.views.CycleProgressHeader>
 
+    <ScrollView
+        android:layout_width="0dp"
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/ic_add_white_24dp"
-        app:layout_anchor="@id/rv_cycles"
-        app:layout_anchorGravity="bottom|right|end"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        app:layout_constraintTop_toBottomOf="@+id/cycleProgressHeader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp">
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Status" />
+
+                <TextView
+                    android:id="@+id/whirlpool_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_mono"
+                    android:text="Cycle in progress"
+                    android:textAlignment="viewEnd" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80808080" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Start time" />
+
+                <TextView
+                    android:id="@+id/whirlpool_start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_mono"
+                    android:gravity="end"
+                    android:text="12 April 2018, 12:45"
+                    android:textAlignment="viewEnd" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80808080" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Amount" />
+
+                <TextView
+                    android:id="@+id/whirlpool_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_mono"
+                    android:gravity="end"
+                    android:text="0.0 BTC"
+                    android:textAlignment="viewEnd" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80808080" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Total Fees" />
+
+                <TextView
+                    android:id="@+id/whirlpool_total_fees"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_mono"
+                    android:gravity="end"
+                    android:text="0.000BTC"
+                    android:textAlignment="viewEnd" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80808080" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Transaction ID" />
+
+                <TextView
+                    android:id="@+id/textView2335"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:fontFamily="@font/roboto_mono"
+                    android:text="pending"
+                    android:textAlignment="viewEnd" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80808080" />
+
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </android.support.constraint.ConstraintLayout>

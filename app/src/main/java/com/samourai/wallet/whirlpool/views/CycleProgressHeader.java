@@ -1,26 +1,21 @@
 package com.samourai.wallet.whirlpool.views;
 
-import android.animation.ValueAnimator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.samourai.wallet.R;
 
-import java.util.concurrent.TimeUnit;
 
 public class CycleProgressHeader extends FrameLayout {
 
     View progressHeaderSection, HeaderSection;
+
+    ProgressBar progressBar;
 
     public CycleProgressHeader(Context context) {
         this(context, null);
@@ -32,6 +27,7 @@ public class CycleProgressHeader extends FrameLayout {
         init();
     }
 
+
     public CycleProgressHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
@@ -41,7 +37,15 @@ public class CycleProgressHeader extends FrameLayout {
         progressHeaderSection = inflate(getContext(), R.layout.cycle_progress_header, null);
         HeaderSection = inflate(getContext(), R.layout.cycle_header, null);
         addView(progressHeaderSection);
+        progressBar = progressHeaderSection.findViewById(R.id.cycleProgressHeader_progress);
     }
 
+    public void setProgress(int progress, int duration) {
+        ObjectAnimator progressAnimator;
+        progressAnimator = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), progress);
+        progressAnimator.setDuration(duration);
+        progressAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        progressAnimator.start();
+    }
 
 }
