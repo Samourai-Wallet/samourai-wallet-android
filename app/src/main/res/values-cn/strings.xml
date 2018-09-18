@@ -31,10 +31,10 @@
     <string name="options_mnemonic2">显示此钱包的12字种子</string>
     <string name="options_xpub">显示BIP44 XPUB</string>
     <string name="options_xpub2">显示BIP44类账户的扩展公钥</string>
-    <string name="options_xpub49">显示隔离验证YPUB</string>
-    <string name="options_xpub49_2">显示BIP49隔离验证（P2SH）类账户的扩展公钥</string>
-    <string name="options_xpub84">显示隔离验证ZPUB</string>
-    <string name="options_xpub84_2">显示BIP49隔离验证（Bech32）类账户的扩展公钥</string>
+    <string name="options_xpub49">显示隔离见证YPUB</string>
+    <string name="options_xpub49_2">显示BIP49隔离见证（P2SH）类账户的扩展公钥</string>
+    <string name="options_xpub84">显示隔离见证ZPUB</string>
+    <string name="options_xpub84_2">显示BIP49隔离见证（Bech32）类账户的扩展公钥</string>
     <string name="options_wipe">安全删除钱包</string>
     <string name="options_wipe2">从此设备安全删除钱包</string>
     <string name="options_stealth_display">隐形启动模式</string>
@@ -89,7 +89,7 @@
     <string name="options_broadcast_hex">交易hex广播</string>
     <string name="options_broadcast_hex2">以十六进制方式广播提交的已签名交易</string>
     <string name="options_like_typed_change">零钱收到同类输出交易</string>
-    <string name="options_like_typed_change2">零钱只收到同类交易输出地址，如关闭，零钱将只收到隔离验证地址</string>
+    <string name="options_like_typed_change2">零钱只收到同类交易输出地址，如关闭，零钱将只收到隔离见证地址</string>
     <string name="options_haptic">输入PIN码震动模式</string>
     <string name="options_haptic_2">输入PIN码时逐字震动模式</string>
     <string name="options_prune">修剪备份</string>
@@ -408,8 +408,8 @@
     <string name="MainNet">主网（Mainnet）</string>
     <string name="TestNet">测试网络（TestNet）</string>
 
-    <string name="segwit_address">隔离验证地址</string>
-    <string name="segwit_switch_prompt">保存在隔离验证地址的余额用于交易效率更高，这样从你的钱包发币时所需要支付的矿工费将降低</string>
+    <string name="segwit_address">隔离见证地址</string>
+    <string name="segwit_switch_prompt">保存在隔离见证地址的余额用于交易效率更高，这样从你的钱包发币时所需要支付的矿工费将降低</string>
 
     <string name="privkey_clipboard">监测到你的粘贴板存有私钥，删除粘贴板信息？</string>
 
@@ -532,8 +532,8 @@
     <string name="action_utxo_amounts">以地址类型查看余额</string>
 
     <string name="total_p2pkh">老地址总额（p2pkh）：</string>
-    <string name="total_p2sh_p2wpkh">隔离验证地址总额（p2sh）：</string>
-    <string name="total_p2wpkh">隔离验证地址总额（bech32）：</string>
+    <string name="total_p2sh_p2wpkh">隔离见证地址总额（p2sh）：</string>
+    <string name="total_p2wpkh">隔离见证地址总额（bech32）：</string>
     <string name="total_blocked">禁用总额：</string>
   
   	<string name="title_activity_main3">Main3Activity</string>
@@ -555,8 +555,8 @@
     <string name="prune_backup">修剪钱包信息并备份？</string>
 
     <string-array name="address_types">
-        <item>隔离验证兼容地址（P2SH）</item>
-        <item>隔离验证地址（bech32）</item>
+        <item>隔离见证兼容地址（P2SH）</item>
+        <item>隔离见证地址（bech32）</item>
         <item>旧版地址（P2PKH）</item>
     </string-array>
 
