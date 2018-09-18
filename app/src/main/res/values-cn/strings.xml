@@ -10,7 +10,7 @@
 
     <string name="action_settings">设置</string>
     <string name="action_support">帮助</string>
-    <string name="action_sweep">扫私钥</string>
+    <string name="action_sweep">扫清私钥</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">激活全部付款码</string>
     <string name="action_sync_all">同步所有付款码</string>
@@ -271,7 +271,7 @@
     <string name="api_error">武士钱包接口返回错误。请确认你的网络连接重试，或稍后重试</string>
 
     <string name="cannot_recognize_privkey">无法识别私钥</string>
-    <string name="cannot_sweep_privkey">扫描私钥错误</string>
+    <string name="cannot_sweep_privkey">扫清私钥错误</string>
     <string name="please_wait_sending">交易正在发送，请稍候</string>
     <string name="please_wait_ricochet">正在处理Ricochet队列，请稍候</string>
 
@@ -372,7 +372,7 @@
     <string name="opendime_not_verified">无法验证</string>
     <string name="opendime_no_valid_key">无法验证此设备私钥有效性</string>
     <string name="opendime_view">查看</string>
-    <string name="opendime_sweep">扫出</string>
+    <string name="opendime_sweep">扫清</string>
     <string name="opendime_topup">充值</string>
 
     <string name="select_app">选择APP</string>
