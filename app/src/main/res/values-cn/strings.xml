@@ -290,7 +290,7 @@
     <string name="ricochet_spend3">（包含0.002BTC给武士钱包和矿工的费用）？</string>
 
     <string name="action_ricochet">重发Ricochet</string>
-    <string name="action_empty_ricochet">清理Ricochet列队</string>
+    <string name="action_empty_ricochet">清理Ricochet队列</string>
     <string name="ricochet">Ricochet-以多4个跳跃发送</string>
     <string name="action_ricochet_script">显示Ricochet代码</string>
     <string name="action_ricochet_replay">重发Ricochet</string>
@@ -301,7 +301,7 @@
     <string name="ricochet_broadcast">你的Ricochet交易已广播</string>
 
     <string name="bip47_cannot_identify_outpoint">无法为付款码匿名</string>
-    <string name="bip47_cannot_compose_notif_tx">无法建立通知交易</string>
+    <string name="bip47_cannot_compose_notif_tx">无法建立公告交易</string>
 
     <string name="pushtx_returns_null">付款失败，服务器返回空值</string>
 
@@ -332,7 +332,7 @@
     <string name="fee_bump_not_necessary">请注意，增加费用对此交易可能并无影响</string>
     <string name="bump_fee">你确定为此交易增加矿工费以便收到更快的确认吗？\n\n矿工加速费：</string>
 
-    <string name="options_sign">签署记录</string>
+    <string name="options_sign">签署信息</string>
 
     <string name="trusted_node_pow_failed">无法验证你提供的来自可信任节点的工作证明（PoW），请重试</string>
 
