@@ -71,22 +71,39 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <EditText
-                        android:layout_weight="4"
-                        android:layout_width="0dp"
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="number|numberDecimal"
-                        android:digits="0123456789."
-                        android:ems="10"
-                        android:id="@+id/amountBTC"
-                        android:hint="0.0000"
-                        android:textColorHint="@color/primary_light"
-                        android:layout_marginEnd="8dp"
-                        android:textColor="@color/primary_light"
-                        android:maxLength="17"
-                        android:textSize="16sp"
-                        />
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="50">
 
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number|numberDecimal"
+                            android:digits="0123456789."
+                            android:ems="10"
+                            android:id="@+id/amountBTC"
+                            android:hint="0.0000"
+                            android:textColorHint="@color/primary_light"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/primary_light"
+                            android:maxLength="17"
+                            android:textSize="16sp"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="6dp"
+                            android:fontFamily="@font/roboto_mono"
+                            android:text="BTC"
+                            android:typeface="monospace" />
+                    </RelativeLayout>
+
+<!--
                     <TextView
                         android:layout_weight="3"
                         android:layout_width="0dp"
@@ -113,7 +130,7 @@
                         android:maxLength="17"
                         android:textSize="16sp"
                         />
-
+-->
                 </LinearLayout>
 
                 <LinearLayout

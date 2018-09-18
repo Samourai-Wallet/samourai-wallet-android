@@ -13,7 +13,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
@@ -26,7 +25,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -44,7 +42,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -57,9 +54,7 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
-import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFSpend;
-import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
@@ -67,7 +62,6 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
-import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -81,15 +75,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
-
-import static java.lang.System.currentTimeMillis;
 
 import com.yanzhenjie.zbar.Symbol;
 
@@ -99,10 +90,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.MnemonicException;
-import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class BatchSendActivity extends Activity {
 
@@ -126,16 +114,9 @@ public class BatchSendActivity extends Activity {
     private TextWatcher textWatcherAddress = null;
 
     private EditText edAmountBTC = null;
-    private EditText edAmountFiat = null;
     private TextWatcher textWatcherBTC = null;
-    private TextWatcher textWatcherFiat = null;
 
     private String defaultSeparator = null;
-
-    private String strFiat = null;
-
-    private double btc_fx = 286.0;
-    private TextView tvFiatSymbol = null;
 
     private int selectedAccount = 0;
 
@@ -214,11 +195,6 @@ public class BatchSendActivity extends Activity {
         DecimalFormat format = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
-
-        strFiat = PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-        btc_fx = ExchangeRateFactory.getInstance(BatchSendActivity.this).getAvgPrice(strFiat);
-        tvFiatSymbol = (TextView)findViewById(R.id.fiatSymbol);
-        tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
 
         edAddress = (EditText)findViewById(R.id.destination);
 
@@ -301,14 +277,12 @@ public class BatchSendActivity extends Activity {
         });
 
         edAmountBTC = (EditText)findViewById(R.id.amountBTC);
-        edAmountFiat = (EditText)findViewById(R.id.amountFiat);
 
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
 
                 edAmountBTC.removeTextChangedListener(this);
-                edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
@@ -337,18 +311,11 @@ public class BatchSendActivity extends Activity {
                 }
 
                 if(d > 21000000.0)    {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
                     edAmountBTC.setText("0");
                     edAmountBTC.setSelection(edAmountBTC.getText().length());
                     Toast.makeText(BatchSendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
-                else    {
-                    edAmountFiat.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(d * btc_fx));
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
-                }
 
-                edAmountFiat.addTextChangedListener(textWatcherFiat);
                 edAmountBTC.addTextChangedListener(this);
 
                 validateSpend();
@@ -363,68 +330,6 @@ public class BatchSendActivity extends Activity {
             }
         };
         edAmountBTC.addTextChangedListener(textWatcherBTC);
-
-        textWatcherFiat = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                edAmountFiat.removeTextChangedListener(this);
-                edAmountBTC.removeTextChangedListener(textWatcherBTC);
-
-                int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
-                fiatFormat.setMaximumFractionDigits(max_len + 1);
-                fiatFormat.setMinimumFractionDigits(0);
-
-                double d = 0.0;
-                try	{
-                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
-                    String s1 = fiatFormat.format(d);
-                    if(s1.indexOf(defaultSeparator) != -1)	{
-                        String dec = s1.substring(s1.indexOf(defaultSeparator));
-                        if(dec.length() > 0)	{
-                            dec = dec.substring(1);
-                            if(dec.length() > max_len)	{
-                                edAmountFiat.setText(s1.substring(0, s1.length() - 1));
-                                edAmountFiat.setSelection(edAmountFiat.getText().length());
-                            }
-                        }
-                    }
-                }
-                catch(NumberFormatException nfe)	{
-                    ;
-                }
-                catch(ParseException pe) {
-                    ;
-                }
-
-                if((d / btc_fx) > 21000000.0)    {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
-                    edAmountBTC.setText("0");
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                    Toast.makeText(BatchSendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                }
-                else    {
-                    edAmountBTC.setText(MonetaryUtil.getInstance().getBTCFormat().format(d / btc_fx));
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                }
-
-                edAmountBTC.addTextChangedListener(textWatcherBTC);
-                edAmountFiat.addTextChangedListener(this);
-
-                validateSpend();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                ;
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ;
-            }
-        };
-        edAmountFiat.addTextChangedListener(textWatcherFiat);
 
         validateSpend();
 
@@ -509,7 +414,6 @@ public class BatchSendActivity extends Activity {
             data.clear();
             edAddress.setText("");
             edAmountBTC.setText("");
-            edAmountFiat.setText("");
             edAddress.setEnabled(true);
 
             strPCode = "";
@@ -626,7 +530,6 @@ public class BatchSendActivity extends Activity {
         BatchSendUtil.getInstance().add(dd);
 
         edAmountBTC.setText("");
-        edAmountFiat.setText("");
         edAddress.setText("");
         edAddress.setEnabled(true);
 
@@ -707,8 +610,6 @@ public class BatchSendActivity extends Activity {
                 }
             }
 
-            tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
-
             final String strAmount;
             NumberFormat nf = NumberFormat.getInstance(Locale.US);
             nf.setMinimumIntegerDigits(1);
@@ -721,7 +622,6 @@ public class BatchSendActivity extends Activity {
                 if(amount != null && Double.parseDouble(amount) != 0.0)    {
                     edAddress.setEnabled(false);
                     edAmountBTC.setEnabled(false);
-                    edAmountFiat.setEnabled(false);
 //                    Toast.makeText(BatchSendActivity.this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1050,136 +950,6 @@ public class BatchSendActivity extends Activity {
                             );
                             Intent _intent = new Intent(BatchSendActivity.this, TxAnimUIActivity.class);
                             startActivity(_intent);
-
-
-
-
-                            /*
-
-
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    Looper.prepare();
-
-                                    boolean isOK = false;
-                                    String response = null;
-                                    try {
-                                        if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-                                            if(TrustedNodeUtil.getInstance().isSet())    {
-                                                response = PushTx.getInstance(BatchSendActivity.this).trustedNode(hexTx);
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if(jsonObject.has("result"))    {
-                                                    if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
-                                                        isOK = true;
-                                                    }
-                                                    else    {
-                                                        Toast.makeText(BatchSendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            }
-                                            else    {
-                                                Toast.makeText(BatchSendActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                        else    {
-                                            response = PushTx.getInstance(BatchSendActivity.this).samourai(hexTx);
-
-                                            if(response != null)    {
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if(jsonObject.has("status"))    {
-                                                    if(jsonObject.getString("status").equals("ok"))    {
-                                                        isOK = true;
-                                                    }
-                                                }
-                                            }
-                                            else    {
-                                                Toast.makeText(BatchSendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-
-                                        if(isOK)    {
-
-                                            BatchSendUtil.getInstance().clear();
-
-                                            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
-                                                Toast.makeText(BatchSendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                            }
-                                            else    {
-                                                Toast.makeText(BatchSendActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
-                                            }
-
-                                            if(_change > 0L)    {
-                                                BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
-                                            }
-
-                                            if(PrefsUtil.getInstance(BatchSendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-
-                                                if(_change > 0L && _change_address != null)    {
-                                                    rbf.addChangeAddr(_change_address);
-                                                }
-
-                                                rbf.setHash(strTxHash);
-                                                rbf.setSerializedTx(hexTx);
-
-                                                RBFUtil.getInstance().add(rbf);
-                                            }
-
-                                            for(BatchSendUtil.BatchSend d : data)   {
-
-                                                String address = d.addr;
-                                                String pcode = d.pcode;
-                                                // increment counter if BIP47 spend
-                                                if(pcode != null && pcode.length() > 0)    {
-                                                    BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
-                                                    BIP47Meta.getInstance().inc(pcode);
-
-                                                    SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
-                                                    String strTS = sd.format(currentTimeMillis());
-                                                    String event = strTS + " " + BatchSendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) d.amount / 1e8) + " BTC";
-                                                    BIP47Meta.getInstance().setLatestEvent(strPCode, event);
-
-                                                }
-                                            }
-
-                                            View view = BatchSendActivity.this.getCurrentFocus();
-                                            if (view != null) {
-                                                InputMethodManager imm = (InputMethodManager)BatchSendActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                                            }
-
-                                            Intent _intent = new Intent(BatchSendActivity.this, BalanceActivity.class);
-                                            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                            startActivity(_intent);
-
-                                        }
-                                        else    {
-                                            Toast.makeText(BatchSendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
-                                            // reset change index upon tx fail
-                                            BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_idx);
-                                        }
-                                    }
-                                    catch(JSONException je) {
-                                        Toast.makeText(BatchSendActivity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                    catch(DecoderException de) {
-                                        Toast.makeText(BatchSendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                    finally {
-                                        ;
-                                    }
-
-                                    Looper.loop();
-
-                                }
-                            }).start();
-
-                            */
-
-
-
-
 
                         }
                     }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

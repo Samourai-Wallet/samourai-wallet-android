@@ -63,7 +63,6 @@ import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -700,17 +699,8 @@ public class OpenDimeActivity extends Activity {
                                             public void run() {
                                                 double btc_balance = (((double)balance) / 1e8);
 
-                                                String strFiat = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-                                                double btc_fx = 0.0;
-                                                double fiat_balance = 0.0;
-                                                if(balance > 0L)    {
-                                                    btc_fx = ExchangeRateFactory.getInstance(OpenDimeActivity.this).getAvgPrice(strFiat);
-                                                    fiat_balance = btc_fx * btc_balance;
-                                                }
-
                                                 String strBalance = "" + btc_balance + " BTC";
                                                 if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
-                                                    strBalance += " " + MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance) + " " + strFiat;
                                                     btSweep.setVisibility(View.VISIBLE);
                                                 }
                                                 else    {
