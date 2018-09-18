@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
-    <string name="options_cat_prefs">Currency, Block explorer</string>
+    <string name="options_cat_prefs">Block explorer</string>
     <string name="options_cat_stealth">Stealth</string>
     <string name="options_cat_remote">Remote</string>
     <string name="options_cat_wallet">Wallet</string>
