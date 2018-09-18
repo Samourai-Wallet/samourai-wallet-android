@@ -74,7 +74,7 @@
                 android:maxLength="17"
                 android:textSize="16sp"
                 />
-
+<!--
             <TextView
                 android:layout_weight="3"
                 android:layout_width="0dp"
@@ -101,7 +101,7 @@
                 android:maxLength="17"
                 android:textSize="16sp"
                 />
-
+-->
         </LinearLayout>
 
         <LinearLayout
