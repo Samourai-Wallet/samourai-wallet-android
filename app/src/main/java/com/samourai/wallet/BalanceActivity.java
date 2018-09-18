@@ -1372,8 +1372,8 @@ public class BalanceActivity extends Activity {
                     strUnits = getBTCDisplayUnits();
                 }
                 else    {
-                    strAmount = getFiatDisplayAmount(_amount);
-                    strUnits = getFiatDisplayUnits();
+                    strAmount = getSatoshiDisplayAmount(_amount);
+                    strUnits = getSatoshiDisplayUnits();
                 }
 
                 TextView tvDirection = (TextView)view.findViewById(R.id.TransactionDirection);
@@ -1442,8 +1442,6 @@ public class BalanceActivity extends Activity {
     }
 
     private void displayBalance() {
-        String strFiat = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-        double btc_fx = ExchangeRateFactory.getInstance(BalanceActivity.this).getAvgPrice(strFiat);
 
         long balance = 0L;
         if(SamouraiWallet.getInstance().getShowTotalBalance())    {
@@ -1487,16 +1485,14 @@ public class BalanceActivity extends Activity {
                 }
             }
         }
-        double btc_balance = (((double)balance) / 1e8);
-        double fiat_balance = btc_fx * btc_balance;
 
         if(isBTC) {
             tvBalanceAmount.setText(getBTCDisplayAmount(balance));
             tvBalanceUnits.setText(getBTCDisplayUnits());
         }
         else {
-            tvBalanceAmount.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance));
-            tvBalanceUnits.setText(strFiat);
+            tvBalanceAmount.setText(getSatoshiDisplayAmount(balance));
+            tvBalanceUnits.setText(getSatoshiDisplayUnits());
         }
 
     }
@@ -1514,24 +1510,19 @@ public class BalanceActivity extends Activity {
         return strAmount;
     }
 
+    private String getSatoshiDisplayAmount(long value) {
+        return Long.toString(value);
+    }
+
     private String getBTCDisplayUnits() {
 
         return MonetaryUtil.getInstance().getBTCUnits();
 
     }
 
-    private String getFiatDisplayAmount(long value) {
+    private String getSatoshiDisplayUnits() {
 
-        String strFiat = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-        double btc_fx = ExchangeRateFactory.getInstance(BalanceActivity.this).getAvgPrice(strFiat);
-        String strAmount = MonetaryUtil.getInstance().getFiatFormat(strFiat).format(btc_fx * (((double)value) / 1e8));
-
-        return strAmount;
-    }
-
-    private String getFiatDisplayUnits() {
-
-        return PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+        return MonetaryUtil.getInstance().getSatoshiUnits();
 
     }
 
