@@ -354,7 +354,7 @@
 
     <string name="error_reading_payload">读取载荷错误，请重试</string>
 
-    <string name="utxo_sign">签署短语<</string>
+    <string name="utxo_sign">签署信息<</string>
     <string name="utxo_sign_text1">用此私钥签署短语？</string>
     <string name="utxo_sign_text2">用utxo签署</string>
     <string name="utxo_sign_text3">用utxo签署</string>
