@@ -267,13 +267,13 @@
     <string name="passphrase_needed_for_backup">你的钱包未采取密码短语保护措施。钱包备份需要使用密码短语进行加密。如果你想使用加密钱包备份以及其他武士钱包功能，请用武士钱包建立钱包并把资金转到此钱包</string>
     <string name="passphrase_required">使用此功能需要定制密码短语，请考虑创建一个自动带密码短语的新钱包</string>
 
-    <string name="cannot_reach_api">无法连接武士钱包接口。请确认你的网络连接后重试，或稍后重试</string>
-    <string name="api_error">武士钱包接口返回错误。请确认你的网络连接重试，或稍后重试</string>
+    <string name="cannot_reach_api">无法连接武士钱包接口。请确认你的网络连接后重试，或稍等重试</string>
+    <string name="api_error">武士钱包接口返回错误。请确认你的网络连接重试，或稍等重试</string>
 
     <string name="cannot_recognize_privkey">无法识别私钥</string>
     <string name="cannot_sweep_privkey">扫清私钥错误</string>
-    <string name="please_wait_sending">交易正在发送，请稍候</string>
-    <string name="please_wait_ricochet">正在处理Ricochet队列，请稍候</string>
+    <string name="please_wait_sending">交易正在发送，请稍等</string>
+    <string name="please_wait_ricochet">正在处理Ricochet队列，请稍等</string>
 
     <string name="change_is_dust">此交易的找零属于尘额交易。如重试请更改付款金额或尝试付出全部余额</string>
 
