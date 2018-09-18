@@ -80,9 +80,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private TextView tvPath = null;
 
     private EditText edAmountBTC = null;
-    private EditText edAmountFiat = null;
     private TextWatcher textWatcherBTC = null;
-    private TextWatcher textWatcherFiat = null;
     private LinearLayout advancedButton = null;
     private ConstraintLayout advanceOptionsContainer = null;
     private Spinner addressTypesSpinner = null;
@@ -90,9 +88,6 @@ public class ReceiveActivity extends AppCompatActivity {
     private boolean useSegwit = true;
 
     private String defaultSeparator = null;
-
-    private String strFiat = null;
-    private double btc_fx = 286.0;
 
     private String addr = null;
     private String addr44 = null;
@@ -138,7 +133,6 @@ public class ReceiveActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,11 +149,9 @@ public class ReceiveActivity extends AppCompatActivity {
         tvAddress = findViewById(R.id.receive_address);
         tvPath = findViewById(R.id.path);
         addressTypesSpinner = findViewById(R.id.address_type_spinner);
-        TextView tvFiatSymbol = findViewById(R.id.tvFiatSymbol);
         ivQR = findViewById(R.id.qr);
         advancedButton = findViewById(R.id.advance_button);
         edAmountBTC = findViewById(R.id.amountBTC);
-        edAmountFiat = findViewById(R.id.amountFiat);
         populateSpinner();
 
         Display display = (ReceiveActivity.this).getWindowManager().getDefaultDisplay();
@@ -293,16 +285,11 @@ public class ReceiveActivity extends AppCompatActivity {
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
-        strFiat = PrefsUtil.getInstance(ReceiveActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-        btc_fx = ExchangeRateFactory.getInstance(ReceiveActivity.this).getAvgPrice(strFiat);
-        tvFiatSymbol.setText(strFiat);
-
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
 
                 edAmountBTC.removeTextChangedListener(this);
-                edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
@@ -331,17 +318,11 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
 
                 if (d > 21000000.0) {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
                     edAmountBTC.setText("0");
                     edAmountBTC.setSelection(edAmountBTC.getText().length());
                     Toast.makeText(ReceiveActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                } else {
-                    edAmountFiat.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(d * btc_fx));
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
                 }
 
-                edAmountFiat.addTextChangedListener(textWatcherFiat);
                 edAmountBTC.addTextChangedListener(this);
 
                 displayQRCode();
@@ -354,65 +335,6 @@ public class ReceiveActivity extends AppCompatActivity {
             }
         };
         edAmountBTC.addTextChangedListener(textWatcherBTC);
-
-        textWatcherFiat = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                edAmountFiat.removeTextChangedListener(this);
-                edAmountBTC.removeTextChangedListener(textWatcherBTC);
-
-                int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
-                fiatFormat.setMaximumFractionDigits(max_len + 1);
-                fiatFormat.setMinimumFractionDigits(0);
-
-                double d = 0.0;
-                try {
-                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
-                    String s1 = fiatFormat.format(d);
-                    if (s1.indexOf(defaultSeparator) != -1) {
-                        String dec = s1.substring(s1.indexOf(defaultSeparator));
-                        if (dec.length() > 0) {
-                            dec = dec.substring(1);
-                            if (dec.length() > max_len) {
-                                edAmountFiat.setText(s1.substring(0, s1.length() - 1));
-                                edAmountFiat.setSelection(edAmountFiat.getText().length());
-                            }
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    ;
-                } catch (ParseException pe) {
-                    ;
-                }
-
-                if ((d / btc_fx) > 21000000.0) {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
-                    edAmountBTC.setText("0");
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                    Toast.makeText(ReceiveActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                } else {
-                    edAmountBTC.setText(MonetaryUtil.getInstance().getBTCFormat().format(d / btc_fx));
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                }
-
-                edAmountBTC.addTextChangedListener(textWatcherBTC);
-                edAmountFiat.addTextChangedListener(this);
-
-                displayQRCode();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                ;
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ;
-            }
-        };
-        edAmountFiat.addTextChangedListener(textWatcherFiat);
 
         displayQRCode();
     }

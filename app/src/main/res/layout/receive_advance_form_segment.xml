@@ -35,7 +35,6 @@
                 android:hint="@string/_0_00"
                 android:inputType="numberDecimal" />
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
                 android:text="BTC"
                 android:typeface="monospace" />
         </RelativeLayout>
-
+<!--
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,6 +75,7 @@
 
 
         </RelativeLayout>
+-->
     </LinearLayout>
 
     <TextView
