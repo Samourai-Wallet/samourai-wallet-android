@@ -33,7 +33,7 @@ public class AndroidWhirlpoolHttpClient implements IWhirlpoolHttpClient {
     public void postJsonOverTor(String url, Object body) throws WhirlpoolHttpException {
         try {
             String jsonString = gson.toJson(body);
-            webUtil.postURL("application/json", url, jsonString);
+            webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString);
             //webUtil.tor_postURL("application/json", url, body) // TODO use TOR
         }
         catch(Exception e) {
