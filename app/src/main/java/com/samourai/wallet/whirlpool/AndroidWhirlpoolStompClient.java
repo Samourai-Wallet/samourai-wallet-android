@@ -46,14 +46,6 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
             log.info("connecting to " + url);
             stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
             stompClient.lifecycle()
-                .timeout(TIMEOUT, TimeUnit.MILLISECONDS, new Flowable<LifecycleEvent>() {
-                    @Override
-                    protected void subscribeActual(Subscriber<? super LifecycleEvent> s) {
-                        log.error("timeout");
-                        disconnect();
-                        onDisconnect.onMessage(new Exception("disconnected"));
-                    }
-                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<LifecycleEvent>() {
