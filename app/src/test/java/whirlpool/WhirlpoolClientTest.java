@@ -109,13 +109,15 @@ public class WhirlpoolClientTest {
         // input
         String utxoHash = "7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16";
         String utxoKey = "cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j";
-        String seedWords = "all all all all all all all all all all all all";
         long utxoIndex = 2;
         long utxoBalance = 100000102;
+        String passphrase = "w0";
 
         // output
         int paymentCodeIndex = 0; // TODO always increment
-        HD_Wallet bip44w = hdWalletFactory.newWallet(12, seedWords, 1);
+        String seedWords = "all all all all all all all all all all all all";
+
+        HD_Wallet bip44w = hdWalletFactory.restoreWallet(seedWords, passphrase, 1);
         BIP47Wallet bip47w = hdWalletFactory.getBIP47();
 
         // input utxo key
