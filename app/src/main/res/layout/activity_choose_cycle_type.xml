@@ -58,8 +58,8 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
@@ -100,12 +100,12 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView21"
             app:layout_constraintTop_toBottomOf="@+id/textView18"
-            app:srcCompat="@drawable/ic_loyalty" />
+            app:srcCompat="@drawable/ic_loyalty_whie_24dp" />
 
         <ImageView
             android:id="@+id/imageView4"
