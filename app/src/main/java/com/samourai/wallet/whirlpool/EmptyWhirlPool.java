@@ -44,8 +44,16 @@ public class EmptyWhirlPool extends AppCompatActivity {
         newWhirlPool.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EmptyWhirlPool.this,ChooseCycleType.class);
+                Intent intent = new Intent(EmptyWhirlPool.this, ChooseCycleType.class);
                 startActivity(intent);
+            }
+        });
+        newWhirlPool.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent = new Intent(EmptyWhirlPool.this, WhirlpoolMain.class);
+                startActivity(intent);
+                return true;
             }
         });
 
