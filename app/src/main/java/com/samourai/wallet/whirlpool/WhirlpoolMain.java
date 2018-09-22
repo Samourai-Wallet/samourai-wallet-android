@@ -1,5 +1,6 @@
 package com.samourai.wallet.whirlpool;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -7,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.CyclesAdapter;
@@ -39,6 +41,13 @@ public class WhirlpoolMain extends AppCompatActivity {
         CycleRecyclerView.setAdapter(CyclesAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(CycleRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
+        CyclesAdapter.setItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(WhirlpoolMain.this,CycleDetail.class);
+                startActivity(intent);
+            }
+        });
 
         CycleRecyclerView.addItemDecoration(dividerItemDecoration);
     }
