@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.views.CycleProgressHeader;
@@ -39,4 +40,10 @@ public class CycleDetail extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.whirlpool_cycle_detail_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 }
