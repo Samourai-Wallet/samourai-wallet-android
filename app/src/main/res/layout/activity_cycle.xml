@@ -9,29 +9,47 @@
     tools:context="com.samourai.wallet.whirlpool.CycleDetail">
 
 
-    <com.samourai.wallet.whirlpool.views.CycleProgressHeader
-        android:id="@+id/cycleProgressHeader"
+    <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/appBarLayout4"
         android:layout_width="match_parent"
         android:layout_height="186dp"
-        android:layout_marginBottom="8dp"
+        android:background="@color/grey_accent"
+        android:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="8dp"
         app:layout_constraintVertical_bias="0.0">
 
-    </com.samourai.wallet.whirlpool.views.CycleProgressHeader>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+        <com.samourai.wallet.whirlpool.views.CycleProgressHeader
+            android:id="@+id/cycleProgressHeader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+           >
+
+        </com.samourai.wallet.whirlpool.views.CycleProgressHeader>
+
+
+    </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:layout_width="0dp"
-
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cycleProgressHeader">
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout4">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,10 +78,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_weight="1"
-                    android:gravity="end"
-                    android:maxLines="1"
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_mono"
+                    android:gravity="end"
+                    android:maxLines="1"
                     android:text="Cycle in progress"
                     android:textAlignment="viewEnd" />
             </LinearLayout>
@@ -184,8 +202,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_weight="1"
-                    android:gravity="end"
                     android:fontFamily="@font/roboto_mono"
+                    android:gravity="end"
                     android:text="pending"
                     android:textAlignment="viewEnd" />
             </LinearLayout>

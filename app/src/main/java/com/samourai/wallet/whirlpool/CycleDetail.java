@@ -18,7 +18,7 @@ public class CycleDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cycle);
         cycleProgressHeader = findViewById(R.id.cycleProgressHeader);
-//        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -34,6 +34,8 @@ public class CycleDetail extends AppCompatActivity {
                 cycleProgressHeader.setProgress(100,800);
             }
         }, 2500);
+
+
 
     }
 
