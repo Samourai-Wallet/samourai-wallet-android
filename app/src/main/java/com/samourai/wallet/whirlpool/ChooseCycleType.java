@@ -3,10 +3,13 @@ package com.samourai.wallet.whirlpool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ViewGroup;
 
 import com.samourai.wallet.R;
 
 public class ChooseCycleType extends AppCompatActivity {
+
+    private ViewGroup superChargeButton, standardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

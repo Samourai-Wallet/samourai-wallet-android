@@ -66,12 +66,15 @@
 
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_new_whirlpool"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:clickable="true"
+        app:rippleColor="@color/blue_ui_2"
+        android:background="?attr/selectableItemBackground"
+        android:backgroundTint="@color/blue"
         android:focusable="true"
         android:src="@drawable/ic_add_bubble" />
 

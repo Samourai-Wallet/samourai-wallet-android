@@ -1,9 +1,11 @@
 package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -23,7 +25,7 @@ public class EmptyWhirlPool extends AppCompatActivity {
     private ImageView[] indicators;
     private ViewPager viewPager;
     private LinearLayout pagerIndicatorContainer;
-
+    private FloatingActionButton newWhirlPool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +39,16 @@ public class EmptyWhirlPool extends AppCompatActivity {
         viewPager = findViewById(R.id.viewpager_intro_whirlpool);
         viewPager.setAdapter(new SliderAdapter(this));
         pagerIndicatorContainer = findViewById(R.id.dots);
-//        viewPager.addOnPageChangeListener(new CircularViewPagerHandler(viewPager));
+        newWhirlPool = findViewById(R.id.fab_new_whirlpool);
         setPagerIndicators();
+        newWhirlPool.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EmptyWhirlPool.this,ChooseCycleType.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void setPagerIndicators() {
