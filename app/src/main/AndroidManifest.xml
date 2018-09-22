@@ -222,6 +222,8 @@
         <activity
             android:name=".whirlpool.WhirlPoolActivity"
             android:exported="true"
+            android:label=""
+            android:parentActivityName=".whirlpool.ChooseCycleType"
             android:theme="@style/whirlpool_theme" />
         <activity
             android:name=".whirlpool.EmptyWhirlPool"

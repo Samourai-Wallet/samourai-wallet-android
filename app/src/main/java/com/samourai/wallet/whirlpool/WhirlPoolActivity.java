@@ -18,8 +18,10 @@ public class WhirlPoolActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_whirl_pool);
-        Toolbar toolbar = findViewById(R.id.toolbar_whirlpool_main);
+        Toolbar toolbar = findViewById(R.id.toolbar_whirlpool);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 }
