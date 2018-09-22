@@ -91,7 +91,6 @@ public class EmptyWhirlPool extends AppCompatActivity {
                 }
                 // here we using PorterDuff mode to overlay color over ImageView to set Active indicator
                 // we don't have to create multiple asset for showing active and inactive states of indicators
-
                 indicators[position].getDrawable().setColorFilter(getResources().getColor(color[position]), PorterDuff.Mode.ADD);
             }
 

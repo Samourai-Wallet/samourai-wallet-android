@@ -6,17 +6,16 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.whirlpool.views.CycleProgressHeader;
+import com.samourai.wallet.whirlpool.views.CycleDetailHeader;
 
 
 public class CycleDetail extends AppCompatActivity {
 
-    private CycleProgressHeader cycleProgressHeader;
+    private CycleDetailHeader cycleDetailHeader;
     private Boolean showMenuItems = false;
     private TextView CycleStatus,TransactionStatus,TransactionId;
 
@@ -25,7 +24,7 @@ public class CycleDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cycle);
-        cycleProgressHeader = findViewById(R.id.cycleProgressHeader);
+        cycleDetailHeader = findViewById(R.id.cycleProgressHeader);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         CycleStatus = findViewById(R.id.whirlpool_status);
         TransactionStatus = findViewById(R.id.transaction_status);
@@ -37,19 +36,19 @@ public class CycleDetail extends AppCompatActivity {
         (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                cycleProgressHeader.setProgress(60, 600);
+                cycleDetailHeader.setProgress(60, 600);
             }
         }, 1500);
         (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                cycleProgressHeader.setProgress(100, 800);
+                cycleDetailHeader.setProgress(100, 800);
             }
         }, 2500);
         (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                cycleProgressHeader.switchToBroadCastedSection();
+                cycleDetailHeader.switchToBroadCastedSection();
                 setBroadCastedState();
             }
         }, 5000);
@@ -65,8 +64,6 @@ public class CycleDetail extends AppCompatActivity {
         TransactionStatus.setText("");
         TransactionId.setVisibility(View.VISIBLE);
         TransactionId.setText("36ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0bfaea3b3dcc9b84313");
-
-
 
     }
 

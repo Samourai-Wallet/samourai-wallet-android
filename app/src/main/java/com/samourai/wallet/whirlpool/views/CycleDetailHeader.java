@@ -2,7 +2,6 @@ package com.samourai.wallet.whirlpool.views;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,24 +12,24 @@ import android.widget.ProgressBar;
 import com.samourai.wallet.R;
 
 
-public class CycleProgressHeader extends FrameLayout {
+public class CycleDetailHeader extends FrameLayout {
 
     View progressHeaderSection, HeaderSection;
 
     ProgressBar progressBar;
 
-    public CycleProgressHeader(Context context) {
+    public CycleDetailHeader(Context context) {
         this(context, null);
         init();
     }
 
-    public CycleProgressHeader(Context context, AttributeSet attrs) {
+    public CycleDetailHeader(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
         init();
     }
 
 
-    public CycleProgressHeader(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CycleDetailHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

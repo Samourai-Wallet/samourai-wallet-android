@@ -31,12 +31,12 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways" />
 
-        <com.samourai.wallet.whirlpool.views.CycleProgressHeader
+        <com.samourai.wallet.whirlpool.views.CycleDetailHeader
             android:id="@+id/cycleProgressHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </com.samourai.wallet.whirlpool.views.CycleProgressHeader>
+        </com.samourai.wallet.whirlpool.views.CycleDetailHeader>
 
 
     </android.support.design.widget.AppBarLayout>

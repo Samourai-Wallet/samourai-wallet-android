@@ -582,5 +582,6 @@
     <string name="transaction_broadcast">Transaction Broadcast</string>
     <string name="pending">pending</string>
     <string name="transaction_id">Transaction ID</string>
+    <string name="completed">Completed</string>
 
 </resources>
