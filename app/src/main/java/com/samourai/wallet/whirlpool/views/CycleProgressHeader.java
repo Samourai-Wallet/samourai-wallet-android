@@ -2,6 +2,8 @@ package com.samourai.wallet.whirlpool.views;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.transition.ChangeBounds;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -46,6 +48,19 @@ public class CycleProgressHeader extends FrameLayout {
         progressAnimator.setDuration(duration);
         progressAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         progressAnimator.start();
+    }
+
+
+    public void switchToBroadCastedSection(){
+        TransitionManager.beginDelayedTransition(this);
+        removeAllViews();
+        addView(HeaderSection);
+    }
+
+    public void switchToProgressSection(){
+        TransitionManager.beginDelayedTransition(this);
+        removeAllViews();
+        addView(progressHeaderSection);
     }
 
 }

@@ -35,6 +35,12 @@ public class CycleDetail extends AppCompatActivity {
                 cycleProgressHeader.setProgress(100,800);
             }
         }, 2500);
+         (new Handler()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cycleProgressHeader.switchToBroadCastedSection();
+            }
+        }, 5000);
 
 
 
