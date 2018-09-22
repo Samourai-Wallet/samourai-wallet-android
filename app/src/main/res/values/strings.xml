@@ -579,5 +579,8 @@
     <string name="_0_5_mins">0-5 mins</string>
     <string name="select_a_cycle_type">Select a cycle type</string>
     <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Transaction Broadcast</string>
+    <string name="pending">pending</string>
+    <string name="transaction_id">Transaction ID</string>
 
 </resources>
