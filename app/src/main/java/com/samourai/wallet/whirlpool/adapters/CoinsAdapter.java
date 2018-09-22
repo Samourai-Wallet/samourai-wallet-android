@@ -34,7 +34,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Coin coin = mCoins.get(position);
 
         holder.addressTxView.setText(coin.getAddress());
@@ -54,7 +54,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
                 CompoundButton compoundButton = (CompoundButton) view;
                 Coin mCoin = (Coin) compoundButton.getTag();
                 mCoin.setSelected(compoundButton.isChecked());
-                mCoins.get(position).setSelected(compoundButton.isChecked());
+                mCoins.get(holder.getAdapterPosition()).setSelected(compoundButton.isChecked());
             }
         });
 
