@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -48,12 +49,13 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new SeparatorDecoration(this, ContextCompat.getColor(this, R.color.item_separator_grey), 1));
 
-
-
         reviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(NewWhirlpoolCycle.this,"Selected--->   ".concat(getSelectedCoins().toString()),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(NewWhirlpoolCycle.this,WhirlPoolActivity.class);
+                startActivity(intent);
+
             }
         });
     }
@@ -84,6 +86,7 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
     }
 
 
+    // RV decorator that sets custom divider for the list
     private class SeparatorDecoration extends RecyclerView.ItemDecoration {
 
         private final Paint mPaint;
