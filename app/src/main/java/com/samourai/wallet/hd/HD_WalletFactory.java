@@ -178,11 +178,10 @@ public class HD_WalletFactory	{
         }
 
         HD_Wallet hdw84 = null;
-        InputStream wis = context.getAssets().open("BIP39/en.txt");
-        if (wis != null) {
+        MnemonicCode mc = computeMnemonicCode();
+        if (mc != null) {
             String seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             String passphrase = HD_WalletFactory.getInstance(context).get().getPassphrase();
-            MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
             hdw84 = new HD_Wallet(84, mc, SamouraiWallet.getInstance().getCurrentNetworkParams(), org.bouncycastle.util.encoders.Hex.decode(seed), passphrase, 1);
         }
 
