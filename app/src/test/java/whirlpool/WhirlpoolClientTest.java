@@ -1,16 +1,8 @@
 package whirlpool;
 
-import android.content.Context;
-import android.test.mock.MockContext;
-
 import com.google.common.util.concurrent.SettableFuture;
-import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.hd.HD_Wallet;
-import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.whirlpool.AndroidWhirlpoolHttpClient;
 import com.samourai.wallet.whirlpool.AndroidWhirlpoolStompClient;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
@@ -30,58 +22,26 @@ import junit.framework.Assert;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.params.TestNet3Params;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-
-import io.reactivex.Scheduler;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
-
-public class WhirlpoolClientTest {
+public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
 
     private static final String SERVER = "127.0.0.1:8080";
     private static final NetworkParameters networkParameters = TestNet3Params.get();
 
-    private Context context = new MockContext();
-    private BIP47Util bip47Util = BIP47Util.getInstance(context);
-    private HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
-
     @Before
     public void setUp() throws Exception {
-        // mock main thread
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler(new Function<Callable<Scheduler>, Scheduler>() {
-            @Override
-            public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
-                return Schedulers.trampoline();
-            }
-        });
-
-        // resolve mnemonicCode
-        InputStream wis = getClass().getResourceAsStream("/BIP39/en.txt");
-        MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
-        hdWalletFactory.__setMnemonicCode(mc);
-        wis.close();
-
-        // init Samourai Wallet
-        SamouraiWallet.getInstance().setCurrentNetworkParams(networkParameters);
+        super.setUp(networkParameters);
 
         // client configuration (server...)
-        AndroidWhirlpoolHttpClient whirlpoolHttpClient = new AndroidWhirlpoolHttpClient(WebUtil.getInstance(null));
-        AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
         WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClient, SERVER, networkParameters);
-
-        boolean testMode = true; // TODO skipping utxo validations
-        config.setTestMode(testMode);
+        config.setTestMode(true); // TODO skipping utxo validations
 
         // instanciate client
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
@@ -111,12 +71,11 @@ public class WhirlpoolClientTest {
         String utxoKey = "cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j";
         long utxoIndex = 2;
         long utxoBalance = 100000102;
-        String passphrase = "w0";
 
         // output
         int paymentCodeIndex = 0; // TODO always increment
         String seedWords = "all all all all all all all all all all all all";
-
+        String passphrase = "w0";
         HD_Wallet bip44w = hdWalletFactory.restoreWallet(seedWords, passphrase, 1);
         BIP47Wallet bip47w = hdWalletFactory.getBIP47();
 
