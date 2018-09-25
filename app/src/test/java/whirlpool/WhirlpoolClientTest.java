@@ -144,6 +144,9 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
             Thread.sleep(1000);
         }
         while(success.get() == null);
+
+        log.info("receiveKey=" + mixHandler.getReceiveKey());
+
     }
 
     private Pool findPool(String poolId) throws Exception {
