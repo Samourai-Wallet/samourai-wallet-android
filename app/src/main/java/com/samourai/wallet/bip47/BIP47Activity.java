@@ -1721,14 +1721,14 @@ public class BIP47Activity extends Activity {
         if(pcodes != null && pcodes.size() > 0)    {
             for(String pcode : pcodes)   {
                 if(!following.contains(pcode))    {
-                    doUploadFollow(pcode);
+                    doUploadFollow(pcode, false);
                 }
             }
         }
 
     }
 
-    private void doUploadFollow(final String pcode) {
+    private void doUploadFollow(final String pcode, final boolean isTrust) {
 
         new Thread(new Runnable() {
 
@@ -1757,7 +1757,8 @@ public class BIP47Activity extends Activity {
                         obj.put("signature", sig);
 
 //                        Log.d("BIP47Activity", "follow:" + obj.toString());
-                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/follow", obj.toString());
+                        String endPoint = isTrust ? "api/v1/trust" : "api/v1/follow";
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + endPoint, obj.toString());
 //                        Log.d("BIP47Activity", res);
 
                         responseObj = new JSONObject(res);
