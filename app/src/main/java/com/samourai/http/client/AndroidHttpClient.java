@@ -1,36 +1,34 @@
-package com.samourai.wallet.whirlpool;
+package com.samourai.http.client;
 
 import com.google.gson.Gson;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.whirlpool.client.whirlpool.httpClient.IWhirlpoolHttpClient;
-import com.samourai.whirlpool.client.whirlpool.httpClient.WhirlpoolHttpException;
 
 /**
  * HTTP client used by Whirlpool.
  */
-public class AndroidWhirlpoolHttpClient implements IWhirlpoolHttpClient {
+public class AndroidHttpClient implements IHttpClient {
     private Gson gson;
     private WebUtil webUtil;
 
-    public AndroidWhirlpoolHttpClient(WebUtil webUtil) {
+    public AndroidHttpClient(WebUtil webUtil) {
         this.webUtil = webUtil;
         this.gson = new Gson();
     }
 
     @Override
-    public <T> T getJsonAsEntity(String url, Class<T> entityClass) throws WhirlpoolHttpException {
+    public <T> T parseJson(String url, Class<T> entityClass) throws HttpException {
         try {
             String responseString = webUtil.getURL(url);
             return gson.fromJson(responseString, entityClass);
         }
         catch(Exception e) {
             String responseBody = null; // TODO get server response
-            throw new WhirlpoolHttpException(e, responseBody);
+            throw new HttpException(e, responseBody);
         }
     }
 
     @Override
-    public void postJsonOverTor(String url, Object body) throws WhirlpoolHttpException {
+    public void postJsonOverTor(String url, Object body) throws HttpException {
         try {
             String jsonString = gson.toJson(body);
             webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString);
@@ -38,7 +36,7 @@ public class AndroidWhirlpoolHttpClient implements IWhirlpoolHttpClient {
         }
         catch(Exception e) {
             String responseBody = e.getMessage();
-            throw new WhirlpoolHttpException(e, responseBody);
+            throw new HttpException(e, responseBody);
         }
     }
 

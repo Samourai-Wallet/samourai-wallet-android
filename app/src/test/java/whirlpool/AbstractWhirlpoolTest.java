@@ -9,14 +9,13 @@ import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.whirlpool.AndroidWhirlpoolHttpClient;
-import com.samourai.wallet.whirlpool.AndroidWhirlpoolStompClient;
+import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.stomp.client.AndroidStompClient;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicCode;
-import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +28,13 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public abstract class AbstractWhirlpoolTest {
-    private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
 
     protected Context context = new MockContext();
     protected BIP47Util bip47Util = BIP47Util.getInstance(context);
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
-    protected AndroidWhirlpoolHttpClient whirlpoolHttpClient = new AndroidWhirlpoolHttpClient(WebUtil.getInstance(null));
-    protected AndroidWhirlpoolStompClient stompClient = new AndroidWhirlpoolStompClient();
+    protected AndroidHttpClient whirlpoolHttpClient = new AndroidHttpClient(WebUtil.getInstance(null));
+    protected AndroidStompClient stompClient = new AndroidStompClient();
     protected NetworkParameters networkParameters;
 
     public void setUp(NetworkParameters networkParameters) throws Exception {

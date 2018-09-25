@@ -1,24 +1,20 @@
-package com.samourai.wallet.whirlpool;
+package com.samourai.stomp.client;
 
 import com.google.gson.Gson;
-import com.samourai.whirlpool.client.mix.transport.IWhirlpoolStompClient;
 import com.samourai.whirlpool.protocol.WhirlpoolProtocol;
 
-import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.websocket.MessageHandler;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.CompletableTransformer;
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -30,18 +26,18 @@ import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompCommand;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
-    private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
+public class AndroidStompClient implements IStompClient {
+    private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
     private static final long TIMEOUT = 20000;
     private Gson gson;
     private StompClient stompClient;
 
-    public AndroidWhirlpoolStompClient() {
+    public AndroidStompClient() {
         this.gson = new Gson();
     }
 
     @Override
-    public void connect(String url, Map<String, String> stompHeaders, final MessageHandler.Whole<String> onConnect, final MessageHandler.Whole<Throwable> onDisconnect) {
+    public void connect(String url, Map<String, String> stompHeaders, final MessageHandler.Whole<IStompMessage> onConnect, final MessageHandler.Whole<Throwable> onDisconnect) {
         try {
             log.info("connecting to " + url);
             stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
@@ -55,8 +51,8 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
                                 log.info("connected");
-                                String stompUsername = "foo"; // TODO
-                                onConnect.onMessage(stompUsername);
+                                // send back headers: no way to get connected headers on Android?
+                                onConnect.onMessage(null);
                                 break;
                             case ERROR:
                                 log.error("Stomp connection error", lifecycleEvent.getException());
@@ -83,7 +79,7 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
     }
 
     @Override
-    public void subscribe(Map<String, String> stompHeaders, final MessageHandler.Whole<Object> onMessage, MessageHandler.Whole<String> onError) {
+    public void subscribe(Map<String, String> stompHeaders, final MessageHandler.Whole<IStompMessage> onMessage, MessageHandler.Whole<String> onError) {
         try {
             String destination = getDestination(stompHeaders);
             List<StompHeader> myHeaders = computeHeaders(stompHeaders);
@@ -94,17 +90,22 @@ public class AndroidWhirlpoolStompClient implements IWhirlpoolStompClient {
                     .subscribe(new Consumer<StompMessage>() {
                         @Override
                         public void accept(StompMessage stompMessage) throws Exception {
-                            log.info("subscribe accept");
-                            String messageType = stompMessage.findHeader(WhirlpoolProtocol.HEADER_MESSAGE_TYPE);
-                            log.info("messageType: " + messageType);
-                            String jsonPayload = stompMessage.getPayload();
-                            Object whirlpoolMessage = gson.fromJson(jsonPayload, Class.forName(messageType));
-                            onMessage.onMessage(whirlpoolMessage);
+                            try {
+                                String messageType = stompMessage.findHeader(WhirlpoolProtocol.HEADER_MESSAGE_TYPE);
+                                String jsonPayload = stompMessage.getPayload();
+                                Object objectPayload = gson.fromJson(jsonPayload, Class.forName(messageType));
+                                AndroidStompMessage androidStompMessage = new AndroidStompMessage(stompMessage, objectPayload);
+                                onMessage.onMessage(androidStompMessage);
+                            } catch(Exception e) {
+                                log.error("stompClient.accept error", e);
+                                onError.onMessage(e.getMessage());
+                            }
                         }
                     });
         }
         catch (Exception e) {
             log.error("subscribe error", e);
+            onError.onMessage(e.getMessage());
         }
         log.info("subscribed");
     }

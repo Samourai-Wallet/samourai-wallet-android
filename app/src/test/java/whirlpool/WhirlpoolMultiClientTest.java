@@ -1,6 +1,6 @@
 package whirlpool;
 
-import com.samourai.wallet.whirlpool.AndroidWhirlpoolStompClient;
+import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
 import com.samourai.whirlpool.client.mix.handler.IMixHandler;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import util.MultiClientManager;
 
 public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
-    private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
     private WhirlpoolClientConfig config;
     private MultiClientManager multiClientManager;
