@@ -3,7 +3,6 @@ package whirlpool;
 import com.google.common.util.concurrent.SettableFuture;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.hd.HD_Wallet;
-import com.samourai.wallet.whirlpool.AndroidWhirlpoolStompClient;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
 import com.samourai.whirlpool.client.mix.handler.IMixHandler;
@@ -29,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
-    private Logger log = LoggerFactory.getLogger(AndroidWhirlpoolStompClient.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(WhirlpoolClientTest.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
 
     private static final String SERVER = "127.0.0.1:8080";
@@ -145,7 +144,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         }
         while(success.get() == null);
 
-        log.info("receiveKey=" + mixHandler.getReceiveKey());
+        log.info("receiveKey=" + ((MixHandler)mixHandler).getReceiveKey());
 
     }
 
