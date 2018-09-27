@@ -562,6 +562,7 @@
   <item>BIP84 Segwit</item>
   <item>BIP44 P2PKH</item>
   <item>Ricochet Segwit</item>
+  <item>Whirlpool Segwit pre-mix</item>
   </string-array>
   <string name="chain_id">Chaîne d'adresses</string>
   <string name="receive_chain">Recevoir l\'adresse</string>
@@ -573,7 +574,12 @@
   <string name="show_hex">Afficher Code Hex</string>
   <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
     
+  <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
       
-    
+  <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
+  <string name="restore">RESTAURER</string>
+  <string name="request_amount">Demande Montant</string>
+  <string name="address_type">Type d\'Adresse</string>
+  <string name="path">Chemin d\'accès</string>    
     
 </resources>
