@@ -878,7 +878,13 @@ public class BatchSendActivity extends Activity {
             Log.d("BatchSendActivity", "output:" + _data.addr);
             Log.d("BatchSendActivity", "output:" + _data.pcode);
             amount += _data.amount;
-            receivers.put(_data.addr, BigInteger.valueOf(_data.amount));
+            if(receivers.containsKey(_data.addr))    {
+                BigInteger _amount = receivers.get(_data.addr);
+                receivers.put(_data.addr, _amount.add(BigInteger.valueOf(_data.amount)));
+            }
+            else    {
+                receivers.put(_data.addr, BigInteger.valueOf(_data.amount));
+            }
         }
         Log.d("BatchSendActivity", "amount:" + amount);
 
