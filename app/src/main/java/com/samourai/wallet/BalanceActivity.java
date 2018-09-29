@@ -128,6 +128,7 @@ import com.yanzhenjie.zbar.Symbol;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1497,20 +1498,18 @@ public class BalanceActivity extends Activity {
     }
 
     private String getBTCDisplayAmount(long value) {
-
-        String strAmount = null;
-        DecimalFormat df = new DecimalFormat("#");
-        df.setMinimumIntegerDigits(1);
-        df.setMinimumFractionDigits(1);
-        df.setMaximumFractionDigits(8);
-
-        strAmount = Coin.valueOf(value).toPlainString();
-
-        return strAmount;
+        return Coin.valueOf(value).toPlainString();
     }
 
     private String getSatoshiDisplayAmount(long value) {
-        return Long.toString(value);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat df = new DecimalFormat("#", symbols);
+        df.setMinimumIntegerDigits(1);
+        df.setMaximumIntegerDigits(16);
+        df.setGroupingUsed(true);
+        df.setGroupingSize(3);
+        return df.format(value);
     }
 
     private String getBTCDisplayUnits() {
