@@ -52,7 +52,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
             System.out.println("fetchPools...");
             Pools pools = whirlpoolClient.fetchPools();
             for (Pool pool : pools.getPools()) {
-                System.out.println(pool.getPoolId()+" : "+pool.getDenomination());
+                System.out.println(pool.getPoolId()+" : "+pool.getDenomination()+"sats, " + pool.getNbRegistered() + " registered in pool, " + pool.getMixNbConfirmed() + " confirmed for mix");
             }
             Assert.assertFalse(pools.getPools().isEmpty());
         } catch(Exception e) {
