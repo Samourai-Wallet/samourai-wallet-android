@@ -1697,7 +1697,7 @@ public class SendActivity extends Activity {
                     .setPositiveButton(R.string.learn_more, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.masanariwallet.com/post/169222582782/bitpay-qr-codes-are-no-longer-valid-important"));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blog.samouraiwallet.com/post/169222582782/bitpay-qr-codes-are-no-longer-valid-important"));
                             startActivity(intent);
 
                         }

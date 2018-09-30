@@ -30,10 +30,10 @@ import info.guardianproject.netcipher.client.StrongHttpsClient;
 
 public class WebUtil	{
 
-    public static final String MASANARI_API = "https://api.masanariwallet.com/";
+    public static final String MASANARI_API = "https://api.samouraiwallet.com/";
     public static final String MASANARI_API_CHECK = "https://api.masanari.com/v1/status";
-    public static final String MASANARI_API2 = "https://api.masanariwallet.com/v2/";
-    public static final String MASANARI_API2_TESTNET = "https://api.masanariwallet.com/test/v2/";
+    public static final String MASANARI_API2 = "https://api.samouraiwallet.com/v2/";
+    public static final String MASANARI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
     public static final String BTCe_EXCHANGE_URL = "https://wex.nz/api/3/ticker/";

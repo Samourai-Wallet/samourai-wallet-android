@@ -1576,7 +1576,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             }
 
             Intent email = new Intent(Intent.ACTION_SEND);
-            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@masanariwallet.com" } );
+            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "nospam@gmail.com" } );
             email.putExtra(Intent.EXTRA_SUBJECT, "Masanari Wallet support backup");
             email.putExtra(Intent.EXTRA_TEXT, jsonObject.toString());
             email.setType("message/rfc822");
