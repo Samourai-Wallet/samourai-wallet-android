@@ -15,7 +15,7 @@
     <string name="action_unarchive">Aktifkan seluruh kode pembayaran tersimpan</string>
     <string name="action_sync_all">Singkronisasi seluruh kode pembayayan</string>
 
-    <string name="about_us">Tentang Wallet Samourai</string>
+    <string name="about_us">Tentang Wallet Masanari</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Batal</string>
@@ -38,7 +38,7 @@
     <string name="options_wipe">Hapus wallet dengan aman</string>
     <string name="options_wipe2">Hapus wallet dari perangkat ini secara aman.</string>
     <string name="options_stealth_display">Launcher Mode Sembunyi</string>
-    <string name="options_stealth_display2">Hapus Samourai dari launcher dan home screen. Anda harus menelepon **KODE_PIN_ANDA# dari aplikasi panggilan telepon anda untuk menjalankan Samourai.</string>
+    <string name="options_stealth_display2">Hapus Masanari dari launcher dan home screen. Anda harus menelepon **KODE_PIN_ANDA# dari aplikasi panggilan telepon anda untuk menjalankan Masanari.</string>
     <string name="options_remote_commands">Ijinkan perintah remote</string>
     <string name="options_remote_commands2">Bolehkan perintah remote melalui SMS.</string>
     <string name="options_currency">Harga bursa</string>
@@ -111,12 +111,12 @@
     <string name="copied_to_clipboard">Salin ke clipboard</string>
     <string name="send_payment_code">Kirim kode pembayaran</string>
 
-    <string name="ask_you_sure_exit">Apa anda yakin ingin keluar dari Samourai?</string>
+    <string name="ask_you_sure_exit">Apa anda yakin ingin keluar dari Masanari?</string>
     <string name="yes">Yes</string>
     <string name="no">Tidak</string>
     <string name="close">Tutup</string>
 
-    <string name="sim_warning">Perangkat Wallet Samourai anda saat ini mempunyai kartu SIM berbeda sesuai dengan pesan teks masuk ini.</string>
+    <string name="sim_warning">Perangkat Wallet Masanari anda saat ini mempunyai kartu SIM berbeda sesuai dengan pesan teks masuk ini.</string>
 
     <string name="pin_5_8">Buat kode PIN antara 5 dan 8 karakter.</string>
     <string name="pin_5_8_confirm">Konfirmasi kode PIN</string>
@@ -160,7 +160,7 @@
     <string name="destination">Address atau channel pembayaran</string>
 
     <string name="insufficient_funds">Dana tidak mencukupi</string>
-    <string name="tx_length_error">Samourai tidak menangani transaksi dengan ukuran yang melebihi 100KB. Silahkan mencoba untuk memecah transaksi menjadi beberapa bagian.</string>
+    <string name="tx_length_error">Masanari tidak menangani transaksi dengan ukuran yang melebihi 100KB. Silahkan mencoba untuk memecah transaksi menjadi beberapa bagian.</string>
     <string name="invalid_amount">Jumlah tidak valid</string>
     <string name="amount">Jumlah</string>
 
@@ -192,7 +192,7 @@
     <string name="custom_fee">Tentukan sendiri</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Wallet</string>
+    <string name="account_Masanari">Wallet</string>
     <string name="account_shuffling">Pindahkan</string>
 
     <string name="max_available">Max. tersedia:</string>
@@ -216,7 +216,7 @@
 
     <string name="choose_email_client">Pilih sebuah klien Email:</string>
 
-    <string name="cannot_launch_app">Wallet Samourai tidak dapat berjalan di perangkat ini</string>
+    <string name="cannot_launch_app">Wallet Masanari tidak dapat berjalan di perangkat ini</string>
     <string name="confirm_change_pin">Apa anda yakin ingin mengganti PIN?</string>
     <string name="success_change_pin">PIN berubah</string>
     <string name="alternative_pin_create">Anda yakin ingin membuat alternatif PIN untuk launcher dan perintah remote?</string>
@@ -258,11 +258,11 @@
 
     <string name="invalid_passphrase">Frase kata sandi tidak valid</string>
     <string name="passphrase">Frase kata sandi</string>
-    <string name="passphrase_needed_for_backup">Wallet anda tidak dilindungi dengan frase kata sandi. Cadangan wallet dienkripsi menggunakan frase kata sandi anda. Jika ingin menggunakan cadangan wallet terenkripsi dan fitur wallet Samourai lainnya, buat wallet anda menggunakan Samourai dan transfer dana anda.</string>
+    <string name="passphrase_needed_for_backup">Wallet anda tidak dilindungi dengan frase kata sandi. Cadangan wallet dienkripsi menggunakan frase kata sandi anda. Jika ingin menggunakan cadangan wallet terenkripsi dan fitur wallet Masanari lainnya, buat wallet anda menggunakan Masanari dan transfer dana anda.</string>
     <string name="passphrase_required">Sebuah frase kata sandi dibutuhkan untuk fitur ini. Harap pertimbangkan untuk membuat wallet baru yang secara otomatis termasuk membuat frase kata sandi.</string>
 
-    <string name="cannot_reach_api">API Samourai tidak dapat dijangkau. Silahkan verifikasi koneksi dan coba kembali nanti.</string>
-    <string name="api_error">API Samourai terjadi kesalahan. Silahkan coba kembali nanti.</string>
+    <string name="cannot_reach_api">API Masanari tidak dapat dijangkau. Silahkan verifikasi koneksi dan coba kembali nanti.</string>
+    <string name="api_error">API Masanari terjadi kesalahan. Silahkan coba kembali nanti.</string>
 
     <string name="cannot_recognize_privkey">Tidak dapat mengenali private key</string>
     <string name="cannot_sweep_privkey">Kesalahan saat impor dan menghapus private key</string>
@@ -271,9 +271,9 @@
 
     <string name="change_is_dust">Perubahan transaksi ini masih bernilai terlalu kecil. Coba kembali dan rubah nilai pengeluaran atau gunakan seluruh saldo.</string>
 
-    <string name="tor_routing_on">Samourai menggunakan routing melalui Tor.</string>
-    <string name="tor_routing_off">Samourai tidak routing melalui Tor. Tekan tombol untuk mengaktifkan.</string>
-    <string name="tor_install">Tekan untuk instal Orbot dan route Samourai melalui Tor.</string>
+    <string name="tor_routing_on">Masanari menggunakan routing melalui Tor.</string>
+    <string name="tor_routing_off">Masanari tidak routing melalui Tor. Tekan tombol untuk mengaktifkan.</string>
+    <string name="tor_install">Tekan untuk instal Orbot dan route Masanari melalui Tor.</string>
 
     <string name="premium_addons">Addons Premium</string>
 
@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Ricocheted untuk</string>
     <string name="ricochet_spend1">Pengeluaran Ricochet untuk</string>
     <string name="ricochet_spend2">total jumlah untuk</string>
-    <string name="ricochet_spend3">(termasuk biaya 0.002 BTC untuk Samourai dan penambang\' biaya)?</string>
+    <string name="ricochet_spend3">(termasuk biaya 0.002 BTC untuk Masanari dan penambang\' biaya)?</string>
 
     <string name="action_ricochet">Ulangi Ricochet</string>
     <string name="action_empty_ricochet">Antrian Ricochet kosong</string>
@@ -308,7 +308,7 @@
     <string name="trusted_node_ko">Node terpercaya tidak dapat dikenali. Silahkan periksa instalasi.</string>
     <string name="trusted_node_error">Kesalahan saat mencapai node terpercaya yang dikehendaki.</string>
     <string name="trusted_node_tx_error">Transaksi gagal pada node terpercaya.</string>
-    <string name="trusted_node_not_core_131">Node terpercaya telah ditetapkan. Perlu dicatat bahwa Wallet Samourai telah mendukung Bitcoin Core 0.13.1 dan versi diatasnya.</string>
+    <string name="trusted_node_not_core_131">Node terpercaya telah ditetapkan. Perlu dicatat bahwa Wallet Masanari telah mendukung Bitcoin Core 0.13.1 dan versi diatasnya.</string>
     <string name="trusted_node_tx_sent">Transaksi dikirimkan melalui node terpercaya.</string>
     <string name="trusted_node_not_responding">Node terpercaya tidak merespon. Harap periksa instalasi.</string>
     <string name="trusted_node_breaks_consensus">Node terpercaya tidak dapat digunakan pada klien bitcoin yang dapat merusak konsensus.</string>
@@ -370,7 +370,7 @@
     <string name="opendime_topup">TOP UP</string>
 
     <string name="select_app">Pilih aplikasi</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Tidak terproteksi</string>
@@ -387,7 +387,7 @@
     <string name="replay_waiting_for_confirmations">menunggu konfirmasi</string>
     <string name="replay_confirmed">terkonfirmasi</string>
     <string name="replay_confirmations">konfirmasi:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Menunggu konfirmasi Replay protection</string>
@@ -438,7 +438,7 @@
 
     <string name="copy_to_clipboard">Salin pada clipboard</string>
 
-    <string name="no_bitpay">Kesalahan: Ini bukanlah permintaan bitcoin yang valid. Samourai hanya mendukung pengiriman address bitcoin yang valid.</string>
+    <string name="no_bitpay">Kesalahan: Ini bukanlah permintaan bitcoin yang valid. Masanari hanya mendukung pengiriman address bitcoin yang valid.</string>
     <string name="learn_more">Pelajari lagi</string>
 
     <string name="paynym">PayNym</string>
@@ -459,7 +459,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC ke dalam wallet anda dan coba lagi.</string>
     <string name="help">Bantuan</string>
 
-    <string name="passphrase_disclaimer">Saya mengerti bahwa Samourai tidak dapat membantu kasus kehilangan atau lupa frase kata sandi.</string>
+    <string name="passphrase_disclaimer">Saya mengerti bahwa Masanari tidak dapat membantu kasus kehilangan atau lupa frase kata sandi.</string>
     <string name="confirm_pin_code">Konfirmasi kode pin</string>
     <string name="re_enter_your_pin_code">Masukkan kembali kode PIN anda</string>
     <string name="re_enter_a_passphrase">Masukkan kembali frase kata sandi</string>
@@ -468,9 +468,9 @@
     <string name="set_pin_code">Tentukan kode Pin</string>
     <string name="accept_disclaimer_error">Anda harus menyetujui disclaimer</string>
     <string name="import_external_wallet">Impor wallet luar</string>
-    <string name="import_samourai_wallet">Impor cadangan samourai</string>
+    <string name="import_masanari_wallet">Impor cadangan masanari</string>
     <string name="backup_file">File cadangan</string>
-    <string name="import_an_encrypted_samourai_wallet">import cadangan samourai yang terenkripsi untuk memulihkan wallet dengan semua meta-data secara utuh</string>
+    <string name="import_an_encrypted_masanari_wallet">import cadangan masanari yang terenkripsi untuk memulihkan wallet dengan semua meta-data secara utuh</string>
     <string name="back">KEMBALI</string>
     <string name="finish">selesai</string>
     <string name="choose_file">pilih file</string>
@@ -483,8 +483,8 @@
     <string name="last_updated">Pembaruan terakhir</string>
     <string name="get_help">Dapatkan bantuan</string>
     <string name="offline_mode">Mode Offline</string>
-    <string name="import_samourai_backup">Impor cadangan Samourai</string>
-    <string name="samourai_bitcoin_wallet">Wallet Bitcoin Samourai</string>
+    <string name="import_masanari_backup">Impor cadangan Masanari</string>
+    <string name="masanari_bitcoin_wallet">Wallet Bitcoin Masanari</string>
     <string name="enter_your_wallet_passphrase">Masukkan frase kata sandi wallet anda</string>
     <string name="start_new_wallet">Mulai wallet baru</string>
   <string name="get_help_create">Buat wallet: Dapatkan bantuan</string>

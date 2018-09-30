@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.samourai.wallet.TxAnimUIActivity">
+    tools:context="com.masanari.wallet.TxAnimUIActivity">
 
-    <com.samourai.wallet.widgets.TransactionProgressView
+    <com.masanari.wallet.widgets.TransactionProgressView
         android:id="@+id/transactionProgressView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

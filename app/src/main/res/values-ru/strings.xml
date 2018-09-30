@@ -15,7 +15,7 @@
     <string name="action_unarchive">Активировать все архивированные платёжные коды</string>
     <string name="action_sync_all">Синхронизировать все платёжные коды</string>
 
-    <string name="about_us">О кошельке Samourai</string>
+    <string name="about_us">О кошельке Masanari</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
@@ -38,7 +38,7 @@
     <string name="options_wipe">Безопасное удаление кошелька</string>
     <string name="options_wipe2">Удалить этот кошелёк с телефона надёжным способом.</string>
     <string name="options_stealth_display">Скрыть иконку приложения</string>
-    <string name="options_stealth_display2">Удалить иконку Samourai с домашнего экрана и из лаунчера. Для запуска Samourai нужно будет набрать **ВАШ_PIN# в приложении телефона.</string>
+    <string name="options_stealth_display2">Удалить иконку Masanari с домашнего экрана и из лаунчера. Для запуска Masanari нужно будет набрать **ВАШ_PIN# в приложении телефона.</string>
     <string name="options_remote_commands">Включить удалённое управление</string>
     <string name="options_remote_commands2">Разрешить принимать удалённые команды через SMS.</string>
     <string name="options_currency">Местный курс</string>
@@ -111,12 +111,12 @@
     <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
     <string name="send_payment_code">Отправить платёжный код</string>
 
-    <string name="ask_you_sure_exit">Вы точно хотите выйти из Samourai?</string>
+    <string name="ask_you_sure_exit">Вы точно хотите выйти из Masanari?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="close">Закрыть</string>
 
-    <string name="sim_warning">На вашем устройстве с кошельком Samourai была заменена SIM-карта. Это сообщение отправлено с присвоенного ей телефонного номера.</string>
+    <string name="sim_warning">На вашем устройстве с кошельком Masanari была заменена SIM-карта. Это сообщение отправлено с присвоенного ей телефонного номера.</string>
 
     <string name="pin_5_8">Задайте PIN-код (от 5 до 8 знаков).</string>
     <string name="pin_5_8_confirm">Подтвердить PIN-код</string>
@@ -160,7 +160,7 @@
     <string name="destination">Адрес или платёжный канал</string>
 
     <string name="insufficient_funds">Недостаточно средств</string>
-    <string name="tx_length_error">Samourai не работает с транзакциями объёмом больше 100 кб. Попробуйте разделить транзакцию на части.</string>
+    <string name="tx_length_error">Masanari не работает с транзакциями объёмом больше 100 кб. Попробуйте разделить транзакцию на части.</string>
     <string name="invalid_amount">Некорректная сумма</string>
     <string name="amount">Сумма</string>
 
@@ -192,7 +192,7 @@
     <string name="custom_fee">Своя</string>
     <string name="sat_b">сат/б</string>
 
-    <string name="account_Samourai">Кошелёк</string>
+    <string name="account_Masanari">Кошелёк</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Макс. доступно:</string>
@@ -216,7 +216,7 @@
 
     <string name="choose_email_client">Выберите почтовый клиент:</string>
 
-    <string name="cannot_launch_app">Кошелёк Samourai не может быть запущен на этом устройстве</string>
+    <string name="cannot_launch_app">Кошелёк Masanari не может быть запущен на этом устройстве</string>
     <string name="confirm_change_pin">Вы уверены, что хотите сменить свой PIN-код?</string>
     <string name="success_change_pin">PIN-код изменён</string>
     <string name="alternative_pin_create">Вы уверены, что хотите создать альтернативный PIN-код для скрытого запуска и удалённого управления?</string>
@@ -258,11 +258,11 @@
 
     <string name="invalid_passphrase">Неверная парольная фраза</string>
     <string name="passphrase">Парольная фраза</string>
-    <string name="passphrase_needed_for_backup">Ваш кошелёк не защищён парольной фразой. Резервные копии вашего кошелька шифруются ею. Если вы хотите использовать зашифрованные резервные копии и другие возможности кошелька Samourai, то создайте новый кошелёк в этом приложении и перешлите на него свои средства.</string>
+    <string name="passphrase_needed_for_backup">Ваш кошелёк не защищён парольной фразой. Резервные копии вашего кошелька шифруются ею. Если вы хотите использовать зашифрованные резервные копии и другие возможности кошелька Masanari, то создайте новый кошелёк в этом приложении и перешлите на него свои средства.</string>
     <string name="passphrase_required">Для использования этой функции требуется парольная фраза. Подумайте о том, чтобы создать новый кошелёк, который будет автоматически её поддерживать.</string>
 
-    <string name="cannot_reach_api">Не получается связаться с Samourai API. Проверьте соединение и попробуйте ещё раз или отложите попытку.</string>
-    <string name="api_error">Samourai API возвращают ошибку. Попробуйте ещё раз или отложите попытку.</string>
+    <string name="cannot_reach_api">Не получается связаться с Masanari API. Проверьте соединение и попробуйте ещё раз или отложите попытку.</string>
+    <string name="api_error">Masanari API возвращают ошибку. Попробуйте ещё раз или отложите попытку.</string>
 
     <string name="cannot_recognize_privkey">Не удаётся распознать приватный ключ</string>
     <string name="cannot_sweep_privkey">Ошибка втягивания приватного ключа</string>
@@ -271,9 +271,9 @@
 
     <string name="change_is_dust">Сдача с этой транзакции чересчур мала. Попробуйте ещё раз, уменьшив количество отправляемых средств или потратьте их все.</string>
 
-    <string name="tor_routing_on">Трафик Samourai идёт через Tor.</string>
-    <string name="tor_routing_off">Трафик Samourai не проходит через Tor. Нажмите, чтобы перенаправить.</string>
-    <string name="tor_install">Нажмите, чтобы установить Orbot и пропускать трафик Samourai через Tor.</string>
+    <string name="tor_routing_on">Трафик Masanari идёт через Tor.</string>
+    <string name="tor_routing_off">Трафик Masanari не проходит через Tor. Нажмите, чтобы перенаправить.</string>
+    <string name="tor_install">Нажмите, чтобы установить Orbot и пропускать трафик Masanari через Tor.</string>
 
     <string name="premium_addons">Премиум-аддоны</string>
 
@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Отправлено через Ricochet на</string>
     <string name="ricochet_spend1">Отправлено через Ricochet на</string>
     <string name="ricochet_spend2">на общую сумму в</string>
-    <string name="ricochet_spend3">(включая вознаграждение Samourai размером 0,002 BTC и комиссию майнерам)?</string>
+    <string name="ricochet_spend3">(включая вознаграждение Masanari размером 0,002 BTC и комиссию майнерам)?</string>
 
     <string name="action_ricochet">Повторить Ricochet</string>
     <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>
@@ -308,7 +308,7 @@
     <string name="trusted_node_ko">Не удалось определить ноду. Пожалуйста, проверьте конфигурацию.</string>
     <string name="trusted_node_error">Не удаётся связаться с предложенной доверенной нодой</string>
     <string name="trusted_node_tx_error">Транзакция дала сбой на доверенной ноде.</string>
-    <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Samourai поддерживает Bitcoin Core 0.13.1 и выше.</string>
+    <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Masanari поддерживает Bitcoin Core 0.13.1 и выше.</string>
     <string name="trusted_node_tx_sent">Транзакция отправлена через доверенную ноду.</string>
     <string name="trusted_node_not_responding">Доверенная нода не отвечает. Пожалуйста, проверьте конфигурацию.</string>
     <string name="trusted_node_breaks_consensus">Доверенная нода не может быть установлена на биткоин-клиент, нарушающий правила работы сети.</string>
@@ -370,7 +370,7 @@
     <string name="opendime_topup">ПОПОЛНИТь</string>
 
     <string name="select_app">Выберите приложение</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Replay-защита</string>
     <string name="replay_unprotected">Не защищено</string>
@@ -387,7 +387,7 @@
     <string name="replay_waiting_for_confirmations">ожидаем подтверждений</string>
     <string name="replay_confirmed">подтверждено</string>
     <string name="replay_confirmations">подтверждения:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay-защита ожидает подтверждения</string>
@@ -438,7 +438,7 @@
 
     <string name="copy_to_clipboard">Скопировать в буфер обмена</string>
 
-    <string name="no_bitpay">Ошибка: Неправильный запрос платежа. Samourai поддерживает отправку только на корректные биткоин-адреса.</string>
+    <string name="no_bitpay">Ошибка: Неправильный запрос платежа. Masanari поддерживает отправку только на корректные биткоин-адреса.</string>
     <string name="learn_more">Узнать больше</string>
 
     <string name="paynym">PayNym</string>
@@ -459,7 +459,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC и попробуйте ещё раз.</string>
     <string name="help">Помощь</string>
 
-    <string name="passphrase_disclaimer">Я понимаю, что Samourai не сможет мне помочь, если я забуду или потеряю свою парольную фразу. У Samourai нет никаких данных о ней.</string>
+    <string name="passphrase_disclaimer">Я понимаю, что Masanari не сможет мне помочь, если я забуду или потеряю свою парольную фразу. У Masanari нет никаких данных о ней.</string>
     <string name="confirm_pin_code">Подтвердить ПИН</string>
     <string name="re_enter_your_pin_code">Введите ПИН ещё раз</string>
     <string name="re_enter_a_passphrase">Введите парольную фразу ещё раз</string>
@@ -468,9 +468,9 @@
     <string name="set_pin_code">Установить ПИН</string>
     <string name="accept_disclaimer_error">Вы должны согласиться с разъяснением</string>
     <string name="import_external_wallet">Импортировать сторонний кошелёк</string>
-    <string name="import_samourai_wallet">Импортировать бэкап samourai</string>
+    <string name="import_masanari_wallet">Импортировать бэкап masanari</string>
     <string name="backup_file">Файл бэкапа</string>
-    <string name="import_an_encrypted_samourai_wallet">импортировать зашифрованную резервную копию samourai для восстановления кошелька с сохранением всех метаданных</string>
+    <string name="import_an_encrypted_masanari_wallet">импортировать зашифрованную резервную копию masanari для восстановления кошелька с сохранением всех метаданных</string>
     <string name="back">НАЗАД</string>
     <string name="finish">готово</string>
     <string name="choose_file">выберите файл</string>
@@ -483,8 +483,8 @@
     <string name="last_updated">Последнее обновление</string>
     <string name="get_help">Помощь</string>
     <string name="offline_mode">Оффлайн-режим</string>
-    <string name="import_samourai_backup">Импортировать бэкап Samourai</string>
-    <string name="samourai_bitcoin_wallet">Биткоин-кошелёк Samourai</string>
+    <string name="import_masanari_backup">Импортировать бэкап Masanari</string>
+    <string name="masanari_bitcoin_wallet">Биткоин-кошелёк Masanari</string>
     <string name="enter_your_wallet_passphrase">Введите парольную фразу для вашего кошелька</string>
     <string name="start_new_wallet">Создать новый кошелёк</string>
     <string name="get_help_create">Создать кошелёк: Помощь</string>

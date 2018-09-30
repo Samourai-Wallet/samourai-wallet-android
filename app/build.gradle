@@ -6,11 +6,11 @@ android {
     useLibrary 'org.apache.http.legacy'
     flavorDimensions "versionCode"
     defaultConfig {
-        applicationId 'com.samourai.wallet'
+        applicationId 'com.masanari.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 118
-        versionName "0.98.86"
+        versionCode 1
+        versionName "0.0.1-alpha.1"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -40,22 +40,22 @@ android {
     }
     productFlavors {
         production {
-            applicationId 'com.samourai.wallet'
+            applicationId 'com.masanari.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 118
-            versionName "0.98.86"
-            resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.98.86"
+            versionCode 1
+            versionName "0.0.1-alpha.1"
+            resValue "string", "app_name", "Masanari"
+            resValue "string", "version_name", "0.0.1-alpha.1"
         }
         staging {
-            applicationId 'com.samourai.wallet.staging'
+            applicationId 'com.masanari.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 118
-            versionName "0.98.86"
-            resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.98.86"
+            versionCode 1
+            versionName "0.0.1-alpha.1"
+            resValue "string", "app_name", "Masanari Staging"
+            resValue "string", "version_name", "0.0.1-alpha.1"
         }
     }
 }

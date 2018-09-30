@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.samourai.wallet.widgets.ViewPager
+    <com.masanari.wallet.widgets.ViewPager
         android:id="@+id/wallet_create_viewpager"
         android:layout_width="match_parent"
         android:layout_marginBottom="52dp"

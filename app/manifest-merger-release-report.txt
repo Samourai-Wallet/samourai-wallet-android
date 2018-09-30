@@ -72,7 +72,7 @@ MERGED from net.i2p.android.ext:floatingactionbutton:1.9.0:12:5
 		ADDED from AndroidManifest.xml:30:9
 	android:name
 		ADDED from AndroidManifest.xml:29:9
-activity#samourai.wallet.MainActivity
+activity#masanari.wallet.MainActivity
 ADDED from AndroidManifest.xml:32:9
 	android:label
 		ADDED from AndroidManifest.xml:34:13
@@ -108,7 +108,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:45:17
 	android:name
 		ADDED from AndroidManifest.xml:45:27
-activity#samourai.wallet.MainActivity2
+activity#masanari.wallet.MainActivity2
 ADDED from AndroidManifest.xml:49:9
 	android:label
 		ADDED from AndroidManifest.xml:50:13
@@ -116,7 +116,7 @@ ADDED from AndroidManifest.xml:49:9
 		ADDED from AndroidManifest.xml:51:13
 	android:name
 		ADDED from AndroidManifest.xml:49:19
-activity#samourai.wallet.SettingsActivity
+activity#masanari.wallet.SettingsActivity
 ADDED from AndroidManifest.xml:78:9
 	android:label
 		ADDED from AndroidManifest.xml:79:13
@@ -124,7 +124,7 @@ ADDED from AndroidManifest.xml:78:9
 		ADDED from AndroidManifest.xml:80:13
 	android:name
 		ADDED from AndroidManifest.xml:78:19
-activity#samourai.wallet.AboutActivity
+activity#masanari.wallet.AboutActivity
 ADDED from AndroidManifest.xml:84:9
 	android:screenOrientation
 		ADDED from AndroidManifest.xml:86:13
@@ -132,13 +132,13 @@ ADDED from AndroidManifest.xml:84:9
 		ADDED from AndroidManifest.xml:85:13
 	android:name
 		ADDED from AndroidManifest.xml:84:19
-activity#samourai.wallet.PinEntryActivity
+activity#masanari.wallet.PinEntryActivity
 ADDED from AndroidManifest.xml:90:9
 	android:label
 		ADDED from AndroidManifest.xml:91:13
 	android:name
 		ADDED from AndroidManifest.xml:90:19
-activity#samourai.wallet.ShapeShiftActivity
+activity#masanari.wallet.ShapeShiftActivity
 ADDED from AndroidManifest.xml:95:9
 	android:label
 		ADDED from AndroidManifest.xml:96:13
@@ -154,19 +154,19 @@ ADDED from AndroidManifest.xml:100:9
 		ADDED from AndroidManifest.xml:104:13
 	android:name
 		ADDED from AndroidManifest.xml:101:13
-service#samourai.wallet.service.BroadcastReceiverService
+service#masanari.wallet.service.BroadcastReceiverService
 ADDED from AndroidManifest.xml:107:9
 	android:enabled
 		ADDED from AndroidManifest.xml:107:18
 	android:name
 		ADDED from AndroidManifest.xml:107:41
-service#samourai.wallet.service.WebSocketService
+service#masanari.wallet.service.WebSocketService
 ADDED from AndroidManifest.xml:109:9
 	android:enabled
 		ADDED from AndroidManifest.xml:109:18
 	android:name
 		ADDED from AndroidManifest.xml:109:41
-receiver#samourai.wallet.receivers.BootIntentReceiver
+receiver#masanari.wallet.receivers.BootIntentReceiver
 ADDED from AndroidManifest.xml:111:9
 	android:exported
 		ADDED from AndroidManifest.xml:111:106
@@ -188,7 +188,7 @@ category#android.intent.category.HOME
 ADDED from AndroidManifest.xml:115:17
 	android:name
 		ADDED from AndroidManifest.xml:115:27
-receiver#samourai.wallet.receivers.InterceptOutgoingReceiver
+receiver#masanari.wallet.receivers.InterceptOutgoingReceiver
 ADDED from AndroidManifest.xml:119:9
 	android:exported
 		ADDED from AndroidManifest.xml:119:113
@@ -204,7 +204,7 @@ action#android.intent.action.NEW_OUTGOING_CALL
 ADDED from AndroidManifest.xml:121:17
 	android:name
 		ADDED from AndroidManifest.xml:121:25
-receiver#samourai.wallet.receivers.SMSReceiver
+receiver#masanari.wallet.receivers.SMSReceiver
 ADDED from AndroidManifest.xml:126:9
 	android:exported
 		ADDED from AndroidManifest.xml:126:99

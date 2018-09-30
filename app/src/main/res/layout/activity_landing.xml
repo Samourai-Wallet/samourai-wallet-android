@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.samourai.wallet.LandingActivity">
+    tools:context="com.masanari.wallet.LandingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:src="@drawable/ic_samourai_logo_trans2x" />
+                android:src="@drawable/ic_masanari_logo_trans2x" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                     style="@style/Base.TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/samourai_bitcoin_wallet"
+                    android:text="@string/masanari_bitcoin_wallet"
                     android:textStyle="bold" />
 
                 <TextView

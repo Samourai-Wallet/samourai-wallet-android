@@ -15,7 +15,7 @@
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
 
-    <string name="about_us">About Samourai Wallet</string>
+    <string name="about_us">About Masanari Wallet</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -38,7 +38,7 @@
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
-    <string name="options_stealth_display2">Remove Samourai from the launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Samourai.</string>
+    <string name="options_stealth_display2">Remove Masanari from the launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Masanari.</string>
     <string name="options_remote_commands">Enable remote commands</string>
     <string name="options_remote_commands2">Allow remote commands via SMS.</string>
     <string name="options_currency">Street price</string>
@@ -117,12 +117,12 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="send_payment_code">Send payment code</string>
 
-    <string name="ask_you_sure_exit">Are you sure you want to exit Samourai?</string>
+    <string name="ask_you_sure_exit">Are you sure you want to exit Masanari?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="close">Close</string>
 
-    <string name="sim_warning">Your Samourai Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
+    <string name="sim_warning">Your Masanari Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
 
     <string name="pin_5_8">Create a PIN code between 5 and 8 characters.</string>
     <string name="pin_5_8_confirm">Confirm PIN code</string>
@@ -166,7 +166,7 @@
     <string name="destination">Address or payment channel</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
-    <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
+    <string name="tx_length_error">Masanari does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
     <string name="amount">Amount</string>
 
@@ -198,7 +198,7 @@
     <string name="custom_fee">Custom</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Wallet</string>
+    <string name="account_Masanari">Wallet</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Max. available:</string>
@@ -222,7 +222,7 @@
 
     <string name="choose_email_client">Choose an Email client:</string>
 
-    <string name="cannot_launch_app">Samourai Wallet cannot be run on this device</string>
+    <string name="cannot_launch_app">Masanari Wallet cannot be run on this device</string>
     <string name="confirm_change_pin">Are you sure you want to change your PIN?</string>
     <string name="success_change_pin">PIN changed</string>
     <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
@@ -264,11 +264,11 @@
 
     <string name="invalid_passphrase">Invalid passphrase</string>
     <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
+    <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Masanari Wallet features create your wallet using Masanari Wallet and transfer your funds.</string>
     <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
 
-    <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
-    <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+    <string name="cannot_reach_api">Masanari APIs cannot be reached. Please verify connection and try again or try later.</string>
+    <string name="api_error">Masanari APIs are returning an error. Please try again or try later.</string>
 
     <string name="cannot_recognize_privkey">Cannot recognize private key</string>
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
@@ -277,9 +277,9 @@
 
     <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
 
-    <string name="tor_routing_on">Samourai is routing via Tor.</string>
-    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+    <string name="tor_routing_on">Masanari is routing via Tor.</string>
+    <string name="tor_routing_off">Masanari is not routing via Tor. Tap to activate.</string>
+    <string name="tor_install">Tap to install Orbot and route Masanari through Tor.</string>
 
     <string name="premium_addons">Premium Addons</string>
 
@@ -287,7 +287,7 @@
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 BTC fee to Masanari and miners\' fees)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Empty Ricochet queue</string>
@@ -314,7 +314,7 @@
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
+    <string name="trusted_node_not_core_131">Trusted node is set. Note that Masanari Wallet supports Bitcoin Core 0.13.1 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
     <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
@@ -376,7 +376,7 @@
     <string name="opendime_topup">TOP UP</string>
 
     <string name="select_app">Select application</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Unprotected</string>
@@ -393,7 +393,7 @@
     <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
     <string name="replay_confirmed">confirmed</string>
     <string name="replay_confirmations">confirmations:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
@@ -444,7 +444,7 @@
 
     <string name="copy_to_clipboard">Copy to clipboard</string>
 
-    <string name="no_bitpay">Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses.</string>
+    <string name="no_bitpay">Error: This is not a valid bitcoin request. Masanari only supports sending to valid bitcoin addresses.</string>
     <string name="learn_more">Learn More</string>
 
     <string name="paynym">PayNym</string>
@@ -465,7 +465,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
     <string name="help">Help</string>
 
-    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
+    <string name="passphrase_disclaimer">I understand that Masanari cannot provide assistance in the case of lost or forgotten passphrases. Masanari never has any knowledge of my passphrase.</string>
     <string name="confirm_pin_code">Confirm pin code</string>
     <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
     <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
@@ -474,9 +474,9 @@
     <string name="set_pin_code">Set Pin code</string>
     <string name="accept_disclaimer_error">You need to accept disclaimer</string>
     <string name="import_external_wallet">Import external wallet</string>
-    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="import_masanari_wallet">Import masanari backup</string>
     <string name="backup_file">Backup file</string>
-    <string name="import_an_encrypted_samourai_wallet">import an encrypted samourai backup to restore a wallet with all meta-data intact</string>
+    <string name="import_an_encrypted_masanari_wallet">import an encrypted masanari backup to restore a wallet with all meta-data intact</string>
     <string name="back">BACK</string>
     <string name="finish">finish</string>
     <string name="choose_file">choose file</string>
@@ -489,8 +489,8 @@
     <string name="last_updated">Last updated</string>
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
-    <string name="import_samourai_backup">Import Samourai backup</string>
-    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="import_masanari_backup">Import Masanari backup</string>
+    <string name="masanari_bitcoin_wallet">Masanari Bitcoin Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
     <string name="get_help_create">Create wallet: Get help</string>
@@ -560,7 +560,7 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+    <string name="in_offline_mode">Masanari Wallet is in offline mode.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>

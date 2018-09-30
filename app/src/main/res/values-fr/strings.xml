@@ -15,7 +15,7 @@
     <string name="action_unarchive">Activer tous les codes de paiement archivés</string>
     <string name="action_sync_all">Synchroniser tous les codes de paiement</string>
 
-    <string name="about_us">À propos du portefeuille Samourai</string>
+    <string name="about_us">À propos du portefeuille Masanari</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
@@ -38,7 +38,7 @@
     <string name="options_wipe">Supprimer ce portefeuille en toute sécurité</string>
     <string name="options_wipe2">Supprimer en toute sécurité le portefeuille de cet appareil.</string>
     <string name="options_stealth_display">Lanceur d\'application mode furtif</string>
-    <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
+    <string name="options_stealth_display2">Retirer Masanari du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Masanari.</string>
     <string name="options_remote_commands">Permettre les commandes à distance</string>
     <string name="options_remote_commands2">Permettre les commandes à distance via SMS.</string>
     <string name="options_currency">Taux en cours</string>
@@ -111,12 +111,12 @@
     <string name="copied_to_clipboard">Copiée dans le presse-papiers</string>
     <string name="send_payment_code">Envoyer le code de paiement</string>
 
-    <string name="ask_you_sure_exit">Êtes-vous sûr de vouloir quitter Samourai?</string>
+    <string name="ask_you_sure_exit">Êtes-vous sûr de vouloir quitter Masanari?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="close">Fermer</string>
 
-    <string name="sim_warning">Un changement de carte SIM correspondant au numéro entrant de cet SMS vient d\'être effectué sur Le téléphone de votre portefeuille Samourai.</string>
+    <string name="sim_warning">Un changement de carte SIM correspondant au numéro entrant de cet SMS vient d\'être effectué sur Le téléphone de votre portefeuille Masanari.</string>
 
     <string name="pin_5_8">Créer un code PIN comportant 5 à 8 caractères.</string>
     <string name="pin_5_8_confirm">Confirmer votre code PIN</string>
@@ -160,7 +160,7 @@
     <string name="destination">Adresse ou canal de paiement</string>
 
     <string name="insufficient_funds">Fonds insuffisants</string>
-    <string name="tx_length_error">Samourai ne permet pas les transactions de taille supérieure à 100KB. Veuillez essayer de fractionner votre transaction en plusieurs montants.</string>
+    <string name="tx_length_error">Masanari ne permet pas les transactions de taille supérieure à 100KB. Veuillez essayer de fractionner votre transaction en plusieurs montants.</string>
     <string name="invalid_amount">Montant invalide</string>
     <string name="amount">Montant</string>
 
@@ -192,7 +192,7 @@
     <string name="custom_fee">Frais personnalisés</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Portefeuille</string>
+    <string name="account_Masanari">Portefeuille</string>
     <string name="account_shuffling">Échangé</string>
 
     <string name="max_available">Max. disponible:</string>
@@ -216,7 +216,7 @@
 
     <string name="choose_email_client">Choisissez un Client de Messagerie:</string>
 
-    <string name="cannot_launch_app">Le portefeuille Samourai ne peut pas être installé sur cet appareil</string>
+    <string name="cannot_launch_app">Le portefeuille Masanari ne peut pas être installé sur cet appareil</string>
     <string name="confirm_change_pin"> Êtes-vous sûr de vouloir modifier votre PIN?</string>
     <string name="success_change_pin">PIN modifié</string>
     <string name="alternative_pin_create">Êtes-vous sûr de vouloir créer un PIN distinct pour l\'utilisation des fonctions mode furtif et commandes à distance?</string>
@@ -258,11 +258,11 @@
 
     <string name="invalid_passphrase">Passphrase invalide</string>
     <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Votre portefeuille n\'est pas protégé par une passphrase. La passphrase de votre portefeuille est utilisée lors du chiffrement des sauvegardes portefeuille. Pour des sauvegardes portefeuille chiffrées et l\'accès aux autres fonctionnalités du portefeuille Samourai, créez votre portefeuille Samourai et transférez vos fonds.</string>
+    <string name="passphrase_needed_for_backup">Votre portefeuille n\'est pas protégé par une passphrase. La passphrase de votre portefeuille est utilisée lors du chiffrement des sauvegardes portefeuille. Pour des sauvegardes portefeuille chiffrées et l\'accès aux autres fonctionnalités du portefeuille Masanari, créez votre portefeuille Masanari et transférez vos fonds.</string>
     <string name="passphrase_required">Une passphrase est nécessaire pour l\'utilisation de cette fonction. Veuillez songer à créer un nouveau portefeuille qui comprend l\'usage automatique d\'une passphrase.</string>
 
-    <string name="cannot_reach_api">Impossible d\'accéder aux APIs de Samourai. Veuillez vérifier votre connexion et réessayer maintenant ou ultérieurement.</string>
-    <string name="api_error">Les APIs de Samourai renvoient un message d\'erreur. Veuillez réessayer maintenant ou ultérieurement.</string>
+    <string name="cannot_reach_api">Impossible d\'accéder aux APIs de Masanari. Veuillez vérifier votre connexion et réessayer maintenant ou ultérieurement.</string>
+    <string name="api_error">Les APIs de Masanari renvoient un message d\'erreur. Veuillez réessayer maintenant ou ultérieurement.</string>
 
     <string name="cannot_recognize_privkey">Ne peut reconnaître la clé privée</string>
     <string name="cannot_sweep_privkey">Erreur survenue lors du balayage de la clé privée</string>
@@ -271,9 +271,9 @@
 
     <string name="change_is_dust">La monnaie restante de cette transaction est de la poussière de bitcoin ("Dust"). Recommencer en modifiant le montant de la somme ou en dépensant la totalité du solde.</string>
 
-    <string name="tor_routing_on">L\'acheminement de Samourai se fait via Tor.</string>
-    <string name="tor_routing_off">L\'acheminement de Samourai ne se fait pas via Tor. Appuyer pour activer.</string>
-    <string name="tor_install">Appuyer pour installer Orbot et acheminer Samourai par Tor.</string>
+    <string name="tor_routing_on">L\'acheminement de Masanari se fait via Tor.</string>
+    <string name="tor_routing_off">L\'acheminement de Masanari ne se fait pas via Tor. Appuyer pour activer.</string>
+    <string name="tor_install">Appuyer pour installer Orbot et acheminer Masanari par Tor.</string>
 
     <string name="premium_addons">Fonctions Premium additionnelles</string>
 
@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Envoyé avec Ricochet à</string>
     <string name="ricochet_spend1">Effectuer l\'envoi avec Ricochet à</string>
     <string name="ricochet_spend2">pour un total de</string>
-    <string name="ricochet_spend3">(inclure 0.002 BTC de frais dus à Samourai et aux mineurs)?</string>
+    <string name="ricochet_spend3">(inclure 0.002 BTC de frais dus à Masanari et aux mineurs)?</string>
 
     <string name="action_ricochet">Relancer Ricochet</string>
     <string name="action_empty_ricochet">Vider la file d\'attente Ricochet</string>
@@ -308,7 +308,7 @@
     <string name="trusted_node_ko">Noeud sécurisé non reconnu. Veuillez vérifier votre installation.</string>
     <string name="trusted_node_error">Erreur survenue lors de la tentative d\'accès au noeud sécurisé sélectionné.</string>
     <string name="trusted_node_tx_error">Échec de la transaction sur le noeud sécurisé.</string>
-    <string name="trusted_node_not_core_131">Le noeud sécurisé est prêt à l\'utilisation. Notez que le portefeuille Samourai est compatible avec les versions 0.13.1 et supérieure de Bitcoin Core.</string>
+    <string name="trusted_node_not_core_131">Le noeud sécurisé est prêt à l\'utilisation. Notez que le portefeuille Masanari est compatible avec les versions 0.13.1 et supérieure de Bitcoin Core.</string>
     <string name="trusted_node_tx_sent">Transaction envoyée via le noeud sécurisé.</string>
     <string name="trusted_node_not_responding">Le noeud sécurisé ne répond pas. Veuillez vérifier votre installation.</string>
     <string name="trusted_node_breaks_consensus">Le noeud sécurisé ne peut être paramétré avec une application bitcoin qui rompt le principe du consensus.</string>
@@ -370,7 +370,7 @@
     <string name="opendime_topup">RECHARGER</string>
 
     <string name="select_app">Sélectionner l\'application</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Protection Rejeu ("Replay")</string>
     <string name="replay_unprotected">Non protégé</string>
@@ -387,7 +387,7 @@
     <string name="replay_waiting_for_confirmations">en attente de confirmations</string>
     <string name="replay_confirmed">confirmée</string>
     <string name="replay_confirmations">confirmations:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Protection Rejeu en attente de confirmation</string>
@@ -438,7 +438,7 @@
 
     <string name="copy_to_clipboard">Copier dans le presse-papiers</string>
 
-    <string name="no_bitpay">Erreur: Ceci n\'est pas une requête bitcoin valide. Les envois sur Samourai se font uniquement vers des adresses bitcoin valides.</string>
+    <string name="no_bitpay">Erreur: Ceci n\'est pas une requête bitcoin valide. Les envois sur Masanari se font uniquement vers des adresses bitcoin valides.</string>
     <string name="learn_more">En savoir plus</string>
 
     <string name="paynym">PayNym</string>
@@ -459,7 +459,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC dans votre portefeuille et réessayer.</string>
     <string name="help">Aide</string>
 
-    <string name="passphrase_disclaimer">Je suis conscient qu\'en cas de perte ou de vol de ma passphrase, Samourai ne peut la récupérer. Samourai n\'en a jamais connaissance.</string>
+    <string name="passphrase_disclaimer">Je suis conscient qu\'en cas de perte ou de vol de ma passphrase, Masanari ne peut la récupérer. Masanari n\'en a jamais connaissance.</string>
     <string name="confirm_pin_code">Confirmer votre code PIN</string>
     <string name="re_enter_your_pin_code">Saisir de nouveau votre code PIN</string>
     <string name="re_enter_a_passphrase">Saisir de nouveau une passphrase</string>
@@ -468,9 +468,9 @@
     <string name="set_pin_code">Définir un code PIN</string>
     <string name="accept_disclaimer_error">Vous devez accepter la clause de non-responsabilité</string>
     <string name="import_external_wallet">Importer portefeuille externe</string>
-    <string name="import_samourai_wallet">Importer sauvegarde Samourai</string>
+    <string name="import_masanari_wallet">Importer sauvegarde Masanari</string>
     <string name="backup_file">Sauvegarde</string>
-    <string name="import_an_encrypted_samourai_wallet">Importer une sauvegarde Samourai cryptée pour restaurer un portefeuille avec toutes ses métadonnées intactes</string>
+    <string name="import_an_encrypted_masanari_wallet">Importer une sauvegarde Masanari cryptée pour restaurer un portefeuille avec toutes ses métadonnées intactes</string>
     <string name="back">RETOUR</string>
     <string name="finish">finaliser</string>
     <string name="choose_file">choisir le fichier</string>
@@ -483,8 +483,8 @@
     <string name="last_updated">Dernière mise à jour</string>
     <string name="get_help">Obtenir de l\'aide</string>
     <string name="offline_mode">Mode hors-ligne</string>
-    <string name="import_samourai_backup">Importer sauvegarde Samourai</string>
-    <string name="samourai_bitcoin_wallet">Portefeuille Bitcoin Samourai</string>
+    <string name="import_masanari_backup">Importer sauvegarde Masanari</string>
+    <string name="masanari_bitcoin_wallet">Portefeuille Bitcoin Masanari</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
     <string name="start_new_wallet">Lancer nouveau portefeuille</string>
   <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>
@@ -568,7 +568,7 @@
   <string name="receive_chain">Recevoir l\'adresse</string>
   <string name="change_chain">Changer l\'adresse</string>
 
-  <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
+  <string name="in_offline_mode">Le portefeuille Masanari est en mode hors-ligne.</string>
 
   <string name="tx_standby">Transaction en attente</string>
   <string name="show_hex">Afficher Code Hex</string>

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/samourai_splash"
+        android:src="@drawable/masanari_splash"
         />
 
 </RelativeLayout>

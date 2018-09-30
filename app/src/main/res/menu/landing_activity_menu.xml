@@ -4,9 +4,9 @@
         android:visible="true"
         android:title="@string/import_external_wallet"
         />
-    <item android:id="@+id/import_samourai_backup_menu"
+    <item android:id="@+id/import_masanari_backup_menu"
         android:visible="true"
-        android:title="@string/import_samourai_backup"
+        android:title="@string/import_masanari_backup"
         />
     <item android:id="@+id/get_help_menu_create"
         android:visible="true"

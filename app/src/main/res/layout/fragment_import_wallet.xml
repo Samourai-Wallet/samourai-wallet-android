@@ -18,7 +18,7 @@
             android:orientation="vertical"
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
-            tools:context="com.samourai.wallet.fragments.PassphraseEntryFragment">
+            tools:context="com.masanari.wallet.fragments.PassphraseEntryFragment">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/mnemonic" />
 
-                    <com.samourai.wallet.widgets.MnemonicSeedEditText
+                    <com.masanari.wallet.widgets.MnemonicSeedEditText
                         android:id="@+id/mnemonic_code_edittext"
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
@@ -136,7 +136,7 @@
 
 
 
-        <!-- Import samourai backup-->
+        <!-- Import masanari backup-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -149,7 +149,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
-                tools:context="com.samourai.wallet.fragments.PassphraseEntryFragment">
+                tools:context="com.masanari.wallet.fragments.PassphraseEntryFragment">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -172,13 +172,13 @@
                             style="@android:style/TextAppearance.WindowTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/import_samourai_wallet"
+                            android:text="@string/import_masanari_wallet"
                             android:textAllCaps="true" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/import_an_encrypted_samourai_wallet" />
+                            android:text="@string/import_an_encrypted_masanari_wallet" />
                     </LinearLayout>
 
                 </LinearLayout>

@@ -15,7 +15,7 @@
     <string name="action_unarchive">Ativar todos os códigos de pagamento arquivados.</string>
     <string name="action_sync_all">Sincronizar todos os códigos de pagamento</string>
 
-    <string name="about_us">Sobre Samourai Wallet</string>
+    <string name="about_us">Sobre Masanari Wallet</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
@@ -36,7 +36,7 @@
     <string name="options_wipe">Apagar carteira de forma segura</string>
     <string name="options_wipe2">Apagar seguramente essa carteira do aparelho.</string>
     <string name="options_stealth_display">Launcher Furtivo</string>
-    <string name="options_stealth_display2">Remove a Samourai do launcher e da tela inicial. Você deve discar **SEU_CÓDIGO_PIN# do discador do telefone para iniciar a Samourai.</string>
+    <string name="options_stealth_display2">Remove a Masanari do launcher e da tela inicial. Você deve discar **SEU_CÓDIGO_PIN# do discador do telefone para iniciar a Masanari.</string>
     <string name="options_remote_commands">Habilita controles remotos</string>
     <string name="options_remote_commands2">Permite comandos remotos por SMS.</string>
     <string name="options_currency">Preço de rua</string>
@@ -115,12 +115,12 @@
     <string name="copied_to_clipboard">Copiado para a área de transferência</string>
     <string name="send_payment_code">Enviar código de pagamento</string>
 
-    <string name="ask_you_sure_exit">Você tem certeza que deseja sair da Samourai?</string>
+    <string name="ask_you_sure_exit">Você tem certeza que deseja sair da Masanari?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="close">Fechar</string>
 
-    <string name="sim_warning">Seu dispositivo com a carteira Samourai agora tem um chip SIM diferente que corresponde ao número o qual enviou essa mensagem de texto.</string>
+    <string name="sim_warning">Seu dispositivo com a carteira Masanari agora tem um chip SIM diferente que corresponde ao número o qual enviou essa mensagem de texto.</string>
 
     <string name="pin_5_8">Criar um código PIN contendo entre 5 e 8 caracteres.</string>
     <string name="pin_5_8_confirm">Confirmar código PIN</string>
@@ -163,7 +163,7 @@
     <string name="destination">Endereço ou canal de pagamento</string>
 
     <string name="insufficient_funds">Fundos insuficientes</string>
-    <string name="tx_length_error">A Samourai não trabalha com transações de mais de 100KB. Por favor tente dividir sua transação.</string>
+    <string name="tx_length_error">A Masanari não trabalha com transações de mais de 100KB. Por favor tente dividir sua transação.</string>
     <string name="invalid_amount">Quantia inválida</string>
     <string name="amount">Quantia</string>
 
@@ -195,7 +195,7 @@
     <string name="custom_fee">Personalizada</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Carteira</string>
+    <string name="account_Masanari">Carteira</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Máx. disponível:</string>
@@ -219,7 +219,7 @@
 
     <string name="choose_email_client">Escolha um cliente de e-mail:</string>
 
-    <string name="cannot_launch_app">A Carteira Samourai não pode rodar neste dispositivo</string>
+    <string name="cannot_launch_app">A Carteira Masanari não pode rodar neste dispositivo</string>
     <string name="confirm_change_pin">Você tem certeza que deseja mudar seu PIN?</string>
     <string name="success_change_pin">PIN alterado</string>
     <string name="alternative_pin_create">Você tem certeza que deseja criar um PIN alternativo para ser usado no início furtivo e nos comandos remotos?</string>
@@ -261,11 +261,11 @@
 
     <string name="invalid_passphrase">Passphrase inválido</string>
     <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Sua carteira não está protegida por um passphrase. Backups da carteira são encriptados utilizando sua senha. Se você gostaria de usar backups encriptados e outras funções da carteira Samourai crie sua carteira usando este aplicativo e transfira seus fundos.</string>
+    <string name="passphrase_needed_for_backup">Sua carteira não está protegida por um passphrase. Backups da carteira são encriptados utilizando sua senha. Se você gostaria de usar backups encriptados e outras funções da carteira Masanari crie sua carteira usando este aplicativo e transfira seus fundos.</string>
     <string name="passphrase_required">Um passphrase é necessário para utilizar esta função. Por favor considere criar uma nova carteira que irá automaticamente conter uma senha.</string>
 
-    <string name="cannot_reach_api">Os APIs da Samourai não podem ser acessados. Por favor verifique sua conexão e tente novamente ou tente mais tarde.</string>
-    <string name="api_error">Os APIs da Samourai estão retornando um erro. Tente novamente ou mais tarde.</string>
+    <string name="cannot_reach_api">Os APIs da Masanari não podem ser acessados. Por favor verifique sua conexão e tente novamente ou tente mais tarde.</string>
+    <string name="api_error">Os APIs da Masanari estão retornando um erro. Tente novamente ou mais tarde.</string>
 
     <string name="cannot_recognize_privkey">Não é possível reconhecer a chave privada</string>
     <string name="cannot_sweep_privkey">Erro limpando chave privada</string>
@@ -274,9 +274,9 @@
 
     <string name="change_is_dust">O troco desta transação é irrisório e será adicionado a taxa dos mineradores.</string>
 
-    <string name="tor_routing_on">Samourai está roteando através do Tor.</string>
-    <string name="tor_routing_off">Samourai não está roteando através do Tor. Pressione para ativar.</string>
-    <string name="tor_install">Pressione para instalar o Orbot e rotear a Samourai através do Tor.</string>
+    <string name="tor_routing_on">Masanari está roteando através do Tor.</string>
+    <string name="tor_routing_off">Masanari não está roteando através do Tor. Pressione para ativar.</string>
+    <string name="tor_install">Pressione para instalar o Orbot e rotear a Masanari através do Tor.</string>
 
     <string name="premium_addons">Addons Premium</string>
 
@@ -284,7 +284,7 @@
     <string name="ricochet_hopping">Ricocheteado para</string>
     <string name="ricochet_spend1">Gasto Ricochet para</string>
     <string name="ricochet_spend2">totalizando</string>
-    <string name="ricochet_spend3">(inclui taxa de 0.001 BTC para Samourai e taxas de mineração)?</string>
+    <string name="ricochet_spend3">(inclui taxa de 0.001 BTC para Masanari e taxas de mineração)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Esvaziar fila Ricochet</string>
@@ -311,7 +311,7 @@
     <string name="trusted_node_ko">Node confiável não reconhecido. Por favor verifique a instalação.</string>
     <string name="trusted_node_error">Erro ao acessar o node confiável proposto.</string>
     <string name="trusted_node_tx_error">Transação falhou no node confiável.</string>
-    <string name="trusted_node_not_core_131">Node confiável está definido. Note que a Samourai suporta Bitcoin Core 0.13.1 e posteriores.</string>
+    <string name="trusted_node_not_core_131">Node confiável está definido. Note que a Masanari suporta Bitcoin Core 0.13.1 e posteriores.</string>
     <string name="trusted_node_tx_sent">Transação enviada através de node confiável.</string>
     <string name="trusted_node_not_responding">Node confiável não está respondendo. Por favor verifique a instalação.</string>
     <string name="trusted_node_breaks_consensus">Node confiável não pode ser configurado num cliente bitcoin que quebre o consenso.</string>
@@ -373,7 +373,7 @@
     <string name="opendime_topup">COMPLETAR</string>
 
     <string name="select_app">Selecione o aplicativo</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Desprotegido</string>
@@ -390,7 +390,7 @@
     <string name="replay_waiting_for_confirmations">aguardando confirmações</string>
     <string name="replay_confirmed">confirmado</string>
     <string name="replay_confirmations">confirmações</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay protection aguardando confirmação</string>
@@ -441,7 +441,7 @@
 
     <string name="copy_to_clipboard">Copiar para área de transferência</string>
 
-    <string name="no_bitpay">Erro: Este não é um pedido válido de Bitcoin. A Samourai suporta apenas envios para endereços Bitcoin válidos.</string>
+    <string name="no_bitpay">Erro: Este não é um pedido válido de Bitcoin. A Masanari suporta apenas envios para endereços Bitcoin válidos.</string>
     <string name="learn_more">Aprenda Mais</string>
 
     <string name="paynym">PayNym</string>
@@ -526,7 +526,7 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string name="in_offline_mode">A carteira Samourai está no modo offline.</string>
+    <string name="in_offline_mode">A carteira Masanari está no modo offline.</string>
     <string name="tx_standby">Transação em stand-by</string>
     <string name="show_hex">Exibir Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna no Android em breve</string>

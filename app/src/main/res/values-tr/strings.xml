@@ -15,7 +15,7 @@
   <string name="action_unarchive">Arşivlenmiş tüm ödeme kodlarını etkinleştir</string>
   <string name="action_sync_all">Tüm ödeme kodlarını eşitle</string>
 
-  <string name="about_us">Samourai Cüzdan Hakkında</string>
+  <string name="about_us">Masanari Cüzdan Hakkında</string>
 
   <string name="ok">Tamam</string>
   <string name="cancel">İptal</string>
@@ -38,7 +38,7 @@
   <string name="options_wipe">Cüzdanı güvenli bir şekilde sil</string>
   <string name="options_wipe2">Cüzdanı bu aygıttan güvenli bir şekilde sil.</string>
   <string name="options_stealth_display">Gizli başlatıcı</string>
-  <string name="options_stealth_display2">Samourai\'ı başlatıcıdan ve ana ekranınızdan kaldırır. Telefon çeviriciden **PIN_KODUNUZU# girerek Samourai\'ı başlatabilirsiniz.</string>
+  <string name="options_stealth_display2">Masanari\'ı başlatıcıdan ve ana ekranınızdan kaldırır. Telefon çeviriciden **PIN_KODUNUZU# girerek Masanari\'ı başlatabilirsiniz.</string>
   <string name="options_remote_commands">Uzaktan erişim komutlarını etkinleştir</string>
   <string name="options_remote_commands2">SMS ile uzaktan erişim komutlarına izin verin.</string>
   <string name="options_currency">Sokak fiyatı</string>
@@ -117,12 +117,12 @@
   <string name="copied_to_clipboard">Panoya kopyalandı</string>
   <string name="send_payment_code">Ödeme kodunu gönder</string>
 
-  <string name="ask_you_sure_exit">Samourai\'dan çıkmak istediğinize emin misiniz?</string>
+  <string name="ask_you_sure_exit">Masanari\'dan çıkmak istediğinize emin misiniz?</string>
   <string name="yes">Evet</string>
   <string name="no">Hayır</string>
   <string name="close">Kapat</string>
 
-  <string name="sim_warning">Samourai Cüzdan cihazınıza gelen bu metin mesajının geldiği numaranın ilişik olduğu başka bir SIM kart kullanıyor.</string>
+  <string name="sim_warning">Masanari Cüzdan cihazınıza gelen bu metin mesajının geldiği numaranın ilişik olduğu başka bir SIM kart kullanıyor.</string>
 
   <string name="pin_5_8">5 ve 8 karakter arası uzunlukta bir PIN kodu oluşturun.</string>
   <string name="pin_5_8_confirm">PIN kodunuzu doğrulayın</string>
@@ -166,7 +166,7 @@
   <string name="destination">Adres veya ödeme kanalı</string>
 
   <string name="insufficient_funds">Yetersiz fon</string>
-  <string name="tx_length_error">Samourai, 100KB boyutu üzerindeki işlemleri gerçekleştirmemektedir. Lütfen işleminizi bölmeyi deneyin.</string>
+  <string name="tx_length_error">Masanari, 100KB boyutu üzerindeki işlemleri gerçekleştirmemektedir. Lütfen işleminizi bölmeyi deneyin.</string>
   <string name="invalid_amount">Geçersiz tutar</string>
   <string name="amount">Tutar</string>
 
@@ -198,7 +198,7 @@
   <string name="custom_fee">Özel</string>
   <string name="sat_b">sat/b</string>
 
-  <string name="account_Samourai">Cüzdan</string>
+  <string name="account_Masanari">Cüzdan</string>
   <string name="account_shuffling">Shifted</string>
 
   <string name="max_available">En fazla mümkün:</string>
@@ -222,7 +222,7 @@
 
   <string name="choose_email_client">E-posta istemcisi seçin:</string>
 
-  <string name="cannot_launch_app">Samourai Cüzdan bu cihazda çalıştırılamaz.</string>
+  <string name="cannot_launch_app">Masanari Cüzdan bu cihazda çalıştırılamaz.</string>
   <string name="confirm_change_pin">PIN\'inizi değiştirmek istediğinizden emin misiniz?</string>
   <string name="success_change_pin">PIN değiştirildi</string>
   <string name="alternative_pin_create">Gizli başlatma ve uzaktan erişim işlevleri için başka bir PIN kodu oluşturmak istediğinize emin misiniz?</string>
@@ -264,11 +264,11 @@
 
   <string name="invalid_passphrase">Geçersiz parola</string>
   <string name="passphrase">Parola</string>
-  <string name="passphrase_needed_for_backup">Cüzdanınız bir parola ile korunmuyor. Cüzdan yedekleri cüzdan parolanız kullanılarak şifrelenir. Eğer şifrelenmiş cüzdan yedekleri ve diğer Samourai Cüzdan özelliklerini kullanmak isterseniz, cüzdanınızı Samourai Cüzdan kullanarak oluşturun ve fonlarınızı aktarın.</string>
+  <string name="passphrase_needed_for_backup">Cüzdanınız bir parola ile korunmuyor. Cüzdan yedekleri cüzdan parolanız kullanılarak şifrelenir. Eğer şifrelenmiş cüzdan yedekleri ve diğer Masanari Cüzdan özelliklerini kullanmak isterseniz, cüzdanınızı Masanari Cüzdan kullanarak oluşturun ve fonlarınızı aktarın.</string>
   <string name="passphrase_required">Bu işlev için bir parola gerekli. Lütfen yeni bir cüzdan oluşturmayı göz önüne alın, bu işlem kendinden parolalı bir cüzdan yaratacaktır.</string>
 
-  <string name="cannot_reach_api">Samourai API\'lerine ulaşılamıyor. Bağlantınızı doğrulayın ve/veya daha sonra yeniden deneyin.</string>
-  <string name="api_error">Samourai API\'leri hata veriyor. Lütfen daha sonra yeniden deneyin.</string>
+  <string name="cannot_reach_api">Masanari API\'lerine ulaşılamıyor. Bağlantınızı doğrulayın ve/veya daha sonra yeniden deneyin.</string>
+  <string name="api_error">Masanari API\'leri hata veriyor. Lütfen daha sonra yeniden deneyin.</string>
 
   <string name="cannot_recognize_privkey">Özel anahtar işlenemiyor</string>
   <string name="cannot_sweep_privkey">Özel anahtar geçirilirken hata</string>
@@ -277,9 +277,9 @@
 
   <string name="change_is_dust">Bu işlemden oluşan para üstü bir kırıntı. Yeniden deneyin ve ya harcanan tutarı değiştirin ya da tüm tutarı harcayın.</string>
 
-  <string name="tor_routing_on">Samourai Tor üzerinden yönlendiriliyor.</string>
-  <string name="tor_routing_off">Samourai Tor üzerinden yönlendirilmiyor. Etkinleştirmek için dokunun.</string>
-  <string name="tor_install">Orbot\'u yüklemek ve Samourai\'ı Tor üzerinden yönlendirmek için dokunun.</string>
+  <string name="tor_routing_on">Masanari Tor üzerinden yönlendiriliyor.</string>
+  <string name="tor_routing_off">Masanari Tor üzerinden yönlendirilmiyor. Etkinleştirmek için dokunun.</string>
+  <string name="tor_install">Orbot\'u yüklemek ve Masanari\'ı Tor üzerinden yönlendirmek için dokunun.</string>
 
   <string name="premium_addons">Premium Eklentiler</string>
 
@@ -287,7 +287,7 @@
   <string name="ricochet_hopping">Ricochet yapılan:</string>
   <string name="ricochet_spend1">Harcanacak Ricochet</string>
   <string name="ricochet_spend2">toplam tutar</string>
-  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.002 BTC işlem masrafını içerir)?</string>
+  <string name="ricochet_spend3">(Masanari ve madencilerin\' 0.002 BTC işlem masrafını içerir)?</string>
 
   <string name="action_ricochet">Ricochet\'i tekrarla</string>
   <string name="action_empty_ricochet">Ricochet kuyruğunu boşalt</string>
@@ -314,7 +314,7 @@
   <string name="trusted_node_ko">Güvenilen düğüm işlenemedi. Lütfen kurulumu denetleyin.</string>
   <string name="trusted_node_error">Önerilen güvenilen düğüme ulaşmada hata</string>
   <string name="trusted_node_tx_error">Güvenilen düğümde işlem başarısız oldu.</string>
-  <string name="trusted_node_not_core_131">Güvenilen düğüm ayarlandı. Samourai Cüzdan\'ın Bitcoin Core 0.13.1 ve üzeri sürümleri desteklediğini lütfen not alın.</string>
+  <string name="trusted_node_not_core_131">Güvenilen düğüm ayarlandı. Masanari Cüzdan\'ın Bitcoin Core 0.13.1 ve üzeri sürümleri desteklediğini lütfen not alın.</string>
   <string name="trusted_node_tx_sent">İşlem güvenilen düğüm üzerinden gönderildi.</string>
   <string name="trusted_node_not_responding">Güvenilen düğüm yanıt vermiyor. Lütfen kurulumu denetleyin.</string>
   <string name="trusted_node_breaks_consensus">Güvenilen düğüm fikir birliğini geçersiz sayan bir Bitcoin istemcisinde ayarlanamaz.</string>
@@ -376,7 +376,7 @@
   <string name="opendime_topup">TÜMLE</string>
 
   <string name="select_app">Uygulama seç</string>
-  <string name="samourai_opendime">Samourai: OpenDime</string>
+  <string name="masanari_opendime">Masanari: OpenDime</string>
 
   <string name="replay_protection">Tekrar koruması</string>
   <string name="replay_unprotected">Korumasız</string>
@@ -393,7 +393,7 @@
   <string name="replay_waiting_for_confirmations">onaylar için bekliyor</string>
   <string name="replay_confirmed">onaylandı</string>
   <string name="replay_confirmations">onaylar:</string>
-  <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+  <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
   <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
   <string name="replay_awaiting_confirmation">Tekrar koruması onay bekliyor</string>
@@ -444,7 +444,7 @@
 
   <string name="copy_to_clipboard">Panoya kopyala</string>
 
-  <string name="no_bitpay">Hata: Bu geçerli bir bitcoin isteği değil. Samourai yalnızca geçerli bitcoin adreslerine göndermeyi destekler.</string>
+  <string name="no_bitpay">Hata: Bu geçerli bir bitcoin isteği değil. Masanari yalnızca geçerli bitcoin adreslerine göndermeyi destekler.</string>
   <string name="learn_more">Daha fazla öğrenin</string>
 
   <string name="paynym">PayNym</string>
@@ -465,7 +465,7 @@
   <string name="bip47_notif_tx_insufficient_funds_2">BTC koyun ve yeniden deneyin.</string>
   <string name="help">Yardım</string>
 
-  <string name="passphrase_disclaimer">Samourai\'ın parolanızı kaybetmeniz veya unutmanız durumunda yardım sağlayamayacağını kabul ediyorum. Samourai\'ın benim parolam hakkında hiçbir zaman bir bilgisi olmamıştır.</string>
+  <string name="passphrase_disclaimer">Masanari\'ın parolanızı kaybetmeniz veya unutmanız durumunda yardım sağlayamayacağını kabul ediyorum. Masanari\'ın benim parolam hakkında hiçbir zaman bir bilgisi olmamıştır.</string>
   <string name="confirm_pin_code">PIN kodunuzu onaylayın</string>
   <string name="re_enter_your_pin_code">PIN kodunuzu yeniden girin</string>
   <string name="re_enter_a_passphrase">Parolanızı yeniden girin</string>
@@ -474,9 +474,9 @@
   <string name="set_pin_code">PIN kodu ayarlayın</string>
   <string name="accept_disclaimer_error">Bu feragatnameyi kabul etmeniz gerekmektedir.</string>
   <string name="import_external_wallet">Dışarıdan cüzdan içe aktar</string>
-  <string name="import_samourai_wallet">Samourai yedeği içe aktar</string>
+  <string name="import_masanari_wallet">Masanari yedeği içe aktar</string>
   <string name="backup_file">Dosya yedeği al</string>
-  <string name="import_an_encrypted_samourai_wallet">tanımlayıcı verisi bozulmamış bir cüzdanı geri getirmek için şifrelenmiş bir Samourai yedeğini içe aktarın</string>
+  <string name="import_an_encrypted_masanari_wallet">tanımlayıcı verisi bozulmamış bir cüzdanı geri getirmek için şifrelenmiş bir Masanari yedeğini içe aktarın</string>
   <string name="back">GERİ</string>
   <string name="finish">bitir</string>
   <string name="choose_file">dosya seç</string>
@@ -489,8 +489,8 @@
   <string name="last_updated">Son güncelleme</string>
   <string name="get_help">Yardım al</string>
   <string name="offline_mode">Çevrimdışı kip</string>
-  <string name="import_samourai_backup">Samourai yedeğini içe aktar</string>
-  <string name="samourai_bitcoin_wallet">Samourai Bitcoin Cüzdanı</string>
+  <string name="import_masanari_backup">Masanari yedeğini içe aktar</string>
+  <string name="masanari_bitcoin_wallet">Masanari Bitcoin Cüzdanı</string>
   <string name="enter_your_wallet_passphrase">Cüzdan parolanızı girin</string>
   <string name="start_new_wallet">Yeni bir cüzdan oluşturun</string>
   <string name="get_help_create">Cüzdan oluşturma: Yardım alın</string>
@@ -560,7 +560,7 @@
         <item>Eski (P2PKH)</item>
     </string-array>
 
-  <string name="in_offline_mode">Samourai Cüzdan çevrimdışı kipte.</string>
+  <string name="in_offline_mode">Masanari Cüzdan çevrimdışı kipte.</string>
     <string name="tx_standby">İşlem beklemede</string>
     <string name="show_hex">Hex Kodunu Göster</string>
     <string name="tx_tenna_coming_soon">Android için txTenna yakında.</string>

@@ -123,7 +123,7 @@
     <string name="no">Не</string>
     <string name="close">Затвори</string>
 
-    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от когото сте получили това съобщение. Vasheto ustroystvo sus Samourai portfeil sega ima druga SIM karta, suotvetstvashta s nomera, ot kogoto ste poluchili tova suobshtenie.</string>
+    <string name="sim_warning">Вашето устройство със Самурай портфейл сега има друга СИМ карта, съответстваща с номера, от когото сте получили това съобщение. Vasheto ustroystvo sus Masanari portfeil sega ima druga SIM karta, suotvetstvashta s nomera, ot kogoto ste poluchili tova suobshtenie.</string>
 
     <string name="pin_5_8">Създайте PIN код с дължина между 5 и 8 цифри</string>
     <string name="pin_5_8_confirm">Потвърдете PIN кода</string>
@@ -199,7 +199,7 @@
     <string name="custom_fee">По избор</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Портфейл</string>
+    <string name="account_Masanari">Портфейл</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Макс. налични:</string>
@@ -377,7 +377,7 @@
     <string name="opendime_topup">TOP UP</string>
 
     <string name="select_app">Избор на приложение:</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="masanari_opendime">Masanari: OpenDime</string>
 
     <string name="replay_protection">Replay защита</string>
     <string name="replay_unprotected">Незащитен</string>
@@ -394,7 +394,7 @@
     <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
     <string name="replay_confirmed">Потвърдено</string>
     <string name="replay_confirmations">Потвърждения:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">BCash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay защита в очакване на потвърждение</string>
@@ -475,9 +475,9 @@
     <string name="set_pin_code">Задайте PIN код</string>
     <string name="accept_disclaimer_error">Трябва да приемете предупреждението</string>
     <string name="import_external_wallet">Импортиране на външен портфейл</string>
-    <string name="import_samourai_wallet">Импортиране на Самурай резервно копие</string>
+    <string name="import_masanari_wallet">Импортиране на Самурай резервно копие</string>
     <string name="backup_file">Файл с резервното копие</string>
-    <string name="import_an_encrypted_samourai_wallet">Импортирайте резервно копие, за да възстановите портфейла си и всичките му данни</string>
+    <string name="import_an_encrypted_masanari_wallet">Импортирайте резервно копие, за да възстановите портфейла си и всичките му данни</string>
     <string name="back">НАЗАД</string>
     <string name="finish">край</string>
     <string name="choose_file">изберете файл</string>
@@ -490,8 +490,8 @@
     <string name="last_updated">Последно обновено</string>
     <string name="get_help">Получаване на помощ</string>
     <string name="offline_mode">Офлайн режим</string>
-    <string name="import_samourai_backup">Импортиране на Самурай резервно копие</string>
-    <string name="samourai_bitcoin_wallet">Самурай Биткойн Портфейл</string>
+    <string name="import_masanari_backup">Импортиране на Самурай резервно копие</string>
+    <string name="masanari_bitcoin_wallet">Самурай Биткойн Портфейл</string>
     <string name="enter_your_wallet_passphrase">Въведете тайната си фраза</string>
     <string name="start_new_wallet">Направи нов портфейл</string>
     <string name="get_help_create">Създаване на портфейл: получаване на помощ</string>

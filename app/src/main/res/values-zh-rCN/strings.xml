@@ -198,7 +198,7 @@
     <string name="custom_fee">自定手续费</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">钱包</string>
+    <string name="account_Masanari">钱包</string>
     <string name="account_shuffling">已兑换</string>
 
     <string name="max_available">最多可发送:</string>
@@ -376,7 +376,7 @@
     <string name="opendime_topup">充值</string>
 
     <string name="select_app">选择APP</string>
-    <string name="samourai_opendime">武士钱包：OpenDime</string>
+    <string name="masanari_opendime">武士钱包：OpenDime</string>
 
     <string name="replay_protection">重播保护</string>
     <string name="replay_unprotected">未保护</string>
@@ -393,7 +393,7 @@
     <string name="replay_waiting_for_confirmations">等待确认</string>
     <string name="replay_confirmed">已确认</string>
     <string name="replay_confirmations">确认数:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">重播保护正在等待确认</string>
@@ -474,9 +474,9 @@
     <string name="set_pin_code">设置PIN码</string>
     <string name="accept_disclaimer_error">你必须同意免责声明</string>
     <string name="import_external_wallet">导入外部钱包</string>
-    <string name="import_samourai_wallet">导入武士钱包备份</string>
+    <string name="import_masanari_wallet">导入武士钱包备份</string>
     <string name="backup_file">备份文件</string>
-    <string name="import_an_encrypted_samourai_wallet">导入加密武士钱包备份，恢复钱包和所有元数据</string>
+    <string name="import_an_encrypted_masanari_wallet">导入加密武士钱包备份，恢复钱包和所有元数据</string>
     <string name="back">后退</string>
     <string name="finish">完成</string>
     <string name="choose_file">选择文件</string>
@@ -489,8 +489,8 @@
     <string name="last_updated">最近更新</string>
     <string name="get_help">寻求帮助</string>
     <string name="offline_mode">下线模式</string>
-    <string name="import_samourai_backup">导入武士钱包备份</string>
-    <string name="samourai_bitcoin_wallet">武士钱包</string>
+    <string name="import_masanari_backup">导入武士钱包备份</string>
+    <string name="masanari_bitcoin_wallet">武士钱包</string>
     <string name="enter_your_wallet_passphrase">输入你的钱包密码短语</string>
     <string name="start_new_wallet">创建新钱包</string>
     <string name="get_help_create">创建新钱：帮助</string>
