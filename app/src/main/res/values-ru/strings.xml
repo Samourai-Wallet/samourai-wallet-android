@@ -12,7 +12,7 @@
     <string name="action_support">Поддержка</string>
     <string name="action_sweep">Втянуть приватный ключ</string>
     <string name="action_bip47">PayNym\'ы</string>
-    <string name="action_unarchive">Активировать все архивированные платёжные коды</string>
+    <string name="action_unarchive">Разархивировать все платёжные коды</string>
     <string name="action_sync_all">Синхронизировать все платёжные коды</string>
 
     <string name="about_us">О кошельке Samourai</string>
@@ -238,7 +238,7 @@
     <string name="bip47_setup4_text2">Будет уплачена с баланса вашего кошелька.</string>
 
     <string name="bip47_add1_title">Новый контакт</string>
-    <string name="bip47_add1_text">Отсканируйте или вставьте платёжный код чтобы создать новый платёжный канал.</string>
+    <string name="bip47_add1_text">Отсканируйте или вставьте платёжный код, чтобы создать новый платёжный канал.</string>
 
     <string name="paste">Вставить</string>
     <string name="label">Пометить</string>
@@ -256,7 +256,7 @@
     <string name="bip47_cannot_scan_own_pcode">Не получается отсканировать собственный платёжный код</string>
     <string name="bip47_spend_to_pcode">Отправить через этот платёжный канал?</string>
     <string name="bip47_sign">Подписать сообщение</string>
-    <string name="bip47_sign_text1">Подписать сообщение используя приватный ключ от BIP47 notification-адреса?</string>
+    <string name="bip47_sign_text1">Подписать сообщение, используя приватный ключ от BIP47 notification-адреса?</string>
     <string name="bip47_sign_text2">Подписано моим BIP47 notification-адресом.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Этот платёжный канал ожидает одного подтверждения прежде чем разрешить отправку средств. Хотите отказаться от предыдущей попытки и попробовать отправить извещение заново?></string>
 
