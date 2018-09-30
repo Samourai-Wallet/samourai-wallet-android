@@ -140,7 +140,6 @@
     <string name="please_select">Válassz...</string>
     <string name="create_wallet">Pénztárca készítése</string>
     <string name="restore_wallet">Pénztárca visszaállítása</string>
-    <string name="restore_backup">Biztonsági mentés visszaállítása</string>
     <string name="wallet_passphrase">Add meg a pénztárcád jelszavát</string>
     <string name="bip39_passphrase">BIP39 jelszó</string>
     <string name="bip39_match">BIP39 jelszó OK.</string>
@@ -165,7 +164,6 @@
 
     <string name="to">Címzett</string>
     <string name="destination">Cím vagy fizetési csatorna</string>
-    <string name="send_amount">Mennyiség</string>
 
     <string name="insufficient_funds">Nem áll rendelkezésre elegendő összeg</string>
     <string name="tx_length_error">A Samourai nem kezel 100KB-nál nagyobb tranzakciókat. Próbáld meg kisebb részekre osztani a tranzakciót.</string>
@@ -230,7 +228,6 @@
     <string name="alternative_pin_create">Biztosan létrehozol egy alternatív PIN kódot? Ezt a PIN kódot kell használnod az alkalmazás elindításához rejtőzködő üzemmódban, illetve távoli utasítások használatához.</string>
     <string name="alternative_pin_deleted">Alternatív PIN kód törölve.</string>
     <string name="alternative_pin_wait">Meg kell várnod, amíg a rejtőzködő mód teljesen aktiválódik, mielőtt egy alternatív PIN kódot megadnál.</string>
-    <string name="telno_invalid_format">Nemzetközi formátumot használj, pl.: \'+36201234567\'</string>
 
     <string name="invalid_payment_code">Hibás fizetési kód</string>
     <string name="error_payment_code">Hiba a fizetési kód generálása során</string>
@@ -275,11 +272,6 @@
 
     <string name="cannot_recognize_privkey">A privát kulcs nem ismerhető fel</string>
     <string name="cannot_sweep_privkey">Hiba a privát kulcs begyűjtése közben</string>
-    <string name="sweep_privkey">Biztosan begyűjtöd a privát kulcshoz tartozó címről a pénzt?</string>
-    <string name="sweep_privkey_address">Erről a címről:</string>
-    <string name="sweep_privkey_amount">Mennyiség:</string>
-    <string name="sweep_privkey_fee">Bányász díj:</string>
-    
     <string name="please_wait_sending">Tranzakció küldése folyamatban, kérjük várj.</string>
     <string name="please_wait_ricochet">Ricochet sor feldolgozása folyamatban, kérjük várj.</string>
 
@@ -494,9 +486,7 @@
     <string name="add_bip39_password">BIP39 jelszó megadása</string>
     <string name="close_bip39_password">BIP39 jelszó elrejtése</string>
     <string name="enter_your_mnemonic_seed_to_import_a_wallet">Add meg egy másik pénztárcától származó visszaállítási szavaidat az importáláshoz.</string>
-    <string name="no_file_chosen">Nincs fájl kiválasztva</string>
     <string name="last_updated">Legutóbb módosítva</string>
-    <string name="enter_passphrase">Jelszó megadása</string>
     <string name="get_help">Segítség kérése</string>
     <string name="offline_mode">Offline mód</string>
     <string name="import_samourai_backup">Samourai mentés visszaállítása</string>
@@ -537,11 +527,6 @@
 
     <string name="boltzmann_cannot">Nem lehet létrehozni STONEWALL tranzakciót az általad megadott bemenetekből. Ha mindenképp szeretnél STONEWALL tranzakciót küldeni, válaszd a \'NEM\' opciót, és próbáld újra más bemenetek használatával.</string>
     <string name="boltzmann_like_typed">Ne feledd, hogy az \'Azonos típusú címek a visszajáróhoz\' opció ki van kapcsolva. Emiatt a STONEWALL tranzakció felépítése kevésbé optimális lehet.</string>
-    
-    <string name="tx_send">Biztosan elküldöd a tranzakciót?</string>
-    <string name="tx_send_address">Erre a címre:</string>
-    <string name="tx_send_amount">Mennyiség:</string>
-    <string name="tx_send_fee">Bányász díj:</string>
 
     <string name="insufficient_fee">A díj túl alacsony</string>
     <string name="action_utxo_amounts">Megtekintés címek típusa szerint</string>

@@ -140,7 +140,6 @@
     <string name="please_select">Please select...</string>
     <string name="create_wallet">Create wallet</string>
     <string name="restore_wallet">Restore wallet</string>
-    <string name="restore_backup">Restore backup</string>
     <string name="wallet_passphrase">Enter your wallet passphrase</string>
     <string name="bip39_passphrase">BIP39 passphrase</string>
     <string name="bip39_match">BIP39 passphrase verified OK.</string>
@@ -165,7 +164,6 @@
 
     <string name="to">To</string>
     <string name="destination">Address or payment channel</string>
-    <string name="send_amount">Amount</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
@@ -230,7 +228,6 @@
     <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
     <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
     <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
-    <string name="telno_invalid_format">Use international dialing format. Ex.:\'+447385555555\'</string>
 
     <string name="invalid_payment_code">Invalid payment code</string>
     <string name="error_payment_code">Error generating payment code</string>
@@ -275,11 +272,6 @@
 
     <string name="cannot_recognize_privkey">Cannot recognize private key</string>
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
-    <string name="sweep_privkey">Do you want to sweep from this private key?</string>
-    <string name="sweep_privkey_address">From address:</string>
-    <string name="sweep_privkey_amount">Amount:</string>
-    <string name="sweep_privkey_fee">Miner fee:</string>
-    
     <string name="please_wait_sending">Sending transaction, please wait.</string>
     <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
 
@@ -494,9 +486,7 @@
     <string name="add_bip39_password">Add bip39 password</string>
     <string name="close_bip39_password">Close bip39 password</string>
     <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
-    <string name="no_file_chosen">No file chosen</string>
     <string name="last_updated">Last updated</string>
-    <string name="enter_passphrase">Enter passphrase</string>
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
     <string name="import_samourai_backup">Import Samourai backup</string>
@@ -537,11 +527,6 @@
 
   <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
   <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
-
-  <string name="tx_send">Do you want to send the transaction?</string>
-  <string name="tx_send_address">To address:</string>
-  <string name="tx_send_amount">Amount:</string>
-  <string name="tx_send_fee">Fee:</string>
 
   <string name="insufficient_fee">Insufficient fee</string>
   <string name="action_utxo_amounts">View amounts by address type</string>

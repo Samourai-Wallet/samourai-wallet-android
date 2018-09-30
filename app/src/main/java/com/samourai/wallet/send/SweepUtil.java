@@ -133,7 +133,7 @@ public class SweepUtil  {
 //                        Log.d("BalanceActivity", "Amount:" + amount);
                         Log.d("SweepUtil", "Fee:" + fee.toString());
 
-                        String message = context.getString(R.string.sweep_privkey);
+                        String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
                         message += "\n\n";
                         message += context.getString(R.string.sweep_privkey_address) + " " + address + "\n";
                         message += context.getString(R.string.sweep_privkey_amount)  + " " + Coin.valueOf(amount).toPlainString() + "\n";

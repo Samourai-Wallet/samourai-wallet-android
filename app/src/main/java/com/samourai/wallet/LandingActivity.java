@@ -106,12 +106,12 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
     public void RestoreWalletFromBackup() {
         ContextWrapper themeWrapper = new ContextThemeWrapper(this, R.style.restoreDialogStyle);
         AlertDialog.Builder builder = new AlertDialog.Builder(themeWrapper);
-        builder.setTitle(R.string.restore_backup);
+        builder.setTitle("Restore backup");
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.landing_restore_dialog, null);
         final EditText password = (EditText) view.findViewById(R.id.restore_dialog_password_edittext);
         builder.setView(view);
-        builder.setPositiveButton(R.string.restore, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("RESTORE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -124,7 +124,7 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
                 }
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

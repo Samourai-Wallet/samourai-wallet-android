@@ -1040,12 +1040,7 @@ public class SendActivity extends Activity {
                     */
 
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
-                    String message = strCannotDoBoltzmann + strPrivacyWarning;
-
-                    message += SendActivity.this.getResources().getString(R.string.tx_send) + "\n";
-                    message += SendActivity.this.getResources().getString(R.string.tx_send_address) + " " + dest + "\n";
-                    message += SendActivity.this.getResources().getString(R.string.tx_send_amount)  + " " + Coin.valueOf(amount).toPlainString() + "\n";
-                    message += SendActivity.this.getResources().getString(R.string.tx_send_fee)     + " " + Coin.valueOf(_fee.longValue()).toPlainString() + "\n";
+                    String message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
                     final long _amount = amount;
 
