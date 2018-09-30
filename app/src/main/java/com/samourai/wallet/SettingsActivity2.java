@@ -467,7 +467,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 cbPref4.setEnabled(true);
                             }
                             else {
-                                Toast.makeText(SettingsActivity2.this, "Use international dialing format. Ex.:'+447385555555'", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity2.this, SettingsActivity2.this.getResources().getString(R.string.telno_invalid_format), Toast.LENGTH_SHORT).show();
                             }
                         }
                         else {
