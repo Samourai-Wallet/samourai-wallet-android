@@ -134,10 +134,6 @@ public class SweepUtil  {
                         Log.d("SweepUtil", "Fee:" + fee.toString());
 
                         String message = "Sweep " + Coin.valueOf(amount).toPlainString() + " from " + address + " (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?";
-                        message += "\n\n";
-                        message += context.getString(R.string.sweep_privkey_address) + " " + address + "\n";
-                        message += context.getString(R.string.sweep_privkey_amount)  + " " + Coin.valueOf(amount).toPlainString() + "\n";
-                        message += context.getString(R.string.sweep_privkey_fee)     + " " + Coin.valueOf(fee.longValue()).toPlainString();
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle(R.string.app_name);
