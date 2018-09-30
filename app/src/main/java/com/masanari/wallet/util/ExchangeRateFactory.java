@@ -22,10 +22,12 @@ public class ExchangeRateFactory	{
     private static String strDataLBC = null;
     private static String strDataBTCe = null;
     private static String strDataBFX = null;
+    private static String strDataKraken = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
     private static HashMap<String,Double> fxRatesBFX = null;
+    private static HashMap<String,Double> fxRatesKraken = null;
 //    private static HashMap<String,String> fxSymbols = null;
 
     private static ExchangeRateFactory instance = null;
@@ -52,6 +54,11 @@ public class ExchangeRateFactory	{
             "LocalBitcoins.com",
             "WEX (ex-'BTC-e')",
             "Bitfinex",
+            "Kraken"
+    };
+
+    private static String[] currencyLabelsKraken = {
+            "Euro - EUR"
     };
 
     private ExchangeRateFactory()	 { ; }
@@ -64,6 +71,7 @@ public class ExchangeRateFactory	{
             fxRatesLBC = new HashMap<String,Double>();
             fxRatesBTCe = new HashMap<String,Double>();
             fxRatesBFX = new HashMap<String,Double>();
+            fxRatesKraken = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
 
             instance = new ExchangeRateFactory();
@@ -81,7 +89,10 @@ public class ExchangeRateFactory	{
         else if(fxSel == 2)	 {
             fxRates = fxRatesBFX;
         }
-        else	 {
+        else if (fxSel ==3) {
+            fxRates = fxRatesKraken;
+        }
+        else if (fxSel == 0) {
             fxRates = fxRatesLBC;
         }
 
@@ -106,6 +117,10 @@ public class ExchangeRateFactory	{
         return currencyLabelsBTCe;
     }
 
+    public String[] getCurrencyLabelsKraken()	 {
+        return currencyLabelsKraken;
+    }
+
     public String[] getExchangeLabels()	 {
         return exchangeLabels;
     }
@@ -122,9 +137,19 @@ public class ExchangeRateFactory	{
         strDataBFX = data;
     }
 
+    public void setDataKraken(String data)	 {
+        strDataKraken = data;
+    }
+
     public void parseLBC()	 {
         for(int i = 0; i < currencies.length; i++)	 {
             getLBC(currencies[i]);
+        }
+    }
+
+    public void parseKraken() {
+        for(int i = 0; i < currencies.length; i++)	 {
+            getKraken(currencies[i]);
         }
     }
 
@@ -221,6 +246,15 @@ public class ExchangeRateFactory	{
                     }
                     ExchangeRateFactory.getInstance(context).setDataBFX(response);
                     ExchangeRateFactory.getInstance(context).parseBFX();
+
+                    if(!AppUtil.getInstance(context).isOfflineMode())    {
+                        response = WebUtil.getInstance(null).getURL(WebUtil.KRAKEN_EXCHANGE_URL);
+                    }
+                    else    {
+                        response = PayloadUtil.getInstance(context).deserializeFX_BFX().toString();
+                    }
+                    ExchangeRateFactory.getInstance(context).setDataKraken(response);
+                    ExchangeRateFactory.getInstance(context).parseKraken();
                 }
                 catch(Exception e) {
                     e.printStackTrace();
@@ -254,6 +288,32 @@ public class ExchangeRateFactory	{
         catch (JSONException je) {
             fxRatesLBC.put(currency, Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
+        }
+        catch(IOException | DecryptionException e) {
+            ;
+        }
+    }
+
+    private void getKraken(String currency)	 {
+        System.out.println(currency);
+        try {
+            JSONObject jsonObject = new JSONObject(strDataKraken);
+            if (jsonObject != null)	{
+                JSONObject jsonCurr = jsonObject.getJSONObject("result").getJSONObject("XXBTZEUR");
+                if (jsonCurr != null)	{
+                    double avg_price = 0.0;
+                    if(jsonCurr.has("p"))	{
+                        avg_price = jsonCurr.getJSONArray("p").getDouble(1);
+                    }
+                    fxRatesKraken.put(currency, Double.valueOf(avg_price));
+                }
+                if(currency.equalsIgnoreCase("EUR"))   {
+                    PayloadUtil.getInstance(context).serializeFX_BTCe_EUR(jsonObject);
+                }
+            }
+        }
+        catch (JSONException je) {
+            fxRatesBTCe.put(currency, Double.valueOf(-1.0));
         }
         catch(IOException | DecryptionException e) {
             ;

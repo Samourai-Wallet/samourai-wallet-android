@@ -1147,6 +1147,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
         if(fxSel == 1)	{
             currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsBTCe();
         }
+        else if(fxSel == 3) {
+            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsKraken();
+        }
         else	{
             currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabels();
         }
