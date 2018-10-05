@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alpha_create_wallet">Schrijf deze woorden op en bewaar ze goed. Verlies deze woorden of je passphrase niet.</string>
+    <string name="alpha_create_wallet">Schrijf deze woorden op en bewaar ze goed. Verlies deze woorden of je wachtwoordzin niet.</string>
     <string name="alpha_create_confirm_backup">Ik heb mijn woorden opgeschreven</string>
 
     <string name="creating_wallet">Wallet aanmaken. Even geduld a.u.b...</string>
@@ -11,8 +11,8 @@
     <string name="action_support">Ondersteuning</string>
     <string name="action_sweep">Private key leeghalen</string>
     <string name="action_bip47">PayNyms</string>
-    <string name="action_unarchive">Alle gearchiveerde betalingscodes activeren</string>
-    <string name="action_sync_all">Alle betalingscodes synchroniseren</string>
+    <string name="action_unarchive">Alle gearchiveerde payment codes activeren</string>
+    <string name="action_sync_all">Alle payment codes synchroniseren</string>
 
     <string name="about_us">Over Masanari Wallet</string>
 
@@ -58,47 +58,47 @@
     <string name="options_Tor2">Start Orbot (Tor).</string>
     <string name="options_export">Exporteer wallet back-up</string>
     <string name="options_change_pin">Verander PIN</string>
-    <string name="options_change_pin2">Creëer een nieuwe PIN-code; voor ontgrendelen van je wallet.</string>
+    <string name="options_change_pin2">Creëer een nieuwe pincode; voor ontgrendelen van je wallet.</string>
     <string name="options_remote_pin">Verborgen-modus en PIN op afstand</string>
-    <string name="options_remote_pin2">Creëer een alternatieve PIN voor verborgen-modus en bediening op afstand.</string>
+    <string name="options_remote_pin2">Creëer een alternatieve pincode voor verborgen-modus en bediening op afstand.</string>
     <string name="options_autosave_backup">Back-up automatisch opslaan op dit apparaat</string>
-    <string name="options_autosave_backup2">Periodiek versleutelde back-up van passphrase opslaan op dit apparaat.</string>
+    <string name="options_autosave_backup2">Periodiek versleutelde back-up van wachtwoordzin opslaan op dit apparaat.</string>
     <string name="options_version">Versie</string>
     <string name="options_txs">Transacties</string>
     <string name="options_boltzmann">STONEWALL betaling</string>
     <string name="options_boltzmann_2">Het STONEWALL algoritme gebruiken bij betalingen, voor meer privacy.</string>
-    <string name="options_utxo">Onbestede outputs tonen</string>
+    <string name="options_utxo">Ongebruikte outputs tonen</string>
     <string name="options_trusted_node">Kies vertrouwde node</string>
-    <string name="options_trusted_node2">Specificeer je eigen bitcoin node voor het publiceren van transacties.</string>
+    <string name="options_trusted_node2">Specificeer je eigen bitcoin node voor het verzenden van transacties.</string>
     <string name="options_use_trusted_node">Gebruik vertrouwde node</string>
-    <string name="options_use_trusted_node2">Publiceer transacties vanaf je eigen node.</string>
+    <string name="options_use_trusted_node2">Verzend transacties vanaf je eigen node.</string>
     <string name="options_rbf0">Gebruik RBF voor betalingen</string>
-    <string name="options_rbf0_2">Betalingen gebruiken replace-by-fee, om de transactiekosten op te kunnen hogen.</string>
+    <string name="options_rbf0_2">Betalingen gebruiken replace-by-fee, om de fee op te kunnen hogen.</string>
     <string name="options_troubleshoot">Probleemoplosser</string>
-    <string name="options_passphrase_test">Passphrase/back-up test</string>
+    <string name="options_passphrase_test">Wachtwoordzin/back-up test</string>
     <string name="options_passphrase_test2">Verifiëren wallet-toegang en back-up ondersteuning.</string>
     <string name="options_send_backup_to_support">Stuur een back-up naar technische ondersteuning</string>
     <string name="options_send_backup_to_support2">Stuur een wallet back-up naar technische ondersteuning. Bevat geen informatie over de private key.</string>
-    <string name="options_fee_provider">Provider voor schatten transactiekosten</string>
-    <string name="options_fee_provider2">Selecteer jouw gewenste provider voor het schatten van transactiekosten.</string>
-    <string name="options_broadcast_on">Publiceer transacties</string>
-    <string name="options_broadcast_on2">Vink uit (publiceren UIT) om de (raw) ondertekende transactie to kopiëren naar het klembord.</string>
+    <string name="options_fee_provider">Provider voor schatten fee</string>
+    <string name="options_fee_provider2">Selecteer jouw gewenste provider voor het schatten van fee.</string>
+    <string name="options_broadcast_on">Verzend transacties</string>
+    <string name="options_broadcast_on2">Vink uit (verzenden UIT) om de (raw) ondertekende transactie to kopiëren naar het klembord.</string>
     <string name="options_segwit">Ontvang op segwit adressen</string>
     <string name="options_segwit_2">Genereer segwit adressen voor inkomende transacties.</string>
-    <string name="options_broadcast_hex">Publiceer hex transactie</string>
-    <string name="options_broadcast_hex2">Publiceer ondertekende transactie in hexadecimaal formaat.</string>
+    <string name="options_broadcast_hex">Verzend hex transactie</string>
+    <string name="options_broadcast_hex2">Verzend ondertekende transactie in hexadecimaal formaat.</string>
     <string name="options_like_typed_change">Ontvang wisselgeld op soortgelijke outputs</string>
-    <string name="options_like_typed_change2">Ontvang wisselgeld op adressen van hetzelfde type als de bestede output. Schakel UIT om wisselgeld alleen te ontvangen op segwit adressen.</string>
+    <string name="options_like_typed_change2">Ontvang wisselgeld op adressen van hetzelfde type als de uitgegeven output. Schakel UIT om wisselgeld alleen te ontvangen op segwit adressen.</string>
     <string name="options_haptic">Haptische PIN invoer</string>
-    <string name="options_haptic_2">Vibreer bij elk cijfer tijdens het invoeren van de PIN-code.</string>
-    <string name="options_prune">Opruimen back-up</string>
+    <string name="options_haptic_2">Vibreer bij elk cijfer tijdens het invoeren van de pincode.</string>
+    <string name="options_prune">Verkleinen back-up</string>
     <string name="options_prune2">Maak ruimte vrij in de wallet en ruim back-up bestanden op.</string>
     <string name="options_address_calc">Adres rekenaar</string>
     <string name="options_address_calc2">Bereken adressen die zijn afgeleid van jouw wallet seed.</string>
     <string name="options_paynym_calc">PayNym rekenaar</string>
     <string name="options_paynym_calc2">Bereken adressen die zijn gedeeld met ander PayNyms.</string>
 
-    <string name="prompt_send_backup_to_support">Stuur een wallet back-up naar technische dienst? Exclusief info over private keys, de seed of passphrase.</string>
+    <string name="prompt_send_backup_to_support">Stuur een wallet back-up naar technische dienst? Exclusief info over private keys, de seed of wachtwoordzin.</string>
 
     <string name="timeline_today">Vandaag</string>
     <string name="timeline_older">Ouder</string>
@@ -109,44 +109,44 @@
     <string name="you_sent">Verzonden</string>
     <string name="send">Verzend</string>
     <string name="receive">Ontvangen</string>
-    <string name="cannot_select_utxo">Kan geen onbestede outputs seleceteren</string>
+    <string name="cannot_select_utxo">Kan geen ongebruikte outputs selecteren</string>
     <string name="error_bip126_output">Fout bij vaststellen output adres</string>
     <string name="error_change_output">Fout bij vaststellen wisselgeld adres</string>
 
-    <string name="copied_to_clipboard">Gekopiëerd naar het klembord</string>
-    <string name="send_payment_code">Verstuur betalingscode</string>
+    <string name="copied_to_clipboard">Gekopieerd naar het klembord</string>
+    <string name="send_payment_code">Verstuur payment codes</string>
 
     <string name="ask_you_sure_exit">Weet je zeker dat je Masanari wilt afsluiten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="close">Sluiten</string>
 
-    <string name="sim_warning">Je Masanari wallet aparaat heeft nu een andere SIM-kaart corresponderend met het inkomende nummer van dit tekstbericht.</string>
+    <string name="sim_warning">Je Masanari wallet apparaat heeft nu een andere SIM-kaart corresponderend met het inkomende nummer van dit tekstbericht.</string>
 
-    <string name="pin_5_8">Creëer een PIN-code tussen de 5 en 8 tekens.</string>
-    <string name="pin_5_8_confirm">Bevestig PIN-code</string>
-    <string name="pin_error">PIN-code fout</string>
+    <string name="pin_5_8">Creëer een pincode tussen de 5 en 8 tekens.</string>
+    <string name="pin_5_8_confirm">Bevestig pincode</string>
+    <string name="pin_error">Pincode fout</string>
     <string name="no_internet">Geen internetverbinding. Probeer het opnieuw a.u.b.</string>
     <string name="bip38_pw">BIP38 wachtwoord</string>
     <string name="bip38_pw_error">BIP38 wachtwoord fout</string>
-    <string name="bip39_safe">Creëer a.u.b. een passphrase en hou deze geheim. Je hebt deze passphrase nodig als je toegang tot je wallet verliest.</string>
-    <string name="bip39_safe2">"Bevestig a.u.b. jouw passphrase. Hou deze geheim. Je hebt deze passphrase nodig als je toegang tot je wallet verliest. "</string>
-    <string name="bip39_restore">Voer jouw mnemonic (of hex entropie) en eventueel BIP39 passphrase in. Als je geen BIP39 passphrase gebruikt, laat deze leeg.</string>
-    <string name="bip39_must">Jouw wallet heeft een passphrase nodig. Probeer het opnieuw a.u.b.</string>
-    <string name="bip39_unmatch">Passphrase komt niet overeen. Probeer het opnieuw a.u.b.</string>
-    <string name="bip39_invalid">Gebruik geen spaties in jouw passphrase. Probeer het opnieuw a.u.b.</string>
-    <string name="bip39_empty">Je moet een passphrase opgeven.</string>
+    <string name="bip39_safe">Creëer a.u.b. een wachtwoordzin en hou deze geheim. Je hebt deze wachtwoordzin nodig als je toegang tot je wallet verliest.</string>
+    <string name="bip39_safe2">"Bevestig a.u.b. jouw wachtwoordzin. Hou deze geheim. Je hebt deze wachtwoordzin nodig als je toegang tot je wallet verliest. "</string>
+    <string name="bip39_restore">Voer jouw mnemonic (of hex entropie) en eventueel BIP39 wachtwoordzin in. Als je geen BIP39 wachtwoordzin gebruikt, laat deze leeg.</string>
+    <string name="bip39_must">Jouw wallet heeft een wachtwoordzin nodig. Probeer het opnieuw a.u.b.</string>
+    <string name="bip39_unmatch">Wachtwoordzin komt niet overeen. Probeer het opnieuw a.u.b.</string>
+    <string name="bip39_invalid">Gebruik geen spaties in jouw wachtwoordzin. Probeer het opnieuw a.u.b.</string>
+    <string name="bip39_empty">Je moet een wachtwoordzin opgeven.</string>
     <string name="please_select">Kies a.u.b...</string>
     <string name="create_wallet">Creëer wallet</string>
     <string name="restore_wallet">Herstel wallet</string>
-    <string name="wallet_passphrase">Voer jouw wallet passphrase in</string>
-    <string name="bip39_passphrase">BIP39 passphrase</string>
-    <string name="bip39_match">BIP39 passphrase is geverifieerd.</string>
-    <string name="bip39_decrypt_test">Wallet passphrase is geverifieerd. Wil je het ontsleutelen van de laatste auto back-up testen?</string>
+    <string name="wallet_passphrase">Voer jouw wallet wachtwoordzin in</string>
+    <string name="bip39_passphrase">BIP39 wachtwoordzin</string>
+    <string name="bip39_match">BIP39 wachtwoordzin is geverifieerd.</string>
+    <string name="bip39_decrypt_test">Wallet wachtwoordzin is geverifieerd. Wil je het ontsleutelen van de laatste auto back-up testen?</string>
     <string name="backup_read_ok">Back-up bestand is OK.</string>
     <string name="backup_read_error">Fout bij lezen van het back-up bestand.</string>
     <string name="mnemonic_hex">Mnemonic of hex entropie</string>
-    <string name="pin_enter">Voer PIN-code in</string>
+    <string name="pin_enter">Voer pincode in</string>
     <string name="please_wait">Wacht a.u.b...</string>
     <string name="random_key_error">Willekeurige sleutel fout</string>
     <string name="login_error">Inloggen mislukt</string>
@@ -169,7 +169,7 @@
     <string name="invalid_amount">Ongeldig bedrag</string>
     <string name="amount">Bedrag</string>
 
-    <string name="receive_address_to_clipboard">Kopieer dit ontvang-adres naar het klembord? Als het wordt gekopiëerd, kan het zichtbaar zijn voor andere programma\'s.</string>
+    <string name="receive_address_to_clipboard">Kopieer dit ontvang-adres naar het klembord? Als het wordt gekopieerd, kan het zichtbaar zijn voor andere programma\'s.</string>
     <string name="receive_address_to_share">Deel dit ontvang-adres? Als het wordt gedeeld, kan het worden gelezen door andere programma\'s.</string>
     <string name="sure_to_erase">Weet je zeker dat je deze wallet wilt verwijderen?</string>
     <string name="wallet_erased">Wallet verwijderd van dit apparaat.</string>
@@ -187,8 +187,8 @@
     <string name="ssl_no_connection">We kunnen geen verbinding maken met de host om het SSL-certificaat te verifiëren. Controleer je netwerkverbinding en apparaat voordat je verdergaat.</string>
     <string name="exit">Afsluiten</string>
 
-    <string name="create_pin">Creëer PIN-code</string>
-    <string name="confirm_pin">Bevestig PIN-code</string>
+    <string name="create_pin">Creëer pincode</string>
+    <string name="confirm_pin">Bevestig pincode</string>
 
     <string name="auto_fee">NORMALE TX KOSTEN</string>
     <string name="priority_fee">PRIORITEIT TX KOSTEN</string>
@@ -215,42 +215,42 @@
     <string name="encrypted_backup">Versleutelde wallet gegevens</string>
     <string name="decryption_error">Er deed zich een fout voor tijdens het ontsleutelen van jouw wallet back-up. Probeer het opnieuw a.u.b.</string>
     <string name="restore_wallet_from_backup">Herstel wallet van back-up</string>
-    <string name="restore_wallet_from_existing_backup">Back-up gevonden op aparaat. Om te herstellen van de bestaande back-up, tik op \'OK\', anders kopieer/plak een andere back-up en tik op \'OK\'.</string>
+    <string name="restore_wallet_from_existing_backup">Back-up gevonden op apparaat. Om te herstellen van de bestaande back-up, tik op \'OK\', anders kopieer/plak een andere back-up en tik op \'OK\'.</string>
 
-    <string name="choose_email_client">Kies een e-mailclient:</string>
+    <string name="choose_email_client">Kies een e-mailcliënt:</string>
 
-    <string name="cannot_launch_app">Masanari Wallet kan niet op dit aparaat draaien</string>
-    <string name="confirm_change_pin">Weet je zeker dat je je PIN-code wilt veranderen?</string>
-    <string name="success_change_pin">PIN-code aangepast</string>
-    <string name="alternative_pin_create">Weet je zeker je een alternatieve PIN-code wilt maken voor het verborgen opstarten en bedienen op afstand?</string>
-    <string name="alternative_pin_deleted">Je gebruikt geen alternatieve PIN-code voor verborgen opstarten en bedienen op afstand.</string>
-    <string name="alternative_pin_wait">Wacht totdat de verborgen-modus volledig is geactiveerd voordat je een alternatieve PIN-code creëert.</string>
+    <string name="cannot_launch_app">Masanari Wallet kan niet op dit apparaat draaien</string>
+    <string name="confirm_change_pin">Weet je zeker dat je je pincode wilt veranderen?</string>
+    <string name="success_change_pin">Pincode aangepast</string>
+    <string name="alternative_pin_create">Weet je zeker je een alternatieve pincode wilt maken voor het verborgen opstarten en bedienen op afstand?</string>
+    <string name="alternative_pin_deleted">Je gebruikt geen alternatieve pincode voor verborgen opstarten en bedienen op afstand.</string>
+    <string name="alternative_pin_wait">Wacht totdat de verborgen-modus volledig is geactiveerd voordat je een alternatieve pincode creëert.</string>
 
-    <string name="invalid_payment_code">Ongeldige betalingscode</string>
-    <string name="error_payment_code">Fout bij genereren betalingscode</string>
+    <string name="invalid_payment_code">Ongeldige payment code</string>
+    <string name="error_payment_code">Fout bij genereren payment code</string>
 
     <string name="bip47_setup1_title">Jouw PayNym</string>
     <string name="bip47_setup4_title">Toevoegen PayNym contact</string>
-    <string name="bip47_setup4_text1">Het toevoegen van deze PayNym aan jouw contacten vereist eenmalige transactiekosten, voor het vastleggen op de blockchain.</string>
+    <string name="bip47_setup4_text1">Het toevoegen van deze PayNym aan jouw contacten vereist eenmalige fee, voor het vastleggen op de blockchain.</string>
     <string name="bip47_setup4_text2">wordt afgetrokken van jouw wallet saldo.</string>
 
     <string name="bip47_add1_title">Nieuw contact</string>
-    <string name="bip47_add1_text">Scan of plak een betalingscode om een nieuw payment channel aan te maken.</string>
+    <string name="bip47_add1_text">Scan of plak een payment code om een nieuw payment channel aan te maken.</string>
 
     <string name="paste">Plak</string>
     <string name="label">Label</string>
     <string name="next">Volgende</string>
     <string name="confirm">Bevestigen</string>
-    <string name="payment_code">Betalingscode</string>
+    <string name="payment_code">Payment code</string>
     <string name="payment_channel_init">Notificatie-transactie verzonden. Jouw payment channel wordt aangemaakt.</string>
 
-    <string name="bip47_no_label_error">Je moet een label voor deze betalingscode opgeven</string>
+    <string name="bip47_no_label_error">Je moet een label voor deze payment code opgeven</string>
 
     <string name="bip47_status_tbe">Nog niet vastgesteld</string>
     <string name="bip47_status_pending">In behandeling - 0/1 bevestigingen</string>
     <string name="bip47_status_active">Klaar om te verzenden</string>
     <string name="bip47_status_incoming">Klaar om te ontvangen</string>
-    <string name="bip47_cannot_scan_own_pcode">Je kunt je eigen betalingscode niet scannen</string>
+    <string name="bip47_cannot_scan_own_pcode">Je kunt je eigen payment code niet scannen</string>
     <string name="bip47_spend_to_pcode">Verstuur via dit payment channel?</string>
     <string name="bip47_sign">Onderteken bericht</string>
     <string name="bip47_sign_text1">Onderteken bericht met behulp van BIP47 notificatie adres private key?</string>
@@ -259,10 +259,10 @@
 
     <string name="rbf_incoming">De inkomende transactie is vervangend door replace-by-fee. Bekijk in block explorer?</string>
 
-    <string name="invalid_passphrase">Ongeldige passphrase</string>
-    <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Jouw wallet is niet beveiligd met een passphrase. Wallet back-ups worden versleuteld met jouw  passphrase. Als je gebruik wilt maken van versleutelde wallet back-ups en andere Masanari wallet mogelijkheden, creëer dan een Masanari Wallet en stort je geld.</string>
-    <string name="passphrase_required">Voor het gebruik van deze functie is een passphrase vereist. Overweeg om een nieuwe wallet te maken die automatisch een passphrase bevat.</string>
+    <string name="invalid_passphrase">Ongeldige wachtwoordzin</string>
+    <string name="passphrase">Wachtwoordzin</string>
+    <string name="passphrase_needed_for_backup">Jouw wallet is niet beveiligd met een wachtwoordzin. Wallet back-ups worden versleuteld met jouw wachtwoordzin. Als je gebruik wilt maken van versleutelde wallet back-ups en andere Masanari wallet mogelijkheden, creëer dan een Masanari Wallet en stort je geld.</string>
+    <string name="passphrase_required">Voor het gebruik van deze functie is een wachtwoordzin vereist. Overweeg om een nieuwe wallet te maken die automatisch een wachtwoordzin bevat.</string>
 
     <string name="cannot_reach_api">Masanari API\'s zijn onbereikbaar. Controleer de verbinding en probeer het nu of later opnieuw.</string>
     <string name="api_error">Masanari APIs geven een fout terug. Probeer het nu of later opnieuw.</string>
@@ -282,22 +282,22 @@
 
     <string name="ricochet_hop">Ricochet Hop</string>
     <string name="ricochet_hopping">Ricocheted naar</string>
-    <string name="ricochet_spend1">Ricochet besteed aan</string>
+    <string name="ricochet_spend1">Ricochet uitgegeven aan</string>
     <string name="ricochet_spend2">voor een totaalbedrag van</string>
-    <string name="ricochet_spend3">(inclucief 0.002 BTC transactiekosten voor Masanari en transactiekosten)?</string>
+    <string name="ricochet_spend3">(inclucief 0.002 BTC fee voor Masanari en miners\' fees)?</string>
 
     <string name="action_ricochet">Herhaal Ricochet</string>
     <string name="action_empty_ricochet">Leegmaken Ricochet wachtrij</string>
     <string name="ricochet">Ricochet - verstuur met 4 extra hops</string>
     <string name="action_ricochet_script">Toon Ricochet script</string>
     <string name="action_ricochet_replay">Opnieuw versturen Ricochet</string>
-    <string name="ricochet_replay">Wil je deze Ricochet betaling opnieuw publiceren?</string>
-    <string name="ricochet_not_broadcast_replay">Er was een probleem met het publiceren van jouw Ricochet. Wil je deze Ricochet opnieuw publiceren?</string>
+    <string name="ricochet_replay">Wil je deze Ricochet betaling opnieuw verzenden?</string>
+    <string name="ricochet_not_broadcast_replay">Er was een probleem met het verzenden van jouw Ricochet. Wil je deze Ricochet opnieuw verzenden?</string>
     <string name="no_ricochet_replay">Er is geen Ricochet om opnieuw te versturen.</string>
     <string name="no_ricochet_display">Er is geen Ricochet script om weer te geven.</string>
-    <string name="ricochet_broadcast">Jouw Ricochet is gepubliceerd.</string>
+    <string name="ricochet_broadcast">Jouw Ricochet is verzonden.</string>
 
-    <string name="bip47_cannot_identify_outpoint">Kan uitgaande betalingscode niet maskeren</string>
+    <string name="bip47_cannot_identify_outpoint">Kan uitgaande payment code niet maskeren</string>
     <string name="bip47_cannot_compose_notif_tx">Kan notificatie tx niet samenstellen</string>
 
     <string name="pushtx_returns_null">Besteding mislukt. Server heeft de waarde null geretourneerd.</string>
@@ -323,25 +323,25 @@
 
     <string name="options_unconfirmed_tx">Deze transactie wacht op bevestiging. Selecteer a.u.b. een optie:</string>
     <string name="options_block_explorer">Bekijk transactie</string>
-    <string name="options_bump_fee">Verhoog transactiekosten</string>
+    <string name="options_bump_fee">Verhoog fee</string>
 
     <string name="cpfp_cannot_retrieve_tx">Kan geen transactie-informatie ophalen. Probeer het a.u.b. opnieuw.</string>
-    <string name="fee_bump_not_necessary">Hou er rekening mee dat het verhogen van de transactiekosten voor deze transactie mogelijk niet nodig is.</string>
-    <string name="bump_fee">Wil je de transactiekosten van deze transactie verhogen voor een snellere bevestiging?\n\nExtra transactiekosten:</string>
+    <string name="fee_bump_not_necessary">Hou er rekening mee dat het verhogen van de fee voor deze transactie mogelijk niet nodig is.</string>
+    <string name="bump_fee">Wil je de fee van deze transactie verhogen voor een snellere bevestiging?\n\nExtra miner fee:</string>
 
     <string name="options_sign">Onderteken bericht</string>
 
     <string name="trusted_node_pow_failed">De proof-of-work, gerapporteerd door jouw vertrouwde node, wordt niet geverifieerd. Controleer a.u.b. jouw installatie.</string>
 
-    <string name="options_fees">Toon huidige transactiekosten</string>
-    <string name="current_fee_selection">Jouw transactiekosten zijn ingesteld op:</string>
-    <string name="current_hi_fee_value">Huidige hoge transactiekosten:</string>
-    <string name="current_mid_fee_value">Huidige normale transactiekosten:</string>
-    <string name="current_lo_fee_value">Huidige lage transactiekosten:</string>
+    <string name="options_fees">Toon huidige fee</string>
+    <string name="current_fee_selection">Jouw fee zijn ingesteld op:</string>
+    <string name="current_hi_fee_value">Huidige hoge fee:</string>
+    <string name="current_mid_fee_value">Huidige normale fee:</string>
+    <string name="current_lo_fee_value">Huidige lage fee:</string>
     <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Stel jouw aangepaste transactiekosten in sat/b in.</string>
-    <string name="custom_fee_too_low">Aangepaste transactiekosten is te laag ingesteld.</string>
-    <string name="custom_fee_too_high">Aangepaste transactiekosten is te hoog ingesteld.</string>
+    <string name="set_sat">Stel jouw aangepaste fee in sat/b in.</string>
+    <string name="custom_fee_too_low">Aangepaste fee is te laag ingesteld.</string>
+    <string name="custom_fee_too_high">Aangepaste fee is te hoog ingesteld.</string>
 
     <string name="cpfp_spent">CPFP transactie verzonden.</string>
     <string name="rbf_spent">RBF transactie verzonden.</string>
@@ -357,17 +357,17 @@
     <string name="utxo_sign_text3">Ondertekend met behulp van utxo.</string>
 
     <string name="recovery_checkup">Herstelcontrole</string>
-    <string name="recovery_checkup_message">Jouw wallet herstelwoorden en passphrase worden weergegeven. Laat niemand je scherm zien. Dit wordt NIET opnieuw weergegeven.</string>
+    <string name="recovery_checkup_message">Jouw wallet herstelwoorden en wachtwoordzin worden weergegeven. Laat niemand je scherm zien. Dit wordt NIET opnieuw weergegeven.</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="recovery_checkup_finish">IK HEB MIJN HERSTEL-INFO VEILIGGESTELD</string>
-    <string name="pin_reminder">Ter herinnering: jouw PIN-code is:</string>
+    <string name="pin_reminder">Ter herinnering: jouw pincode is:</string>
 
     <string name="opendime_confirmed_balance">Bevestigd saldo</string>
     <string name="opendime_privkey">Private Key</string>
     <string name="opendime_verified">GEVERIFIEERD</string>
-    <string name="opendime_valid_key">Geldige private key op aparaat</string>
+    <string name="opendime_valid_key">Geldige private key op apparaat</string>
     <string name="opendime_not_verified">KAN NIET VERIFIËREN</string>
-    <string name="opendime_no_valid_key">Kan private key niet valideren op aparaat</string>
+    <string name="opendime_no_valid_key">Kan private key niet valideren op apparaat</string>
     <string name="opendime_view">BEKIJK</string>
     <string name="opendime_sweep">LEEGHALEN</string>
     <string name="opendime_topup">OPWAARDEREN</string>
@@ -375,15 +375,15 @@
     <string name="select_app">Kies programma</string>
     <string name="masanari_opendime">Masanari: OpenDime</string>
 
-    <string name="replay_protection">Replay protection</string>
+    <string name="replay_protection">Replay beveiliging</string>
     <string name="replay_unprotected">Onbeveiligd</string>
     <string name="replay_in_progress">In uitvoering</string>
     <string name="replay_protected">Beveiligd</string>
     <string name="replay_disclaimer">Chain split ontdekt</string>
     <string name="replay_text">Alle adressen worden samengevoegd tot een enkele transactie en naar een adres in uw wallet verzonden. Dit wordt het samenvoegen van inputs genoemd en kan jouw privacy aantasten.</string>
-    <string name="replay_ENABLE">INSCHAKELEN REPLAY PROTECTION</string>
+    <string name="replay_ENABLE">INSCHAKELEN REPLAY BEVEILIGING</string>
 
-    <string name="replay_broadcast_to_network">publiceer naar netwerk...</string>
+    <string name="replay_broadcast_to_network">verzend naar netwerk...</string>
     <string name="replay_seen_on_network">gezien op netwerk...</string>
     <string name="replay_split_tx_broadcast">split tx publicatie...</string>
     <string name="replay_description">Jouw wallet stuurt een speciale transactie naar zichzelf om jouw coins definitief af te splitsen van de andere chain. Dit beschermt jou tegen replay aanvallen.</string>
@@ -393,7 +393,7 @@
     <string name="replay_masanari_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
-    <string name="replay_awaiting_confirmation">Replay protection wacht op bevestiging</string>
+    <string name="replay_awaiting_confirmation">Replay beveiliging wacht op bevestiging</string>
     <string name="replay_dismiss">WAARSCHUWING VERWERPEN</string>
 
     <string name="show_qr">Toon QR</string>
@@ -406,13 +406,13 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Segwit Adres</string>
-    <string name="segwit_switch_prompt">Tegoeden die zijn gestort in Segwit adressen zijn efficiënter om mee te handelen. Ze bieden lagere transactiekosten bij het verzenden van bitcoin vanuit jouw wallet.</string>
+    <string name="segwit_switch_prompt">Tegoeden die zijn gestort in Segwit adressen zijn efficiënter om mee te handelen. Ze bieden lagere fee bij het verzenden van bitcoin vanuit jouw wallet.</string>
 
     <string name="privkey_clipboard">Er is een private key geïdentificeerd op uw klembord. De inhoud van het klembord verwijderen?</string>
 
     <string name="tx_hex">Transactie hex</string>
     <string name="enter_tx_hex">Voer transactie in hex-format in</string>
-    <string name="broadcast">Publiceer transactie</string>
+    <string name="broadcast">Verzend transactie</string>
 
     <string name="dusting_tx">DUST TRANSACTIE</string>
     <string name="dusting_attempt">Een onverwachte dust transactie naar jouw wallet kan een indicatie zijn van een poging om jouw wallet-adressen en uitgaven te traceren.\n\nMarkeer deze dust als niet onbesteedbaar om trackingpogingen van derden te beperken.</string>
@@ -423,11 +423,11 @@
     <string name="paycode">PAYNYM</string>
     <string name="dust">DUST</string>
     <string name="do_not_spend">Niet uitgeven</string>
-    <string name="dusting_tx_unblock">Deze dust transactie is momenteel geblokkeerd voor uitgaven. Deze onbestede output deblokkeren voor mogelijke uitgaven?</string>
+    <string name="dusting_tx_unblock">Deze dust transactie is momenteel geblokkeerd voor uitgaven. Deze ongebruikte output deblokkeren voor mogelijke uitgaven?</string>
     <string name="mark_spend">Markeer als besteedbaar</string>
     <string name="mark_do_not_spend">Markeer als niet besteden</string>
-    <string name="mark_utxo_spend">Markeer deze onbestede output als besteedbaar?</string>
-    <string name="mark_utxo_do_not_spend">Markeer deze onbestede output als onbesteedbaar?</string>
+    <string name="mark_utxo_spend">Markeer deze ongebruikte output als besteedbaar?</string>
+    <string name="mark_utxo_do_not_spend">Markeer deze ongebruikte output als onbesteedbaar?</string>
 
     <string name="options_sign_a_message">Onderteken een bericht</string>
     <string name="options_display_redeem_script">Display redeem script</string>
@@ -435,121 +435,121 @@
     <string name="options_display_privkey">Toon private key</string>
     <string name="options_batch">Batch uitgaven</string>
 
-    <string name="do_not_repeat_sent_to">Check box to not warn about repeat sends to this address.</string>
+    <string name="do_not_repeat_sent_to">Vink aan om geen melding meer te ontvangen over herhaaldelijk versturen naar dit adres.</string>
 
-    <string name="mark_inputs_as_unspendable">Mark the unspent outputs that compose the inputs to this transaction as unspendable?</string>
+    <string name="mark_inputs_as_unspendable">Markeer de ongebruikte outputs, die de ingang vormen van deze transactie, als onbesteedbaar?</string>
 
-    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="copy_to_clipboard">Kopieer naar klembord</string>
 
-    <string name="no_bitpay">Error: This is not a valid bitcoin request. Masanari only supports sending to valid bitcoin addresses.</string>
-    <string name="learn_more">Learn More</string>
+    <string name="no_bitpay">Fout: Dit is geen geldig bitcoin-verzoek. Masanari ondersteunt alleen het verzenden naar geldige bitcoin-adressen.</string>
+    <string name="learn_more">Lees meer</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
-    <string name="claim_paynym">Claim your paynym</string>
-    <string name="claim_paynym_title1">Claim your free PayNymID</string>
-    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
-    <string name="claim_paynym_title2">Benefits of a PayNymID</string>
-    <string name="claim_paynym_text2a">Unique name and image generated with a hash of your paynym code. No two will ever be the same!</string>
-    <string name="claim_paynym_text2b">No identity checks! Your name and image are based on your paynym code, not any national ID card.</string>
-    <string name="claim_paynym_text2c">Be found easily! Compatible wallets can search for new contacts and send private secure payments without leaving a trace.</string>
-    <string name="claim_paynym_id">Claim my PayNymID</string>
-    <string name="claim_paynym_id_refused">Not interested. Don\'t ask me again.</string>
+    <string name="claim_paynym">Claim jouw paynym</string>
+    <string name="claim_paynym_title1">Claim jouw gratis PayNymID</string>
+    <string name="claim_paynym_text1">Sta toe dat jouw vrienden en contacten jouw PayNym kunnen vinden en direct verbinding kunnen maken via compatibele bitcoin-wallets.</string>
+    <string name="claim_paynym_title2">Voordelen van een PayNymID</string>
+    <string name="claim_paynym_text2a">Unieke naam en afbeelding gegenereerd met een hash van jouw paynym-code. Geen twee zullen ooit hetzelfde zijn!</string>
+    <string name="claim_paynym_text2b">Geen identiteitscontroles! Jouw naam en afbeelding zijn gebaseerd op jouw paynym-code, niet op een nationale identiteitskaart.</string>
+    <string name="claim_paynym_text2c">Word gemakkelijk gevonden! Compatibele wallets kunnen zoeken naar nieuwe contacten en privébetalingen verzenden zonder een spoor na te laten.</string>
+    <string name="claim_paynym_id">Claim mijn PayNymID</string>
+    <string name="claim_paynym_id_refused">Niet geïnteresseerd. Vraag het mij niet nog een keer.</string>
 
-    <string name="claim_paynym_prompt">Claim my PayNymID and add my public PayNym code to PayNym.is?</string>
+    <string name="claim_paynym_prompt">Mijn PayNymID claimen en mijn publieke PayNym-code toevoegen aan PayNym.is?</string>
 
-    <string name="bip47_notif_tx_insufficient_funds_1">Adding a PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain. Deposit</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
+    <string name="bip47_notif_tx_insufficient_funds_1">Het toevoegen van een PayNym aan uw contacten vereist eenmalige fee voor het aanmaken van de record op de blockchain. Stort</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC in je wallet en probeer het opnieuw.</string>
     <string name="help">Help</string>
 
-    <string name="passphrase_disclaimer">I understand that Masanari cannot provide assistance in the case of lost or forgotten passphrases. Masanari never has any knowledge of my passphrase.</string>
-    <string name="confirm_pin_code">Confirm pin code</string>
-    <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
-    <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
-    <string name="create_a_passphrase">Create a passphrase</string>
-    <string name="create_a_secure_passphrase_for_your_wallet">Create a secure passphrase for your wallet</string>
-    <string name="set_pin_code">Set Pin code</string>
-    <string name="accept_disclaimer_error">You need to accept disclaimer</string>
-    <string name="import_external_wallet">Import external wallet</string>
-    <string name="import_masanari_wallet">Import masanari back-up</string>
-    <string name="backup_file">Back-up file</string>
-    <string name="import_an_encrypted_masanari_wallet">import an encrypted masanari back-up to restore a wallet with all meta-data intact</string>
-    <string name="back">BACK</string>
-    <string name="finish">finish</string>
-    <string name="choose_file">choose file</string>
+    <string name="passphrase_disclaimer">Ik begrijp dat Masanari geen hulp kan bieden in het geval van verloren of vergeten wachtwoordzin. Masanari heeft nooit kennis van mijn wachtwoordzin.</string>
+    <string name="confirm_pin_code">Bevestig pincode</string>
+    <string name="re_enter_your_pin_code">Voer je pincode opnieuw in</string>
+    <string name="re_enter_a_passphrase">Geef je wachtwoordzin opnieuw op</string>
+    <string name="create_a_passphrase">Creëer een wachtwoordzin</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Maak een veilige wachtwoordzin voor uw wallet</string>
+    <string name="set_pin_code">Stel pincode in</string>
+    <string name="accept_disclaimer_error">U moet de disclaimer aanvaarden</string>
+    <string name="import_external_wallet">Importeer externe wallet</string>
+    <string name="import_masanari_wallet">Importeer masanari back-up</string>
+    <string name="backup_file">Back-up bestand</string>
+    <string name="import_an_encrypted_masanari_wallet">importeer een versleutelde masanari back-up om een wallet te herstellen met alle intacte metagegevens</string>
+    <string name="back">TERUG</string>
+    <string name="finish">einde</string>
+    <string name="choose_file">kies bestand</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="add_bip39_password">Add bip39 password</string>
-    <string name="close_bip39_password">Close bip39 password</string>
-    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Enter your mnemonic seed to import a wallet from another provider.</string>
-    <string name="last_updated">Last updated</string>
-    <string name="get_help">Get help</string>
-    <string name="offline_mode">Offline mode</string>
-    <string name="import_masanari_backup">Import Masanari back-up</string>
+    <string name="hello_blank_fragment">Hallo leeg fragment</string>
+    <string name="add_bip39_password">Voeg bip39 wachtwoord toe</string>
+    <string name="close_bip39_password">Sluit bip39 wachtwoord</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Voer je mnemonic seed in om een wallet van een andere provider te importeren.</string>
+    <string name="last_updated">Laatste update</string>
+    <string name="get_help">Hulp krijgen</string>
+    <string name="offline_mode">Offline modus</string>
+    <string name="import_masanari_backup">Importeer Masanari back-up</string>
     <string name="masanari_bitcoin_wallet">Masanari Bitcoin Wallet</string>
-    <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
-    <string name="start_new_wallet">Start new wallet</string>
-    <string name="get_help_create">Create wallet: Get help</string>
-    <string name="get_help_restore">Restore wallet: Get help</string>
+    <string name="enter_your_wallet_passphrase">Voer jouw wachtwoordzin in</string>
+    <string name="start_new_wallet">Start nieuwe wallet</string>
+    <string name="get_help_create">Creëer wallet: Hulp krijgen</string>
+    <string name="get_help_restore">Wallet herstellen: Hulp krijgen</string>
 
     <string name="fee">Miner fee</string>
-    <string name="fee_low_priority">Low priority: estimated 24</string>
-    <string name="fee_mid_priority">Normal priority: estimated 6</string>
-    <string name="fee_high_priority">High priority: estimated 2</string>
-    <string name="fee_custom_priority">Custom fee: estimated</string>
-    <string name="blocks_to_cf">blocks before confirmation</string>
+    <string name="fee_low_priority">Lage prioriteit: naar schatting 24</string>
+    <string name="fee_mid_priority">Normale prioriteit: naar schatting 6</string>
+    <string name="fee_high_priority">Hoge prioriteit: naar schatting 2</string>
+    <string name="fee_custom_priority">Aangepaste fee: geschat</string>
+    <string name="blocks_to_cf">blokken voor bevestiging</string>
 
-    <string name="invalid_mnemonic_word">Invalid BIP39 mnemonic word</string>
-    <string name="invalid_mnemonic">Invalid BIP39 mnemonic</string>
-    <string name="enter_your_code_here">Enter your code here</string>
+    <string name="invalid_mnemonic_word">Ongeldig BIP39 mnemonic woord</string>
+    <string name="invalid_mnemonic">Ongeldige BIP39 mnemonic</string>
+    <string name="enter_your_code_here">Voer je code hier in</string>
 
-    <string name="declaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
-    <string name="return_to_wallet">Return to wallet</string>
-    <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
-    <string name="these_words_are">These words are a back-up of all the secret keys in your wallet.</string>
-    <string name="recovery_words">RECOVERY WORDS</string>
+    <string name="declaimer_recovery_words">Ik bevestig dat ik de bovenstaande woorden heb opgeschreven en deze op een veilige locatie heb opgeslagen. Ik begrijp dat iedereen, die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden, toegang heeft tot mijn portefeuille en al mijn tegoeden.</string>
+    <string name="return_to_wallet">Ga terug naar wallet</string>
+    <string name="caution_message_recovery_words">Het is niet veilig om deze woorden op uw computer of in de cloud te bewaren. Schrijf deze woorden op een stuk papier en bewaar het geheim en veilig.</string>
+    <string name="these_words_are">Deze woorden zijn een back-up van alle geheime sleutels in je wallet.</string>
+    <string name="recovery_words">HERSTELWOORDEN</string>
 
-    <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
-    <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
-    <string name="permission_alert_dialog_title_outgoing">Requesting process outgoing call permission</string>
-    <string name="permission_dialog_message_outgoing">Your wallet needs access to outgoing calls so it can use the stealth launch feature.</string>
+    <string name="permission_alert_dialog_title_sms">Vraag om SMS en Telefoon status rechten</string>
+    <string name="permission_dialog_message_sms">Jouw wallet heeft toegang nodig tot het versturen en ontvangen van SMS-berichten, zodat deze externe waarschuwingsfuncties kan gebruiken.</string>
+    <string name="permission_alert_dialog_title_outgoing">Vraag om toestemming om uitgaande telefoongesprekken te verwerken</string>
+    <string name="permission_dialog_message_outgoing">Jouw wallet heeft toegang nodig tot uitgaande gesprekken, zodat deze de verborgen opstarten functie kan gebruiken.</string>
 
-    <string name="permission_alert_dialog_title_external">Requesting read/write permission</string>
-    <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted back-up of your wallet to your device.</string>
-    <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
-    <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
+    <string name="permission_alert_dialog_title_external">Vraag om lees- en schrijfrechten</string>
+    <string name="permission_dialog_message_external">Jouw wallet heeft toegang tot bestandsopslag nodig, zodat deze automatisch een versleutelde back-up van jouw wallet kan opslaan op jouw apparaat.</string>
+    <string name="permission_alert_dialog_title_camera">Vraag om camera toestemming</string>
+    <string name="permission_dialog_message_camera">Jouw wallet heeft toegang tot de camera nodig om QR-codes te scannen.</string>
 
-    <string name="use_bech32">Use bech32 address</string>
+    <string name="use_bech32">Gebruik bech32 adres</string>
 
-    <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
-    <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+    <string name="boltzmann_cannot">Een STONEWALL betaling kan niet worden samengesteld met je huidige set ongebruikte outputs. Als je een STONEWALL betaling nodig hebt, tik je op \'NEE\' en probeer je het opnieuw met een aangepaste set ongebruikte outputs.</string>
+    <string name="boltzmann_like_typed">Houd er rekening mee dat \'Ontvang wisselgeld op soortgelijke outputs\' UIT staat en kan resulteren in een minder optimale transactiestructuur voor jouw STONEWALL betaling.</string>
 
-    <string name="insufficient_fee">Insufficient fee</string>
-    <string name="action_utxo_amounts">View amounts by address type</string>
+    <string name="insufficient_fee">Onvoldoende fee</string>
+    <string name="action_utxo_amounts">Bekijk bedragen op adrestype</string>
 
-    <string name="total_p2pkh">Total legacy (p2pkh):</string>
-    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-    <string name="total_p2wpkh">Total segwit (bech32):</string>
-    <string name="total_blocked">Total blocked:</string>
+    <string name="total_p2pkh">Totaal legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Totaal segwit (p2sh):</string>
+    <string name="total_p2wpkh">Totaal segwit (bech32):</string>
+    <string name="total_blocked">Totaal geblokkeerd:</string>
 
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
-    <string name="advanced">Advanced</string>
-    <string name="broadcast_with_txtenna">Broadcast with TxTenna</string>
-    <string name="show_qr_code">Show QR Code</string>
-    <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
+    <string name="advanced">Geavanceerd</string>
+    <string name="broadcast_with_txtenna">Verzend met TxTenna</string>
+    <string name="show_qr_code">Toon QR Code</string>
+    <string name="tx_connectivity_failure_msg">Kan geen transactie verzenden zonder een gegevensverbinding. Hoe wil je doorgaan?</string>
 
-    <string name="tx_creating_ok">Creating transaction...</string>
-    <string name="tx_creating_ko">Cannot create transaction</string>
-    <string name="tx_signing_ok">Signing transaction...</string>
-    <string name="tx_signing_ko">Cannot sign transaction</string>
-    <string name="tx_broadcast_ok">Broadcasting transaction...</string>
-    <string name="tx_broadcast_ko">Cannot broadcast transaction</string>
-    <string name="tx_sent_ok">Transaction sent</string>
-    <string name="tx_sent_ko">Transaction not sent</string>
+    <string name="tx_creating_ok">Aanmaken transactie...</string>
+    <string name="tx_creating_ko">Kan geen transactie aanmaken</string>
+    <string name="tx_signing_ok">Onderteken transactie...</string>
+    <string name="tx_signing_ko">Kan transactie niet ondertekenen</string>
+    <string name="tx_broadcast_ok">Versturen transactie...</string>
+    <string name="tx_broadcast_ko">Kan transactie niet versturen</string>
+    <string name="tx_sent_ok">Transactie verstuurd</string>
+    <string name="tx_sent_ko">Transactie niet verstuurd</string>
 
-    <string name="prune_backup">Prune payload and back-up files?</string>
+    <string name="prune_backup">Payload en back-up bestanden verkleinen?</string>
 
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
@@ -557,19 +557,19 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string name="in_offline_mode">Masanari Wallet is in offline mode.</string>
-    <string name="tx_standby">Transaction in stand-by</string>
-    <string name="show_hex">Display Hex Code</string>
-    <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
+    <string name="in_offline_mode">Masanari Wallet bevindt zich in offline modus.</string>
+    <string name="tx_standby">Transactie in stand-by</string>
+    <string name="show_hex">Hex-code weergeven</string>
+    <string name="tx_tenna_coming_soon">txTenna op Android komt binnenkort</string>
     <string name="enter_paynym">PayNym</string>
     <string name="enter_index">Index</string>
 
-    <string name="receive_addresses">Receive addresses</string>
-    <string name="send_addresses">Send addresses</string>
-    <string name="display_receive_redeem">Receive redeem script</string>
-    <string name="display_receive_privkey">Receive private key</string>
-    <string name="invalid_index">Invalid index</string>
-    <string name="type_address">Type of address</string>
+    <string name="receive_addresses">Ontvang adressen</string>
+    <string name="send_addresses">Verzend adressen</string>
+    <string name="display_receive_redeem">Ontvang redeem-script</string>
+    <string name="display_receive_privkey">Ontvang private key</string>
+    <string name="invalid_index">Ongeldige index</string>
+    <string name="type_address">Type adres</string>
 
     <string-array name="account_types">
         <item>BIP49 Segwit</item>
@@ -580,15 +580,15 @@
         <item>Whirlpool Segwit post-mix</item>
     </string-array>
 
-    <string name="chain_id">Address chain</string>
-    <string name="receive_chain">Receive address</string>
-    <string name="change_chain">Change address</string>
+    <string name="chain_id">Adres keten</string>
+    <string name="receive_chain">Ontvang adres</string>
+    <string name="change_chain">Wisselgeld adres</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
-    <string name="encrypted_backup_detected">Encrypted back-up detected</string>
-    <string name="restore">RESTORE</string>
-    <string name="request_amount">Request Amount</string>
-    <string name="address_type">Address Type</string>
-    <string name="path">Path</string>
+    <string name="encrypted_backup_detected">Versleutelde back-up gedetecteerd</string>
+    <string name="restore">HERSTEL</string>
+    <string name="request_amount">Aanvraagbedrag</string>
+    <string name="address_type">Adrestype</string>
+    <string name="path">Pad</string>
     <string name="retry">Opnieuw proberen</string>
     <string name="custom_fee">Aangepast</string>
 
