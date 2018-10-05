@@ -451,7 +451,7 @@
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Claim your paynym</string>
     <string name="claim_paynym_title1">Claim your free PayNymID</string>
-    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
+    <string name="claim_paynym_text1">Allow your friends and contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
     <string name="claim_paynym_title2">Benefits of a PayNymID</string>
     <string name="claim_paynym_text2a">Unique name and image generated with a hash of your paynym code. No two will ever be the same!</string>
     <string name="claim_paynym_text2b">No identity checks! Your name and image are based on your paynym code, not any national ID card.</string>
