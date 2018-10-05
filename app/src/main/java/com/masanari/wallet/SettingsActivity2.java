@@ -772,7 +772,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             startActivity(intent);
                         }
                         catch(PackageManager.NameNotFoundException nnfe)	{
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + AppUtil.OPENVPN_PACKAGE_ID));
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + AppUtil.OPENVPN_PACKAGE_ID));
                             startActivity(intent);
                         }
 
