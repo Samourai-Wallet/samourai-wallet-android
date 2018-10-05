@@ -19,7 +19,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuleren</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_prefs">Valuta, Block explorer</string>
     <string name="options_cat_stealth">Verborgen-modus</string>
     <string name="options_cat_remote">Bedien op afstand</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -46,7 +46,7 @@
     <string name="options_blockexplorer2">De block explorer die wordt gebruikt om transactie-details te bekijken.</string>
     <string name="options_sim_switch">Bescherm tegen omwisselen SIM</string>
     <string name="options_sim_switch2">Stuur SMS naar een vertrouwd mobiel nummer als de SIM-kaart wordt gewijzigd.</string>
-    <string name="options_use_telno">Gebruik vertrouwd mobiel nummer voor bediening op afstand</string>
+    <string name="options_use_telno">Vertrouwde mobiel voor remote bediening</string>
     <string name="options_use_telno2">Alleen jouw vertrouwd mobiel telefoonnummer toestaan voor bediening op afstand.</string>
     <string name="options_alert_telno">Vertrouwd nummer</string>
     <string name="options_alert_telno2">Een vertrouwd mobiel nummer dat exclusief toegang krijgt tot bedienen op afstand (gebruik intern. formaat zonder spaties bijv.: +447385555555).</string>
@@ -93,9 +93,9 @@
     <string name="options_haptic_2">Vibreer bij elk cijfer tijdens het invoeren van de pincode.</string>
     <string name="options_prune">Verkleinen back-up</string>
     <string name="options_prune2">Maak ruimte vrij in de wallet en ruim back-up bestanden op.</string>
-    <string name="options_address_calc">Adres rekenaar</string>
+    <string name="options_address_calc">Adres berekenen</string>
     <string name="options_address_calc2">Bereken adressen die zijn afgeleid van jouw wallet seed.</string>
-    <string name="options_paynym_calc">PayNym rekenaar</string>
+    <string name="options_paynym_calc">PayNym berekenen</string>
     <string name="options_paynym_calc2">Bereken adressen die zijn gedeeld met ander PayNyms.</string>
 
     <string name="prompt_send_backup_to_support">Stuur een wallet back-up naar technische dienst? Exclusief info over private keys, de seed of wachtwoordzin.</string>
@@ -108,7 +108,7 @@
     <string name="you_received">Ontvangen</string>
     <string name="you_sent">Verzonden</string>
     <string name="send">Verzend</string>
-    <string name="receive">Ontvangen</string>
+    <string name="receive">Ontvang</string>
     <string name="cannot_select_utxo">Kan geen ongebruikte outputs selecteren</string>
     <string name="error_bip126_output">Fout bij vaststellen output adres</string>
     <string name="error_change_output">Fout bij vaststellen wisselgeld adres</string>
@@ -430,7 +430,7 @@
     <string name="mark_utxo_do_not_spend">Markeer deze ongebruikte output als onbesteedbaar?</string>
 
     <string name="options_sign_a_message">Onderteken een bericht</string>
-    <string name="options_display_redeem_script">Display redeem script</string>
+    <string name="options_display_redeem_script">Toon redeem script</string>
     <string name="options_view_tx">Bekijk transactie</string>
     <string name="options_display_privkey">Toon private key</string>
     <string name="options_batch">Batch uitgaven</string>
@@ -450,7 +450,7 @@
     <string name="claim_paynym_title1">Claim jouw gratis PayNymID</string>
     <string name="claim_paynym_text1">Sta toe dat jouw vrienden en contacten jouw PayNym kunnen vinden en direct verbinding kunnen maken via compatibele bitcoin-wallets.</string>
     <string name="claim_paynym_title2">Voordelen van een PayNymID</string>
-    <string name="claim_paynym_text2a">Unieke naam en afbeelding gegenereerd met een hash van jouw paynym-code. Geen twee zullen ooit hetzelfde zijn!</string>
+    <string name="claim_paynym_text2a">Unieke naam en afbeelding zijn gegenereerd met een hash van jouw paynym-code. Geen twee zullen ooit hetzelfde zijn!</string>
     <string name="claim_paynym_text2b">Geen identiteitscontroles! Jouw naam en afbeelding zijn gebaseerd op jouw paynym-code, niet op een nationale identiteitskaart.</string>
     <string name="claim_paynym_text2c">Word gemakkelijk gevonden! Compatibele wallets kunnen zoeken naar nieuwe contacten en privébetalingen verzenden zonder een spoor na te laten.</string>
     <string name="claim_paynym_id">Claim mijn PayNymID</string>
@@ -462,7 +462,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC in je wallet en probeer het opnieuw.</string>
     <string name="help">Help</string>
 
-    <string name="passphrase_disclaimer">Ik begrijp dat Masanari geen hulp kan bieden in het geval van verloren of vergeten wachtwoordzin. Masanari heeft nooit kennis van mijn wachtwoordzin.</string>
+    <string name="passphrase_disclaimer">Ik begrijp dat Masanari geen hulp kan bieden in het geval van een verloren of vergeten wachtwoordzin. Masanari heeft nooit kennis van mijn wachtwoordzin.</string>
     <string name="confirm_pin_code">Bevestig pincode</string>
     <string name="re_enter_your_pin_code">Voer je pincode opnieuw in</string>
     <string name="re_enter_a_passphrase">Geef je wachtwoordzin opnieuw op</string>
@@ -475,7 +475,7 @@
     <string name="backup_file">Back-up bestand</string>
     <string name="import_an_encrypted_masanari_wallet">importeer een versleutelde masanari back-up om een wallet te herstellen met alle intacte metagegevens</string>
     <string name="back">TERUG</string>
-    <string name="finish">einde</string>
+    <string name="finish">klaar</string>
     <string name="choose_file">kies bestand</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -504,10 +504,10 @@
     <string name="invalid_mnemonic">Ongeldige BIP39 mnemonic</string>
     <string name="enter_your_code_here">Voer je code hier in</string>
 
-    <string name="declaimer_recovery_words">Ik bevestig dat ik de bovenstaande woorden heb opgeschreven en deze op een veilige locatie heb opgeslagen. Ik begrijp dat iedereen, die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden, toegang heeft tot mijn portefeuille en al mijn tegoeden.</string>
+    <string name="declaimer_recovery_words">Ik bevestig dat ik de bovenstaande woorden heb opgeschreven en deze op een veilige locatie heb opgeslagen. Ik begrijp dat iedereen, die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden, toegang heeft tot mijn wallet en al mijn tegoeden.</string>
     <string name="return_to_wallet">Ga terug naar wallet</string>
-    <string name="caution_message_recovery_words">Het is niet veilig om deze woorden op uw computer of in de cloud te bewaren. Schrijf deze woorden op een stuk papier en bewaar het geheim en veilig.</string>
-    <string name="these_words_are">Deze woorden zijn een back-up van alle geheime sleutels in je wallet.</string>
+    <string name="caution_message_recovery_words">Het is niet veilig om deze woorden op uw computer of in de cloud te bewaren. Schrijf deze woorden op een stuk papier en bewaar het op een geheime en veilige plek.</string>
+    <string name="these_words_are">Deze woorden vormen een back-up van alle geheime sleutels in je wallet.</string>
     <string name="recovery_words">HERSTELWOORDEN</string>
 
     <string name="permission_alert_dialog_title_sms">Vraag om SMS en Telefoon status rechten</string>
