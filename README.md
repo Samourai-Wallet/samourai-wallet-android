@@ -13,8 +13,8 @@ and [wont](https://old.reddit.com/r/Bitcoin/comments/9jtp75/users_will_never_be_
 * Bring back fiat currency (done)
 * Keep merging bugfix patches from orininal project (done. Up-to-date with v0.98.89)
 * Implement **bits** denomination: 1 bit = 100 satoshis ([bip-176](https://github.com/bitcoin/bips/blob/master/bip-0176.mediawiki) by Jimmy Song)
-* Add Dutch language (75% done)
-* Remove all Samourai developers fees (Both for Ricochet transactions (0.002 BTC) and intitial PaymentNym payment code (0.00015 BTC))
+* Add Dutch language (done)
+* (Option) Remove "premium" functions if they require Samourai developers fees (Both for Ricochet transactions (0.002 BTC) and intitial PaymentNym payment code (0.00015 BTC))
 * Make wallet function without the need for backend API's of samouraiwallet.com
 * Refactor code (make classes smaller, cleanup) and add unit tests (currently none)
 * Work towards a stable version instead of adding more features
