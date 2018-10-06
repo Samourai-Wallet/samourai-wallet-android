@@ -9,8 +9,8 @@ android {
         applicationId 'com.masanari.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 3
-        versionName "0.0.1-alpha.3"
+        versionCode 4
+        versionName "0.0.1-alpha.4"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -37,25 +37,28 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
+        exclude 'lib/x86_64/darwin/libscrypt.dylib'
+        exclude 'lib/x86_64/freebsd/libscrypt.so'
+        exclude 'lib/x86_64/linux/libscrypt.so'
     }
     productFlavors {
         production {
             applicationId 'com.masanari.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 3
-            versionName "0.0.1-alpha.3"
+            versionCode 4
+            versionName "0.0.1-alpha.4"
             resValue "string", "app_name", "Masanari"
-            resValue "string", "version_name", "0.0.1-alpha.3"
+            resValue "string", "version_name", "0.0.1-alpha.4"
         }
         staging {
             applicationId 'com.masanari.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 3
+            versionCode 4
             versionName "0.0.1-alpha.3"
             resValue "string", "app_name", "Masanari Staging"
-            resValue "string", "version_name", "0.0.1-alpha.3"
+            resValue "string", "version_name", "0.0.1-alpha.4"
         }
     }
 }
