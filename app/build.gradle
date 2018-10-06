@@ -9,8 +9,8 @@ android {
         applicationId 'com.masanari.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 5
-        versionName "0.0.1-alpha.5"
+        versionCode 6
+        versionName "0.0.1-alpha.6"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -46,19 +46,19 @@ android {
             applicationId 'com.masanari.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 5
-            versionName "0.0.1-alpha.5"
+            versionCode 6
+            versionName "0.0.1-alpha.6"
             resValue "string", "app_name", "Masanari"
-            resValue "string", "version_name", "0.0.1-alpha.5"
+            resValue "string", "version_name", "0.0.1-alpha.6"
         }
         staging {
             applicationId 'com.masanari.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 5
-            versionName "0.0.1-alpha.5"
+            versionCode 6
+            versionName "0.0.1-alpha.6"
             resValue "string", "app_name", "Masanari Staging"
-            resValue "string", "version_name", "0.0.1-alpha.5"
+            resValue "string", "version_name", "0.0.1-alpha.6"
         }
     }
 }
