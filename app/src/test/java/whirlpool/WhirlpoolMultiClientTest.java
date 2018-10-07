@@ -5,6 +5,7 @@ import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
 import com.samourai.whirlpool.client.mix.handler.IMixHandler;
 import com.samourai.whirlpool.client.mix.handler.MixHandler;
+import com.samourai.whirlpool.client.utils.MultiClientManager;
 import com.samourai.whirlpool.client.whirlpool.WhirlpoolClientConfig;
 import com.samourai.whirlpool.client.whirlpool.WhirlpoolClientImpl;
 import com.samourai.whirlpool.client.whirlpool.beans.Pool;
@@ -18,8 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import util.MultiClientManager;
 
 public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
@@ -49,7 +48,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
     @Test
     public void testMultiMix() throws Exception {
         // instanciate multiClientManager
-        multiClientManager = new MultiClientManager(NB_CLIENTS);
+        multiClientManager = new MultiClientManager();
 
         // pool
         Pool pool = findPool("1btc");
@@ -103,7 +102,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         whirlpoolClient.whirlpool(pool.getPoolId(), pool.getDenomination(), mixParams, nbMixs, listener);
 
         // wait for all clients success
-        multiClientManager.waitAllClientsSuccess();
+        multiClientManager.waitDone();
     }
 
     private Pool findPool(String poolId) throws Exception {
