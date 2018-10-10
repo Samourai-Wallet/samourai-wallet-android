@@ -170,19 +170,14 @@ public class TxAnimUIActivity extends AppCompatActivity {
                             progressView.setTxStatusMessage(R.string.tx_broadcast_ok);
 
                             if(PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
-
-                                doShowTx(hexTx, strTxHash);
-
+                                offlineTx(R.string.broadcast_off, hexTx, strTxHash);
                                 return;
 
                             }
 
                             if(AppUtil.getInstance(TxAnimUIActivity.this).isOfflineMode())    {
-
                                 offlineTx(R.string.offline_mode, hexTx, strTxHash);
-
                                 return;
-
                             }
 
                             new Thread(new Runnable() {
