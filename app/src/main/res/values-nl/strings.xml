@@ -167,8 +167,8 @@
 
     <string name="insufficient_funds">Saldo ontoereikend</string>
     <string name="tx_length_error">Samourai ondersteunt geen transacties groter dan 100KB. Probeer je transactie te splitsen.</string>
-    <string name="invalid_amount">Ongeldige hoeveelheid</string>
-    <string name="amount">Hoeveelheid</string>
+    <string name="invalid_amount">Ongeldig bedrag</string>
+    <string name="amount">Bedrag</string>
 
     <string name="receive_address_to_clipboard">Dit ontvangstadres naar het klembord kopiëren? Het wordt dan mogelijk zichtbaar voor andere applicaties.</string>
     <string name="receive_address_to_share">Dit ontvangstadres delen? Het wordt dan mogelijk zichtbaar voor andere applicaties.</string>
@@ -275,7 +275,7 @@
     <string name="please_wait_sending">Transactie verzenden, even geduld.</string>
     <string name="please_wait_ricochet">Ricochet-wachtrij verwerken, even geduld.</string>
 
-    <string name="change_is_dust">Het wisselgeld van deze transactie is een hoeveelheid stof. Probeer opnieuw en wijzig de te besteden hoeveelheid of besteed het gehele saldo.</string>
+    <string name="change_is_dust">Het wisselgeld van deze transactie is een zeer klein \'dust\'-bedrag. Probeer het opnieuw en wijzig het te besteden bedrag of besteed het gehele saldo.</string>
 
     <string name="tor_routing_on">Samourai wordt omgeleid via Tor.</string>
     <string name="tor_routing_off">Samourai wordt niet omgeleid via Tor. Tik om te activeren.</string>
@@ -348,7 +348,7 @@
 
     <string name="cpfp_spent">CPFP-transactie verzonden.</string>
     <string name="rbf_spent">RBF-transactie verzonden.</string>
-    <string name="cannot_output_dust">Kan geen transactie met stof-output aanmaken.</string>
+    <string name="cannot_output_dust">Kan geen transactie met dust-output aanmaken.</string>
     <string name="cannot_create_change_output">Kan geen wisselgeld-output aanmaken.</string>
     <string name="cannot_create_cpfp">Kan geen CBFP-transactie aanmaken.</string>
 
@@ -417,16 +417,16 @@
     <string name="enter_tx_hex">Voer transactie in, in hex-formaat</string>
     <string name="broadcast">Transactie uitzenden</string>
 
-    <string name="dusting_tx">STOFTRANSACTIE</string>
-    <string name="dusting_attempt">En onverwachte inkomende stoftransactie kan wijzen op een poging om je portemonneeadressen en -uitgaven te volgen.\n\nMarkeer dit stof als onbesteedbaar om pogingen tot volgen door derde partijen te minimaliseren.</string>
-    <string name="dusting_attempt_amount">Hoeveelheid:</string>
+    <string name="dusting_tx">DUST-TRANSACTIE</string>
+    <string name="dusting_attempt">En onverwachte inkomende dust-transactie kan wijzen op een poging om je portemonneeadressen en -uitgaven te volgen.\n\nMarkeer deze dust als onbesteedbaar om pogingen tot volgen door derde partijen te minimaliseren.</string>
+    <string name="dusting_attempt_amount">Bedrag:</string>
     <string name="dusting_attempt_id">Hash-index:</string>
     <string name="dusting_attempt_ignore">Negeren</string>
     <string name="dusting_attempt_mark_unspendable">Als onbesteedbaar markeren</string>
     <string name="paycode">PAYNYM</string>
-    <string name="dust">STOF</string>
+    <string name="dust">DUST</string>
     <string name="do_not_spend">Niet besteden</string>
-    <string name="dusting_tx_unblock">Deze stoftransactie kan momenteel niet worden besteed. De blokkade opheffen om besteden mogelijk te maken?</string>
+    <string name="dusting_tx_unblock">Deze dust-transactie kan momenteel niet worden besteed. De blokkade opheffen om besteden mogelijk te maken?</string>
     <string name="mark_spend">Als besteedbaar markeren</string>
     <string name="mark_do_not_spend">Als onbesteedbaar markeren</string>
     <string name="mark_utxo_spend">Deze onbestede output besteedbaar maken?</string>
@@ -589,7 +589,7 @@
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
     <string name="encrypted_backup_detected">Versleutelde back-up gedetecteerd</string>
     <string name="restore">HERSTELLEN</string>
-    <string name="request_amount">Gevraagde hoeveelheid</string>
+    <string name="request_amount">Gevraagd bedrag</string>
     <string name="address_type">Adrestype</string>
     <string name="path">Pad</string>
 
