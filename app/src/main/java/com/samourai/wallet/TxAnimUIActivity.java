@@ -295,16 +295,23 @@ public class TxAnimUIActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                Toast.makeText(TxAnimUIActivity.this, R.string.tx_tenna_coming_soon, Toast.LENGTH_SHORT).show();
 
+                String pkgName = "com.samourai.txtenna";
+
                 Intent txTennaIntent = new Intent("com.samourai.txtenna.HEX");
                 txTennaIntent.putExtra(Intent.EXTRA_TEXT, hex);
                 txTennaIntent.setType("text/plain");
 
-                Uri marketUri = Uri.parse("market://search?q=pname:com.samourai.txtenna");
+                Uri marketUri = Uri.parse("market://search?q=pname:" + pkgName);
                 Intent marketIntent = new Intent(Intent.ACTION_VIEW).setData(marketUri);
 
                 PackageManager pm = getPackageManager();
-//                startActivity(pm.queryIntentActivities(txTennaIntent, 0).size() == 0  ? txTennaIntent : marketIntent);
-                startActivity(txTennaIntent);
+                try {
+                    pm.getPackageInfo(pkgName, 0);
+                    startActivity(txTennaIntent);
+                }
+                catch (PackageManager.NameNotFoundException e) {
+                    startActivity(marketIntent);
+                }
 
             }
         });
