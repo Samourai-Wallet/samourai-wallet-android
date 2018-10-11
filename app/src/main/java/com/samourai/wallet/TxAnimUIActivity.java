@@ -292,8 +292,12 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                 String pkgName = "com.samourai.txtenna";
 
+                String _hex = hex;
                 Intent txTennaIntent = new Intent("com.samourai.txtenna.HEX");
-                txTennaIntent.putExtra(Intent.EXTRA_TEXT, hex);
+                if(SamouraiWallet.getInstance().isTestNet())    {
+                    _hex += "-t";
+                }
+                txTennaIntent.putExtra(Intent.EXTRA_TEXT, _hex);
                 txTennaIntent.setType("text/plain");
 
                 Uri marketUri = Uri.parse("market://search?q=pname:" + pkgName);
