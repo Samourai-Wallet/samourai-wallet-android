@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/whirpool_explore_menu"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_explore_black_24dp"
+        android:title="" />
+    <item
+        android:id="@+id/whirpool_chart_menu"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_insert_chart_black_24dp"
+        android:title="" />
+
+
+    <item
+        android:id="@+id/placeholder"
+        app:showAsAction="never"
+         android:title=""
+        >
+
+    </item>
+</menu>
