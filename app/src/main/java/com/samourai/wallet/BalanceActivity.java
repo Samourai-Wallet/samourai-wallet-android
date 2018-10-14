@@ -71,6 +71,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.*;
+import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
@@ -2384,7 +2385,7 @@ public class BalanceActivity extends Activity {
                     final Transaction _tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
                     List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
                     _txOutputs.addAll(txOutputs);
-                    Collections.sort(_txOutputs, new SendFactory.BIP69OutputComparator());
+                    Collections.sort(_txOutputs, new BIP69OutputComparator());
                     for(TransactionOutput to : _txOutputs) {
                         // zero value outputs discarded here
                         if(to.getValue().longValue() > 0L)    {

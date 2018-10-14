@@ -98,7 +98,6 @@ import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.R;
 
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -1064,7 +1063,7 @@ public class BIP47Activity extends Activity {
             // use outpoint for payload masking
             //
             byte[] privkey = ecKey.getPrivKeyBytes();
-            byte[] pubkey = payment_code.notificationAddress().getPubKey();
+            byte[] pubkey = payment_code.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getPubKey();
             byte[] outpoint = outPoint.bitcoinSerialize();
 //                Log.i("BIP47Activity", "outpoint:" + Hex.toHexString(outpoint));
 //                Log.i("BIP47Activity", "payer shared secret:" + Hex.toHexString(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes()));
@@ -1098,7 +1097,7 @@ public class BIP47Activity extends Activity {
 
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
-        receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
+        receivers.put(payment_code.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString(), SendNotifTxFactory._bNotifTxValue);
         receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
@@ -1447,7 +1446,7 @@ public class BIP47Activity extends Activity {
         int before = BIP47Meta.getInstance().getLabels().size();
         try {
             PaymentCode pcode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode();
-            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString());
         }
         catch (AddressFormatException afe) {
             afe.printStackTrace();

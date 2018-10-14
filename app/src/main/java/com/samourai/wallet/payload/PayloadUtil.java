@@ -41,6 +41,7 @@ import org.apache.commons.codec.DecoderException;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
@@ -432,6 +433,23 @@ public class PayloadUtil	{
 
     }
 
+    private MnemonicCode computeMnemonicCode(Context ctx) throws IOException {
+        InputStream wis = ctx.getResources().getAssets().open("BIP39/en.txt");
+        MnemonicCode mc = null;
+        if (wis != null) {
+            mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            wis.close();
+        }
+        return mc;
+    }
+
+    private HD_Wallet newHDWallet(Context ctx, int purpose, JSONObject jsonobj, NetworkParameters params) throws JSONException, DecoderException, MnemonicException.MnemonicLengthException, IOException {
+        byte[] seed = org.apache.commons.codec.binary.Hex.decodeHex(((String) jsonobj.get("seed")).toCharArray());
+        String strPassphrase = jsonobj.getString("passphrase");
+        MnemonicCode mc = computeMnemonicCode(ctx);
+        return new HD_Wallet(purpose, mc, params, seed, strPassphrase, SamouraiWallet.NB_ACCOUNTS);
+    }
+
     public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
 
 //        Log.i("PayloadUtil", obj.toString());
@@ -476,7 +494,7 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).removeValue(PrefsUtil.TESTNET);
                 }
 
-                hdw = new HD_Wallet(context, 44, wallet, params);
+                hdw = newHDWallet(context, 44, wallet, params);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getReceive().setAddrIdx(wallet.has("receiveIdx") ? wallet.getInt("receiveIdx") : 0);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChange().setAddrIdx(wallet.has("changeIdx") ? wallet.getInt("changeIdx") : 0);
 

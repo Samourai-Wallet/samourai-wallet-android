@@ -14,6 +14,10 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -58,6 +62,9 @@ android {
             resValue "string", "version_name", "0.98.89"
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -89,4 +96,30 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation ('com.samouraiwallet:whirlpool-client:0.0.1-SNAPSHOT') {
+        exclude group:'com.google.code.findbugs', module:'jsr305'
+        exclude group:'com.google.protobuf', module:'protobuf-java'
+        exclude group:'net.jcip', module:'jcip-annotations'
+        exclude group:'com.squareup.okhttp', module:'okhttp'
+        exclude group:'org.slf4j', module:'slf4j-api'
+        //
+        exclude group:'org.apache.commons', module:'commons-lang3'
+        exclude group:'org.json', module:'json'
+    }
+    implementation ('com.github.Samourai-Wallet:extlibj:adapt-for-whirlpool-SNAPSHOT') {
+        exclude group:'com.google.code.findbugs', module:'jsr305'
+        exclude group:'com.google.protobuf', module:'protobuf-java'
+        exclude group:'net.jcip', module:'jcip-annotations'
+        exclude group:'com.squareup.okhttp', module:'okhttp'
+        exclude group:'org.slf4j', module:'slf4j-api'
+        //
+        exclude group:'org.apache.commons', module:'commons-lang3'
+        exclude group:'org.json', module:'json'
+    }
+    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.5.4'
+    implementation 'org.java-websocket:Java-WebSocket:1.3.6'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
 }
