@@ -25,6 +25,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
@@ -416,7 +417,7 @@ public class WebSocketHandler {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!pingPongSuccess) {
+                if (!pingPongSuccess && ConnectivityStatus.hasConnectivity(context)) {
                     start();
                 }
             }

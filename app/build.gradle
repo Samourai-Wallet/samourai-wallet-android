@@ -9,8 +9,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 122
-        versionName "0.98.89"
+        versionCode 123
+        versionName "0.98.90"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -43,19 +43,19 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 122
-            versionName "0.98.89"
+            versionCode 123
+            versionName "0.98.90"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.98.89"
+            resValue "string", "version_name", "0.98.90"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 122
-            versionName "0.98.89"
+            versionCode 123
+            versionName "0.98.90"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.98.89"
+            resValue "string", "version_name", "0.98.90"
         }
     }
 }
@@ -89,4 +89,5 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
 }

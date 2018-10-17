@@ -1421,11 +1421,17 @@ public class BalanceActivity extends Activity {
 
         if(AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
             Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
-            /*
-            CoordinatorLayout coordinatorLayout = new CoordinatorLayout(BalanceActivity.this);
-            Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.in_offline_mode, Snackbar.LENGTH_LONG);
-            snackbar.show();
-            */
+            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            }
+
+            return;
+        }
+        else    {
+            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            }
+            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
 
         Intent intent = new Intent(BalanceActivity.this, RefreshService.class);

@@ -561,6 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+    <string name="broadcast_off">Your Samourai Wallet broadcasting is switched off.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
