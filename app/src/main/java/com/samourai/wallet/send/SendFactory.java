@@ -218,9 +218,6 @@ public class SendFactory	{
 
         List<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
-        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L)    {
-            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
-        }
 
         for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();
@@ -264,7 +261,17 @@ public class SendFactory	{
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
                 input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
             }
+            else if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L)   {
+                input.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_NO);
+            }
+            else    {
+                ;
+            }
             inputs.add(input);
+        }
+
+        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L && PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == false)    {
+            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
         }
 
         //

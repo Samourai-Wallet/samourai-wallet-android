@@ -23,6 +23,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -214,7 +215,7 @@ public class RicochetMeta {
 
     }
 
-    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47) {
+    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47, boolean useTimeLock) {
 
         JSONObject jObj = new JSONObject();
 
@@ -375,6 +376,7 @@ public class RicochetMeta {
             else    {
                 remainingSamouraiFee = samouraiFeeAmountV2;
             }
+            long latestBlock = APIFactory.getInstance(context).getLatestBlockHeight();
             int _hop = 0;
             for (int i = (nbHops - 1); i >= 0; i--) {
                 _hop++;
@@ -387,12 +389,16 @@ public class RicochetMeta {
                     hopx = biSpend.add(biFeePerHop.multiply(BigInteger.valueOf((long) i)));
                 }
 
+                long nTimeLock = 0L;
+                if(useTimeLock && latestBlock > 0L)    {
+                    nTimeLock = latestBlock + _hop;
+                }
                 //                Log.d("RicochetMeta", "doing hop:" + _hop);
                 if(samouraiFeeViaBIP47 && ((_hop - 1) < 4))    {
-                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, samouraiFees.get(_hop - 1));
+                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, samouraiFees.get(_hop - 1), nTimeLock);
                 }
                 else    {
-                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, null);
+                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, null, nTimeLock);
                 }
 
                 if(txHop == null)    {
@@ -539,7 +545,7 @@ public class RicochetMeta {
         return tx;
     }
 
-    private Transaction getHopTx(String prevTxHash, int prevTxN, int prevIndex, long prevSpendAmount, long spendAmount, String destination, Pair<String,Long> samouraiFeePair) {
+    private Transaction getHopTx(String prevTxHash, int prevTxN, int prevIndex, long prevSpendAmount, long spendAmount, String destination, Pair<String,Long> samouraiFeePair, long nTimeLock) {
 
         TransactionOutput output = null;
         if(destination.toLowerCase().startsWith("tb") || destination.toLowerCase().startsWith("bc"))   {
@@ -566,6 +572,9 @@ public class RicochetMeta {
         Script redeemScript = p2wpkh.segWitRedeemScript();
 
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
+        if(nTimeLock > 0L)    {
+            tx.setLockTime(nTimeLock);
+        }
         tx.addOutput(output);
 
         if(samouraiFeePair != null)    {
@@ -589,6 +598,9 @@ public class RicochetMeta {
         Sha256Hash txHash = Sha256Hash.wrap(prevTxHash);
         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash, Coin.valueOf(prevSpendAmount));
         TransactionInput txInput = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[]{}, outPoint, Coin.valueOf(prevSpendAmount));
+        if(nTimeLock > 0L)    {
+            txInput.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_NO);
+        }
         tx.addInput(txInput);
 
         TransactionSignature sig = tx.calculateWitnessSignature(0, ecKey, redeemScript.scriptCode(), Coin.valueOf(prevSpendAmount), Transaction.SigHash.ALL, false);

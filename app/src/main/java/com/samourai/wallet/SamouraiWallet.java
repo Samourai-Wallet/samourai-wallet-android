@@ -26,6 +26,7 @@ public class SamouraiWallet {
     public static final BigInteger bFee = BigInteger.valueOf(Coin.parseCoin("0.00015").longValue());
 
     public static final long RBF_SEQUENCE_NO = 0xffffffff - 2;
+    public static final long NLOCKTIME_SEQUENCE_NO = 0xffffffff - 3;
 
     private static SamouraiWallet instance = null;
 
