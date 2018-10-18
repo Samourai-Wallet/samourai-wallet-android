@@ -218,6 +218,9 @@ public class SendFactory	{
 
         List<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
+        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L)    {
+            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
+        }
 
         for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();

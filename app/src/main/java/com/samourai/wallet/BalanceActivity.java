@@ -2421,6 +2421,10 @@ public class BalanceActivity extends Activity {
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
+                                    if(APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight() > 0L)    {
+                                        _tx.setLockTime(APIFactory.getInstance(BalanceActivity.this).getLatestBlockHeight());
+                                    }
+
                                     Transaction __tx = signTx(_tx);
                                     final String hexTx = new String(Hex.encode(__tx.bitcoinSerialize()));
                                     Log.d("BalanceActivity", "hex tx:" + hexTx);
