@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/windowDark"
     android:orientation="vertical"
-    tools:context="com.samourai.wallet.whirlpool.CycleDetail">
+    tools:context="com.samourai.wallet.tx.TxDetailsActivity">
 
 
     <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
