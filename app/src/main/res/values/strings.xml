@@ -620,5 +620,9 @@
     <string name="pending">pending</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="completed">Completed</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Pay again</string>
+    <string name="miner_fee_rate">Miner fee rate</string>
+    <string name="status">Status</string>
 
 </resources>
