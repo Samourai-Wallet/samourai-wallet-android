@@ -232,6 +232,7 @@ public class RicochetMeta {
             jObj.put("samourai_fee_via_bip47", samouraiFeeViaBIP47);
             jObj.put("feeKB", biFeePerKB.longValue());
             jObj.put("destination", strDestination);
+            jObj.put("nLockTime", useTimeLock);
             if(strPCode != null)    {
                 jObj.put("pcode", strPCode);
             }
