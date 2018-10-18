@@ -28,7 +28,6 @@ public class TxDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        Objects.requireNonNull(getSupportActionBar()).setElevation(0);
         payNymUsername = findViewById(R.id.tx_paynym_username);
         btcUnit = findViewById(R.id.tx_unit);
         btcValue = findViewById(R.id.tx_btc_value);

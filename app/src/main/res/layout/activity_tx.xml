@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grey_accent"
-        app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -79,6 +78,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/appBarLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
