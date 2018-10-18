@@ -18,7 +18,7 @@ import com.samourai.wallet.widgets.CircleImageView;
 import java.util.Objects;
 
 
-public class TxDetails extends AppCompatActivity {
+public class TxDetailsActivity extends AppCompatActivity {
 
     private CircleImageView payNymAvatar;
     private TextView payNymUsername, btcUnit, btcValue;

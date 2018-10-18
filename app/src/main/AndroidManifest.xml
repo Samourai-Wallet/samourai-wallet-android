@@ -265,7 +265,7 @@
              android:label=""
             android:theme="@style/whirlpool_theme" />
         <activity
-            android:name=".tx.TxDetails"
+            android:name=".tx.TxDetailsActivity"
             android:exported="true"
             android:theme="@style/whirlpool_theme"
             android:label=" "/>
