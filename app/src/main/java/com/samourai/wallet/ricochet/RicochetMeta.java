@@ -600,7 +600,7 @@ public class RicochetMeta {
         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash, Coin.valueOf(prevSpendAmount));
         TransactionInput txInput = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[]{}, outPoint, Coin.valueOf(prevSpendAmount));
         if(nTimeLock > 0L)    {
-            txInput.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_NO);
+            txInput.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_VAL);
         }
         tx.addInput(txInput);
 
