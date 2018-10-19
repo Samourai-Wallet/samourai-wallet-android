@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/windowDark"
     android:orientation="vertical"
-    tools:context="com.samourai.wallet.tx.TxPrivacyDetails">
+    tools:context="com.samourai.wallet.tx.TxPrivacyDetailsActivity">
 
 
     <android.support.design.widget.AppBarLayout xmlns:tools="http://schemas.android.com/tools"

@@ -14,7 +14,7 @@ import com.samourai.wallet.R;
 import java.util.Objects;
 
 
-public class TxPrivacyDetails extends AppCompatActivity {
+public class TxPrivacyDetailsActivity extends AppCompatActivity {
 
     private Button hideLogButton, copyBtn;
     private ViewGroup logContainer;

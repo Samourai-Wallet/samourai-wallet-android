@@ -270,7 +270,7 @@
             android:label=" "
             android:theme="@style/whirlpool_theme" />
         <activity
-            android:name=".tx.TxPrivacyDetails"
+            android:name=".tx.TxPrivacyDetailsActivity"
             android:exported="true"
             android:label=""
             android:theme="@style/whirlpool_theme" />
