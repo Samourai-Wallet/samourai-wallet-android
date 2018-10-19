@@ -624,5 +624,12 @@
     <string name="pay_again">Pay again</string>
     <string name="miner_fee_rate">Miner fee rate</string>
     <string name="status">Status</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Number of deterministic \ncombinations</string>
+    <string name="transaction_entropy">Transaction Entropy</string>
+    <string name="efficiency_score">Efficiency score</string>
+    <string name="hide_log">HIDE LOG</string>
+    <string name="copy">Copy</string>
+    <string name="show_log">Show Log</string>
 
 </resources>
