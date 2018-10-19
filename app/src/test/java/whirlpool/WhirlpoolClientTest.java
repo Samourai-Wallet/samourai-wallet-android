@@ -23,10 +23,12 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.TestNet3Params;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Ignore
 public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(WhirlpoolClientTest.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
