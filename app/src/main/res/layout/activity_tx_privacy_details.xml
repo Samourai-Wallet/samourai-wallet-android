@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowDark"
+    android:orientation="vertical"
+    tools:context="com.samourai.wallet.tx.TxPrivacyDetailsActivity">
+
+
+    <android.support.design.widget.AppBarLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/appBarLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/grey_accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_accent"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </android.support.v7.widget.Toolbar>
+
+
+        <TextView
+            android:id="@+id/tx_btc_value"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/roboto_mono"
+            android:gravity="center_vertical"
+            android:text="919cf999c5bd6c80e2e3fb81b9009ac779d749ff71b5b7fd279482f8cb82e125" />
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout4"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:orientation="horizontal"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/transaction_entropy" />
+
+            <TextView
+                android:id="@+id/tx_entropy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_mono"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text="1.28 bits"
+                android:textAlignment="viewEnd" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#80808080" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:orientation="horizontal"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:text="@string/number_of_deterministic_combinations" />
+
+            <TextView
+                android:id="@+id/tx_status"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_mono"
+                android:gravity="end"
+                android:text="3"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#80808080" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:orientation="horizontal"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/efficiency_score" />
+
+            <TextView
+                android:id="@+id/tx_efficiency_score"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_mono"
+                android:gravity="end"
+                android:text="88/100"
+                android:textAlignment="viewEnd" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/hide_log_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_horizontal"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="@string/hide_log"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout7"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout7"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+
+
+    <ScrollView
+        android:id="@+id/log_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        android:layout_marginStart="4dp"
+        android:background="@color/darkgrey"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hide_log_button">
+
+        <TextView
+            android:id="@+id/log_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/roboto_mono"
+            android:padding="12dp"
+            android:text="Linkability Matrix (probabilities)
+ : \n [[1. 1. 1.]\n
+    [1. 1. 1.]\n
+    [1. 1. 1.]\n
+    [1. 1. 1.]\n
+    [1. 1. 1.]\n
+    [1. 1. 1.]]\n
+Deterministic links : ('mufaGVwep9maizoAblRf1(45VRsOvex)ar, 136447292)\n
+('mrx6JOsKEQUePD1rvRy2604JkNB29oHpQm's 72470918)\n are deterministically linked
+ ('mfbzwi5hZ6HHhGRBaka5pypbS7GpajMtR's 85678322)\n
+ Onfx6JOsKEQUeM1rvRy264JkNB29olipQms \n\n\n\n
+" />
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/copy_btn"
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:text="@string/copy"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@+id/log_container"
+        app:layout_constraintEnd_toEndOf="@+id/log_container"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/log_container" />
+
+
+</android.support.constraint.ConstraintLayout>

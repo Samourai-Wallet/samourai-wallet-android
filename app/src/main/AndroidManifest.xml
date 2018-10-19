@@ -262,9 +262,18 @@
             android:theme="@style/whirlpool_theme" />
         <activity
             android:name=".whirlpool.CycleDetail"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxDetailsActivity"
             android:exported="true"
-            android:theme="@style/whirlpool_theme"
-            android:label="" />
+            android:label=" "
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxPrivacyDetailsActivity"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
     </application>
 
 </manifest>

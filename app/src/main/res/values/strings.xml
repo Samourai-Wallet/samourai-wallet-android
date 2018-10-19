@@ -561,6 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+    <string name="broadcast_off">Your Samourai Wallet broadcasting is switched off.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
@@ -620,5 +621,16 @@
     <string name="pending">pending</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="completed">Completed</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Pay again</string>
+    <string name="miner_fee_rate">Miner fee rate</string>
+    <string name="status">Status</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Number of deterministic \ncombinations</string>
+    <string name="transaction_entropy">Transaction Entropy</string>
+    <string name="efficiency_score">Efficiency score</string>
+    <string name="hide_log">HIDE LOG</string>
+    <string name="copy">Copy</string>
+    <string name="show_log">Show Log</string>
 
 </resources>
