@@ -223,40 +223,6 @@ public class BalanceActivity extends Activity {
                         }
                     }
                 });
-                /*
-                BalanceActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        refreshTx(notifTx, false, false);
-
-                        if(BalanceActivity.this != null)    {
-
-                            if(rbfHash != null)    {
-                                new AlertDialog.Builder(BalanceActivity.this)
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
-                                        .setCancelable(true)
-                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                doExplorerView(rbfHash);
-
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        }).show();
-
-                            }
-
-                        }
-
-                    }
-                });
-                */
 
                 if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
 
@@ -1422,17 +1388,11 @@ public class BalanceActivity extends Activity {
 
         if(AppUtil.getInstance(BalanceActivity.this).isOfflineMode())    {
             Toast.makeText(BalanceActivity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
-            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-            }
-
-            return;
-        }
-        else    {
-            if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-            }
-            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            /*
+            CoordinatorLayout coordinatorLayout = new CoordinatorLayout(BalanceActivity.this);
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.in_offline_mode, Snackbar.LENGTH_LONG);
+            snackbar.show();
+            */
         }
 
         Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
@@ -1872,75 +1832,75 @@ public class BalanceActivity extends Activity {
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                                                    stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+                                        if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                                            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+                                        }
+                                        startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+
+                                        Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
+                                        if(tx != null)    {
+                                            tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
+                                            final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                            Log.d("BalanceActivity", hexTx);
+
+                                            final String strTxHash = tx.getHashAsString();
+                                            Log.d("BalanceActivity", strTxHash);
+
+                                            boolean isOK = false;
+                                            try {
+
+                                                isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
+
+                                                if(isOK)    {
+
+                                                    handler.post(new Runnable() {
+                                                        public void run() {
+                                                            Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
+
+                                                            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
+                                                            Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
+                                                            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                            startActivity(_intent);
+                                                        }
+                                                    });
+
                                                 }
-                                                startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-
-                                                Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
-                                                if(tx != null)    {
-                                                    tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
-                                                    final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                                    Log.d("BalanceActivity", hexTx);
-
-                                                    final String strTxHash = tx.getHashAsString();
-                                                    Log.d("BalanceActivity", strTxHash);
-
-                                                    boolean isOK = false;
-                                                    try {
-
-                                                        isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
-
-                                                        if(isOK)    {
-
-                                                            handler.post(new Runnable() {
-                                                                public void run() {
-                                                                    Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
-
-                                                                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-
-                                                                    Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
-                                                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                                                    startActivity(_intent);
-                                                                }
-                                                            });
-
+                                                else    {
+                                                    handler.post(new Runnable() {
+                                                        public void run() {
+                                                            Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                         }
-                                                        else    {
-                                                            handler.post(new Runnable() {
-                                                                public void run() {
-                                                                    Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
+                                                    });
 
-                                                            // reset receive index upon tx fail
-                                                            if(FormatsUtil.getInstance().isValidBech32(addr))    {
-                                                                int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-                                                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
-                                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-                                                            else    {
-                                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-
-                                                        }
+                                                    // reset receive index upon tx fail
+                                                    if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                                                        int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
-                                                    catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
-                                                        handler.post(new Runnable() {
-                                                            public void run() {
-                                                                Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+                                                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                        int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
-                                                    finally {
-                                                        ;
+                                                    else    {
+                                                        int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
 
                                                 }
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                                handler.post(new Runnable() {
+                                                    public void run() {
+                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                        }
 
                                     }
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
