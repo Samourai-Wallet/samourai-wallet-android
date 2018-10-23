@@ -2,11 +2,13 @@ package whirlpool;
 
 import com.google.common.util.concurrent.SettableFuture;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
-import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
-import com.samourai.whirlpool.client.mix.handler.IMixHandler;
-import com.samourai.whirlpool.client.mix.handler.MixHandler;
+import com.samourai.whirlpool.client.mix.handler.IPostmixHandler;
+import com.samourai.whirlpool.client.mix.handler.IPremixHandler;
+import com.samourai.whirlpool.client.mix.handler.PostmixHandler;
+import com.samourai.whirlpool.client.mix.handler.PremixHandler;
+import com.samourai.whirlpool.client.mix.handler.UtxoWithBalance;
 import com.samourai.whirlpool.client.mix.listener.MixStep;
 import com.samourai.whirlpool.client.mix.listener.MixSuccess;
 import com.samourai.whirlpool.client.whirlpool.WhirlpoolClientConfig;
@@ -33,8 +35,9 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(WhirlpoolClientTest.class.getSimpleName());
     private WhirlpoolClient whirlpoolClient;
 
-    private static final String SERVER = "127.0.0.1:8080";
     private static final NetworkParameters networkParameters = TestNet3Params.get();
+    private static final String SERVER = "127.0.0.1:8080";
+    private static final String POOL_ID = "1btc";
 
     @Before
     public void setUp() throws Exception {
@@ -65,28 +68,18 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
     @Test
     public void testMix() throws Exception {
         // pool
-        Pool pool = findPool("1btc");
+        Pool pool = findPool(POOL_ID);
 
         // input
-        String utxoHash = "7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16";
+        UtxoWithBalance utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 2, 100000102);
         String utxoKey = "cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j";
-        long utxoIndex = 2;
-        long utxoBalance = 100000102;
+        ECKey ecKey = new DumpedPrivateKey(networkParameters, utxoKey).getKey();
+        IPremixHandler premixHandler = new PremixHandler(utxo, ecKey);
 
         // output
+        BIP47Wallet bip47w = computeBip47wallet("all all all all all all all all all all all all", "w0");
         int paymentCodeIndex = 0; // TODO always increment
-        String seedWords = "all all all all all all all all all all all all";
-        String passphrase = "w0";
-        HD_Wallet bip44w = hdWalletFactory.restoreWallet(seedWords, passphrase, 1);
-        BIP47Wallet bip47w = hdWalletFactory.getBIP47();
-
-        // input utxo key
-        DumpedPrivateKey dumpedPrivateKey = new DumpedPrivateKey(networkParameters, utxoKey);
-        ECKey ecKey = dumpedPrivateKey.getKey();
-
-        // mix params
-        IMixHandler mixHandler = new MixHandler(ecKey, bip47w, paymentCodeIndex, bip47Util);
-        MixParams mixParams = new MixParams(utxoHash, utxoIndex, utxoBalance, mixHandler);
+        IPostmixHandler postmixHandler = new PostmixHandler(bip47w, paymentCodeIndex, bip47Util);
 
         // listener will be notified of whirlpool progress in realtime
         final SettableFuture<Boolean> success = SettableFuture.create();
@@ -126,8 +119,8 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         };
 
         // start mixing
-        int nbMixs = 1; // number of mixs to achieve
-        whirlpoolClient.whirlpool(pool.getPoolId(), pool.getDenomination(), mixParams, nbMixs, listener);
+        MixParams mixParams = new MixParams(pool.getPoolId(), pool.getDenomination(), premixHandler, postmixHandler);
+        whirlpoolClient.whirlpool(mixParams, 1, listener);
 
         do {
             if (success.get() != null) {
@@ -146,7 +139,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         }
         while(success.get() == null);
 
-        log.info("receiveKey=" + ((MixHandler)mixHandler).getReceiveKey());
+        log.info("receiveKey=" + ((PostmixHandler)postmixHandler).getReceiveKey());
 
     }
 
