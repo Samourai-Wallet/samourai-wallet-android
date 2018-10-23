@@ -62,6 +62,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -515,7 +516,10 @@ public class ReceiveActivity extends AppCompatActivity {
                     ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
                 } else {
                     String strURI = "bitcoin:" + _addr;
-                    strURI += "?amount=" + amount.toString();
+                    DecimalFormat df = new DecimalFormat("#");
+                    df.setMinimumIntegerDigits(1);
+                    df.setMaximumFractionDigits(8);
+                    strURI += "?amount=" + df.format(amount);
                     ivQR.setImageBitmap(generateQRCode(strURI));
                 }
             } else {
