@@ -1010,6 +1010,8 @@ public class BalanceActivity extends Activity {
                 final PrivKeyReader pvr = privKeyReader;
 
                 final EditText password38 = new EditText(BalanceActivity.this);
+                password38.setSingleLine(true);
+                password38.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                         .setTitle(R.string.app_name)
