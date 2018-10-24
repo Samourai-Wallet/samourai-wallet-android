@@ -119,7 +119,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         };
 
         // start mixing
-        MixParams mixParams = new MixParams(pool.getPoolId(), pool.getDenomination(), premixHandler, postmixHandler);
+        MixParams mixParams = new MixParams(pool, premixHandler, postmixHandler);
         whirlpoolClient.whirlpool(mixParams, 1, listener);
 
         do {
