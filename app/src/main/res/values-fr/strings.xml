@@ -580,6 +580,8 @@
   <string name="restore">RESTAURER</string>
   <string name="request_amount">Demande Montant</string>
   <string name="address_type">Type d\'Adresse</string>
-  <string name="path">Chemin d\'accès</string>    
+  <string name="path">Chemin d\'accès</string>  
+  
+  <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>  
     
 </resources>
