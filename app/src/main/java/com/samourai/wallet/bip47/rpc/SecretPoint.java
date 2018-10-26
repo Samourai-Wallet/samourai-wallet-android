@@ -1,5 +1,7 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.samourai.wallet.bip47.rpc.secretPoint.ISecretPoint;
+
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
@@ -11,7 +13,7 @@ import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
-public class SecretPoint {
+public class SecretPoint implements ISecretPoint {
 
     private PrivateKey privKey = null;
     private PublicKey pubKey = null;
@@ -19,6 +21,7 @@ public class SecretPoint {
     private KeyFactory kf = null;
 
     private static final ECParameterSpec params = ECNamedCurveTable.getParameterSpec("secp256k1");
+    private static final String KEY_PROVIDER = "SC"; // Android: use spongycastle
 
     static {
         Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
@@ -27,7 +30,7 @@ public class SecretPoint {
     private SecretPoint()    { ; }
 
     public SecretPoint(byte[] dataPrv, byte[] dataPub) throws InvalidKeySpecException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, NoSuchProviderException {
-        kf = KeyFactory.getInstance("ECDH", "SC");
+        kf = KeyFactory.getInstance("ECDH", KEY_PROVIDER);
         privKey = loadPrivateKey(dataPrv);
         pubKey = loadPublicKey(dataPub);
     }
@@ -38,7 +41,7 @@ public class SecretPoint {
 
     private SecretKey ECDHSecret() throws InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, NoSuchProviderException    {
 
-        KeyAgreement ka = KeyAgreement.getInstance("ECDH", "SC");
+        KeyAgreement ka = KeyAgreement.getInstance("ECDH", KEY_PROVIDER);
         ka.init(privKey);
         ka.doPhase(pubKey, true);
         SecretKey secret = ka.generateSecret("AES");

@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">请用纸笔记下英文单词并保管好，务必不要丢失或忘记密码单词</string>
+    <string name="alpha_create_confirm_backup">我已记下单词</string>
+
+    <string name="creating_wallet">创建钱包。请稍等</string>
+    <string name="restoring_wallet">恢复钱包。请稍等</string>
+    <string name="decrypting_bip38">解析BIP38密码。请稍等</string>
+
+    <string name="action_settings">设置</string>
+    <string name="action_support">帮助</string>
+    <string name="action_sweep">扫清私钥</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">激活全部付款码</string>
+    <string name="action_sync_all">同步所有付款码</string>
+
+    <string name="about_us">关于武士钱包</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">取消</string>
+
+    <string name="options_cat_prefs">法币、区块浏览器</string>
+    <string name="options_cat_stealth">隐私模式</string>
+    <string name="options_cat_remote">远程</string>
+    <string name="options_cat_wallet">钱包</string>
+    <string name="options_cat_networking">网络</string>
+    <string name="options_cat_other">关于</string>
+
+    <string name="options_mnemonic">显示助记词</string>
+    <string name="options_mnemonic2">显示此钱包的12字种子</string>
+    <string name="options_xpub">显示BIP44 XPUB</string>
+    <string name="options_xpub2">显示BIP44类账户的扩展公钥</string>
+    <string name="options_xpub49">显示隔离见证YPUB</string>
+    <string name="options_xpub49_2">显示BIP49隔离见证（P2SH）类账户的扩展公钥</string>
+    <string name="options_xpub84">显示隔离见证ZPUB</string>
+    <string name="options_xpub84_2">显示BIP49隔离见证（Bech32）类账户的扩展公钥</string>
+    <string name="options_wipe">安全删除钱包</string>
+    <string name="options_wipe2">从此设备安全删除钱包</string>
+    <string name="options_stealth_display">隐形启动模式</string>
+    <string name="options_stealth_display2">把武士钱包从启动栏和主屏幕删除。你必须用手机拨打**PIN码# 启动武士钱包</string>
+    <string name="options_remote_commands">开通远程命令</string>
+    <string name="options_remote_commands2">开通SMS远程命令</string>
+    <string name="options_currency">场外价</string>
+    <string name="options_currency2">选择交易所和法币</string>
+    <string name="options_blockexplorer">区块浏览器</string>
+    <string name="options_blockexplorer2">用来查交易明细的区块浏览器</string>
+    <string name="options_sim_switch">SIM卡变更防御</string>
+    <string name="options_sim_switch2">SIM卡变更时发送短信给可信任的手机号码</string>
+    <string name="options_use_telno">远程命令使用可信任手机号</string>
+    <string name="options_use_telno2">只允许来自指定可信任手机号的远程命令</string>
+    <string name="options_alert_telno">可信任手机号</string>
+    <string name="options_alert_telno2">可信任的手机号码，该号码将作为绑定远程授权的唯一号码（请使用国际格式不要加空格，比如：+8613855555555）</string>
+    <string name="options_hash">APK哈希</string>
+    <string name="options_hash2">收取此APK文档的SHA-25哈希（可复制到粘贴板）</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">启动安卓OpenVPN</string>
+    <string name="options_Tor">由Tor建网？</string>
+    <string name="options_Tor2">启动Orbot (Tor)</string>
+    <string name="options_export">导出钱包备份</string>
+    <string name="options_change_pin">更改PIN码</string>
+    <string name="options_change_pin2">指定新的PIN用于解锁钱包</string>
+    <string name="options_remote_pin">隐私模式启动与远程PIN</string>
+    <string name="options_remote_pin2">为隐私模式和远程功能另外指定PIN</string>
+    <string name="options_autosave_backup">自动保存备份到此设备</string>
+    <string name="options_autosave_backup2">定期保存以密码短语加密的备份到此设备</string>
+    <string name="options_version">版本</string>
+    <string name="options_txs">交易</string>
+    <string name="options_boltzmann">STONEWALL付款模式</string>
+    <string name="options_boltzmann_2">付款将会使用STONEWALL算法提高交易模糊性</string>
+    <string name="options_utxo">显示未付输出</string>
+    <string name="options_trusted_node">设置可信任节点</string>
+    <string name="options_trusted_node2">指定自己的比特币节点进行广播交易</string>
+    <string name="options_use_trusted_node">使用可信任节点</string>
+    <string name="options_use_trusted_node2">使用自己的节点广播交易</string>
+    <string name="options_rbf0">使用RBF付款</string>
+    <string name="options_rbf0_2">付款将会使用RBF费用替代法以便增加交易手续费</string>
+    <string name="options_troubleshoot">错误诊断</string>
+    <string name="options_passphrase_test">密码短语/备份测试</string>
+    <string name="options_passphrase_test2">认证钱包权限与备份协助</string>
+    <string name="options_send_backup_to_support">把备份发送给技术支持团队</string>
+    <string name="options_send_backup_to_support2">把钱包备份发送给技术支持团队。不包含私钥信息</string>
+    <string name="options_fee_provider">手续费估算资源</string>
+    <string name="options_fee_provider2">选择交易费估算供应商</string>
+    <string name="options_broadcast_on">交易广播</string>
+    <string name="options_broadcast_on2">清除打勾（关闭广播模式）并把已签署交易源码复制到粘贴板</string>
+    <string name="options_segwit">收到隔离见证地址</string>
+    <string name="options_segwit_2">为收款生产隔离见证地址</string>
+    <string name="options_broadcast_hex">交易hex广播</string>
+    <string name="options_broadcast_hex2">以十六进制方式广播提交的已签名交易</string>
+    <string name="options_like_typed_change">零钱收到同类输出交易</string>
+    <string name="options_like_typed_change2">零钱只收到同类交易输出地址，如关闭，零钱将只收到隔离见证地址</string>
+    <string name="options_haptic">输入PIN码震动模式</string>
+    <string name="options_haptic_2">输入PIN码时逐字震动模式</string>
+    <string name="options_prune">修剪备份</string>
+    <string name="options_prune2">修剪钱包信息并备份</string>
+    <string name="options_address_calc">地址计算器</string>
+    <string name="options_address_calc2">通过钱包种子衍生计算地址</string>
+    <string name="options_paynym_calc">PayNym计算器</string>
+    <string name="options_paynym_calc2">计算已与其他PayNyms分享的地址</string>
+
+    <string name="prompt_send_backup_to_support">把钱包备份提交给技术团队？不包含任何私钥、种子、密码短语等信息</string>
+
+    <string name="timeline_today">今日</string>
+    <string name="timeline_older">历史</string>
+
+    <string name="tx_sent">交易已发送</string>
+    <string name="tx_failed">交易发送错误</string>
+    <string name="you_received">已收到</string>
+    <string name="you_sent">已发送</string>
+    <string name="send">付款</string>
+    <string name="receive">收款</string>
+    <string name="cannot_select_utxo">无法选择此未付输出</string>
+    <string name="error_bip126_output">输出地址错误</string>
+    <string name="error_change_output">找零地址错误</string>
+
+    <string name="copied_to_clipboard">已拷贝到剪贴板</string>
+    <string name="send_payment_code">发送付款码</string>
+
+    <string name="ask_you_sure_exit">是否确定退出武士钱包？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="close">关闭</string>
+
+    <string name="sim_warning">收到此条短信时，你的武士钱包所在设备正在使用其他SIM卡</string>
+    
+    <string name="pin_5_8">创建一个5至8位的PIN码</string>
+    <string name="pin_5_8_confirm">确认PIN码</string>
+    <string name="pin_error">PIN码错误</string>
+    <string name="no_internet">无网络，请重试</string>
+    <string name="bip38_pw">BIP38密码</string>
+    <string name="bip38_pw_error">BIP38密码错误</string>
+    <string name="bip39_safe">请创建一个密码短语并保管好，如果丢失钱包你需要此密码短语恢复钱包</string>
+    <string name="bip39_safe2">请确认你的密码短语。请保管好你的密码短语，如果丢失钱包你需要此密码短语恢复钱包</string>
+    <string name="bip39_restore">请输入你的提示词（或hex信息熵）加上（如需要）你的BIP39密码短语。如果你没有设定BIP39密码短语就留空</string>
+    <string name="bip39_must">你钱包必须使用密码短语，请重试</string>
+    <string name="bip39_unmatch">密码短语不匹配，请重试</string>
+    <string name="bip39_invalid">密码短语不允许用空格，请重试</string>
+    <string name="bip39_empty">你必须使用密码短语</string>
+    <string name="please_select">请选择...</string>
+    <string name="create_wallet">创建钱包</string>
+    <string name="restore_wallet">恢复钱包</string>
+    <string name="wallet_passphrase">输入你的钱包密码短语</string>
+    <string name="bip39_passphrase">BIP39密码短语</string>
+    <string name="bip39_match">BIP39密码短语确认成功</string>
+    <string name="bip39_decrypt_test">密码短语已确认成功。是否尝试解密最近的自动备份？</string>
+    <string name="backup_read_ok">备份文件OK</string>
+    <string name="backup_read_error">读取备份文件错误</string>
+    <string name="mnemonic_hex">提示词或hex信息熵</string>
+    <string name="pin_enter">输入PIN码</string>
+    <string name="please_wait">请稍等...</string>
+    <string name="random_key_error">解读PIN码错误</string>
+    <string name="login_error">登录失败</string>
+    <string name="wallet_created_ok">钱包创建成功</string>
+    <string name="wallet_created_ko">钱包创建错误</string>
+    <string name="wallet_restored_ok">钱包恢复成功</string>
+    <string name="wallet_restored_ko">钱包恢复错误</string>
+
+    <string name="address_used_previously">你已经用过此地址！重复使用地址会泄露隐私信息</string>
+   
+    <string name="scan">扫描</string>
+    <string name="scan_error">扫描错误</string>
+    <string name="enter_privkey">请输入私钥</string>
+
+    <string name="to">To</string>
+    <string name="destination">地址或付款码</string>
+
+    <string name="insufficient_funds">余额不足</string>
+    <string name="tx_length_error">武士钱包不处理大小100KB以上的交易，请将交易分开后再尝试</string>
+    <string name="invalid_amount">金额无效</string>
+    <string name="amount">金额</string>
+
+    <string name="receive_address_to_clipboard">把此收款地址拷贝到剪贴板吗？如果同意，有可能会被其他程序读取</string>
+    <string name="receive_address_to_share">共享此收款地址吗？如果同意，有可能会被其他程序读取</string>
+    <string name="sure_to_erase">你确定要删除此钱包吗？</string>
+    <string name="wallet_erased">钱包已从此设备删除</string>
+
+    <string name="send_privacy_warning">隐私警告：请注意你曾经发过款项到此收款地址</string>
+
+    <string name="securely_wiping_wait">安全扫描钱包，请稍等</string>
+
+    <string name="options_scramble_pin">PIN键盘混杂模式</string>
+    <string name="options_scramble_pin2">使用混杂型数字键盘进入钱包</string>
+
+    <string name="you_must_have_orbot">你必须安装Orbot并设置它作为代理，是否现在去Google Play安装？</string>
+
+    <string name="ssl_pinning_invalid">SSL证书强校验失败，有可能意味着恶意行动，请检查网络连接与设备安全再继续</string>
+    <string name="ssl_no_connection">无法连接到主机验证SSL证书，请检查网络连接与设备安全再继续</string>
+    <string name="retry">重试</string>
+    <string name="exit">退出</string>
+
+    <string name="create_pin">创建PIN码</string>
+    <string name="confirm_pin">确认PIN码</string>
+
+    <string name="auto_fee">正常</string>
+    <string name="priority_fee">偏高（快）</string>
+    <string name="low_fee">偏低（慢）</string>
+    <string name="custom_fee">自定手续费</string>
+    <string name="sat_b">sat/b</string>
+
+    <string name="account_Samourai">钱包</string>
+    <string name="account_shuffling">已兑换</string>
+
+    <string name="max_available">最多可发送:</string>
+
+    <string name="first_use_shuffle">这是你的兑换账户。来自Shapeshift的比特币将会收到此账户，此账户跟你的主要钱包不使用同一份地址</string>
+
+    <string name="select_account">选择账户</string>
+    <string name="received_bitcoin">已收比特币</string>
+    <string name="received">已收到</string>
+    <string name="sent">交易已发送</string>
+    <string name="total">共计</string>
+    <string name="export_to_clipboard">导出到剪贴板</string>
+    <string name="export_to_email">导出到邮件</string>
+    <string name="encryption_error">钱包备份加密出错，请重试</string>
+    <string name="import_backup">来自备份</string>
+    <string name="import_mnemonic">提示词、种子</string>
+    <string name="encrypted_backup">钱包加密信息</string>
+    <string name="decryption_error">钱包备份解密出错，请重试</string>
+    <string name="restore_wallet_from_backup">从备份恢复钱包</string>
+    <string name="restore_wallet_from_existing_backup">搜到设备上的备份。使用此备份恢复钱包点击OK，否则拷贝并粘贴其他备份信息再点击OK</string>
+
+    <string name="choose_email_client">请选邮件用户端：</string>
+
+    <string name="cannot_launch_app">此设备无法运行武士钱包</string>
+    <string name="confirm_change_pin">是否确定要更改PIN码？</string>
+    <string name="success_change_pin">PIN已变更</string>
+    <string name="alternative_pin_create">你确定要为了隐私模式启动与远程命令使用另外指定的PIN吗？</string>
+    <string name="alternative_pin_deleted">你目前为隐私模式启动与远程命令未设定另外指定的PIN</string>
+    <string name="alternative_pin_wait">请等候隐私模式完成启动再指定另外的PIN</string>
+
+    <string name="invalid_payment_code">付款码无效</string>
+    <string name="error_payment_code">生产付款码错误</string>
+
+    <string name="bip47_setup1_title">你的PayNym</string>
+    <string name="bip47_setup4_title">添加PayNym联系人</string>
+    <string name="bip47_setup4_text1">添加此PayNym到你的联系人需要为在区块链上做记录支付一次性的交易费</string>
+    <string name="bip47_setup4_text2">将会从你的钱包余额扣除</string>
+
+    <string name="bip47_add1_title">新联系人</string>
+    <string name="bip47_add1_text">扫描或粘贴支付码建立新的支付渠道</string>
+
+    <string name="paste">粘贴</string>
+    <string name="label">标注</string>
+    <string name="next">下一个</string>
+    <string name="confirm">确认</string>
+    <string name="payment_code">付款码</string>
+    <string name="payment_channel_init">公告交易已发送。你的支付渠道正在建立中</string>
+
+    <string name="bip47_no_label_error">你必须为此付款码提供一个标注</string>
+
+    <string name="bip47_status_tbe">尚未建立成功</string>
+    <string name="bip47_status_pending">等待状态 - 0/1确认</string>
+    <string name="bip47_status_active">准备发送</string>
+    <string name="bip47_status_incoming">准备接收</string>
+    <string name="bip47_cannot_scan_own_pcode">无法扫描自己的付款码</string>
+    <string name="bip47_spend_to_pcode">通过此付款渠道发送？</string>
+    <string name="bip47_sign">签署信息</string>
+    <string name="bip47_sign_text1">是否使用BIP47通知地址私钥签署？</string>
+    <string name="bip47_sign_text2">已由我的BIP47通知地址私钥签署</string>
+    <string name="bip47_wait_for_confirmation_or_retry">此支付渠道还在等一个确认才可以启动发送款项，是否放弃之前尝试并重新发送请求？</string>
+
+    <string name="rbf_incoming">收到RBF（费用替代法）款项，通过区块链浏览器查看？</string>
+
+    <string name="invalid_passphrase">密码短语无效</string>
+    <string name="passphrase">密码短语</string>
+    <string name="passphrase_needed_for_backup">你的钱包未采取密码短语保护措施。钱包备份需要使用密码短语进行加密。如果你想使用加密钱包备份以及其他武士钱包功能，请用武士钱包建立钱包并把资金转到此钱包</string>
+    <string name="passphrase_required">使用此功能需要定制密码短语，请考虑创建一个自动带密码短语的新钱包</string>
+
+    <string name="cannot_reach_api">无法连接武士钱包接口。请确认你的网络连接后重试，或稍等重试</string>
+    <string name="api_error">武士钱包接口返回错误。请确认你的网络连接重试，或稍等重试</string>
+
+    <string name="cannot_recognize_privkey">无法识别私钥</string>
+    <string name="cannot_sweep_privkey">扫清私钥错误</string>
+    <string name="please_wait_sending">交易正在发送，请稍等</string>
+    <string name="please_wait_ricochet">正在处理Ricochet队列，请稍等</string>
+
+    <string name="change_is_dust">此交易的找零属于尘额交易。如重试请更改付款金额或尝试付出全部余额</string>
+
+    <string name="tor_routing_on">武士钱包使用Tor连网</string>
+    <string name="tor_routing_off">武士钱包未使用Tor连网。请点击建立Tor连接</string>
+    <string name="tor_install">请点击安装Orbot并使用Tor联网.</string>
+
+    <string name="premium_addons">收费服务</string>
+
+    <string name="ricochet_hop">Ricochet跳</string>
+    <string name="ricochet_hopping">Ricochet到</string>
+    <string name="ricochet_spend1">Ricochet付款到</string>
+    <string name="ricochet_spend2">总费</string>
+    <string name="ricochet_spend3">（包含0.002BTC给武士钱包和矿工的费用）？</string>
+
+    <string name="action_ricochet">重发Ricochet</string>
+    <string name="action_empty_ricochet">清理Ricochet队列</string>
+    <string name="ricochet">Ricochet-以多4个跳跃发送</string>
+    <string name="action_ricochet_script">显示Ricochet代码</string>
+    <string name="action_ricochet_replay">重发Ricochet</string>
+    <string name="ricochet_replay">你确定重播此Ricochet付款吗？</string>
+    <string name="ricochet_not_broadcast_replay">广播Ricochet遇到问题，是否重播此Ricochet付款？</string>
+    <string name="no_ricochet_replay">没有有效的Ricochet可重发</string>
+    <string name="no_ricochet_display">没有有效的Ricochet代码可显示</string>
+    <string name="ricochet_broadcast">你的Ricochet交易已广播</string>
+
+    <string name="bip47_cannot_identify_outpoint">无法为付款码匿名</string>
+    <string name="bip47_cannot_compose_notif_tx">无法建立公告交易</string>
+
+    <string name="pushtx_returns_null">付款失败，服务器返回空值</string>
+
+    <string name="trusted_node">可信任节点</string>
+    <string name="trusted_node_user_hint">rpc用户名</string>
+    <string name="trusted_node_ip_hint">IP地址</string>
+    <string name="trusted_node_port_hint">端口（默认：8332）</string>
+    <string name="trusted_node_password_hint">rpc用户密码</string>
+    <string name="trusted_node_not_valid">请提供可信任节点的有效信息</string>
+    <string name="trusted_node_ko">无法识别可信任节点。请检查节点信息</string>
+    <string name="trusted_node_error">连接可信任节点错误</string>
+    <string name="trusted_node_tx_error">可信任节点交易失败</string>
+    <string name="trusted_node_not_core_131">可信任节点已设定。请注意武士钱包支持Bitcoin Core 0.13.1以上的版本</string>
+    <string name="trusted_node_tx_sent">交易已由可信任节点发送</string>
+    <string name="trusted_node_not_responding">可信任节点无响应，请检查节点信息</string>
+    <string name="trusted_node_breaks_consensus">可信任节不允许设定违犯比特币共识的节点</string>
+
+    <string name="refresh_tx_pre">正在收取交易与余额信息</string>
+    <string name="refresh_tx">收到交易与余额信息</string>
+    <string name="refresh_incoming_notif_tx">收到BIP47通知交易</string>
+    <string name="refresh_outgoing_notif_tx">已更新发出的BIP47通知交易</string>
+
+    <string name="options_unconfirmed_tx">此交易正在等待确认。请选择：</string>
+    <string name="options_block_explorer">查看交易</string>
+    <string name="options_bump_fee">增加交易费</string>
+
+    <string name="cpfp_cannot_retrieve_tx">无法收取交易信息，请重试</string>
+    <string name="fee_bump_not_necessary">请注意，增加费用对此交易可能并无影响</string>
+    <string name="bump_fee">你确定为此交易增加矿工费以便收到更快的确认吗？\n\n矿工加速费：</string>
+
+    <string name="options_sign">签署信息</string>
+
+    <string name="trusted_node_pow_failed">无法验证你提供的来自可信任节点的工作证明（PoW），请重试</string>
+
+    <string name="options_fees">显示目前矿工费</string>
+    <string name="current_fee_selection">你的矿工费标准现在定为：</string>
+    <string name="current_hi_fee_value">偏高费：</string>
+    <string name="current_mid_fee_value">正常费：</string>
+    <string name="current_lo_fee_value">偏低费：</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">以sat/b制定矿工费</string>
+    <string name="custom_fee_too_low">自定义矿工费太低</string>
+    <string name="custom_fee_too_high">自定义矿工费太高</string>
+
+    <string name="cpfp_spent">已发送CPFP交易</string>
+    <string name="rbf_spent">已发送RBF交易</string>
+    <string name="cannot_output_dust">无法使用尘额输出创建交易</string>
+    <string name="cannot_create_change_output">无法创建找零输出</string>
+    <string name="cannot_create_cpfp">无法创建CPFP交易</string>
+
+    <string name="error_reading_payload">读取载荷错误，请重试</string>
+
+    <string name="utxo_sign">签署信息</string>
+    <string name="utxo_sign_text1">用此私钥签署短语？</string>
+    <string name="utxo_sign_text2">用utxo签署</string>
+    <string name="utxo_sign_text3">用utxo签署</string>
+
+    <string name="recovery_checkup">恢复记录查询</string>
+    <string name="recovery_checkup_message">接下来将显示你的钱包备份恢复单词与密码短语，不要让任何人看到你的设备屏幕。这些信息之后将不会再显示</string>
+    <string name="mnemonic">提示词</string>
+    <string name="recovery_checkup_finish">我已保管好恢复钱包信息</string>
+    <string name="pin_reminder">再次提醒，你的PIN码是：</string>
+
+    <string name="opendime_confirmed_balance">已确认余额</string>
+    <string name="opendime_privkey">私钥</string>
+    <string name="opendime_verified">已验证</string>
+    <string name="opendime_valid_key">此设备私钥有效</string>
+    <string name="opendime_not_verified">无法验证</string>
+    <string name="opendime_no_valid_key">无法验证此设备私钥有效性</string>
+    <string name="opendime_view">查看</string>
+    <string name="opendime_sweep">扫清</string>
+    <string name="opendime_topup">充值</string>
+
+    <string name="select_app">选择APP</string>
+    <string name="samourai_opendime">武士钱包：OpenDime</string>
+
+    <string name="replay_protection">重播保护</string>
+    <string name="replay_unprotected">未保护</string>
+    <string name="replay_in_progress">正在保护中</string>
+    <string name="replay_protected">已保护</string>
+    <string name="replay_disclaimer">检测到区块链分叉</string>
+    <string name="replay_text">所有地址将会合成一个交易并发送给你钱包的某个地址。此操作名为输入合并，有可能会降低你的系统安全性</string>
+    <string name="replay_ENABLE">开启重播保护</string>
+
+    <string name="replay_broadcast_to_network">广播到网络...</string>
+    <string name="replay_seen_on_network">网络已看到...</string>
+    <string name="replay_split_tx_broadcast">分叉交易已广播...</string>
+    <string name="replay_description">你的钱包将会给自己发送一种特殊的交易让你的币跟分叉链永久分裂。这个交易将保护你的币免受重播攻击</string>
+    <string name="replay_waiting_for_confirmations">等待确认</string>
+    <string name="replay_confirmed">已确认</string>
+    <string name="replay_confirmations">确认数:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">重播保护正在等待确认</string>
+    <string name="replay_dismiss">取消警告</string>
+
+    <string name="show_qr">显示二维码</string>
+    <string name="share_qr">分享二维码</string>
+    <string name="send_tx">发送原始交易</string>
+    <string name="tx_too_large_qr">原始交易太大无法使用二维码显示</string>
+
+    <string name="select_network">请选择网络...</string>
+    <string name="MainNet">主网（Mainnet）</string>
+    <string name="TestNet">测试网络（TestNet）</string>
+
+    <string name="segwit_address">隔离见证地址</string>
+    <string name="segwit_switch_prompt">保存在隔离见证地址的余额用于交易效率更高，这样从你的钱包发币时所需要支付的矿工费将降低</string>
+
+    <string name="privkey_clipboard">监测到你的粘贴板存有私钥，删除粘贴板信息？</string>
+
+    <string name="tx_hex">交易hex</string>
+    <string name="enter_tx_hex">请以hex格式输入交易</string>
+    <string name="broadcast">广播交易</string>
+
+    <string name="dusting_tx">尘额交易</string>
+    <string name="dusting_attempt">非预期接收的尘额交易进入钱包，很可能是第三方在尝试跟踪你的钱包地址与付款对象。\n\n把此笔尘额交易标记为不可付出，避免第三方跟踪</string>
+    <string name="dusting_attempt_amount">金额：</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">忽略</string>
+    <string name="dusting_attempt_mark_unspendable">标记为不可付出</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">尘额交易</string>
+    <string name="do_not_spend">不要付出</string>
+    <string name="dusting_tx_unblock">此笔尘额交易目前标记为不可付出，为付出解锁该交易吗？</string>
+    <string name="mark_spend">标记为可付出</string>
+    <string name="mark_do_not_spend">标记为不可付出</string>
+    <string name="mark_utxo_spend">将此不可付出交易改为可付出？</string>
+    <string name="mark_utxo_do_not_spend">将此不可付出交易改为可付出？</string>
+
+    <string name="options_sign_a_message">信息签名</string>
+    <string name="options_display_redeem_script">显示锁定脚本（redeem script）</string>
+    <string name="options_view_tx">查看交易</string>
+    <string name="options_display_privkey">显示私钥</string>
+    <string name="options_batch">批量付款</string>
+
+    <string name="do_not_repeat_sent_to">勾选不再提示曾发送款项到此收款地址</string>
+
+    <string name="mark_inputs_as_unspendable">将此笔交易输入产生的未付出的交易输出标记为不可付款？</string>
+    
+    <string name="copy_to_clipboard">拷贝到剪贴板</string>
+
+    <string name="no_bitpay">错误：不是有效的比特币收款请求，武士钱包只支持发送款项到有效的比特币地址</string>
+    <string name="learn_more">了解更多</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">申请自己的paynym</string>
+    <string name="claim_paynym_title1">申请自己免费的PayNymID</string>
+    <string name="claim_paynym_text1">允许你的联系人通过兼容比特币钱包查到并连上你的PayNym</string>
+    <string name="claim_paynym_title2">PayNymID的优势</string>
+    <string name="claim_paynym_text2a">使用你的paynym码哈希生成唯一的名称与图片，独一无二！</string>
+    <string name="claim_paynym_text2b">没有任何身份认证！你的名称与图片由你的paynym码生成，而不是国家身份证件</string>
+    <string name="claim_paynym_text2c">付款信息易找到！兼容钱包可以搜索新联系人及发送安全隐私的无痕付款</string>
+    <string name="claim_paynym_id">申请我的paynym</string>
+    <string name="claim_paynym_id_refused">不感兴趣，不再询问</string>
+
+    <string name="claim_paynym_prompt">申请PayNymID并把共享PayNym码添加到PayNym.is？</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">把PayNym添加到你的联系人需要为在链上标记支付一次性的交易费</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">钱包存储比特币后重试</string>
+    <string name="help">帮助</string>
+
+    <string name="passphrase_disclaimer">我理解在丢失密码短语情况下武士钱包无法提供支持。我从未透露密码短语给武士钱包</string>
+    <string name="confirm_pin_code">确认PIN码</string>
+    <string name="re_enter_your_pin_code">重新输入PIN码</string>
+    <string name="re_enter_a_passphrase">重新输入密码短语</string>
+    <string name="create_a_passphrase">创建密码短语</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">给钱包创建安全的密码短语</string>
+    <string name="set_pin_code">设置PIN码</string>
+    <string name="accept_disclaimer_error">你必须同意免责声明</string>
+    <string name="import_external_wallet">导入外部钱包</string>
+    <string name="import_samourai_wallet">导入武士钱包备份</string>
+    <string name="backup_file">备份文件</string>
+    <string name="import_an_encrypted_samourai_wallet">导入加密武士钱包备份，恢复钱包和所有元数据</string>
+    <string name="back">后退</string>
+    <string name="finish">完成</string>
+    <string name="choose_file">选择文件</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">你好blank fragment</string>
+    <string name="add_bip39_password">添加bip39密码</string>
+    <string name="close_bip39_password">关闭bip39密码</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">输入你的提示词种子，从其他软件商处导入钱包</string>
+    <string name="last_updated">最近更新</string>
+    <string name="get_help">寻求帮助</string>
+    <string name="offline_mode">下线模式</string>
+    <string name="import_samourai_backup">导入武士钱包备份</string>
+    <string name="samourai_bitcoin_wallet">武士钱包</string>
+    <string name="enter_your_wallet_passphrase">输入你的钱包密码短语</string>
+    <string name="start_new_wallet">创建新钱包</string>
+    <string name="get_help_create">创建新钱：帮助</string>
+    <string name="get_help_restore">恢复备份：帮助</string>
+
+    <string name="fee">矿工费</string>
+    <string name="fee_low_priority">低优先级：预计24</string>
+    <string name="fee_mid_priority">普通优先级：预计6</string>
+    <string name="fee_high_priority">高优先级：预计2</string>
+    <string name="fee_custom_priority">自定费：预计</string>
+    <string name="blocks_to_cf">区块后确认</string>
+
+    <string name="invalid_mnemonic_word">BIP39提示词无效</string>
+    <string name="invalid_mnemonic">BIP39提示词无效</string>
+    <string name="enter_your_code_here">在此输入你的code</string>
+        
+    <string name="declaimer_recovery_words">我确认我已经把上述单词记下并保存到安全的地方。我理解只要有单词与密码短语任何人可以登录我的钱包并使用钱包里的所有资金</string>
+    <string name="return_to_wallet">返回钱包</string>
+    <string name="caution_message_recovery_words">把单词记在电脑或云上并不安全。把单词记到纸上并保存到安全的地方</string>
+    <string name="these_words_are">这些单词是你钱包所有私钥的备份</string>
+    <string name="recovery_words">恢复单词</string>
+
+    <string name="permission_alert_dialog_title_sms">需要短信与电话状态权限</string>
+    <string name="permission_dialog_message_sms">你的钱包需要短信发送及收取权限以启用远程通知功能</string>
+    <string name="permission_alert_dialog_title_outgoing">需要外拨电话授权</string>
+    <string name="permission_dialog_message_outgoing">你的钱包需要外拨电话权限以启用隐私模式启动功能</string>
+
+    <string name="permission_alert_dialog_title_external">需要读写授权</string>
+    <string name="permission_dialog_message_external">你的钱包需要读写授权以启用自动在此设备保存钱包的加密备份功能</string>
+    <string name="permission_alert_dialog_title_camera">需要摄像头授权</string>
+    <string name="permission_dialog_message_camera">你的钱包需要摄像头授权以扫描二维码</string>
+
+    <string name="use_bech32">使用bech32地址</string>
+
+    <string name="boltzmann_cannot">STONEWALL交易无法使用现在的未付出组输出交易。如果需要使用STONEWALL点击“否”并使用其他的未付出组重试</string>
+    <string name="boltzmann_like_typed">请注意 \'找零时只允许收到与付款输出同样地址\' 目前关闭。你的STONEWALL交易效率将会相当低</string>
+
+    <string name="insufficient_fee">费用不足</string>
+    <string name="action_utxo_amounts">以地址类型查看余额</string>
+
+    <string name="total_p2pkh">老地址总额（p2pkh）：</string>
+    <string name="total_p2sh_p2wpkh">隔离见证地址总额（p2sh）：</string>
+    <string name="total_p2wpkh">隔离见证地址总额（bech32）：</string>
+    <string name="total_blocked">禁用总额：</string>
+  
+  	<string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">高级</string>
+    <string name="broadcast_with_txtenna">使用TxTenna广播</string>
+    <string name="show_qr_code">显示二维码</string>
+    <string name="tx_connectivity_failure_msg">无网络连接状态下无法广播，下一步如何操作？</string>
+
+    <string name="tx_creating_ok">创建交易...</string>
+    <string name="tx_creating_ko">交易无法创建</string>
+    <string name="tx_signing_ok">交易签名...</string>
+    <string name="tx_signing_ko">交易无法签名</string>
+    <string name="tx_broadcast_ok">广播交易...</string>
+    <string name="tx_broadcast_ko">交易无法广播</string>
+    <string name="tx_sent_ok">交易已发送</string>
+    <string name="tx_sent_ko">交易未发送</string>
+
+    <string name="prune_backup">修剪钱包信息并备份？</string>
+
+    <string-array name="address_types">
+        <item>隔离见证兼容地址（P2SH）</item>
+        <item>隔离见证地址（bech32）</item>
+        <item>旧版地址（P2PKH）</item>
+    </string-array>
+
+    <string name="in_offline_mode">武士钱包未连线.</string>
+    <string name="tx_standby">交易正排队</string>
+    <string name="show_hex">显示hex码</string>
+    <string name="tx_tenna_coming_soon">安卓版txTenna即将上线</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">索引</string>
+
+    <string name="receive_addresses">接收地址</string>
+    <string name="send_addresses">发送地址</string>
+    <string name="display_receive_redeem">收取锁定脚本（redeem script）</string>
+    <string name="display_receive_privkey">接收私钥</string>
+    <string name="invalid_index">无效索引</string>
+    <string name="type_address">地址类型</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit（混合前）</item>
+        <item>Whirlpool Segwit（混合后）</item>
+    </string-array>
+
+    <string name="chain_id">地址链</string>
+    <string name="receive_chain">接收地址</string>
+    <string name="change_chain">找零地址</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit（混合后）</string>
+
+</resources>

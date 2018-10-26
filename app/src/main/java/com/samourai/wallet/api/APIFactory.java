@@ -576,7 +576,7 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) || xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()))    {
 
                 HD_Address addr = null;
                 switch(purpose)    {
@@ -1186,11 +1186,11 @@ public class APIFactory	{
 
             }
             else    {
-                StringBuilder url = new StringBuilder(WebUtil.BITCOIND_FEE_URL);
+                String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
                 String response = null;
                 if(!AppUtil.getInstance(context).isOfflineMode())    {
-                    response = WebUtil.getInstance(null).getURL(url.toString());
+                    response = WebUtil.getInstance(null).getURL(_url + "fees");
                 }
                 else    {
                     response = PayloadUtil.getInstance(context).deserializeFees().toString();

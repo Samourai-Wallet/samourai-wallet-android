@@ -38,7 +38,7 @@
     <string name="options_wipe">Supprimer ce portefeuille en toute sécurité</string>
     <string name="options_wipe2">Supprimer en toute sécurité le portefeuille de cet appareil.</string>
     <string name="options_stealth_display">Lanceur d\'application mode furtif</string>
-    <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
+    <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
     <string name="options_remote_commands">Permettre les commandes à distance</string>
     <string name="options_remote_commands2">Permettre les commandes à distance via SMS.</string>
     <string name="options_currency">Taux en cours</string>
@@ -323,7 +323,7 @@
     <string name="options_bump_fee">Augmenter les frais tx</string>
 
     <string name="cpfp_cannot_retrieve_tx">Les informations concernant la transaction ne peuvent être récupérées. Veuillez réessayer.</string>
-    <string name="fee_bump_not_necessary">Sachez qu\'il n'est peut-être pas nécessaire  d\'augmenter fortement les frais de cette transaction.</string>
+    <string name="fee_bump_not_necessary">Sachez qu\'il n\'est peut-être pas nécessaire  d\'augmenter fortement les frais de cette transaction.</string>
     <string name="bump_fee">Voudriez-vous augmenter les frais de transaction des mineurs afin d\'accélérer l\'obtention d\'une confirmation?\n\nFrais Additionnels des Mineurs:</string>
 
     <string name="options_sign">Signer le message</string>
@@ -541,13 +541,13 @@
   <string name="options_prune">Réduire taille sauvegarde</string>
   <string name="options_prune2">Réduire taille charge utile portefeuille et fichiers de sauvegarde.</string>
   <string name="prune_backup">Réduire taille charge utile et fichiers de sauvegarde?</string>
-    
-    
+
+
   <string name="options_address_calc">Calculateur d\'adresses</string>
   <string name="options_address_calc2">Calculer les adresses dérivées de la phrase de récupération de votre portefeuille.</string>
   <string name="options_paynym_calc">Calculateur PayNym</string>
   <string name="options_paynym_calc2">Calculer les adresses partagées avec d\'autres PayNyms.</string>
-    
+
   <string name="enter_paynym">PayNym</string>
   <string name="enter_index">Index</string>
   <string name="receive_addresses">Recevoir les adresses</string>
@@ -555,25 +555,31 @@
   <string name="display_receive_redeem">Recevoir le script de règlement</string>
   <string name="display_receive_privkey">Recevoir la clé privée</string>
   <string name="invalid_index">Index invalide</string>
-    
+
   <string name="type_address">Type d\'adresse</string>
   <string-array name="account_types">
   <item>BIP49 Segwit</item>
   <item>BIP84 Segwit</item>
   <item>BIP44 P2PKH</item>
   <item>Ricochet Segwit</item>
+  <item>Whirlpool Segwit pre-mix</item>
   </string-array>
-  <string name="chain_id">Chaîne d'adresses</string>
+  <string name="chain_id">Chaîne d\'adresses</string>
   <string name="receive_chain">Recevoir l\'adresse</string>
   <string name="change_chain">Changer l\'adresse</string>
-    
+
   <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
-    
+
   <string name="tx_standby">Transaction en attente</string>
   <string name="show_hex">Afficher Code Hex</string>
   <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
-    
-      
-    
-    
+
+  <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+
+  <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
+  <string name="restore">RESTAURER</string>
+  <string name="request_amount">Demande Montant</string>
+  <string name="address_type">Type d\'Adresse</string>
+  <string name="path">Chemin d\'accès</string>
+
 </resources>

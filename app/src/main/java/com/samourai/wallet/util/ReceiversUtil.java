@@ -64,12 +64,12 @@ public class ReceiversUtil  {
                 ocFilter.setPriority(1001);
                 ocReceiver = new InterceptOutgoingReceiver();
                 receivers.add(ocReceiver);
-                context.registerReceiver(ocReceiver, ocFilter);
+                context.getApplicationContext().registerReceiver(ocReceiver, ocFilter);
             }
         }
         else {
             if(receivers.contains(ocReceiver)) {
-                context.unregisterReceiver(ocReceiver);
+                context.getApplicationContext().unregisterReceiver(ocReceiver);
                 receivers.remove(ocReceiver);
             }
         }
@@ -80,12 +80,12 @@ public class ReceiversUtil  {
                 isFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
                 isFilter.setPriority(2147483647);
                 isReceiver = new SMSReceiver();
-                context.registerReceiver(isReceiver, isFilter);
+                context.getApplicationContext().registerReceiver(isReceiver, isFilter);
             }
         }
         else {
             if(receivers.contains(isReceiver)) {
-                context.unregisterReceiver(isReceiver);
+                context.getApplicationContext().unregisterReceiver(isReceiver);
                 receivers.remove(isReceiver);
             }
         }

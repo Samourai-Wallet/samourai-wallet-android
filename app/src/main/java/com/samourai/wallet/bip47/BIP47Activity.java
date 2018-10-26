@@ -98,7 +98,6 @@ import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.R;
 
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -493,6 +492,7 @@ public class BIP47Activity extends Activity {
                 String pcode = data.getStringExtra("pcode");
                 if(pcode != null && pcode.length() > 0 && FormatsUtil.getInstance().isValidPaymentCode(pcode) && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
                     doUpdatePayNymInfo(pcode);
+                    adapter.notifyDataSetChanged();
                 }
 
                 if(BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT)    {
@@ -1063,7 +1063,7 @@ public class BIP47Activity extends Activity {
             // use outpoint for payload masking
             //
             byte[] privkey = ecKey.getPrivKeyBytes();
-            byte[] pubkey = payment_code.notificationAddress().getPubKey();
+            byte[] pubkey = payment_code.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getPubKey();
             byte[] outpoint = outPoint.bitcoinSerialize();
 //                Log.i("BIP47Activity", "outpoint:" + Hex.toHexString(outpoint));
 //                Log.i("BIP47Activity", "payer shared secret:" + Hex.toHexString(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes()));
@@ -1097,7 +1097,7 @@ public class BIP47Activity extends Activity {
 
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
-        receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
+        receivers.put(payment_code.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString(), SendNotifTxFactory._bNotifTxValue);
         receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
@@ -1446,7 +1446,7 @@ public class BIP47Activity extends Activity {
         int before = BIP47Meta.getInstance().getLabels().size();
         try {
             PaymentCode pcode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode();
-            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString());
         }
         catch (AddressFormatException afe) {
             afe.printStackTrace();
@@ -1691,6 +1691,9 @@ public class BIP47Activity extends Activity {
                         JSONArray _following = responseObj.getJSONArray("following");
                         for(int i = 0; i < _following.length(); i++)   {
                             following.add(((JSONObject)_following.get(i)).getString("code"));
+                            if(((JSONObject)_following.get(i)).has("segwit"))    {
+                                BIP47Meta.getInstance().setSegwit(((JSONObject)_following.get(i)).getString("code"), ((JSONObject)_following.get(i)).getBoolean("segwit"));
+                            }
                         }
                     }
 
@@ -1717,14 +1720,14 @@ public class BIP47Activity extends Activity {
         if(pcodes != null && pcodes.size() > 0)    {
             for(String pcode : pcodes)   {
                 if(!following.contains(pcode))    {
-                    doUploadFollow(pcode);
+                    doUploadFollow(pcode, false);
                 }
             }
         }
 
     }
 
-    private void doUploadFollow(final String pcode) {
+    private void doUploadFollow(final String pcode, final boolean isTrust) {
 
         new Thread(new Runnable() {
 
@@ -1738,7 +1741,7 @@ public class BIP47Activity extends Activity {
                     JSONObject obj = new JSONObject();
                     obj.put("code", BIP47Util.getInstance(BIP47Activity.this).getPaymentCode().toString());
 //                    Log.d("BIP47Activity", obj.toString());
-                    String res = WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
 //                    Log.d("BIP47Activity", res);
 
                     JSONObject responseObj = new JSONObject(res);
@@ -1753,13 +1756,16 @@ public class BIP47Activity extends Activity {
                         obj.put("signature", sig);
 
 //                        Log.d("BIP47Activity", "follow:" + obj.toString());
-                        res = WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, WebUtil.PAYNYM_API + "api/v1/follow", obj.toString());
+                        String endPoint = isTrust ? "api/v1/trust" : "api/v1/follow";
+                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47Activity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + endPoint, obj.toString());
 //                        Log.d("BIP47Activity", res);
 
                         responseObj = new JSONObject(res);
                         if(responseObj.has("following") && responseObj.has("token"))    {
                             ;
                         }
+
+                        doUpdatePayNymInfo(pcode);
 
                     }
                     else    {
@@ -1802,15 +1808,21 @@ public class BIP47Activity extends Activity {
                     JSONObject responseObj = new JSONObject(res);
                     if(responseObj.has("nymName"))    {
                         final String strNymName = responseObj.getString("nymName");
-                        BIP47Meta.getInstance().setLabel(pcode, strNymName);
-                        handler.post(new Runnable() {
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
+                        if(FormatsUtil.getInstance().isValidPaymentCode(BIP47Meta.getInstance().getLabel(pcode)))    {
+                            BIP47Meta.getInstance().setLabel(pcode, strNymName);
+                        }
+                    }
+                    if(responseObj.has("segwit") && responseObj.getBoolean("segwit") == true)    {
+                        BIP47Meta.getInstance().setSegwit(pcode, true);
                     }
 
-                }
+                    BIP47Activity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    }
                 catch(Exception e) {
                     e.printStackTrace();
                 }

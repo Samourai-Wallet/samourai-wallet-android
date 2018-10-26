@@ -62,6 +62,7 @@ import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
@@ -73,23 +74,16 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -104,10 +98,6 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.bouncycastle.util.encoders.DecoderException;
-import org.bouncycastle.util.encoders.Hex;
-
-import static java.lang.System.currentTimeMillis;
 
 public class SendActivity extends Activity {
 
@@ -123,9 +113,7 @@ public class SendActivity extends Activity {
     private TextWatcher textWatcherAddress = null;
 
     private EditText edAmountBTC = null;
-    private EditText edAmountFiat = null;
     private TextWatcher textWatcherBTC = null;
-    private TextWatcher textWatcherFiat = null;
 
     private String defaultSeparator = null;
 
@@ -147,11 +135,6 @@ public class SendActivity extends Activity {
     private int SPEND_TYPE = SPEND_BOLTZMANN;
     //    private CheckBox cbSpendType = null;
     private Switch swRicochet = null;
-
-    private String strFiat = null;
-
-    private double btc_fx = 286.0;
-    private TextView tvFiatSymbol = null;
 
     private Button btSend = null;
 
@@ -225,11 +208,6 @@ public class SendActivity extends Activity {
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
-        strFiat = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
-        btc_fx = ExchangeRateFactory.getInstance(SendActivity.this).getAvgPrice(strFiat);
-        tvFiatSymbol = (TextView)findViewById(R.id.fiatSymbol);
-        tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
-
         edAddress = (EditText)findViewById(R.id.destination);
 
         textWatcherAddress = new TextWatcher() {
@@ -301,14 +279,12 @@ public class SendActivity extends Activity {
         });
 
         edAmountBTC = (EditText)findViewById(R.id.amountBTC);
-        edAmountFiat = (EditText)findViewById(R.id.amountFiat);
 
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
 
                 edAmountBTC.removeTextChangedListener(this);
-                edAmountFiat.removeTextChangedListener(textWatcherFiat);
 
                 int max_len = 8;
                 NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
@@ -337,18 +313,11 @@ public class SendActivity extends Activity {
                 }
 
                 if(d > 21000000.0)    {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
                     edAmountBTC.setText("0");
                     edAmountBTC.setSelection(edAmountBTC.getText().length());
                     Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
-                else    {
-                    edAmountFiat.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(d * btc_fx));
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
-                }
 
-                edAmountFiat.addTextChangedListener(textWatcherFiat);
                 edAmountBTC.addTextChangedListener(this);
 
                 validateSpend();
@@ -363,68 +332,6 @@ public class SendActivity extends Activity {
             }
         };
         edAmountBTC.addTextChangedListener(textWatcherBTC);
-
-        textWatcherFiat = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                edAmountFiat.removeTextChangedListener(this);
-                edAmountBTC.removeTextChangedListener(textWatcherBTC);
-
-                int max_len = 2;
-                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
-                fiatFormat.setMaximumFractionDigits(max_len + 1);
-                fiatFormat.setMinimumFractionDigits(0);
-
-                double d = 0.0;
-                try	{
-                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
-                    String s1 = fiatFormat.format(d);
-                    if(s1.indexOf(defaultSeparator) != -1)	{
-                        String dec = s1.substring(s1.indexOf(defaultSeparator));
-                        if(dec.length() > 0)	{
-                            dec = dec.substring(1);
-                            if(dec.length() > max_len)	{
-                                edAmountFiat.setText(s1.substring(0, s1.length() - 1));
-                                edAmountFiat.setSelection(edAmountFiat.getText().length());
-                            }
-                        }
-                    }
-                }
-                catch(NumberFormatException nfe)	{
-                    ;
-                }
-                catch(ParseException pe) {
-                    ;
-                }
-
-                if((d / btc_fx) > 21000000.0)    {
-                    edAmountFiat.setText("0.00");
-                    edAmountFiat.setSelection(edAmountFiat.getText().length());
-                    edAmountBTC.setText("0");
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                    Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                }
-                else    {
-                    edAmountBTC.setText(MonetaryUtil.getInstance().getBTCFormat().format(d / btc_fx));
-                    edAmountBTC.setSelection(edAmountBTC.getText().length());
-                }
-
-                edAmountBTC.addTextChangedListener(textWatcherBTC);
-                edAmountFiat.addTextChangedListener(this);
-
-                validateSpend();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                ;
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ;
-            }
-        };
-        edAmountFiat.addTextChangedListener(textWatcherFiat);
 
         SPEND_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) ? SPEND_BOLTZMANN : SPEND_SIMPLE;
         if(SPEND_TYPE > SPEND_BOLTZMANN)    {
@@ -1210,335 +1117,10 @@ public class SendActivity extends Activity {
                             Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
                             startActivity(_intent);
 
-
-                            /*
-
-
-
-
-                            // make tx
-                            Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outPoints, receivers);
-
-                            final RBFSpend rbf;
-                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-
-                                rbf = new RBFSpend();
-
-                                for(TransactionInput input : tx.getInputs())    {
-
-                                    boolean _isBIP49 = false;
-                                    boolean _isBIP84 = false;
-                                    String _addr = null;
-                                    String script = Hex.toHexString(input.getConnectedOutput().getScriptBytes());
-                                    if(Bech32Util.getInstance().isBech32Script(script))    {
-                                        try {
-                                            _addr = Bech32Util.getInstance().getAddressFromScript(script);
-                                            _isBIP84 = true;
-                                        }
-                                        catch(Exception e) {
-                                            ;
-                                        }
-                                    }
-                                    else    {
-                                        Address _address = input.getConnectedOutput().getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                                        if(_address != null)    {
-                                            _addr = _address.toString();
-                                            _isBIP49 = true;
-                                        }
-                                    }
-                                    if(_addr == null)    {
-                                        _addr = input.getConnectedOutput().getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                                    }
-
-                                    String path = APIFactory.getInstance(SendActivity.this).getUnspentPaths().get(_addr);
-                                    if(path != null)    {
-                                        if(_isBIP84)    {
-                                            rbf.addKey(input.getOutpoint().toString(), path + "/84");
-                                        }
-                                        else if(_isBIP49)    {
-                                            rbf.addKey(input.getOutpoint().toString(), path + "/49");
-                                        }
-                                        else    {
-                                            rbf.addKey(input.getOutpoint().toString(), path);
-                                        }
-                                    }
-                                    else    {
-                                        String pcode = BIP47Meta.getInstance().getPCode4Addr(_addr);
-                                        int idx = BIP47Meta.getInstance().getIdx4Addr(_addr);
-                                        rbf.addKey(input.getOutpoint().toString(), pcode + "/" + idx);
-                                    }
-
-                                }
-
-                            }
-                            else    {
-                                rbf = null;
-                            }
-
-                            if(tx != null)    {
-                                tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
-                                final Transaction _tx = tx;
-                                final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-//                                Log.d("SendActivity", hexTx);
-                                final String strTxHash = tx.getHashAsString();
-
-                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
-
-                                    if(progress != null && progress.isShowing())    {
-                                        progress.dismiss();
-                                    }
-
-                                    doShowTx(hexTx, strTxHash);
-
-                                    return;
-
-                                }
-
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        Looper.prepare();
-
-                                        boolean isOK = false;
-                                        String response = null;
-                                        try {
-                                            if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-                                                if(TrustedNodeUtil.getInstance().isSet())    {
-                                                    response = PushTx.getInstance(SendActivity.this).trustedNode(hexTx);
-                                                    JSONObject jsonObject = new org.json.JSONObject(response);
-                                                    if(jsonObject.has("result"))    {
-                                                        if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
-                                                            isOK = true;
-                                                        }
-                                                        else    {
-                                                            Toast.makeText(SendActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                }
-                                                else    {
-                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                            else    {
-                                                response = PushTx.getInstance(SendActivity.this).samourai(hexTx);
-
-                                                if(response != null)    {
-                                                    JSONObject jsonObject = new org.json.JSONObject(response);
-                                                    if(jsonObject.has("status"))    {
-                                                        if(jsonObject.getString("status").equals("ok"))    {
-                                                            isOK = true;
-                                                        }
-                                                    }
-                                                }
-                                                else    {
-                                                    Toast.makeText(SendActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-
-                                            if(isOK)    {
-                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
-                                                    Toast.makeText(SendActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else    {
-                                                    Toast.makeText(SendActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
-                                                }
-
-                                                if(_change > 0L && SPEND_TYPE == SPEND_SIMPLE)    {
-
-                                                    if(changeType == 84)    {
-                                                        BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
-                                                    }
-                                                    else if(changeType == 49)    {
-                                                        BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
-                                                    }
-                                                    else    {
-                                                        try {
-                                                            HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().incAddrIdx();
-                                                        }
-                                                        catch(IOException ioe) {
-                                                            ;
-                                                        }
-                                                        catch(MnemonicException.MnemonicLengthException mle) {
-                                                            ;
-                                                        }
-                                                    }
-                                                }
-
-                                                if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-
-                                                    for(TransactionOutput out : _tx.getOutputs())   {
-                                                        try {
-                                                            if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(out.getScriptBytes())) && !address.equals(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes()))))    {
-                                                                rbf.addChangeAddr(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
-                                                                Log.d("SendActivity", "added change output:" + Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
-                                                            }
-                                                            else if(changeType == 44 && !address.equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))  {
-                                                                rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                                Log.d("SendActivity", "added change output:" + out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                            }
-                                                            else if(changeType != 44 && !address.equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString()))   {
-                                                                rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                                Log.d("SendActivity", "added change output:" + out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                                            }
-                                                            else    {
-                                                                ;
-                                                            }
-                                                        }
-                                                        catch(NullPointerException npe) {
-                                                            ;
-                                                        }
-                                                        catch(Exception e) {
-                                                            ;
-                                                        }
-                                                    }
-
-                                                    rbf.setHash(strTxHash);
-                                                    rbf.setSerializedTx(hexTx);
-
-                                                    RBFUtil.getInstance().add(rbf);
-                                                }
-
-                                                // increment counter if BIP47 spend
-                                                if(strPCode != null && strPCode.length() > 0)    {
-                                                    BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
-                                                    BIP47Meta.getInstance().inc(strPCode);
-
-                                                    SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
-                                                    String strTS = sd.format(currentTimeMillis());
-                                                    String event = strTS + " " + SendActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
-                                                    BIP47Meta.getInstance().setLatestEvent(strPCode, event);
-
-                                                    strPCode = null;
-                                                }
-
-                                                if(strPrivacyWarning.length() > 0 && cbShowAgain != null)    {
-                                                    SendAddressUtil.getInstance().add(address, cbShowAgain.isChecked() ? false : true);
-                                                }
-                                                else if(SendAddressUtil.getInstance().get(address) == 0)    {
-                                                    SendAddressUtil.getInstance().add(address, false);
-                                                }
-                                                else    {
-                                                    SendAddressUtil.getInstance().add(address, true);
-                                                }
-
-                                                if(_change == 0L)    {
-                                                    Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                                                    intent.putExtra("notifTx", false);
-                                                    intent.putExtra("fetch", true);
-                                                    LocalBroadcastManager.getInstance(SendActivity.this).sendBroadcast(intent);
-                                                }
-
-                                                View view = SendActivity.this.getCurrentFocus();
-                                                if (view != null) {
-                                                    InputMethodManager imm = (InputMethodManager)SendActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                                                }
-
-                                                if(bViaMenu)    {
-                                                    SendActivity.this.finish();
-                                                }
-                                                else    {
-                                                    Intent _intent = new Intent(SendActivity.this, BalanceActivity.class);
-                                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                                    startActivity(_intent);
-                                                }
-
-                                            }
-                                            else    {
-                                                Toast.makeText(SendActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
-                                                // reset change index upon tx fail
-                                                if(changeType == 84)    {
-                                                    BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
-                                                }
-                                                else if(changeType == 49)    {
-                                                    BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
-                                                }
-                                                else    {
-                                                    HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
-                                                }
-                                            }
-                                        }
-                                        catch(JSONException je) {
-                                            Toast.makeText(SendActivity.this, "pushTx:" + je.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch(MnemonicException.MnemonicLengthException mle) {
-                                            Toast.makeText(SendActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch(DecoderException de) {
-                                            Toast.makeText(SendActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        catch(IOException ioe) {
-                                            Toast.makeText(SendActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        finally {
-                                            SendActivity.this.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    btSend.setActivated(true);
-                                                    btSend.setClickable(true);
-                                                    progress.dismiss();
-                                                    dialog.dismiss();
-                                                }
-                                            });
-                                        }
-
-                                        Looper.loop();
-
-                                    }
-                                }).start();
-
-
-
-
-
-
-
-
-
-
-                            }
-                            else    {
-//                                Log.d("SendActivity", "tx error");
-                                Toast.makeText(SendActivity.this, "tx error", Toast.LENGTH_SHORT).show();
-                            }
-
-                            */
-
                         }
                     });
                     builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, int whichButton) {
-
-                            /*
-                            try {
-                                // reset change index upon 'NO'
-                                if(changeType == 84)    {
-                                    BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
-                                }
-                                else if(changeType == 49)    {
-                                    BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(_change_index);
-                                }
-                                else    {
-                                    HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(_change_index);
-                                }
-
-                            }
-                            catch(Exception e) {
-//                                Log.d("SendActivity", e.getMessage());
-                                Toast.makeText(SendActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                            finally {
-                                SendActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        btSend.setActivated(true);
-                                        btSend.setClickable(true);
-//                                        dialog.dismiss();
-                                    }
-                                });
-                            }
-                            */
 
                             SendActivity.this.runOnUiThread(new Runnable() {
                                 @Override
@@ -1653,6 +1235,9 @@ public class SendActivity extends Activity {
 
             if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
 
+                strPCode = null;
+                strDestinationBTCAddress = null;
+
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
                 processScan(strResult);
@@ -1760,8 +1345,6 @@ public class SendActivity extends Activity {
                 }
             }
 
-            tvFiatSymbol.setText(getDisplayUnits() + "-" + strFiat);
-
             final String strAmount;
             NumberFormat nf = NumberFormat.getInstance(Locale.US);
             nf.setMinimumIntegerDigits(1);
@@ -1774,7 +1357,6 @@ public class SendActivity extends Activity {
                 if(amount != null && Double.parseDouble(amount) != 0.0)    {
                     edAddress.setEnabled(false);
                     edAmountBTC.setEnabled(false);
-                    edAmountFiat.setEnabled(false);
 //                    Toast.makeText(SendActivity.this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1823,7 +1405,14 @@ public class SendActivity extends Activity {
                     PaymentCode _pcode = new PaymentCode(pcode);
                     PaymentAddress paymentAddress = BIP47Util.getInstance(SendActivity.this).getSendAddress(_pcode, BIP47Meta.getInstance().getOutgoingIdx(pcode));
 
-                    strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    if(BIP47Meta.getInstance().getSegwit(pcode))    {
+                        SegwitAddress segwitAddress = new SegwitAddress(paymentAddress.getSendECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        strDestinationBTCAddress = segwitAddress.getBech32AsString();
+                    }
+                    else    {
+                        strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    }
+
                     strPCode = _pcode.toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     edAddress.setEnabled(false);

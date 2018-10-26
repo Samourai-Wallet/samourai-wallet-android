@@ -42,8 +42,11 @@ public class MonetaryUtil {
 		return fiatFormat;
 	}
 
-    public String getBTCUnits() {
-        return "BTC";
-    }
+	public String getBTCUnits() {
+		return "BTC";
+	}
+	public String getSatoshiUnits() {
+		return "sat";
+	}
 
 }

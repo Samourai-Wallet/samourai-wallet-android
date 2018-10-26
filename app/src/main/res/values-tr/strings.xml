@@ -94,6 +94,10 @@
   <string name="options_haptic_2">PIN kodu girerken her basışta titretir.</string>
   <string name="options_prune">Yedek Temizle</string>
   <string name="options_prune2">Yedek dosyalarını temizle.</string>
+  <string name="options_address_calc">Adres hesaplayıcı</string>
+  <string name="options_address_calc2">Cüzdanınızın sözcüklerinden türetilen adresleri hesaplayın.</string>
+  <string name="options_paynym_calc">PayNym hesaplayıcı</string>
+  <string name="options_paynym_calc2">Diğer Paynymlar ile paylaşılan adresleri hesaplayın.</string>
   
 <string name="prompt_send_backup_to_support">Cüzdan yedeği teknik desteğe gönderilsin mi? Hiçbir özel anahtar, sözcük veya parola bilgisi içermez.</string>
 
@@ -502,6 +506,7 @@
   <string name="invalid_mnemonic_word">Geçersiz BIP39 sözcükleri</string>
   <string name="invalid_mnemonic">Geçersiz BIP39 sözcüğü</string>
   <string name="enter_your_code_here">Kodunuzu buraya girin</string>
+  
   <string name="declaimer_recovery_words">Yukarıdaki sözcükleri yazdığımı ve gizli, güvenli bir konumda sakladığımı beyan ederim. Benim parolam ve kurtarma sözcüklerime erişimi olan herkesin cüzdanıma ve tüm fonlarıma erişebileceğini anlıyor ve kabul ediyorum.</string>
   <string name="return_to_wallet">Cüzdana dön</string>
   <string name="caution_message_recovery_words">Bu sözcükleri bilgisayarınızda veya bulutta saklamak güvenli değildir. Bu sözcükleri bir kağıda yazın ve gizli, güvenli bir yerde saklayın.</string>
@@ -531,7 +536,7 @@
   <string name="total_p2wpkh">Yerli segwit adreslerde (bech32):</string>
   <string name="total_blocked">Toplam engellenen:</string>
 
-<string name="title_activity_main3">Main3Activity</string>
+  <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Gelişmiş</string>
     <string name="broadcast_with_txtenna">TxTenna ile yayınla</string>
@@ -554,5 +559,38 @@
         <item>Yerli segwit (bech32)</item>
         <item>Eski (P2PKH)</item>
     </string-array>
+
+  <string name="in_offline_mode">Samourai Cüzdan çevrimdışı kipte.</string>
+    <string name="tx_standby">İşlem beklemede</string>
+    <string name="show_hex">Hex Kodunu Göster</string>
+    <string name="tx_tenna_coming_soon">Android için txTenna yakında.</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">İndeks</string>
+
+    <string name="receive_addresses">Alım adresi</string>
+    <string name="send_addresses">Gönderim adresi</string>
+    <string name="display_receive_redeem">Redeem betiğini göster</string>
+    <string name="display_receive_privkey">Özel anahtarı göster</string>
+    <string name="invalid_index">Geçersiz indeks</string>
+    <string name="type_address">Adres tipi</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+    </string-array>
+
+    <string name="chain_id">Adres zinciri</string>
+    <string name="receive_chain">Alınacak Adres</string>
+    <string name="change_chain">Para üstü adresi</string>
+  <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+  <string name="encrypted_backup_detected">Şifrelenmiş yedek bulundu</string>
+  <string name="restore">YEDEĞİ YÜKLE</string>
+  <string name="request_amount">İstenilen Miktar</string>
+  <string name="address_type">Adres Tipi</string>
+  <string name="path">Yol</string>
 
 </resources>

@@ -7,12 +7,12 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -27,10 +27,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.WebUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
@@ -119,7 +116,7 @@ public class RefreshService extends IntentService {
                 PaymentCode pcode = BIP47Util.getInstance(RefreshService.this).getPaymentCode();
 //                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
 //                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString());
             }
             catch (AddressFormatException afe) {
                 afe.printStackTrace();
@@ -203,8 +200,6 @@ public class RefreshService extends IntentService {
 
         Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
         LocalBroadcastManager.getInstance(RefreshService.this).sendBroadcast(_intent);
-
-        ExchangeRateFactory.getInstance(RefreshService.this).exchangeRateThread();
 
     }
 

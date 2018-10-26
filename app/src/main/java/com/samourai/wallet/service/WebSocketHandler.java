@@ -25,6 +25,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
@@ -47,11 +48,6 @@ import java.util.TimerTask;
 public class WebSocketHandler {
 
     private WebSocket mConnection = null;
-
-    private Timer pingTimer = null;
-    private final long pingInterval = 20000L;
-    private final long pongTimeout = 5000L;
-    private boolean pingPongSuccess = false;
 
     private String[] addrs = null;
 
@@ -96,8 +92,6 @@ public class WebSocketHandler {
 
     public void stop() {
 
-        stopPingTimer();
-
         if(mConnection != null && mConnection.isOpen()) {
             mConnection.disconnect();
         }
@@ -108,7 +102,6 @@ public class WebSocketHandler {
         try {
             stop();
             connect();
-            startPingTimer();
         }
         catch (IOException | com.neovisionaries.ws.client.WebSocketException e) {
             e.printStackTrace();
@@ -169,12 +162,6 @@ public class WebSocketHandler {
                 mConnection = new WebSocketFactory()
                         .createSocket(SamouraiWallet.getInstance().isTestNet() ? "wss://api.samourai.io/test/v2/inv" : "wss://api.samourai.io/v2/inv")
                         .addListener(new WebSocketAdapter() {
-
-                            @Override
-                            public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-                                super.onPongFrame(websocket, frame);
-                                pingPongSuccess = true;
-                            }
 
                             public void onTextMessage(WebSocket websocket, String message) {
                                     Log.d("WebSocket", message);
@@ -384,43 +371,6 @@ public class WebSocketHandler {
 
             return null;
         }
-    }
-
-    private void startPingTimer(){
-
-        pingTimer = new Timer();
-        try {
-            pingTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    if (mConnection != null) {
-                        pingPongSuccess = false;
-                        if(mConnection.isOpen())   {
-                            mConnection.sendPing();
-                        }
-                        startPongTimer();
-                    }
-                }
-            }, pingInterval, pingInterval);
-        }
-        catch(IllegalStateException ise) {
-            pingTimer = null;
-        }
-    }
-
-    private void stopPingTimer(){
-        if(pingTimer != null) pingTimer.cancel();
-    }
-
-    private void startPongTimer(){
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!pingPongSuccess) {
-                    start();
-                }
-            }
-        }, pongTimeout);
     }
 
 }
