@@ -40,10 +40,11 @@ public class BIP47Meta {
 
     private static ConcurrentHashMap<String,String> pcodeLabels = null;
     private static ConcurrentHashMap<String,Boolean> pcodeArchived = null;
-    private static ConcurrentHashMap<String,ConcurrentHashMap<String,Integer>> pcodeIncomingIdxs = null;    // lookahead
+    private static ConcurrentHashMap<String,ConcurrentHashMap<String,Integer>> pcodeUnspentIdxs = null;
     private static ConcurrentHashMap<String,String> addr2pcode = null;
     private static ConcurrentHashMap<String,Integer> addr2idx = null;
     private static ConcurrentHashMap<String,Integer> pcodeOutgoingIdxs = null;
+    private static ConcurrentHashMap<String,Integer> pcodeIncomingIdxs = null;
     private static ConcurrentHashMap<String,Pair<String,Integer>> pcodeOutgoingStatus = null;
     private static ConcurrentHashMap<String,ArrayList<Integer>> pcodeIncomingUnspent = null;
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
@@ -59,10 +60,11 @@ public class BIP47Meta {
         if(instance == null) {
             pcodeLabels = new ConcurrentHashMap<String,String>();
             pcodeArchived = new ConcurrentHashMap<String,Boolean>();
-            pcodeIncomingIdxs = new ConcurrentHashMap<String,ConcurrentHashMap<String,Integer>>();
+            pcodeUnspentIdxs = new ConcurrentHashMap<String,ConcurrentHashMap<String,Integer>>();
             addr2pcode = new ConcurrentHashMap<String,String>();
             addr2idx = new ConcurrentHashMap<String,Integer>();
             pcodeOutgoingIdxs = new ConcurrentHashMap<String,Integer>();
+            pcodeIncomingIdxs = new ConcurrentHashMap<String,Integer>();
             pcodeOutgoingStatus = new ConcurrentHashMap<String,Pair<String,Integer>>();
             pcodeIncomingUnspent = new ConcurrentHashMap<String,ArrayList<Integer>>();
             pcodeIncomingStatus = new ConcurrentHashMap<String,String>();
@@ -78,10 +80,11 @@ public class BIP47Meta {
     public void clear() {
         pcodeLabels.clear();
         pcodeArchived.clear();
-        pcodeIncomingIdxs.clear();
+        pcodeUnspentIdxs.clear();
         addr2pcode.clear();
         addr2idx.clear();
         pcodeOutgoingIdxs.clear();
+        pcodeIncomingIdxs.clear();
         pcodeOutgoingStatus.clear();
         pcodeIncomingUnspent.clear();
         pcodeIncomingStatus.clear();
@@ -212,6 +215,19 @@ public class BIP47Meta {
         }
     }
 
+    public int getIncomingIdx(String pcode)   {
+        if(!pcodeIncomingIdxs.containsKey(pcode))    {
+            return 0;
+        }
+        else    {
+            return pcodeIncomingIdxs.get(pcode);
+        }
+    }
+
+    public void setIncomingIdx(String pcode, int idx)   {
+        pcodeIncomingIdxs.put(pcode, idx);
+    }
+
     public int getOutgoingIdx(String pcode)   {
         if(!pcodeOutgoingIdxs.containsKey(pcode))    {
             return 0;
@@ -233,7 +249,7 @@ public class BIP47Meta {
                 continue;
             }
             else    {
-                ConcurrentHashMap<String,Integer> map = pcodeIncomingIdxs.get(pcode);
+                ConcurrentHashMap<String,Integer> map = pcodeUnspentIdxs.get(pcode);
                 addrs.addAll(map.keySet());
             }
         }
@@ -295,13 +311,13 @@ public class BIP47Meta {
 
     public void setIncomingIdx(String pcode, int idx, String addr)   {
 
-        if(!pcodeIncomingIdxs.containsKey(pcode))    {
+        if(!pcodeUnspentIdxs.containsKey(pcode))    {
             ConcurrentHashMap<String, Integer> addrIdx = new ConcurrentHashMap<String, Integer>();
             addrIdx.put(addr, idx);
-            pcodeIncomingIdxs.put(pcode, addrIdx);
+            pcodeUnspentIdxs.put(pcode, addrIdx);
         }
         else    {
-            pcodeIncomingIdxs.get(pcode).put(addr, idx);
+            pcodeUnspentIdxs.get(pcode).put(addr, idx);
         }
     }
 
@@ -407,7 +423,7 @@ public class BIP47Meta {
         return ret;
     }
 
-    public int getIncomingIdx(String pcode)    {
+    public int getUnspentIdx(String pcode)    {
 
         int ret = -1;
 
@@ -464,9 +480,9 @@ public class BIP47Meta {
 
         for(String pcode : getLabels())   {
 
-            ConcurrentHashMap<String,Integer> incomingIdxs = pcodeIncomingIdxs.get(pcode);
+            ConcurrentHashMap<String,Integer> incomingIdxs = pcodeUnspentIdxs.get(pcode);
             ArrayList<Integer> unspentIdxs = getUnspent(pcode);
-            int highestUnspentIdx = getIncomingIdx(pcode);
+            int highestUnspentIdx = getUnspentIdx(pcode);
             boolean changed = false;
 
 //            Log.i("BIP47Meta", "highest idx:" + highestUnspentIdx + "," + pcode);
@@ -484,7 +500,7 @@ public class BIP47Meta {
             }
 
             if(changed)    {
-                pcodeIncomingIdxs.put(pcode, incomingIdxs);
+                pcodeUnspentIdxs.put(pcode, incomingIdxs);
             }
 
         }
@@ -507,8 +523,8 @@ public class BIP47Meta {
                 pobj.put("archived", pcodeArchived.get(pcode));
                 pobj.put("segwit", pcodeSegwit.get(pcode));
 
-                if(pcodeIncomingIdxs.containsKey(pcode))    {
-                    ConcurrentHashMap<String,Integer> incoming = pcodeIncomingIdxs.get(pcode);
+                if(pcodeUnspentIdxs.containsKey(pcode))    {
+                    ConcurrentHashMap<String,Integer> incoming = pcodeUnspentIdxs.get(pcode);
                     JSONArray _incoming = new JSONArray();
                     for(String s : incoming.keySet())   {
                         JSONObject o = new JSONObject();
@@ -521,6 +537,13 @@ public class BIP47Meta {
 
                 // addr2pcode not save to JSON
                 // addr2idx not save to JSON
+
+                if(pcodeIncomingIdxs.get(pcode) != null)    {
+                    pobj.put("_in_idx", pcodeIncomingIdxs.get(pcode));
+                }
+                else    {
+                    pobj.put("_in_idx", 0);
+                }
 
                 if(pcodeOutgoingIdxs.get(pcode) != null)    {
                     pobj.put("out_idx", pcodeOutgoingIdxs.get(pcode));
@@ -605,7 +628,11 @@ public class BIP47Meta {
                         addr2pcode.put(addr, obj.getString("payment_code"));
                         addr2idx.put(addr, idx);
                     }
-                    pcodeIncomingIdxs.put(obj.getString("payment_code"), incoming);
+                    pcodeUnspentIdxs.put(obj.getString("payment_code"), incoming);
+                }
+
+                if(obj.has("_in_idx"))    {
+                    pcodeIncomingIdxs.put(obj.getString("payment_code"), obj.getInt("_in_idx"));
                 }
 
                 if(obj.has("out_idx"))    {
