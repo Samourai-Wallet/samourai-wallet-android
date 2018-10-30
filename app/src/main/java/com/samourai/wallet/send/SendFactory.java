@@ -261,12 +261,6 @@ public class SendFactory	{
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
                 input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL);
             }
-            else if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L)   {
-                input.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_VAL);
-            }
-            else    {
-                ;
-            }
             inputs.add(input);
         }
 

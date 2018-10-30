@@ -656,7 +656,7 @@ public class SendActivity extends Activity {
                         samouraiFeeViaBIP47 = true;
                     }
 
-                    final JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, true);
+                    final JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, false);
                     if(jObj != null)    {
 
                         try {

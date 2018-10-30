@@ -408,6 +408,9 @@ public class RicochetMeta {
 
                 jHop = new JSONObject();
                 jHop.put("seq", (nbHops - i));
+                if(useTimeLock)    {
+                    jHop.put("nTimeLock", nTimeLock);
+                }
                 jHop.put("spend_amount", hopx.longValue());
                 jHop.put("fee", biFeePerHop.longValue());
                 jHop.put("prev_tx_hash", prevTxHash);
@@ -599,9 +602,6 @@ public class RicochetMeta {
         Sha256Hash txHash = Sha256Hash.wrap(prevTxHash);
         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash, Coin.valueOf(prevSpendAmount));
         TransactionInput txInput = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[]{}, outPoint, Coin.valueOf(prevSpendAmount));
-        if(nTimeLock > 0L)    {
-            txInput.setSequenceNumber(SamouraiWallet.NLOCKTIME_SEQUENCE_VAL);
-        }
         tx.addInput(txInput);
 
         TransactionSignature sig = tx.calculateWitnessSignature(0, ecKey, redeemScript.scriptCode(), Coin.valueOf(prevSpendAmount), Transaction.SigHash.ALL, false);
