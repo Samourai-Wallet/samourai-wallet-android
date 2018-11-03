@@ -34,7 +34,7 @@
     <string name="options_xpub49">Exibir Segwit YPUB</string>
     <string name="options_xpub49_2">Exibir chave pública estendida para conta Segwit BIP49.</string>
     <string name="options_xpub84">Exibir Segwit ZPUB</string>
-    <string name="options_xpub84_2">Exibir chave pública estendida para conta BIP84 Segwit account (Bech32).</string>
+    <string name="options_xpub84_2">Exibir chave pública estendida para conta BIP84 Segwit (Bech32).</string>
     <string name="options_wipe">Apagar carteira de forma segura</string>
     <string name="options_wipe2">Apagar seguramente esta carteira do aparelho.</string>
     <string name="options_stealth_display">Launcher Furtivo</string>
