@@ -48,7 +48,7 @@
             <TextView
                 style="@style/TextAppearance.AppCompat.Display2"
                 android:layout_width="wrap_content"
-                android:id="@+id/tx_btc_value"
+                android:id="@+id/tx_amount"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:gravity="center"

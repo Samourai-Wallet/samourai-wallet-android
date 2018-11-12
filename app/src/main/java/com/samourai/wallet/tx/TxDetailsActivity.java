@@ -1,40 +1,69 @@
 package com.samourai.wallet.tx;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.util.BlockExplorerUtil;
+import com.samourai.wallet.util.DateUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.widgets.CircleImageView;
 
+import org.bitcoinj.core.Coin;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Objects;
 
 
 public class TxDetailsActivity extends AppCompatActivity {
 
     private CircleImageView payNymAvatar;
-    private TextView payNymUsername, btcUnit, btcValue;
+    private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate;
+    private Tx tx;
+    private static final String TAG = "TxDetailsActivity";
+    private String BTCDisplayAmount, SatDisplayAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        if (getIntent().hasExtra("TX")) {
+            try {
+                JSONObject TxJsonObject = new JSONObject(getIntent().getStringExtra("TX"));
+                tx = new Tx(TxJsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         payNymUsername = findViewById(R.id.tx_paynym_username);
         btcUnit = findViewById(R.id.tx_unit);
-        btcValue = findViewById(R.id.tx_btc_value);
+        amount = findViewById(R.id.tx_amount);
         payNymAvatar = findViewById(R.id.img_paynym_avatar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        txId = findViewById(R.id.transaction_id);
+        txStatus = findViewById(R.id.tx_status);
+        txDate = findViewById(R.id.tx_date);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        btcValue.setOnClickListener(new View.OnClickListener() {
+        amount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggleUnits();
@@ -47,20 +76,67 @@ public class TxDetailsActivity extends AppCompatActivity {
             }
         });
 
+        setTx();
+
     }
 
+    private void setTx() {
+
+        calculateBTCDisplayAmount((long) tx.getAmount());
+        calculateSatoshiDisplayAmount((long) tx.getAmount());
+        amount.setText(BTCDisplayAmount);
+        if (tx.getConfirmations() < 3) {
+            txStatus.setTextColor(ContextCompat.getColor(this, R.color.tx_broadcast_offline_bg));
+            String txConfirmation = getString(R.string.unconfirmed) +
+                    " (" +
+                    tx.getConfirmations() +
+                    "/3)";
+            txStatus.setText(txConfirmation);
+
+        }
+        if (tx.getConfirmations() > 3) {
+            String txConfirmation = String.valueOf(tx.getConfirmations()) +
+                    " " +
+                    getString(R.string.confirmation);
+
+            txStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+            txStatus.setText(txConfirmation);
+        }
+
+        txId.setText(tx.getHash());
+        txDate.setText(DateUtil.getInstance(this).formatted(tx.getTS()));
+
+    }
+
+    private void calculateBTCDisplayAmount(long value) {
+        BTCDisplayAmount = Coin.valueOf(value).toPlainString();
+    }
 
     private void toggleUnits() {
         TransitionManager.beginDelayedTransition((ViewGroup) btcUnit.getRootView().getRootView(), new AutoTransition());
 
         if (btcUnit.getText().equals("BTC")) {
             btcUnit.setText("sat");
-            btcValue.setText("3,433.000");
+            amount.setText(SatDisplayAmount);
+
         } else {
             btcUnit.setText("BTC");
-            btcValue.setText("0.00003433");
+            amount.setText(BTCDisplayAmount);
         }
     }
+
+
+    private void calculateSatoshiDisplayAmount(long value) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat df = new DecimalFormat("#", symbols);
+        df.setMinimumIntegerDigits(1);
+        df.setMaximumIntegerDigits(16);
+        df.setGroupingUsed(true);
+        df.setGroupingSize(3);
+        SatDisplayAmount = df.format(value);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -69,12 +145,30 @@ public class TxDetailsActivity extends AppCompatActivity {
                 showPaynym();
                 break;
             }
+            case R.id.menu_item_block_explore: {
+                doExplorerView();
+                break;
+            }
             case android.R.id.home: {
                 finish();
                 break;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doExplorerView() {
+        if (tx.getHash() != null) {
+            int sel = PrefsUtil.getInstance(this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+            if (sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length) {
+                sel = 0;
+            }
+            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
+
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + tx.getHash()));
+            startActivity(browserIntent);
+        }
+
     }
 
     @Override
