@@ -35,7 +35,7 @@ import java.util.Objects;
 public class TxDetailsActivity extends AppCompatActivity {
 
     private CircleImageView payNymAvatar;
-    private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate;
+    private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate, bottomButton;
     private Tx tx;
     private static final String TAG = "TxDetailsActivity";
     private String BTCDisplayAmount, SatDisplayAmount;
@@ -61,6 +61,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         txId = findViewById(R.id.transaction_id);
         txStatus = findViewById(R.id.tx_status);
         txDate = findViewById(R.id.tx_date);
+        bottomButton = findViewById(R.id.btn_bottom_button);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         amount.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +93,7 @@ public class TxDetailsActivity extends AppCompatActivity {
                     tx.getConfirmations() +
                     "/3)";
             txStatus.setText(txConfirmation);
-
+            bottomButton.setText("Boost transaction fee");
         }
         if (tx.getConfirmations() > 3) {
             String txConfirmation = String.valueOf(tx.getConfirmations()) +
@@ -101,6 +102,7 @@ public class TxDetailsActivity extends AppCompatActivity {
 
             txStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
             txStatus.setText(txConfirmation);
+            bottomButton.setText("Pay again");
         }
 
         txId.setText(tx.getHash());
