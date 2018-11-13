@@ -18,11 +18,13 @@ import android.widget.TextView;
 import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.widgets.CircleImageView;
+import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONException;
@@ -39,7 +41,7 @@ public class TxDetailsActivity extends AppCompatActivity {
     private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate, bottomButton;
     private Tx tx;
     private static final String TAG = "TxDetailsActivity";
-    private String BTCDisplayAmount, SatDisplayAmount;
+    private String BTCDisplayAmount, SatDisplayAmount, paynymDisplayName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +111,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         txId.setText(tx.getHash());
         txDate.setText(DateUtil.getInstance(this).formatted(tx.getTS()));
         if (tx.getPaymentCode() != null) {
+            paynymDisplayName = BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode());
             showPaynym();
         }
 
@@ -189,9 +192,11 @@ public class TxDetailsActivity extends AppCompatActivity {
         payNymUsername.setVisibility(View.VISIBLE);
         payNymAvatar.setVisibility(View.VISIBLE);
 
-        //Set Paynym details here
-        payNymUsername.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
-        payNymAvatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.paynym));
+        payNymUsername.setText(paynymDisplayName);
+        Picasso.with(this)
+                .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + tx.getPaymentCode() + "/avatar")
+                .into(payNymAvatar);
+
     }
 
 
