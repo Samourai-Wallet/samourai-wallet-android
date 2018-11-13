@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.samourai.wallet.BalanceActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -107,6 +108,9 @@ public class TxDetailsActivity extends AppCompatActivity {
 
         txId.setText(tx.getHash());
         txDate.setText(DateUtil.getInstance(this).formatted(tx.getTS()));
+        if (tx.getPaymentCode() != null) {
+            showPaynym();
+        }
 
     }
 
@@ -186,7 +190,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         payNymAvatar.setVisibility(View.VISIBLE);
 
         //Set Paynym details here
-        payNymUsername.setText("+blackflower");
+        payNymUsername.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
         payNymAvatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.paynym));
     }
 
