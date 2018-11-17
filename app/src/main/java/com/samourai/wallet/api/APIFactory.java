@@ -214,12 +214,12 @@ public class APIFactory	{
             }
         }
         catch(Exception e) {
-        jsonObject = null;
-        e.printStackTrace();
-        return false;
+            jsonObject = null;
+            e.printStackTrace();
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
