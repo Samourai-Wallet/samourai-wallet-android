@@ -7,4 +7,11 @@
         android:key="explorer"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_language"
+        android:summary="@string/options_language2"
+        android:defaultValue="true"
+        android:key="systemLanguage"
+        />
+
 </PreferenceScreen>

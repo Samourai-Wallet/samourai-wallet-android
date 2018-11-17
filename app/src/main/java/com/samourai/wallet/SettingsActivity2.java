@@ -109,6 +109,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                final CheckBoxPreference cbLanguage = (CheckBoxPreference) findPreference("systemLanguage");
+                cbLanguage.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbLanguage.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, true);
+                        }
+                        Toast.makeText(getApplicationContext(), R.string.options_restartRequired, Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("txs"))   {
                 addPreferencesFromResource(R.xml.settings_txs);

@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_prefs">Preferences</string>
     <string name="options_cat_stealth">Stealth</string>
     <string name="options_cat_remote">Remote</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -632,5 +632,9 @@
     <string name="hide_log">HIDE LOG</string>
     <string name="copy">Copy</string>
     <string name="show_log">Show Log</string>
+
+    <string name="options_language">Use system language</string>
+    <string name="options_language2">Uncheck to use english</string>
+    <string name="options_restartRequired">This change takes effect after a restart of the app.</string>
 
 </resources>
