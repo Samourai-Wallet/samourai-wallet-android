@@ -196,6 +196,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("result")) {
                                                     if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
                                                         isOK = true;
+                                                        BatchSendUtil.getInstance().clear();
                                                     } else {
                                                         Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
                                                         failTx(R.string.tx_broadcast_ko);
@@ -212,6 +213,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("status")) {
                                                     if (jsonObject.getString("status").equals("ok")) {
                                                         isOK = true;
+                                                        BatchSendUtil.getInstance().clear();
                                                     }
                                                 }
                                             } else {
