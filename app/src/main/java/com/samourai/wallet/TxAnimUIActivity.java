@@ -221,6 +221,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                         }
                                     }
                                     catch(JSONException je) {
+                                        Toast.makeText(TxAnimUIActivity.this, je.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e("TxAnimUIActivity", "JSONException", je);
                                         failTx(R.string.tx_broadcast_ko);
                                     }
 
@@ -261,14 +263,19 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
-    private void failTx(int id)   {
-        progressView.reset();
+    private void failTx(final int id)   {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressView.reset();
 
-        progressView.offlineMode(1200);
-        progressView.setTxStatusMessage(R.string.tx_failed);
-        progressView.setTxSubText(id);
-//        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-//        progressView.toggleOfflineButton();
+                progressView.offlineMode(1200);
+                progressView.setTxStatusMessage(R.string.tx_failed);
+                progressView.setTxSubText(id);
+//              progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
+//              progressView.toggleOfflineButton();
+            }
+        });
     }
 
     private void offlineTx(int id, final String hex, final String hash)   {
