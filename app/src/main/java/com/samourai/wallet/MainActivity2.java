@@ -330,6 +330,10 @@ public class MainActivity2 extends Activity {
                     if(APIFactory.getInstance(MainActivity2.this).getToken())    {
                         doAppInit(isDial, strUri, strPCode);
                     }
+                    else    {
+                        Toast.makeText(MainActivity2.this, R.string.api_key_error, Toast.LENGTH_SHORT).show();
+                        MainActivity2.this.finish();
+                    }
 
                     Looper.loop();
 
