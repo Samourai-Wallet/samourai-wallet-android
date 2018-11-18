@@ -561,7 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Samourai работает в офлайн-режиме.</string>
-    <string name="broadcast_off">Your Samourai Wallet broadcasting is switched off.</string>
+    <string name="broadcast_off">Вещание с вашего кошелька Samourai отключено.</string>
     <string name="tx_standby">Транзакция ожидает отправки</string>
     <string name="show_hex">Показать hex-код</string>
     <string name="tx_tenna_coming_soon">txTenna для Android &#8211; скоро</string>
@@ -595,42 +595,42 @@
     <string name="path">Путь</string>
 
     <string name="title_activity_send_new_ui">SendNewUIActivity</string>
-    <string name="ricochet_hops_msg">Additional hops between your wallet and the final destination for increased fungibility</string>
-    <string name="review_transaction">REVIEW TRANSACTION</string>
-    <string name="stonewall_increases_deniability">STONEWALL Increases deniability and   reduce linkability of this transaction.</string>
+    <string name="ricochet_hops_msg">Дополнительные шаги между вашим кошельком и конечной точкой для улучшения взаимозаменяемости монет</string>
+    <string name="review_transaction">ПРОСМОТР ТРАНЗАКЦИИ</string>
+    <string name="stonewall_increases_deniability">STONEWALL позволяет правдоподобнее отрицать причастность и уменьшает количество возможных связей этой транзакции.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
-    <string name="cycling_bitcoin">Cycling bitcoin through the \n whirlpool will cover the tracks your \n transactions leave behind</string>
-    <string name="metadata_cleaner">metadata cleaner</string>
-    <string name="end_to_end_trustless">end-to-end trustlessness</string>
-    <string name="your_private_keys">Your private keys never leave the\n device at any point during the\n Whirlpool cycle</string>
-    <string name="different_cycles_for">different cycles for different needs</string>
-    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or a\n earn a small BTC reward when you\n complete a slow cycle</string>
-    <string name="supercharge_whirlpool_desc">Your coins will be added to the top of the queue for immediate processing</string>
+    <string name="cycling_bitcoin">Прокручивание биткоинов через \n whirlpool заметёт следы, которые \n ваши транзакции могли оставить</string>
+    <string name="metadata_cleaner">уборщик метаданных</string>
+    <string name="end_to_end_trustless">сквозная безопасность</string>
+    <string name="your_private_keys">Ваши приватные ключи остаются на\n устройстве на протяжении всего\n цикла Whirlpool</string>
+    <string name="different_cycles_for">разные циклы для разных нужд</string>
+    <string name="complete_a_slow_cycle">Заплатите небольшую комиссию за быстрый цикл\n или заработайте немного биткоинов за\n прохождение медленного</string>
+    <string name="supercharge_whirlpool_desc">Ваши монеты будут добавлены в самое начало очереди для приоритетной обработки</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
-    <string name="title_activity_cycle">CycleActivity</string>
-    <string name="standard_whirlpool_desc">Your coins will be added to the bottom of the queue but will earn a small BTC reward when the cycle completes</string>
-    <string name="standard">Standard</string>
-    <string name="_48_hours">48 hours +</string>
-    <string name="free">FREE</string>
+    <string name="title_activity_cycle">АктивностьЦикла</string>
+    <string name="standard_whirlpool_desc">Ваши монеты будут добавлены в конец очереди, но принесут небольшое вознаграждение по завершении цикла</string>
+    <string name="standard">Стандарт</string>
+    <string name="_48_hours">48 часов +</string>
+    <string name="free">БЕСПЛАТНО</string>
     <string name="_1_50">1.50%</string>
     <string name="_0_5_mins">0-5 mins</string>
-    <string name="select_a_cycle_type">Select a cycle type</string>
+    <string name="select_a_cycle_type">Выберите тип цикла</string>
     <string name="supercharge">SuperCharge</string>
-    <string name="transaction_broadcast">Transaction Broadcast</string>
-    <string name="pending">pending</string>
-    <string name="transaction_id">Transaction ID</string>
-    <string name="completed">Completed</string>
+    <string name="transaction_broadcast">Трансляция транзакции</string>
+    <string name="pending">в процессе</string>
+    <string name="transaction_id">ID транзакции</string>
+    <string name="completed">Выполнено</string>
     <string name="title_activity_received_tx">" "</string>
-    <string name="pay_again">Pay again</string>
-    <string name="miner_fee_rate">Miner fee rate</string>
-    <string name="status">Status</string>
+    <string name="pay_again">Заплатите снова</string>
+    <string name="miner_fee_rate">Размер комиссии майнерам</string>
+    <string name="status">Статус</string>
     <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
-    <string name="number_of_deterministic_combinations">Number of deterministic \ncombinations</string>
-    <string name="transaction_entropy">Transaction Entropy</string>
-    <string name="efficiency_score">Efficiency score</string>
-    <string name="hide_log">HIDE LOG</string>
-    <string name="copy">Copy</string>
-    <string name="show_log">Show Log</string>
-  
+    <string name="number_of_deterministic_combinations">Количество детерменировнных \nкомбинаций</string>
+    <string name="transaction_entropy">Энтропия транзакций</string>
+    <string name="efficiency_score">Оценка эффективности</string>
+    <string name="hide_log">СКРЫТЬ ЖУРНАЛ</string>
+    <string name="copy">Копировать</string>
+    <string name="show_log">Показать журнал</string>
+
 </resources>
