@@ -2,7 +2,6 @@ package com.samourai.wallet.spend;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
@@ -13,13 +12,14 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 
 import java.util.Objects;
 
 
-public class SendNewUIActivity extends AppCompatActivity {
+public class SendNewUIActivity extends BaseAppCompatActivity {
 
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;

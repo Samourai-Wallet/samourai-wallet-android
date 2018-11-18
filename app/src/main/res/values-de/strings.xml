@@ -597,7 +597,7 @@
 
     <string name="options_language">Systemsprache verwenden</string>
     <string name="options_language2">Deaktivieren um Englisch zu verwenden</string>
-    <string name="options_restartRequired">Diese Änderung wird erst nach einem Neustart der App wirksam.</string>
+    <string name="options_sureToChangeLanguage">Die App wird neugestartet, um diese Änderung vorzunehmen. Fortfahren?</string>
 	
 	
 

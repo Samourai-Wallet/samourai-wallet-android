@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -59,6 +58,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -72,7 +72,7 @@ import com.samourai.wallet.util.PrivKeyReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class OpenDimeActivity extends Activity {
+public class OpenDimeActivity extends BaseActivity {
 
     static {
         FileSystemFactory.registerFileSystem(new JavaFsFileSystemCreator());

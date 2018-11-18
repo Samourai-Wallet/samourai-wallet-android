@@ -18,7 +18,6 @@ import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -44,6 +43,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
@@ -70,7 +70,7 @@ import java.text.ParseException;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ReceiveActivity extends AppCompatActivity {
+public class ReceiveActivity extends BaseAppCompatActivity {
 
     private static int imgWidth = 0;
 

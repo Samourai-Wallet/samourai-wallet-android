@@ -57,6 +57,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -99,7 +100,7 @@ import org.bitcoinj.script.Script;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SendActivity extends Activity {
+public class SendActivity extends BaseActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;

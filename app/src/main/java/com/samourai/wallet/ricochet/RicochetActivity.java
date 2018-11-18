@@ -1,6 +1,5 @@
 package com.samourai.wallet.ricochet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -25,6 +24,7 @@ import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.send.PushTx;
@@ -37,7 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class RicochetActivity extends Activity {
+public class RicochetActivity extends BaseActivity {
 
     private String strPCode = null;
     private boolean samouraiFeeViaBIP47 = false;

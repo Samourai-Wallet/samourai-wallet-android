@@ -1,6 +1,5 @@
 package com.samourai.wallet.bip47.paynym;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.util.AppUtil;
 
 import com.samourai.wallet.R;
@@ -21,7 +21,7 @@ import com.samourai.wallet.util.PrefsUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClaimPayNymActivity extends Activity {
+public class ClaimPayNymActivity extends BaseActivity {
 
     private Button btClaim = null;
     private Button btRefuse = null;

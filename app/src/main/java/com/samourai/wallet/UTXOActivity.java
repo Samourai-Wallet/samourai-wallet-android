@@ -1,6 +1,5 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +32,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -54,7 +54,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UTXOActivity extends Activity {
+public class UTXOActivity extends BaseActivity {
 
     private class DisplayData   {
         private String addr = null;

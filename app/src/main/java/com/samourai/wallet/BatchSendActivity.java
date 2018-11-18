@@ -49,6 +49,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
@@ -92,7 +93,7 @@ import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
 
-public class BatchSendActivity extends Activity {
+public class BatchSendActivity extends BaseActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int FEE_SELECT = 2013;

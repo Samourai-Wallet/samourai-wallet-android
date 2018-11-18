@@ -38,6 +38,7 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.yanzhenjie.zbar.Symbol;
 
@@ -107,7 +108,7 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-public class BIP47Activity extends Activity {
+public class BIP47Activity extends BaseActivity {
 
     private static final int EDIT_PCODE = 2000;
     private static final int RECOMMENDED_PCODE = 2001;

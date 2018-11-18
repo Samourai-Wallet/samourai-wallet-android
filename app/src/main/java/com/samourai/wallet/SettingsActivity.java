@@ -12,15 +12,15 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.MenuItem;
 //import android.util.Log;
 
+import com.samourai.wallet.language.BasePreferenceActivity;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.util.AppUtil;
 
-public class SettingsActivity extends PreferenceActivity	{
+public class SettingsActivity extends BasePreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

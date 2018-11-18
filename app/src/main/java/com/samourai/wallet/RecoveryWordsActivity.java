@@ -1,6 +1,5 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,10 +15,11 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
-public class RecoveryWordsActivity extends Activity {
+public class RecoveryWordsActivity extends BaseActivity {
     private GridView recoveryWordsGrid;
     private Button returnToWallet;
     private CheckBox desclaimerCheckbox;

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
@@ -34,7 +35,7 @@ import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 
-public class BIP47Add extends Activity {
+public class BIP47Add extends BaseActivity {
 
     private EditText edLabel = null;
     private EditText edPCode = null;
