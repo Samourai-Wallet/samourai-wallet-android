@@ -71,7 +71,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     private int arcdelay = 800;
     private long signDelay = 2000L;
     private long broadcastDelay = 1599L;
-    private long resultDelay = 1500L;
+    private long resultDelay = 3000L;
 
     private Handler resultHandler = null;
 
