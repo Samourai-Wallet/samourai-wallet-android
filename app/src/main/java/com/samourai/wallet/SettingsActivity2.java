@@ -122,9 +122,11 @@ public class SettingsActivity2 extends BasePreferenceActivity {
 
 
                                         if (cbLanguage.isChecked()) {
-                                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, true);
-                                        } else {
                                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, false);
+                                            cbLanguage.setChecked(false);
+                                        } else {
+                                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, true);
+                                            cbLanguage.setChecked(true);
                                         }
                                         AppUtil.getInstance(SettingsActivity2.this).restartApp();
 
@@ -135,7 +137,7 @@ public class SettingsActivity2 extends BasePreferenceActivity {
                             }
                         }).show();
 
-                        return true;
+                        return false;
                     }
                 });
 
