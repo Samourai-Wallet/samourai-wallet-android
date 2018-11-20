@@ -1,6 +1,5 @@
 package com.samourai.wallet.tx;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -18,19 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.samourai.wallet.BalanceActivity;
-import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.R;
-import com.samourai.wallet.api.Tx;
-import com.samourai.wallet.bip47.BIP47Activity;
-import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.send.PushTx;
-import com.samourai.wallet.send.RBFSpend;
-import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.send.boost.RBFCallback;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.boost.RBFTask;
+import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.send.boost.CPFPTask;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -38,9 +31,6 @@ import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.Transaction;
-import org.bouncycastle.util.encoders.DecoderException;
-import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,8 +38,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Objects;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -58,11 +48,12 @@ import io.reactivex.schedulers.Schedulers;
 public class TxDetailsActivity extends AppCompatActivity {
 
     private CircleImageView payNymAvatar;
-    private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate, bottomButton;
+    private TextView payNymUsername, btcUnit, amount, txStatus, txId, txDate, bottomButton, minerFee, minerFeeRate;
     private Tx tx;
     private static final String TAG = "TxDetailsActivity";
     private String BTCDisplayAmount, SatDisplayAmount, paynymDisplayName;
     private RBFTask rbfTask = null;
+    private CPFPTask cpfpTask = null;
     private ProgressBar progressBar;
 
     @Override
@@ -89,29 +80,18 @@ public class TxDetailsActivity extends AppCompatActivity {
         bottomButton = findViewById(R.id.btn_bottom_button);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         progressBar = findViewById(R.id.progressBar);
-        amount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleUnits();
-            }
-        });
-        btcUnit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleUnits();
-            }
-        });
+        minerFee = findViewById(R.id.tx_miner_fee_paid);
+        minerFeeRate = findViewById(R.id.tx_miner_fee_rate);
+        amount.setOnClickListener(view -> toggleUnits());
+        btcUnit.setOnClickListener(view -> toggleUnits());
 
         setTx();
 
-        bottomButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TxDetailsActivity.this.isBoostingAvailable()) {
-                    TxDetailsActivity.this.doBoosting();
-                } else {
-                    TxDetailsActivity.this.payAgain();
-                }
+        bottomButton.setOnClickListener(view -> {
+            if (this.isBoostingAvailable()) {
+                this.doBoosting();
+            } else {
+                this.payAgain();
             }
         });
 
@@ -154,100 +134,110 @@ public class TxDetailsActivity extends AppCompatActivity {
             showPaynym();
         }
 
-
+        fetchTxDetails();
     }
 
     private void doBoosting() {
-        if (this.isRBFPossible()) {
+        String message = getString(R.string.options_unconfirmed_tx);
 
-            String message = getString(R.string.options_unconfirmed_tx);
+        if (this.isRBFPossible()) {
+            Log.i(TAG, "doBoosting: RBF");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.app_name);
             builder.setMessage(message);
             builder.setCancelable(true);
-            builder.setPositiveButton(R.string.options_bump_fee, (dialog, whichButton) -> {
-                TxDetailsActivity.this.RBFBoost();
-            });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(final DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+            builder.setPositiveButton(R.string.options_bump_fee, (dialog, whichButton) -> this.RBFBoost());
+            builder.setNegativeButton(R.string.cancel, (dialog, whichButton) -> dialog.dismiss());
 
             AlertDialog alert = builder.create();
             alert.show();
             return;
+        } else {
+            if (this.isCPFPPossible()) {
+                Log.i(TAG, "doBoosting: CPFP");
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TxDetailsActivity.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage(message);
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.options_bump_fee, (dialog, whichButton) -> this.CPFBoost());
+                builder.setNegativeButton(R.string.cancel, (dialog, whichButton) -> dialog.dismiss());
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    }
+
+    private void CPFBoost() {
+        if (cpfpTask == null || cpfpTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+            cpfpTask = new CPFPTask(TxDetailsActivity.this);
+            cpfpTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
         }
     }
 
     private void RBFBoost() {
-        rbfTask = new RBFTask(this, tx.getHash());
 
-//        if (rbfTask == null || rbfTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-//            rbfTask = new RBFTask(TxDetailsActivity.this);
-//            rbfTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
-//        }
-        Log.i(TAG, "RBFBoost: CLICKe");
-        toggleProgress(View.VISIBLE);
-        rbfTask.prepareMessage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.i(TAG, "onNext: onSubscribe");
 
-                    }
-
-                    @Override
-                    public void onNext(String message) {
-                        toggleProgress(View.INVISIBLE);
-                        android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(TxDetailsActivity.this)
-                                .setTitle(R.string.app_name)
-                                .setMessage(message)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        toggleProgress(View.VISIBLE);
-                                        rbfTask.pushRFB();
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        dlg.show();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Log.i(TAG, "onNext Error: ".concat(e.getMessage()));
-                        toggleProgress(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onNext onComplete");
-                    }
-                });
-
-        rbfTask.rbfCallback = message -> {
-            toggleProgress(View.INVISIBLE);
-//                Log.i(TAG, "onSuccess: ".concat(successMessage));
-            Toast.makeText(TxDetailsActivity.this, message, Toast.LENGTH_LONG).show();
-            Intent _intent = new Intent(this, MainActivity2.class);
-            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(_intent);
-        };
-
-//
+        if (rbfTask == null || rbfTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+            rbfTask = new RBFTask(this);
+            rbfTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+        }
 
     }
 
     private boolean isBoostingAvailable() {
         return tx.getConfirmations() < 3;
     }
+
+    private void fetchTxDetails() {
+        toggleProgress(View.VISIBLE);
+        makeTxNetworkRequest()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(JSONObject jsonObject) {
+                        toggleProgress(View.INVISIBLE);
+
+                        try {
+                            setFeeInfo(jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        toggleProgress(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    /**
+     * @param jsonObject
+     * @throws JSONException
+     */
+    private void setFeeInfo(JSONObject jsonObject) throws JSONException {
+        if (jsonObject.has("fees")) {
+            minerFee.setText(jsonObject.getString("fees").concat(" sats"));
+        }
+        if (jsonObject.has("feerate")) {
+            minerFeeRate.setText(jsonObject.getString("feerate").concat(" sats"));
+        }
+    }
+
+    private Observable<JSONObject> makeTxNetworkRequest() {
+        return Observable.create(emitter -> emitter.onNext(APIFactory.getInstance(TxDetailsActivity.this).getTxInfo(tx.getHash())));
+    }
+
 
     private void calculateBTCDisplayAmount(long value) {
         BTCDisplayAmount = Coin.valueOf(value).toPlainString();
@@ -300,6 +290,10 @@ public class TxDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * Opens external BlockExplorer
+     */
     private void doExplorerView() {
         if (tx.getHash() != null) {
             int sel = PrefsUtil.getInstance(this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
@@ -324,7 +318,6 @@ public class TxDetailsActivity extends AppCompatActivity {
         TransitionManager.beginDelayedTransition((ViewGroup) payNymAvatar.getRootView().getRootView(), new AutoTransition());
         payNymUsername.setVisibility(View.VISIBLE);
         payNymAvatar.setVisibility(View.VISIBLE);
-
         payNymUsername.setText(paynymDisplayName);
         Picasso.with(this)
                 .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + tx.getPaymentCode() + "/avatar")
@@ -333,18 +326,24 @@ public class TxDetailsActivity extends AppCompatActivity {
     }
 
 
-    private boolean isAwaitingForConfimation() {
-        return tx.getConfirmations() < 3;
-    }
-
-    // CPFP
-    private boolean isCPFPPossible() {
-        return tx.getConfirmations() < 1 && tx.getAmount() < 0.0 || tx.getConfirmations() < 1 && tx.getAmount() >= 0.0;
-    }
-
-    // RBF
+    /***
+     * checks tx can be boosted using
+     * Replace-by-fee method
+     * @return boolean
+     */
     private boolean isRBFPossible() {
         return tx.getConfirmations() < 1 && tx.getAmount() < 0.0 && RBFUtil.getInstance().contains(tx.getHash());
+    }
+
+    /***
+     * checks tx can be boosted using
+     * child pays for parent method
+     * @return boolean
+     */
+    private boolean isCPFPPossible() {
+        boolean a = tx.getConfirmations() < 1 && tx.getAmount() >= 0.0;
+        boolean b = tx.getConfirmations() < 1 && tx.getAmount() < 0.0;
+        return (a || b);
     }
 
 
