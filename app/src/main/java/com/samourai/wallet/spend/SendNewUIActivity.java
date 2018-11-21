@@ -34,7 +34,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_new_ui);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_send));
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("");
 
         //CustomView for showing and hiding body of th UI
@@ -58,20 +58,10 @@ public class SendNewUIActivity extends AppCompatActivity {
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
 
 
-        btnReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                review();
-            }
-        });
+        btnReview.setOnClickListener(v -> review());
 
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(SendNewUIActivity.this, "Send Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnSend.setOnClickListener(v -> Toast.makeText(SendNewUIActivity.this, "Send Clicked", Toast.LENGTH_SHORT).show());
 
 
     }
@@ -93,7 +83,12 @@ public class SendNewUIActivity extends AppCompatActivity {
             public void run() {
                 entropyBar.setRange(3);
             }
-        },7000);
+        },7000);  new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                entropyBar.setRange(2);
+            }
+        },9000);
     }
 
     private void backToTransactionView() {
