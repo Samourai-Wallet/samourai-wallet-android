@@ -124,11 +124,12 @@ public class TxDetailsActivity extends AppCompatActivity {
 
             txStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
             txStatus.setText(txConfirmation);
-            bottomButton.setText("Pay again");
+            bottomButton.setVisibility(View.INVISIBLE);
         }
 
         txId.setText(tx.getHash());
         txDate.setText(DateUtil.getInstance(this).formatted(tx.getTS()));
+
         if (tx.getPaymentCode() != null) {
             paynymDisplayName = BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode());
             showPaynym();
