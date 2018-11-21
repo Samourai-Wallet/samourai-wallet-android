@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -15,8 +14,6 @@ import android.widget.ViewSwitcher;
 import com.samourai.wallet.R;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
-
-import java.util.Objects;
 
 
 public class SendNewUIActivity extends AppCompatActivity {
@@ -47,7 +44,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         //Input elements from toolbar section of the UI
         toEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
-        fiatEditText = findViewById(R.id.amountFiat);
+        fiatEditText = findViewById(R.id.amountSat);
 
         entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
         //view elements from review segment and transaction segment can be access through respective

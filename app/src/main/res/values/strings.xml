@@ -632,5 +632,6 @@
     <string name="hide_log">HIDE LOG</string>
     <string name="copy">Copy</string>
     <string name="show_log">Show Log</string>
+    <string name="total_available_amount">Total available amount</string>
 
 </resources>
