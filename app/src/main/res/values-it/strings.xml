@@ -527,6 +527,12 @@
 
     <string name="boltzmann_cannot">Una transazione STONEWALL non può essere composta con il tuo attuale set di output non spesi. Se hai bisogno di una transazione STONEWALL, scegli \'NO\' e prova ancora con un altro set di output.</string>
     <string name="boltzmann_like_typed">Nota che \'Ricevi il resto in output di stessa tipologia\' è DISATTIVATO e può risultare in una struttura subottimale per la tua transazione STONEWALL.</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avanzate</string>
+    <string name="broadcast_with_txtenna">Broadcast con TxTenna</string>
+    <string name="show_qr_code">Mostra QR Code</string>
+    <string name="tx_connectivity_failure_msg">Impossibile trasmettere la transazione senza connessione dati. Come vuoi procedere?</string>
 
     <string name="insufficient_fee">Fee insufficienti</string>
     <string name="action_utxo_amounts">Visualizza gli importi per tipo indirizzo</string>
@@ -536,12 +542,6 @@
     <string name="total_p2wpkh">Totale segwit (bech32):</string>
     <string name="total_blocked">Totale bloccati:</string>
 
-    <string name="title_activity_main3">Main3Activity</string>
-    <string name="_0_00">0.00</string>
-    <string name="advanced">Avanzate</string>
-    <string name="broadcast_with_txtenna">Broadcast con TxTenna</string>
-    <string name="show_qr_code">Mostra QR Code</string>
-    <string name="tx_connectivity_failure_msg">Impossibile trasmettere la transazione senza connessione dati. Come vuoi procedere?</string>
 
     <string name="tx_creating_ok">Creazione transazione...</string>
     <string name="tx_creating_ko">Errore nella creazione della transazione.</string>
@@ -561,6 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Samourai Wallet è in modalità offline.</string>
+    <string name="broadcast_off">Il broadcasting del tuo wallet Samourai è disattivato.</string>
     <string name="tx_standby">Transazione in stand-by</string>
     <string name="show_hex">Visualizza Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna su Android in arrivo presto!</string>
@@ -587,5 +588,49 @@
     <string name="receive_chain">Indirizzo di ricezione</string>
     <string name="change_chain">Indirizzo di resto</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+    <string name="encrypted_backup_detected">Trovato backup criptato</string>
+    <string name="restore">RIPRISTINA</string>
+    <string name="request_amount">Richiedi importo</string>
+    <string name="address_type">Tipo di indirizzo</string>
+    <string name="path">Path</string>
+
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg">Hop addizionali tra il tuo wallet e la destinazione finale per una fungibilità migliore</string>
+    <string name="review_transaction">CONTROLLA TRANSAZIONE</string>
+    <string name="stonewall_increases_deniability">STONEWALL aumenta la negabilità e riduce la linkabilità di questa transazione.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Ciclare bitcoin attraverso \n whirlpool coprirà le tracce che le \n tue transazioni si lasciano alle spalle</string>
+    <string name="metadata_cleaner">pulitura metadati</string>
+    <string name="end_to_end_trustless">end-to-end trustlessness</string>
+    <string name="your_private_keys">Le tue chiavi private non lasciano mai il\n dispositivo in nessun punto durante il\n ciclo Whirlpool</string>
+    <string name="different_cycles_for">cicli differenti per necessità differenti</string>
+    <string name="complete_a_slow_cycle">Paga una piccola fee per un ciclo più veloce oppure\n guadagna una piccola ricompensa in BTC quando\n completi un ciclo lento</string>
+    <string name="supercharge_whirlpool_desc">I tuoi coin saranno aggiunti in cima alla coda per essere processati immediatamente</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string>
+    <string name="standard_whirlpool_desc">I tuoi coin saranno aggiunti in fondo alla coda, ma riceverai una piccola ricompensa in BTC al termine del ciclo</string>
+    <string name="standard">Standard</string>
+    <string name="_48_hours">48 ore +</string>
+    <string name="free">GRATIS</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 min</string>
+    <string name="select_a_cycle_type">Seleziona un tipo di ciclo</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Broadcast Transazione</string>
+    <string name="pending">in corso</string>
+    <string name="transaction_id">ID Transazione</string>
+    <string name="completed">Completato</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Paga ancora</string>
+    <string name="miner_fee_rate">Rata di fee per i miners</string>
+    <string name="status">Stato</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Numero di combinazioni \ndeterministiche</string>
+    <string name="transaction_entropy">Entropia della Transazione</string>
+    <string name="efficiency_score">Punteggio Efficienza</string>
+    <string name="hide_log">NASCONDI LOG</string>
+    <string name="copy">Copia</string>
+    <string name="show_log">Mostra Log</string>
 
 </resources>

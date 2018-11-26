@@ -231,7 +231,7 @@ public class WebSocketHandler {
                                             for (int j = 0; j < inputArray.length(); j++) {
                                                 inputObj = (JSONObject) inputArray.get(j);
 
-                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") <= SamouraiWallet.RBF_SEQUENCE_NO)    {
+                                                if(inputObj.has("sequence") && (inputObj.getLong("sequence") == SamouraiWallet.RBF_SEQUENCE_VAL || inputObj.getLong("sequence") == SamouraiWallet.RBF_SEQUENCE_VAL_WITH_NLOCKTIME))    {
                                                     isRBF = true;
                                                 }
 
