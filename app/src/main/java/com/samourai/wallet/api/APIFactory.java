@@ -171,7 +171,8 @@ public class APIFactory	{
 
     public synchronized boolean getToken() {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+//        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = WebUtil.SAMOURAI_API2_TESTNET;
 
         JSONObject jsonObject  = null;
 
