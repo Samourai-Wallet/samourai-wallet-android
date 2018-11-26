@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/list_item_spacing_half"
+    android:background="@color/windowDark"
+    android:paddingBottom="@dimen/list_item_spacing_half"
+    tools:context="com.samourai.wallet.fragments.PaynymSelectModalFragment"
+    tools:listitem="@layout/fragment_paynymselectmodal_list_item" />

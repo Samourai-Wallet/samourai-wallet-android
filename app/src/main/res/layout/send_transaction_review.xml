@@ -64,10 +64,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="right"
+                android:id="@+id/selected_fee_rate_in_layman"
                 android:text="Urgent"
                 android:textColor="@android:color/white" />
 
             <TextView
+                android:id="@+id/selected_fee_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="33 sat/b" />
@@ -93,6 +95,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/total_fee"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"

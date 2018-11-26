@@ -96,6 +96,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.spend.SendNewUIActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -776,6 +777,9 @@ public class BalanceActivity extends Activity {
         }
         else if (id == R.id.action_scan_qr) {
             doScan();
+        }
+        else if (id == R.id.action_new_spend) {
+            startActivity(new Intent(this,SendNewUIActivity.class));
         }
         else {
             ;

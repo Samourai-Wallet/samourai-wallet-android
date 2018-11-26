@@ -3,26 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_view_switcher"
-    android:inAnimation="@android:anim/fade_in"
-    android:outAnimation="@android:anim/fade_out"
     android:layout_width="match_parent"
-    android:layout_height="160dp">
-
+    android:layout_height="180dp"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
 
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:layout_editor_absoluteY="81dp">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/to_edt_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,104 +34,114 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="To"
-                android:inputType="text"
+                android:inputType="textNoSuggestions"
                 android:maxLines="0" />
+
+
         </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="2dp"
+            android:id="@+id/paynym_select_btn"
+            android:background="?attr/selectableItemBackground"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_search_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/to_edt_layout"
+            app:layout_constraintEnd_toEndOf="@+id/to_edt_layout"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/to_edt_layout"
+            app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:id="@+id/textInputLayout3"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
+            android:layout_height="70dp"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal"
+            android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout"
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            >
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="50">
-
-                <EditText
-                    android:id="@+id/amountBTC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="6dp"
-                    android:fontFamily="@font/roboto_mono"
-                    android:text="BTC"
-                    android:typeface="monospace" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_weight="50">
-
-                <TextView
-                    android:id="@+id/tvFiatSymbol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="6dp"
-                    android:fontFamily="@font/roboto_mono"
-                    android:text="sat"
-                    android:typeface="monospace" />
-
+                android:inputType="textPersonName">
 
                 <EditText
                     android:id="@+id/amountSat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0,1,2,3,4,5,6,7,8,9,."
                     android:fontFamily="@font/roboto_mono"
-                    android:gravity="right"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
+                    android:gravity="start"
+                    android:hint="sat"
+                    android:inputType="textMultiLine|phone"
+                    android:maxLines="2"
+                    android:scrollbars="vertical" />
 
 
-            </RelativeLayout>
-        </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
+        </FrameLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputLayout2"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
+
+            <EditText
+                android:id="@+id/amountBTC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_mono"
+                android:gravity="start"
+                android:hint="BTC"
+                android:inputType="number|textMultiLine"
+                android:maxHeight="12dp"
+                android:maxLines="2" />
+
+
+        </android.support.design.widget.TextInputLayout>
+
 
         <TextView
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_alignParentBottom="true"
+            android:layout_height="19dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/txt_grey"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/total_available_amount"
+            android:textColor="@color/txt_grey"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/totalBTC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="0.0 BTC"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -141,6 +150,7 @@
 
 
     </android.support.constraint.ConstraintLayout>
+
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -151,13 +161,13 @@
 
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/text_to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="To..."
             android:textColor="@color/txt_grey"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -168,50 +178,50 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/to_address_review"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/roboto_mono"
             android:maxLines="2"
-            tools:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/text_to"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d" />
 
         <TextView
             android:id="@+id/textView121"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/amount"
             android:textColor="@color/txt_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
+            app:layout_constraintTop_toBottomOf="@+id/to_address_review"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/send_review_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/roboto_mono"
-            android:text="1.00 BTC"
+            tools:text="1.00 BTC"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
