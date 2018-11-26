@@ -259,13 +259,9 @@ public class SendFactory	{
 
             MyTransactionInput input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-                input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL);
+                input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
             }
             inputs.add(input);
-        }
-
-        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L && PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == false)    {
-            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
         }
 
         //
