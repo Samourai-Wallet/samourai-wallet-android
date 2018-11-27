@@ -17,14 +17,17 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -41,6 +44,7 @@ import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.yanzhenjie.zbar.Symbol;
 
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -68,6 +72,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private ImageView selectPaynymBtn;
     private Switch ricochetHopsSwitch;
     private ConstraintLayout bottomSheet;
+    private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
 //    BottomSheetBehavior sheetBehavior;
 
@@ -124,6 +129,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
+        feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -445,6 +451,12 @@ public class SendNewUIActivity extends AppCompatActivity {
             this.onBackPressed();
             return true;
         }
+        if (item.getItemId() == R.id.action_scan_qr) {
+            Intent intent = new Intent(this, ZBarScannerActivity.class);
+            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+            startActivityForResult(intent, SCAN_QR);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -662,11 +674,6 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     }
 
-
-    private void disableSend(boolean enable) {
-        btnSend.setEnabled(!enable);
-        btnSend.setAlpha(!enable ? 1f : .8f);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

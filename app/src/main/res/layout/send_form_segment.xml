@@ -4,10 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_view_switcher"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="189dp"
     android:inAnimation="@android:anim/fade_in"
     android:outAnimation="@android:anim/fade_out">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,7 +20,7 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteY="81dp">
 
-        <android.support.design.widget.TextInputLayout
+        <FrameLayout
             android:id="@+id/to_edt_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -26,35 +30,48 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
 
-            <EditText
-                android:id="@+id/edt_send_to"
+            >
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:ems="10"
-                android:hint="To"
-                android:inputType="textNoSuggestions"
-                android:maxLines="0" />
+                android:inputType="textNoSuggestions">
+
+                <EditText
+                    android:id="@+id/edt_send_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="To"
+                    android:inputType="textNoSuggestions|textMultiLine"
+                     android:maxLines="2"
+                    android:scrollbars="vertical"
+                    android:paddingRight="22dp" />
 
 
-        </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
+        </FrameLayout>
+
 
         <ImageView
+            android:id="@+id/paynym_select_btn"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="2dp"
-            android:id="@+id/paynym_select_btn"
-            android:background="?attr/selectableItemBackground"
             android:layout_marginBottom="8dp"
+            android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_search_white_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/to_edt_layout"
             app:layout_constraintEnd_toEndOf="@+id/to_edt_layout"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/to_edt_layout"
             app:layout_constraintTop_toTopOf="parent" />
+
         <FrameLayout
             android:id="@+id/textInputLayout3"
             android:layout_width="0dp"
@@ -151,6 +168,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    </ScrollView>
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
