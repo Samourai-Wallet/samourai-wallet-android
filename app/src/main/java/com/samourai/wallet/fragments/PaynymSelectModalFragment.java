@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.spend.SendNewUIActivity;
 import com.squareup.picasso.Picasso;
@@ -44,7 +45,7 @@ public class PaynymSelectModalFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final RecyclerView recyclerView = (RecyclerView) view;
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
 
         paymentCodes = new ArrayList<>(BIP47Meta.getInstance().getSortedByLabels(false));
 
@@ -102,6 +103,7 @@ public class PaynymSelectModalFragment extends BottomSheetDialogFragment {
             Picasso.with(getContext())
                     .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + paymentCodes.get(position) + "/avatar")
                     .into(holder.avatar);
+
 
         }
 
