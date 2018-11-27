@@ -458,6 +458,9 @@ public class BatchSendActivity extends Activity {
 
             if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
 
+                strPCode = null;
+                strDestinationBTCAddress = null;
+
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
                 processScan(strResult);

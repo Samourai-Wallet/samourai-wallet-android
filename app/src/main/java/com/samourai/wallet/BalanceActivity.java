@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,13 +19,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Html;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -56,8 +49,13 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.TransactionWitness;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.BIP38PrivateKey;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.crypto.TransactionSignature;
+import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -70,7 +68,9 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
-import com.samourai.wallet.bip47.rpc.*;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
@@ -96,6 +96,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.spend.SendNewUIActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -110,11 +111,6 @@ import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.TypefaceUtil;
 
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.TransactionSignature;
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.script.Script;
-import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -222,40 +218,6 @@ public class BalanceActivity extends Activity {
                         }
                     }
                 });
-                /*
-                BalanceActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        refreshTx(notifTx, false, false);
-
-                        if(BalanceActivity.this != null)    {
-
-                            if(rbfHash != null)    {
-                                new AlertDialog.Builder(BalanceActivity.this)
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
-                                        .setCancelable(true)
-                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                doExplorerView(rbfHash);
-
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        }).show();
-
-                            }
-
-                        }
-
-                    }
-                });
-                */
 
                 if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
 
@@ -816,6 +778,9 @@ public class BalanceActivity extends Activity {
         else if (id == R.id.action_scan_qr) {
             doScan();
         }
+        else if (id == R.id.action_new_spend) {
+            startActivity(new Intent(this,SendNewUIActivity.class));
+        }
         else {
             ;
         }
@@ -1049,6 +1014,8 @@ public class BalanceActivity extends Activity {
                 final PrivKeyReader pvr = privKeyReader;
 
                 final EditText password38 = new EditText(BalanceActivity.this);
+                password38.setSingleLine(true);
+                password38.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                         .setTitle(R.string.app_name)
@@ -1865,75 +1832,75 @@ public class BalanceActivity extends Activity {
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-                                                    stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+                                        if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                                            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+                                        }
+                                        startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+
+                                        Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
+                                        if(tx != null)    {
+                                            tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
+                                            final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
+                                            Log.d("BalanceActivity", hexTx);
+
+                                            final String strTxHash = tx.getHashAsString();
+                                            Log.d("BalanceActivity", strTxHash);
+
+                                            boolean isOK = false;
+                                            try {
+
+                                                isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
+
+                                                if(isOK)    {
+
+                                                    handler.post(new Runnable() {
+                                                        public void run() {
+                                                            Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
+
+                                                            FeeUtil.getInstance().setSuggestedFee(suggestedFee);
+
+                                                            Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
+                                                            _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                                            startActivity(_intent);
+                                                        }
+                                                    });
+
                                                 }
-                                                startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-
-                                                Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
-                                                if(tx != null)    {
-                                                    tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
-                                                    final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
-                                                    Log.d("BalanceActivity", hexTx);
-
-                                                    final String strTxHash = tx.getHashAsString();
-                                                    Log.d("BalanceActivity", strTxHash);
-
-                                                    boolean isOK = false;
-                                                    try {
-
-                                                        isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
-
-                                                        if(isOK)    {
-
-                                                            handler.post(new Runnable() {
-                                                                public void run() {
-                                                                    Toast.makeText(BalanceActivity.this, R.string.cpfp_spent, Toast.LENGTH_SHORT).show();
-
-                                                                    FeeUtil.getInstance().setSuggestedFee(suggestedFee);
-
-                                                                    Intent _intent = new Intent(BalanceActivity.this, MainActivity2.class);
-                                                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                                                    startActivity(_intent);
-                                                                }
-                                                            });
-
+                                                else    {
+                                                    handler.post(new Runnable() {
+                                                        public void run() {
+                                                            Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                                                         }
-                                                        else    {
-                                                            handler.post(new Runnable() {
-                                                                public void run() {
-                                                                    Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
+                                                    });
 
-                                                            // reset receive index upon tx fail
-                                                            if(FormatsUtil.getInstance().isValidBech32(addr))    {
-                                                                int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-                                                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
-                                                                int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-                                                            else    {
-                                                                int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
-                                                                HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                            }
-
-                                                        }
+                                                    // reset receive index upon tx fail
+                                                    if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                                                        int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
-                                                    catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
-                                                        handler.post(new Runnable() {
-                                                            public void run() {
-                                                                Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+                                                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                        int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
-                                                    finally {
-                                                        ;
+                                                    else    {
+                                                        int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
+                                                        HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
 
                                                 }
+                                            }
+                                            catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                                handler.post(new Runnable() {
+                                                    public void run() {
+                                                        Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                            finally {
+                                                ;
+                                            }
+
+                                        }
 
                                     }
                                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -2384,7 +2351,7 @@ public class BalanceActivity extends Activity {
                     final Transaction _tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
                     List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
                     _txOutputs.addAll(txOutputs);
-                    Collections.sort(_txOutputs, new SendFactory.BIP69OutputComparator());
+                    Collections.sort(_txOutputs, new BIP69OutputComparator());
                     for(TransactionOutput to : _txOutputs) {
                         // zero value outputs discarded here
                         if(to.getValue().longValue() > 0L)    {

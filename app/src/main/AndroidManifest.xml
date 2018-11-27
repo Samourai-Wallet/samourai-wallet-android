@@ -167,7 +167,9 @@
 
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            />
 
         <service
             android:name=".service.WebSocketService"
