@@ -1,6 +1,5 @@
 package com.samourai.wallet.spend;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,8 +14,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -53,6 +50,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class SendNewUIActivity extends AppCompatActivity {
@@ -65,7 +63,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView maxAmount, totalFee, toAddress, estimatedBlockWait, selectedFeeRate, selectedFeeRateLayman;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman;
     private Button btnReview, btnSend;
     private ImageView selectPaynymBtn;
     private Switch ricochetHopsSwitch;
@@ -97,8 +95,8 @@ public class SendNewUIActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_new_ui);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar_send));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(findViewById(R.id.toolbar_send));
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
         //CustomView for showing and hiding body of th UI
         sendTransactionDetailsView = findViewById(R.id.sendTransactionDetailsView);
@@ -111,24 +109,24 @@ public class SendNewUIActivity extends AppCompatActivity {
         toAddressEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
         satEditText = findViewById(R.id.amountSat);
-        btcEditText.addTextChangedListener(BTCWatcher);
-        satEditText.addTextChangedListener(satWatcher);
-        toAddress = findViewById(R.id.to_address_review);
+        tvToAddress = findViewById(R.id.to_address_review);
         selectPaynymBtn = findViewById(R.id.paynym_select_btn);
-        maxAmount = findViewById(R.id.totalBTC);
-//        Log.i(TAG, "onCreate: ".concat(maxAmount.toString()));
-        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
+        tvReviewSpendAmount = findViewById(R.id.send_review_amount);
+        tvMaxAmount = findViewById(R.id.totalBTC);
+
+
         //view elements from review segment and transaction segment can be access through respective
         //methods which returns root viewGroup
+        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
-
-        selectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
-        selectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
-        totalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
-
+        tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
+        tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
+        tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
-//        bottomSheet = findViewById(R.id.bottom_sheet);
+
+        btcEditText.addTextChangedListener(BTCWatcher);
+        satEditText.addTextChangedListener(satWatcher);
 
         btnReview.setOnClickListener(v -> review());
 
@@ -152,6 +150,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         }
 
         setUpRicochet();
+
         setUpFee();
 
         Bundle extras = getIntent().getExtras();
@@ -292,7 +291,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         strAmount = nf.format(balance / 1e8);
         Log.i(TAG, "setBalance: ------------> ".concat(strAmount));
         Log.i(TAG, "setBalance: ------------> ".concat(getDisplayUnits()));
-        maxAmount.setText(strAmount + " " + getDisplayUnits());
+        tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
 
     }
 
@@ -398,17 +397,17 @@ public class SendNewUIActivity extends AppCompatActivity {
         }
     };
 
-    private void setToAddress(String string) {
-        toAddress.setText(string);
+    private void setTvToAddress(String string) {
+        tvToAddress.setText(string);
         toAddressEditText.setText(string);
     }
 
-    private String getToAddress() {
+    private String getTvToAddress() {
         if (toAddressEditText.getText().toString().trim().length() != 0) {
             return toAddressEditText.getText().toString();
         }
-        if (toAddress.getText().toString().length() != 0) {
-            return toAddress.getText().toString();
+        if (tvToAddress.getText().toString().length() != 0) {
+            return tvToAddress.getText().toString();
         }
         return "";
     }
@@ -425,29 +424,13 @@ public class SendNewUIActivity extends AppCompatActivity {
     }
 
     private void review() {
-        amountViewSwitcher.showNext();
-        sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
-        isOnReviewPage = true;
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                entropyBar.disable();
-//            }
-//        }, 4000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                entropyBar.setRange(3);
-//            }
-//        }, 7000);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                entropyBar.setRange(2);
-//            }
-//        }, 9000);
+
+        if (validateSpend()) {
+            tvReviewSpendAmount.setText(btcEditText.getText());
+            amountViewSwitcher.showNext();
+            sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
+        }
+
     }
 
     private void backToTransactionView() {
@@ -526,9 +509,9 @@ public class SendNewUIActivity extends AppCompatActivity {
                     NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                     btcFormat.setMaximumFractionDigits(8);
                     btcFormat.setMinimumFractionDigits(1);
-                    setToAddress(btcFormat.format(Double.parseDouble(amount) / 1e8));
+                    setTvToAddress(btcFormat.format(Double.parseDouble(amount) / 1e8));
                 } catch (NumberFormatException nfe) {
-                    setToAddress("0.0");
+                    setTvToAddress("0.0");
                 }
             }
 
@@ -538,7 +521,7 @@ public class SendNewUIActivity extends AppCompatActivity {
             nf.setMinimumFractionDigits(1);
             nf.setMaximumFractionDigits(8);
             strAmount = nf.format(balance / 1e8);
-            maxAmount.setText(strAmount + " " + getDisplayUnits());
+            tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
 
             try {
                 if (amount != null && Double.parseDouble(amount) != 0.0) {
@@ -553,9 +536,9 @@ public class SendNewUIActivity extends AppCompatActivity {
         } else if (FormatsUtil.getInstance().isValidBitcoinAddress(data)) {
 
             if (FormatsUtil.getInstance().isValidBech32(data)) {
-                setToAddress(data.toLowerCase());
+                setTvToAddress(data.toLowerCase());
             } else {
-                setToAddress(data);
+                setTvToAddress(data);
             }
 
         } else if (data.contains("?")) {
@@ -602,7 +585,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     }
 
                     strPCode = _pcode.toString();
-                    setToAddress(BIP47Meta.getInstance().getDisplayLabel(strPCode));
+                    setTvToAddress(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     toAddressEditText.setEnabled(false);
                 } catch (Exception e) {
                     Toast.makeText(this, R.string.error_payment_code, Toast.LENGTH_SHORT).show();
@@ -629,20 +612,20 @@ public class SendNewUIActivity extends AppCompatActivity {
     }
 
 
-    private void validateSpend() {
+    private boolean validateSpend() {
 
         boolean isValid = false;
         boolean insufficientFunds = false;
 
         double btc_amount = 0.0;
 
-        String strBTCAddress = getToAddress();
+        String strBTCAddress = getTvToAddress();
         if (strBTCAddress.startsWith("bitcoin:")) {
-            setToAddress(strBTCAddress.substring(8));
+            setTvToAddress(strBTCAddress.substring(8));
         }
 
         try {
-            btc_amount = NumberFormat.getInstance(Locale.US).parse(getToAddress()).doubleValue();
+            btc_amount = NumberFormat.getInstance(Locale.US).parse(btcEditText.getText().toString()).doubleValue();
 //            Log.i("SendFragment", "amount entered:" + btc_amount);
         } catch (NumberFormatException nfe) {
             btc_amount = 0.0;
@@ -663,7 +646,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if (btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
+        if (btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(getTvToAddress())) {
             isValid = true;
         } else if (btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
@@ -672,11 +655,17 @@ public class SendNewUIActivity extends AppCompatActivity {
         }
 
         if (!isValid || insufficientFunds) {
-            btnSend.setVisibility(View.INVISIBLE);
+            return false;
         } else {
-            btnSend.setVisibility(View.VISIBLE);
+            return true;
         }
 
+    }
+
+
+    private void disableSend(boolean enable) {
+        btnSend.setEnabled(!enable);
+        btnSend.setAlpha(!enable ? 1f : .8f);
     }
 
     @Override
