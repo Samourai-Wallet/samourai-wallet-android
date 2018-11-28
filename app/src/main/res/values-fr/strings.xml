@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
 
-    <string name="options_cat_prefs">Monnaie, Explorateur de blocs</string>
+    <string name="options_cat_prefs">Explorateur de blocs</string>
     <string name="options_cat_stealth">Mode furtif</string>
     <string name="options_cat_remote">À distance</string>
     <string name="options_cat_wallet">Portefeuille</string>
