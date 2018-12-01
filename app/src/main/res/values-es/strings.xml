@@ -20,7 +20,7 @@
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="options_cat_prefs">Moneda, Explorador de bloques</string>
+    <string name="options_cat_prefs">Explorador de bloques</string>
     <string name="options_cat_stealth">Invisibilidad</string>
     <string name="options_cat_remote">Control remoto</string>
     <string name="options_cat_wallet">Billetera</string>
