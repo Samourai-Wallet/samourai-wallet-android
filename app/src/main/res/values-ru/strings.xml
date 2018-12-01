@@ -12,7 +12,7 @@
     <string name="action_support">Поддержка</string>
     <string name="action_sweep">Втянуть приватный ключ</string>
     <string name="action_bip47">PayNym\'ы</string>
-    <string name="action_unarchive">Активировать все архивированные платёжные коды</string>
+    <string name="action_unarchive">Разархивировать все платёжные коды</string>
     <string name="action_sync_all">Синхронизировать все платёжные коды</string>
 
     <string name="about_us">О кошельке Masanari</string>
@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
 
-    <string name="options_cat_prefs">Проводник блоков, валюты</string>
+    <string name="options_cat_prefs">Проводник блоков</string>
     <string name="options_cat_stealth">Маскировка</string>
     <string name="options_cat_remote">Удалённое управление</string>
     <string name="options_cat_wallet">Кошелёк</string>
@@ -74,7 +74,7 @@
     <string name="options_use_trusted_node">Использовать доверенную ноду</string>
     <string name="options_use_trusted_node2">Отправлять транзакции через свою собственную ноду.</string>
     <string name="options_rbf0">Использовать RBF в платежах</string>
-    <string name="options_rbf0_2">Использовать replace-by-fee для возможности повышения комиссии в уже отправленных транзакциях.</string>
+    <string name="options_rbf0_2">Использовать replace-by-fee для получения возможности повышения комиссии в уже отправленных транзакциях.</string>
     <string name="options_troubleshoot">Диагностика</string>
     <string name="options_passphrase_test">Проверка парольной фразы/бэкапа</string>
     <string name="options_passphrase_test2">Убедиться в возможности доступа к кошельку и корректности резервной копии.</string>
@@ -89,9 +89,15 @@
     <string name="options_broadcast_hex">Отправлять транзакции в hex</string>
     <string name="options_broadcast_hex2">Отправлять подписанные транзакции в шестнадцатеричном формате.</string>
     <string name="options_like_typed_change">Сдача на тот же тип адреса</string>
-    <string name="options_like_typed_change2">Отправлять сдачу на тот же тип адреса, с которого она была отправлена. Отключите, чтобы всегда получать сдачу на segwit-адреса.</string>
+    <string name="options_like_typed_change2">Отправлять сдачу с транзакции на тот же тип адреса, с которого она была отправлена. Отключите, чтобы всегда получать сдачу на segwit-адреса.</string>
     <string name="options_haptic">Вибрация при вводе PIN</string>
-    <string name="options_haptic_2">Вибрировать при нажатии на каждую кнопку при вводе PIN.</string>
+    <string name="options_haptic_2">Вибрировать при нажатии на кнопки при вводе PIN.</string>
+    <string name="options_prune">Урезать бэкап</string>
+    <string name="options_prune2">Урезать полезные данные кошелька и файлы бэкапа.</string>
+    <string name="options_address_calc">Калькулятор адресов</string>
+    <string name="options_address_calc2">Вычисляет адреса, выведенные из мнемоники вашего кошелька.</string>
+    <string name="options_paynym_calc">Калькулятор PayNym\'ов</string>
+    <string name="options_paynym_calc2">Вычисляет адреса, связанные с другими PayNym\'ами.</string>
 
     <string name="prompt_send_backup_to_support">Отправить резервную копию кошелька в техподдержку? Отправленная информация не будет включать приватный ключ, мнемонику или парольную фразу.</string>
 
@@ -179,7 +185,7 @@
     <string name="you_must_have_orbot">У вас должен быть установлен Orbot и активирован прокси-трафик через него. Хотите установить Orbot из Google Play?</string>
 
     <string name="ssl_pinning_invalid">Привязка SSL-сертификата не удалась. Это может свидетельствовать о подозрительных действиях третьих лиц. Проверьте своё устройство и соединение с интернетом прежде чем продолжить.</string>
-    <string name="ssl_no_connection">Мы не можем связаться с хостом для верификации SSL-сертификата. Провертье своё устройство и соединение с интернетом прежде чем продолжить.</string>
+    <string name="ssl_no_connection">Мы не можем связаться с хостом для верификации SSL-сертификата. Проверьте своё устройство и соединение с интернетом прежде чем продолжить.</string>
     <string name="retry">Повторить</string>
     <string name="exit">Выход</string>
 
@@ -232,7 +238,7 @@
     <string name="bip47_setup4_text2">Будет уплачена с баланса вашего кошелька.</string>
 
     <string name="bip47_add1_title">Новый контакт</string>
-    <string name="bip47_add1_text">Отсканируйте или вставьте платёжный код чтобы создать новый платёжный канал.</string>
+    <string name="bip47_add1_text">Отсканируйте или вставьте платёжный код, чтобы создать новый платёжный канал.</string>
 
     <string name="paste">Вставить</string>
     <string name="label">Пометить</string>
@@ -250,7 +256,7 @@
     <string name="bip47_cannot_scan_own_pcode">Не получается отсканировать собственный платёжный код</string>
     <string name="bip47_spend_to_pcode">Отправить через этот платёжный канал?</string>
     <string name="bip47_sign">Подписать сообщение</string>
-    <string name="bip47_sign_text1">Подписать сообщение используя приватный ключ от BIP47 notification-адреса?</string>
+    <string name="bip47_sign_text1">Подписать сообщение, используя приватный ключ от BIP47 notification-адреса?</string>
     <string name="bip47_sign_text2">Подписано моим BIP47 notification-адресом.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Этот платёжный канал ожидает одного подтверждения прежде чем разрешить отправку средств. Хотите отказаться от предыдущей попытки и попробовать отправить извещение заново?></string>
 
@@ -272,8 +278,8 @@
     <string name="change_is_dust">Сдача с этой транзакции чересчур мала. Попробуйте ещё раз, уменьшив количество отправляемых средств или потратьте их все.</string>
 
     <string name="tor_routing_on">Трафик Masanari идёт через Tor.</string>
-    <string name="tor_routing_off">Трафик Masanari не проходит через Tor. Нажмите, чтобы перенаправить.</string>
-    <string name="tor_install">Нажмите, чтобы установить Orbot и пропускать трафик Masanari через Tor.</string>
+    <string name="tor_routing_off">Трафик Masanari не проходит через Tor. Нажмите сюда, чтобы перенаправить.</string>
+    <string name="tor_install">Нажмите сюда, чтобы установить Orbot и пропускать трафик Masanari через Tor.</string>
 
     <string name="premium_addons">Премиум-аддоны</string>
 
@@ -281,7 +287,7 @@
     <string name="ricochet_hopping">Отправлено через Ricochet на</string>
     <string name="ricochet_spend1">Отправлено через Ricochet на</string>
     <string name="ricochet_spend2">на общую сумму в</string>
-    <string name="ricochet_spend3">(включая вознаграждение Masanari размером 0,002 BTC и комиссию майнерам)?</string>
+    <string name="ricochet_spend3">(включая вознаграждение Masanari в размере 0,002 BTC и комиссию майнерам)?</string>
 
     <string name="action_ricochet">Повторить Ricochet</string>
     <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>
@@ -311,7 +317,7 @@
     <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Masanari поддерживает Bitcoin Core 0.13.1 и выше.</string>
     <string name="trusted_node_tx_sent">Транзакция отправлена через доверенную ноду.</string>
     <string name="trusted_node_not_responding">Доверенная нода не отвечает. Пожалуйста, проверьте конфигурацию.</string>
-    <string name="trusted_node_breaks_consensus">Доверенная нода не может быть установлена на биткоин-клиент, нарушающий правила работы сети.</string>
+    <string name="trusted_node_breaks_consensus">Доверенной нодой не может быть биткоин-клиент, нарушающий правила работы сети.</string>
 
     <string name="refresh_tx_pre">Получаем данные о транзакциях и балансе.</string>
     <string name="refresh_tx">Данные о транзакциях и балансе получены.</string>
@@ -346,7 +352,7 @@
     <string name="cannot_create_change_output">Не удаётся создать выход для сдачи</string>
     <string name="cannot_create_cpfp">Не удаётся создать CPFP-транзакцию</string>
 
-    <string name="error_reading_payload">Ошибка чтения основных данных. Попробуйте ещё раз.</string>
+    <string name="error_reading_payload">Ошибка чтения полезных данных. Попробуйте ещё раз.</string>
 
     <string name="utxo_sign">Подписать сообщение</string>
     <string name="utxo_sign_text1">Подписать сообщение этим приватным ключом?</string>
@@ -367,7 +373,7 @@
     <string name="opendime_no_valid_key">Не удаётся проверить приватный ключ на устройстве</string>
     <string name="opendime_view">ОБЗОР</string>
     <string name="opendime_sweep">ВТЯНУТЬ</string>
-    <string name="opendime_topup">ПОПОЛНИТь</string>
+    <string name="opendime_topup">ПОПОЛНИТЬ</string>
 
     <string name="select_app">Выберите приложение</string>
     <string name="masanari_opendime">Masanari: OpenDime</string>
@@ -382,7 +388,7 @@
 
     <string name="replay_broadcast_to_network">отправляю в сеть...</string>
     <string name="replay_seen_on_network">замечено в сети...</string>
-    <string name="replay_split_tx_broadcast">отправляю сплит транзакцию...</string>
+    <string name="replay_split_tx_broadcast">отправляю разделяющую транзакцию...</string>
     <string name="replay_description">Ваш кошелёк отправит специальную транзакцию самому себе, что навсегда разделит ваши монеты с другой сетью. Это защитит вас от replay-атак</string>
     <string name="replay_waiting_for_confirmations">ожидаем подтверждений</string>
     <string name="replay_confirmed">подтверждено</string>
@@ -412,7 +418,7 @@
     <string name="broadcast">Отправить транзакцию</string>
 
     <string name="dusting_tx">МИКРОТРАНЗАКЦИЯ</string>
-    <string name="dusting_attempt">Несанкционированная микротранзакция на ваш кошелёк может означать попытку отслеживания ваших адресов и расходов.\n\nОтметьте это микроколичество как нерасходуемое для во избежание рисков отслеживания третьими лицами.</string>
+    <string name="dusting_attempt">Несанкционированная микротранзакция на ваш кошелёк может означать попытку отслеживания ваших адресов и расходов.\n\nОтметьте это микроколичество как нерасходуемое во избежание рисков отслеживания третьими лицами.</string>
     <string name="dusting_attempt_amount">Количество:</string>
     <string name="dusting_attempt_id">Хэш-Индекс:</string>
     <string name="dusting_attempt_ignore">Игнорировать</string>
@@ -427,7 +433,7 @@
     <string name="mark_utxo_do_not_spend">Заблокировать этот непотраченный выход?</string>
 
     <string name="options_sign_a_message">Подписать сообщение</string>
-    <string name="options_display_redeem_script">Показать высвобождающий скрипт</string>
+    <string name="options_display_redeem_script">Показать отмыкающий скрипт</string>
     <string name="options_view_tx">Посмотреть транзакцию</string>
     <string name="options_display_privkey">Показать приватный ключ</string>
     <string name="options_batch">Составная транзакция</string>
@@ -460,12 +466,12 @@
     <string name="help">Помощь</string>
 
     <string name="passphrase_disclaimer">Я понимаю, что Masanari не сможет мне помочь, если я забуду или потеряю свою парольную фразу. У Masanari нет никаких данных о ней.</string>
-    <string name="confirm_pin_code">Подтвердить ПИН</string>
-    <string name="re_enter_your_pin_code">Введите ПИН ещё раз</string>
+    <string name="confirm_pin_code">Подтвердить PIN</string>
+    <string name="re_enter_your_pin_code">Введите PIN ещё раз</string>
     <string name="re_enter_a_passphrase">Введите парольную фразу ещё раз</string>
     <string name="create_a_passphrase">Введите парольную фразу</string>
     <string name="create_a_secure_passphrase_for_your_wallet">Придумайте безопасную парольную фразу для своего кошелька</string>
-    <string name="set_pin_code">Установить ПИН</string>
+    <string name="set_pin_code">Установить PIN</string>
     <string name="accept_disclaimer_error">Вы должны согласиться с разъяснением</string>
     <string name="import_external_wallet">Импортировать сторонний кошелёк</string>
     <string name="import_masanari_wallet">Импортировать бэкап masanari</string>
@@ -500,9 +506,10 @@
     <string name="invalid_mnemonic_word">Неправильное слово BIP39-мнемоники</string>
     <string name="invalid_mnemonic">Неправильная BIP39-мнемоника</string>
     <string name="enter_your_code_here">Введите ваш код</string>
+
     <string name="declaimer_recovery_words">Я подтверждаю, что я записал вышестоящие слова и сохранил их в надёжном и безопасном месте. Я понимаю, что каждый, кто имеет доступ к моей парольной фразе и словам для восстановления, сможет получить доступ к моему кошельку и всем моим средствам.</string>
     <string name="return_to_wallet">Возврат к кошельку</string>
-    <string name="caution_message_recovery_words">Небезопасно хранить эти слова на вашем компьютере или в облаке. Запишите эти слова на бумаге и скрытно храните их в надёжном месте.</string>
+    <string name="caution_message_recovery_words">Небезопасно хранить эти слова на вашем компьютере или в облаке. Запишите эти слова на бумаге и тайно храните их в надёжном месте.</string>
     <string name="these_words_are">Эти слова &#8211; резервная копия всех ваших приватных ключей в этом кошельке.</string>
     <string name="recovery_words">СЛОВА ДЛЯ ВОССТАНОВЛЕНИЯ</string>
 
@@ -528,5 +535,62 @@
     <string name="total_p2sh_p2wpkh">Всего segwit (p2sh):</string>
     <string name="total_p2wpkh">Всего segwit (bech32):</string>
     <string name="total_blocked">Всего заблокированных:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Дополнительно</string>
+    <string name="broadcast_with_txtenna">Отправить с помощью TxTenna</string>
+    <string name="show_qr_code">Показать QR-код</string>
+    <string name="tx_connectivity_failure_msg">Не удаётся отправить транзакцию в отсутствие подключения к интернету. Что следует сделать?</string>
+
+    <string name="tx_creating_ok">Создаём транзакцию...</string>
+    <string name="tx_creating_ko">Не удалось создать транзакцию</string>
+    <string name="tx_signing_ok">Подписываем транзакцию...</string>
+    <string name="tx_signing_ko">Не удалось подписать транзакцию</string>
+    <string name="tx_broadcast_ok">Отправляем транзакцию...</string>
+    <string name="tx_broadcast_ko">Не удалось отправить транзакцию</string>
+    <string name="tx_sent_ok">Транзакция отправлена</string>
+    <string name="tx_sent_ko">Транзакция не была отправлена</string>
+
+    <string name="prune_backup">Урезать полезные данные и файлы бэкапа?</string>
+
+    <string-array name="address_types">
+        <item>Segwit-совместимый (P2SH)</item>
+        <item>Чистый Segwit (bech32)</item>
+        <item>Legacy-адрес (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">Masanari работает в офлайн-режиме.</string>
+    <string name="tx_standby">Транзакция ожидает отправки</string>
+    <string name="show_hex">Показать hex-код</string>
+    <string name="tx_tenna_coming_soon">txTenna для Android &#8211; скоро</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Индекс</string>
+
+    <string name="receive_addresses">Адреса получения</string>
+    <string name="send_addresses">Адреса отправки</string>
+    <string name="display_receive_redeem">Получить отмыкающий скрипт</string>
+    <string name="display_receive_privkey">Получить приватный ключ</string>
+    <string name="invalid_index">Неправильный индекс</string>
+    <string name="type_address">Тип адреса</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit пре-миксовый</item>
+        <item>Whirlpool Segwit пост-миксовый</item>
+    </string-array>
+
+    <string name="chain_id">Цепь адресов:</string>
+    <string name="receive_chain">Адрес получения</string>
+    <string name="change_chain">Адрес для сдачи</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit пост-миксовый</string>
+    <string name="encrypted_backup_detected">Обнаружен зашифрованный бэкап</string>
+    <string name="restore">ВОССТАНОВИТЬ</string>
+    <string name="request_amount">Запрашиваемая сумма</string>
+    <string name="address_type">Тип адреса</string>
+    <string name="path">Путь</string>
 
 </resources>

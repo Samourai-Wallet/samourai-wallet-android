@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.masanari.wallet.MainActivity2;
 import com.masanari.wallet.access.AccessFactory;
 import com.masanari.wallet.api.APIFactory;
-import com.masanari.wallet.hd.HD_Wallet;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.payload.PayloadUtil;
 import com.masanari.wallet.prng.PRNGFixes;

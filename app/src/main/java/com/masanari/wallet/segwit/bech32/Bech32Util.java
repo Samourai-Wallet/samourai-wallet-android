@@ -1,6 +1,7 @@
 package com.masanari.wallet.segwit.bech32;
 
 import com.masanari.wallet.MasanariWallet;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.util.encoders.Hex;

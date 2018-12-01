@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.masanari.wallet.access.AccessFactory;
 import com.masanari.wallet.crypto.AESUtil;
 import com.masanari.wallet.crypto.DecryptionException;
-import com.masanari.wallet.hd.HD_Wallet;
+import com.samourai.wallet.hd.HD_Wallet;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.payload.PayloadUtil;
 import com.masanari.wallet.permissions.PermissionsUtil;

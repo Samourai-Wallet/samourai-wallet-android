@@ -508,10 +508,10 @@
     <string name="enter_your_code_here">Enter your code here</string>
 
     <string name="declaimer_recovery_words">I confirm that I have written the above words down and have stored them in a safe and secure location. I understand that anyone who has access to both my passphrase and my recovery words will be able to access my wallet and all my funds.</string>
-  <string name="return_to_wallet">Return to wallet</string>
-  <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
+    <string name="return_to_wallet">Return to wallet</string>
+    <string name="caution_message_recovery_words">It is not safe to keep these words backed up on your computer or in the cloud. Write these words down on a piece of paper and keep it secret and secure.</string>
     <string name="these_words_are">These words are a backup of all the secret keys in your wallet.</string>
-  <string name="recovery_words">RECOVERY WORDS</string>
+    <string name="recovery_words">RECOVERY WORDS</string>
 
   <string name="permission_alert_dialog_title_sms">Requesting SMS and Phone state permission</string>
   <string name="permission_dialog_message_sms">Your wallet needs access to SMS send and receive so it can use remote alert features.</string>
@@ -525,23 +525,23 @@
 
   <string name="use_bech32">Use bech32 address</string>
 
-  <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
-  <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
-
-  <string name="insufficient_fee">Insufficient fee</string>
-  <string name="action_utxo_amounts">View amounts by address type</string>
-
-  <string name="total_p2pkh">Total legacy (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-  <string name="total_p2wpkh">Total segwit (bech32):</string>
-  <string name="total_blocked">Total blocked:</string>
-
+    <string name="boltzmann_cannot">A STONEWALL spend could not be composed with your current set of unspents. If you require a STONEWALL spend tap \'NO\' and try again with a modified set of unspents.</string>
+    <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Advanced</string>
     <string name="broadcast_with_txtenna">Broadcast with TxTenna</string>
     <string name="show_qr_code">Show QR Code</string>
     <string name="tx_connectivity_failure_msg">Cannot broadcast transaction without a data connection.How would you like to proceed</string>
+
+
+    <string name="insufficient_fee">Insufficient fee</string>
+  <string name="action_utxo_amounts">View amounts by address type</string>
+
+  <string name="total_p2pkh">Total legacy (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+  <string name="total_p2wpkh">Total segwit (bech32):</string>
+  <string name="total_blocked">Total blocked:</string>
 
     <string name="tx_creating_ok">Creating transaction...</string>
     <string name="tx_creating_ko">Cannot create transaction</string>
@@ -561,6 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Masanari Wallet is in offline mode.</string>
+    <string name="broadcast_off">Your Masanari Wallet broadcasting is switched off.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
@@ -592,5 +593,44 @@
     <string name="request_amount">Request Amount</string>
     <string name="address_type">Address Type</string>
     <string name="path">Path</string>
+
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg">Additional hops between your wallet and the final destination for increased fungibility</string>
+    <string name="review_transaction">REVIEW TRANSACTION</string>
+    <string name="stonewall_increases_deniability">STONEWALL Increases deniability and   reduce linkability of this transaction.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Cycling bitcoin through the \n whirlpool will cover the tracks your \n transactions leave behind</string>
+    <string name="metadata_cleaner">metadata cleaner</string>
+    <string name="end_to_end_trustless">end-to-end trustlessness</string>
+    <string name="your_private_keys">Your private keys never leave the\n device at any point during the\n Whirlpool cycle</string>
+    <string name="different_cycles_for">different cycles for different needs</string>
+    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or a\n earn a small BTC reward when you\n complete a slow cycle</string>
+    <string name="supercharge_whirlpool_desc">Your coins will be added to the top of the queue for immediate processing</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string>
+    <string name="standard_whirlpool_desc">Your coins will be added to the bottom of the queue but will earn a small BTC reward when the cycle completes</string>
+    <string name="standard">Standard</string>
+    <string name="_48_hours">48 hours +</string>
+    <string name="free">FREE</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 mins</string>
+    <string name="select_a_cycle_type">Select a cycle type</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Transaction Broadcast</string>
+    <string name="pending">pending</string>
+    <string name="transaction_id">Transaction ID</string>
+    <string name="completed">Completed</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Pay again</string>
+    <string name="miner_fee_rate">Miner fee rate</string>
+    <string name="status">Status</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Number of deterministic \ncombinations</string>
+    <string name="transaction_entropy">Transaction Entropy</string>
+    <string name="efficiency_score">Efficiency score</string>
+    <string name="hide_log">HIDE LOG</string>
+    <string name="copy">Copy</string>
+    <string name="show_log">Show Log</string>
 
 </resources>

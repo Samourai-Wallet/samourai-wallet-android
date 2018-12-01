@@ -4,20 +4,27 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.masanari.wallet.MasanariWallet;
-import com.masanari.wallet.bip47.rpc.BIP47Wallet;
-import com.masanari.wallet.bip47.rpc.NotSecp256k1Exception;
+
 import com.masanari.wallet.bip47.rpc.SecretPoint;
-import com.masanari.wallet.hd.HD_Address;
+import com.samourai.wallet.bip47.rpc.BIP47Wallet;
+import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.bip47.rpc.secretPoint.ISecretPoint;
+import com.samourai.wallet.bip47.rpc.secretPoint.ISecretPointFactory;
+
 import com.masanari.wallet.hd.HD_WalletFactory;
 
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
 
-import com.masanari.wallet.bip47.rpc.PaymentCode;
-import com.masanari.wallet.bip47.rpc.PaymentAddress;
+
+import com.samourai.wallet.bip47.BIP47UtilGeneric;
+import com.samourai.wallet.hd.HD_Address;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -25,14 +32,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 
-public class BIP47Util {
+public class BIP47Util extends BIP47UtilGeneric {
 
     private static BIP47Wallet wallet = null;
 
     private static Context context = null;
     private static BIP47Util instance = null;
-
-    private BIP47Util() { ; }
 
     public static BIP47Util getInstance(Context ctx) {
 
@@ -58,6 +63,20 @@ public class BIP47Util {
         return instance;
     }
 
+    private BIP47Util() {
+        super(secretPointFactory);
+    }
+    private static final ISecretPointFactory secretPointFactory = new ISecretPointFactory() {
+        @Override
+        public ISecretPoint newSecretPoint(byte[] dataPrv, byte[] dataPub) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, InvalidKeyException {
+            return new SecretPoint(dataPrv, dataPub);
+        }
+    };
+
+    private NetworkParameters getNetworkParams() {
+        return MasanariWallet.getInstance().getCurrentNetworkParams();
+    }
+
     public void reset()  {
         wallet = null;
     }
@@ -67,100 +86,71 @@ public class BIP47Util {
     }
 
     public HD_Address getNotificationAddress() {
-        return wallet.getAccount(0).getNotificationAddress();
+        return super.getNotificationAddress(wallet);
     }
 
     public HD_Address getNotificationAddress(int account) {
-        return wallet.getAccount(account).getNotificationAddress();
+        return super.getNotificationAddress(wallet, account);
     }
 
     public PaymentCode getPaymentCode() throws AddressFormatException   {
-        String payment_code = wallet.getAccount(0).getPaymentCode();
-        return new PaymentCode(payment_code);
+        return super.getPaymentCode(wallet);
     }
 
     public PaymentCode getPaymentCode(int account) throws AddressFormatException   {
-        String payment_code = wallet.getAccount(account).getPaymentCode();
-        return new PaymentCode(payment_code);
+        return super.getPaymentCode(wallet, account);
     }
 
     public PaymentCode getFeaturePaymentCode() throws AddressFormatException   {
-        PaymentCode payment_code = getPaymentCode();
-        return new PaymentCode(payment_code.makeMasanariPaymentCode());
+        return super.getFeaturePaymentCode(wallet);
     }
 
     public PaymentCode getFeaturePaymentCode(int account) throws AddressFormatException   {
-        PaymentCode payment_code = getPaymentCode(account);
-        return new PaymentCode(payment_code.makeMasanariPaymentCode());
+        return super.getFeaturePaymentCode(wallet, account);
     }
 
     public PaymentAddress getReceiveAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        HD_Address address = wallet.getAccount(0).addressAt(idx);
-        return getPaymentAddress(pcode, 0, address);
+        return super.getReceiveAddress(wallet, pcode, idx, getNetworkParams());
     }
 
     public PaymentAddress getReceiveAddress(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        HD_Address address = wallet.getAccount(account).addressAt(idx);
-        return getPaymentAddress(pcode, 0, address);
+        return super.getReceiveAddress(wallet, account, pcode, idx, getNetworkParams());
     }
 
     public String getReceivePubKey(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        PaymentAddress paymentAddress = getReceiveAddress(pcode, idx);
-        return Hex.toHexString(paymentAddress.getReceiveECKey().getPubKey());
+        return super.getReceivePubKey(wallet, pcode, idx, getNetworkParams());
     }
 
     public String getReceivePubKey(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        PaymentAddress paymentAddress = getReceiveAddress(pcode, account, idx);
-        return Hex.toHexString(paymentAddress.getReceiveECKey().getPubKey());
+        return super.getReceivePubKey(wallet, account, pcode, idx, getNetworkParams());
     }
 
     public PaymentAddress getSendAddress(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        HD_Address address = wallet.getAccount(0).addressAt(0);
-        return getPaymentAddress(pcode, idx, address);
+        return super.getSendAddress(wallet, pcode, idx, getNetworkParams());
     }
 
     public PaymentAddress getSendAddress(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception {
-        HD_Address address = wallet.getAccount(account).addressAt(0);
-        return getPaymentAddress(pcode, idx, address);
+        return getSendAddress(wallet, account, pcode, idx, getNetworkParams());
     }
 
     public String getSendPubKey(PaymentCode pcode, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        PaymentAddress paymentAddress = getSendAddress(pcode, idx);
-        return Hex.toHexString(paymentAddress.getSendECKey().getPubKey());
+        return super.getSendPubKey(wallet, pcode, idx, getNetworkParams());
     }
 
     public String getSendPubKey(PaymentCode pcode, int account, int idx) throws AddressFormatException, NotSecp256k1Exception, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        PaymentAddress paymentAddress = getSendAddress(pcode, account, idx);
-        return Hex.toHexString(paymentAddress.getSendECKey().getPubKey());
+        return super.getSendPubKey(wallet, account, pcode, idx, getNetworkParams());
     }
 
     public byte[] getIncomingMask(byte[] pubkey, byte[] outPoint) throws AddressFormatException, Exception    {
-
-        HD_Address notifAddress = getNotificationAddress();
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MasanariWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
-        ECKey inputKey = dpk.getKey();
-        byte[] privkey = inputKey.getPrivKeyBytes();
-        byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
-
-        return mask;
+        return super.getIncomingMask(wallet, pubkey, outPoint, getNetworkParams());
     }
 
     public byte[] getIncomingMask(byte[] pubkey, int account, byte[] outPoint) throws AddressFormatException, Exception    {
-
-        HD_Address notifAddress = getNotificationAddress(account);
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MasanariWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
-        ECKey inputKey = dpk.getKey();
-        byte[] privkey = inputKey.getPrivKeyBytes();
-        byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
-
-        return mask;
+        return super.getIncomingMask(wallet, account, pubkey, outPoint, getNetworkParams());
     }
 
     public PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, HD_Address address) throws AddressFormatException, NotSecp256k1Exception {
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MasanariWallet.getInstance().getCurrentNetworkParams(), address.getPrivateKeyString());
-        ECKey eckey = dpk.getKey();
-        PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, eckey.getPrivKeyBytes());
-        return paymentAddress;
+        return super.getPaymentAddress(pcode, idx, address, getNetworkParams());
     }
 
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_scan_qr"
+        android:icon="@drawable/ic_crop_free_white_24dp"
+        android:visible="true"
+        android:title=""
+        app:showAsAction="always" />
+    <item android:id="@+id/item" app:showAsAction="never"
+        android:title="item" />
+</menu>

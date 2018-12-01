@@ -23,17 +23,17 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.masanari.wallet.bip47.BIP47Util;
-import com.masanari.wallet.bip47.rpc.PaymentAddress;
-import com.masanari.wallet.bip47.rpc.PaymentCode;
-import com.masanari.wallet.hd.HD_Address;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.ricochet.RicochetMeta;
 import com.masanari.wallet.segwit.BIP49Util;
 import com.masanari.wallet.segwit.BIP84Util;
-import com.masanari.wallet.segwit.SegwitAddress;
 import com.masanari.wallet.util.AppUtil;
 
 import com.masanari.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.segwit.SegwitAddress;
 
 import org.bitcoinj.core.ECKey;
 

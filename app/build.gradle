@@ -2,17 +2,21 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     useLibrary 'org.apache.http.legacy'
     flavorDimensions "versionCode"
     defaultConfig {
         applicationId 'com.masanari.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 6
-        versionName "0.0.1-alpha.6"
+        versionCode 7
+        versionName "0.0.1-alpha.7"
         // Enabling multidex support.
         multiDexEnabled true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -46,20 +50,23 @@ android {
             applicationId 'com.masanari.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 6
-            versionName "0.0.1-alpha.6"
+            versionCode 7
+            versionName "0.0.1-alpha.7"
             resValue "string", "app_name", "Masanari"
-            resValue "string", "version_name", "0.0.1-alpha.6"
+            resValue "string", "version_name", "0.0.1-alpha.7"
         }
         staging {
             applicationId 'com.masanari.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 6
-            versionName "0.0.1-alpha.6"
+            versionCode 7
+            versionName "0.0.1-alpha.7"
             resValue "string", "app_name", "Masanari Staging"
-            resValue "string", "version_name", "0.0.1-alpha.6"
+            resValue "string", "version_name", "0.0.1-alpha.7"
         }
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -92,4 +99,27 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation ('com.github.Samourai-Wallet:whirlpool-client:develop-SNAPSHOT') {
+        exclude group:'com.google.code.findbugs', module:'jsr305'
+        exclude group:'com.google.protobuf', module:'protobuf-java'
+        exclude group:'net.jcip', module:'jcip-annotations'
+        exclude group:'com.squareup.okhttp', module:'okhttp'
+        //
+        exclude group:'org.apache.commons', module:'commons-lang3'
+        exclude group:'org.json', module:'json'
+    }
+    implementation ('com.github.Samourai-Wallet:extlibj:develop-SNAPSHOT') {
+        exclude group:'com.google.code.findbugs', module:'jsr305'
+        exclude group:'com.google.protobuf', module:'protobuf-java'
+        exclude group:'net.jcip', module:'jcip-annotations'
+        exclude group:'com.squareup.okhttp', module:'okhttp'
+        //
+        exclude group:'org.apache.commons', module:'commons-lang3'
+        exclude group:'org.json', module:'json'
+    }
+    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.5.4'
+    implementation 'org.java-websocket:Java-WebSocket:1.3.6'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    testImplementation 'junit:junit:4.12'
 }

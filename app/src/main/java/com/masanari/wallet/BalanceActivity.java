@@ -63,16 +63,16 @@ import com.masanari.wallet.bip47.BIP47Meta;
 import com.masanari.wallet.bip47.BIP47Util;
 import com.masanari.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.masanari.wallet.bip47.rpc.*;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.masanari.wallet.crypto.AESUtil;
 import com.masanari.wallet.crypto.DecryptionException;
-import com.masanari.wallet.hd.HD_Address;
-import com.masanari.wallet.hd.HD_Wallet;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.payload.PayloadUtil;
 import com.masanari.wallet.permissions.PermissionsUtil;
 import com.masanari.wallet.segwit.BIP49Util;
 import com.masanari.wallet.segwit.BIP84Util;
-import com.masanari.wallet.segwit.SegwitAddress;
 import com.masanari.wallet.segwit.bech32.Bech32Util;
 import com.masanari.wallet.send.BlockedUTXO;
 import com.masanari.wallet.send.FeeUtil;
@@ -115,6 +115,10 @@ import org.bouncycastle.util.encoders.DecoderException;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
+
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.yanzhenjie.zbar.Symbol;
 
 import java.io.IOException;
@@ -213,40 +217,6 @@ public class BalanceActivity extends Activity {
                         }
                     }
                 });
-                /*
-                BalanceActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        refreshTx(notifTx, false, false);
-
-                        if(BalanceActivity.this != null)    {
-
-                            if(rbfHash != null)    {
-                                new AlertDialog.Builder(BalanceActivity.this)
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
-                                        .setCancelable(true)
-                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                doExplorerView(rbfHash);
-
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        }).show();
-
-                            }
-
-                        }
-
-                    }
-                });
-                */
 
                 if(BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet())    {
 
@@ -1040,6 +1010,9 @@ public class BalanceActivity extends Activity {
                 final PrivKeyReader pvr = privKeyReader;
 
                 final EditText password38 = new EditText(BalanceActivity.this);
+                password38.setSingleLine(true);
+                password38.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                         .setTitle(R.string.app_name)
@@ -2386,7 +2359,7 @@ public class BalanceActivity extends Activity {
                     final Transaction _tx = new Transaction(MasanariWallet.getInstance().getCurrentNetworkParams());
                     List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
                     _txOutputs.addAll(txOutputs);
-                    Collections.sort(_txOutputs, new SendFactory.BIP69OutputComparator());
+                    Collections.sort(_txOutputs, new BIP69OutputComparator());
                     for(TransactionOutput to : _txOutputs) {
                         // zero value outputs discarded here
                         if(to.getValue().longValue() > 0L)    {

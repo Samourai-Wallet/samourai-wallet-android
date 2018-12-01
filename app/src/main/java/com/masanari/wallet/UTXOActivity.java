@@ -33,7 +33,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.masanari.wallet.api.APIFactory;
 import com.masanari.wallet.bip47.BIP47Meta;
-import com.masanari.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.masanari.wallet.send.BlockedUTXO;
 import com.masanari.wallet.send.MyTransactionOutPoint;
 import com.masanari.wallet.send.SendFactory;

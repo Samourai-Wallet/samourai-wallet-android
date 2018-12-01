@@ -129,10 +129,6 @@ public class ExchangeRateFactory	{
         strDataLBC = data;
     }
 
-    public void setDataBTCe(String data)	 {
-        strDataBTCe = data;
-    }
-
     public void setDataBFX(String data)	 {
         strDataBFX = data;
     }
@@ -150,20 +146,6 @@ public class ExchangeRateFactory	{
     public void parseKraken() {
         for(int i = 0; i < currencies.length; i++)	 {
             getKraken(currencies[i]);
-        }
-    }
-
-    public void parseBTCe()	 {
-        for(int i = 0; i < currencies.length; i++)	 {
-            if(currencies[i].equals("GBP") || currencies[i].equals("CNY"))	 {
-                continue;
-            }
-            if(currencies[i].equals("RUB"))	 {
-                getBTCe("RUR");
-            }
-            else	 {
-                getBTCe(currencies[i]);
-            }
         }
     }
 
@@ -210,33 +192,6 @@ public class ExchangeRateFactory	{
                     }
                     ExchangeRateFactory.getInstance(context).setDataLBC(response);
                     ExchangeRateFactory.getInstance(context).parseLBC();
-
-                    if(!AppUtil.getInstance(context).isOfflineMode())    {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_usd");
-                    }
-                    else    {
-                        response = PayloadUtil.getInstance(context).deserializeFX_BTCe_USD().toString();
-                    }
-                    ExchangeRateFactory.getInstance(context).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(context).parseBTCe();
-
-                    if(!AppUtil.getInstance(context).isOfflineMode())    {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_rur");
-                    }
-                    else    {
-                        response = PayloadUtil.getInstance(context).deserializeFX_BTCe_RUR().toString();
-                    }
-                    ExchangeRateFactory.getInstance(context).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(context).parseBTCe();
-
-                    if(!AppUtil.getInstance(context).isOfflineMode())    {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.BTCe_EXCHANGE_URL + "btc_eur");
-                    }
-                    else    {
-                        response = PayloadUtil.getInstance(context).deserializeFX_BTCe_EUR().toString();
-                    }
-                    ExchangeRateFactory.getInstance(context).setDataBTCe(response);
-                    ExchangeRateFactory.getInstance(context).parseBTCe();
 
                     if(!AppUtil.getInstance(context).isOfflineMode())    {
                         response = WebUtil.getInstance(null).getURL(WebUtil.BFX_EXCHANGE_URL);

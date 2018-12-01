@@ -30,7 +30,7 @@
         >
 
         <activity
-            android:name="com.masanari.wallet.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
@@ -45,27 +45,27 @@
 
         <activity-alias
             android:name=".Launcher"
-            android:targetActivity="com.masanari.wallet.MainActivity">
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
 
-        <activity android:name="com.masanari.wallet.MainActivity2"
+        <activity android:name=".MainActivity2"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustPan"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.BalanceActivity"
+        <activity android:name=".BalanceActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.ReceiveActivity"
+        <activity android:name=".ReceiveActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -73,79 +73,79 @@
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.SendActivity"
+        <activity android:name=".SendActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.UTXOActivity"
+        <activity android:name=".UTXOActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.BatchSendActivity"
+        <activity android:name=".BatchSendActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.FeeActivity"
+        <activity android:name=".FeeActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.SettingsActivity"
+        <activity android:name=".SettingsActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.SettingsActivity2"
+        <activity android:name=".SettingsActivity2"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.AboutActivity"
+        <activity android:name=".AboutActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.PinEntryActivity"
+        <activity android:name=".PinEntryActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.bip47.BIP47Activity"
+        <activity android:name=".bip47.BIP47Activity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.bip47.BIP47Add"
+        <activity android:name=".bip47.BIP47Add"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.bip47.BIP47ShowQR"
+        <activity android:name=".bip47.BIP47ShowQR"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.ricochet.RicochetActivity"
+        <activity android:name=".ricochet.RicochetActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.OpenDimeActivity"
+        <activity android:name=".OpenDimeActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
@@ -159,25 +159,25 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
-        <activity android:name="com.masanari.wallet.bip47.paynym.ClaimPayNymActivity"
+        <activity android:name=".bip47.paynym.ClaimPayNymActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.ExodusActivity"
+        <activity android:name=".ExodusActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.PayNymCalcActivity"
+        <activity android:name=".PayNymCalcActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 
-        <activity android:name="com.masanari.wallet.AddressCalcActivity"
+        <activity android:name=".AddressCalcActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
@@ -190,11 +190,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             />
 
-        <service android:enabled="true" android:name="com.masanari.wallet.service.WebSocketService" />
+        <service android:enabled="true" android:name=".service.WebSocketService" />
 
-        <service android:enabled="true" android:name="com.masanari.wallet.service.RefreshService" />
+        <service android:enabled="true" android:name=".service.RefreshService" />
 
-        <receiver android:name="com.masanari.wallet.receivers.BootIntentReceiver" android:enabled="true" android:exported="true">
+        <receiver android:name=".receivers.BootIntentReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -202,14 +202,14 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.masanari.wallet.receivers.InterceptOutgoingReceiver" android:enabled="true" android:exported="true">
+        <receiver android:name=".receivers.InterceptOutgoingReceiver" android:enabled="true" android:exported="true">
             <intent-filter android:priority="1001">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.masanari.wallet.receivers.SMSReceiver" android:enabled="true" android:exported="true">
+        <receiver android:name=".receivers.SMSReceiver" android:enabled="true" android:exported="true">
             <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -222,12 +222,12 @@
             android:name="com.masanari.wallet.LandingActivity"
             android:theme="@style/AppThemeLanding"
             ></activity>
-        <activity android:name="com.masanari.wallet.RecoveryWordsActivity">
+        <activity android:name=".RecoveryWordsActivity">
         </activity>
         <activity android:theme="@style/AppThemeLanding" android:exported="true" android:name="com.masanari.wallet.TxAnimUIActivity" />
 
         <provider
-            android:name="com.masanari.wallet.util.GenericFileProvider"
+            android:name=".util.GenericFileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -235,6 +235,52 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
+        <activity
+            android:name=".spend.SendNewUIActivity"
+            android:exported="true"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".whirlpool.WhirlPoolActivity"
+            android:exported="true"
+            android:label=""
+            android:parentActivityName=".whirlpool.ChooseCycleType"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.EmptyWhirlPool"
+            android:exported="true"
+            android:label="@string/title_activity_empty_whirl_pool"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.NewWhirlpoolCycle"
+            android:exported="true"
+            android:label="New Cycle"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.ChooseCycleType"
+            android:exported="true"
+            android:label="New Cycle"
+            android:parentActivityName=".whirlpool.EmptyWhirlPool"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.WhirlpoolMain"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.CycleDetail"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxDetailsActivity"
+            android:exported="true"
+            android:label=" "
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxPrivacyDetailsActivity"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
 
 
     </application>

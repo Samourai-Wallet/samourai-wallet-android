@@ -21,7 +21,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
 
-    <string name="options_cat_prefs">Währung, Block-Explorer</string>
+    <string name="options_cat_prefs">Block-Explorer</string>
     <string name="options_cat_stealth">Unsichtbar-Modus</string>
     <string name="options_cat_remote">Fernzugriff</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -32,9 +32,9 @@
     <string name="options_mnemonic2">Zeigt den Geheimsatz (12 Worte) deiner Wallet.</string>
     <string name="options_xpub">BIP44 XPUB anzeigen</string>
     <string name="options_xpub2">Zeigt den Extended Public Key des BIP44 Accounts.</string>
-    <string name="options_xpub49">Segwit YPUB anzeigen</string>
+    <string name="options_xpub49">SegWit YPUB anzeigen</string>
     <string name="options_xpub49_2">Zeigt den Extended Public Key des BIP49 SegWit Accounts (P2SH).</string>
-    <string name="options_xpub84">Segwit ZPUB anzeigen</string>
+    <string name="options_xpub84">SegWit ZPUB anzeigen</string>
     <string name="options_xpub84_2">Zeigt den Extended Public Key des BIP84 SegWit Accounts (Bech32).</string>
     <string name="options_wipe">Wallet sicher löschen</string>
     <string name="options_wipe2">Entfernt diese Wallet sicher vom Gerät.</string>
@@ -60,7 +60,7 @@
     <string name="options_Tor2">Starte Orbot (Tor).</string>
     <string name="options_export">Wallet Backup exportieren</string>
     <string name="options_change_pin">PIN ändern</string>
-    <string name="options_change_pin2">Erstelle eine neue PIN, um dein Wallet zu entsperren.</string>
+    <string name="options_change_pin2">Erstelle eine neue PIN, um deine Wallet zu entsperren.</string>
     <string name="options_remote_pin">Unsichtbar-Modus und Fernzugriff PIN</string>
     <string name="options_remote_pin2">Erstelle eine alternative PIN für den Unsichtbar-Modus und den Fernzugriff.</string>
     <string name="options_autosave_backup">Automatische Backups aktivieren</string>
@@ -85,12 +85,12 @@
     <string name="options_fee_provider2">Wähle deinen bevorzugten Gebühren-Schätzungs-Service.</string>
     <string name="options_broadcast_on">Transaktionen veröffentlichen</string>
     <string name="options_broadcast_on2">Ausschalten (veröffentlichen AUS) um signierte RAW-Transaktionen in die Zwischenablage zu kopieren.</string>
-    <string name="options_segwit">Empfange auf SegWit Adressen</string>
-    <string name="options_segwit_2">Generiert SegWit Adressen für eingehende Transaktionen.</string>
+    <string name="options_segwit">Auf SegWit-Adressen empfangen</string>
+    <string name="options_segwit_2">Generiert SegWit-Adressen für eingehende Transaktionen.</string>
     <string name="options_broadcast_hex">Hex-Transaktion veröffentlichen</string>
     <string name="options_broadcast_hex2">Eine signierte Hex-Transaktion veröffentlichen.</string>
     <string name="options_like_typed_change">Wechselgeld auf gleichartige Adressen</string>
-    <string name="options_like_typed_change2">Wechselgeld auf Adressen empfangen, die dem Adress-Typ der Senderadresse entsprechen. Diese Option Ausschalten um Wechselgeld immer auf SegWit Adressen zu empfangen.</string>
+    <string name="options_like_typed_change2">Wechselgeld auf Adressen empfangen, die dem Adresstyp der Sendeadresse entsprechen. Diese Option Ausschalten um Wechselgeld immer auf SegWit-Adressen zu empfangen.</string>
     <string name="options_haptic">Haptische PIN-Eingabe</string>
     <string name="options_haptic_2">Vibrationsfeedback während der PIN-Eingabe.</string>
     <string name="options_prune">Backup verkleinern</string>
@@ -107,8 +107,8 @@
 
     <string name="tx_sent">Transaktion erfolgreich</string>
     <string name="tx_failed">Transaktion fehlgeschlagen</string>
-    <string name="you_received">Empfangen</string>
-    <string name="you_sent">Gesendet</string>
+    <string name="you_received">Empfangen:</string>
+    <string name="you_sent">Gesendet:</string>
     <string name="send">Senden</string>
     <string name="receive">Empfangen</string>
     <string name="cannot_select_utxo">Ungenutzte Outputs können nicht ausgewählt werden</string>
@@ -308,7 +308,7 @@
 
     <string name="trusted_node">Vertrauenswürdiger Peer</string>
     <string name="trusted_node_user_hint">RPC Benutzername</string>
-    <string name="trusted_node_ip_hint">IP Adresse</string>
+    <string name="trusted_node_ip_hint">IP-Adresse</string>
     <string name="trusted_node_port_hint">Port (8332 Standard)</string>
     <string name="trusted_node_password_hint">RPC Beutzerpasswort</string>
     <string name="trusted_node_not_valid">Bitte gültige Informationen für den vertrauenswürdigen Peer eingeben.</string>
@@ -409,8 +409,8 @@
     <string name="MainNet">MainNet</string>
     <string name="TestNet">TestNet</string>
 
-    <string name="segwit_address">SegWit Adresse</string>
-    <string name="segwit_switch_prompt">Guthaben auf einer SegWit Adresse kann effizienter versendet werden. Dies ermöglicht geringere Transaktionsgebühren beim Versenden von Bitcoins.</string>
+    <string name="segwit_address">SegWit-Adresse</string>
+    <string name="segwit_switch_prompt">Guthaben auf einer SegWit-Adresse kann effizienter versendet werden. Dies ermöglicht geringere Transaktionsgebühren beim Versenden von Bitcoins.</string>
 
     <string name="privkey_clipboard">Ein Private Key wurde in deiner Zwischenablage gefunden. Zwischenablage leeren?</string>
 
@@ -437,7 +437,7 @@
     <string name="options_display_redeem_script">Redeem Script anzeigen</string>
     <string name="options_view_tx">Transaktion anzeigen</string>
     <string name="options_display_privkey">Private Key anzeigen</string>
-    <string name="options_batch">Stapel-Zahlung</string>
+    <string name="options_batch">Batch-Zahlung</string>
 
     <string name="do_not_repeat_sent_to">Haken setzen, um nicht mehr vor mehrfachem Senden an diese Adresse zu warnen.</string>
 
@@ -445,14 +445,14 @@
 
     <string name="copy_to_clipboard">In die Zwischenablage kopieren</string>
 
-    <string name="no_bitpay">Fehler: Das ist keine gültige Bitcoin Anfrage. Masanari unterstützt nur das Senden an gültige Bitcoin Adressen.</string>
+    <string name="no_bitpay">Fehler: Das ist keine gültige Bitcoin Anfrage. Masanari unterstützt nur das Senden an gültige Bitcoin-Adressen.</string>
     <string name="learn_more">Mehr erfahren</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Dein PayNym anfordern</string>
     <string name="claim_paynym_title1">Fordere deine kostenlose PayNymID an</string>
-    <string name="claim_paynym_text1">Erlaube deinen Freunden und Kontakten dich direkt über kompatible Bitcoin Wallets zu finden und sich mit deinem PayNym zu verbinden.</string>
+    <string name="claim_paynym_text1">Erlaube deinen Freunden und Kontakten dich direkt über kompatible Bitcoin-Wallets zu finden und sich mit deinem PayNym zu verbinden.</string>
     <string name="claim_paynym_title2">Vorteile einer PayNymID</string>
     <string name="claim_paynym_text2a">Name und Bild sind einzigartig, da sie mit dem Hash deines PayNym-Codes generiert werden. Es wird nie zwei gleiche geben!</string>
     <string name="claim_paynym_text2b">Keine Identitätsprüfung! Dein Name und dein Bild basieren auf deinem PayNym-Code, nicht auf irgendeinem Ausweis.</string>
@@ -491,7 +491,7 @@
     <string name="get_help">Hilfe</string>
     <string name="offline_mode">Offline-Modus</string>
     <string name="import_masanari_backup">Masanari Backup importieren</string>
-    <string name="masanari_bitcoin_wallet">Masanari Bitcoin Wallet</string>
+    <string name="masanari_bitcoin_wallet">Masanari Bitcoin-Wallet</string>
     <string name="enter_your_wallet_passphrase">Wallet Passphrase eingeben</string>
     <string name="start_new_wallet">Neue Wallet erstellen</string>
     <string name="get_help_create">Wallet erstellen: Hilfe</string>
@@ -524,7 +524,7 @@
 	<string name="permission_alert_dialog_title_camera">Zugriff auf Kamera erforderlich</string>
 	<string name="permission_dialog_message_camera">Deine Wallet benötigt Zugriff auf die Kamera, um QR-Codes scannen zu können.</string>
 
-	<string name="use_bech32">Bech32 Adresse verwenden</string>
+    <string name="use_bech32">Bech32-Adresse verwenden</string>
 
     <string name="boltzmann_cannot">Eine STONEWALL-Zahlung konnte mit deinem aktuellen Set an ungenutzten Outputs nicht erzeugt werden. Wenn du auf STONEWALL bestehst, tippe auf \'Nein\' und versuche es mit einem modifizierten Set an ungenutzten Outputs erneut.</string>
     <string name="boltzmann_like_typed">Hinweis: \'Wechselgeld auf gleichartige Adressen\' ist aus und kann zu einer weniger optimalen Transaktionsstruktur deiner STONEWALL-Zahlung führen.</string>
@@ -573,31 +573,39 @@
     <string name="display_receive_redeem">Empfangs Redeem Script</string>
     <string name="display_receive_privkey">Empfangs Private Key</string>
     <string name="invalid_index">Ungültiger Index</string>
-    <string name="type_address">Adress-Typ</string>
+    <string name="type_address">Adresstyp</string>
 
     <string-array name="account_types">
         <item>BIP49 SegWit</item>
         <item>BIP84 SegWit</item>
         <item>BIP44 P2PKH</item>
         <item>Ricochet SegWit</item>
+        <item>Whirlpool SegWit pre-mix</item>
+        <item>Whirlpool SegWit post-mix</item>
     </string-array>
 
     <string name="chain_id">Addresszweig</string>
     <string name="receive_chain">Empfangsadresse</string>
     <string name="change_chain">Wechseladresse</string>
+    <string name="whirlpool_postmix">Whirlpool SegWit post-mix</string>
+    <string name="encrypted_backup_detected">Verschlüsseltes Backup gefunden</string>
+    <string name="restore">WIEDERHERSTELLEN</string>
+    <string name="request_amount">Angeforderter Betrag</string>
+    <string name="address_type">Addresstyp</string>
+    <string name="path">Pfad</string>
 
 </resources>
 
 
 <!-- Hinweis: 
 
-	Last updated for Version: 0.98.81
+	Last updated for Version: 0.98.89
 	
 	Einige Fachbegriffe oder bereits eingedeutschte Wörter habe ich englisch gelassen, da es meiner Meinung nach sinnvoller ist.
 	
 	Folgende Begriffe sind betroffen: 
-	Backup, Bitcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,       
-	Exchange, Payment-Code, MainNet, PayNym, Premium Addons, Private Key, Proof-of-Work,    
-	Public Key, replace-by-fee, Replay, Ricochet, STONEWALL, TestNet, Wallet
+	Backup, Batch, Bitcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,
+	Exchange, Payment-Code, MainNet, PayNym, Premium Addons, pre-mix, post-mix, Private Key, Proof-of-Work,
+	Public Key, replace-by-fee, Replay, Ricochet, STONEWALL, TestNet, Wallet, Whirlpool
 
 -->

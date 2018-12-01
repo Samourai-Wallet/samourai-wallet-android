@@ -40,6 +40,9 @@ import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
 import com.masanari.wallet.MasanariWallet;
 import com.masanari.wallet.segwit.bech32.Bech32Util;
+import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -75,9 +78,6 @@ import com.google.common.base.Splitter;
 import com.masanari.wallet.access.AccessFactory;
 import com.masanari.wallet.api.APIFactory;
 import com.masanari.wallet.bip47.paynym.ClaimPayNymActivity;
-import com.masanari.wallet.bip47.rpc.NotSecp256k1Exception;
-import com.masanari.wallet.bip47.rpc.PaymentAddress;
-import com.masanari.wallet.bip47.rpc.PaymentCode;
 import com.masanari.wallet.bip47.rpc.SecretPoint;
 import com.masanari.wallet.crypto.DecryptionException;
 import com.masanari.wallet.hd.HD_WalletFactory;
@@ -1063,7 +1063,7 @@ public class BIP47Activity extends Activity {
             // use outpoint for payload masking
             //
             byte[] privkey = ecKey.getPrivKeyBytes();
-            byte[] pubkey = payment_code.notificationAddress().getPubKey();
+            byte[] pubkey = payment_code.notificationAddress(MasanariWallet.getInstance().getCurrentNetworkParams()).getPubKey();
             byte[] outpoint = outPoint.bitcoinSerialize();
 //                Log.i("BIP47Activity", "outpoint:" + Hex.toHexString(outpoint));
 //                Log.i("BIP47Activity", "payer shared secret:" + Hex.toHexString(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes()));
@@ -1097,7 +1097,7 @@ public class BIP47Activity extends Activity {
 
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
-        receivers.put(payment_code.notificationAddress().getAddressString(), SendNotifTxFactory._bNotifTxValue);
+        receivers.put(payment_code.notificationAddress(MasanariWallet.getInstance().getCurrentNetworkParams()).getAddressString(), SendNotifTxFactory._bNotifTxValue);
         receivers.put(MasanariWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_MASANARI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.MASANARI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
@@ -1446,7 +1446,7 @@ public class BIP47Activity extends Activity {
         int before = BIP47Meta.getInstance().getLabels().size();
         try {
             PaymentCode pcode = BIP47Util.getInstance(BIP47Activity.this).getPaymentCode();
-            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+            APIFactory.getInstance(BIP47Activity.this).getNotifAddress(pcode.notificationAddress(MasanariWallet.getInstance().getCurrentNetworkParams()).getAddressString());
         }
         catch (AddressFormatException afe) {
             afe.printStackTrace();

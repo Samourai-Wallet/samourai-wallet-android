@@ -6,12 +6,12 @@ import android.widget.Toast;
 import org.bitcoinj.crypto.MnemonicException;
 
 import com.masanari.wallet.MasanariWallet;
-import com.masanari.wallet.hd.HD_Address;
-import com.masanari.wallet.hd.HD_Wallet;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.segwit.BIP49Util;
 import com.masanari.wallet.segwit.BIP84Util;
-import com.masanari.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.SegwitAddress;
 
 import java.io.IOException;
 import java.util.HashMap;

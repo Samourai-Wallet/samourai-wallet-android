@@ -594,7 +594,10 @@ public class ReceiveActivity extends AppCompatActivity {
                     ivQR.setImageBitmap(generateQRCode(BitcoinURI.convertToBitcoinURI(Address.fromBase58(MasanariWallet.getInstance().getCurrentNetworkParams(), _addr), Coin.valueOf(lamount), null, null)));
                 } else {
                     String strURI = "bitcoin:" + _addr;
-                    strURI += "?amount=" + amount.toString();
+                    DecimalFormat df = new DecimalFormat("#");
+                    df.setMinimumIntegerDigits(1);
+                    df.setMaximumFractionDigits(8);
+                    strURI += "?amount=" + df.format(amount);
                     ivQR.setImageBitmap(generateQRCode(strURI));
                 }
             } else {

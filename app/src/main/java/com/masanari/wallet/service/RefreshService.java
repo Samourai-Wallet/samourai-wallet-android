@@ -11,12 +11,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.masanari.wallet.MasanariWallet;
 import com.masanari.wallet.R;
 import com.masanari.wallet.access.AccessFactory;
 import com.masanari.wallet.api.APIFactory;
 import com.masanari.wallet.bip47.BIP47Meta;
 import com.masanari.wallet.bip47.BIP47Util;
-import com.masanari.wallet.bip47.rpc.PaymentCode;
 import com.masanari.wallet.crypto.AESUtil;
 import com.masanari.wallet.crypto.DecryptionException;
 import com.masanari.wallet.hd.HD_WalletFactory;
@@ -28,6 +28,7 @@ import com.masanari.wallet.util.AppUtil;
 import com.masanari.wallet.util.CharSequenceX;
 import com.masanari.wallet.util.ExchangeRateFactory;
 import com.masanari.wallet.util.PrefsUtil;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
@@ -116,7 +117,7 @@ public class RefreshService extends IntentService {
                 PaymentCode pcode = BIP47Util.getInstance(RefreshService.this).getPaymentCode();
 //                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
 //                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
-                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress().getAddressString());
+                APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress(MasanariWallet.getInstance().getCurrentNetworkParams()).getAddressString());
             }
             catch (AddressFormatException afe) {
                 afe.printStackTrace();

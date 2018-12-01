@@ -4,9 +4,10 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.masanari.wallet.MasanariWallet;
-import com.masanari.wallet.hd.HD_Address;
-import com.masanari.wallet.hd.HD_Wallet;
 import com.masanari.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.SegwitAddress;
 
 import org.bitcoinj.crypto.MnemonicException;
 

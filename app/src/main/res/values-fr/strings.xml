@@ -38,7 +38,7 @@
     <string name="options_wipe">Supprimer ce portefeuille en toute sécurité</string>
     <string name="options_wipe2">Supprimer en toute sécurité le portefeuille de cet appareil.</string>
     <string name="options_stealth_display">Lanceur d\'application mode furtif</string>
-    <string name="options_stealth_display2">Retirer Masanari du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Masanari.</string>
+    <string name="options_stealth_display2">Retirer Masanari du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
     <string name="options_remote_commands">Permettre les commandes à distance</string>
     <string name="options_remote_commands2">Permettre les commandes à distance via SMS.</string>
     <string name="options_currency">Taux en cours</string>

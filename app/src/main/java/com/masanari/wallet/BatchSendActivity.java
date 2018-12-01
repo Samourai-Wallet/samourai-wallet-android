@@ -46,11 +46,8 @@ import com.masanari.wallet.api.APIFactory;
 import com.masanari.wallet.bip47.BIP47Activity;
 import com.masanari.wallet.bip47.BIP47Meta;
 import com.masanari.wallet.bip47.BIP47Util;
-import com.masanari.wallet.bip47.rpc.PaymentAddress;
-import com.masanari.wallet.bip47.rpc.PaymentCode;
 import com.masanari.wallet.hd.HD_WalletFactory;
 import com.masanari.wallet.segwit.BIP49Util;
-import com.masanari.wallet.segwit.SegwitAddress;
 import com.masanari.wallet.segwit.bech32.Bech32Util;
 import com.masanari.wallet.send.FeeUtil;
 import com.masanari.wallet.send.MyTransactionOutPoint;
@@ -83,6 +80,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -542,6 +542,9 @@ public class BatchSendActivity extends Activity {
         if(resultCode == Activity.RESULT_OK && requestCode == SCAN_QR)	{
 
             if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                strPCode = null;
+                strDestinationBTCAddress = null;
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 

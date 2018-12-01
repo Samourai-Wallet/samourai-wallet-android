@@ -11,7 +11,7 @@ import android.util.Log;
 import com.masanari.wallet.JSONRPC.TrustedNodeUtil;
 import com.masanari.wallet.MasanariWallet;
 import com.masanari.wallet.api.APIFactory;
-import com.masanari.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.masanari.wallet.util.AddressFactory;
 import com.masanari.wallet.util.FormatsUtil;
 import com.masanari.wallet.util.PrefsUtil;

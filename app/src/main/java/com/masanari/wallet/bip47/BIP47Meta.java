@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 //import android.util.Log;
 
-import com.masanari.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
