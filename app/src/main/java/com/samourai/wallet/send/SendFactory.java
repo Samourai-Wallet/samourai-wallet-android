@@ -425,6 +425,15 @@ public class SendFactory	{
             return null;
         }
 
+        List<String> seenPreviousSetHash = null;
+        if(firstPassOutpoints != null)    {
+            seenPreviousSetHash = new ArrayList<String>();
+
+            for(MyTransactionOutPoint outpoint : firstPassOutpoints)   {
+                seenPreviousSetHash.add(outpoint.getTxHash().toString());
+            }
+        }
+
         int changeType = 49;
         int mixedType = 49;
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
@@ -505,7 +514,10 @@ public class SendFactory	{
 
             for(MyTransactionOutPoint op : utxo.getOutpoints())   {
                 String hash = op.getTxHash().toString();
-                if(!seenOutpoints.containsKey(hash))    {
+                if(seenPreviousSetHash != null && seenPreviousSetHash.contains(hash))    {
+                    ;
+                }
+                else if(!seenOutpoints.containsKey(hash))    {
                     seenOutpoints.put(hash,op);
                     selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
                     Log.d("SendFactory", "selected:" + i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
