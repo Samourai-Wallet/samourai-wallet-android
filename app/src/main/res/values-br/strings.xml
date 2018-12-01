@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="options_cat_prefs">Moeda, Explorador de blocos</string>
+    <string name="options_cat_prefs">Explorador de blocos</string>
     <string name="options_cat_stealth">Furtividade</string>
     <string name="options_cat_remote">Controle Remoto</string>
     <string name="options_cat_wallet">Carteira</string>
@@ -41,8 +41,6 @@
     <string name="options_stealth_display2">Remove a Samourai do launcher e da tela inicial. Você deve discar **SEU_CÓDIGO_PIN# do discador do telefone para iniciar a Samourai.</string>
     <string name="options_remote_commands">Habilita controles remotos</string>
     <string name="options_remote_commands2">Permite comandos remotos por SMS.</string>
-    <string name="options_currency">Preço de rua</string>
-    <string name="options_currency2">Escolha sua exchange e sua moeda local.</string>
     <string name="options_blockexplorer">Explorador de blocos</string>
     <string name="options_blockexplorer2">O explorador de blocos utilizado para ver detalhes da transação.</string>
     <string name="options_sim_switch">Defesa contra troca de chip SIM</string>
@@ -402,7 +400,6 @@
     <string name="share_qr">Compartilhar QR</string>
     <string name="send_tx">Enviar transação primária</string>
     <string name="tx_too_large_qr">Transação primária grande demais para exibir em QR code.</string>
-
     <string name="select_network">Selecionar rede...</string>
     <string name="MainNet">MainNet</string>
     <string name="TestNet">TestNet</string>
@@ -483,7 +480,7 @@
     <string name="recovery_words">PALAVRAS DE RECUPERAÇÃO</string>
 
     <string name="permission_alert_dialog_title_sms">Solicitando permissão de uso do telefone e do serviço de SMS</string>
-<string name="permission_dialog_message_sms">Sua carteira precisa acessar o envio e recebimento de SMS para conseguir utilizar recursos de alerta remoto.</string>
+    <string name="permission_dialog_message_sms">Sua carteira precisa acessar o envio e recebimento de SMS para conseguir utilizar recursos de alerta remoto.</string>
     <string name="permission_alert_dialog_title_outgoing">Solicitando permissão para recebimento de chamadas</string>
     <string name="permission_dialog_message_outgoing">Sua carteira precisa de acesso para recebimento de chamadas para que possa utilizar o recurso de abrir o aplicativo pelo modo de furtividade.</string>
 
