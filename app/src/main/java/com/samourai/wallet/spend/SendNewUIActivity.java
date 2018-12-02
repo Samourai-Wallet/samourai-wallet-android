@@ -31,7 +31,6 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
@@ -56,7 +55,6 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -126,7 +124,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     private String strPCode = null;
     private long feeLow, feeMed, feeHigh;
-    private CharSequenceX strPrivacyWarning;
+    private String strPrivacyWarning;
     private ArrayList<UTXO> selectedUTXO;
     private long _change;
     private HashMap<String, BigInteger> receivers;
@@ -135,6 +133,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private String message;
     private long amount;
     private int change_index;
+    private String ricochetMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,6 +246,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
         FEE_TYPE = PrefsUtil.getInstance(this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
+
         feeLow = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
         feeMed = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
         feeHigh = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
@@ -289,32 +289,50 @@ public class SendNewUIActivity extends AppCompatActivity {
             hi_sf.setDefaultPerKB(BigInteger.valueOf(feeHigh * 1000L));
             FeeUtil.getInstance().setHighFee(hi_sf);
         }
-        feeSeekBar.setProgress((int) feeMed);
-        tvEstimatedBlockWait.setText("6 blocks");
+//        tvEstimatedBlockWait.setText("6 blocks");
         tvSelectedFeeRateLayman.setText("Normal");
 
         FeeUtil.getInstance().sanitizeFee();
 
-
+        feeSeekBar.setProgress((int) feeMed);
         Log.i(TAG, "setUpFee: ".concat(String.valueOf(feeHigh) + " " + String.valueOf(feeMed) + " " + String.valueOf(feeLow)));
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                int value = i + 1;
-                tvSelectedFeeRate.setText(String.valueOf(value).concat(" sats/b"));
-
+                double value = i + 1;
+                tvSelectedFeeRate.setText(String.valueOf((int) value).concat(" sats/b"));
+                if (value == 0.0) {
+                    value = 1.0;
+                }
+                Log.i(TAG, "onProgressChanged: ".concat(String.valueOf(value)));
+                double pct = 0.0;
+                int nbBlocks = 6;
+                if (value <= (double) feeLow) {
+                    pct = ((double) feeLow / value);
+                    nbBlocks = ((Double) Math.ceil(pct * 24.0)).intValue();
+                } else if (value >= (double) feeHigh) {
+                    pct = ((double) feeHigh / value);
+                    nbBlocks = ((Double) Math.ceil(pct * 2.0)).intValue();
+                    if (nbBlocks < 1) {
+                        nbBlocks = 1;
+                    }
+                } else {
+                    pct = ((double) feeMed / value);
+                    nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
+                }
+                tvEstimatedBlockWait.setText(nbBlocks + " blocks");
                 setFee(value);
 
                 if (value >= feeHigh) {
-                    tvEstimatedBlockWait.setText("2 blocks");
+//                    tvEstimatedBlockWait.setText("2 blocks");
                     tvSelectedFeeRateLayman.setText("Urgent");
 
                 } else if (i >= feeMed) {
-                    tvEstimatedBlockWait.setText("6 blocks");
+//                    tvEstimatedBlockWait.setText("6 blocks");
                     tvSelectedFeeRateLayman.setText("Normal");
 
                 } else if (i >= feeLow) {
-                    tvEstimatedBlockWait.setText("24 blocks");
+//                    tvEstimatedBlockWait.setText("24 blocks");
                     tvSelectedFeeRateLayman.setText("Low");
                 }
 
@@ -337,25 +355,25 @@ public class SendNewUIActivity extends AppCompatActivity {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                 FeeUtil.getInstance().sanitizeFee();
+//                tvEstimatedBlockWait.setText("24 blocks");
 
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                 FeeUtil.getInstance().sanitizeFee();
-
-                tvEstimatedBlockWait.setText("2 blocks");
+//                tvEstimatedBlockWait.setText("2 blocks");
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                 FeeUtil.getInstance().sanitizeFee();
 
-                tvEstimatedBlockWait.setText("6 blocks");
+//                tvEstimatedBlockWait.setText("6 blocks");
                 break;
         }
 
     }
 
-    private void setFee(int fee) {
+    private void setFee(double fee) {
 
         double sanitySat = FeeUtil.getInstance().getHighFee().getDefaultPerKB().doubleValue() / 1000.0;
         final long sanityValue;
@@ -539,7 +557,6 @@ public class SendNewUIActivity extends AppCompatActivity {
     };
 
     private void setTvToAddress(String string) {
-        Log.i(TAG, "setTvToAddress: ".concat(string));
         tvToAddress.setText(string);
         toAddressEditText.setText(string);
     }
@@ -570,6 +587,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         if (validateSpend()) {
             prepareSpend();
             tvReviewSpendAmount.setText(btcEditText.getText());
+            btnSend.setText("send ".concat(btcEditText.getText().toString()).concat(" BTC"));
             amountViewSwitcher.showNext();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
         }
@@ -698,34 +716,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                         return;
                     }
 
-                    String msg = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
-
-                    AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(msg)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    RicochetMeta.getInstance(SendNewUIActivity.this).add(jObj);
-
-                                    dialog.dismiss();
-
-                                    Intent intent = new Intent(SendNewUIActivity.this, RicochetActivity.class);
-                                    startActivityForResult(intent, RICOCHET);
-
-                                }
-
-                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-
-                                    dialog.dismiss();
-
-                                }
-                            });
-                    if (!isFinishing()) {
-                        dlg.show();
-                    }
+                    ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
                     return;
 
@@ -1022,7 +1013,6 @@ public class SendNewUIActivity extends AppCompatActivity {
                 dest = address;
             }
 
-            final String strPrivacyWarning;
             if (SendAddressUtil.getInstance().get(address) == 1) {
                 strPrivacyWarning = getString(R.string.send_privacy_warning) + "\n\n";
             } else {
@@ -1143,6 +1133,37 @@ public class SendNewUIActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
         alert.show();
+
+    }
+
+    private void ricochetSpend(String msg, JSONObject jObj) {
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        RicochetMeta.getInstance(SendNewUIActivity.this).add(jObj);
+
+                        dialog.dismiss();
+
+                        Intent intent = new Intent(SendNewUIActivity.this, RicochetActivity.class);
+                        startActivityForResult(intent, RICOCHET);
+
+                    }
+
+                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                    }
+                });
+        if (!isFinishing()) {
+            dlg.show();
+        }
 
     }
 
@@ -1287,9 +1308,6 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     }
 
-    private void getEstimateMinerFee() {
-
-    }
 
     private void processPCode(String pcode, String meta) {
 
