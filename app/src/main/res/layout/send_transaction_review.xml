@@ -49,10 +49,9 @@
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/fee_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -61,18 +60,20 @@
             app:layout_constraintTop_toTopOf="@+id/fee_seekbar">
 
             <TextView
+                android:id="@+id/selected_fee_rate_in_layman"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="right"
-                android:id="@+id/selected_fee_rate_in_layman"
                 android:text="Urgent"
                 android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/selected_fee_rate"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="33 sat/b" />
+                android:gravity="right"
+                android:text="34 sat/b"
+                android:textAlignment="textEnd" />
         </LinearLayout>
 
         <LinearLayout
@@ -125,6 +126,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/est_block_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -355,12 +357,13 @@
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Transaction Entropy"
             android:textColor="@color/txt_grey"
             android:textSize="13sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/textView15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -371,11 +374,12 @@
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/roboto_mono"
             android:text="0 bits"
             android:textColor="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView14"
             app:layout_constraintTop_toTopOf="parent"
@@ -385,10 +389,11 @@
             android:id="@+id/entropyBar"
             android:layout_width="24dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/textView15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

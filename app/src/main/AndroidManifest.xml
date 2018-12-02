@@ -234,6 +234,7 @@
         <activity
             android:name=".spend.SendNewUIActivity"
             android:exported="true"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.WhirlPoolActivity"

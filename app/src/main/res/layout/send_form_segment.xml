@@ -10,163 +10,163 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:fillViewport="true"
-        android:layout_height="wrap_content">
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="81dp">
+        android:fillViewport="true">
 
-        <FrameLayout
-            android:id="@+id/to_edt_layout"
-            android:layout_width="0dp"
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteY="81dp">
 
-            >
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:ems="10"
-                android:inputType="textNoSuggestions">
-
-                <EditText
-                    android:id="@+id/edt_send_to"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="To"
-                    android:inputType="textNoSuggestions|textMultiLine"
-                     android:maxLines="2"
-                    android:scrollbars="vertical"
-                    android:paddingRight="22dp" />
-
-
-            </android.support.design.widget.TextInputLayout>
-        </FrameLayout>
-
-
-        <ImageView
-            android:id="@+id/paynym_select_btn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="8dp"
-            android:background="?attr/selectableItemBackground"
-            android:src="@drawable/ic_search_white_24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/to_edt_layout"
-            app:layout_constraintEnd_toEndOf="@+id/to_edt_layout"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/to_edt_layout"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <FrameLayout
-            android:id="@+id/textInputLayout3"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout"
-
-            >
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
+            <FrameLayout
+                android:id="@+id/to_edt_layout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
 
-                <EditText
-                    android:id="@+id/amountSat"
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:inputType="textNoSuggestions">
+
+                    <EditText
+                        android:id="@+id/edt_send_to"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="To"
+                        android:inputType="textNoSuggestions|textMultiLine"
+                        android:maxLines="2"
+                        android:paddingRight="22dp"
+                        android:scrollbars="vertical" />
+
+
+                </android.support.design.widget.TextInputLayout>
+            </FrameLayout>
+
+
+            <ImageView
+                android:id="@+id/paynym_select_btn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_search_white_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/to_edt_layout"
+                app:layout_constraintEnd_toEndOf="@+id/to_edt_layout"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/to_edt_layout"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/textInputLayout3"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout"
+
+                >
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="0,1,2,3,4,5,6,7,8,9,."
+                    android:inputType="textPersonName">
+
+                    <EditText
+                        android:id="@+id/amountSat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="0,1,2,3,4,5,6,7,8,9,."
+                        android:fontFamily="@font/roboto_mono"
+                        android:gravity="start"
+                        android:hint="sat"
+                        android:inputType="textMultiLine|phone"
+                        android:maxLines="2"
+                        android:scrollbars="vertical" />
+
+
+                </android.support.design.widget.TextInputLayout>
+            </FrameLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayout2"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
+
+                <EditText
+                    android:id="@+id/amountBTC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:fontFamily="@font/roboto_mono"
                     android:gravity="start"
-                    android:hint="sat"
-                    android:inputType="textMultiLine|phone"
-                    android:maxLines="2"
-                    android:scrollbars="vertical" />
+                    android:hint="BTC"
+                    android:inputType="number|textMultiLine"
+                    android:maxHeight="12dp"
+                    android:maxLines="2" />
 
 
             </android.support.design.widget.TextInputLayout>
-        </FrameLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout2"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
 
-            <EditText
-                android:id="@+id/amountBTC"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/total_available_amount"
+                android:textColor="@color/txt_grey"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+
+            <TextView
+                android:id="@+id/totalBTC"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/roboto_mono"
-                android:gravity="start"
-                android:hint="BTC"
-                android:inputType="number|textMultiLine"
-                android:maxHeight="12dp"
-                android:maxLines="2" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="0.0 BTC"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
 
-        </android.support.design.widget.TextInputLayout>
-
-
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/total_available_amount"
-            android:textColor="@color/txt_grey"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
-
-        <TextView
-            android:id="@+id/totalBTC"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="0.0 BTC"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -193,7 +193,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.16000003" />
+            app:layout_constraintVertical_bias="0.060000002" />
 
         <TextView
             android:id="@+id/to_address_review"
@@ -229,7 +229,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/to_address_review"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.060000002" />
 
         <TextView
             android:id="@+id/send_review_amount"
