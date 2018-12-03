@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -31,6 +32,7 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SettingsActivity2;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
@@ -98,8 +100,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman;
     private Button btnReview, btnSend;
     private ImageView selectPaynymBtn;
-    private Switch ricochetHopsSwitch;
-    private ConstraintLayout bottomSheet;
+    private Switch ricochetHopsSwitch, stoneWallSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
 //    BottomSheetBehavior sheetBehavior;
@@ -134,6 +135,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private long amount;
     private int change_index;
     private String ricochetMessage;
+    private JSONObject ricochetJsonObj = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,14 +173,14 @@ public class SendNewUIActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
+        stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
 
         btnReview.setOnClickListener(v -> review());
-
-
         btnSend.setOnClickListener(v -> initiateSpend());
+
 
         if (SamouraiWallet.getInstance().getShowTotalBalance()) {
             if (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2) {
@@ -189,6 +191,8 @@ public class SendNewUIActivity extends AppCompatActivity {
         } else {
             selectedAccount = 0;
         }
+
+
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = android.content.ClipData
@@ -225,11 +229,22 @@ public class SendNewUIActivity extends AppCompatActivity {
             }
         }
 
+        setUpBoltzman();
+
         validateSpend();
 
         setBalance();
 
         setUpPaynym();
+    }
+
+    private void setUpBoltzman() {
+
+        boolean useBoltzman = PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_BOLTZMANN, true);
+        stoneWallSwitch.setChecked(useBoltzman);
+        stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+            PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
+        });
     }
 //
 
@@ -589,7 +604,8 @@ public class SendNewUIActivity extends AppCompatActivity {
             tvReviewSpendAmount.setText(btcEditText.getText());
             btnSend.setText("send ".concat(btcEditText.getText().toString()).concat(" BTC"));
             amountViewSwitcher.showNext();
-            sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
+
+            sendTransactionDetailsView.showReview(false);
         }
 
     }
@@ -706,14 +722,13 @@ public class SendNewUIActivity extends AppCompatActivity {
                 samouraiFeeViaBIP47 = true;
             }
 
-            final JSONObject jObj = RicochetMeta.getInstance(SendNewUIActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
-            if (jObj != null) {
+            ricochetJsonObj = RicochetMeta.getInstance(SendNewUIActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
+            if (ricochetJsonObj != null) {
 
                 try {
-                    long totalAmount = jObj.getLong("total_spend");
+                    long totalAmount = ricochetJsonObj.getLong("total_spend");
                     if (totalAmount > balance) {
                         Toast.makeText(SendNewUIActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
-                        return;
                     }
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
@@ -1048,6 +1063,11 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     private void initiateSpend() {
 
+        if (SPEND_TYPE == SPEND_RICOCHET) {
+
+            ricochetSpend();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(SendNewUIActivity.this);
         builder.setTitle(R.string.app_name);
         builder.setMessage(message);
@@ -1136,16 +1156,16 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     }
 
-    private void ricochetSpend(String msg, JSONObject jObj) {
+    private void ricochetSpend() {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
                 .setTitle(R.string.app_name)
-                .setMessage(msg)
+                .setMessage(ricochetMessage)
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        RicochetMeta.getInstance(SendNewUIActivity.this).add(jObj);
+                        RicochetMeta.getInstance(SendNewUIActivity.this).add(ricochetJsonObj);
 
                         dialog.dismiss();
 
