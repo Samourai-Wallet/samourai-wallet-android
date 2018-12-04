@@ -1289,6 +1289,8 @@ public class SendNewUIActivity extends AppCompatActivity {
             try {
                 if (amount != null && Double.parseDouble(amount) != 0.0) {
                     toAddressEditText.setEnabled(false);
+                    selectPaynymBtn.setEnabled(false);
+                    selectPaynymBtn.setAlpha(0.5f);
  //                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                     enableAmount(false);
 
