@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -32,7 +30,6 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SettingsActivity2;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
@@ -571,12 +568,12 @@ public class SendNewUIActivity extends AppCompatActivity {
         }
     };
 
-    private void setTvToAddress(String string) {
+    private void setToAddress(String string) {
         tvToAddress.setText(string);
         toAddressEditText.setText(string);
     }
 
-    private String getTvToAddress() {
+    private String getToAddress() {
         if (toAddressEditText.getText().toString().trim().length() != 0) {
             return toAddressEditText.getText().toString();
         }
@@ -1223,6 +1220,11 @@ public class SendNewUIActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void enableAmount(boolean enable) {
+        btcEditText.setEnabled(enable);
+        satEditText.setEnabled(enable);
+    }
+
 
     private void processScan(String data) {
 
@@ -1262,16 +1264,17 @@ public class SendNewUIActivity extends AppCompatActivity {
             String address = FormatsUtil.getInstance().getBitcoinAddress(data);
             String amount = FormatsUtil.getInstance().getBitcoinAmount(data);
 
-            toAddressEditText.setText(address);
-
+            setToAddress(address);
             if (amount != null) {
                 try {
                     NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
                     btcFormat.setMaximumFractionDigits(8);
                     btcFormat.setMinimumFractionDigits(1);
-                    setTvToAddress(btcFormat.format(Double.parseDouble(amount) / 1e8));
-                } catch (NumberFormatException nfe) {
-                    setTvToAddress("0.0");
+//                    setToAddress(btcFormat.format(Double.parseDouble(amount) / 1e8));
+//                    Log.i(TAG, "------->: ".concat();
+                    btcEditText.setText(btcFormat.format(Double.parseDouble(amount) / 1e8));
+                 } catch (NumberFormatException nfe) {
+//                    setToAddress("0.0");
                 }
             }
 
@@ -1286,19 +1289,20 @@ public class SendNewUIActivity extends AppCompatActivity {
             try {
                 if (amount != null && Double.parseDouble(amount) != 0.0) {
                     toAddressEditText.setEnabled(false);
-                    toAddressEditText.setEnabled(false);
-//                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+ //                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+                    enableAmount(false);
+
                 }
             } catch (NumberFormatException nfe) {
-                toAddressEditText.setText("0.0");
+                enableAmount(true);
             }
 
         } else if (FormatsUtil.getInstance().isValidBitcoinAddress(data)) {
 
             if (FormatsUtil.getInstance().isValidBech32(data)) {
-                setTvToAddress(data.toLowerCase());
+                setToAddress(data.toLowerCase());
             } else {
-                setTvToAddress(data);
+                setToAddress(data);
             }
 
         } else if (data.contains("?")) {
@@ -1346,7 +1350,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     }
 
                     strPCode = _pcode.toString();
-                    setTvToAddress(BIP47Meta.getInstance().getDisplayLabel(strPCode));
+                    setToAddress(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     toAddressEditText.setEnabled(false);
                 } catch (Exception e) {
                     Toast.makeText(this, R.string.error_payment_code, Toast.LENGTH_SHORT).show();
@@ -1380,11 +1384,11 @@ public class SendNewUIActivity extends AppCompatActivity {
 
         double btc_amount = 0.0;
 
-        String strBTCAddress = getTvToAddress();
+        String strBTCAddress = getToAddress();
         if (strBTCAddress.startsWith("bitcoin:")) {
-            setTvToAddress(strBTCAddress.substring(8));
+            setToAddress(strBTCAddress.substring(8));
         }
-        setTvToAddress(strBTCAddress);
+        setToAddress(strBTCAddress);
 
         try {
             btc_amount = NumberFormat.getInstance(Locale.US).parse(btcEditText.getText().toString()).doubleValue();
@@ -1408,7 +1412,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if (btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(getTvToAddress())) {
+        if (btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
         } else if (btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;

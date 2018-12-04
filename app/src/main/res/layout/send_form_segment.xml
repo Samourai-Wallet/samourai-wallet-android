@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_view_switcher"
     android:layout_width="match_parent"
-    android:layout_height="189dp"
+    android:layout_height="190dp"
     android:inAnimation="@android:anim/fade_in"
     android:outAnimation="@android:anim/fade_out">
 
@@ -45,6 +45,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
+                        android:textSize="16sp"
                         android:hint="To"
                         android:inputType="textNoSuggestions|textMultiLine"
                         android:maxLines="2"
@@ -97,6 +98,7 @@
                         android:digits="0,1,2,3,4,5,6,7,8,9,."
                         android:fontFamily="@font/roboto_mono"
                         android:gravity="start"
+                        android:textSize="16sp"
                         android:hint="sat"
                         android:inputType="textMultiLine|phone"
                         android:maxLines="2"
@@ -126,6 +128,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_mono"
                     android:gravity="start"
+                    android:textSize="16sp"
                     android:hint="BTC"
                     android:inputType="number|textMultiLine"
                     android:maxHeight="12dp"
