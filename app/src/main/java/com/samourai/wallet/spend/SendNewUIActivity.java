@@ -89,6 +89,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;
+    private static final String TAG = "SendNewUIActivity";
 
 
     private SendTransactionDetailsView sendTransactionDetailsView;
@@ -102,10 +103,8 @@ public class SendNewUIActivity extends AppCompatActivity {
     private EntropyBar entropyBar;
 //    BottomSheetBehavior sheetBehavior;
 
-    private static final String TAG = "SendNewUIActivity";
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
-    private Boolean isOnReviewPage = false;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
@@ -460,8 +459,11 @@ public class SendNewUIActivity extends AppCompatActivity {
         nf.setMinimumIntegerDigits(1);
 
         strAmount = nf.format(balance / 1e8);
-        Log.i(TAG, "setBalance: ------------> ".concat(strAmount));
-        Log.i(TAG, "setBalance: ------------> ".concat(getDisplayUnits()));
+
+        tvMaxAmount.setOnClickListener(view -> {
+            btcEditText.setText(strAmount);
+        });
+
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
 
     }
@@ -1187,7 +1189,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     private void backToTransactionView() {
         amountViewSwitcher.showPrevious();
         sendTransactionDetailsView.showTransaction();
-        isOnReviewPage = false;
+
     }
 
     @Override
@@ -1207,7 +1209,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isOnReviewPage) {
+        if (sendTransactionDetailsView.isReview()) {
             backToTransactionView();
         } else {
             super.onBackPressed();
@@ -1224,7 +1226,6 @@ public class SendNewUIActivity extends AppCompatActivity {
         btcEditText.setEnabled(enable);
         satEditText.setEnabled(enable);
     }
-
 
     private void processScan(String data) {
 
@@ -1273,7 +1274,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 //                    setToAddress(btcFormat.format(Double.parseDouble(amount) / 1e8));
 //                    Log.i(TAG, "------->: ".concat();
                     btcEditText.setText(btcFormat.format(Double.parseDouble(amount) / 1e8));
-                 } catch (NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
 //                    setToAddress("0.0");
                 }
             }
@@ -1291,7 +1292,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     toAddressEditText.setEnabled(false);
                     selectPaynymBtn.setEnabled(false);
                     selectPaynymBtn.setAlpha(0.5f);
- //                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+                    //                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                     enableAmount(false);
 
                 }
@@ -1327,13 +1328,11 @@ public class SendNewUIActivity extends AppCompatActivity {
         validateSpend();
     }
 
-
     public String getDisplayUnits() {
 
         return MonetaryUtil.getInstance().getBTCUnits();
 
     }
-
 
     private void processPCode(String pcode, String meta) {
 
@@ -1377,7 +1376,6 @@ public class SendNewUIActivity extends AppCompatActivity {
         }
 
     }
-
 
     private boolean validateSpend() {
 
