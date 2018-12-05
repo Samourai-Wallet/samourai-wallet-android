@@ -28,9 +28,13 @@ import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.TxAnimUIActivity;
+import com.samourai.wallet.UTXOActivity;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -39,6 +43,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -54,6 +59,7 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -1193,33 +1199,12 @@ public class SendNewUIActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.onBackPressed();
-            return true;
-        }
-        if (item.getItemId() == R.id.action_scan_qr) {
-            Intent intent = new Intent(this, ZBarScannerActivity.class);
-            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-            startActivityForResult(intent, SCAN_QR);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
         if (sendTransactionDetailsView.isReview()) {
             backToTransactionView();
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.send_menu, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     private void enableAmount(boolean enable) {
@@ -1455,5 +1440,111 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.send_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (item.getItemId() == android.R.id.home) {
+            this.onBackPressed();
+            return true;
+        }
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_scan_qr) {
+            doScan();
+        } else if (id == R.id.action_ricochet) {
+            Intent intent = new Intent(SendNewUIActivity.this, RicochetActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_empty_ricochet) {
+            emptyRicochetQueue();
+        } else if (id == R.id.action_utxo) {
+            doUTXO();
+        } else if (id == R.id.action_fees) {
+            doFees();
+        } else if (id == R.id.action_batch) {
+            doBatchSpend();
+        } else if (id == R.id.action_support) {
+            doSupport();
+        } else {
+            ;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void emptyRicochetQueue() {
+
+        RicochetMeta.getInstance(this).setLastRicochet(null);
+        RicochetMeta.getInstance(this).empty();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    PayloadUtil.getInstance(SendNewUIActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendNewUIActivity.this).getGUID() + AccessFactory.getInstance(SendNewUIActivity.this).getPIN()));
+                } catch (Exception e) {
+                    ;
+                }
+
+            }
+        }).start();
+
+    }
+
+    private void doScan() {
+        Intent intent = new Intent(SendNewUIActivity.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+        startActivityForResult(intent, SCAN_QR);
+    }
+
+    private void doSupport() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/8-sending-bitcoin"));
+        startActivity(intent);
+    }
+
+    private void doUTXO() {
+        Intent intent = new Intent(SendNewUIActivity.this, UTXOActivity.class);
+        startActivity(intent);
+    }
+
+    private void doBatchSpend() {
+        Intent intent = new Intent(SendNewUIActivity.this, BatchSendActivity.class);
+        startActivity(intent);
+    }
+
+    private void doFees() {
+
+        SuggestedFee highFee = FeeUtil.getInstance().getHighFee();
+        SuggestedFee normalFee = FeeUtil.getInstance().getNormalFee();
+        SuggestedFee lowFee = FeeUtil.getInstance().getLowFee();
+
+        String message = getText(R.string.current_fee_selection) + " " + (FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
+        message += "\n";
+        message += getText(R.string.current_hi_fee_value) + " " + (highFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
+        message += "\n";
+        message += getText(R.string.current_mid_fee_value) + " " + (normalFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
+        message += "\n";
+        message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
+
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, whichButton) -> dialog.dismiss());
+        if (!isFinishing()) {
+            dlg.show();
+        }
+
+    }
 
 }
+
