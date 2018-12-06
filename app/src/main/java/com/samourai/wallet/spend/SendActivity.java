@@ -31,7 +31,6 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -90,12 +89,12 @@ import java.util.Objects;
 import java.util.Vector;
 
 
-public class SendNewUIActivity extends AppCompatActivity {
+public class SendActivity extends AppCompatActivity {
 
 
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;
-    private static final String TAG = "SendNewUIActivity";
+    private static final String TAG = "SendActivity";
 
 
     private SendTransactionDetailsView sendTransactionDetailsView;
@@ -507,7 +506,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     btcEditText.setSelection(btcEditText.getText().length());
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
-                    Toast.makeText(SendNewUIActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
 
 //
@@ -564,7 +563,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     btcEditText.setSelection(btcEditText.getText().length());
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
-                    Toast.makeText(SendNewUIActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -633,11 +632,11 @@ public class SendNewUIActivity extends AppCompatActivity {
         amount = (long) (Math.round(dAmount * 1e8));
         ;
 
-//                Log.i("SendNewUIActivity", "amount:" + amount);
+//                Log.i("SendActivity", "amount:" + amount);
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
 
-        if ((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendNewUIActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        if ((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
         } else {
             changeType = 44;
@@ -649,13 +648,13 @@ public class SendNewUIActivity extends AppCompatActivity {
         // store current change index to restore value in case of sending fail
         change_index = 0;
         if (changeType == 84) {
-            change_index = BIP84Util.getInstance(SendNewUIActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+            change_index = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         } else if (changeType == 49) {
-            change_index = BIP49Util.getInstance(SendNewUIActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+            change_index = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         } else {
             try {
-                change_index = HD_WalletFactory.getInstance(SendNewUIActivity.this).get().getAccount(0).getChange().getAddrIdx();
-//                    Log.d("SendNewUIActivity", "storing change index:" + change_index);
+                change_index = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
+//                    Log.d("SendActivity", "storing change index:" + change_index);
             } catch (IOException ioe) {
                 ;
             } catch (MnemonicException.MnemonicLengthException mle) {
@@ -668,13 +667,13 @@ public class SendNewUIActivity extends AppCompatActivity {
         long neededAmount = 0L;
         if (FormatsUtil.getInstance().isValidBech32(address)) {
             neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, 0, UTXOFactory.getInstance().getCountP2WPKH(), 4).longValue();
-//                    Log.d("SendNewUIActivity", "segwit:" + neededAmount);
+//                    Log.d("SendActivity", "segwit:" + neededAmount);
         } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 0, 4).longValue();
-//                    Log.d("SendNewUIActivity", "segwit:" + neededAmount);
+//                    Log.d("SendActivity", "segwit:" + neededAmount);
         } else {
             neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
-//                    Log.d("SendNewUIActivity", "p2pkh:" + neededAmount);
+//                    Log.d("SendActivity", "p2pkh:" + neededAmount);
         }
         neededAmount += amount;
         neededAmount += SamouraiWallet.bDust.longValue();
@@ -691,19 +690,19 @@ public class SendNewUIActivity extends AppCompatActivity {
         long change = 0L;
         BigInteger fee = null;
 
-//                Log.d("SendNewUIActivity", "amount:" + amount);
-//                Log.d("SendNewUIActivity", "balance:" + balance);
+//                Log.d("SendActivity", "amount:" + amount);
+//                Log.d("SendActivity", "balance:" + balance);
 
         // insufficient funds
         if (amount > balance) {
-            Toast.makeText(SendNewUIActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
         }
         // entire balance (can only be simple spend)
         else if (amount == balance) {
             // make sure we are using simple spend
             SPEND_TYPE = SPEND_SIMPLE;
 
-//                    Log.d("SendNewUIActivity", "amount == balance");
+//                    Log.d("SendActivity", "amount == balance");
             // take all utxos, deduct fee
             selectedUTXO.addAll(utxos);
 
@@ -711,8 +710,8 @@ public class SendNewUIActivity extends AppCompatActivity {
                 totalValueSelected += u.getValue();
             }
 
-//                    Log.d("SendNewUIActivity", "balance:" + balance);
-//                    Log.d("SendNewUIActivity", "total value selected:" + totalValueSelected);
+//                    Log.d("SendActivity", "balance:" + balance);
+//                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
 
         } else {
             ;
@@ -727,13 +726,13 @@ public class SendNewUIActivity extends AppCompatActivity {
                 samouraiFeeViaBIP47 = true;
             }
 
-            ricochetJsonObj = RicochetMeta.getInstance(SendNewUIActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
+            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
             if (ricochetJsonObj != null) {
 
                 try {
                     long totalAmount = ricochetJsonObj.getLong("total_spend");
                     if (totalAmount > balance) {
-                        Toast.makeText(SendNewUIActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                     }
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
@@ -749,7 +748,7 @@ public class SendNewUIActivity extends AppCompatActivity {
             return;
         } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
 
-            Log.d("SendNewUIActivity", "needed amount:" + neededAmount);
+            Log.d("SendActivity", "needed amount:" + neededAmount);
 
             List<UTXO> _utxos1 = null;
             List<UTXO> _utxos2 = null;
@@ -758,36 +757,36 @@ public class SendNewUIActivity extends AppCompatActivity {
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
             long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
 
-            Log.d("SendNewUIActivity", "value P2WPKH:" + valueP2WPKH);
-            Log.d("SendNewUIActivity", "value P2SH_P2WPKH:" + valueP2SH_P2WPKH);
-            Log.d("SendNewUIActivity", "value P2PKH:" + valueP2PKH);
+            Log.d("SendActivity", "value P2WPKH:" + valueP2WPKH);
+            Log.d("SendActivity", "value P2SH_P2WPKH:" + valueP2SH_P2WPKH);
+            Log.d("SendActivity", "value P2PKH:" + valueP2PKH);
 
             boolean selectedP2WPKH = false;
             boolean selectedP2SH_P2WPKH = false;
             boolean selectedP2PKH = false;
 
             if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
-                Log.d("SendNewUIActivity", "set 1 P2WPKH 2x");
+                Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
             } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
-                Log.d("SendNewUIActivity", "set 1 P2SH_P2WPKH 2x");
+                Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
             } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
-                Log.d("SendNewUIActivity", "set 1 P2PKH 2x");
+                Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
             } else if (valueP2WPKH > (neededAmount * 2)) {
-                Log.d("SendNewUIActivity", "set 1 P2WPKH 2x");
+                Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
             } else if (valueP2SH_P2WPKH > (neededAmount * 2)) {
-                Log.d("SendNewUIActivity", "set 1 P2SH_P2WPKH 2x");
+                Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
             } else if (valueP2PKH > (neededAmount * 2)) {
-                Log.d("SendNewUIActivity", "set 1 P2PKH 2x");
+                Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
             } else {
@@ -796,15 +795,15 @@ public class SendNewUIActivity extends AppCompatActivity {
 
             if (_utxos1 == null) {
                 if (valueP2SH_P2WPKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 1 P2SH_P2WPKH");
+                    Log.d("SendActivity", "set 1 P2SH_P2WPKH");
                     _utxos1 = utxosP2SH_P2WPKH;
                     selectedP2SH_P2WPKH = true;
                 } else if (valueP2WPKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 1 P2WPKH");
+                    Log.d("SendActivity", "set 1 P2WPKH");
                     _utxos1 = utxosP2WPKH;
                     selectedP2WPKH = true;
                 } else if (valueP2PKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 1 P2PKH");
+                    Log.d("SendActivity", "set 1 P2PKH");
                     _utxos1 = utxosP2PKH;
                     selectedP2PKH = true;
                 } else {
@@ -816,13 +815,13 @@ public class SendNewUIActivity extends AppCompatActivity {
             if (_utxos1 != null && _utxos2 == null) {
 
                 if (!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 2 P2SH_P2WPKH");
+                    Log.d("SendActivity", "set 2 P2SH_P2WPKH");
                     _utxos2 = utxosP2SH_P2WPKH;
                 } else if (!selectedP2WPKH && valueP2WPKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 2 P2WPKH");
+                    Log.d("SendActivity", "set 2 P2WPKH");
                     _utxos2 = utxosP2WPKH;
                 } else if (!selectedP2PKH && valueP2PKH > neededAmount) {
-                    Log.d("SendNewUIActivity", "set 2 P2PKH");
+                    Log.d("SendActivity", "set 2 P2PKH");
                     _utxos2 = utxosP2PKH;
                 } else {
                     ;
@@ -835,7 +834,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                 SPEND_TYPE = SPEND_SIMPLE;
             } else {
 
-                Log.d("SendNewUIActivity", "boltzmann spend");
+                Log.d("SendActivity", "boltzmann spend");
 
                 Collections.shuffle(_utxos1);
                 if (_utxos2 != null) {
@@ -843,7 +842,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                 }
 
                 // boltzmann spend (STONEWALL)
-                pair = SendFactory.getInstance(SendNewUIActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
+                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
 
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE
@@ -876,12 +875,12 @@ public class SendNewUIActivity extends AppCompatActivity {
                 if (u.getValue() >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 2).longValue())) {
                     selectedUTXO.add(u);
                     totalValueSelected += u.getValue();
-                    Log.d("SendNewUIActivity", "spend type:" + SPEND_TYPE);
-                    Log.d("SendNewUIActivity", "single output");
-                    Log.d("SendNewUIActivity", "amount:" + amount);
-                    Log.d("SendNewUIActivity", "value selected:" + u.getValue());
-                    Log.d("SendNewUIActivity", "total value selected:" + totalValueSelected);
-                    Log.d("SendNewUIActivity", "nb inputs:" + u.getOutpoints().size());
+                    Log.d("SendActivity", "spend type:" + SPEND_TYPE);
+                    Log.d("SendActivity", "single output");
+                    Log.d("SendActivity", "amount:" + amount);
+                    Log.d("SendActivity", "value selected:" + u.getValue());
+                    Log.d("SendActivity", "total value selected:" + totalValueSelected);
+                    Log.d("SendActivity", "nb inputs:" + u.getOutpoints().size());
                     break;
                 }
             }
@@ -901,19 +900,19 @@ public class SendNewUIActivity extends AppCompatActivity {
                     totalValueSelected += u.getValue();
                     selected += u.getOutpoints().size();
 
-//                            Log.d("SendNewUIActivity", "value selected:" + u.getValue());
-//                            Log.d("SendNewUIActivity", "total value selected/threshold:" + totalValueSelected + "/" + (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()));
+//                            Log.d("SendActivity", "value selected:" + u.getValue());
+//                            Log.d("SendActivity", "total value selected/threshold:" + totalValueSelected + "/" + (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFee(selected, 2).longValue()));
 
                     Triple<Integer, Integer, Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(u.getOutpoints()));
                     p2pkh += outpointTypes.getLeft();
                     p2sh_p2wpkh += outpointTypes.getMiddle();
                     p2wpkh += outpointTypes.getRight();
                     if (totalValueSelected >= (amount + SamouraiWallet.bDust.longValue() + FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, 2).longValue())) {
-                        Log.d("SendNewUIActivity", "spend type:" + SPEND_TYPE);
-                        Log.d("SendNewUIActivity", "multiple outputs");
-                        Log.d("SendNewUIActivity", "amount:" + amount);
-                        Log.d("SendNewUIActivity", "total value selected:" + totalValueSelected);
-                        Log.d("SendNewUIActivity", "nb inputs:" + selected);
+                        Log.d("SendActivity", "spend type:" + SPEND_TYPE);
+                        Log.d("SendActivity", "multiple outputs");
+                        Log.d("SendActivity", "amount:" + amount);
+                        Log.d("SendActivity", "total value selected:" + totalValueSelected);
+                        Log.d("SendActivity", "nb inputs:" + selected);
                         break;
                     }
                 }
@@ -943,7 +942,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     receivers.put(script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), BigInteger.valueOf(output.getValue().longValue()));
                     outputAmount += output.getValue().longValue();
                 } catch (Exception e) {
-                    Toast.makeText(SendNewUIActivity.this, R.string.error_bip126_output, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SendActivity.this, R.string.error_bip126_output, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -952,7 +951,7 @@ public class SendNewUIActivity extends AppCompatActivity {
             fee = BigInteger.valueOf(inputAmount - outputAmount);
 
         } else {
-            Toast.makeText(SendNewUIActivity.this, R.string.cannot_select_utxo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SendActivity.this, R.string.cannot_select_utxo, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -975,14 +974,14 @@ public class SendNewUIActivity extends AppCompatActivity {
                     //
                     // fee sanity check
                     //
-                    Transaction tx = SendFactory.getInstance(SendNewUIActivity.this).makeTransaction(0, outpoints, receivers);
-                    tx = SendFactory.getInstance(SendNewUIActivity.this).signTransaction(tx);
+                    Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outpoints, receivers);
+                    tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                     byte[] serialized = tx.bitcoinSerialize();
-                    Log.d("SendNewUIActivity", "size:" + serialized.length);
-                    Log.d("SendNewUIActivity", "vsize:" + tx.getVirtualTransactionSize());
-                    Log.d("SendNewUIActivity", "fee:" + fee.longValue());
+                    Log.d("SendActivity", "size:" + serialized.length);
+                    Log.d("SendActivity", "vsize:" + tx.getVirtualTransactionSize());
+                    Log.d("SendActivity", "fee:" + fee.longValue());
                     if ((tx.hasWitness() && (fee.longValue() < tx.getVirtualTransactionSize())) || (!tx.hasWitness() && (fee.longValue() < serialized.length))) {
-                        Toast.makeText(SendNewUIActivity.this, R.string.insufficient_fee, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SendActivity.this, R.string.insufficient_fee, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     //
@@ -994,18 +993,18 @@ public class SendNewUIActivity extends AppCompatActivity {
                 }
             }
 
-            Log.d("SendNewUIActivity", "spend type:" + SPEND_TYPE);
-            Log.d("SendNewUIActivity", "amount:" + amount);
-            Log.d("SendNewUIActivity", "total value selected:" + totalValueSelected);
-            Log.d("SendNewUIActivity", "fee:" + fee.longValue());
-            Log.d("SendNewUIActivity", "nb inputs:" + selectedUTXO.size());
+            Log.d("SendActivity", "spend type:" + SPEND_TYPE);
+            Log.d("SendActivity", "amount:" + amount);
+            Log.d("SendActivity", "total value selected:" + totalValueSelected);
+            Log.d("SendActivity", "fee:" + fee.longValue());
+            Log.d("SendActivity", "nb inputs:" + selectedUTXO.size());
 
             change = totalValueSelected - (amount + fee.longValue());
-//                    Log.d("SendNewUIActivity", "change:" + change);
+//                    Log.d("SendActivity", "change:" + change);
 
             if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
 
-                AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
+                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.change_is_dust)
                         .setCancelable(false)
@@ -1040,7 +1039,7 @@ public class SendNewUIActivity extends AppCompatActivity {
             }
 
             String strCannotDoBoltzmann = null;
-            if (!canDoBoltzmann && PrefsUtil.getInstance(SendNewUIActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true) {
+            if (!canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true) {
                 strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
             } else {
                 strCannotDoBoltzmann = "";
@@ -1049,7 +1048,7 @@ public class SendNewUIActivity extends AppCompatActivity {
 
             /*
                     String strNoLikedTypeBoltzmann = null;
-                    if(canDoBoltzmann && PrefsUtil.getInstance(SendNewUIActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true && PrefsUtil.getInstance(SendNewUIActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
+                    if(canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
                         strNoLikedTypeBoltzmann = getString(R.string.boltzmann_like_typed) + "\n\n";
                     }
                     else    {
@@ -1073,12 +1072,12 @@ public class SendNewUIActivity extends AppCompatActivity {
             ricochetSpend();
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(SendNewUIActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
         builder.setTitle(R.string.app_name);
         builder.setMessage(message);
         final CheckBox cbShowAgain;
         if (strPrivacyWarning.length() > 0) {
-            cbShowAgain = new CheckBox(SendNewUIActivity.this);
+            cbShowAgain = new CheckBox(SendActivity.this);
             cbShowAgain.setText(R.string.do_not_repeat_sent_to);
             cbShowAgain.setChecked(false);
             builder.setView(cbShowAgain);
@@ -1098,20 +1097,20 @@ public class SendNewUIActivity extends AppCompatActivity {
                 if (_change > 0L) {
                     if (SPEND_TYPE == SPEND_SIMPLE) {
                         if (changeType == 84) {
-                            String change_address = BIP84Util.getInstance(SendNewUIActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendNewUIActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
+                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else if (changeType == 49) {
-                            String change_address = BIP49Util.getInstance(SendNewUIActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendNewUIActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+                            String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else {
                             try {
-                                String change_address = HD_WalletFactory.getInstance(SendNewUIActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendNewUIActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                                String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
                                 receivers.put(change_address, BigInteger.valueOf(_change));
                             } catch (IOException ioe) {
-                                Toast.makeText(SendNewUIActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
                                 return;
                             } catch (MnemonicException.MnemonicLengthException mle) {
-                                Toast.makeText(SendNewUIActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
@@ -1136,7 +1135,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                         amount,
                         change_index
                 );
-                Intent _intent = new Intent(SendNewUIActivity.this, TxAnimUIActivity.class);
+                Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
                 startActivity(_intent);
 
             }
@@ -1144,7 +1143,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, int whichButton) {
 
-                SendNewUIActivity.this.runOnUiThread(new Runnable() {
+                SendActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 //                            btSend.setActivated(true);
@@ -1163,18 +1162,18 @@ public class SendNewUIActivity extends AppCompatActivity {
 
     private void ricochetSpend() {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(ricochetMessage)
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        RicochetMeta.getInstance(SendNewUIActivity.this).add(ricochetJsonObj);
+                        RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
 
                         dialog.dismiss();
 
-                        Intent intent = new Intent(SendNewUIActivity.this, RicochetActivity.class);
+                        Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
                         startActivityForResult(intent, RICOCHET);
 
                     }
@@ -1342,7 +1341,7 @@ public class SendNewUIActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.error_payment_code, Toast.LENGTH_SHORT).show();
                 }
             } else {
-//                Toast.makeText(SendNewUIActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
 
                 if (meta != null && meta.startsWith("?") && meta.length() > 1) {
                     meta = meta.substring(1);
@@ -1405,6 +1404,9 @@ public class SendNewUIActivity extends AppCompatActivity {
             isValid = false;
         }
 
+        if(insufficientFunds){
+            Toast.makeText(this,getString(R.string.insufficient_funds),Toast.LENGTH_SHORT).show();
+        }
         if (!isValid || insufficientFunds) {
             return false;
         } else {
@@ -1461,7 +1463,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         if (id == R.id.action_scan_qr) {
             doScan();
         } else if (id == R.id.action_ricochet) {
-            Intent intent = new Intent(SendNewUIActivity.this, RicochetActivity.class);
+            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_empty_ricochet) {
             emptyRicochetQueue();
@@ -1490,7 +1492,7 @@ public class SendNewUIActivity extends AppCompatActivity {
             public void run() {
 
                 try {
-                    PayloadUtil.getInstance(SendNewUIActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendNewUIActivity.this).getGUID() + AccessFactory.getInstance(SendNewUIActivity.this).getPIN()));
+                    PayloadUtil.getInstance(SendActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SendActivity.this).getGUID() + AccessFactory.getInstance(SendActivity.this).getPIN()));
                 } catch (Exception e) {
                     ;
                 }
@@ -1501,7 +1503,7 @@ public class SendNewUIActivity extends AppCompatActivity {
     }
 
     private void doScan() {
-        Intent intent = new Intent(SendNewUIActivity.this, ZBarScannerActivity.class);
+        Intent intent = new Intent(SendActivity.this, ZBarScannerActivity.class);
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
         startActivityForResult(intent, SCAN_QR);
     }
@@ -1512,12 +1514,12 @@ public class SendNewUIActivity extends AppCompatActivity {
     }
 
     private void doUTXO() {
-        Intent intent = new Intent(SendNewUIActivity.this, UTXOActivity.class);
+        Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
         startActivity(intent);
     }
 
     private void doBatchSpend() {
-        Intent intent = new Intent(SendNewUIActivity.this, BatchSendActivity.class);
+        Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
         startActivity(intent);
     }
 
@@ -1535,7 +1537,7 @@ public class SendNewUIActivity extends AppCompatActivity {
         message += "\n";
         message += getText(R.string.current_lo_fee_value) + " " + (lowFee.getDefaultPerKB().longValue() / 1000L) + " " + getText(R.string.slash_sat);
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SendNewUIActivity.this)
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setMessage(message)
                 .setCancelable(false)

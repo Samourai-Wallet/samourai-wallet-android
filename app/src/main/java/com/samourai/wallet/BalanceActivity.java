@@ -43,7 +43,6 @@ import android.util.Log;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
-import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.TransactionInput;
@@ -81,7 +80,6 @@ import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.segwit.bech32.Bech32;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
@@ -96,7 +94,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
-import com.samourai.wallet.spend.SendNewUIActivity;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -384,7 +382,7 @@ public class BalanceActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
-                Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                Intent intent = new Intent(BalanceActivity.this,  SendActivity.class);
                 intent.putExtra("via_menu", true);
                 startActivity(intent);
 
@@ -778,9 +776,6 @@ public class BalanceActivity extends Activity {
         else if (id == R.id.action_scan_qr) {
             doScan();
         }
-        else if (id == R.id.action_new_spend) {
-            startActivity(new Intent(this,SendNewUIActivity.class));
-        }
         else {
             ;
         }
@@ -816,7 +811,7 @@ public class BalanceActivity extends Activity {
                         doPrivKey(strResult);
                     }
                     else    {
-                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                        Intent intent = new Intent(BalanceActivity.this,  SendActivity.class);
                         intent.putExtra("uri", strResult);
                         startActivity(intent);
                     }
