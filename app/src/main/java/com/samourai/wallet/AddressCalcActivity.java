@@ -33,9 +33,14 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AppUtil;
 
+import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AddressCalcActivity extends Activity {
 
@@ -162,7 +167,6 @@ public class AddressCalcActivity extends Activity {
                     message += strAddress;
 
                     final TextView tvText = new TextView(getApplicationContext());
-//                    tvText.setTextSize(12);
                     tvText.setText(message);
                     tvText.setTextIsSelectable(true);
                     tvText.setPadding(40, 10, 40, 10);
@@ -171,9 +175,45 @@ public class AddressCalcActivity extends Activity {
                             .setTitle(R.string.app_name)
                             .setView(tvText)
                             .setCancelable(true)
-                            .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+                            .setNeutralButton(R.string.utxo_sign, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     dialog.dismiss();
+
+                                    String addr = strAddress;
+                                    String msg = null;
+
+                                    if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+
+                                        msg = AddressCalcActivity.this.getString(R.string.utxo_sign_text3);
+
+                                        try {
+                                            JSONObject obj = new JSONObject();
+                                            obj.put("pubkey", ecKey.getPublicKeyAsHex());
+                                            obj.put("address", addr);
+                                            msg +=  " " + obj.toString();
+                                        }
+                                        catch(JSONException je) {
+                                            msg += ":";
+                                            msg += addr;
+                                            msg += ", ";
+                                            msg += "pubkey:";
+                                            msg += ecKey.getPublicKeyAsHex();
+                                        }
+
+                                    }
+                                    else    {
+
+                                        msg = AddressCalcActivity.this.getString(R.string.utxo_sign_text2);
+
+                                    }
+
+                                    if(ecKey != null)    {
+                                        MessageSignUtil.getInstance(AddressCalcActivity.this).doSign(AddressCalcActivity.this.getString(R.string.utxo_sign),
+                                                AddressCalcActivity.this.getString(R.string.utxo_sign_text1),
+                                                msg,
+                                                ecKey);
+                                    }
+
                                 }
                             })
                             .setNegativeButton(R.string.options_display_privkey, new DialogInterface.OnClickListener() {

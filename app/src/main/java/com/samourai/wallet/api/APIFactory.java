@@ -137,6 +137,102 @@ public class APIFactory	{
         UTXOFactory.getInstance().clear();
     }
 
+    public String getAccessToken() {
+        return ACCESS_TOKEN;
+    }
+
+    public void setAccessToken(String accessToken) {
+        ACCESS_TOKEN = accessToken;
+    }
+
+    public String getAppToken()  {
+
+        if(APP_TOKEN != null)    {
+            return APP_TOKEN;
+        }
+        else    {
+            return new String(getXORKey());
+        }
+    }
+
+    public byte[] getXORKey() {
+
+        byte[] xorSegments0 = Base64.decode("[--- REDACTED ---]");
+        byte[] xorSegments1 = Base64.decode("[--- REDACTED ---]");
+
+        return xor(xorSegments0, xorSegments1);
+    }
+
+    private byte[] xor(byte[] b0, byte[] b1) {
+
+        byte[] ret = new byte[b0.length];
+
+        for(int i = 0; i < b0.length; i++){
+            ret[i] = (byte)(b0[i] ^ b1[i]);
+        }
+
+        return ret;
+
+    }
+
+    public int getAccessTokenRefresh() {
+        return ACCESS_TOKEN_REFRESH;
+    }
+
+    public synchronized boolean getToken() {
+
+//        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = WebUtil.SAMOURAI_API2_TESTNET;
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String response = null;
+
+            if(AppUtil.getInstance(context).isOfflineMode())    {
+                ;
+            }
+            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                // use POST
+                StringBuilder args = new StringBuilder();
+                args.append("apikey=");
+                args.append(new String(getXORKey()));
+                response = WebUtil.getInstance(context).postURL(_url + "auth/login?", args.toString());
+                Log.i("APIFactory", "API token response:" + response);
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("apikey", new String(getXORKey()));
+                response = WebUtil.getInstance(context).tor_postURL(_url + "auth/login", args);
+                Log.i("APIFactory", "API token response:" + response);
+            }
+
+            try {
+                jsonObject = new JSONObject(response);
+                if(jsonObject.has("authorizations"))    {
+                    JSONObject authObj = jsonObject.getJSONObject("authorizations");
+                    if(authObj.has("access_token"))    {
+                        setAccessToken(authObj.getString("access_token"));
+                        return true;
+                    }
+                }
+            }
+            catch(JSONException je) {
+                je.printStackTrace();
+                jsonObject = null;
+                return false;
+            }
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
 
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;

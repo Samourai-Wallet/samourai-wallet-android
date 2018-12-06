@@ -20,16 +20,21 @@ public class SIMUtil {
             tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
             instance = new SIMUtil();
 
-            if(tm.getSubscriberId() != null && tm.getSubscriberId().length() > 0)	{
-                imsi = tm.getSubscriberId();
+            try {
+                if(tm.getSubscriberId() != null && tm.getSubscriberId().length() > 0)	{
+                    imsi = tm.getSubscriberId();
 //                Log.i("SIMUtil", "subscriber id:" + imsi);
-            }
-            else if(tm.getSimSerialNumber() != null && tm.getSimSerialNumber().length() > 0)	{
-                imsi = tm.getSimSerialNumber();
+                }
+                else if(tm.getSimSerialNumber() != null && tm.getSimSerialNumber().length() > 0)	{
+                    imsi = tm.getSimSerialNumber();
 //                Log.i("SIMUtil", "sim serial no.:" + imsi);
+                }
+                else	{
+                    imsi = "";
+                }
             }
-            else	{
-                imsi = "";
+            catch(SecurityException se) {
+                ;
             }
 
         }

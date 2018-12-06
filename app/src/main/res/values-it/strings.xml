@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annulla</string>
 
-    <string name="options_cat_prefs">Valuta, explorer di blocchi</string>
+    <string name="options_cat_prefs">Explorer di blocchi</string>
     <string name="options_cat_stealth">Modalità segreta</string>
     <string name="options_cat_remote">Controllo Remoto</string>
     <string name="options_cat_wallet">Wallet</string>
