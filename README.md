@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Samourai-Wallet/samourai-wallet-android.svg?branch=develop)](https://travis-ci.org/Samourai-Wallet/samourai-wallet-android)
+
 # Samourai Wallet
 
 ### Features:
