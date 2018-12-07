@@ -36,4 +36,4 @@ app/production/
 app/staging/
 
 app/output.json
-
+samourai.api
