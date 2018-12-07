@@ -25,9 +25,9 @@ public class SamouraiWallet {
     public static final BigInteger bDust = BigInteger.valueOf(Coin.parseCoin("0.00000546").longValue());    // https://github.com/bitcoin/bitcoin/pull/2760
     public static final BigInteger bFee = BigInteger.valueOf(Coin.parseCoin("0.00015").longValue());
 
-    public static final long RBF_SEQUENCE_VAL_WITH_NLOCKTIME = 0xffffffff - 1;
-    public static final long RBF_SEQUENCE_VAL = 0xffffffff - 2;
-    public static final long NLOCKTIME_SEQUENCE_VAL = 0xffffffff - 3;
+    public static final BigInteger RBF_SEQUENCE_VAL_WITH_NLOCKTIME = BigInteger.valueOf(0xffffffffL - 1L);
+    public static final BigInteger RBF_SEQUENCE_VAL = BigInteger.valueOf(0xffffffffL - 2L);
+    public static final BigInteger NLOCKTIME_SEQUENCE_VAL = BigInteger.valueOf(0xffffffffL - 3L);
 
     private static SamouraiWallet instance = null;
 
