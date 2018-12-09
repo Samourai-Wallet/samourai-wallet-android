@@ -2159,7 +2159,7 @@ public class BalanceActivity extends Activity {
                     List<TransactionInput> txInputs = tx.getInputs();
                     for(TransactionInput input : txInputs) {
                         MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
-                        _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
+                        _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
                         _inputs.add(_input);
                         Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
                     }
@@ -2310,7 +2310,7 @@ public class BalanceActivity extends Activity {
                             for(MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
 
                                 MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
-                                _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
+                                _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
                                 _inputs.add(_input);
                                 Log.d("BalanceActivity", "add selected outpoint:" + _input.getOutpoint().toString());
 

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
@@ -147,8 +148,8 @@ public class APIFactory	{
 
     public byte[] getXORKey() {
 
-         byte[] xorSegments0 = Base64.decode("[--- REDACTED ---]");
-         byte[] xorSegments1 = Base64.decode("[--- REDACTED ---]");
+        byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
+        byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
 
 
         return xor(xorSegments0, xorSegments1);
