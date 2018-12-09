@@ -232,50 +232,51 @@
         </provider>
 
         <activity
-            android:name=".spend.SendNewUIActivity"
+            android:name=".spend.SendActivity"
             android:exported="true"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.WhirlPoolActivity"
             android:exported="true"
             android:label=""
             android:parentActivityName=".whirlpool.ChooseCycleType"
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.EmptyWhirlPool"
             android:exported="true"
             android:label="@string/title_activity_empty_whirl_pool"
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.NewWhirlpoolCycle"
             android:exported="true"
             android:label="New Cycle"
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.ChooseCycleType"
             android:exported="true"
             android:label="New Cycle"
             android:parentActivityName=".whirlpool.EmptyWhirlPool"
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
             android:exported="true"
             android:label=""
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".tx.TxDetailsActivity"
             android:exported="true"
             android:label=" "
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".tx.TxPrivacyDetailsActivity"
             android:exported="true"
             android:label=""
-            android:theme="@style/whirlpool_theme" />
+            android:theme="@style/ui_2_theme" />
     </application>
 
 </manifest>

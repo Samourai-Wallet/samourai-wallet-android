@@ -264,10 +264,6 @@ public class SendFactory	{
             inputs.add(input);
         }
 
-        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L && PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == false)    {
-            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
-        }
-
         //
         // deterministically sort inputs and outputs, see BIP69 (OBPP)
         //

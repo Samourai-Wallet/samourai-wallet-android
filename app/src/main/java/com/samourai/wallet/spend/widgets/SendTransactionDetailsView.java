@@ -24,6 +24,7 @@ public class SendTransactionDetailsView extends FrameLayout {
 
     private View transactionView, transactionReview;
     private ViewGroup ricochetHopsReview, stoneWallReview;
+    private boolean reviewActive = false;
 
     public SendTransactionDetailsView(@NonNull Context context) {
         super(context);
@@ -82,6 +83,7 @@ public class SendTransactionDetailsView extends FrameLayout {
 
         TransitionManager.beginDelayedTransition(this, set);
         addView(transactionReview);
+        reviewActive = true;
         removeView(transactionView);
     }
 
@@ -97,6 +99,11 @@ public class SendTransactionDetailsView extends FrameLayout {
 
         TransitionManager.beginDelayedTransition(this, set);
         addView(transactionView);
+        reviewActive = false;
         removeView(transactionReview);
+    }
+
+    public boolean isReview() {
+        return reviewActive;
     }
 }

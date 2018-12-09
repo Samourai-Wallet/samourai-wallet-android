@@ -7,9 +7,5 @@
         android:title=""
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/showPaynym"
-        android:title="Show paynym"
-        app:showAsAction="never" />
 
 </menu>

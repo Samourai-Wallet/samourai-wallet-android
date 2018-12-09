@@ -28,15 +28,13 @@
     <string name="options_cat_other">Sobre</string>
 
     <string name="options_mnemonic">Exibir mnemonic</string>
-    <string name="options_mnemonic2">Exibir seed de 12 palavras para esta carteira.</string>
+    <string name="options_mnemonic2">Exibir seed de 12 palavras para essa carteira.</string>
     <string name="options_xpub">Exibir BIP44 XPUB</string>
     <string name="options_xpub2">Exibir chave pública estendida para conta BIP44.</string>
     <string name="options_xpub49">Exibir Segwit YPUB</string>
     <string name="options_xpub49_2">Exibir chave pública estendida para conta Segwit BIP49.</string>
-    <string name="options_xpub84">Exibir Segwit ZPUB</string>
-    <string name="options_xpub84_2">Exibir chave pública estendida para conta BIP84 Segwit (Bech32).</string>
     <string name="options_wipe">Apagar carteira de forma segura</string>
-    <string name="options_wipe2">Apagar seguramente esta carteira do aparelho.</string>
+    <string name="options_wipe2">Apagar seguramente essa carteira do aparelho.</string>
     <string name="options_stealth_display">Launcher Furtivo</string>
     <string name="options_stealth_display2">Remove a Samourai do launcher e da tela inicial. Você deve discar **SEU_CÓDIGO_PIN# do discador do telefone para iniciar a Samourai.</string>
     <string name="options_remote_commands">Habilita controles remotos</string>

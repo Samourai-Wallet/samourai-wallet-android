@@ -151,6 +151,7 @@ public class APIFactory	{
         byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
         byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
 
+
         return xor(xorSegments0, xorSegments1);
     }
 
