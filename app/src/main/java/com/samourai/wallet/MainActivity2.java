@@ -18,7 +18,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -26,6 +25,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -307,41 +307,7 @@ public class MainActivity2 extends Activity {
 
     }
 
-    private void doAppInit(final boolean isDial, final String strUri, final String strPCode) {
-
-        boolean needToken = false;
-        if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
-            needToken = true;
-        }
-        else {
-            JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
-            if(jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh()))    {
-                needToken = true;
-            }
-        }
-
-        if(needToken) {
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    if(APIFactory.getInstance(MainActivity2.this).getToken())    {
-                        doAppInit(isDial, strUri, strPCode);
-                    }
-                    else    {
-                        Toast.makeText(MainActivity2.this, R.string.api_key_error, Toast.LENGTH_SHORT).show();
-                        MainActivity2.this.finish();
-                    }
-
-                    Looper.loop();
-
-                }
-            }).start();
-
-            return;
-        }
+    private void doAppInit(boolean isDial, final String strUri, final String strPCode) {
 
         if((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn())    {
 
