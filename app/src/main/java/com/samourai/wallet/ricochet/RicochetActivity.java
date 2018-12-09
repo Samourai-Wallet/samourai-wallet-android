@@ -215,7 +215,7 @@ public class RicochetActivity extends Activity {
                                         //
                                         if(strPCode != null && strPCode.length() > 0)    {
                                             BIP47Meta.getInstance().getPCode4AddrLookup().put(dests[i], strPCode);
-                                            BIP47Meta.getInstance().inc(strPCode);
+                                            BIP47Meta.getInstance().incOutgoingIdx(strPCode);
                                         }
 
                                         //
@@ -227,7 +227,7 @@ public class RicochetActivity extends Activity {
                                                 PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
                                                 String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                                                 BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
-                                                BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
+                                                BIP47Meta.getInstance().incOutgoingIdx(BIP47Meta.strSamouraiDonationPCode);
                                             }
                                         }
 

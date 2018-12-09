@@ -29,10 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BIP47Meta {
 
     public static final String strSamouraiDonationPCode = "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh";
-    public static final String strSamouraiDonationMeta = "?title=Samourai Donations&desc=Donate to help fund development of Samourai Bitcoin Wallet&user=K6tS2X8";
+//    public static final String strSamouraiDonationMeta = "?title=Samourai Donations&desc=Donate to help fund development of Samourai Bitcoin Wallet&user=K6tS2X8";
 
     public static final int INCOMING_LOOKAHEAD = 3;
-    public static final int OUTGOING_LOOKAHEAD = 3;
+//    public static final int OUTGOING_LOOKAHEAD = 3;
 
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;
@@ -205,16 +205,16 @@ public class BIP47Meta {
     public void setSegwit(String pcode, boolean segwit)   {
         pcodeSegwit.put(pcode, segwit);
     }
-
-    public void inc(String pcode)   {
-        if(!pcodeOutgoingIdxs.containsKey(pcode))    {
-            pcodeOutgoingIdxs.put(pcode, 1);
+/*
+    public void incIncomingIdx(String pcode)   {
+        if(!pcodeIncomingIdxs.containsKey(pcode))    {
+            pcodeIncomingIdxs.put(pcode, 1);
         }
         else    {
-            pcodeOutgoingIdxs.put(pcode, pcodeOutgoingIdxs.get(pcode) + 1);
+            pcodeIncomingIdxs.put(pcode, pcodeIncomingIdxs.get(pcode) + 1);
         }
     }
-
+*/
     public int getIncomingIdx(String pcode)   {
         if(!pcodeIncomingIdxs.containsKey(pcode))    {
             return 0;
@@ -226,6 +226,15 @@ public class BIP47Meta {
 
     public void setIncomingIdx(String pcode, int idx)   {
         pcodeIncomingIdxs.put(pcode, idx);
+    }
+
+    public void incOutgoingIdx(String pcode)   {
+        if(!pcodeOutgoingIdxs.containsKey(pcode))    {
+            pcodeOutgoingIdxs.put(pcode, 1);
+        }
+        else    {
+            pcodeOutgoingIdxs.put(pcode, pcodeOutgoingIdxs.get(pcode) + 1);
+        }
     }
 
     public int getOutgoingIdx(String pcode)   {
@@ -276,7 +285,6 @@ public class BIP47Meta {
             for(int i = idx; i < (idx + INCOMING_LOOKAHEAD); i++)   {
                 try {
                     Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
-                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
                     BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), i);
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
                     addrs.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
@@ -309,7 +317,7 @@ public class BIP47Meta {
         return addr2idx;
     }
 
-    public void setIncomingIdx(String pcode, int idx, String addr)   {
+    public void setUnspentIdx(String pcode, int idx, String addr)   {
 
         if(!pcodeUnspentIdxs.containsKey(pcode))    {
             ConcurrentHashMap<String, Integer> addrIdx = new ConcurrentHashMap<String, Integer>();

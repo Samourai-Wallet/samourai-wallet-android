@@ -435,6 +435,9 @@ public class APIFactory	{
                                 int idx = BIP47Meta.getInstance().getIdx4Addr(addr);
                                 if(amount > 0L)    {
                                     BIP47Meta.getInstance().addUnspent(pcode, idx);
+                                    if(idx > BIP47Meta.getInstance().getIncomingIdx(pcode))    {
+                                        BIP47Meta.getInstance().setIncomingIdx(pcode, idx);
+                                    }
                                 }
                                 else    {
                                     if(addrObj.has("pubkey"))    {
@@ -983,13 +986,11 @@ public class APIFactory	{
                     //
                     // initial lookup
                     //
-                    for(int i = 0; i < 3; i++)   {
+                    for(int i = 0; i < BIP47Meta.INCOMING_LOOKAHEAD; i++)   {
                         Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
-                        BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
                         BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), i);
                         BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), pcode.toString());
                     }
-
                 }
                 catch(Exception e) {
                     ;
@@ -1600,7 +1601,6 @@ public class APIFactory	{
 
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(addrObj.getString("address"), idx);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(addrObj.getString("address"), pcode);
-
                         }
                         else    {
                             addr = (String)addrObj.get("address");
@@ -1639,6 +1639,9 @@ public class APIFactory	{
                         if(addrObj.has("n_tx"))  {
                             nbTx = addrObj.getInt("n_tx");
                             if(nbTx > 0)    {
+                                if(idx > BIP47Meta.getInstance().getIncomingIdx(pcode))    {
+                                    BIP47Meta.getInstance().setIncomingIdx(pcode, idx);
+                                }
                                 Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
                                 ret++;
                             }
@@ -1675,25 +1678,34 @@ public class APIFactory	{
                     String addr = null;
                     String pcode = null;
                     int idx = -1;
-                    if(addrObj.has("address"))  {
-                        addr = (String)addrObj.get("address");
+                    Log.i("APIFactory", "address object:" + addrObj.toString());
+
+                    if(addrObj.has("pubkey"))    {
+                        addr = (String)addrObj.get("pubkey");
                         pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
                         idx = BIP47Meta.getInstance().getIdx4Addr(addr);
 
-                        if(addrObj.has("n_tx"))  {
-                            nbTx = addrObj.getInt("n_tx");
-                            if(nbTx > 0)    {
-                                int stored = BIP47Meta.getInstance().getOutgoingIdx(pcode);
-                                if(idx >= stored)    {
-//                                        Log.i("APIFactory", "sync send idx:" + idx + ", " + addr);
-                                    BIP47Meta.getInstance().setOutgoingIdx(pcode, idx + 1);
-                                }
-                                ret++;
-                            }
+                        BIP47Meta.getInstance().getIdx4AddrLookup().put(addrObj.getString("address"), idx);
+                        BIP47Meta.getInstance().getPCode4AddrLookup().put(addrObj.getString("address"), pcode);
+                    }
+                    else    {
+                        addr = (String)addrObj.get("address");
+                        pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                        idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+                    }
 
+                    if(addrObj.has("n_tx"))  {
+                        nbTx = addrObj.getInt("n_tx");
+                        if(nbTx > 0)    {
+                            if(idx >= BIP47Meta.getInstance().getOutgoingIdx(pcode))    {
+                                Log.i("APIFactory", "sync send idx:" + idx + ", " + addr);
+                                BIP47Meta.getInstance().setOutgoingIdx(pcode, idx + 1);
+                            }
+                            ret++;
                         }
 
                     }
+
                 }
 
             }

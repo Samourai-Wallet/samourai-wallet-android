@@ -385,7 +385,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 // increment counter if BIP47 spend
                 if (SendParams.getInstance().getPCode() != null && SendParams.getInstance().getPCode().length() > 0) {
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(SendParams.getInstance().getDestAddress(), SendParams.getInstance().getPCode());
-                    BIP47Meta.getInstance().inc(SendParams.getInstance().getPCode());
+                    BIP47Meta.getInstance().incOutgoingIdx(SendParams.getInstance().getPCode());
 
                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                     String strTS = sd.format(System.currentTimeMillis());
@@ -400,7 +400,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         // increment counter if BIP47 spend
                         if(pcode != null && pcode.length() > 0)    {
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
-                            BIP47Meta.getInstance().inc(pcode);
+                            BIP47Meta.getInstance().incOutgoingIdx(pcode);
 
                             SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                             String strTS = sd.format(System.currentTimeMillis());
