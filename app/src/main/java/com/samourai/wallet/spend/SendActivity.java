@@ -311,6 +311,8 @@ public class SendActivity extends AppCompatActivity {
         FeeUtil.getInstance().sanitizeFee();
 
         feeSeekBar.setProgress((int) feeMed);
+        tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
+
         Log.i(TAG, "setUpFee: ".concat(String.valueOf(feeHigh) + " " + String.valueOf(feeMed) + " " + String.valueOf(feeLow)));
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -320,7 +322,6 @@ public class SendActivity extends AppCompatActivity {
                 if (value == 0.0) {
                     value = 1.0;
                 }
-                Log.i(TAG, "onProgressChanged: ".concat(String.valueOf(value)));
                 double pct = 0.0;
                 int nbBlocks = 6;
                 if (value <= (double) feeLow) {
@@ -1404,8 +1405,8 @@ public class SendActivity extends AppCompatActivity {
             isValid = false;
         }
 
-        if(insufficientFunds){
-            Toast.makeText(this,getString(R.string.insufficient_funds),Toast.LENGTH_SHORT).show();
+        if (insufficientFunds) {
+            Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
         }
         if (!isValid || insufficientFunds) {
             return false;

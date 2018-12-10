@@ -71,8 +71,8 @@
                 android:id="@+id/selected_fee_rate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="34 sat/b"
+                android:gravity="end"
+                android:text="0 sat/b"
                 android:textAlignment="textEnd" />
         </LinearLayout>
 
