@@ -1391,13 +1391,12 @@ public class BalanceActivity extends Activity {
     private void doExplorerView(String strHash) {
 
         if (strHash != null) {
-            int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-            if (sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length) {
-                sel = 0;
-            }
-            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strHash));
+            String blockExplorer = "https://m.oxt.me/transaction/";
+            if (SamouraiWallet.getInstance().isTestNet()) {
+                blockExplorer = "https://blockstream.info/testnet/";
+            }
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + strHash));
             startActivity(browserIntent);
         }
 
