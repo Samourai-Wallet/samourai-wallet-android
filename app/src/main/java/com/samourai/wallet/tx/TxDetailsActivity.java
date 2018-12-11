@@ -292,16 +292,14 @@ public class TxDetailsActivity extends AppCompatActivity {
      * Opens external BlockExplorer
      */
     private void doExplorerView() {
-        if (tx.getHash() != null) {
-            int sel = PrefsUtil.getInstance(this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-            if (sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length) {
-                sel = 0;
-            }
-            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + tx.getHash()));
-            startActivity(browserIntent);
+        String blockExplorer = "https://m.oxt.me/transaction/";
+        if (SamouraiWallet.getInstance().isTestNet()) {
+            blockExplorer = "https://blockstream.info/testnet/";
         }
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + tx.getHash()));
+        startActivity(browserIntent);
 
     }
 
