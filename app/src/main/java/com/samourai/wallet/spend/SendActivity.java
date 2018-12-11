@@ -310,13 +310,16 @@ public class SendActivity extends AppCompatActivity {
 
         FeeUtil.getInstance().sanitizeFee();
 
-        feeSeekBar.setProgress((int) feeMed);
         tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
 
-        Log.i(TAG, "setUpFee: ".concat(String.valueOf(feeHigh) + " " + String.valueOf(feeMed) + " " + String.valueOf(feeLow)));
+        // android slider starts at 0
+        feeSeekBar.setProgress((int) feeMed - 1);
+
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                // here we get progress value at 0 , so we need to add 1
                 double value = i + 1;
                 tvSelectedFeeRate.setText(String.valueOf((int) value).concat(" sats/b"));
                 if (value == 0.0) {
@@ -341,15 +344,12 @@ public class SendActivity extends AppCompatActivity {
                 setFee(value);
 
                 if (value >= feeHigh) {
-//                    tvEstimatedBlockWait.setText("2 blocks");
                     tvSelectedFeeRateLayman.setText("Urgent");
 
                 } else if (i >= feeMed) {
-//                    tvEstimatedBlockWait.setText("6 blocks");
                     tvSelectedFeeRateLayman.setText("Normal");
 
                 } else if (i >= feeLow) {
-//                    tvEstimatedBlockWait.setText("24 blocks");
                     tvSelectedFeeRateLayman.setText("Low");
                 }
 
@@ -604,18 +604,17 @@ public class SendActivity extends AppCompatActivity {
 
     private void review() {
 
-        if (validateSpend()) {
-            prepareSpend();
+        if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText());
-            btnSend.setText("send ".concat(btcEditText.getText().toString()).concat(" BTC"));
             amountViewSwitcher.showNext();
 
-            sendTransactionDetailsView.showReview(false);
+            sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
+
         }
 
     }
 
-    private void prepareSpend() {
+    private boolean prepareSpend() {
 
         double btc_amount = 0.0;
 
@@ -697,6 +696,7 @@ public class SendActivity extends AppCompatActivity {
         // insufficient funds
         if (amount > balance) {
             Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+
         }
         // entire balance (can only be simple spend)
         else if (amount == balance) {
@@ -734,19 +734,22 @@ public class SendActivity extends AppCompatActivity {
                     long totalAmount = ricochetJsonObj.getLong("total_spend");
                     if (totalAmount > balance) {
                         Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                        return false;
                     }
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
-                    return;
+                    btnSend.setText("send ".concat(Coin.valueOf(totalAmount).toPlainString()).concat(" BTC"));
+
+                    return true;
 
                 } catch (JSONException je) {
-                    return;
+                    return false;
                 }
 
             }
 
-            return;
+            return true;
         } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
 
             Log.d("SendActivity", "needed amount:" + neededAmount);
@@ -944,7 +947,7 @@ public class SendActivity extends AppCompatActivity {
                     outputAmount += output.getValue().longValue();
                 } catch (Exception e) {
                     Toast.makeText(SendActivity.this, R.string.error_bip126_output, Toast.LENGTH_SHORT).show();
-                    return;
+                    return false;
                 }
             }
 
@@ -953,7 +956,7 @@ public class SendActivity extends AppCompatActivity {
 
         } else {
             Toast.makeText(SendActivity.this, R.string.cannot_select_utxo, Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
 //         do spend here
@@ -983,7 +986,7 @@ public class SendActivity extends AppCompatActivity {
                     Log.d("SendActivity", "fee:" + fee.longValue());
                     if ((tx.hasWitness() && (fee.longValue() < tx.getVirtualTransactionSize())) || (!tx.hasWitness() && (fee.longValue() < serialized.length))) {
                         Toast.makeText(SendActivity.this, R.string.insufficient_fee, Toast.LENGTH_SHORT).show();
-                        return;
+                        return false;
                     }
                     //
                     //
@@ -1020,7 +1023,7 @@ public class SendActivity extends AppCompatActivity {
                     dlg.show();
                 }
 
-                return;
+                return false;
             }
 
             _change = change;
@@ -1062,8 +1065,13 @@ public class SendActivity extends AppCompatActivity {
 
             tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
 
+            double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
+            btnSend.setText("send ".concat(String.valueOf(getBtcValue(value)).concat(" BTC")));
+
+            return true;
         }
+        return false;
     }
 
     private void initiateSpend() {
