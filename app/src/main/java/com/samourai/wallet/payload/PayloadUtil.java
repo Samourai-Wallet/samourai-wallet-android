@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -64,6 +65,8 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PayloadUtil	{
 
@@ -144,9 +147,25 @@ public class PayloadUtil	{
         }
     }
 
-    public void serializeUTXO(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+    public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
         if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
+
+            JSONArray utxos = new JSONArray();
+
+            for(JSONObject obj : objs)   {
+                if(obj != null && obj.has("unspent_outputs"))    {
+                    JSONArray array = obj.getJSONArray("unspent_outputs");
+                    for(int i = 0; i < array.length(); i++)   {
+                        JSONObject _obj = array.getJSONObject(i);
+                        utxos.put(_obj);
+                    }
+                }
+            }
+
+            JSONObject utxoObj = new JSONObject();
+            utxoObj.put("unspent_outputs", utxos);
+            serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
         }
     }
 

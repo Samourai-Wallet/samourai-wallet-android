@@ -80,6 +80,9 @@ public class APIFactory	{
     private static HashMap<String,String> unspentPaths = null;
     private static HashMap<String,UTXO> utxos = null;
 
+    private static JSONObject utxoObj0 = null;
+    private static JSONObject utxoObj1 = null;
+
     private static HashMap<String, Long> bip47_amounts = null;
 
     private static long latest_block_height = -1L;
@@ -1057,12 +1060,12 @@ public class APIFactory	{
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         JSONObject jsonObject  = null;
+        String response = null;
 
         try {
 
-            String response = null;
-
             if(AppUtil.getInstance(context).isOfflineMode())    {
+                utxos.clear();
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
@@ -1088,6 +1091,15 @@ public class APIFactory	{
         catch(Exception e) {
             jsonObject = null;
             e.printStackTrace();
+        }
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            try {
+                jsonObject = new JSONObject(response);
+            }
+            catch(JSONException je) {
+                ;
+            }
         }
 
         return jsonObject;
@@ -1186,13 +1198,6 @@ public class APIFactory	{
                         ;
                     }
 
-                }
-
-                try {
-                    PayloadUtil.getInstance(context).serializeUTXO(jsonObj);
-                }
-                catch(IOException | DecryptionException e) {
-                    ;
                 }
 
                 return true;
@@ -1504,7 +1509,7 @@ public class APIFactory	{
             if(addressStrings.size() > 0)    {
                 s = addressStrings.toArray(new String[0]);
 //                Log.i("APIFactory", addressStrings.toString());
-                getUnspentOutputs(s);
+                utxoObj0 = getUnspentOutputs(s);
             }
 
             Log.d("APIFactory", "addresses:" + addressStrings.toString());
@@ -1531,8 +1536,22 @@ public class APIFactory	{
                 xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
                 xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                getUnspentOutputs(xs);
+                utxoObj1 = getUnspentOutputs(xs);
                 getDynamicFees();
+            }
+
+            try {
+                List<JSONObject> utxoObjs = new ArrayList<JSONObject>();
+                if(utxoObj0 != null)    {
+                    utxoObjs.add(utxoObj0);
+                }
+                if(utxoObj1 != null)    {
+                    utxoObjs.add(utxoObj1);
+                }
+                PayloadUtil.getInstance(context).serializeUTXO(utxoObjs);
+            }
+            catch(IOException | DecryptionException e) {
+                ;
             }
 
             //
