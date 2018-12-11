@@ -360,7 +360,7 @@ public class PayloadUtil	{
             meta.put("tor", TorUtil.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
 
-            meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
+
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
             meta.put("haptic_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.HAPTIC_PIN, true));
@@ -598,9 +598,6 @@ public class PayloadUtil	{
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
 
-                if(meta.has("explorer")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BLOCK_EXPLORER, meta.getInt("explorer"));
-                }
                 if(meta.has("trusted_no")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.ALERT_MOBILE_NO, (String) meta.get("trusted_no"));
                     editor.putString("alertSMSNo", meta.getString("trusted_no"));

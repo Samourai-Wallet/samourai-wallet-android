@@ -19,8 +19,7 @@ public class PrefsUtil {
 	public static final String CURRENT_EXCHANGE = "currentExchange";
 	public static final String CURRENT_EXCHANGE_SEL = "currentExchangeSel";
 	public static final String CURRENT_FEE_TYPE = "currentFeeType";
-	public static final String BLOCK_EXPLORER = "blockExplorer";
-	public static final String WALLET_ORIGIN = "origin";
+ 	public static final String WALLET_ORIGIN = "origin";
 	public static final String FIRST_RUN = "1stRun";
 	public static final String FIRST_USE_SHUFFLE = "1stUseShuffle";
 	public static final String SIM_IMSI = "IMSI";
