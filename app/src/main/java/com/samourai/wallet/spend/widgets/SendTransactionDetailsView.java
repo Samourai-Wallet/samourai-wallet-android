@@ -74,7 +74,7 @@ public class SendTransactionDetailsView extends FrameLayout {
                 .addTarget(transactionReview);
 
         if (ricochet) {
-            ricochetHopsReview.setVisibility(View.VISIBLE);
+//            ricochetHopsReview.setVisibility(View.VISIBLE);
             stoneWallReview.setVisibility(View.GONE);
         } else {
             ricochetHopsReview.setVisibility(View.GONE);
