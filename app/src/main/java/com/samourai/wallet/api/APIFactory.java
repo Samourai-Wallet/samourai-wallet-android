@@ -185,7 +185,7 @@ public class APIFactory	{
             String response = null;
 
             if(AppUtil.getInstance(context).isOfflineMode())    {
-                ;
+                return true;
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 // use POST
@@ -204,7 +204,7 @@ public class APIFactory	{
 
             try {
                 jsonObject = new JSONObject(response);
-                if(jsonObject.has("authorizations"))    {
+                if(jsonObject != null && jsonObject.has("authorizations"))    {
                     JSONObject authObj = jsonObject.getJSONObject("authorizations");
                     if(authObj.has("access_token"))    {
                         setAccessToken(authObj.getString("access_token"));

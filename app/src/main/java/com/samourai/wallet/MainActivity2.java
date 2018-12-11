@@ -320,7 +320,7 @@ public class MainActivity2 extends Activity {
             }
         }
 
-        if(needToken) {
+        if(needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
 
             new Thread(new Runnable() {
                 @Override

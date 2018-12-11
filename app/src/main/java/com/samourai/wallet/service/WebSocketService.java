@@ -43,6 +43,10 @@ public class WebSocketService extends Service {
 
         super.onCreate();
 
+        if(AppUtil.getInstance(WebSocketService.this).isOfflineMode())    {
+            return;
+        }
+
         //
         context = this.getApplicationContext();
 

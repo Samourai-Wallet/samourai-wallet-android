@@ -66,10 +66,17 @@ public class RefreshService extends IntentService {
 
         Log.d("RefreshService", "doInBackground()");
 
-        JWT jwt = new JWT(APIFactory.getInstance(RefreshService.this).getAccessToken());
-        if(jwt.isExpired(APIFactory.getInstance(RefreshService.this).getAccessTokenRefresh()))    {
-            if(!APIFactory.getInstance(RefreshService.this).getToken())  {
-                return;
+        if(!AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
+
+            if(APIFactory.getInstance(RefreshService.this).getAccessToken() == null)    {
+                APIFactory.getInstance(RefreshService.this).getToken();
+            }
+
+            JWT jwt = new JWT(APIFactory.getInstance(RefreshService.this).getAccessToken());
+            if(jwt.isExpired(APIFactory.getInstance(RefreshService.this).getAccessTokenRefresh()))    {
+                if(!APIFactory.getInstance(RefreshService.this).getToken())  {
+                    return;
+                }
             }
         }
 
