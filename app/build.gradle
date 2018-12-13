@@ -9,8 +9,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 125
-        versionName "0.98.92"
+        versionCode 127
+        versionName "0.98.95"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -51,16 +51,16 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 125
-            versionName "0.98.92"
+            versionCode 127
+            versionName "0.98.95"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.98.92"
+            resValue "string", "version_name", "0.98.95"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 126
+            versionCode 127
             versionName "0.98.95"
             resValue "string", "app_name", "Samourai Staging"
             resValue "string", "version_name", "0.98.95"
