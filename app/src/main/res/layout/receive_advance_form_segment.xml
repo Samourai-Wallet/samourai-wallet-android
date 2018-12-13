@@ -31,6 +31,7 @@
                 android:id="@+id/amountBTC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number|textMultiLine"
                 android:fontFamily="@font/roboto_mono"
                 android:hint="BTC" />
 
@@ -46,6 +47,7 @@
                 android:id="@+id/amountSAT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number|textMultiLine"
                 android:fontFamily="@font/roboto_mono"
                 android:hint="sat" />
 
