@@ -17,61 +17,36 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
+            android:paddingTop="4dp"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteY="81dp">
 
-            <FrameLayout
+            <android.support.design.widget.TextInputLayout
                 android:id="@+id/to_edt_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="textNoSuggestions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                >
-
-                <android.support.design.widget.TextInputLayout
+                <EditText
+                    android:id="@+id/edt_send_to"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textNoSuggestions">
+                    android:hint="To"
+                    android:inputType="textNoSuggestions|textMultiLine"
+                    android:maxLines="2"
+                    android:paddingRight="22dp"
+                    android:scrollbars="vertical"
+                    android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/edt_send_to"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:textSize="16sp"
-                        android:hint="To"
-                        android:inputType="textNoSuggestions|textMultiLine"
-                        android:maxLines="2"
-                        android:paddingRight="22dp"
-                        android:scrollbars="vertical" />
+            </android.support.design.widget.TextInputLayout>
 
-
-                </android.support.design.widget.TextInputLayout>
-            </FrameLayout>
-
-
-            <ImageView
-                android:id="@+id/paynym_select_btn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginBottom="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_search_white_24dp"
-                app:layout_constraintBottom_toBottomOf="@+id/to_edt_layout"
-                app:layout_constraintEnd_toEndOf="@+id/to_edt_layout"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/to_edt_layout"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
                 android:id="@+id/textInputLayout3"
@@ -98,11 +73,11 @@
                         android:digits="0,1,2,3,4,5,6,7,8,9,."
                         android:fontFamily="@font/roboto_mono"
                         android:gravity="start"
-                        android:textSize="16sp"
                         android:hint="sat"
                         android:inputType="textMultiLine|phone"
                         android:maxLines="2"
-                        android:scrollbars="vertical" />
+                        android:scrollbars="vertical"
+                        android:textSize="16sp" />
 
 
                 </android.support.design.widget.TextInputLayout>
@@ -128,11 +103,11 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_mono"
                     android:gravity="start"
-                    android:textSize="16sp"
                     android:hint="BTC"
                     android:inputType="number|textMultiLine"
                     android:maxHeight="12dp"
-                    android:maxLines="2" />
+                    android:maxLines="2"
+                    android:textSize="16sp" />
 
 
             </android.support.design.widget.TextInputLayout>
@@ -162,17 +137,18 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                tools:text="0.0 BTC"
                 android:background="?attr/selectableItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+                app:layout_constraintTop_toBottomOf="@+id/textView12"
+                tools:text="0.0 BTC" />
 
 
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
+
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"

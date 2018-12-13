@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -102,7 +103,6 @@ public class SendActivity extends AppCompatActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman;
     private Button btnReview, btnSend;
-    private ImageView selectPaynymBtn;
     private Switch ricochetHopsSwitch, stoneWallSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
@@ -157,7 +157,6 @@ public class SendActivity extends AppCompatActivity {
         btcEditText = findViewById(R.id.amountBTC);
         satEditText = findViewById(R.id.amountSat);
         tvToAddress = findViewById(R.id.to_address_review);
-        selectPaynymBtn = findViewById(R.id.paynym_select_btn);
         tvReviewSpendAmount = findViewById(R.id.send_review_amount);
         tvMaxAmount = findViewById(R.id.totalBTC);
 
@@ -237,7 +236,6 @@ public class SendActivity extends AppCompatActivity {
 
         setBalance();
 
-        setUpPaynym();
     }
 
     private void setUpBoltzman() {
@@ -249,14 +247,6 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 //
-
-    private void setUpPaynym() {
-        selectPaynymBtn.setOnClickListener((view) -> {
-            PaynymSelectModalFragment paynymSelectModalFragment =
-                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null));
-            paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
-        });
-    }
 
 
     private void enableReviewButton(boolean enable) {
@@ -1303,8 +1293,8 @@ public class SendActivity extends AppCompatActivity {
             try {
                 if (amount != null && Double.parseDouble(amount) != 0.0) {
                     toAddressEditText.setEnabled(false);
-                    selectPaynymBtn.setEnabled(false);
-                    selectPaynymBtn.setAlpha(0.5f);
+//                    selectPaynymBtn.setEnabled(false);
+//                    selectPaynymBtn.setAlpha(0.5f);
                     //                    Toast.makeText(this, R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                     enableAmount(false);
 
