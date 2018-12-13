@@ -3,6 +3,8 @@ package com.samourai.http.client;
 import com.google.gson.Gson;
 import com.samourai.wallet.util.WebUtil;
 
+import java.util.Map;
+
 /**
  * HTTP client used by Whirlpool.
  */
@@ -38,6 +40,11 @@ public class AndroidHttpClient implements IHttpClient {
             String responseBody = e.getMessage();
             throw new HttpException(e, responseBody);
         }
+    }
+
+    @Override
+    public void postUrlEncoded(String url, Map<String,String> body) {
+        // TODO
     }
 
 }

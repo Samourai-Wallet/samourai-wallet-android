@@ -1,5 +1,6 @@
 package com.samourai.wallet;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -271,8 +272,19 @@ public class CreateWalletActivity extends FragmentActivity implements
         }
     }
 
+    @Override
+    public void onDetachedFromWindow() {
+        if (progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
+        super.onDetachedFromWindow();
+    }
+
     private void toggleLoading() {
         if (progressDialog == null) {
+            Activity activity = this;
+            if ( activity.isFinishing() ) {
+                return;
+            }
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
             progressDialog.setTitle(R.string.app_name);

@@ -18,6 +18,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,7 +166,7 @@ public class WebSocketHandler {
                         .addListener(new WebSocketAdapter() {
 
                             public void onTextMessage(WebSocket websocket, String message) {
-                                    Log.d("WebSocket", message);
+                                Log.d("WebSocket", message);
                                 try {
                                     JSONObject jsonObject = null;
                                     try {
@@ -215,6 +217,8 @@ public class WebSocketHandler {
                                         String out_addr = null;
                                         String hash = null;
 
+                                        boolean isRBF = false;
+
                                         if (objX.has("time")) {
                                             ts = objX.getLong("time");
                                         }
@@ -223,17 +227,11 @@ public class WebSocketHandler {
                                             hash = objX.getString("hash");
                                         }
 
-                                        boolean isRBF = false;
-
                                         if (objX.has("inputs")) {
                                             JSONArray inputArray = (JSONArray) objX.get("inputs");
                                             JSONObject inputObj = null;
                                             for (int j = 0; j < inputArray.length(); j++) {
                                                 inputObj = (JSONObject) inputArray.get(j);
-
-                                                if(inputObj.has("sequence") && inputObj.getLong("sequence") <= SamouraiWallet.RBF_SEQUENCE_NO)    {
-                                                    isRBF = true;
-                                                }
 
                                                 if (inputObj.has("prev_out")) {
                                                     JSONObject prevOutObj = (JSONObject) inputObj.get("prev_out");
@@ -259,7 +257,6 @@ public class WebSocketHandler {
                                         }
 
                                         if (objX.has("out")) {
-                                            Log.i("WebSocketHandler", "websocket msg:" + objX.toString());
                                             JSONArray outArray = (JSONArray) objX.get("out");
                                             JSONObject outObj = null;
                                             for (int j = 0; j < outArray.length(); j++) {
@@ -290,7 +287,6 @@ public class WebSocketHandler {
                                                         idx++;
                                                         for(int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++)   {
                                                             Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
-                                                            BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                             BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
                                                             BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
@@ -301,7 +297,6 @@ public class WebSocketHandler {
                                                         if(idx >= 2)    {
                                                             for(int i = idx; i >= (idx - (BIP47Meta.INCOMING_LOOKAHEAD - 1)); i--)   {
                                                                 Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
-                                                                BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                                 BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
                                                                 BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
@@ -333,6 +328,9 @@ public class WebSocketHandler {
 
                                         String title = context.getString(R.string.app_name);
                                         if (total_value > 0L) {
+
+                                            isRBF = checkForRBF(hash);
+
                                             String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
                                             if (in_addr !=null && in_addr.length() > 0) {
                                                 marquee += " from " + in_addr;
@@ -371,6 +369,34 @@ public class WebSocketHandler {
 
             return null;
         }
+    }
+
+    private synchronized boolean checkForRBF(String hash)  {
+
+        boolean ret = false;
+
+        try {
+            JSONObject obj = APIFactory.getInstance(context).getTxInfo(hash);
+            if(obj != null && obj.has("inputs"))    {
+                JSONArray inputs = obj.getJSONArray("inputs");
+                for(int i = 0; i < inputs.length(); i++)   {
+                    JSONObject inputObj = inputs.getJSONObject(i);
+                    if(inputObj.has("seq"))    {
+                        long sequence = inputObj.getLong("seq");
+                        if(BigInteger.valueOf(sequence).compareTo(SamouraiWallet.RBF_SEQUENCE_VAL) <= 0)    {
+                            ret = true;
+                            Log.d("WebSocketHandler", "return value:" + ret);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        catch(JSONException je) {
+            ;
+        }
+
+        return ret;
     }
 
 }
