@@ -618,13 +618,20 @@ public class SendActivity extends AppCompatActivity {
     private void review() {
 
         if (validateSpend() && prepareSpend()) {
-            tvReviewSpendAmount.setText(btcEditText.getText());
+            tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
             amountViewSwitcher.showNext();
-
+            hideKeyboard();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
         }
 
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(amountViewSwitcher.getWindowToken(), 0);
+        }
     }
 
     private boolean prepareSpend() {
