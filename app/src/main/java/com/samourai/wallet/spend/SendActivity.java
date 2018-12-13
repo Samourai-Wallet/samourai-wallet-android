@@ -106,7 +106,6 @@ public class SendActivity extends AppCompatActivity {
     private Switch ricochetHopsSwitch, stoneWallSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
-//    BottomSheetBehavior sheetBehavior;
 
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
@@ -246,7 +245,6 @@ public class SendActivity extends AppCompatActivity {
             PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
         });
     }
-//
 
 
     private void enableReviewButton(boolean enable) {
@@ -373,19 +371,14 @@ public class SendActivity extends AppCompatActivity {
             case FEE_LOW:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                 FeeUtil.getInstance().sanitizeFee();
-//                tvEstimatedBlockWait.setText("24 blocks");
-
                 break;
             case FEE_PRIORITY:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
                 FeeUtil.getInstance().sanitizeFee();
-//                tvEstimatedBlockWait.setText("2 blocks");
                 break;
             default:
                 FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
                 FeeUtil.getInstance().sanitizeFee();
-
-//                tvEstimatedBlockWait.setText("6 blocks");
                 break;
         }
 
@@ -500,7 +493,6 @@ public class SendActivity extends AppCompatActivity {
                 }
                 Float btc = Float.parseFloat(String.valueOf(editable));
                 Double sats = getSatValue(Double.valueOf(btc));
-                Log.i(TAG, "afterTextChanged: ....".concat(sats.toString()));
                 satEditText.setText(formattedSatValue(sats));
 
                 if (btc > 21000000.0) {
@@ -555,7 +547,6 @@ public class SendActivity extends AppCompatActivity {
                 Double sats = Double.parseDouble(cleared_space);
                 Float btc = getBtcValue(sats);
                 String formatted = formattedSatValue(sats);
-                Log.i(TAG, "afterTextChanged: ....".concat(btc.toString()));
 
 
                 satEditText.setText(formatted);
