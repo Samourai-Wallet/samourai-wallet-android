@@ -203,8 +203,6 @@
 
     <string name="max_available">Макс. доступно:</string>
 
-    <string name="first_use_shuffle">Это ваш Shifted-аккаунт. Биткоины, которые вы получили с ShapeShift, будут храниться здесь. Адреса Shifted-аккаунта не будут пересекаться с адресами вашего основного кошелька.</string>
-
     <string name="select_account">Выбрать аккаунт</string>
     <string name="received_bitcoin">Получен перевод</string>
     <string name="received">Получено</string>
