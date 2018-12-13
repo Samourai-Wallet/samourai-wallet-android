@@ -141,7 +141,7 @@ public class SendActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_new_ui);
+        setContentView(R.layout.activity_send);
         setSupportActionBar(findViewById(R.id.toolbar_send));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
