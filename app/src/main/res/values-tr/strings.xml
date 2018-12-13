@@ -203,8 +203,6 @@
 
   <string name="max_available">En fazla mümkün:</string>
 
-  <string name="first_use_shuffle">Bu sizin Shifted hesabınız. ShapeShift üzerinden alacağınız Bitcoin\'ler ana cüzdan hesabınız ile aynı adres alanını paylaşmayan bu hesap üzerinde tutulacaktır.</string>
-
   <string name="select_account">Hesap seç</string>
   <string name="received_bitcoin">Alınan Bitcoin</string>
   <string name="received">Alındı</string>
