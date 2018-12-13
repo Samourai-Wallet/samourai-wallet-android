@@ -114,7 +114,7 @@ public class TxDetailsActivity extends AppCompatActivity {
                     tx.getConfirmations() +
                     "/3)";
             txStatus.setText(txConfirmation);
-            bottomButton.setText("Boost transaction fee");
+//            bottomButton.setText("Boost transaction fee");
 
         }
 
@@ -125,7 +125,7 @@ public class TxDetailsActivity extends AppCompatActivity {
 
             txStatus.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
             txStatus.setText(txConfirmation);
-            bottomButton.setVisibility(View.INVISIBLE);
+//            bottomButton.setVisibility(View.INVISIBLE);
         }
 
         txId.setText(tx.getHash());
