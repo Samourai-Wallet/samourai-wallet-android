@@ -204,8 +204,6 @@
 
     <string name="max_available">Max. verfügbar:</string>
 
-    <string name="first_use_shuffle">Dies ist dein Tausch-Account. Bitcoin, die du über ShapeShift erhältst, werden in diesem Account gespeichert. Dieser Account teilt seinen Adressbereich nicht mit deiner primären Wallet.</string>
-
     <string name="select_account">Account wählen</string>
     <string name="received_bitcoin">Empfangene Bitcoin</string>
     <string name="received">Empfangen</string>
