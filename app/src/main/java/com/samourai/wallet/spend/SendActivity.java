@@ -229,6 +229,7 @@ public class SendActivity extends AppCompatActivity {
                 processPCode(strPCode, null);
             }
         }
+        enableReviewButton(false);
 
         setUpBoltzman();
 
@@ -255,6 +256,16 @@ public class SendActivity extends AppCompatActivity {
                     PaynymSelectModalFragment.newInstance(code -> processPCode(code, null));
             paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
         });
+    }
+
+
+    private void enableReviewButton(boolean enable) {
+        btnReview.setEnabled(enable);
+        if (enable) {
+            btnReview.setBackground(getDrawable(R.drawable.button_blue));
+        } else {
+            btnReview.setBackground(getDrawable(R.drawable.disabled_grey_button));
+        }
     }
 
     private void setUpFee() {
@@ -516,6 +527,7 @@ public class SendActivity extends AppCompatActivity {
             }
             satEditText.addTextChangedListener(satWatcher);
             btcEditText.addTextChangedListener(this);
+            validateSpend();
 
 
         }
@@ -572,6 +584,7 @@ public class SendActivity extends AppCompatActivity {
             }
             satEditText.addTextChangedListener(this);
             btcEditText.addTextChangedListener(BTCWatcher);
+            validateSpend();
 
         }
     };
@@ -1417,8 +1430,10 @@ public class SendActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
         }
         if (!isValid || insufficientFunds) {
+            enableReviewButton(false);
             return false;
         } else {
+            enableReviewButton(true);
             return true;
         }
 
