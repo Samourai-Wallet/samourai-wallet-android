@@ -31,7 +31,6 @@
         </android.support.v7.widget.Toolbar>
 
 
-
         <LinearLayout
             android:id="@+id/linearLayout6"
             android:layout_width="match_parent"
@@ -68,15 +67,16 @@
                 android:text="BTC"
                 android:textAlignment="center" />
         </LinearLayout>
+
         <ProgressBar
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="-6dp"
             android:background="@android:color/transparent"
             android:indeterminate="true"
             android:visibility="invisible"
-            android:id="@+id/progressBar"
-            android:layout_marginBottom="-6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -292,10 +292,11 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
+                    android:background="?attr/selectableItemBackground"
                     android:fontFamily="@font/roboto_mono"
                     android:gravity="start"
-                    android:text="919cf999c5bd6c80e2e3fb81b9009ac779d749ff71b5b7fd279482f8cb82e125"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="919cf999c5bd6c80e2e3fb81b9009ac779d749ff71b5b7fd279482f8cb82e125" />
 
             </LinearLayout>
 

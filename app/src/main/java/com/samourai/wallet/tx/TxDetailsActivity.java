@@ -1,5 +1,6 @@
 package com.samourai.wallet.tx;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,8 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.boost.RBFTask;
@@ -96,7 +99,25 @@ public class TxDetailsActivity extends AppCompatActivity {
             }
         });
 
+        txId.setOnClickListener(view -> {
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.txid_to_clipboard)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) TxDetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip;
+                        clip = android.content.ClipData.newPlainText("tx id", ((TextView) view).getText());
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                        }
+                        Toast.makeText(TxDetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+            }).show();
+        });
+
     }
+ 
 
     private void payAgain() {
     }
