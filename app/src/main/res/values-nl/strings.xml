@@ -203,8 +203,6 @@
 
     <string name="max_available">Max. beschikbaar:</string>
 
-    <string name="first_use_shuffle">Dit is je Shifted-rekening. De bitcoin die je ontvangt via ShapeShift zal op deze rekening worden opgeslagen, die niet dezelfde adresruimte gebruikt als je standaardrekening.</string>
-
     <string name="select_account">Account selecteren</string>
     <string name="received_bitcoin">Bitcoin ontvangen</string>
     <string name="received">Ontvangen</string>
