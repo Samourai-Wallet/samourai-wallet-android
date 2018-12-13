@@ -636,5 +636,6 @@
     <string name="unconfirmed">Unconfirmed</string>
     <string name="confirmation">Confirmation</string>
     <string name="total_available_amount">Total available amount</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
 
 </resources>

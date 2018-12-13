@@ -6,6 +6,13 @@
         android:visible="true"
         android:title=""
         app:showAsAction="always" />
+
+    <item android:id="@+id/select_paynym"
+        android:icon="@drawable/ic_action_account_circle"
+        android:visible="true"
+        android:title=""
+        app:showAsAction="always" />
+
     <item android:id="@+id/action_batch"
         android:title="@string/options_batch"
         android:orderInCategory="100"

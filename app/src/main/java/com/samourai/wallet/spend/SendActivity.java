@@ -1490,6 +1490,12 @@ public class SendActivity extends AppCompatActivity {
             this.onBackPressed();
             return true;
         }
+        if (item.getItemId() == R.id.select_paynym) {
+            PaynymSelectModalFragment paynymSelectModalFragment =
+                    PaynymSelectModalFragment.newInstance(code -> processPCode(code, null));
+            paynymSelectModalFragment.show(getSupportFragmentManager(), "paynym_select");
+            return true;
+        }
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_scan_qr) {
             doScan();
