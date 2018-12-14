@@ -262,13 +262,11 @@ public class UTXOActivity extends Activity {
 
                             case R.id.item_view:
                             {
-                                int sel = PrefsUtil.getInstance(UTXOActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-                                if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
-                                    sel = 0;
+                                String blockExplorer = "https://m.oxt.me/transaction/";
+                                if (SamouraiWallet.getInstance().isTestNet()) {
+                                    blockExplorer = "https://blockstream.info/testnet/";
                                 }
-                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
-
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).hash));
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + data.get(position).hash));
                                 startActivity(browserIntent);
                             }
 

@@ -46,6 +46,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
@@ -78,7 +79,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private TextView tvAddress = null;
     private TextView tvPath = null;
 
-    private EditText edAmountBTC = null;
+    private EditText edAmountBTC, edAmountSAT = null;
     private TextWatcher textWatcherBTC = null;
     private LinearLayout advancedButton = null;
     private ConstraintLayout advanceOptionsContainer = null;
@@ -151,7 +152,11 @@ public class ReceiveActivity extends AppCompatActivity {
         ivQR = findViewById(R.id.qr);
         advancedButton = findViewById(R.id.advance_button);
         edAmountBTC = findViewById(R.id.amountBTC);
+        edAmountSAT = findViewById(R.id.amountSAT);
         populateSpinner();
+
+        edAmountBTC.addTextChangedListener(BTCWatcher);
+        edAmountSAT.addTextChangedListener(satWatcher);
 
         Display display = (ReceiveActivity.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -173,8 +178,7 @@ public class ReceiveActivity extends AppCompatActivity {
         idx49 = BIP49Util.getInstance(ReceiveActivity.this).getWallet().getAccount(0).getChain(0).getAddrIdx();
         try {
             idx44 = HD_WalletFactory.getInstance(ReceiveActivity.this).get().getAccount(0).getChain(0).getAddrIdx();
-        }
-        catch(IOException | MnemonicException.MnemonicLengthException e) {
+        } catch (IOException | MnemonicException.MnemonicLengthException e) {
             ;
         }
         addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
@@ -217,10 +221,9 @@ public class ReceiveActivity extends AppCompatActivity {
             }
         });
 
-        if(useSegwit)    {
+        if (useSegwit) {
             addressTypesSpinner.setSelection(0);
-        }
-        else    {
+        } else {
             addressTypesSpinner.setSelection(2);
         }
 
@@ -284,59 +287,126 @@ public class ReceiveActivity extends AppCompatActivity {
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         defaultSeparator = Character.toString(symbols.getDecimalSeparator());
 
-        textWatcherBTC = new TextWatcher() {
+        displayQRCode();
+    }
 
-            public void afterTextChanged(Editable s) {
 
-                edAmountBTC.removeTextChangedListener(this);
+    private Double getSatValue(Double btc) {
+        if (btc == 0) {
+            return (double) 0;
+        }
+        return btc * 100000000;
+    }
 
-                int max_len = 8;
-                NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
-                btcFormat.setMaximumFractionDigits(max_len + 1);
-                btcFormat.setMinimumFractionDigits(0);
 
-                double d = 0.0;
-                try {
-                    d = NumberFormat.getInstance(Locale.US).parse(s.toString()).doubleValue();
-                    String s1 = btcFormat.format(d);
-                    if (s1.indexOf(defaultSeparator) != -1) {
-                        String dec = s1.substring(s1.indexOf(defaultSeparator));
-                        if (dec.length() > 0) {
-                            dec = dec.substring(1);
-                            if (dec.length() > max_len) {
-                                edAmountBTC.setText(s1.substring(0, s1.length() - 1));
-                                edAmountBTC.setSelection(edAmountBTC.getText().length());
-                                s = edAmountBTC.getEditableText();
-                            }
-                        }
-                    }
-                } catch (NumberFormatException nfe) {
-                    ;
-                } catch (ParseException pe) {
-                    ;
+    private String formattedSatValue(Object number) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        return decimalFormat.format(number).replace(",", " ");
+    }
+
+
+    private TextWatcher BTCWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            edAmountSAT.removeTextChangedListener(satWatcher);
+            edAmountBTC.removeTextChangedListener(this);
+
+            try {
+                if (editable.toString().length() == 0) {
+                    edAmountSAT.setText("0");
+                    edAmountBTC.setText("");
+                    edAmountSAT.setSelection(edAmountSAT.getText().length());
+                    edAmountSAT.addTextChangedListener(satWatcher);
+                    edAmountBTC.addTextChangedListener(this);
+                    return;
                 }
+                Float btc = Float.parseFloat(String.valueOf(editable));
+                Double sats = getSatValue(Double.valueOf(btc));
+                edAmountSAT.setText(formattedSatValue(sats));
 
-                if (d > 21000000.0) {
-                    edAmountBTC.setText("0");
+                if (btc > 21000000.0) {
+                    edAmountBTC.setText("0.00");
                     edAmountBTC.setSelection(edAmountBTC.getText().length());
+                    edAmountSAT.setText("0");
+                    edAmountSAT.setSelection(edAmountSAT.getText().length());
                     Toast.makeText(ReceiveActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
 
-                edAmountBTC.addTextChangedListener(this);
 
-                displayQRCode();
+//
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
+            edAmountSAT.addTextChangedListener(satWatcher);
+            edAmountBTC.addTextChangedListener(this);
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            displayQRCode();
+        }
+    };
 
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        };
-        edAmountBTC.addTextChangedListener(textWatcherBTC);
 
-        displayQRCode();
+    private Float getBtcValue(Double sats) {
+        return (float) (sats / 100000000);
     }
+
+
+    private TextWatcher satWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            edAmountSAT.removeTextChangedListener(this);
+            edAmountBTC.removeTextChangedListener(BTCWatcher);
+
+            try {
+                if (editable.toString().length() == 0) {
+                    edAmountBTC.setText("0.00");
+                    edAmountSAT.setText("");
+                    edAmountSAT.addTextChangedListener(this);
+                    edAmountBTC.addTextChangedListener(BTCWatcher);
+                    return;
+                }
+                String cleared_space = editable.toString().replace(" ", "");
+
+                Double sats = Double.parseDouble(cleared_space);
+                Float btc = getBtcValue(sats);
+                String formatted = formattedSatValue(sats);
+
+
+                edAmountSAT.setText(formatted);
+                edAmountSAT.setSelection(formatted.length());
+                edAmountBTC.setText(String.format(Locale.ENGLISH, "%.8f", btc));
+                if (btc > 21000000.0) {
+                    edAmountBTC.setText("0.00");
+                    edAmountBTC.setSelection(edAmountBTC.getText().length());
+                    edAmountSAT.setText("0");
+                    edAmountSAT.setSelection(edAmountSAT.getText().length());
+                    Toast.makeText(ReceiveActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+
+            }
+            edAmountSAT.addTextChangedListener(this);
+            edAmountBTC.addTextChangedListener(BTCWatcher);
+            displayQRCode();
+        }
+    };
+
 
     private void populateSpinner() {
 

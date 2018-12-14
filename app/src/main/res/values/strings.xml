@@ -171,6 +171,7 @@
     <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
+    <string name="txid_to_clipboard">Copy this transaction id  to the clipboard? If copied, it may be visible to other applications.</string>
     <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
     <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
     <string name="wallet_erased">Wallet erased from device.</string>
@@ -269,8 +270,6 @@
 
     <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
     <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
-    <string name="api_key_error">Invalid API key.</string>
-    <string name="api_token_error">Invalid API token.</string>
 
     <string name="cannot_recognize_privkey">Cannot recognize private key</string>
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
@@ -634,5 +633,9 @@
     <string name="hide_log">HIDE LOG</string>
     <string name="copy">Copy</string>
     <string name="show_log">Show Log</string>
+    <string name="unconfirmed">Unconfirmed</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="total_available_amount">Total available amount</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
 
 </resources>

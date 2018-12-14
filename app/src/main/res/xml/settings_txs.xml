@@ -15,12 +15,12 @@
         android:key="likeTypedChange"
         />
 
-    <CheckBoxPreference
-        android:title="@string/options_boltzmann"
-        android:summary="@string/options_boltzmann_2"
-        android:defaultValue="true"
-        android:key="boltzmann"
-        />
+    <!--<CheckBoxPreference-->
+        <!--android:title="@string/options_boltzmann"-->
+        <!--android:summary="@string/options_boltzmann_2"-->
+        <!--android:defaultValue="true"-->
+        <!--android:key="boltzmann"-->
+        <!--/>-->
 
     <CheckBoxPreference
         android:title="@string/options_rbf0"

@@ -97,20 +97,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         Bundle extras = getIntent().getExtras();
         if(extras != null && extras.containsKey("branch"))	{
             String strBranch = extras.getString("branch");
-
-            if(strBranch.equals("prefs"))    {
-                addPreferencesFromResource(R.xml.settings_prefs);
-
-                Preference explorersPref = (Preference) findPreference("explorer");
-                explorersPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getBlockExplorer();
-                        return true;
-                    }
-                });
-
-            }
-            else if(strBranch.equals("txs"))   {
+                 if(strBranch.equals("txs"))   {
                 addPreferencesFromResource(R.xml.settings_txs);
 
                 final CheckBoxPreference cbPref0 = (CheckBoxPreference) findPreference("segwit");
@@ -142,21 +129,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
-
-                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("boltzmann");
-                cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                        if (cbPref7.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, false);
-                        }
-                        else    {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, true);
-                        }
-
-                        return true;
-                    }
-                });
+//
+//                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("boltzmann");
+//                cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+//
+//                        if (cbPref7.isChecked()) {
+//                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, false);
+//                        }
+//                        else    {
+//                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, true);
+//                        }
+//
+//                        return true;
+//                    }
+//                });
 
                 final CheckBoxPreference cbPref9 = (CheckBoxPreference) findPreference("rbf");
                 cbPref9.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -1151,29 +1138,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getBlockExplorer()	{
-
-        final CharSequence[] explorers = BlockExplorerUtil.getInstance().getBlockExplorers();
-        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-        final int _sel;
-        if(sel >= explorers.length)    {
-            _sel = 0;
-        }
-        else    {
-            _sel = sel;
-        }
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_blockexplorer)
-                .setSingleChoiceItems(explorers, _sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BLOCK_EXPLORER, which);
-                                dialog.dismiss();
-                            }
-                        }
-                ).show();
-
-    }
 
     private void getTrustedNode()	{
 
