@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
@@ -64,6 +65,20 @@ public class RefreshService extends IntentService {
         notifTx = intent.getBooleanExtra("notifTx", false);
 
         Log.d("RefreshService", "doInBackground()");
+
+        if(!AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
+
+            if(APIFactory.getInstance(RefreshService.this).getAccessToken() == null)    {
+                APIFactory.getInstance(RefreshService.this).getToken();
+            }
+
+            JWT jwt = new JWT(APIFactory.getInstance(RefreshService.this).getAccessToken());
+            if(jwt.isExpired(APIFactory.getInstance(RefreshService.this).getAccessTokenRefresh()))    {
+                if(!APIFactory.getInstance(RefreshService.this).getToken())  {
+                    return;
+                }
+            }
+        }
 
         APIFactory.getInstance(RefreshService.this).initWallet();
 

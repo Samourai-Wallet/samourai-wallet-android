@@ -71,7 +71,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     private int arcdelay = 800;
     private long signDelay = 2000L;
     private long broadcastDelay = 1599L;
-    private long resultDelay = 1500L;
+    private long resultDelay = 3000L;
 
     private Handler resultHandler = null;
 
@@ -196,6 +196,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("result")) {
                                                     if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
                                                         isOK = true;
+                                                        BatchSendUtil.getInstance().clear();
                                                     } else {
                                                         Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
                                                         failTx(R.string.tx_broadcast_ko);
@@ -212,6 +213,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("status")) {
                                                     if (jsonObject.getString("status").equals("ok")) {
                                                         isOK = true;
+                                                        BatchSendUtil.getInstance().clear();
                                                     }
                                                 }
                                             } else {
@@ -221,6 +223,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                         }
                                     }
                                     catch(JSONException je) {
+                                        Toast.makeText(TxAnimUIActivity.this, je.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e("TxAnimUIActivity", "JSONException", je);
                                         failTx(R.string.tx_broadcast_ko);
                                     }
 
@@ -261,14 +265,19 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
-    private void failTx(int id)   {
-        progressView.reset();
+    private void failTx(final int id)   {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressView.reset();
 
-        progressView.offlineMode(1200);
-        progressView.setTxStatusMessage(R.string.tx_failed);
-        progressView.setTxSubText(id);
-//        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-//        progressView.toggleOfflineButton();
+                progressView.offlineMode(1200);
+                progressView.setTxStatusMessage(R.string.tx_failed);
+                progressView.setTxSubText(id);
+//              progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
+//              progressView.toggleOfflineButton();
+            }
+        });
     }
 
     private void offlineTx(int id, final String hex, final String hash)   {
@@ -376,7 +385,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 // increment counter if BIP47 spend
                 if (SendParams.getInstance().getPCode() != null && SendParams.getInstance().getPCode().length() > 0) {
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(SendParams.getInstance().getDestAddress(), SendParams.getInstance().getPCode());
-                    BIP47Meta.getInstance().inc(SendParams.getInstance().getPCode());
+                    BIP47Meta.getInstance().incOutgoingIdx(SendParams.getInstance().getPCode());
 
                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                     String strTS = sd.format(System.currentTimeMillis());
@@ -391,7 +400,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         // increment counter if BIP47 spend
                         if(pcode != null && pcode.length() > 0)    {
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
-                            BIP47Meta.getInstance().inc(pcode);
+                            BIP47Meta.getInstance().incOutgoingIdx(pcode);
 
                             SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                             String strTS = sd.format(System.currentTimeMillis());

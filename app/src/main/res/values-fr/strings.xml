@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
 
-    <string name="options_cat_prefs">Monnaie, Explorateur de blocs</string>
+    <string name="options_cat_prefs">Explorateur de blocs</string>
     <string name="options_cat_stealth">Mode furtif</string>
     <string name="options_cat_remote">À distance</string>
     <string name="options_cat_wallet">Portefeuille</string>
@@ -581,5 +581,7 @@
   <string name="request_amount">Demande Montant</string>
   <string name="address_type">Type d\'Adresse</string>
   <string name="path">Chemin d\'accès</string>
+  
+  <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>  
 
 </resources>

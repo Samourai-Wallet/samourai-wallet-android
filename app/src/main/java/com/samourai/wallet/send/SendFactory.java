@@ -259,9 +259,13 @@ public class SendFactory	{
 
             MyTransactionInput input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
-                input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_NO);
+                input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
             }
             inputs.add(input);
+        }
+
+        if(APIFactory.getInstance(context).getLatestBlockHeight() > 0L && PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == false)    {
+            tx.setLockTime(APIFactory.getInstance(context).getLatestBlockHeight());
         }
 
         //
@@ -421,6 +425,15 @@ public class SendFactory	{
             return null;
         }
 
+        List<String> seenPreviousSetHash = null;
+        if(firstPassOutpoints != null)    {
+            seenPreviousSetHash = new ArrayList<String>();
+
+            for(MyTransactionOutPoint outpoint : firstPassOutpoints)   {
+                seenPreviousSetHash.add(outpoint.getTxHash().toString());
+            }
+        }
+
         int changeType = 49;
         int mixedType = 49;
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
@@ -501,7 +514,10 @@ public class SendFactory	{
 
             for(MyTransactionOutPoint op : utxo.getOutpoints())   {
                 String hash = op.getTxHash().toString();
-                if(!seenOutpoints.containsKey(hash))    {
+                if(seenPreviousSetHash != null && seenPreviousSetHash.contains(hash))    {
+                    ;
+                }
+                else if(!seenOutpoints.containsKey(hash))    {
                     seenOutpoints.put(hash,op);
                     selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
                     Log.d("SendFactory", "selected:" + i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());

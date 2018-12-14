@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -306,7 +307,41 @@ public class MainActivity2 extends Activity {
 
     }
 
-    private void doAppInit(boolean isDial, final String strUri, final String strPCode) {
+    private void doAppInit(final boolean isDial, final String strUri, final String strPCode) {
+
+        boolean needToken = false;
+        if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
+            needToken = true;
+        }
+        else {
+            JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
+            if(jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh()))    {
+                needToken = true;
+            }
+        }
+
+        if(needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+
+                    if(APIFactory.getInstance(MainActivity2.this).getToken())    {
+                        doAppInit(isDial, strUri, strPCode);
+                    }
+                    else    {
+                        Toast.makeText(MainActivity2.this, R.string.api_key_error, Toast.LENGTH_SHORT).show();
+                        MainActivity2.this.finish();
+                    }
+
+                    Looper.loop();
+
+                }
+            }).start();
+
+            return;
+        }
 
         if((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn())    {
 
