@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;

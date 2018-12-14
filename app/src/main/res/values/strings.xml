@@ -270,6 +270,8 @@
 
     <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
     <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+    <string name="api_key_error">Invalid API key.</string>
+    <string name="api_token_error">Invalid API token.</string>
 
     <string name="cannot_recognize_privkey">Cannot recognize private key</string>
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
