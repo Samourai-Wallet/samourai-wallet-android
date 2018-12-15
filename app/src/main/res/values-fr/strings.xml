@@ -197,8 +197,6 @@
 
     <string name="max_available">Max. disponible:</string>
 
-    <string name="first_use_shuffle">Ceci est votre Compte Shift. Les Bitcoin que vous recevez via ShapeShift seront stockés sur ce compte qui ne partage pas d\'espace adresses commun avec le compte principal de votre portefeuille.</string>
-
     <string name="select_account">Sélectionnez votre compte</string>
     <string name="received_bitcoin">Bitcoin Reçus</string>
     <string name="received">Reçus</string>

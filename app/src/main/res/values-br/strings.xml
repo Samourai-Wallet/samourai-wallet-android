@@ -200,8 +200,6 @@
 
     <string name="max_available">Máx. disponível:</string>
 
-    <string name="first_use_shuffle">Essa é sua Conta Shifted. O Bitcoin recebido através do ShapeShift será armazenado nessa conta que não compartilha do mesmo espaço de endereços que sua carteira primária.</string>
-
     <string name="select_account">Selecionar conta</string>
     <string name="received_bitcoin">Bitcoin recebido</string>
     <string name="received">Recebido</string>
