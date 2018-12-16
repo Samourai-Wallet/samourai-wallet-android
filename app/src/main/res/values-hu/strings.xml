@@ -203,8 +203,6 @@
 
     <string name="max_available">Rendelkezésre áll:</string>
 
-    <string name="first_use_shuffle">Ez a Shifted pénztárcád. A Bitcoin, amit ShapeShift-en keresztül kapsz, ebben a pénztárcában lesz tárolva. Ez a pénztárca az elsődleges pénztárcádtól különböző címeket használ.</string>
-
     <string name="select_account">Pénztárca kiválasztása</string>
     <string name="received_bitcoin">Bejövő tranzakció:</string>
     <string name="received">Fogadva:</string>
