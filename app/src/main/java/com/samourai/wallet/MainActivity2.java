@@ -129,20 +129,6 @@ public class MainActivity2 extends Activity {
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 
-                if(itemPosition == 2 && PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.FIRST_USE_SHUFFLE, true) == true)    {
-
-                    new AlertDialog.Builder(MainActivity2.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(R.string.first_use_shuffle)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.FIRST_USE_SHUFFLE, false);
-                                }
-                            }).show();
-
-                }
-
                 SamouraiWallet.getInstance().setCurrentSelectedAccount(itemPosition);
                 if(account_selections.length > 1)    {
                     SamouraiWallet.getInstance().setShowTotalBalance(true);
