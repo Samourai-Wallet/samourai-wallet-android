@@ -19,6 +19,9 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -32,7 +35,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -50,6 +56,7 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.cahoots.CahootsFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -57,9 +64,14 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
@@ -78,7 +90,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -88,6 +106,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
     private boolean steathActivating = false;
 
     private final static int SCAN_HEX_TX = 2011;
+    private final static int SCAN_CAHOOTS = 2012;
+    private final static int SCAN_PSBT = 2013;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,21 +162,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
-//
-//                final CheckBoxPreference cbPref7 = (CheckBoxPreference) findPreference("boltzmann");
-//                cbPref7.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-//
-//                        if (cbPref7.isChecked()) {
-//                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, false);
-//                        }
-//                        else    {
-//                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_BOLTZMANN, true);
-//                        }
-//
-//                        return true;
-//                    }
-//                });
 
                 final CheckBoxPreference cbPref9 = (CheckBoxPreference) findPreference("rbf");
                 cbPref9.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -237,6 +242,31 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         return true;
                     }
                 });
+
+                if(SamouraiWallet.getInstance().isTestNet())    {
+
+                    Preference cahootsPref = (Preference) findPreference("cahoots");
+                    cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                        public boolean onPreferenceClick(Preference preference) {
+                            doCahoots();
+                            return true;
+                        }
+                    });
+
+                    Preference psbtPref = (Preference) findPreference("psbt");
+                    psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                        public boolean onPreferenceClick(Preference preference) {
+                            doPSBT();
+                            return true;
+                        }
+                    });
+
+                }
+                else    {
+                    PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("txPrefs");
+                    PreferenceGroup xcategory = (PreferenceGroup) findPreference(getResources().getString(R.string.experimental));
+                    preferenceScreen.removePreference(xcategory);
+                }
 
             }
             else if(strBranch.equals("stealth"))   {
@@ -985,7 +1015,31 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
             }
         }
+        else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_CAHOOTS)	{
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                doProcessCahoots(strResult);
+
+            }
+        }
+        else if(resultCode == Activity.RESULT_OK && requestCode == SCAN_PSBT)	{
+            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+
+                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+
+                doProcessPSBT(strResult);
+
+            }
+        }
         else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_HEX_TX)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_CAHOOTS)	{
+            ;
+        }
+        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_PSBT)	{
             ;
         }
         else {
@@ -1522,6 +1576,18 @@ public class SettingsActivity2 extends PreferenceActivity	{
         startActivityForResult(intent, SCAN_HEX_TX);
     }
 
+    private void doScanCahoots()   {
+        Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_CAHOOTS);
+    }
+
+    private void doScanPSBT()   {
+        Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        startActivityForResult(intent, SCAN_PSBT);
+    }
+
     private void doAddressCalc()    {
         Intent intent = new Intent(SettingsActivity2.this, AddressCalcActivity.class);
         startActivity(intent);
@@ -1646,6 +1712,26 @@ public class SettingsActivity2 extends PreferenceActivity	{
             dlg.show();
         }
 
+    }
+
+    private void doCahoots()    {
+
+        Toast.makeText(SettingsActivity2.this, "#Cahoots exchange: in progress", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void doPSBT()    {
+
+        Toast.makeText(SettingsActivity2.this, "PSBT exchange: in progress", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void doProcessCahoots(final String strCahoots)    {
+        ;
+    }
+
+    private void doProcessPSBT(final String strPSBT)    {
+        ;
     }
 
 }

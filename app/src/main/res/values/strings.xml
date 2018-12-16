@@ -636,4 +636,17 @@
     <string name="confirmation">Confirmation</string>
     <string name="total_available_amount">Total available amount</string>
 
+    <string name="experimental">Experimental</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Make every spend a CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Partially Signed Bitcoin Transaction.</string>
+    <string name="import_cahoots">Scan or paste a #Cahoots.</string>
+    <string name="import_psbt">Scan or paste a PSBT.</string>
+    <string name="enter_cahoots">Enter #Cahoots text</string>
+    <string name="enter_psbt">Enter PSBT text</string>
+    <string name="create_cahoots">Create #Cahoots spend</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+
 </resources>
