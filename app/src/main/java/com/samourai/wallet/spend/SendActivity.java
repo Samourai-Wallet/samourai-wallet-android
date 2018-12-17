@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -238,10 +239,11 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpBoltzman() {
-
         boolean useBoltzman = PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_BOLTZMANN, true);
         stoneWallSwitch.setChecked(useBoltzman);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+            prepareSpend();
             PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
         });
     }
