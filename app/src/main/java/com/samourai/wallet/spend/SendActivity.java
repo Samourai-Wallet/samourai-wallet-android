@@ -199,7 +199,7 @@ public class SendActivity extends AppCompatActivity {
                     .newPlainText("Miner fee", tvTotalFee.getText());
             if (cm != null) {
                 cm.setPrimaryClip(clipData);
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -307,7 +307,7 @@ public class SendActivity extends AppCompatActivity {
             FeeUtil.getInstance().setHighFee(hi_sf);
         }
 //        tvEstimatedBlockWait.setText("6 blocks");
-        tvSelectedFeeRateLayman.setText("Normal");
+        tvSelectedFeeRateLayman.setText(getString(R.string.normal));
 
         FeeUtil.getInstance().sanitizeFee();
 
@@ -345,13 +345,13 @@ public class SendActivity extends AppCompatActivity {
                 setFee(value);
 
                 if (value >= feeHigh) {
-                    tvSelectedFeeRateLayman.setText("Urgent");
+                    tvSelectedFeeRateLayman.setText(R.string.urgent);
 
                 } else if (i >= feeMed) {
-                    tvSelectedFeeRateLayman.setText("Normal");
+                    tvSelectedFeeRateLayman.setText(R.string.normal);
 
                 } else if (i >= feeLow) {
-                    tvSelectedFeeRateLayman.setText("Low");
+                    tvSelectedFeeRateLayman.setText(R.string.low);
                 }
 
 

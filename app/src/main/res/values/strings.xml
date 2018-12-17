@@ -650,5 +650,8 @@
     <string name="create_cahoots">Create #Cahoots spend</string>
     <string name="stowaway">Stowaway</string>
     <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Low</string>
 
 </resources>
