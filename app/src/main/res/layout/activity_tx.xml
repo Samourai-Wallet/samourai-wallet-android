@@ -316,12 +316,11 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/border_button2_shape"
-        android:text="@string/pay_again"
         android:textAllCaps="false"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/pay_again" />
 
 
 </android.support.constraint.ConstraintLayout>
