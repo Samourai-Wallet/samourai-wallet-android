@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.constraint.Group;
 import android.support.transition.Slide;
 import android.support.transition.Transition;
@@ -71,6 +72,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.WebUtil;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -1203,7 +1205,7 @@ public class SendActivity extends AppCompatActivity {
 
                         if(staggered)    {
 
-                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
+//                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
 
                             try {
                                 if(ricochetJsonObj.has("hops"))    {
@@ -1218,7 +1220,7 @@ public class SendActivity extends AppCompatActivity {
                                             String hex = hopObj.getString("tx");
                                             JSONObject scriptObj = new JSONObject();
                                             scriptObj.put("hop", i);
-                                            scriptObj.put("nTimeLock", locktime);
+                                            scriptObj.put("nlocktime", locktime);
                                             scriptObj.put("tx", hex);
                                             nLockTimeScript.put(scriptObj);
                                         }
@@ -1226,7 +1228,37 @@ public class SendActivity extends AppCompatActivity {
                                         JSONObject nLockTimeObj = new JSONObject();
                                         nLockTimeObj.put("script", nLockTimeScript);
 
-                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
+//                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
+
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                Looper.prepare();
+
+                                                String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                                                url += "pushtx/schedule";
+                                                try {
+                                                    String result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+//                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
+                                                    JSONObject resultObj = new JSONObject(result);
+                                                    if(resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok"))    {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else    {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                catch (Exception e) {
+                                                    Log.d("SendActivity", e.getMessage());
+                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                Looper.loop();
+
+                                            }
+                                        }).start();
+
                                     }
                                 }
                             }
