@@ -80,6 +80,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -748,7 +749,7 @@ public class SendActivity extends AppCompatActivity {
                 samouraiFeeViaBIP47 = true;
             }
 
-            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
+            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, ricochetStaggeredDelivery.isChecked());
             if (ricochetJsonObj != null) {
 
                 try {
@@ -1098,8 +1099,7 @@ public class SendActivity extends AppCompatActivity {
     private void initiateSpend() {
 
         if (SPEND_TYPE == SPEND_RICOCHET) {
-
-            ricochetSpend();
+            ricochetSpend(ricochetStaggeredDelivery.isChecked());
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
@@ -1190,7 +1190,7 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void ricochetSpend() {
+    private void ricochetSpend(boolean staggered) {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
@@ -1199,12 +1199,48 @@ public class SendActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
-
                         dialog.dismiss();
 
-                        Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
-                        startActivityForResult(intent, RICOCHET);
+                        if(staggered)    {
+
+                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
+
+                            try {
+                                if(ricochetJsonObj.has("hops"))    {
+                                    JSONArray hops = ricochetJsonObj.getJSONArray("hops");
+                                    if(hops.getJSONObject(0).has("nTimeLock"))    {
+
+                                        JSONArray nLockTimeScript = new JSONArray();
+                                        for(int i = 0; i < hops.length(); i++)   {
+                                            JSONObject hopObj = hops.getJSONObject(i);
+                                            int seq = i;
+                                            long locktime = hopObj.getLong("nTimeLock");
+                                            String hex = hopObj.getString("tx");
+                                            JSONObject scriptObj = new JSONObject();
+                                            scriptObj.put("hop", i);
+                                            scriptObj.put("nTimeLock", locktime);
+                                            scriptObj.put("tx", hex);
+                                            nLockTimeScript.put(scriptObj);
+                                        }
+
+                                        JSONObject nLockTimeObj = new JSONObject();
+                                        nLockTimeObj.put("script", nLockTimeScript);
+
+                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
+                                    }
+                                }
+                            }
+                            catch(JSONException je) {
+                                Log.d("SendActivity", je.getMessage());
+                            }
+
+                        }
+                        else    {
+                            RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
+
+                            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+                            startActivityForResult(intent, RICOCHET);
+                        }
 
                     }
 
