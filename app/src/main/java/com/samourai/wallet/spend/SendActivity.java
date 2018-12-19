@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -446,6 +447,14 @@ public class SendActivity extends AppCompatActivity {
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
 
+        ricochetStaggeredDelivery.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.RICOCHET_STAGGERED, false));
+
+        ricochetStaggeredDelivery.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            PrefsUtil.getInstance(this).setValue(PrefsUtil.RICOCHET_STAGGERED, isChecked);
+
+            // Handle staggered delivery option
+
+        });
     }
 
 
