@@ -198,107 +198,107 @@
     <string name="custom_fee">Vlastný</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Samourai">Wallet</string>
-    <string name="account_shuffling">Shifted</string>
+    <string name="account_Samourai">Peňaženka</string>
+    <string name="account_shuffling">Premiestnené</string>
 
-    <string name="max_available">Max. available:</string>
+    <string name="max_available">Max. dostupné:</string>
 
-    <string name="select_account">Select account</string>
-    <string name="received_bitcoin">Received Bitcoin</string>
-    <string name="received">Received</string>
-    <string name="sent">Transaction sent</string>
-    <string name="total">Total</string>
-    <string name="export_to_clipboard">Export to clipboard</string>
-    <string name="export_to_email">Export to email</string>
-    <string name="encryption_error">There was an error while encrypting your wallet backup. Please try again.</string>
-    <string name="import_backup">From backup</string>
+    <string name="select_account">Zvoľ účet</string>
+    <string name="received_bitcoin">Prijatý Bitcoin</string>
+    <string name="received">Prijatý</string>
+    <string name="sent">Transakcia poslaná</string>
+    <string name="total">Spolu</string>
+    <string name="export_to_clipboard">Exportuj do schránky</string>
+    <string name="export_to_email">Exportuj do email-u</string>
+    <string name="encryption_error">Vyskytla sa chyba pri dekryptovaní zálohy peňaženky. Skúste znova.</string>
+    <string name="import_backup">Zo zálohy</string>
     <string name="import_mnemonic">Mnemonic/seed</string>
-    <string name="encrypted_backup">Encrypted wallet data</string>
-    <string name="decryption_error">There was an error while decrypting your wallet backup. Please try again.</string>
-    <string name="restore_wallet_from_backup">Restore wallet from backup</string>
-    <string name="restore_wallet_from_existing_backup">Backup found on device. To restore from existing backup, tap \'OK\', otherwise copy/paste different backup and tap \'OK\'.</string>
+    <string name="encrypted_backup">Enkryptované dáta peňaženky</string>
+    <string name="decryption_error">Vyskytla sa chyba pri dekryptovaní zálohy peňaženky. Skúste znova.</string>
+    <string name="restore_wallet_from_backup">Obnov peňaženku zo zálohy peňaženky</string>
+    <string name="restore_wallet_from_existing_backup">V zariadení nájdená záloha. Pre obnovenie z existujúcej zálohy, stlač \'OK\', alebo skopíruj/prilep inú zálohu a stlač \'OK\'.</string>
 
-    <string name="choose_email_client">Choose an Email client:</string>
+    <string name="choose_email_client">Vyber emailového klienta:</string>
 
-    <string name="cannot_launch_app">Samourai Wallet cannot be run on this device</string>
-    <string name="confirm_change_pin">Are you sure you want to change your PIN?</string>
-    <string name="success_change_pin">PIN changed</string>
-    <string name="alternative_pin_create">Are you sure you want to create an alternative PIN to be used for stealth launch and remote commands?</string>
-    <string name="alternative_pin_deleted">You are not using any alternative PIN code for stealth and remote functions.</string>
-    <string name="alternative_pin_wait">Wait for stealth launch mode to fully activate before defining an alternative PIN code.</string>
+    <string name="cannot_launch_app">Samourai peňaženka nemôže byť spustená na tomto zariadení</string>
+    <string name="confirm_change_pin">Ste si istý že chcete zmeniť PIN?</string>
+    <string name="success_change_pin">PIN zmenený</string>
+    <string name="alternative_pin_create">Ste si istý že chcete vytvoriť alternatívny PIN ktorý bude použitý pre spustenie v prípade ukradnutia a pre vzdialané príkazy?</string>
+    <string name="alternative_pin_deleted">Nepoužívate žiaden alternatívny PIN kód určení pri krádeži a pre vzdialené príkazy.</string>
+    <string name="alternative_pin_wait">Počkajte pre spustenie a dokončenie aktivácie módu kradeže pred tým ako zadefinujete alternativny PIN kód.</string>
 
-    <string name="invalid_payment_code">Invalid payment code</string>
-    <string name="error_payment_code">Error generating payment code</string>
+    <string name="invalid_payment_code">Nesprávny platovný kód</string>
+    <string name="error_payment_code">Chyba pri generovaní platobného kódu</string>
 
-    <string name="bip47_setup1_title">Your PayNym</string>
-    <string name="bip47_setup4_title">Add PayNym contact</string>
-    <string name="bip47_setup4_text1">Adding this PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain.</string>
-    <string name="bip47_setup4_text2">will be deducted from your wallet balance.</string>
+    <string name="bip47_setup1_title">Vaša PayNym</string>
+    <string name="bip47_setup4_title">Pridaj PayNym kontakt</string>
+    <string name="bip47_setup4_text1">Pridaie tohoto PayNym do tvojích kontaktov vyžaduje jednorázový transakčný poplatok na vytvorenie a zaznamenanie na blockchain.</string>
+    <string name="bip47_setup4_text2">bude stiahnutý z tvojho zostatku na peňaženke.</string>
 
-    <string name="bip47_add1_title">New contact</string>
-    <string name="bip47_add1_text">Scan or paste a payment code to create a new payment channel.</string>
+    <string name="bip47_add1_title">Nový kontakt</string>
+    <string name="bip47_add1_text">Skenuj alebo vlož platobný kód pre vytvorenie nového platobného kanálu.</string>
 
-    <string name="paste">Paste</string>
-    <string name="label">Label</string>
-    <string name="next">Next</string>
-    <string name="confirm">Confirm</string>
-    <string name="payment_code">Payment code</string>
-    <string name="payment_channel_init">Notification transaction sent. Your payment channel is being created.</string>
+    <string name="paste">Prilep</string>
+    <string name="label">Označ</string>
+    <string name="next">Ďalej</string>
+    <string name="confirm">Potvrď</string>
+    <string name="payment_code">Platobný kód</string>
+    <string name="payment_channel_init">Notifikácia transakcie poslaná. Tvoj platobný kanál bol vytvorený.</string>
 
-    <string name="bip47_no_label_error">You must supply a label for this payment code</string>
+    <string name="bip47_no_label_error">Musíte dodať štítok pre tento platobný kód</string>
 
-    <string name="bip47_status_tbe">Not yet established</string>
-    <string name="bip47_status_pending">Pending - 0/1 Confirmations</string>
-    <string name="bip47_status_active">Ready to send</string>
-    <string name="bip47_status_incoming">Ready to receive</string>
-    <string name="bip47_cannot_scan_own_pcode">Cannot scan your own payment code</string>
-    <string name="bip47_spend_to_pcode">Send through this payment channel?</string>
-    <string name="bip47_sign">Sign message</string>
-    <string name="bip47_sign_text1">Sign message using BIP47 notification address private key?</string>
-    <string name="bip47_sign_text2">Signed using my BIP47 notification address.</string>
-    <string name="bip47_wait_for_confirmation_or_retry">This payment channel is waiting for 1 confirmation before sending is activated. Would you like to discard the previous attempt and resend a notification?</string>
+    <string name="bip47_status_tbe">Ešte neurčené</string>
+    <string name="bip47_status_pending">Čakajúci - 0/1 Potvrdení</string>
+    <string name="bip47_status_active">Pripravené odoslať</string>
+    <string name="bip47_status_incoming">Pripravené prijať</string>
+    <string name="bip47_cannot_scan_own_pcode">Nie je možné skenovať tvoj vlastný platobný kód</string>
+    <string name="bip47_spend_to_pcode">Poslať cez tento platobný kanál?</string>
+    <string name="bip47_sign">Podpísať správu</string>
+    <string name="bip47_sign_text1">Podpísať správu použitím BIP47 notifikačnej adresy privátneho klúča?</string>
+    <string name="bip47_sign_text2">Podpísaná s použitím mojej BIP47 notifikačnej adresy.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Tento platobný kanál čaká na 1 konfirmáciu pred tým ako sa aktivuje poslanie. Prajete si zrušiť predchádzajúcu požiadavku a znova preposlať notifikáciu?</string>
 
-    <string name="rbf_incoming">The incoming transaction is replace-by-fee. View in block explorer?</string>
+    <string name="rbf_incoming">Prichádzajúca transakcia je nahradená poplatkom. Zobraz v block prehliadači?</string>
 
-    <string name="invalid_passphrase">Invalid passphrase</string>
-    <string name="passphrase">Passphrase</string>
-    <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Samourai Wallet features create your wallet using Samourai Wallet and transfer your funds.</string>
-    <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
+    <string name="invalid_passphrase">Nesprávne prístupové heslo</string>
+    <string name="passphrase">Prístupové heslo</string>
+    <string name="passphrase_needed_for_backup">Vaša peňaženka nie je chránená prístupovým heslom. Zálohy peňaženky su enkryptované prístupovým heslom. Ak si prajete využívať enkryptované zálohy peňaženky a ostatné výhody Samourai peňaženky vytvorte si vlastnú peňaženku Samourai a presunte do nej vaše prostriedky.</string>
+    <string name="passphrase_required">Pristupové heslo je vyžadované pre túto funkciu. Prosím zvážte vytvorenie novej peňaženky ktorá bude automaticky obsahovať prístupové heslo.</string>
 
-    <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
-    <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
-    <string name="api_key_error">Invalid API key.</string>
-    <string name="api_token_error">Invalid API token.</string>
+    <string name="cannot_reach_api">Samourai APIs nie je možné nájsť. Prosím skontrolujte pripojenie a zopakujte znovu..</string>
+    <string name="api_error">Samourai APIs sa vracia s chybou. Prosím skuste znova alebo skúste neskôr.</string>
+    <string name="api_key_error">Nesprávny API klúč.</string>
+    <string name="api_token_error">Nesprávny API token.</string>
 
-    <string name="cannot_recognize_privkey">Cannot recognize private key</string>
-    <string name="cannot_sweep_privkey">Error sweeping private key</string>
-    <string name="please_wait_sending">Sending transaction, please wait.</string>
-    <string name="please_wait_ricochet">Processing Ricochet queue, please wait.</string>
+    <string name="cannot_recognize_privkey">Nemôžem rozpoznať privátny klúč</string>
+    <string name="cannot_sweep_privkey">Chyba sweeping privátneho klúča</string>
+    <string name="please_wait_sending">Posielam transakciu, prosím čakajte.</string>
+    <string name="please_wait_ricochet">Spracovávam Ricochet frontu, prosím čakajte.</string>
 
-    <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
+    <string name="change_is_dust">Zmena z tejto transakcie predstavuje množstvo prachu. Skúste to znova a buď upravte sumu výdavkov alebo zadajte celý zostatok.</string>
 
-    <string name="tor_routing_on">Samourai is routing via Tor.</string>
-    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+    <string name="tor_routing_on">Samourai je smerovaný cez Tor.</string>
+    <string name="tor_routing_off">Samourai nie je smerovaný cez Tor. Stlačte pre aktiváciu.</string>
+    <string name="tor_install">Stlačte pre nainštalovanie aplikácie Orbot a smeruj Samourai cez Tor.</string>
 
-    <string name="premium_addons">Premium Addons</string>
+    <string name="premium_addons">Prémium Doplnky</string>
 
-    <string name="ricochet_hop">Ricochet Hop</string>
-    <string name="ricochet_hopping">Ricocheted to</string>
-    <string name="ricochet_spend1">Ricochet spend to</string>
-    <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_hop">Ricochet Skok</string>
+    <string name="ricochet_hopping">Ricocheted do</string>
+    <string name="ricochet_spend1">Ricochet minúť do</string>
+    <string name="ricochet_spend2">pre celkovú sumu z</string>
+    <string name="ricochet_spend3">(zahrňuje 0.002 BTC poplatok pre Samourai a ťažiarom\' poplatky)?</string>
 
-    <string name="action_ricochet">Replay Ricochet</string>
-    <string name="action_empty_ricochet">Empty Ricochet queue</string>
-    <string name="ricochet">Ricochet - send with 4 extra hops</string>
-    <string name="action_ricochet_script">Display Ricochet script</string>
-    <string name="action_ricochet_replay">Resend Ricochet</string>
-    <string name="ricochet_replay">Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="ricochet_not_broadcast_replay">There was a problem broadcasting your Ricochet. Do you want to rebroadcast this Ricochet spend?</string>
-    <string name="no_ricochet_replay">There is no Ricochet to be resent.</string>
-    <string name="no_ricochet_display">There is no Ricochet script to display.</string>
-    <string name="ricochet_broadcast">Your Ricochet has been broadcast.</string>
+    <string name="action_ricochet">Opakuj Ricochet</string>
+    <string name="action_empty_ricochet">Prázdna Ricochet fronta</string>
+    <string name="ricochet">Ricochet - poslať s 4 extra skokami</string>
+    <string name="action_ricochet_script">Zobraz Ricochet skript</string>
+    <string name="action_ricochet_replay">Prepošli Ricochet</string>
+    <string name="ricochet_replay">Praješ si znova odvysielať Ricochet výdavky?</string>
+    <string name="ricochet_not_broadcast_replay">Vyskytol sa problém z odvysielaním tvojho Ricochet. Praješ si znova odvysielať tieto Ricochet výdavky?</string>
+    <string name="no_ricochet_replay">Nie je žiaden Ricochet na preposlanie.</string>
+    <string name="no_ricochet_display">Nie je žiaden Ricochet skript na zobrazenie.</string>
+    <string name="ricochet_broadcast">Váš Ricochet bol odvysielaný.</string>
 
     <string name="bip47_cannot_identify_outpoint">Unable to mask outgoing payment code</string>
     <string name="bip47_cannot_compose_notif_tx">Unable to compose notification tx</string>
