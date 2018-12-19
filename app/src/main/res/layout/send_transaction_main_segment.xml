@@ -1,16 +1,16 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="TODO"
         android:tint="@color/cyan_ui_2"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -22,8 +22,8 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Premium Add-ons"
         android:textColor="@color/cyan_ui_2"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
@@ -43,8 +43,8 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:text="Ricochet"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,8 +56,8 @@
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/ricochet_hops_msg"
         android:textColor="#afd2d2d2"
         android:textSize="12sp"
@@ -86,4 +86,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
         app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/tx_staggered_delivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="Staggered delivery"
+        app:layout_constraintBottom_toTopOf="@+id/review_button"
+        app:layout_constraintStart_toStartOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tx_staggered_delivery_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="For extra privacy and analysis resistance, each hop will appear in mempool 1 block apart. Final delivery can take betwen 30 min and 2 hours."
+        android:textColor="#afd2d2d2"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/ricochet_staggered_option"
+        app:layout_constraintStart_toStartOf="@+id/tx_staggered_delivery"
+        app:layout_constraintTop_toBottomOf="@+id/tx_staggered_delivery" />
+
+    <Switch
+        android:id="@+id/ricochet_staggered_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tx_staggered_delivery_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tx_staggered_delivery_desc" />
+
+    <android.support.constraint.Group
+        android:id="@+id/ricochet_staggered_option_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="ricochet_staggered_option,tx_staggered_delivery_desc,tx_staggered_delivery" />
 </android.support.constraint.ConstraintLayout>
