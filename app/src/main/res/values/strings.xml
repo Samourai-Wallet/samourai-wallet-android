@@ -654,4 +654,6 @@
     <string name="normal">Normal</string>
     <string name="low">Low</string>
 
+    <string name="tag_utxo">Label UTXO</string>
+
 </resources>
