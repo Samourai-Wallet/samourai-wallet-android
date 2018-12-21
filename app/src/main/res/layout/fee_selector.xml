@@ -69,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
+            android:textSize="12sp"
             android:text="0 sat/b"
             android:textAlignment="textEnd" />
     </LinearLayout>

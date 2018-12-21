@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -261,6 +262,8 @@ public class SendActivity extends AppCompatActivity {
     private void setUpFee() {
 
 
+        int multiplier = 10000;
+
         FEE_TYPE = PrefsUtil.getInstance(this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
 
@@ -268,8 +271,13 @@ public class SendActivity extends AppCompatActivity {
         feeMed = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
         feeHigh = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
 
-//        feeSeekBar.set((int) feeLow);
-        feeSeekBar.setMax((int) ((feeHigh / 2) + feeHigh));
+        float high = ((float) feeHigh / 2) + (float) feeHigh;
+        int feeHighSliderValue = (int) (high * multiplier);
+        int feeMedSliderValue = (int) (feeMed * multiplier);
+
+
+        feeSeekBar.setMax(feeHighSliderValue - multiplier);
+
         if (feeLow == feeMed && feeMed == feeHigh) {
             feeLow = (long) ((double) feeMed * 0.85);
             feeHigh = (long) ((double) feeMed * 1.15);
@@ -313,16 +321,16 @@ public class SendActivity extends AppCompatActivity {
 
         tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
 
-        // android slider starts at 0
-        feeSeekBar.setProgress((int) feeMed - 1);
+        feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
 
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+ 
+                double value = ((double) i + multiplier) / (double) multiplier;
 
-                // here we get progress value at 0 , so we need to add 1
-                double value = i + 1;
-                tvSelectedFeeRate.setText(String.valueOf((int) value).concat(" sats/b"));
+                Log.i(TAG, "onProgressChanged: ".concat(String.valueOf(value)));
+                tvSelectedFeeRate.setText(String.valueOf(Math.round(value)).concat(" sats/b"));
                 if (value == 0.0) {
                     value = 1.0;
                 }
@@ -344,13 +352,13 @@ public class SendActivity extends AppCompatActivity {
                 tvEstimatedBlockWait.setText(nbBlocks + " blocks");
                 setFee(value);
 
-                if (value >= feeHigh) {
+                if (value > feeHigh) {
                     tvSelectedFeeRateLayman.setText(R.string.urgent);
 
-                } else if (i >= feeMed) {
+                } else if (value >= feeMed) {
                     tvSelectedFeeRateLayman.setText(R.string.normal);
 
-                } else if (i >= feeLow) {
+                } else if (value >= feeLow) {
                     tvSelectedFeeRateLayman.setText(R.string.low);
                 }
 
