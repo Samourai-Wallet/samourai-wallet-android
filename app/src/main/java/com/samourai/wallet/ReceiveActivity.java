@@ -328,7 +328,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     edAmountBTC.addTextChangedListener(this);
                     return;
                 }
-                Float btc = Float.parseFloat(String.valueOf(editable));
+                Double btc = Double.parseDouble(String.valueOf(editable));
                 Double sats = getSatValue(Double.valueOf(btc));
                 edAmountSAT.setText(formattedSatValue(sats));
 
@@ -353,8 +353,8 @@ public class ReceiveActivity extends AppCompatActivity {
     };
 
 
-    private Float getBtcValue(Double sats) {
-        return (float) (sats / 100000000);
+    private Double getBtcValue(Double sats) {
+        return (double) (sats / 1e8);
     }
 
 
@@ -383,7 +383,7 @@ public class ReceiveActivity extends AppCompatActivity {
                 String cleared_space = editable.toString().replace(" ", "");
 
                 Double sats = Double.parseDouble(cleared_space);
-                Float btc = getBtcValue(sats);
+                Double btc = getBtcValue(sats);
                 String formatted = formattedSatValue(sats);
 
 

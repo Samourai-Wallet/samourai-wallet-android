@@ -502,7 +502,7 @@ public class SendActivity extends AppCompatActivity {
                     btcEditText.addTextChangedListener(this);
                     return;
                 }
-                Float btc = Float.parseFloat(String.valueOf(editable));
+                Double btc = Double.parseDouble(String.valueOf(editable));
                 Double sats = getSatValue(Double.valueOf(btc));
                 satEditText.setText(formattedSatValue(sats));
 
@@ -556,7 +556,7 @@ public class SendActivity extends AppCompatActivity {
                 String cleared_space = editable.toString().replace(" ", "");
 
                 Double sats = Double.parseDouble(cleared_space);
-                Float btc = getBtcValue(sats);
+                Double btc = getBtcValue(sats);
                 String formatted = formattedSatValue(sats);
 
 
@@ -596,15 +596,15 @@ public class SendActivity extends AppCompatActivity {
         return "";
     }
 
-    private Float getBtcValue(Double sats) {
-        return (float) (sats / 100000000);
+    private Double getBtcValue(Double sats) {
+        return (double) (sats / 1e8);
     }
 
     private Double getSatValue(Double btc) {
         if (btc == 0) {
             return (double) 0;
         }
-        return btc * 100000000;
+        return btc * 1e8;
     }
 
     private void review() {
