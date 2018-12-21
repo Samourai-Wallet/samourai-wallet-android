@@ -81,6 +81,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -502,9 +503,8 @@ public class SendActivity extends AppCompatActivity {
                     btcEditText.addTextChangedListener(this);
                     return;
                 }
+
                 Double btc = Double.parseDouble(String.valueOf(editable));
-                Double sats = getSatValue(Double.valueOf(btc));
-                satEditText.setText(formattedSatValue(sats));
 
                 if (btc > 21000000.0) {
                     btcEditText.setText("0.00");
@@ -512,6 +512,40 @@ public class SendActivity extends AppCompatActivity {
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
                     Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                }
+                else    {
+                    DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+                    DecimalFormatSymbols symbols=format.getDecimalFormatSymbols();
+                    String defaultSeparator = Character.toString(symbols.getDecimalSeparator());
+                    int max_len = 8;
+                    NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
+                    btcFormat.setMaximumFractionDigits(max_len + 1);
+
+                    try {
+                        double d = NumberFormat.getInstance(Locale.US).parse(editable.toString()).doubleValue();
+                        String s1 = btcFormat.format(d);
+                        if (s1.indexOf(defaultSeparator) != -1) {
+                            String dec = s1.substring(s1.indexOf(defaultSeparator));
+                            if (dec.length() > 0) {
+                                dec = dec.substring(1);
+                                if (dec.length() > max_len) {
+                                    btcEditText.setText(s1.substring(0, s1.length() - 1));
+                                    btcEditText.setSelection(btcEditText.getText().length());
+                                    editable = btcEditText.getEditableText();
+                                    btc = Double.parseDouble(btcEditText.getText().toString());
+                                }
+                            }
+                        }
+                    } catch (NumberFormatException nfe) {
+                        ;
+                    }
+                    catch(ParseException pe) {
+                        ;
+                    }
+
+                    Double sats = getSatValue(Double.valueOf(btc));
+                    satEditText.setText(formattedSatValue(sats));
+
                 }
 
 //
