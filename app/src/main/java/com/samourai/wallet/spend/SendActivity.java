@@ -322,15 +322,16 @@ public class SendActivity extends AppCompatActivity {
         tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
 
         feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
+        DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
- 
+
                 double value = ((double) i + multiplier) / (double) multiplier;
 
                 Log.i(TAG, "onProgressChanged: ".concat(String.valueOf(value)));
-                tvSelectedFeeRate.setText(String.valueOf(Math.round(value)).concat(" sats/b"));
+                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
                 if (value == 0.0) {
                     value = 1.0;
                 }
