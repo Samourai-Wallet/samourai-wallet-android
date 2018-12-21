@@ -36,6 +36,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.R;
@@ -1566,6 +1567,11 @@ public class APIFactory	{
                 }
             }
 
+            for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
+                if(!seenOutputs.contains(_s))    {
+                    UTXOUtil.getInstance().remove(_s);
+                }
+            }
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
 //                Log.d("APIFactory", "not dusted:" + _s);
                 if(!seenOutputs.contains(_s))    {
