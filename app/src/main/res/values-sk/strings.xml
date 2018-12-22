@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Zruš</string>
 
-    <string name="options_cat_prefs">Block prieskumník</string>
+    <string name="options_cat_prefs">Blok prieskumník</string>
     <string name="options_cat_stealth">Krádež</string>
     <string name="options_cat_remote">Diaľkový</string>
     <string name="options_cat_wallet">Peňaženka</string>
@@ -55,7 +55,7 @@
     <string name="options_hash2">Získaj SHA-256 hash tohoto nainštalovaného APK súboru (môže byť skopírované do schránky).</string>
     <string name="options_VPN">VPN</string>
     <string name="options_VPN2">Spusti OpenVPN pre Android.</string>
-    <string name="options_Tor">Route via Tor?</string>
+    <string name="options_Tor">Nasmeruj cez Tor?</string>
     <string name="options_Tor2">Spusti Orbot (Tor).</string>
     <string name="options_export">Exportuj zálohu peňaženky</string>
     <string name="options_change_pin">Zmeň PIN</string>
@@ -258,7 +258,7 @@
     <string name="bip47_sign_text2">Podpísaná s použitím mojej BIP47 notifikačnej adresy.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Tento platobný kanál čaká na 1 konfirmáciu pred tým ako sa aktivuje poslanie. Prajete si zrušiť predchádzajúcu požiadavku a znova preposlať notifikáciu?</string>
 
-    <string name="rbf_incoming">Prichádzajúca transakcia je nahradená poplatkom. Zobraz v block prehliadači?</string>
+    <string name="rbf_incoming">Prichádzajúca transakcia je nahradená poplatkom. Zobraz v blok prehliadači?</string>
 
     <string name="invalid_passphrase">Nesprávne prístupové heslo</string>
     <string name="passphrase">Prístupové heslo</string>
@@ -526,7 +526,7 @@
     <string name="use_bech32">použi bech32 adresu</string>
 
     <string name="boltzmann_cannot">A STONEWALL výdavky nemôžu byť zložené s vašou aktuálnou sadou nevyčerpaných. Ak potrebujete stráviť STONEWALL, klepnite na \ 'NO \' a skúste znova s upravenou sadou nevyčerpaných.</string>
-    <string name="boltzmann_like_typed">Be advised that \'Receive change to like-typed outputs\' is OFF and can result in a less optimal transaction structure for your STONEWALL spend.</string>
+    <string name="boltzmann_like_typed">Be advised that \'Upozorňujeme, že položka "Prijať zmenu na rovnako napísané výstupy \" je vypnutá a môže mať za následok menej optimálnu štruktúru transakcií pre vaše náklady na STONEWALL.</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Rozšírené</string>
@@ -630,7 +630,7 @@
     <string name="transaction_entropy">Entropia transakcie</string>
     <string name="efficiency_score">Skóre účinnosti</string>
     <string name="hide_log">Skryť LOG</string>
-    <string name="copy">Copy</string>
+    <string name="copy">Kopíruj</string>
     <string name="show_log">Ukáž Log</string>
 
 </resources>
