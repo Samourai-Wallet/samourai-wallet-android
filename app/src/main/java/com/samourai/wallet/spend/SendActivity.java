@@ -1392,6 +1392,7 @@ public class SendActivity extends AppCompatActivity {
                     strPCode = _pcode.toString();
                     setToAddress(BIP47Meta.getInstance().getDisplayLabel(strPCode));
                     toAddressEditText.setEnabled(false);
+                    validateSpend();
                 } catch (Exception e) {
                     Toast.makeText(this, R.string.error_payment_code, Toast.LENGTH_SHORT).show();
                 }
