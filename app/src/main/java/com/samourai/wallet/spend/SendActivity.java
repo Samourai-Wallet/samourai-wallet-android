@@ -245,9 +245,9 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch.setChecked(useBoltzman);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-            prepareSpend();
             PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
-        });
+            new Handler().postDelayed(() -> prepareSpend(),100);
+         });
     }
 
 
