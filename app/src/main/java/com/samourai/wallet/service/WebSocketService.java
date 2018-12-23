@@ -43,17 +43,20 @@ public class WebSocketService extends Service {
 
         super.onCreate();
 
-        if(AppUtil.getInstance(WebSocketService.this).isOfflineMode())    {
-            return;
-        }
-
         //
         context = this.getApplicationContext();
 
-        JWT jwt = new JWT(APIFactory.getInstance(WebSocketService.this).getAccessToken());
-        if(jwt.isExpired(APIFactory.getInstance(WebSocketService.this).getAccessTokenRefresh()))    {
-            if(!APIFactory.getInstance(WebSocketService.this).getToken())  {
-                return;
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(APIFactory.getInstance(context).getAccessToken() == null)    {
+                APIFactory.getInstance(context).getToken();
+            }
+
+            JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
+            if(jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
+                if(!APIFactory.getInstance(context).getToken())  {
+                    return;
+                }
             }
         }
 
