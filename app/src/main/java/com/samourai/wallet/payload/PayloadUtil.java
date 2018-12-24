@@ -34,6 +34,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
@@ -307,6 +308,7 @@ public class PayloadUtil	{
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("sent_tos_from_bip47", SentToFromBIP47Util.getInstance().toJSON());
             meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
@@ -518,6 +520,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
+                }
+                if(meta.has("sent_tos_from_bip47")) {
+                    SentToFromBIP47Util.getInstance().fromJSON((JSONArray) meta.get("sent_tos_from_bip47"));
                 }
                 if(meta.has("batch_send")) {
                     BatchSendUtil.getInstance().fromJSON((JSONArray) meta.get("batch_send"));
