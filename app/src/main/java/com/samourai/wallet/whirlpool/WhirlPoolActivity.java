@@ -1,7 +1,6 @@
 package com.samourai.wallet.whirlpool;
 
 import android.support.transition.TransitionManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -9,10 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 
 import java.util.Objects;
 
-public class WhirlPoolActivity extends AppCompatActivity {
+public class WhirlPoolActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

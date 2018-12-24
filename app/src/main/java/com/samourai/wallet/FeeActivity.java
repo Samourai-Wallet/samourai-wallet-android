@@ -1,7 +1,6 @@
 package com.samourai.wallet;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.util.Log;
 
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.util.AppUtil;
@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class FeeActivity extends Activity {
+public class FeeActivity extends BaseActivity {
 
     private Button btLowFee = null;
     private Button btAutoFee = null;

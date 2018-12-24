@@ -33,6 +33,7 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.R;
 import com.squareup.picasso.Picasso;
@@ -46,7 +47,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class BIP47ShowQR extends Activity {
+public class BIP47ShowQR extends BaseActivity {
 
     private static Display display = null;
     private static int imgWidth = 0;

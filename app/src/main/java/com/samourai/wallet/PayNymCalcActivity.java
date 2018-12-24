@@ -1,6 +1,5 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -24,6 +23,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.AppUtil;
 
@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.bitcoinj.core.ECKey;
 
-public class PayNymCalcActivity extends Activity {
+public class PayNymCalcActivity extends BaseActivity {
 
     private EditText edPayNym = null;
     private EditText edIndex = null;

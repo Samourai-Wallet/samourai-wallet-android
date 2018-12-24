@@ -2,7 +2,6 @@ package com.samourai.wallet.tx;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -13,12 +12,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 import com.samourai.wallet.widgets.CircleImageView;
 
 import java.util.Objects;
 
 
-public class TxDetailsActivity extends AppCompatActivity {
+public class TxDetailsActivity extends BaseAppCompatActivity {
 
     private CircleImageView payNymAvatar;
     private TextView payNymUsername, btcUnit, btcValue;

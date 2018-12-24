@@ -6,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
@@ -22,6 +21,7 @@ import com.samourai.wallet.fragments.ImportWalletFragment;
 import com.samourai.wallet.fragments.PinEntryFragment;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseFragmentActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -46,7 +46,7 @@ import java.util.List;
 import static com.samourai.wallet.R.id.dots;
 
 
-public class RestoreSeedWalletActivity extends FragmentActivity implements
+public class RestoreSeedWalletActivity extends BaseFragmentActivity implements
         PinEntryFragment.onPinEntryListener,
         ImportWalletFragment.onRestoreDataSets {
     private ViewPager wallet_create_viewpager;

@@ -1,6 +1,5 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -27,6 +26,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BaseActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
@@ -42,7 +42,7 @@ import org.bitcoinj.core.ECKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddressCalcActivity extends Activity {
+public class AddressCalcActivity extends BaseActivity {
 
     private EditText edIndex = null;
     private Spinner spType = null;

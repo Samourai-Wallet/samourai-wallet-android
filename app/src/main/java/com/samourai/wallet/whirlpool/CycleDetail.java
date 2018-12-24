@@ -3,17 +3,17 @@ package com.samourai.wallet.whirlpool;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 import com.samourai.wallet.whirlpool.views.CycleDetailHeader;
 
 
-public class CycleDetail extends AppCompatActivity {
+public class CycleDetail extends BaseAppCompatActivity {
 
     private CycleDetailHeader cycleDetailHeader;
     private Boolean showMenuItems = false;

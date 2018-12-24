@@ -18,7 +18,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -53,6 +52,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.language.BasePreferenceActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -82,7 +82,7 @@ import java.security.MessageDigest;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
-public class SettingsActivity2 extends PreferenceActivity	{
+public class SettingsActivity2 extends BasePreferenceActivity {
 
     private ProgressDialog progress = null;
     private boolean steathActivating = false;
@@ -106,6 +106,38 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     public boolean onPreferenceClick(Preference preference) {
                         getBlockExplorer();
                         return true;
+                    }
+                });
+
+                final CheckBoxPreference cbLanguage = (CheckBoxPreference) findPreference("systemLanguage");
+                cbLanguage.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        new AlertDialog.Builder(SettingsActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.options_sureToChangeLanguage)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+
+                                        if (cbLanguage.isChecked()) {
+                                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, false);
+                                            cbLanguage.setChecked(false);
+                                        } else {
+                                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SYSTEM_LANGUAGE, true);
+                                            cbLanguage.setChecked(true);
+                                        }
+                                        AppUtil.getInstance(SettingsActivity2.this).restartApp();
+
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        }).show();
+
+                        return false;
                     }
                 });
 

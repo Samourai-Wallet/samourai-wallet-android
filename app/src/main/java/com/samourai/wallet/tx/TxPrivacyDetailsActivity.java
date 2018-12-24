@@ -1,7 +1,6 @@
 package com.samourai.wallet.tx;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.view.Menu;
@@ -10,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 
 import java.util.Objects;
 
 
-public class TxPrivacyDetailsActivity extends AppCompatActivity {
+public class TxPrivacyDetailsActivity extends BaseAppCompatActivity {
 
     private Button hideLogButton, copyBtn;
     private ViewGroup logContainer;

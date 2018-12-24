@@ -10,7 +10,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,12 +20,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
 
-public class NewWhirlpoolCycle extends AppCompatActivity {
+public class NewWhirlpoolCycle extends BaseAppCompatActivity {
 
     private RecyclerView recyclerView;
     private CoinsAdapter coinsAdapter;

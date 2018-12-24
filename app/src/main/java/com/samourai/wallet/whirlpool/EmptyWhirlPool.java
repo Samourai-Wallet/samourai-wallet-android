@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.language.BaseAppCompatActivity;
 
-public class EmptyWhirlPool extends AppCompatActivity {
+public class EmptyWhirlPool extends BaseAppCompatActivity {
 
     private ImageView[] indicators;
     private ViewPager viewPager;
