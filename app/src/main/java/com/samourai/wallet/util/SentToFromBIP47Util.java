@@ -60,6 +60,32 @@ public class SentToFromBIP47Util {
         return null;
     }
 
+    public List<String> getAllHashes() {
+
+        List<String> ret = new ArrayList<String>();
+
+        for(String addr : sendToFromBIP47.keySet())  {
+            ret.addAll(sendToFromBIP47.get(addr));
+        }
+
+        return ret;
+    }
+
+    public void remove(String addr) {
+        sendToFromBIP47.remove(addr);
+    }
+
+    public void removeHash(String hash) {
+        List<String> hashes = null;
+        for(String addr : sendToFromBIP47.keySet())  {
+            hashes = sendToFromBIP47.get(addr);
+            if(hashes.contains(hash))    {
+                hashes.remove(hash);
+                sendToFromBIP47.put(addr, hashes);
+            }
+        }
+    }
+
     public JSONArray toJSON() {
 
         JSONArray sentBIP47 = new JSONArray();
