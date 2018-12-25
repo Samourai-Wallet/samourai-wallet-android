@@ -8,15 +8,10 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.CheckBoxPreference;
@@ -53,10 +48,8 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -67,13 +60,10 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ExchangeRateFactory;
-import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -83,18 +73,12 @@ import com.samourai.wallet.util.TorUtil;
 import com.yanzhenjie.zbar.Symbol;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.List;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -116,14 +100,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
             if(strBranch.equals("prefs"))    {
                 addPreferencesFromResource(R.xml.settings_prefs);
-
-                Preference fiatPref = (Preference) findPreference("fiat");
-                fiatPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getExchange();
-                        return true;
-                    }
-                });
 
                 Preference explorersPref = (Preference) findPreference("explorer");
                 explorersPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -1123,67 +1099,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 })
                 .show();
-
-    }
-
-    private void getExchange()	{
-
-        final String[] exchanges = ExchangeRateFactory.getInstance(this).getExchangeLabels();
-        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_currency)
-                .setSingleChoiceItems(exchanges, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
-                                if(which == 2)    {
-                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
-                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
-                                    dialog.dismiss();
-                                }
-                                else    {
-                                    dialog.dismiss();
-                                    getFiat();
-                                }
-
-                            }
-                        }
-                ).show();
-
-    }
-
-    private void getFiat()	{
-
-        final int fxSel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
-
-        final String[] currencies;
-        if(fxSel == 1)	{
-            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsBTCe();
-        }
-        else	{
-            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabels();
-        }
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_currency)
-                .setSingleChoiceItems(currencies, 0, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                String selectedCurrency = null;
-                                if (currencies[which].substring(currencies[which].length() - 3).equals("RUR")) {
-                                    selectedCurrency = "RUB";
-                                }
-                                else {
-                                    selectedCurrency = currencies[which].substring(currencies[which].length() - 3);
-                                }
-
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, selectedCurrency);
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, which);
-                                dialog.dismiss();
-                            }
-                        }
-                ).show();
 
     }
 

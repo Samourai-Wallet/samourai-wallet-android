@@ -95,7 +95,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:gravity="center_vertical"
-            android:text="Encrypted backup detected" />
+            android:text="@string/encrypted_backup_detected" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
             android:id="@+id/restore_textview"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="RESTORE"
+            android:text="@string/restore"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
             android:textColor="@color/accent" />
     </FrameLayout>

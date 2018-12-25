@@ -35,7 +35,6 @@
                 android:hint="@string/_0_00"
                 android:inputType="numberDecimal" />
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
                 android:text="BTC"
                 android:typeface="monospace" />
         </RelativeLayout>
-
+<!--
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,6 +75,7 @@
 
 
         </RelativeLayout>
+-->
     </LinearLayout>
 
     <TextView
@@ -85,7 +85,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_mono"
-        android:text="Request Amount"
+        android:text="@string/request_amount"
         android:textColor="@color/text_ui2_grey"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -118,7 +118,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/roboto_mono"
-        android:text="Address Type"
+        android:text="@string/address_type"
         android:textColor="@color/text_ui2_grey"
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toTopOf="@+id/address_type_spinner"
@@ -138,7 +138,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/roboto_mono"
-        android:text="Path"
+        android:text="@string/path"
         android:textColor="@color/text_ui2_grey"
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toBottomOf="parent"

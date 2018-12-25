@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Batal</string>
 
-    <string name="options_cat_prefs">Mata uang, Block explorer</string>
+    <string name="options_cat_prefs">Block explorer</string>
     <string name="options_cat_stealth">Mode Sembunyi</string>
     <string name="options_cat_remote">Remote</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -196,8 +196,6 @@
     <string name="account_shuffling">Pindahkan</string>
 
     <string name="max_available">Max. tersedia:</string>
-
-    <string name="first_use_shuffle">Ini adalah akun yang anda pindahkan. Bitcoin yang anda terima melalui ShapeShift akan disimpan dalam akun ini, tidak berbagi ruang address yang sama dengan akun utama wallet anda.</string>
 
     <string name="select_account">Pilih akun</string>
     <string name="received_bitcoin">Menerima Bitcoin</string>

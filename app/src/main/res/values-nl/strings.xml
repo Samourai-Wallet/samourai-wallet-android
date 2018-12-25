@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">Schrijf deze woorden op en bewaar ze goed. Zorg dat je de woorden niet verliest en je wachtwoord niet vergeet.</string>
+    <string name="alpha_create_confirm_backup">Ik heb de woorden opgeschreven</string>
+
+    <string name="creating_wallet">Portemonnee wordt aangemaakt. Even geduld...</string>
+    <string name="restoring_wallet">Portemonnee wordt hersteld. Even geduld...</string>
+    <string name="decrypting_bip38">BIP38-wachtwoord wordt ontsleuteld. Even geduld...</string>
+
+    <string name="action_settings">Instellingen</string>
+    <string name="action_support">Ondersteuning</string>
+    <string name="action_sweep">Privésleutel legen (\'sweep\')</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Alle gearchiveerde betalingscodes activeren</string>
+    <string name="action_sync_all">Alle betalingscodes synchroniseren</string>
+
+    <string name="about_us">Over Samourai Wallet</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Annuleren</string>
+
+    <string name="options_cat_prefs">Blokverkenner</string>
+    <string name="options_cat_stealth">Onzichtbaar starten</string>
+    <string name="options_cat_remote">Toegang op afstand</string>
+    <string name="options_cat_wallet">Portemonnee</string>
+    <string name="options_cat_networking">Netwerk</string>
+    <string name="options_cat_other">Over</string>
+
+    <string name="options_mnemonic">Herstelwoorden tonen</string>
+    <string name="options_mnemonic2">Toon de seed van 12 woorden voor deze portemonnee.</string>
+    <string name="options_xpub">BIP44-xpub tonen</string>
+    <string name="options_xpub2">Toon uitgebreide openbare sleutel voor BIP44-rekening.</string>
+    <string name="options_xpub49">Segwit-ypub tonen</string>
+    <string name="options_xpub49_2">Toon uitgebreide openbare sleutel voor BIP49-Segwit-rekening (P2SH-wrapped).</string>
+    <string name="options_xpub84">Segwit-zpub tonen</string>
+    <string name="options_xpub84_2">Toon uitgebreide openbare sleutel voor BIP84-Segwit-rekening (bech32).</string>
+    <string name="options_wipe">Portemonnee veilig wissen</string>
+    <string name="options_wipe2">Wis deze portemonnee veilig van dit apparaat.</string>
+    <string name="options_stealth_display">Onzichtbaar starten</string>
+    <string name="options_stealth_display2">Verberg Samourai op het startscherm. Je moet **JOUW_PINCODE# intoetsen op het belscherm om Samourai te starten.</string>
+    <string name="options_remote_commands">Commando\'s op afstand toestaan</string>
+    <string name="options_remote_commands2">Commando\'s via sms toestaan.</string>
+    <string name="options_currency">Straatprijs</string>
+    <string name="options_currency2">Kies je beurs en lokale fiat-valuta.</string>
+    <string name="options_blockexplorer">Blokverkenner</string>
+    <string name="options_blockexplorer2">De gebruikte blokverkenner om transactiedetails te bekijken.</string>
+    <string name="options_sim_switch">Melding bij wisselen SIM</string>
+    <string name="options_sim_switch2">Stuur een sms naar een vertrouwd mobiel nummer als de simkaart wordt gewisseld.</string>
+    <string name="options_use_telno">Vertrouwd mobiel nummer gebruiken</string>
+    <string name="options_use_telno2">Sta alleen commando\'s op afstand toe die afkomstig zijn van je vertrouwde mobiele nummer.</string>
+    <string name="options_alert_telno">Vertrouwd nummer</string>
+    <string name="options_alert_telno2">Toegang op afstand wordt beperkt tot dit vertrouwde mobiele nummer (internationaal formaat zonder spaties, bijv.: +31738555555).</string>
+    <string name="options_hash">APK-hash</string>
+    <string name="options_hash2">Verkrijg SHA-256-hash van dit geïnstalleerde APK-bestand (kan worden gekopieerd naar klembord).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">OpenVPN voor Android starten.</string>
+    <string name="options_Tor">Omleiden via Tor?</string>
+    <string name="options_Tor2">Orbot (Tor) starten.</string>
+    <string name="options_export">Portemonneeback-up exporteren</string>
+    <string name="options_change_pin">PIN wijzigen</string>
+    <string name="options_change_pin2">Geef een nieuwe pincode op; wordt gebruikt om je portemonnee te ontsluiten.</string>
+    <string name="options_remote_pin">PIN voor onzichtbaar en op afstand</string>
+    <string name="options_remote_pin2">Geef een alternatieve PIN op voor onzichtbaar starten en functies op afstand.</string>
+    <string name="options_autosave_backup">Back-up automatisch opslaan</string>
+    <string name="options_autosave_backup2">Met wachtwoordzin versleutelde back-up periodiek opslaan op apparaatopslag.</string>
+    <string name="options_version">Versie</string>
+    <string name="options_txs">Transacties</string>
+    <string name="options_boltzmann">Besteden met STONEWALL</string>
+    <string name="options_boltzmann_2">Uitgaven zullen STONEWALL-algoritme gebruiken voor verbeterde obfuscatie.</string>
+    <string name="options_utxo">Onbestede outputs tonen</string>
+    <string name="options_trusted_node">Vertrouwde node instellen</string>
+    <string name="options_trusted_node2">Gebruik je eigen bitcoin-node om transacties uit te zenden.</string>
+    <string name="options_use_trusted_node">Vertrouwde node gebruiken</string>
+    <string name="options_use_trusted_node2">Zend transacties uit met je eigen node.</string>
+    <string name="options_rbf0">Besteden met RBF</string>
+    <string name="options_rbf0_2">Uitgaven zullen replace-by-fee gebruiken om transactiekosten later te kunnen verhogen.</string>
+    <string name="options_troubleshoot">Probleemoplossing</string>
+    <string name="options_passphrase_test">Test voor wachtwoordzin/back-up</string>
+    <string name="options_passphrase_test2">Verifieer toegang tot portemonnee en back-upondersteuning.</string>
+    <string name="options_send_backup_to_support">Back-up verzenden naar technische ondersteuning</string>
+    <string name="options_send_backup_to_support2">Stuur een back-up naar technische ondersteuning. Bevat geen informatie over privésleutel.</string>
+    <string name="options_fee_provider">Bron voor schatten transactiekosten</string>
+    <string name="options_fee_provider2">Selecteer de bron voor het schatten van transactiekosten.</string>
+    <string name="options_broadcast_on">Transacties uitzenden</string>
+    <string name="options_broadcast_on2">Zet uitzenden UIT om de kale ondertekende transactie naar het klembord te kopiëren.</string>
+    <string name="options_segwit">Ontvangen op segwit-adressen</string>
+    <string name="options_segwit_2">Genereer segwit-adressen voor inkomende transacties.</string>
+    <string name="options_broadcast_hex">Transactie-hex uitzenden</string>
+    <string name="options_broadcast_hex2">Zend ondertekende transactie uit in hex-formaat.</string>
+    <string name="options_like_typed_change">Wisselgeld ontvangen op gelijkende outputs</string>
+    <string name="options_like_typed_change2">Ontvang wisselgeld op hetzelfde adrestype als de bestedings-output. Zet UIT om enkel te ontvangen op segwit-adressen.</string>
+    <string name="options_haptic">Haptische PIN-invoer</string>
+    <string name="options_haptic_2">Tril bij ieder cijfer bij invoeren pincode.</string>
+    <string name="options_prune">Back-up trimmen</string>
+    <string name="options_prune2">Trim de portemonnee- en back-upbestanden.</string>
+    <string name="options_address_calc">Adrescalculator</string>
+    <string name="options_address_calc2">Bereken adressen afgeleid van je portemonnee-seed.</string>
+    <string name="options_paynym_calc">PayNym-calculator</string>
+    <string name="options_paynym_calc2">Bereken adressen gedeeld met andere PayNyms.</string>
+
+    <string name="prompt_send_backup_to_support">Portemonneeback-up naar technische ondersteuning verzenden? Bevat geen privésleutel-, seed-, of wachtwoordinformatie.</string>
+
+    <string name="timeline_today">Vandaag</string>
+    <string name="timeline_older">Eerder</string>
+
+    <string name="tx_sent">Transactie verzonden</string>
+    <string name="tx_failed">Fout bij verzenden transactie</string>
+    <string name="you_received">Ontvangen</string>
+    <string name="you_sent">Verzonden</string>
+    <string name="send">Verzenden</string>
+    <string name="receive">Ontvangen</string>
+    <string name="cannot_select_utxo">Kan onbestede outputs niet selecteren</string>
+    <string name="error_bip126_output">Fout bij bepalen output-adres</string>
+    <string name="error_change_output">Fout bij bepalen wisselgeldadres</string>
+
+    <string name="copied_to_clipboard">Gekopieerd naar klembord</string>
+    <string name="send_payment_code">Betalingscode verzenden</string>
+
+    <string name="ask_you_sure_exit">Weet je zeker dat je Samourai wilt sluiten?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="close">Sluiten</string>
+
+    <string name="sim_warning">Jouw Samourai Wallet-apparaat heeft nu een andere simkaart, overeenkomend met het nummer van de afzender van dit sms-bericht.</string>
+
+    <string name="pin_5_8">Bedenk een pincode tussen de 5 en 8 tekens.</string>
+    <string name="pin_5_8_confirm">Pincode bevestigen</string>
+    <string name="pin_error">Pincodefout</string>
+    <string name="no_internet">Geen internetverbinding. Probeer het opnieuw.</string>
+    <string name="bip38_pw">BIP38-wachtwoord</string>
+    <string name="bip38_pw_error">BIP38-wachtwoordfout</string>
+    <string name="bip39_safe">Bedenk een wachtwoordzin en bewaar deze goed. Je hebt deze wachtwoordzin nodig als je de toegang tot je portemonnee verliest.</string>
+    <string name="bip39_safe2">Bevestig je wachtwoordzin. Hou deze geheim. Je hebt deze wachtwoordzin nodig als je de toegang tot je portemonnee verliest.</string>
+    <string name="bip39_restore">Voer je herstelwoorden (of hex-entropie) in en, indien nodig, je BIP39-wachtwoordzin. Gebruik je geen BIP39-wachtwoordzin, laat dit veld dan leeg.</string>
+    <string name="bip39_must">Je portemonnee moet een wachtwoordzin gebruiken. Probeer het opnieuw.</string>
+    <string name="bip39_unmatch">Wachtwoordzin komt niet overeen. Probeer het opnieuw.</string>
+    <string name="bip39_invalid">Gebruik geen spaties in je wachtwoordzin. Probeer het opnieuw.</string>
+    <string name="bip39_empty">Je moet een wachtwoordzin opgeven.</string>
+    <string name="please_select">Selecteer...</string>
+    <string name="create_wallet">Portemonnee aanmaken</string>
+    <string name="restore_wallet">Portemonnee herstellen</string>
+    <string name="wallet_passphrase">Voer de wachtwoordzin voor je portemonnee in</string>
+    <string name="bip39_passphrase">BIP39-wachtwoordzin</string>
+    <string name="bip39_match">BIP39-wachtwoordzin geverifieerd.</string>
+    <string name="bip39_decrypt_test">Wachtwoordzin voor portemonnee geverifieerd. Wil je het ontsleutelen van de laatste portemonneeback-up testen?</string>
+    <string name="backup_read_ok">Back-upbestand OK.</string>
+    <string name="backup_read_error">Fout bij lezen back-upbestand.</string>
+    <string name="mnemonic_hex">Herstelwoorden of hex-entropie</string>
+    <string name="pin_enter">Pincode invoeren</string>
+    <string name="please_wait">Even geduld...</string>
+    <string name="random_key_error">Willekeurige sleutelfout</string>
+    <string name="login_error">Login mislukt</string>
+    <string name="wallet_created_ok">Portemonnee aangemaakt.</string>
+    <string name="wallet_created_ko">Fout bij aanmaken portemonnee.</string>
+    <string name="wallet_restored_ok">Portemonnee hersteld.</string>
+    <string name="wallet_restored_ko">Fout bij herstellen portemonnee.</string>
+
+    <string name="address_used_previously">Je hebt dit adres al eerder gebruikt! Het opnieuw gebruiken van adressen kan tot verlies van privacy leiden.</string>
+
+    <string name="scan">Scannen</string>
+    <string name="scan_error">Scanfout</string>
+    <string name="enter_privkey">Privésleutel invoeren</string>
+
+    <string name="to">Naar</string>
+    <string name="destination">Adres of betalingskanaal</string>
+
+    <string name="insufficient_funds">Saldo ontoereikend</string>
+    <string name="tx_length_error">Samourai ondersteunt geen transacties groter dan 100KB. Probeer je transactie te splitsen.</string>
+    <string name="invalid_amount">Ongeldig bedrag</string>
+    <string name="amount">Bedrag</string>
+
+    <string name="receive_address_to_clipboard">Dit ontvangstadres naar het klembord kopiëren? Het wordt dan mogelijk zichtbaar voor andere applicaties.</string>
+    <string name="receive_address_to_share">Dit ontvangstadres delen? Het wordt dan mogelijk zichtbaar voor andere applicaties.</string>
+    <string name="sure_to_erase">Weet je zeker dat je deze portemonnee wilt wissen?</string>
+    <string name="wallet_erased">Portemonnee van apparaat gewist.</string>
+
+    <string name="send_privacy_warning">Privacywaarschuwing: denk eraan dat je al eerder saldo naar dit adres hebt verzonden.</string>
+
+    <string name="securely_wiping_wait">Portemonnee wordt veilig gewist. Even geduld.</string>
+
+    <string name="options_scramble_pin">PIN-scherm husselen</string>
+    <string name="options_scramble_pin2">Gehusseld toetsenbord gebruiken om toegang te krijgen tot je portemonnee. </string>
+
+    <string name="you_must_have_orbot">Orbot moet geïnstalleerd en geactiveerd zijn om een proxy te gebruiken. Wil je het installeren vanuit Google Play?</string>
+
+    <string name="ssl_pinning_invalid">Pinnen van SSL-certificaat mislukt. Dit kan wijzen op kwaadaardige activiteit. Controleer je netwerkverbinding en apparaat voordat je verdergaat.</string>
+    <string name="ssl_no_connection">We konden niet verbinden met de host om het SSL-certificaat te controleren. Controleer je netwerkverbinding en apparaat voordat je verdergaat.</string>
+    <string name="retry">Opnieuw</string>
+    <string name="exit">Sluiten</string>
+
+    <string name="create_pin">Pincode aanmaken</string>
+    <string name="confirm_pin">Pincode bevestigen</string>
+
+    <string name="auto_fee">NORMALE FEE</string>
+    <string name="priority_fee">PRIORITEITSFEE</string>
+    <string name="low_fee">LAGE FEE</string>
+    <string name="custom_fee">Aangepast</string>
+    <string name="sat_b">sat/B</string>
+
+    <string name="account_Samourai">Portemonnee</string>
+    <string name="account_shuffling">Shifted</string>
+
+    <string name="max_available">Max. beschikbaar:</string>
+
+    <string name="select_account">Account selecteren</string>
+    <string name="received_bitcoin">Bitcoin ontvangen</string>
+    <string name="received">Ontvangen</string>
+    <string name="sent">Transactie verzonden</string>
+    <string name="total">Totaal</string>
+    <string name="export_to_clipboard">Exporteren naar klembord</string>
+    <string name="export_to_email">Exporteren naar e-mail</string>
+    <string name="encryption_error">Er is een fout opgetreden bij het versleutelen van je portemonneeback-up. Probeer het opnieuw.</string>
+    <string name="import_backup">Vanuit back-up</string>
+    <string name="import_mnemonic">Herstelwoorden/seed</string>
+    <string name="encrypted_backup">Versleutelde portemonneegegevens</string>
+    <string name="decryption_error">Er is een fout opgetreden bij het ontsleutelen van je portemonneeback-up. Probeer het opnieuw.</string>
+    <string name="restore_wallet_from_backup">Portemonnee herstellen vanuit back-up</string>
+    <string name="restore_wallet_from_existing_backup">Back-up gevonden op apparaat. Om te herstellen vanuit bestaande back-up, tik \'OK\'. Kopieer/plak anders een andere back-up en tik \'OK\'.</string>
+
+    <string name="choose_email_client">Kies een e-mailclient:</string>
+
+    <string name="cannot_launch_app">Samourai Wallet kan niet worden uitgevoerd op dit apparaat</string>
+    <string name="confirm_change_pin">Weet je zeker dat je je PIN wilt wijzigen?</string>
+    <string name="success_change_pin">PIN gewijzigd</string>
+    <string name="alternative_pin_create">Weet je zeker dat je een alternatieve PIN wilt aanmaken voor onzichtbaar starten en commando\'s op afstand?</string>
+    <string name="alternative_pin_deleted">Je gebruikt geen alternatieve pincode voor onzichtbaar starten en functies op afstand.</string>
+    <string name="alternative_pin_wait">Wacht tot onzichtbaar starten volledig is geactiveerd voordat je een alternatieve pincode aanmaakt.</string>
+
+    <string name="invalid_payment_code">Ongeldige betalingscode</string>
+    <string name="error_payment_code">Fout bij genereren betalingscode</string>
+
+    <string name="bip47_setup1_title">Jouw PayNym</string>
+    <string name="bip47_setup4_title">PayNym-contact toevoegen</string>
+    <string name="bip47_setup4_text1">Om deze PayNym aan je contacten toe te voegen zijn eenmalige transactiekosten vereist om dit op de blockchain op te slaan.</string>
+    <string name="bip47_setup4_text2">zal van je portemonneesaldo worden afgeschreven.</string>
+
+    <string name="bip47_add1_title">Nieuw contact</string>
+    <string name="bip47_add1_text">Scan of plak een betalingscode om een nieuw betalingskanaal aan te maken.</string>
+
+    <string name="paste">Plakken</string>
+    <string name="label">Label</string>
+    <string name="next">Volgende</string>
+    <string name="confirm">Bevestigen</string>
+    <string name="payment_code">Betalingscode</string>
+    <string name="payment_channel_init">Meldingstransactie verzonden. Je betalingskanaal wordt aangemaakt.</string>
+
+    <string name="bip47_no_label_error">Je moet een label voor deze betalingscode opgeven</string>
+
+    <string name="bip47_status_tbe">Nog niet bevestigd</string>
+    <string name="bip47_status_pending">In afwachting - 0/1 bevestigingen</string>
+    <string name="bip47_status_active">Klaar om te verzenden</string>
+    <string name="bip47_status_incoming">Klaar om te ontvangen</string>
+    <string name="bip47_cannot_scan_own_pcode">Kan je eigen betalingscode niet scannen</string>
+    <string name="bip47_spend_to_pcode">Verzenden via dit betalingskanaal?</string>
+    <string name="bip47_sign">Bericht ondertekenen</string>
+    <string name="bip47_sign_text1">Bericht ondertekenen met een BIP47-meldingsadresprivésleutel?</string>
+    <string name="bip47_sign_text2">Ondertekend met mijn BIP47-meldingsadres.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Dit betalingskanaal wacht op 1 bevestiging voordat verzenden mogelijk wordt. Wil je de vorige poging annuleren en opnieuw een melding verzenden?</string>
+
+    <string name="rbf_incoming">De inkomende transactie is replace-by-fee. Bekijken in blokverkenner?</string>
+
+    <string name="invalid_passphrase">Ongeldige wachtwoordzin</string>
+    <string name="passphrase">Wachtwoordzin</string>
+    <string name="passphrase_needed_for_backup">Je portemonnee is niet beveiligd met een wachtwoordzin. Portemonneeback-ups worden met een wachtwoordzin versleuteld. Als je deze en andere Samourai Wallet-functies wilt gebruiken, maak je portemonnee dan aan met Samourai Wallet en maak je saldo ernaar over.</string>
+    <string name="passphrase_required">Een wachtwoordzin is vereist om deze functie te gebruiken. Overweeg om een nieuwe portemonnee aan te maken, die automatisch een wachtwoordzin zal bevatten.</string>
+
+    <string name="cannot_reach_api">Samourai-API\'s kunnen niet worden bereikt. Zorg dat je verbinding hebt en probeer het later opnieuw.</string>
+    <string name="api_error">De Samourai-API\'s geven een foutmelding. Probeer het later opnieuw.</string>
+
+    <string name="cannot_recognize_privkey">Kan privésleutel niet herkennen</string>
+    <string name="cannot_sweep_privkey">Fout bij legen privésleutel</string>
+    <string name="please_wait_sending">Transactie verzenden, even geduld.</string>
+    <string name="please_wait_ricochet">Ricochet-wachtrij verwerken, even geduld.</string>
+
+    <string name="change_is_dust">Het wisselgeld van deze transactie is een zeer klein \'dust\'-bedrag. Probeer het opnieuw en wijzig het te besteden bedrag of besteed het gehele saldo.</string>
+
+    <string name="tor_routing_on">Samourai wordt omgeleid via Tor.</string>
+    <string name="tor_routing_off">Samourai wordt niet omgeleid via Tor. Tik om te activeren.</string>
+    <string name="tor_install">Tik om Orbot te installeren en Samourai via Tor om te leiden.</string>
+
+    <string name="premium_addons">Betaalde extra\'s</string>
+
+    <string name="ricochet_hop">Ricochet-sprong</string>
+    <string name="ricochet_hopping">Gericochet naar</string>
+    <string name="ricochet_spend1">Ricochet-uitgave naar</string>
+    <string name="ricochet_spend2">van in totaal</string>
+    <string name="ricochet_spend3">(inclusief 0,002 BTC aan transactiekosten voor Samourai en miners)?</string>
+
+    <string name="action_ricochet">Ricochet opnieuw spelen</string>
+    <string name="action_empty_ricochet">Ricochet-wachtrij legen</string>
+    <string name="ricochet">Ricochet - verzenden met 4 extra sprongen</string>
+    <string name="action_ricochet_script">Ricochet-script tonen</string>
+    <string name="action_ricochet_replay">Ricochet opnieuw verzenden</string>
+    <string name="ricochet_replay">Wil je deze Ricochet-uitgave opnieuw uitzenden?</string>
+    <string name="ricochet_not_broadcast_replay">Er is een probleem opgetreden bij het uitzenden van je Ricochet. Wil je deze Ricochet-uitgave opnieuw uitzenden?</string>
+    <string name="no_ricochet_replay">Er is geen Ricochet om opnieuw te verzenden.</string>
+    <string name="no_ricochet_display">Er is geen Ricochet-script om te tonen.</string>
+    <string name="ricochet_broadcast">Je Ricochet is uitgezonden.</string>
+
+    <string name="bip47_cannot_identify_outpoint">Uitgaande betalingscode kan niet worden gemaskeerd</string>
+    <string name="bip47_cannot_compose_notif_tx">Meldingstransactie kan niet worden opgesteld</string>
+
+    <string name="pushtx_returns_null">Uitgave mislukt. Server antwoordde met nulwaarde.</string>
+
+    <string name="trusted_node">Vertrouwde node</string>
+    <string name="trusted_node_user_hint">rpc-gebruikersnaam</string>
+    <string name="trusted_node_ip_hint">IP-adres</string>
+    <string name="trusted_node_port_hint">Poort (standaard 8332)</string>
+    <string name="trusted_node_password_hint">rpc-wachtwoord</string>
+    <string name="trusted_node_not_valid">Geef geldige informatie op voor je vertrouwde node.</string>
+    <string name="trusted_node_ko">Vertrouwde node niet herkend. Controleer de installatie.</string>
+    <string name="trusted_node_error">Fout bij het bereiken van de vertrouwde node.</string>
+    <string name="trusted_node_tx_error">Transactie via vertrouwde node mislukt.</string>
+    <string name="trusted_node_not_core_131">Vertrouwde node is ingesteld. Samourai Wallet ondersteunt Bitcoin Core 0.13.1 en hoger.</string>
+    <string name="trusted_node_tx_sent">Transactie verzonden via vertrouwde node.</string>
+    <string name="trusted_node_not_responding">Vertrouwde node reageert niet. Controleer de installatie.</string>
+    <string name="trusted_node_breaks_consensus">Vertrouwde node kan geen bitcoin-client zijn die consensus negeert.</string>
+
+    <string name="refresh_tx_pre">Transacties en saldo ophalen...</string>
+    <string name="refresh_tx"> Transacties en saldo opgehaald.</string>
+    <string name="refresh_incoming_notif_tx">Inkomende BIP47-meldingstransacties opgehaald.</string>
+    <string name="refresh_outgoing_notif_tx">Uitgaande BIP47-meldingstransacties bijgwerkt.</string>
+
+    <string name="options_unconfirmed_tx">Deze transactie wacht op bevestiging. Kies een optie:</string>
+    <string name="options_block_explorer">Transactie bekijken</string>
+    <string name="options_bump_fee">Transactiekosten verhogen</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Kan transactieinformatie niet ophalen. Probeer opnieuw.</string>
+    <string name="fee_bump_not_necessary">Het verhogen van de transactiekosten is mogelijk niet nodig voor deze transactie.</string>
+    <string name="bump_fee">Wil je de miner-kosten van deze transactie verhogen voor een snellere bevestiging?\n\nBijkomende miner-kosten:</string>
+
+    <string name="options_sign">Bericht ondertekenen</string>
+
+    <string name="trusted_node_pow_failed">De proof-of-work van je vertrouwde node verifieert niet. Controleer je installatie.</string>
+
+    <string name="options_fees">Huidige miner-kosten tonen</string>
+    <string name="current_fee_selection">Je huidige selectie is:</string>
+    <string name="current_hi_fee_value">Hoge transactiekosten:</string>
+    <string name="current_mid_fee_value">Normale transactiekosten:</string>
+    <string name="current_lo_fee_value">Lage transactiekosten:</string>
+    <string name="slash_sat">sat/B</string>
+    <string name="set_sat">Stel je aangepaste transactiekosten in, in sat/B.</string>
+    <string name="custom_fee_too_low">Aangepaste transactiekosten zijn te laag.</string>
+    <string name="custom_fee_too_high">Aangepaste transactiekosten zijn te hoog.</string>
+
+    <string name="cpfp_spent">CPFP-transactie verzonden.</string>
+    <string name="rbf_spent">RBF-transactie verzonden.</string>
+    <string name="cannot_output_dust">Kan geen transactie met dust-output aanmaken.</string>
+    <string name="cannot_create_change_output">Kan geen wisselgeld-output aanmaken.</string>
+    <string name="cannot_create_cpfp">Kan geen CBFP-transactie aanmaken.</string>
+
+    <string name="error_reading_payload">Fout bij lezen. Probeer het opnieuw.</string>
+
+    <string name="utxo_sign">Bericht ondertekenen</string>
+    <string name="utxo_sign_text1">Bericht ondertekenen met deze privésleutel?</string>
+    <string name="utxo_sign_text2">Ondertekend met utxo.</string>
+    <string name="utxo_sign_text3">Ondertekend met utxo.</string>
+
+    <string name="recovery_checkup">Herstelcheck</string>
+    <string name="recovery_checkup_message">Je portemonneeherstelwoorden en wachtwoordzin zullen worden getoond. Zorg ervoor dat niemand kan meekijken. Dit wordt NIET opnieuw getoond.</string>
+    <string name="mnemonic">Herstelwoorden</string>
+    <string name="recovery_checkup_finish">IK HEB MIJN HERSTELINFO VEILIGGESTELD</string>
+    <string name="pin_reminder">Ter herinnering, je pincode is</string>
+
+    <string name="opendime_confirmed_balance">Bevestigd saldo</string>
+    <string name="opendime_privkey">Privésleutel</string>
+    <string name="opendime_verified">GEFERIFIEERD</string>
+    <string name="opendime_valid_key">Geldige privésleutel op apparaat</string>
+    <string name="opendime_not_verified">KAN NIET VERIFIEREN</string>
+    <string name="opendime_no_valid_key">Kan privésleutel niet valideren op apparaat</string>
+    <string name="opendime_view">BEKIJKEN</string>
+    <string name="opendime_sweep">LEGEN</string>
+    <string name="opendime_topup">OPLADEN</string>
+
+    <string name="select_app">Applicatie selecteren</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay protection</string>
+    <string name="replay_unprotected">Onbeschermd</string>
+    <string name="replay_in_progress">In uitvoering</string>
+    <string name="replay_protected">Beschermd</string>
+    <string name="replay_disclaimer">Chain split gedetecteerd</string>
+    <string name="replay_text">Alle adressen zullen worden samengevoegd in een enkele transactie en naar een adres in je portemonnee worden verzonden. Dit wordt \'merging inputs\' genoemd en kan je privacy verminderen.</string>
+    <string name="replay_ENABLE">REPLAY PROTECTION AANZETTEN</string>
+
+    <string name="replay_broadcast_to_network">uitzenden naar netwerk...</string>
+    <string name="replay_seen_on_network">gezien op netwerk...</string>
+    <string name="replay_split_tx_broadcast">transactieuitzending gesplitst...</string>
+    <string name="replay_description">Je portemonnee zal een speciale transactie naar zichzelf verzenden die je coins permanent van de andere chain af zal splitsen. Dit beschermt je tegen replay-aanvallen.</string>
+    <string name="replay_waiting_for_confirmations">wachten op bevestigingen</string>
+    <string name="replay_confirmed">bevestigd</string>
+    <string name="replay_confirmations">bevestigingen:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">Replay protection wacht op bevestiging</string>
+    <string name="replay_dismiss">MELDING NEGEREN</string>
+
+    <string name="show_qr">QR tonen</string>
+    <string name="share_qr">QR delen</string>
+    <string name="send_tx">Kale transactie verzenden</string>
+    <string name="tx_too_large_qr">Kale transactie te groot om als QR-code te tonen.</string>
+
+    <string name="select_network">Selecteer netwerk...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">Segwit-adres</string>
+    <string name="segwit_switch_prompt">Saldo op segwit-adressen is efficiënter om te besteden. De transactiekosten zijn lager bij het verzenden van bitcoin uit je portemonnee.</string>
+
+    <string name="privkey_clipboard">Er is een privésleutel gevonden op je klembord. De inhoud van het klembord wissen?</string>
+
+    <string name="tx_hex">Transactie-hex</string>
+    <string name="enter_tx_hex">Voer transactie in, in hex-formaat</string>
+    <string name="broadcast">Transactie uitzenden</string>
+
+    <string name="dusting_tx">DUST-TRANSACTIE</string>
+    <string name="dusting_attempt">En onverwachte inkomende dust-transactie kan wijzen op een poging om je portemonneeadressen en -uitgaven te volgen.\n\nMarkeer deze dust als onbesteedbaar om pogingen tot volgen door derde partijen te minimaliseren.</string>
+    <string name="dusting_attempt_amount">Bedrag:</string>
+    <string name="dusting_attempt_id">Hash-index:</string>
+    <string name="dusting_attempt_ignore">Negeren</string>
+    <string name="dusting_attempt_mark_unspendable">Als onbesteedbaar markeren</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">DUST</string>
+    <string name="do_not_spend">Niet besteden</string>
+    <string name="dusting_tx_unblock">Deze dust-transactie kan momenteel niet worden besteed. De blokkade opheffen om besteden mogelijk te maken?</string>
+    <string name="mark_spend">Als besteedbaar markeren</string>
+    <string name="mark_do_not_spend">Als onbesteedbaar markeren</string>
+    <string name="mark_utxo_spend">Deze onbestede output besteedbaar maken?</string>
+    <string name="mark_utxo_do_not_spend">Deze onbestede output onbesteedbaar maken?</string>
+
+    <string name="options_sign_a_message">Een bericht ondertekenen</string>
+    <string name="options_display_redeem_script">Redeemscript tonen</string>
+    <string name="options_view_tx">Transactie bekijken</string>
+    <string name="options_display_privkey">Privésleutel tonen</string>
+    <string name="options_batch">Massa-besteden</string>
+
+    <string name="do_not_repeat_sent_to">Vink aan om niet te waarschuwen bij herhaalde uitgaven naar dit adres.</string>
+
+    <string name="mark_inputs_as_unspendable">De onbestede outputs die de inputs van deze transactie vormen als onbesteedbaar markeren?</string>
+
+    <string name="copy_to_clipboard">Kopiëren naar klembord</string>
+
+    <string name="no_bitpay">Fout: dit is geen geldig bitcoinverzoek. Samourai ondersteunt alleen verzenden naar geldige bitcoin-adressen.</string>
+    <string name="learn_more">Meer weten</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Claim jouw paynym</string>
+    <string name="claim_paynym_title1">Claim jouw gratis PayNymID</string>
+    <string name="claim_paynym_text1">Je vrienden &amp; contacten kunnen je PayNym vinden en er direct mee verbinden via compatibele bitcoin-portemonnees.</string>
+    <string name="claim_paynym_title2">Voordelen van een PayNymID</string>
+    <string name="claim_paynym_text2a">Unieke naam en afbeelding gegenereerd met een hash van je paynym-code. Geen twee zijn ooit hetzelfde!</string>
+    <string name="claim_paynym_text2b">Geen identiteitscontroles! Je naam en afbeelding zijn gebaseerd op je paynym-code, niet op een id-kaart.</string>
+    <string name="claim_paynym_text2c">Je kunt eenvoudig worden gevonden! Compatibele portemonnees kunnen zoeken naar nieuwe contacten en veilige, besloten betalingen verzenden zonder een spoor achter te laten.</string>
+    <string name="claim_paynym_id">Mijn PayNymID claimen</string>
+    <string name="claim_paynym_id_refused">Niet geïnteresseerd. Vraag mij niet opnieuw.</string>
+
+    <string name="claim_paynym_prompt">Mijn PayNymID claimen en mijn openbare PayNym-code aan PayNym.is toevoegen?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Om een PayNym aan je contacten toe te voegen zijn eenmalige transactiekosten vereist om dit op de blockchain op te slaan. Stort</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC in je portemonnee en probeer het opnieuw.</string>
+    <string name="help">Help</string>
+
+    <string name="passphrase_disclaimer">Ik begrijp dat Samourai geen ondersteuning kan bieden bij een verloren of vergeten wachtwoordzin. Samourai komt mijn wachtwoordzin nooit te weten.</string>
+    <string name="confirm_pin_code">Pincode bevestigen</string>
+    <string name="re_enter_your_pin_code">Voer je pincode opnieuw in</string>
+    <string name="re_enter_a_passphrase">Wachtwoordzin opnieuw invoeren</string>
+    <string name="create_a_passphrase">Wachtwoordzin aanmaken</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Bedenk een veilige wachtwoordzin voor je portemonnee</string>
+    <string name="set_pin_code">Pincode instellen</string>
+    <string name="accept_disclaimer_error">Je dient de disclaimer te accepteren</string>
+    <string name="import_external_wallet">Externe portemonnee importeren</string>
+    <string name="import_samourai_wallet">Samourai-back-up importeren</string>
+    <string name="backup_file">Back-upbestand</string>
+    <string name="import_an_encrypted_samourai_wallet">Importeer een versleutelde Samourai-back-up om een portemonnee te herstellen met alle metadata intact</string>
+    <string name="back">TERUG</string>
+    <string name="finish">gereed</string>
+    <string name="choose_file">bestand kiezen</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hallo leeg fragment</string>
+    <string name="add_bip39_password">BIP39-wachtwoord toevoegen</string>
+    <string name="close_bip39_password">BIP39-wachtwoord sluiten</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Voer je herstelwoorden/seed in om een portemonnee van een andere dienst te importeren.</string>
+    <string name="last_updated">Laatst bijgewerkt</string>
+    <string name="get_help">Hulp verkrijgen</string>
+    <string name="offline_mode">Offline-modus</string>
+    <string name="import_samourai_backup">Samourai-back-up importeren</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Voer de wachtwoordzin voor je portemonnee in</string>
+    <string name="start_new_wallet">Nieuwe portemonnee starten</string>
+    <string name="get_help_create">Portemonnee aanmaken: hulp verkrijgen</string>
+    <string name="get_help_restore">Portemonnee herstellen: hulp verkrijgen</string>
+
+    <string name="fee">Miner-kosten</string>
+    <string name="fee_low_priority">Lage prioriteit: ongeveer 24</string>
+    <string name="fee_mid_priority">Normale prioriteit: ongeveer 6</string>
+    <string name="fee_high_priority">Hoge prioriteit: ongeveer 2</string>
+    <string name="fee_custom_priority">Aangepaste transactiekosten: ongeveer</string>
+    <string name="blocks_to_cf">blokken tot bevestiging</string>
+
+    <string name="invalid_mnemonic_word">Ongeldig BIP39-woord</string>
+    <string name="invalid_mnemonic">Ongeldige BIP39-mnemonic</string>
+    <string name="enter_your_code_here">Voer je code hier in</string>
+
+    <string name="declaimer_recovery_words">Ik bevestig dat ik bovenstaande woorden heb opgeschreven en deze op een veilige locatie bewaar. Ik begrijp dat iedereen die toegang heeft tot zowel mijn wachtwoordzin als mijn herstelwoorden ook toegang heeft tot mijn portemonnee en mijn volledige saldo.</string>
+  <string name="return_to_wallet">Terug naar portemonnee</string>
+  <string name="caution_message_recovery_words">Het is niet veilig om deze woorden op je computer of online op te slaan. Schrijf de woorden op een stuk papier en bewaar dit op een geheime en veilige plaats.</string>
+    <string name="these_words_are">Deze woorden zijn een back-up van alle geheime sleutels in je portemonnee.</string>
+  <string name="recovery_words">HERSTELWOORDEN</string>
+
+  <string name="permission_alert_dialog_title_sms">Verzoek tot machtiging sms- en telefoonstatus</string>
+  <string name="permission_dialog_message_sms">Je portemonnee heeft toegang tot sms nodig om functies op afstand te kunnen gebruiken.</string>
+  <string name="permission_alert_dialog_title_outgoing">Verzoek tot machtiging uitgaande oproepen verwerken</string>
+  <string name="permission_dialog_message_outgoing">Je portemonnee heeft toegang tot uitgaande oproepen nodig om onzichtbaar starten te kunnen gebruiken.</string>
+
+  <string name="permission_alert_dialog_title_external">Verzoek tot machtiging opslag lezen en schrijven</string>
+  <string name="permission_dialog_message_external">Je portemonnee heeft toegang tot de bestandsopslag nodig om automatisch een versleutelde back-up van je portemonnee op te kunnen slaan.</string>
+  <string name="permission_alert_dialog_title_camera">Verzoek tot machtiging camera</string>
+  <string name="permission_dialog_message_camera">Je portemonnee heeft toegang tot de camera nodig om QR-codes te kunnen scannen.</string>
+
+  <string name="use_bech32">Bech32-adres gebruiken</string>
+
+  <string name="boltzmann_cannot">Er kon geen STONEWALL-uitgave worden opgesteld met je huidige serie onbestede outputs. Indien je een STONEWALL-uitgave vereist, tik \'NEE\' en probeer het opnieuw met een andere serie onbestede outputs.</string>
+  <string name="boltzmann_like_typed">Denk eraan dat \'Wisselgeld ontvangen op gelijkende outputs\' UIT staat, wat kan leiden tot een minder optimale transactiestructuur voor je STONEWALL-uitgave.</string>
+
+  <string name="insufficient_fee">Transactiekosten ontoereikend</string>
+  <string name="action_utxo_amounts">Hoeveelheden per adrestype bekijken</string>
+
+  <string name="total_p2pkh">Totaal oud formaat (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Totaal segwit (p2sh):</string>
+  <string name="total_p2wpkh">Totaal segwit (bech32):</string>
+  <string name="total_blocked">Totaal geblokkeerd:</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0,00</string>
+    <string name="advanced">Geavanceerd</string>
+    <string name="broadcast_with_txtenna">Uitzenden met TxTenna</string>
+    <string name="show_qr_code">QR-code tonen</string>
+    <string name="tx_connectivity_failure_msg">Kan transactie niet uitzenden zonder gegevensverbinding. Hoe wil je doorgaan?</string>
+
+    <string name="tx_creating_ok">Transactie aanmaken...</string>
+    <string name="tx_creating_ko">Kan transactie niet aanmaken</string>
+    <string name="tx_signing_ok">Transactie ondertekenen...</string>
+    <string name="tx_signing_ko">Kan transactie niet ondertekenen</string>
+    <string name="tx_broadcast_ok">Transactie uitzenden...</string>
+    <string name="tx_broadcast_ko">Kan transactie niet uitzenden</string>
+    <string name="tx_sent_ok">Transactie verzonden</string>
+    <string name="tx_sent_ko">Transactie niet verzonden</string>
+
+    <string name="prune_backup">Portemonnee- en back-upbestanden trimmen?</string>
+
+    <string-array name="address_types">
+        <item>Segwit-compatibel (P2SH)</item>
+        <item>Segwit-standaard (bech32)</item>
+        <item>Oud formaat (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">Samourai Wallet is in offline-modus.</string>
+    <string name="tx_standby">Transactie in stand-by</string>
+    <string name="show_hex">Hex-code tonen</string>
+    <string name="tx_tenna_coming_soon">txTenna binnenkort beschikbaar op Android</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Ontvangstadressen</string>
+    <string name="send_addresses">Verzendadressen</string>
+    <string name="display_receive_redeem">Redeemscript ontvangen</string>
+    <string name="display_receive_privkey">Privésleutel ontvangen</string>
+    <string name="invalid_index">Ongeldige index</string>
+    <string name="type_address">Adrestype</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+    </string-array>
+
+    <string name="chain_id">Adres-chain</string>
+    <string name="receive_chain">Ontvangstadres</string>
+    <string name="change_chain">Wisselgeldadres</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+    <string name="encrypted_backup_detected">Versleutelde back-up gedetecteerd</string>
+    <string name="restore">HERSTELLEN</string>
+    <string name="request_amount">Gevraagd bedrag</string>
+    <string name="address_type">Adrestype</string>
+    <string name="path">Pad</string>
+
+</resources>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -35,11 +36,13 @@ import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
@@ -62,6 +65,8 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PayloadUtil	{
 
@@ -72,11 +77,6 @@ public class PayloadUtil	{
 
     private final static String strMultiAddrFilename = "samourai.multi";
     private final static String strUTXOFilename = "samourai.utxo";
-    private final static String strFX_LBC = "samourai.fx_lbc";
-    private final static String strFX_BFX = "samourai.fx_bfx";
-    private final static String strFX_BTCe_USD = "samourai.fx_btce_usd";
-    private final static String strFX_BTCe_RUR = "samourai.fx_btce_rur";
-    private final static String strFX_BTCe_EUR = "samourai.fx_btce_eur";
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
 
@@ -147,39 +147,25 @@ public class PayloadUtil	{
         }
     }
 
-    public void serializeUTXO(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
-        }
-    }
+    public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
-    public void serializeFX_LBC(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strFX_LBC);
-        }
-    }
 
-    public void serializeFX_BTCe_USD(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strFX_BTCe_USD);
-        }
-    }
+            JSONArray utxos = new JSONArray();
 
-    public void serializeFX_BTCe_RUR(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strFX_BTCe_RUR);
-        }
-    }
+            for(JSONObject obj : objs)   {
+                if(obj != null && obj.has("unspent_outputs"))    {
+                    JSONArray array = obj.getJSONArray("unspent_outputs");
+                    for(int i = 0; i < array.length(); i++)   {
+                        JSONObject _obj = array.getJSONObject(i);
+                        utxos.put(_obj);
+                    }
+                }
+            }
 
-    public void serializeFX_BTCe_EUR(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strFX_BTCe_EUR);
-        }
-    }
-
-    public void serializeFX_BFX(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            serializeAux(obj, null, strFX_BFX);
+            JSONObject utxoObj = new JSONObject();
+            utxoObj.put("unspent_outputs", utxos);
+            serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
         }
     }
 
@@ -201,26 +187,6 @@ public class PayloadUtil	{
 
     public JSONObject deserializeUTXO()  throws IOException, JSONException  {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
-    }
-
-    public JSONObject deserializeFX_LBC()  throws IOException, JSONException  {
-        return deserializeAux(null, strFX_LBC);
-    }
-
-    public JSONObject deserializeFX_BTCe_USD()  throws IOException, JSONException  {
-        return deserializeAux(null, strFX_BTCe_USD);
-    }
-
-    public JSONObject deserializeFX_BTCe_RUR()  throws IOException, JSONException  {
-        return deserializeAux(null, strFX_BTCe_RUR);
-    }
-
-    public JSONObject deserializeFX_BTCe_EUR()  throws IOException, JSONException  {
-        return deserializeAux(null, strFX_BTCe_EUR);
-    }
-
-    public JSONObject deserializeFX_BFX()  throws IOException, JSONException  {
-        return deserializeAux(null, strFX_BFX);
     }
 
     public JSONObject deserializeFees()  throws IOException, JSONException  {
@@ -352,6 +318,7 @@ public class PayloadUtil	{
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
+            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
@@ -365,10 +332,6 @@ public class PayloadUtil	{
             meta.put("remote", PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false));
             meta.put("use_trusted", PrefsUtil.getInstance(context).getValue(PrefsUtil.TRUSTED_LOCK, false));
             meta.put("check_sim", PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false));
-            meta.put("fiat", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_FIAT, "USD"));
-            meta.put("fiat_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
-            meta.put("fx", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
-            meta.put("fx_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
             meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
@@ -430,6 +393,23 @@ public class PayloadUtil	{
 
     }
 
+    private MnemonicCode computeMnemonicCode(Context ctx) throws IOException {
+        InputStream wis = ctx.getResources().getAssets().open("BIP39/en.txt");
+        MnemonicCode mc = null;
+        if (wis != null) {
+            mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
+            wis.close();
+        }
+        return mc;
+    }
+
+    private HD_Wallet newHDWallet(Context ctx, int purpose, JSONObject jsonobj, NetworkParameters params) throws JSONException, DecoderException, MnemonicException.MnemonicLengthException, IOException {
+        byte[] seed = org.apache.commons.codec.binary.Hex.decodeHex(((String) jsonobj.get("seed")).toCharArray());
+        String strPassphrase = jsonobj.getString("passphrase");
+        MnemonicCode mc = computeMnemonicCode(ctx);
+        return new HD_Wallet(purpose, mc, params, seed, strPassphrase, SamouraiWallet.NB_ACCOUNTS);
+    }
+
     public synchronized HD_Wallet restoreWalletfromJSON(JSONObject obj) throws DecoderException, MnemonicException.MnemonicLengthException {
 
 //        Log.i("PayloadUtil", obj.toString());
@@ -474,7 +454,7 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).removeValue(PrefsUtil.TESTNET);
                 }
 
-                hdw = new HD_Wallet(context, 44, wallet, params);
+                hdw = newHDWallet(context, 44, wallet, params);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getReceive().setAddrIdx(wallet.has("receiveIdx") ? wallet.getInt("receiveIdx") : 0);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChange().setAddrIdx(wallet.has("changeIdx") ? wallet.getInt("changeIdx") : 0);
 
@@ -562,6 +542,9 @@ public class PayloadUtil	{
                 if(meta.has("ricochet")) {
                     RicochetMeta.getInstance(context).fromJSON((JSONObject) meta.get("ricochet"));
                 }
+                if(meta.has("whirlpool")) {
+                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
+                }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
                 }
@@ -616,18 +599,6 @@ public class PayloadUtil	{
                     if(meta.getBoolean("check_sim"))    {
                         SIMUtil.getInstance(context).setStoredSIM();
                     }
-                }
-                if (meta.has("fiat")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_FIAT, (String)meta.get("fiat"));
-                }
-                if (meta.has("fiat_sel")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_FIAT_SEL, meta.getInt("fiat_sel"));
-                }
-                if (meta.has("fx")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_EXCHANGE, (String)meta.get("fx"));
-                }
-                if(meta.has("fx_sel")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, meta.getInt("fx_sel"));
                 }
                 if(meta.has("use_trusted_node")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));

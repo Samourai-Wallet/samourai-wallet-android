@@ -20,7 +20,7 @@
     <string name="ok">Добре</string>
     <string name="cancel">Отказ</string>
 
-    <string name="options_cat_prefs">Валута, Block explorer</string>
+    <string name="options_cat_prefs">Block explorer</string>
     <string name="options_cat_stealth">Прикритост</string>
     <string name="options_cat_remote">Дистанционно управление</string>
     <string name="options_cat_wallet">Портфейл</string>
@@ -203,8 +203,6 @@
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Макс. налични:</string>
-
-    <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
     <string name="select_account">Изберете акаунт</string>
     <string name="received_bitcoin">Получени биткойни</string>

@@ -15,29 +15,43 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.hardware.telephony" android:required="false" tools:node="replace"/>
-    <uses-feature android:name="android.hardware.usb.host" android:required="false" tools:node="replace"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" tools:node="replace"/>
-    <uses-feature android:name="android.hardware.faketouch" android:required="false" tools:node="replace"/>
-    <uses-feature android:name="android.hardware.screen.landscape" android:required="false" tools:node="replace"/>
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false"
+        tools:node="replace" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false"
+        tools:node="replace" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"
+        tools:node="replace" />
+    <uses-feature
+        android:name="android.hardware.faketouch"
+        android:required="false"
+        tools:node="replace" />
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false"
+        tools:node="replace" />
 
     <application
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="false"
-        >
-
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.samourai.wallet.MainActivity"
-            android:label="@string/app_name"
+            android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
-            >
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <data android:scheme="bitcoin" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
@@ -45,112 +59,83 @@
 
         <activity-alias
             android:name=".Launcher"
-            android:targetActivity="com.samourai.wallet.MainActivity">
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
 
-        <activity android:name="com.samourai.wallet.MainActivity2"
-            android:label="@string/app_name"
+        <activity
+            android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustPan"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.BalanceActivity"
             android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".BalanceActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.ReceiveActivity"
+            android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:label="@string/app_name"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.SendActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".UTXOActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.UTXOActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".BatchSendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.BatchSendActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".FeeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.FeeActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.SettingsActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".SettingsActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.SettingsActivity2"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".AboutActivity"
             android:label="@string/app_name"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".PinEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.AboutActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.PinEntryActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".bip47.BIP47Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.bip47.BIP47Activity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".bip47.BIP47Add"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.bip47.BIP47Add"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".bip47.BIP47ShowQR"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.bip47.BIP47ShowQR"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".ricochet.RicochetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.ricochet.RicochetActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".OpenDimeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.OpenDimeActivity"
-            android:label="@string/app_name"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -158,15 +143,12 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-
-        <activity android:name="com.samourai.wallet.bip47.paynym.ClaimPayNymActivity"
-            android:label="@string/app_name"
+        <activity
+            android:name=".bip47.paynym.ClaimPayNymActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <activity android:name="com.samourai.wallet.ExodusActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".ExodusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
@@ -185,33 +167,45 @@
 
         <activity
             android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
-            android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize"
             />
 
-        <service android:enabled="true" android:name="com.samourai.wallet.service.WebSocketService" />
+        <service
+            android:name=".service.WebSocketService"
+            android:enabled="true" />
+        <service
+            android:name=".service.RefreshService"
+            android:enabled="true" />
 
-        <service android:enabled="true" android:name="com.samourai.wallet.service.RefreshService" />
-
-        <receiver android:name="com.samourai.wallet.receivers.BootIntentReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".receivers.BootIntentReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="com.samourai.wallet.receivers.InterceptOutgoingReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".receivers.InterceptOutgoingReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter android:priority="1001">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="com.samourai.wallet.receivers.SMSReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".receivers.SMSReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -220,11 +214,12 @@
         <activity android:name=".RestoreSeedWalletActivity" />
         <activity
             android:name=".LandingActivity"
-            android:theme="@style/AppThemeLanding"
-            ></activity>
-        <activity android:name=".RecoveryWordsActivity">
-        </activity>
-        <activity android:theme="@style/AppThemeLanding" android:exported="true" android:name=".TxAnimUIActivity" />
+            android:theme="@style/AppThemeLanding" />
+        <activity android:name=".RecoveryWordsActivity" />
+        <activity
+            android:name=".TxAnimUIActivity"
+            android:exported="true"
+            android:theme="@style/AppThemeLanding" />
 
         <provider
             android:name=".util.GenericFileProvider"
@@ -233,10 +228,54 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
-
+        <activity
+            android:name=".spend.SendNewUIActivity"
+            android:exported="true"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".whirlpool.WhirlPoolActivity"
+            android:exported="true"
+            android:label=""
+            android:parentActivityName=".whirlpool.ChooseCycleType"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.EmptyWhirlPool"
+            android:exported="true"
+            android:label="@string/title_activity_empty_whirl_pool"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.NewWhirlpoolCycle"
+            android:exported="true"
+            android:label="New Cycle"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.ChooseCycleType"
+            android:exported="true"
+            android:label="New Cycle"
+            android:parentActivityName=".whirlpool.EmptyWhirlPool"
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.WhirlpoolMain"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".whirlpool.CycleDetail"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxDetailsActivity"
+            android:exported="true"
+            android:label=" "
+            android:theme="@style/whirlpool_theme" />
+        <activity
+            android:name=".tx.TxPrivacyDetailsActivity"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/whirlpool_theme" />
     </application>
 
 </manifest>

@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">Írd le ezeket a szavakat, és tartsd őket biztonságos helyen. Ne veszítsd el ezeket a szavakat, és ne felejtsd el a jelszavadat sem.</string>
+    <string name="alpha_create_confirm_backup">Leírtam a szavakat</string>
+
+    <string name="creating_wallet">Pénztárca létrehozása folyamatban. Kérlek várj...</string>
+    <string name="restoring_wallet">Pénztárca visszaállítása folyamatban. Kérlek várj...</string>
+    <string name="decrypting_bip38">BIP38 jelszó dekódolása folyamatban. Kérlek várj...</string>
+
+    <string name="action_settings">Beállítások</string>
+    <string name="action_support">Segítség</string>
+    <string name="action_sweep">Privát kulcs begyűjtése</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Minden archivált fizetési kód aktiválása</string>
+    <string name="action_sync_all">Minden fizetési kód szinkronizálása</string>
+
+    <string name="about_us">A Samourai Wallet-ről</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Mégse</string>
+
+    <string name="options_cat_prefs">Blokk felfedező</string>
+    <string name="options_cat_stealth">Rejtőzködő mód</string>
+    <string name="options_cat_remote">Távoli</string>
+    <string name="options_cat_wallet">Pénztárca</string>
+    <string name="options_cat_networking">Hálózat</string>
+    <string name="options_cat_other">Az alkalmazásról</string>
+
+    <string name="options_mnemonic">Visszaállítási szavak megjelenítése</string>
+    <string name="options_mnemonic2">Ehhez a pénztárcához tartozó, a visszaállításhoz szükséges 12 szó megjelenítése</string>
+    <string name="options_xpub">BIP44 XPUB megjelenítése</string>
+    <string name="options_xpub2">BIP44 fiókhoz tartozó kiterjesztett nyilvános kulcs megjelenítése</string>
+    <string name="options_xpub49">Segwit YPUB megjelenítése</string>
+    <string name="options_xpub49_2">BIP49 Segwit (P2SH-csomagolt) fiókhoz tartozó kiterjesztett nyilvános kulcs megjelenítése</string>
+    <string name="options_xpub84">Segwit ZPUB megjelenítése</string>
+    <string name="options_xpub84_2">BIP84 Segwit (Bech32) fiókhoz tartozó kiterjesztett nyilvános kulcs megjelenítése</string>
+    <string name="options_wipe">Pénztárca biztonságos törlése</string>
+    <string name="options_wipe2">Pénztárca biztonságos törlése erről az eszközről.</string>
+    <string name="options_stealth_display">Rejtőzködő mód</string>
+    <string name="options_stealth_display2">A Samourai alkalmazás el lesz rejtve a kezdőképernyőről és az alkalmazások közül. Az alábbi szám tárcsázásával indítható a Samourai alkalmazás: **SAJÁT_PIN_KÓD#</string>
+    <string name="options_remote_commands">Távoli utasítások engedélyezése</string>
+    <string name="options_remote_commands2">Távoli utasítások engedélyezése SMS-en keresztül</string>
+    <string name="options_currency">Utcai árfolyam</string>
+    <string name="options_currency2">Válaszd ki az exchange-det és a pénznemedet.</string>
+    <string name="options_blockexplorer">Blokk felfedező</string>
+    <string name="options_blockexplorer2">A tranzakciók részleteinek megtekintéséhez használt blokk felfedező.</string>
+    <string name="options_sim_switch">SIM csere elleni védelem</string>
+    <string name="options_sim_switch2">SMS küldése a megbízható telefonszámra, ha a SIM kártyát kicserélik.</string>
+    <string name="options_use_telno">Megbízható telefonszám használata</string>
+    <string name="options_use_telno2">Kizárólag azoknak a távoli utasításoknak a végrehajtása, amelyek az általad megadott megbízható telefonszámról érkeztek.</string>
+    <string name="options_alert_telno">Megbízható telefonszám</string>
+    <string name="options_alert_telno2">Egy megbízható telefonszám megadása. Ha a \'Megbízható telefonszám használata\' opció be van kapcsolva, akkor kizárólag az erről a telefonszámról érkező távoli utasítások fognak működni. A \'SIM csere elleni védelem\' opció is ezt a telefonszámot fogja használni. A telefonszám nemzetközi formátumban legyen, szóközök nélkül, pl.: +36201234567.</string>
+    <string name="options_hash">APK ellenőrzőösszeg</string>
+    <string name="options_hash2">A telepített APK fájl SHA-256 ellenőrzőösszege (vágólapra másolható).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">OpenVPN for Android indítása.</string>
+    <string name="options_Tor">Tor használata?</string>
+    <string name="options_Tor2">Orbot (Tor) indítása.</string>
+    <string name="options_export">Biztonsági mentés exportálása</string>
+    <string name="options_change_pin">PIN kód cseréje</string>
+    <string name="options_change_pin2">Új PIN kód megadása; ezzel a kóddal oldhatod fel a pénztárcádat.</string>
+    <string name="options_remote_pin">Rejtőzködő indítás és távoli PIN</string>
+    <string name="options_remote_pin2">Egy másik PIN kód megadása, ami a rejtőzködő üzemmód elindításához, illetve távoli utasítások használatához kell.</string>
+    <string name="options_autosave_backup">Automatikus biztonsági mentés</string>
+    <string name="options_autosave_backup2">Időnként titkosított biztonsági mentés készítése, az eszköz tárhelyére elmentve.</string>
+    <string name="options_version">Verzió</string>
+    <string name="options_txs">Tranzakciók</string>
+    <string name="options_boltzmann">STONEWALL használata</string>
+    <string name="options_boltzmann_2">STONEWALL algoritmus használata küldésnél, ami megnehezíti a tranzakció nyomonkövetését.</string>
+    <string name="options_utxo">Elköltetlen kimenetek megjelenítése</string>
+    <string name="options_trusted_node">Megbízható node megadása</string>
+    <string name="options_trusted_node2">Megadhatod a saját bitcoin node-odat, ahova a tranzakciók továbbítódni fognak.</string>
+    <string name="options_use_trusted_node">Megbízható node használata</string>
+    <string name="options_use_trusted_node2">A tranzakciók elküldése saját node-ról.</string>
+    <string name="options_rbf0">RBF (replace-by-fee) használata</string>
+    <string name="options_rbf0_2">Lehetővé teszi, hogy az elküldött tranzakciók díját megnöveld, ezzel esetenként gyorsítható a tranzakció megerősítődése.</string>
+    <string name="options_troubleshoot">Hibaelhárítás</string>
+    <string name="options_passphrase_test">Jelszó/biztonsági mentés ellenőrzése</string>
+    <string name="options_passphrase_test2">Ellenőrizheted, hogy megfelelő-e a jelszavad, illetve a biztonsági mentésed.</string>
+    <string name="options_send_backup_to_support">Biztonsági mentés küldése a techinkai segítőknek</string>
+    <string name="options_send_backup_to_support2">A pénztárca biztonsági mentésének elküldése a technikai segítőknek. Nem tartalmaz információt a privát kulcsokról.</string>
+    <string name="options_fee_provider">Díj számítás</string>
+    <string name="options_fee_provider2">Válaszd ki a  tranzakciós díjakat számító szolgáltatást.</string>
+    <string name="options_broadcast_on">Tranzakciók automatikus elküldése</string>
+    <string name="options_broadcast_on2">Ha ez az opció ki van kapcsolva, akkor a tranzakció nem lesz automatikusan elküldve, hanem a vágólapra lesz másolva (aláírva, hexadecimális formátumban).</string>
+    <string name="options_segwit">Segwit címek használata</string>
+    <string name="options_segwit_2">Segwit címek generálása a bejövő tranzakciókhoz.</string>
+    <string name="options_broadcast_hex">Hexadecimális tranzakció elküldése</string>
+    <string name="options_broadcast_hex2">Egy aláírt, hexadecimális formátumban megadott tranzakció elküldése.</string>
+    <string name="options_like_typed_change">Azonos típusú címek a visszajáróhoz</string>
+    <string name="options_like_typed_change2">A visszajáró ugyanolyan típusú címre fog érkezni, mint amilyen a kimeneti cím típusa. Ha ki van kapcsolva, akkor a visszajáró mindig segwit címre fog érkezni.</string>
+    <string name="options_haptic">Haptikus PIN bevitel</string>
+    <string name="options_haptic_2">PIN kód megadásakor, a számjegyek érintésekor rezgés.</string>
+    <string name="options_prune">Biztonsági mentés törlése</string>
+    <string name="options_prune2">A biztonsági mentés, és a pénztárca adatainak törlése az eszközről.</string>
+    <string name="options_address_calc">Cím kalkulátor</string>
+    <string name="options_address_calc2">Megtekintheted az ehhez a pénztárcához tartozó, determinisztikusan generált címeket.</string>
+    <string name="options_paynym_calc">PayNym kalkulátor</string>
+    <string name="options_paynym_calc2">Megtekintheted egy PayNym determinisztikusan generált címeit.</string>
+
+    <string name="prompt_send_backup_to_support">Biztosan elküldöd a pénztárca biztonsági mentését a technikai segítőknek? Ez nem tartalmazza sem a privát kulcsaid, sem a visszaállítási szavaid, sem a jelszavaid, sem a PIN kódjaid.</string>
+
+    <string name="timeline_today">Ma</string>
+    <string name="timeline_older">Régebbi</string>
+
+    <string name="tx_sent">Tranzakció elküldve</string>
+    <string name="tx_failed">Hiba a tranzakció küldése során</string>
+    <string name="you_received">Bejövő tranzakció:</string>
+    <string name="you_sent">Elküldve:</string>
+    <string name="send">Küldés</string>
+    <string name="receive">Fogadás</string>
+    <string name="cannot_select_utxo">Nem sikerült kiválasztani elköltetlen kimenetet</string>
+    <string name="error_bip126_output">Hiba a kimenő cím meghatározása során</string>
+    <string name="error_change_output">Hiba a visszajáró cím meghatározása során</string>
+
+    <string name="copied_to_clipboard">Vágólapra másolva</string>
+    <string name="send_payment_code">Fizetési kód küldése</string>
+
+    <string name="ask_you_sure_exit">Biztosan kilépsz a Samourai-ból?</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="close">Bezár</string>
+
+    <string name="sim_warning">Kicsérélték a SIM kártyáját annak az eszköznek, amelyre a Samourai-t telepítetted. Ez az SMS az új SIM kártya számáról érkezett.</string>
+
+    <string name="pin_5_8">Adj meg egy 5-8 számjegy hosszú PIN kódot.</string>
+    <string name="pin_5_8_confirm">PIN kód megerősítése</string>
+    <string name="pin_error">PIN kód hiba</string>
+    <string name="no_internet">Nincs internetkapcsolat, próbáld újra később.</string>
+    <string name="bip38_pw">BIP38 jelszó</string>
+    <string name="bip38_pw_error">BIP38 jelszó hiba</string>
+    <string name="bip39_safe">Írj be egy jelszót. Ne felejtsd el, és ne add ki ezt a jelszót senkinek. Szükséged lesz erre a jelszóra a pénztárca visszaállításához.</string>
+    <string name="bip39_safe2">Kérlek erősítsd meg a jelszavad. Ne add ki senkinek a jelszót. A pénztárca visszaállításához szükséged lesz erre a jelszóra.</string>
+    <string name="bip39_restore">Add meg a visszaállítási szavaid (vagy hexadecimális entrópiát), és a BIP39 jelszavad, ha van. Ha nincs BIP39 jelszavad, hagyd üresen.</string>
+    <string name="bip39_must">A pénztárcádhoz szükség van egy jelszóra. Kérlek próbáld újra.</string>
+    <string name="bip39_unmatch">A jelszavak nem egyeznek. Kérlek próbáld újra.</string>
+    <string name="bip39_invalid">A jelszó nem tartalmazhat szóközöket. Kérlek próbáld újra.</string>
+    <string name="bip39_empty">Meg kell adnod egy jelszót.</string>
+    <string name="please_select">Válassz...</string>
+    <string name="create_wallet">Pénztárca készítése</string>
+    <string name="restore_wallet">Pénztárca visszaállítása</string>
+    <string name="wallet_passphrase">Add meg a pénztárcád jelszavát</string>
+    <string name="bip39_passphrase">BIP39 jelszó</string>
+    <string name="bip39_match">BIP39 jelszó OK.</string>
+    <string name="bip39_decrypt_test">BIP39 jelszó OK. Szeretnéd dekódolni a legutóbbi automatikus biztonsági mentést?</string>
+    <string name="backup_read_ok">Biztonsági mentés OK.</string>
+    <string name="backup_read_error">Hiba a biztonsági mentés beolvasása közben.</string>
+    <string name="mnemonic_hex">Visszaállítási szavak, vagy hexadecimális entrópia</string>
+    <string name="pin_enter">Add meg a PIN kódod</string>
+    <string name="please_wait">Kérlek várj...</string>
+    <string name="random_key_error">Hiba történt a véletlenszerű kulcs generálása során</string>
+    <string name="login_error">Sikertelen bejelentkezés</string>
+    <string name="wallet_created_ok">Pénztárca készítése sikeres.</string>
+    <string name="wallet_created_ko">Pénztárca készítése sikertelen.</string>
+    <string name="wallet_restored_ok">Pénztárca visszaállítása sikeres.</string>
+    <string name="wallet_restored_ko">Pénztárca visszaállítása sikertelen.</string>
+
+    <string name="address_used_previously">Már használtad ezt a címet! Ha egy címet többször is felhasználsz, az csökkentheti az anonimitásod.</string>
+
+    <string name="scan">QR kód beolvasása</string>
+    <string name="scan_error">Beolvasási hiba</string>
+    <string name="enter_privkey">Privát kulcs megadása</string>
+
+    <string name="to">Címzett</string>
+    <string name="destination">Cím vagy fizetési csatorna</string>
+
+    <string name="insufficient_funds">Nem áll rendelkezésre elegendő összeg</string>
+    <string name="tx_length_error">A Samourai nem kezel 100KB-nál nagyobb tranzakciókat. Próbáld meg kisebb részekre osztani a tranzakciót.</string>
+    <string name="invalid_amount">Nem megfelelő mennyiség</string>
+    <string name="amount">Mennyiség</string>
+
+    <string name="receive_address_to_clipboard">Vágólapra másolod ezt a címet? Ha igen, akkor ez látható lehet más alkalmazások számára is.</string>
+    <string name="receive_address_to_share">Megosztod ezt a címet? Ha igen, akkor ezt más alkalmazások is láthatják.</string>
+    <string name="sure_to_erase">Biztosan törlöd ezt a pénztárcát?</string>
+    <string name="wallet_erased">Pénztárca törölve az eszközről.</string>
+
+    <string name="send_privacy_warning">Figyelem: erre a címre már küldtél pénzt. Ha megint küldesz erre a címre, az csökkentheti az anonimitásod.</string>
+
+    <string name="securely_wiping_wait">Pénztárca biztonságos törlése. Kérlek várj.</string>
+
+    <string name="options_scramble_pin">PIN bevitel összekeverése</string>
+    <string name="options_scramble_pin2">A PIN kód bevitelénél, a szám gombok véletlenszerű sorrendben jelennek meg.</string>
+
+    <string name="you_must_have_orbot">Tor használatához szükség van az Orbot alkalmazásra. Szeretnéd letölteni a Google Play áruházból?</string>
+
+    <string name="ssl_pinning_invalid">Hiba történt az SSL pinning során. Ez rosszindulatú tevékenységre utalhat. Kérjük ellenőrizd az internetkapcsolatot, valamint az eszközödet, mielőtt folytatnád.</string>
+    <string name="ssl_no_connection">Nem sikerült az SSL tanúsítvány ellenőrzése, kérjük ellenőrizd az internetkapcsolatot.</string>
+    <string name="retry">Újra</string>
+    <string name="exit">Kilépés</string>
+
+    <string name="create_pin">PIN kód létrehozása</string>
+    <string name="confirm_pin">PIN kód megerősítése</string>
+
+    <string name="auto_fee">Normál</string>
+    <string name="priority_fee">Magas</string>
+    <string name="low_fee">Alacsony</string>
+    <string name="custom_fee">Egyéni</string>
+    <string name="sat_b">sat/bájt</string>
+
+    <string name="account_Samourai">Pénztárca</string>
+    <string name="account_shuffling">Shifted pénztárca</string>
+
+    <string name="max_available">Rendelkezésre áll:</string>
+
+    <string name="select_account">Pénztárca kiválasztása</string>
+    <string name="received_bitcoin">Bejövő tranzakció:</string>
+    <string name="received">Fogadva:</string>
+    <string name="sent">Tranzakció elküldve:</string>
+    <string name="total">Összes</string>
+    <string name="export_to_clipboard">Vágólapra másolás</string>
+    <string name="export_to_email">E-mail küldése</string>
+    <string name="encryption_error">Hiba történt a pénztárca titkosítása során. Kérlek próbáld újra.</string>
+    <string name="import_backup">Biztonsági mentés</string>
+    <string name="import_mnemonic">Visszaállítási szavak</string>
+    <string name="encrypted_backup">Pénztárca adatok titkosítva</string>
+    <string name="decryption_error">Hiba történt a biztonsági mentés dekódolása során. Kérlek próbáld újra.</string>
+    <string name="restore_wallet_from_backup">Pénztárca visszaállítása biztonsági mentésből</string>
+    <string name="restore_wallet_from_existing_backup">Található egy biztonsági mentés az eszközön. Ha szeretnéd visszaállítani ezt a mentést, válaszd az \'OK\' lehetőséget. Ha egy másik mentést visszaállítani, illeszd be ide, aztán válaszd az \'OK\' lehetőséget.</string>
+
+    <string name="choose_email_client">Válassz egy e-mail klienst:</string>
+
+    <string name="cannot_launch_app">A Samourai Pénztárca nem kompatibilis ezzel az eszközzel</string>
+    <string name="confirm_change_pin">Biztosan megváltoztatod a PIN kódodat?</string>
+    <string name="success_change_pin">PIN kód megváltoztatva</string>
+    <string name="alternative_pin_create">Biztosan létrehozol egy alternatív PIN kódot? Ezt a PIN kódot kell használnod az alkalmazás elindításához rejtőzködő üzemmódban, illetve távoli utasítások használatához.</string>
+    <string name="alternative_pin_deleted">Alternatív PIN kód törölve.</string>
+    <string name="alternative_pin_wait">Meg kell várnod, amíg a rejtőzködő mód teljesen aktiválódik, mielőtt egy alternatív PIN kódot megadnál.</string>
+
+    <string name="invalid_payment_code">Hibás fizetési kód</string>
+    <string name="error_payment_code">Hiba a fizetési kód generálása során</string>
+
+    <string name="bip47_setup1_title">A te PayNym-ed</string>
+    <string name="bip47_setup4_title">PayNym kapcsolat hozzáadása</string>
+    <string name="bip47_setup4_text1">Ha szeretnéd hozzáadni ezt a PayNym-et a kapcsolataidhoz, szükség lesz egy egyszeri díjra, hogy a tranzakció rögzítődjön a Bitcoin blokkláncon.</string>
+    <string name="bip47_setup4_text2">lesz levonva az egyenlegedből.</string>
+
+    <string name="bip47_add1_title">Új kapcsolat</string>
+    <string name="bip47_add1_text">Szkennelj, vagy illessz be egy fizetési kódot, hogy létrehozz egy új fizetési csatornát.</string>
+
+    <string name="paste">Beillesztés</string>
+    <string name="label">Címke</string>
+    <string name="next">Tovább</string>
+    <string name="confirm">Rendben</string>
+    <string name="payment_code">Fizetési kód</string>
+    <string name="payment_channel_init">Tranzakció elküldve, a fizetési csatorna létrehozása megkezdődött.</string>
+
+    <string name="bip47_no_label_error">Meg kell adnod egy címkét ehhez a fizetési kódhoz.</string>
+
+    <string name="bip47_status_tbe">Még nincs létrehozva</string>
+    <string name="bip47_status_pending">Folyamatban - 0/1 megerősítés</string>
+    <string name="bip47_status_active">Küldésre kész</string>
+    <string name="bip47_status_incoming">Fogadásra kész</string>
+    <string name="bip47_cannot_scan_own_pcode">Nem használhatod a saját fizetési kódodat.</string>
+    <string name="bip47_spend_to_pcode">Szeretnél ezen a fizetési csatornán keresztül küldeni?</string>
+    <string name="bip47_sign">Üzenet aláírása</string>
+    <string name="bip47_sign_text1">Aláírod az üzenetet a BIP47-es értesítési cím privát kulcsával?</string>
+    <string name="bip47_sign_text2">A BIP47-es értesítési címemmel aláírva.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Ennek a fizetési csatornának még nincs egy megerősítése sem. Legalább egy megerősítésnek lennie kell, mielőtt a küldés elérhetővé válik. Szeretnéd eldobni az előző próbálkozást, és újra elküldeni az értesítést?</string>
+
+    <string name="rbf_incoming">A bejövő tranzakció RBF-es (replace-by-fee). Szeretnéd megnézni a blokk felfedezőn?</string>
+
+    <string name="invalid_passphrase">Hibás jelszó</string>
+    <string name="passphrase">Jelszó</string>
+    <string name="passphrase_needed_for_backup">A pénztárcádhoz nem tartozik jelszó. Viszont a biztonsági mentések a pénztárca jelszavával vannak titkosítva. Ha szeretnéd, hogy a biztonsági mentés titkosítva legyen, vagy ha szeretnéd a Samourai pénztárca többi funkcióját is használni, csinálj egy új pénztárcát a Samourai-ban, és küldd át a pénzedet ebbe az új pénztárcába.</string>
+    <string name="passphrase_required">Ennek a funkciónak a használatához egy jelszóval védett pénztárcára van szükség. Fontold meg egy új pénztárca készítését a Samourai-ban, ami automatikusan tartalmazni fog egy jelszót.</string>
+
+    <string name="cannot_reach_api">A Samourai API-k jelenleg nem elérhetőek. Ellenőrizd az internetkapcsolatot és próbáld újra.</string>
+    <string name="api_error">A Samourai API-k hibát jeleznek. Próbáld újra később.</string>
+
+    <string name="cannot_recognize_privkey">A privát kulcs nem ismerhető fel</string>
+    <string name="cannot_sweep_privkey">Hiba a privát kulcs begyűjtése közben</string>
+    <string name="please_wait_sending">Tranzakció küldése folyamatban, kérjük várj.</string>
+    <string name="please_wait_ricochet">Ricochet sor feldolgozása folyamatban, kérjük várj.</string>
+
+    <string name="change_is_dust">A tranzakció visszajáró összege túl alacsony (por). Módosítsd az elküldendő összeget, vagy küldd el a teljes összeget.</string>
+
+    <string name="tor_routing_on">A Tor jelenleg be van kapcsolva. Érintsd meg a kikapcsoláshoz.</string>
+    <string name="tor_routing_off">A Tor jelenleg ki van kapcsolva. Érintsd meg a bekapcsoláshoz.</string>
+    <string name="tor_install">Érintsd meg az Orbot telepítéséhez, és a Tor használatához.</string>
+
+    <string name="premium_addons">Prémium lehetőségek</string>
+
+    <string name="ricochet_hop">Ricochet pattogás:</string>
+    <string name="ricochet_hopping">Ricochet továbbítva ide:</string>
+    <string name="ricochet_spend1">Biztosan szeretnél Ricochet-küldeni a(z)</string>
+    <string name="ricochet_spend2">címre, összesen</string>
+    <string name="ricochet_spend3">BTC-t? Ez tartalmaz 0.002 BTC-nyi fix díjat, ami fedezi a bányász díjakat, és a Samourai költségeit.</string>
+
+    <string name="action_ricochet">Ricochet újraküldése</string>
+    <string name="action_empty_ricochet">Ricochet sor kiürítése</string>
+    <string name="ricochet">Ricochet - küldés 4 extra pattogással</string>
+    <string name="action_ricochet_script">Ricochet script megjelenítése</string>
+    <string name="action_ricochet_replay">Ricochet újraküldése</string>
+    <string name="ricochet_replay">Szeretnéd újra elküldeni ez a Ricochet tranzakciót?</string>
+    <string name="ricochet_not_broadcast_replay">Hiba történt a Ricochet küldése során. Szeretnéd újra elküldeni?</string>
+    <string name="no_ricochet_replay">Nincs újraküldhető Ricochet.</string>
+    <string name="no_ricochet_display">Nincs megjeleníthető Ricochet script.</string>
+    <string name="ricochet_broadcast">A Ricochet el lett küldve.</string>
+
+    <string name="bip47_cannot_identify_outpoint">A kimenő fizetési kód nem azonosítható be</string>
+    <string name="bip47_cannot_compose_notif_tx">Az értesítési tranzakció nem hozható létre</string>
+
+    <string name="pushtx_returns_null">Tranzakció küldése sikertelen. A szerver null-értéket adott vissza.</string>
+
+    <string name="trusted_node">Megbízható node</string>
+    <string name="trusted_node_user_hint">rpc felhasználónév</string>
+    <string name="trusted_node_ip_hint">IP cím</string>
+    <string name="trusted_node_port_hint">Port (alapértelmezett: 8332)</string>
+    <string name="trusted_node_password_hint">rpc jelszó</string>
+    <string name="trusted_node_not_valid">Kérjük érvényes információt adj meg.</string>
+    <string name="trusted_node_ko">A megbízható node nem ismerhető fel.</string>
+    <string name="trusted_node_error">A megbízható node nem érhető el.</string>
+    <string name="trusted_node_tx_error">A megbízható node nem tudta elküldeni a tranzakciót.</string>
+    <string name="trusted_node_not_core_131">Megbízható node beállítva. Ne feledd, hogy a Samourai csak a Bitcoin Core 0.13.1, vagy újabb verzióit támogatja.</string>
+    <string name="trusted_node_tx_sent">Tranzakció sikeresen elküldve, a megbízható node-on keresztül.</string>
+    <string name="trusted_node_not_responding">A megbízható node nem válaszol.</string>
+    <string name="trusted_node_breaks_consensus">A megbízható node csak olyan kliens lehet, ami betartja a Bitcoin szabályait.</string>
+
+    <string name="refresh_tx_pre">Tranzakciók és egyenleg betöltése...</string>
+    <string name="refresh_tx">Tranzakciók és egyenleg betöltve.</string>
+    <string name="refresh_incoming_notif_tx">Beérkező BIP47 értesítési tranzakciók betöltve.</string>
+    <string name="refresh_outgoing_notif_tx">Kimenő BIP47 értesítési tranzakciók frissítve.</string>
+
+    <string name="options_unconfirmed_tx">Ez a tranzakció még nincs megerősítve. Válassz egy lehetőséget:</string>
+    <string name="options_block_explorer">Tranzakció megtekintése</string>
+    <string name="options_bump_fee">Díj növelése</string>
+
+    <string name="cpfp_cannot_retrieve_tx">A tranzakció részletei nem tölthetőek be. Próbáld újra később.</string>
+    <string name="fee_bump_not_necessary">A tranzakciós díj növelése nem feltétlenül szükséges ehhez a tranzakcióhoz.</string>
+    <string name="bump_fee">Szeretnéd megnövelni a tranzakciós díjat, hogy felgyorsítsd a tranzakció megerősítését?\n\nExtra bányász díj:</string>
+
+    <string name="options_sign">Üzenet aláírása</string>
+
+    <string name="trusted_node_pow_failed">A megbízható node által küldött proof-of-work nem megfelelő. Kérjük ellenőrizd a node-odat.</string>
+
+    <string name="options_fees">Bányász díjak megjelenítése</string>
+    <string name="current_fee_selection">Jelenleg kiválasztott díj:</string>
+    <string name="current_hi_fee_value">Jelenlegi magas prioritású díj:</string>
+    <string name="current_mid_fee_value">Jelenlegi normál prioritású díj:</string>
+    <string name="current_lo_fee_value">Jelenlegi alacsony díj:</string>
+    <string name="slash_sat">sat/bájt</string>
+    <string name="set_sat">Add meg az egyéni díjat (sat/bájt):</string>
+    <string name="custom_fee_too_low">A megadott díj túl alacsony.</string>
+    <string name="custom_fee_too_high">A megadott díj túl magas.</string>
+
+    <string name="cpfp_spent">CPFP (child-pays-for-parent) tranzakció elküldve.</string>
+    <string name="rbf_spent">RBF (replace-by-fee) tranzakció elküldve.</string>
+    <string name="cannot_output_dust">A tranzakció nem hozható létre, mert túl alacsony a kimeneti érték (por).</string>
+    <string name="cannot_create_change_output">Visszajáró kimenet létrehozása sikertelen.</string>
+    <string name="cannot_create_cpfp">CPFP (child-pays-for-parent) tranzakció létrehozása sikertelen.</string>
+
+    <string name="error_reading_payload">Hiba történt a pénztárca adatainak olvasása közben.</string>
+
+    <string name="utxo_sign">Üzenet aláírása</string>
+    <string name="utxo_sign_text1">Aláírod az üzenetet ezzel a privát kulccsal?</string>
+    <string name="utxo_sign_text2">Aláírva az alábbi utxo.-val:</string>
+    <string name="utxo_sign_text3">Aláírva az alábbi utxo.-val:</string>
+
+    <string name="recovery_checkup">Visszaállítás ellenőrzése</string>
+    <string name="recovery_checkup_message">A pénztárcád visszaállítási szavai meg lesznek jelenítve. Ne engedd, hogy más is lássa a képernyőt. Ez a képernyő NEM lesz többet megjelenítve.</string>
+    <string name="mnemonic">Visszaállítási szavak</string>
+    <string name="recovery_checkup_finish">BIZTOSÍTOTTAM A VISSZAÁLLÍTÁSI INFORMÁCIÓKAT</string>
+    <string name="pin_reminder">Ne feledd: a PIN kódod:</string>
+
+    <string name="opendime_confirmed_balance">Megerősített egyenleg</string>
+    <string name="opendime_privkey">Privát kulcs</string>
+    <string name="opendime_verified">ELFOGADVA</string>
+    <string name="opendime_valid_key">Érvényes privát kulcs az eszközön</string>
+    <string name="opendime_not_verified">SIKERTELEN</string>
+    <string name="opendime_no_valid_key">Az eszközön lévő privát kulcs nem megfelelő</string>
+    <string name="opendime_view">MEGTEKINT</string>
+    <string name="opendime_sweep">BEGYŰJT</string>
+    <string name="opendime_topup">FELTÖLT</string>
+
+    <string name="select_app">Alkalmazás kiválasztása</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay elleni védelem</string>
+    <string name="replay_unprotected">Nincs védelem</string>
+    <string name="replay_in_progress">Folyamatban</string>
+    <string name="replay_protected">Védve</string>
+    <string name="replay_disclaimer">Lánc hasadás (chain split) érzékelve</string>
+    <string name="replay_text">Az összes címed egyenlege egyesítve lesz egyetlen tranzakcióban, és ez vissza lesz küldve a saját pénztárcádba. Ez csökkentheti az anonimitásod.</string>
+    <string name="replay_ENABLE">REPLAY VÉDELEM ENGEDÉLYEZÉSE</string>
+
+    <string name="replay_broadcast_to_network">broadcast to network...</string>
+    <string name="replay_seen_on_network">seen on network...</string>
+    <string name="replay_split_tx_broadcast">split tx broadcast...</string>
+    <string name="replay_description">Ha engedélyezed a replay védelmet, akkor az alkalmazás küldeni fog egy speciális tranzakciót, amiben az egyenlegedet véglegesen szétválasztja a másik lánctól. Ez megvéd a replay támadások ellen.<!-- (Replay támadás: egy érvényes tranzakciót a támadó elküldhet a másik láncon is, ezáltal a másik láncon is érvényesülni fog a tranzakció, az eredeti küldő akarata ellenére)--></string>
+    <string name="replay_waiting_for_confirmations">megerősítésre várakozás</string>
+    <string name="replay_confirmed">megerősítve</string>
+    <string name="replay_confirmations">megerősítések száma:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">A replay védelem megerősítésre várakozik</string>
+    <string name="replay_dismiss">BEZÁRÁS</string>
+
+    <string name="show_qr">QR kód megjelenítése</string>
+    <string name="share_qr">QR kód megosztása</string>
+    <string name="send_tx">Nyers tranzakció küldése</string>
+    <string name="tx_too_large_qr">A nyers tranzakció túl nagy, nem jeleníthető meg QR kóddal.</string>
+
+    <string name="select_network">Válassz hálózatot:</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">Segwit Cím</string>
+    <string name="segwit_switch_prompt">Segwit címekről küldött tranzakcióknak alacsonyabb a bányászási díja.</string>
+
+    <string name="privkey_clipboard">Figyelem: egy privát kulcs található az eszköz vágólapján. Szeretnéd törölni a vágólap tartalmát?</string>
+
+    <string name="tx_hex">Tranzakció (hex)</string>
+    <string name="enter_tx_hex">Hex formátumú tranzakció megadása</string>
+    <string name="broadcast">Tranzakció elküldése</string>
+
+    <string name="dusting_tx">POR TRANZAKCIÓ</string>
+    <string name="dusting_attempt">Egy váratlan, alacsony értékű (por) tranzakció jelentheti azt, hogy valaki megpróbálja nyomon követni a tranzakcióid. Fagyaszd le ezt a címet, hogy elkerüld mások nyomonkövetési próbálkozásait</string>
+    <string name="dusting_attempt_amount">Mennyiség:</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">Bezárás</string>
+    <string name="dusting_attempt_mark_unspendable">Fagyasztás</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">POR</string>
+    <string name="do_not_spend">Lefagyasztva</string>
+    <string name="dusting_tx_unblock">Ez az alacsony értékű (por) tranzakció jelenleg le van fagyasztva, ezért nem költhető el. Szeretnéd kiolvasztani?</string>
+    <string name="mark_spend">Kiolvasztás</string>
+    <string name="mark_do_not_spend">Fagyasztás</string>
+    <string name="mark_utxo_spend">Kiolvasztod?</string>
+    <string name="mark_utxo_do_not_spend">Lefagyasztod ezt a kimenetet? A lefagyasztott kimeneteket nem tudod elkölteni addig, amíg ki nem olvasztod őket.</string>
+
+    <string name="options_sign_a_message">Üzenet aláírása</string>
+    <string name="options_display_redeem_script">Redeem script megtekintése</string>
+    <string name="options_view_tx">Tranzakció részleteinek megtekintése</string>
+    <string name="options_display_privkey">Privát kulcs megtekintése</string>
+    <string name="options_batch">Tömeges küldés</string>
+
+    <string name="do_not_repeat_sent_to">Ne figyelmeztess, ha többször is akarok küldeni erre a címre.</string>
+
+    <string name="mark_inputs_as_unspendable">Lefagyasztod a kimeneteket, amik ennek a tranzakciónak a bemeneteit alkotják?</string>
+
+    <string name="copy_to_clipboard">Vágólapra másolás</string>
+
+    <string name="no_bitpay">Hiba: Ez egy érvénytelen bitcoin kérelem. A Samourai kizárólag az érvényes bitcoin címekre való küldést támogatja. </string>
+    <string name="learn_more">További információ</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Igényelj egy paynym-et</string>
+    <string name="claim_paynym_title1">Szerezz egy saját, ingyenes PayNymID-t</string>
+    <string name="claim_paynym_text1">A barátaid és a kapcsolataid egyenesen kapcsolódhatnak a te PayNym-edhez, ha kompatibilis Bitcoin pénztárcát használnak.</string>
+    <string name="claim_paynym_title2">A PayNymID előnyei</string>
+    <string name="claim_paynym_text2a">Egyedi név és kép, ami a saját paynym kódodból generálódik. Soha nem lesz két egyforma!</string>
+    <string name="claim_paynym_text2b">Nincs szükség személyazonosításra! A neved és a képed a paynym kódodtól függ, nem a személyi irataidtól.</string>
+    <string name="claim_paynym_text2c">Könnyen felfedezhetnek! A kompatibilis pénztárca alkalmazásokkal könnyedén kereshetnek új kapcsolatokat, és egyszerűen fizethetnek biztonságosan, anélkül, hogy bármilyen nyomot hagynának.</string>
+    <string name="claim_paynym_id">Saját PayNymID beszerzése</string>
+    <string name="claim_paynym_id_refused">Nem érdekel, ne mutasd többet.</string>
+
+    <string name="claim_paynym_prompt">Igényelsz egy saját PayNymID-t és hozzáadod a publikus PayNym kódodat a PayNym.is-hez?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Ha szeretnél egy PayNym-et hozzáadni a kapcsolataidhoz, szükség lesz egy egyszeri díjra, hogy a tranzakció rögzítődjön a Bitcoin blokkláncon. Küldj legalább</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC-t a pénztárcádba, majd próbáld újra.</string>
+    <string name="help">Súgó</string>
+
+    <string name="passphrase_disclaimer">Megértettem és elfogadom, hogy a Samourai nem tud segítséget nyújtani elvesztett vagy elfelejtett jelszavak esetén. A Samourai-nak nincs semmiféle tudomása a jelszavaimról.</string>
+    <string name="confirm_pin_code">PIN kód megerősítése</string>
+    <string name="re_enter_your_pin_code">Add meg újra a PIN kódodat</string>
+    <string name="re_enter_a_passphrase">Írd be újra a jelszót</string>
+    <string name="create_a_passphrase">Adj meg egy jelszót</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Hozz létre egy biztonságos jelszót a pénztárcádhoz</string>
+    <string name="set_pin_code">PIN kód létrehozása</string>
+    <string name="accept_disclaimer_error">El kell fogadnod a feltételeket</string>
+    <string name="import_external_wallet">Külső pénztárca importálása</string>
+    <string name="import_samourai_wallet">Samourai mentés visszaállítása</string>
+    <string name="backup_file">Biztonsági mentés fájl</string>
+    <string name="import_an_encrypted_samourai_wallet">Samourai pénztárca által készített, titkosított biztonsági mentés visszaállítása.</string>
+    <string name="back">VISSZA</string>
+    <string name="finish">BEFEJEZÉS</string>
+    <string name="choose_file">fájl kiválasztása</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello üres részleg</string>
+    <string name="add_bip39_password">BIP39 jelszó megadása</string>
+    <string name="close_bip39_password">BIP39 jelszó elrejtése</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Add meg egy másik pénztárcától származó visszaállítási szavaidat az importáláshoz.</string>
+    <string name="last_updated">Legutóbb módosítva</string>
+    <string name="get_help">Segítség kérése</string>
+    <string name="offline_mode">Offline mód</string>
+    <string name="import_samourai_backup">Samourai mentés visszaállítása</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Pénztárca</string>
+    <string name="enter_your_wallet_passphrase">Add meg a pénztárcád jelszavát</string>
+    <string name="start_new_wallet">Új pénztárca készítése</string>
+    <string name="get_help_create">Segítség kérése pénztárca készítéshez</string>
+    <string name="get_help_restore">Segítség kérése pénztárca visszaállításához</string>
+
+    <string name="fee">Bányász díj</string>
+    <string name="fee_low_priority">Alacsony prioritás: nagyjából 24</string>
+    <string name="fee_mid_priority">Normál prioritás: nagyjából 6</string>
+    <string name="fee_high_priority">Magas prioritás: nagyjából 2</string>
+    <string name="fee_custom_priority">Egyéni díj: nagyjából</string>
+    <string name="blocks_to_cf">blokk a megerősítődésig</string>
+
+    <string name="invalid_mnemonic_word">Érvénytelen BIP39 szó</string>
+    <string name="invalid_mnemonic">Érvénytelen BIP39 szavak</string>
+    <string name="enter_your_code_here">Írd ide a szavakat</string>
+
+    <string name="declaimer_recovery_words">Megerősítem, hogy leírtam a fenti szavakat, és egy biztonságos helyen tárolom őket. Megértettem, hogy bárki, aki hozzáfér ezekhez a szavakhoz, valamint a jelszavamhoz, az hozzáfér a pénztárcámhoz, és ezzel együtt az összes benne tárolt pénzhez is.</string>
+    <string name="return_to_wallet">Vissza a pénztárcához</string>
+    <string name="caution_message_recovery_words">Fontos a szavak sorrendje is.\n\nVeszélyes ezeket a szavakat számítógépen, vagy bármilyen online tárhelyen tárolni. Írd le a szavakat egy papírra, és tartsd őket egy biztos és rejtett helyen.</string>
+    <string name="these_words_are">Ezekkel a szavakkal állíthatóak vissza a pénztárcád privát kulcsai.</string>
+    <string name="recovery_words">VISSZAÁLLÍTÁSI SZAVAK</string>
+
+    <string name="permission_alert_dialog_title_sms">SMS hozzáférés</string>
+    <string name="permission_dialog_message_sms">A pénztárcádnak szüksége van SMS hozzáféréshez (olvasás/küldés), hogy a távoli utasítások és az értesítések működni tudjanak.</string>
+    <string name="permission_alert_dialog_title_outgoing">Híváslista hozzáférés</string>
+    <string name="permission_dialog_message_outgoing">A pénztárcádnak szüksége van a kimenő hívások listájára, hogy el tudjon indulni rejtőzködő üzemmódban.</string>
+
+    <string name="permission_alert_dialog_title_external">Tárhely írás/olvasás hozzáférés</string>
+    <string name="permission_dialog_message_external">A pénztárcádnak szüksége van az eszköz tárhelyének olvasásához/írásához, hogy automatikusan titkosított biztonsági mentéseket tudjon készíteni.</string>
+    <string name="permission_alert_dialog_title_camera">Kamera hozzáférés</string>
+    <string name="permission_dialog_message_camera">A pénztárcádnak szüksége van a kamera használatára, hogy be tudja szkennelni a QR kódokat.</string>
+
+    <string name="use_bech32">Bech32 címek használata</string>
+
+    <string name="boltzmann_cannot">Nem lehet létrehozni STONEWALL tranzakciót az általad megadott bemenetekből. Ha mindenképp szeretnél STONEWALL tranzakciót küldeni, válaszd a \'NEM\' opciót, és próbáld újra más bemenetek használatával.</string>
+    <string name="boltzmann_like_typed">Ne feledd, hogy az \'Azonos típusú címek a visszajáróhoz\' opció ki van kapcsolva. Emiatt a STONEWALL tranzakció felépítése kevésbé optimális lehet.</string>
+
+    <string name="insufficient_fee">A díj túl alacsony</string>
+    <string name="action_utxo_amounts">Megtekintés címek típusa szerint</string>
+
+    <string name="total_p2pkh">Összes legacy (p2pkh):\n</string>
+    <string name="total_p2sh_p2wpkh">Összes segwit (p2sh):\n</string>
+    <string name="total_p2wpkh">Összes segwit (bech32):\n</string>
+    <string name="total_blocked">Összes lefagyasztva:\n</string>
+
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Haladó</string>
+    <string name="broadcast_with_txtenna">Küldés TxTenna-val</string>
+    <string name="show_qr_code">QR kód megjelenítése</string>
+    <string name="tx_connectivity_failure_msg">Nem sikerült elküldeni a tranzakciót, mert nincs internetkapcsolat. Mit szeretnél tenni?</string>
+
+    <string name="tx_creating_ok">Tranzakció létrehozása...</string>
+    <string name="tx_creating_ko">Hiba a létrehozás során</string>
+    <string name="tx_signing_ok">Tranzakció aláírása...</string>
+    <string name="tx_signing_ko">Hiba az aláírás során</string>
+    <string name="tx_broadcast_ok">Tranzakció küldése...</string>
+    <string name="tx_broadcast_ko">Hiba a küldés során</string>
+    <string name="tx_sent_ok">Tranzakció elküldve</string>
+    <string name="tx_sent_ko">A tranzakció küldése sikertelen</string>
+
+    <string name="prune_backup">Biztosan törlöd a pénztárca adatait és a biztonsági mentéseket?</string>
+
+    <string-array name="address_types">
+        <item>Segwit (P2SH-csomagolt)</item>
+        <item>Segwit (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">A Samourai pénztárca offline módban van.</string>
+    <string name="tx_standby">Tranzakció várakozik</string>
+    <string name="show_hex">Hex Kód Megjelenítése</string>
+    <string name="tx_tenna_coming_soon">TxTenna hamarosan érkezik Androidra</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+
+    <string name="receive_addresses">Fogadó címek</string>
+    <string name="send_addresses">Küldési címek</string>
+    <string name="display_receive_redeem">Redeem script megjelenítése</string>
+    <string name="display_receive_privkey">Privát kulcs megjelenítése</string>
+    <string name="invalid_index">Érvénytelen index</string>
+    <string name="type_address">Cím típusa</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit mix előtt</item>
+        <item>Whirlpool Segwit mix után</item>
+    </string-array>
+
+    <string name="chain_id">Cím lánc</string>
+    <string name="receive_chain">Fogadó címek</string>
+    <string name="change_chain">Visszajáró címek</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit mix után</string>
+    <string name="encrypted_backup_detected">Titkosított biztonsági mentés található az eszközön</string>
+    <string name="restore">VISSZAÁLLÍT</string>
+    <string name="request_amount">Fogadási mennyiség</string>
+    <string name="address_type">Fogadási cím típusa</string>
+    <string name="path">Útvonal</string>
+
+</resources>

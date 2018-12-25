@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Samourai-Wallet/samourai-wallet-android.svg?branch=develop)](https://travis-ci.org/Samourai-Wallet/samourai-wallet-android)
+
 # Samourai Wallet
 
 ### Features:
@@ -85,8 +87,6 @@ All development goes in 'develop' branch - do not submit pull requests to 'maste
 [Samourai HQ](https://samouraiwallet.com)
 
 [Sentinel](https://play.google.com/store/apps/details?id=com.samourai.sentinel&hl=en)
-
-[Afterburner](https://play.google.com/store/apps/details?id=com.samourai.afterburner&hl=en)
 
 [PayNym.is](https://paynym.is)
 

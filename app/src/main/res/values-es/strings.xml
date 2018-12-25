@@ -20,7 +20,7 @@
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="options_cat_prefs">Moneda, Explorador de bloques</string>
+    <string name="options_cat_prefs">Explorador de bloques</string>
     <string name="options_cat_stealth">Invisibilidad</string>
     <string name="options_cat_remote">Control remoto</string>
     <string name="options_cat_wallet">Billetera</string>
@@ -193,8 +193,6 @@
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Máximo disponible</string>
-
-    <string name="first_use_shuffle">Esta esta tu billetera Shifted. Los bitcoins que recibas mediante ShapeShift se almacenarán en esta dirección que no comparte el espacio de direcciones de tu billetera principal.</string>
 
     <string name="select_account">Elegir cuenta</string>
     <string name="received_bitcoin">Bitcoin recibido</string>
