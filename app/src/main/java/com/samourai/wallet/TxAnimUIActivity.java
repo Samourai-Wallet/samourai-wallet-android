@@ -45,6 +45,7 @@ import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.widgets.TransactionProgressView;
 
 import org.bitcoinj.core.Address;
@@ -387,6 +388,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(SendParams.getInstance().getDestAddress(), SendParams.getInstance().getPCode());
                     BIP47Meta.getInstance().incOutgoingIdx(SendParams.getInstance().getPCode());
 
+                    SentToFromBIP47Util.getInstance().add(SendParams.getInstance().getDestAddress(), strTxHash);
+
                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                     String strTS = sd.format(System.currentTimeMillis());
                     String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) SendParams.getInstance().getSpendAmount() / 1e8) + " BTC";
@@ -401,6 +404,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         if(pcode != null && pcode.length() > 0)    {
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
                             BIP47Meta.getInstance().incOutgoingIdx(pcode);
+
+                            SentToFromBIP47Util.getInstance().add(address, strTxHash);
 
                             SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                             String strTS = sd.format(System.currentTimeMillis());

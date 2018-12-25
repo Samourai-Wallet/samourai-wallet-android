@@ -566,6 +566,9 @@ public class APIFactory	{
                         }
 
                         Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
+                        if(SentToFromBIP47Util.getInstance().getByHash(hash) != null && BIP47Meta.getInstance().getPCode4Addr(SentToFromBIP47Util.getInstance().getByHash(hash)) != null)    {
+                            tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(SentToFromBIP47Util.getInstance().getByHash(hash)));
+                        }
                         if(BIP47Meta.getInstance().getPCode4Addr(addr) != null)    {
                             tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
                         }
