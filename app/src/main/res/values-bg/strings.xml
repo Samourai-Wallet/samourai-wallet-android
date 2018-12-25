@@ -627,7 +627,7 @@
     <string name="efficiency_score">Оценка на ефективността</string>
     <string name="hide_log">СКРИЙ ЗАПИСА</string>
     <string name="copy">Копиране</string>
-    <string name="show_log">Показване на списъка</string>
+    <string name="show_log">Показване на записа</string>
 
 
 </resources>
