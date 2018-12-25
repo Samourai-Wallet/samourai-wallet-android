@@ -35,6 +35,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -488,6 +489,8 @@ public class APIFactory	{
 
             if(jsonObject.has("txs"))  {
 
+                List<String> seenHashes = new ArrayList<String>();
+
                 JSONArray txArray = (JSONArray)jsonObject.get("txs");
                 JSONObject txObj = null;
                 for(int i = 0; i < txArray.length(); i++)  {
@@ -514,6 +517,10 @@ public class APIFactory	{
                     }
                     if(txObj.has("time"))  {
                         ts = txObj.getLong("time");
+                    }
+
+                    if(!seenHashes.contains(hash))  {
+                        seenHashes.add(hash);
                     }
 
                     if(txObj.has("inputs"))  {
@@ -576,6 +583,15 @@ public class APIFactory	{
                             RBFUtil.getInstance().remove(hash);
                         }
 
+                    }
+                }
+
+                List<String> hashesSentToViaBIP47 = SentToFromBIP47Util.getInstance().getAllHashes();
+                if(hashesSentToViaBIP47.size() > 0)    {
+                    for(String s : hashesSentToViaBIP47)    {
+                        if(!seenHashes.contains(s)) {
+                            SentToFromBIP47Util.getInstance().removeHash(s);
+                        }
                     }
                 }
 
