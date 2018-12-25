@@ -40,6 +40,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -72,7 +73,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     private int arcdelay = 800;
     private long signDelay = 2000L;
     private long broadcastDelay = 1599L;
-    private long resultDelay = 3000L;
+    private long resultDelay = 1500L;
 
     private Handler resultHandler = null;
 
@@ -197,7 +198,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("result")) {
                                                     if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
                                                         isOK = true;
-                                                        BatchSendUtil.getInstance().clear();
                                                     } else {
                                                         Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
                                                         failTx(R.string.tx_broadcast_ko);
@@ -214,7 +214,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 if (jsonObject.has("status")) {
                                                     if (jsonObject.getString("status").equals("ok")) {
                                                         isOK = true;
-                                                        BatchSendUtil.getInstance().clear();
                                                     }
                                                 }
                                             } else {
@@ -224,8 +223,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                         }
                                     }
                                     catch(JSONException je) {
-                                        Toast.makeText(TxAnimUIActivity.this, je.getMessage(), Toast.LENGTH_SHORT).show();
-                                        Log.e("TxAnimUIActivity", "JSONException", je);
                                         failTx(R.string.tx_broadcast_ko);
                                     }
 
@@ -266,19 +263,14 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
-    private void failTx(final int id)   {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressView.reset();
+    private void failTx(int id)   {
+        progressView.reset();
 
-                progressView.offlineMode(1200);
-                progressView.setTxStatusMessage(R.string.tx_failed);
-                progressView.setTxSubText(id);
-//              progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-//              progressView.toggleOfflineButton();
-            }
-        });
+        progressView.offlineMode(1200);
+        progressView.setTxStatusMessage(R.string.tx_failed);
+        progressView.setTxSubText(id);
+//        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
+//        progressView.toggleOfflineButton();
     }
 
     private void offlineTx(int id, final String hex, final String hash)   {

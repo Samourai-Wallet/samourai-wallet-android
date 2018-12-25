@@ -144,6 +144,27 @@ public class BIP47Meta {
         return sortedMapAsc.keySet();
     }
 
+    public Set<String> getSortedByLabels(boolean includeArchived, boolean confirmed)    {
+
+        ConcurrentHashMap<String, String> labels = null;
+
+        if(includeArchived)    {
+            labels = pcodeLabels;
+        }
+        else    {
+            labels = new ConcurrentHashMap<String, String>();
+            for(String key : pcodeLabels.keySet())   {
+                if(!BIP47Meta.getInstance().getArchived(key) && BIP47Meta.getInstance().getOutgoingStatus(key) == BIP47Meta.STATUS_SENT_CFM)    {
+                    labels.put(key, pcodeLabels.get(key));
+                }
+            }
+
+        }
+
+        Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
+        return sortedMapAsc.keySet();
+    }
+
     private static Map<String, String> valueSortByComparator(ConcurrentHashMap<String, String> unsortMap, final boolean order)  {
 
         List<Map.Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(unsortMap.entrySet());

@@ -7,11 +7,6 @@
         />
 
     <Preference
-        android:title="@string/options_cat_prefs"
-        android:key="prefs"
-        />
-
-    <Preference
         android:title="@string/options_txs"
         android:key="txs"
         />

@@ -26,6 +26,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -293,7 +294,7 @@ public class MainActivity2 extends Activity {
 
     }
 
-    private void doAppInit(final boolean isDial, final String strUri, final String strPCode) {
+    private void doAppInit(boolean isDial, final String strUri, final String strPCode) {
 
         boolean needToken = false;
         if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {

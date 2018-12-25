@@ -16,7 +16,6 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
