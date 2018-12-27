@@ -1,8 +1,9 @@
 package com.samourai.wallet.util;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,21 +31,21 @@ public class SentToFromBIP47Util {
         sendToFromBIP47.clear();
     }
 
-    public void add(String addr, String hash) {
+    public void add(String pcode, String hash) {
         List<String> hashes = null;
-        if(sendToFromBIP47.containsKey(addr))    {
-            hashes = sendToFromBIP47.get(addr);
+        if(sendToFromBIP47.containsKey(pcode))    {
+            hashes = sendToFromBIP47.get(pcode);
         }
         else    {
             hashes = new ArrayList<String>();
         }
         hashes.add(hash);
-        sendToFromBIP47.put(addr, hashes);
+        sendToFromBIP47.put(pcode, hashes);
     }
 
-    public List<String> get(String addr) {
-        if(sendToFromBIP47.containsKey(addr))    {
-            return sendToFromBIP47.get(addr);
+    public List<String> get(String pcode) {
+        if(sendToFromBIP47.containsKey(pcode))    {
+            return sendToFromBIP47.get(pcode);
         }
         else    {
             return null;
@@ -52,9 +53,9 @@ public class SentToFromBIP47Util {
     }
 
     public String getByHash(String hash) {
-        for(String addr : sendToFromBIP47.keySet())  {
-            if(sendToFromBIP47.get(addr).contains(hash))    {
-                return addr;
+        for(String pcode : sendToFromBIP47.keySet())  {
+            if(sendToFromBIP47.get(pcode).contains(hash))    {
+                return pcode;
             }
         }
         return null;
@@ -64,24 +65,24 @@ public class SentToFromBIP47Util {
 
         List<String> ret = new ArrayList<String>();
 
-        for(String addr : sendToFromBIP47.keySet())  {
-            ret.addAll(sendToFromBIP47.get(addr));
+        for(String pcode : sendToFromBIP47.keySet())  {
+            ret.addAll(sendToFromBIP47.get(pcode));
         }
 
         return ret;
     }
 
-    public void remove(String addr) {
-        sendToFromBIP47.remove(addr);
+    public void remove(String pcode) {
+        sendToFromBIP47.remove(pcode);
     }
 
     public void removeHash(String hash) {
         List<String> hashes = null;
-        for(String addr : sendToFromBIP47.keySet())  {
-            hashes = sendToFromBIP47.get(addr);
+        for(String pcode : sendToFromBIP47.keySet())  {
+            hashes = sendToFromBIP47.get(pcode);
             if(hashes.contains(hash))    {
                 hashes.remove(hash);
-                sendToFromBIP47.put(addr, hashes);
+                sendToFromBIP47.put(pcode, hashes);
             }
         }
     }
@@ -109,13 +110,13 @@ public class SentToFromBIP47Util {
             for(int i = 0; i < tos.length(); i++)   {
                 JSONArray array = tos.getJSONArray(i);
                 if(array.length() > 0)    {
-                    String addr = array.getString(0);
+                    String pcode = array.getString(0);
                     if(array.length() > 1)    {
                         List<String> hashes = new ArrayList<String>();
                         for(int j = 1; j < array.length(); j++)   {
                             hashes.add(array.getString(j));
                         }
-                        sendToFromBIP47.put(addr, hashes);
+                        sendToFromBIP47.put(pcode, hashes);
                     }
                 }
             }

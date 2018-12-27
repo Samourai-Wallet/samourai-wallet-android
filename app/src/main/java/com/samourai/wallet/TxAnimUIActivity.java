@@ -380,7 +380,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(SendParams.getInstance().getDestAddress(), SendParams.getInstance().getPCode());
                     BIP47Meta.getInstance().incOutgoingIdx(SendParams.getInstance().getPCode());
 
-                    SentToFromBIP47Util.getInstance().add(SendParams.getInstance().getDestAddress(), strTxHash);
+                    SentToFromBIP47Util.getInstance().add(SendParams.getInstance().getPCode(), strTxHash);
 
                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                     String strTS = sd.format(System.currentTimeMillis());
@@ -397,7 +397,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
                             BIP47Meta.getInstance().incOutgoingIdx(pcode);
 
-                            SentToFromBIP47Util.getInstance().add(address, strTxHash);
+                            SentToFromBIP47Util.getInstance().add(pcode, strTxHash);
 
                             SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                             String strTS = sd.format(System.currentTimeMillis());
