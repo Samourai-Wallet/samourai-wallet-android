@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -104,7 +102,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, stoneWallSwitch;
     private SeekBar feeSeekBar;
@@ -176,6 +174,8 @@ public class SendActivity extends AppCompatActivity {
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
+        stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
+        stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -241,15 +241,19 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpBoltzman() {
-        boolean useBoltzman = PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_BOLTZMANN, true);
-        stoneWallSwitch.setChecked(useBoltzman);
+        PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, true);
+        stonewallOptionText.setAlpha(1f);
+        stoneWallSwitch.setAlpha(1f);
+        stoneWallDesc.setAlpha(1f);
+        stoneWallSwitch.setChecked(true);
+        stoneWallSwitch.setEnabled(true);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
             PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
-            new Handler().postDelayed(() -> prepareSpend(),100);
-         });
+            //small delay for storing prefs.
+            new Handler().postDelayed(() -> prepareSpend(), 100);
+        });
     }
-
 
     private void enableReviewButton(boolean enable) {
         btnReview.setEnabled(enable);
@@ -512,10 +516,9 @@ public class SendActivity extends AppCompatActivity {
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
                     Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                }
-                else    {
+                } else {
                     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
-                    DecimalFormatSymbols symbols=format.getDecimalFormatSymbols();
+                    DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
                     String defaultSeparator = Character.toString(symbols.getDecimalSeparator());
                     int max_len = 8;
                     NumberFormat btcFormat = NumberFormat.getInstance(Locale.US);
@@ -538,8 +541,7 @@ public class SendActivity extends AppCompatActivity {
                         }
                     } catch (NumberFormatException nfe) {
                         ;
-                    }
-                    catch(ParseException pe) {
+                    } catch (ParseException pe) {
                         ;
                     }
 
@@ -642,7 +644,7 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void review() {
-
+        setUpBoltzman();
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
             amountViewSwitcher.showNext();
@@ -1088,13 +1090,14 @@ public class SendActivity extends AppCompatActivity {
                 strPrivacyWarning = "";
             }
 
-            String strCannotDoBoltzmann = null;
-            if (!canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true) {
-                strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
-            } else {
-                strCannotDoBoltzmann = "";
+            if (!canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true)) {
+                stonewallOptionText.setAlpha(.6f);
+                stoneWallSwitch.setAlpha(.6f);
+                stoneWallDesc.setAlpha(.6f);
+                stoneWallSwitch.setChecked(false);
+                stoneWallSwitch.setEnabled(false);
+//                strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
             }
-
 
             /*
                     String strNoLikedTypeBoltzmann = null;
@@ -1107,7 +1110,7 @@ public class SendActivity extends AppCompatActivity {
                     */
 
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
-            message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
+            message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
             tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
 

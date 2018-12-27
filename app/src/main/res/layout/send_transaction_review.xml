@@ -192,9 +192,9 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/stone_wall_review_layout"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:id="@+id/stone_wall_review_layout"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp">
 
@@ -209,10 +209,10 @@
             android:id="@+id/textView_stonewall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="STONEWALL protection"
             android:textColor="@color/white"
             android:textStyle="bold"
@@ -237,8 +237,8 @@
             app:layout_constraintBottom_toTopOf="@+id/textView15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textView16"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+            app:layout_constraintStart_toStartOf="@+id/stonewall_desc"
+            app:layout_constraintTop_toBottomOf="@+id/stonewall_desc" />
 
         <TextView
             android:id="@+id/textView15"
@@ -271,14 +271,14 @@
             app:layout_constraintTop_toTopOf="@+id/textView15" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/stonewall_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
             android:layout_marginTop="8dp"
-            android:textSize="13sp"
+            android:layout_marginEnd="32dp"
             android:text="@string/stonewall_increases_deniability"
             android:textColor="@color/txt_grey"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/stone_wall_radio_btn"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/textView_stonewall"
@@ -288,9 +288,9 @@
             android:id="@+id/stone_wall_radio_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/textView16"
+            app:layout_constraintBottom_toBottomOf="@+id/stonewall_desc"
             app:layout_constraintEnd_toEndOf="@+id/textView_stonewall"
-            app:layout_constraintTop_toTopOf="@+id/textView16" />
+            app:layout_constraintTop_toTopOf="@+id/stonewall_desc" />
 
     </android.support.constraint.ConstraintLayout>
 
