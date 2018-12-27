@@ -51,12 +51,15 @@ public class WebSocketService extends Service {
                 APIFactory.getInstance(context).getToken();
             }
 
-            JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
-            if(jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
-                if(!APIFactory.getInstance(context).getToken())  {
-                    return;
+            if(APIFactory.getInstance(context).getAccessToken() != null)    {
+                JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
+                if(jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
+                    if(!APIFactory.getInstance(context).getToken())  {
+                        return;
+                    }
                 }
             }
+
         }
 
         try {
