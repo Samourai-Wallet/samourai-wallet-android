@@ -40,7 +40,7 @@
         app:layout_constraintGuide_begin="44dp" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/ricochet_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -53,7 +53,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/ricochet_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -62,17 +62,17 @@
         android:textColor="#afd2d2d2"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/ricochet_hops_switch"
-        app:layout_constraintStart_toStartOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintStart_toStartOf="@+id/ricochet_title"
+        app:layout_constraintTop_toBottomOf="@+id/ricochet_title" />
 
     <Switch
         android:id="@+id/ricochet_hops_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView8"
+        app:layout_constraintBottom_toBottomOf="@+id/ricochet_desc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView8" />
+        app:layout_constraintTop_toTopOf="@+id/ricochet_desc" />
 
     <Button
         android:id="@+id/review_button"
@@ -84,6 +84,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/ricochet_desc"
         app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>

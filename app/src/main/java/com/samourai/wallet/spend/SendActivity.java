@@ -102,7 +102,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, stoneWallSwitch;
     private SeekBar feeSeekBar;
@@ -166,6 +166,8 @@ public class SendActivity extends AppCompatActivity {
         entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
+        ricochetTitle = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_desc);
+        ricochetDesc = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_title);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
@@ -253,6 +255,39 @@ public class SendActivity extends AppCompatActivity {
             //small delay for storing prefs.
             new Handler().postDelayed(() -> prepareSpend(), 100);
         });
+    }
+
+    private void checkRicochetPossibility() {
+        double btc_amount = 0.0;
+
+        try {
+            btc_amount = NumberFormat.getInstance(Locale.US).parse(btcEditText.getText().toString().trim()).doubleValue();
+//                    Log.i("SendFragment", "amount entered:" + btc_amount);
+        } catch (NumberFormatException nfe) {
+            btc_amount = 0.0;
+        } catch (ParseException pe) {
+            btc_amount = 0.0;
+            return;
+        }
+
+        double dAmount = btc_amount;
+
+        amount = Math.round(dAmount * 1e8);
+        if (amount < (balance - (RicochetMeta.samouraiFeeAmountV2.add(BigInteger.valueOf(50000L))).longValue())) {
+            ricochetDesc.setAlpha(1f);
+            ricochetTitle.setAlpha(1f);
+            ricochetHopsSwitch.setAlpha(1f);
+            ricochetHopsSwitch.setEnabled(true);
+            if (PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true)) {
+                SPEND_TYPE = SPEND_RICOCHET;
+            }
+        } else {
+            ricochetDesc.setAlpha(.6f);
+            ricochetTitle.setAlpha(.6f);
+            ricochetHopsSwitch.setAlpha(.6f);
+            ricochetHopsSwitch.setEnabled(false);
+            SPEND_TYPE = SPEND_BOLTZMANN;
+        }
     }
 
     private void enableReviewButton(boolean enable) {
@@ -547,7 +582,7 @@ public class SendActivity extends AppCompatActivity {
 
                     Double sats = getSatValue(Double.valueOf(btc));
                     satEditText.setText(formattedSatValue(sats));
-
+                    checkRicochetPossibility();
                 }
 
 //
@@ -612,6 +647,7 @@ public class SendActivity extends AppCompatActivity {
             }
             satEditText.addTextChangedListener(this);
             btcEditText.addTextChangedListener(BTCWatcher);
+            checkRicochetPossibility();
             validateSpend();
 
         }
@@ -782,6 +818,7 @@ public class SendActivity extends AppCompatActivity {
                     long totalAmount = ricochetJsonObj.getLong("total_spend");
                     if (totalAmount > balance) {
                         Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                        ricochetHopsSwitch.setChecked(false);
                         return false;
                     }
 
