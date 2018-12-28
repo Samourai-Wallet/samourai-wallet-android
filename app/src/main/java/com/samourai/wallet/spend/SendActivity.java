@@ -363,14 +363,13 @@ public class SendActivity extends AppCompatActivity {
 
         feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
         DecimalFormat decimalFormat = new DecimalFormat("##.00");
-
+        setFeeLabels();
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
                 double value = ((double) i + multiplier) / (double) multiplier;
 
-                Log.i(TAG, "onProgressChanged: ".concat(String.valueOf(value)));
                 tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
                 if (value == 0.0) {
                     value = 1.0;
@@ -392,18 +391,7 @@ public class SendActivity extends AppCompatActivity {
                 }
                 tvEstimatedBlockWait.setText(nbBlocks + " blocks");
                 setFee(value);
-
-                if (value > feeHigh) {
-                    tvSelectedFeeRateLayman.setText(R.string.urgent);
-
-                } else if (value >= feeMed) {
-                    tvSelectedFeeRateLayman.setText(R.string.normal);
-
-                } else if (value >= feeLow) {
-                    tvSelectedFeeRateLayman.setText(R.string.low);
-                }
-
-
+                setFeeLabels();
             }
 
             @Override
@@ -433,6 +421,21 @@ public class SendActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    private void setFeeLabels() {
+        float sliderValue = (((float) feeSeekBar.getProgress()) / feeSeekBar.getMax());
+
+        float sliderInPercentage = sliderValue * 100;
+
+        if (sliderInPercentage < 33) {
+            tvSelectedFeeRateLayman.setText(R.string.low);
+        } else if (sliderInPercentage > 33 && sliderInPercentage < 66) {
+            tvSelectedFeeRateLayman.setText(R.string.normal);
+        } else if (sliderInPercentage > 66) {
+            tvSelectedFeeRateLayman.setText(R.string.urgent);
+
+        }
     }
 
     private void setFee(double fee) {
