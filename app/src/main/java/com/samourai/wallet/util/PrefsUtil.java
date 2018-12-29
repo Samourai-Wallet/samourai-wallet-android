@@ -44,6 +44,7 @@ public class PrefsUtil {
 	public static final String PAYNYM_FEATURED_SEGWIT = "paynymFeatured_v1";
 	public static final String IS_RESTORE = "isRestore";
 	public static final String HAPTIC_PIN = "hapticPin";
+	public static final String RICOCHET_STAGGERED = "ricochetStaggeredDelivery";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

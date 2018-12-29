@@ -23,6 +23,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -214,7 +215,7 @@ public class RicochetMeta {
 
     }
 
-    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47) {
+    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47, boolean useTimeLock) {
 
         JSONObject jObj = new JSONObject();
 
@@ -223,6 +224,12 @@ public class RicochetMeta {
             BigInteger biSpend = BigInteger.valueOf(spendAmount);
             BigInteger biSamouraiFee = BigInteger.valueOf(samouraiFeeAmountV2.longValue() * ((nbHops - 4) + 1));    // 4 hops min. for base fee, each additional hop 0.001
             BigInteger biFeePerKB = BigInteger.valueOf(feePerKBAmount);
+
+            long latestBlock = APIFactory.getInstance(context).getLatestBlockHeight();
+            long nTimeLock = 0L;
+            if(useTimeLock && latestBlock > 0L)    {
+                nTimeLock = latestBlock;
+            }
 
             jObj.put("ts", System.currentTimeMillis() / 1000L);
             jObj.put("hops", nbHops);
@@ -233,6 +240,9 @@ public class RicochetMeta {
             jObj.put("destination", strDestination);
             if(strPCode != null)    {
                 jObj.put("pcode", strPCode);
+            }
+            if(useTimeLock)    {
+                jObj.put("nTimeLock", nTimeLock);
             }
 
             JSONObject jHop = new JSONObject();
@@ -262,7 +272,7 @@ public class RicochetMeta {
             BigInteger hop0Fee = pair.getRight();
 //            Log.d("RicochetMeta", "hop0Fee (return):" + hop0Fee.longValue());
 
-            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47);
+            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47, nTimeLock);
             if(txHop0 == null)    {
                 return null;
             }
@@ -312,6 +322,9 @@ public class RicochetMeta {
             index++;
             jHop.put("tx", new String(Hex.encode(txHop0.bitcoinSerialize())));
             jHop.put("hash", txHop0.getHash().toString());
+            if(useTimeLock)    {
+                jHop.put("nTimeLock", nTimeLock);
+            }
 
             jHops.put(jHop);
 
@@ -387,12 +400,15 @@ public class RicochetMeta {
                     hopx = biSpend.add(biFeePerHop.multiply(BigInteger.valueOf((long) i)));
                 }
 
+                if(useTimeLock && latestBlock > 0L)    {
+                    nTimeLock = latestBlock + _hop;
+                }
                 //                Log.d("RicochetMeta", "doing hop:" + _hop);
                 if(samouraiFeeViaBIP47 && ((_hop - 1) < 4))    {
-                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, samouraiFees.get(_hop - 1));
+                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, samouraiFees.get(_hop - 1), nTimeLock);
                 }
                 else    {
-                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, null);
+                    txHop = getHopTx(prevTxHash, prevTxN, prevIndex, prevSpendValue, hopx.longValue(), _hop < nbHops ? getDestinationAddress(index) : strDestination, null, nTimeLock);
                 }
 
                 if(txHop == null)    {
@@ -409,6 +425,9 @@ public class RicochetMeta {
                 jHop.put("script", prevScriptPubKey);
                 jHop.put("tx", new String(Hex.encode(txHop.bitcoinSerialize())));
                 jHop.put("hash", txHop.getHash().toString());
+                if(useTimeLock)    {
+                    jHop.put("nTimeLock", nTimeLock);
+                }
                 if(_hop < nbHops)    {
                     jHop.put("index", index);
                     jHop.put("destination", getDestinationAddress(index));
@@ -500,7 +519,7 @@ public class RicochetMeta {
         }
     }
 
-    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47) {
+    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47, long nTimeLock) {
 
         List<MyTransactionOutPoint> unspent = new ArrayList<MyTransactionOutPoint>();
         long totalValueSelected = 0L;
@@ -534,12 +553,15 @@ public class RicochetMeta {
         }
 
         Transaction tx = SendFactory.getInstance(context).makeTransaction(0, unspent, receivers);
+        if(nTimeLock > 0L)    {
+            tx.setLockTime(nTimeLock);
+        }
         tx = SendFactory.getInstance(context).signTransaction(tx);
 
         return tx;
     }
 
-    private Transaction getHopTx(String prevTxHash, int prevTxN, int prevIndex, long prevSpendAmount, long spendAmount, String destination, Pair<String,Long> samouraiFeePair) {
+    private Transaction getHopTx(String prevTxHash, int prevTxN, int prevIndex, long prevSpendAmount, long spendAmount, String destination, Pair<String,Long> samouraiFeePair, long nTimeLock) {
 
         TransactionOutput output = null;
         if(destination.toLowerCase().startsWith("tb") || destination.toLowerCase().startsWith("bc"))   {
@@ -566,6 +588,9 @@ public class RicochetMeta {
         Script redeemScript = p2wpkh.segWitRedeemScript();
 
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
+        if(nTimeLock > 0L)    {
+            tx.setLockTime(nTimeLock);
+        }
         tx.addOutput(output);
 
         if(samouraiFeePair != null)    {
@@ -589,6 +614,9 @@ public class RicochetMeta {
         Sha256Hash txHash = Sha256Hash.wrap(prevTxHash);
         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash, Coin.valueOf(prevSpendAmount));
         TransactionInput txInput = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[]{}, outPoint, Coin.valueOf(prevSpendAmount));
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+            txInput.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
+        }
         tx.addInput(txInput);
 
         TransactionSignature sig = tx.calculateWitnessSignature(0, ecKey, redeemScript.scriptCode(), Coin.valueOf(prevSpendAmount), Transaction.SigHash.ALL, false);
