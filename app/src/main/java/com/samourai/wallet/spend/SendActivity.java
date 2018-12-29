@@ -1495,11 +1495,13 @@ public class SendActivity extends AppCompatActivity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if (btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
+        if (amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
-        } else if (btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+        }
+        else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
-        } else {
+        }
+        else {
             isValid = false;
         }
 

@@ -741,10 +741,10 @@ public class BatchSendActivity extends Activity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
+        if(amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
             isValid = true;
         }
-        else if(btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+        else if(amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
         }
         else    {
