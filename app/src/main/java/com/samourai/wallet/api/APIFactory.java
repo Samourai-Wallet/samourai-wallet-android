@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
@@ -31,6 +32,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
@@ -71,7 +73,7 @@ public class APIFactory	{
 
     private static String APP_TOKEN = null;         // API app token
     private static String ACCESS_TOKEN = null;      // API access token
-    private static int ACCESS_TOKEN_REFRESH = 300;  // in seconds
+    private static long ACCESS_TOKEN_REFRESH = 300L;  // in seconds
 
     private static long xpub_balance = 0L;
     private static HashMap<String, Long> xpub_amounts = null;
@@ -172,8 +174,37 @@ public class APIFactory	{
 
     }
 
-    public int getAccessTokenRefresh() {
+    public long getAccessTokenRefresh() {
         return ACCESS_TOKEN_REFRESH;
+    }
+
+    public boolean stayingAlive()   {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(APIFactory.getInstance(context).getAccessToken() == null)    {
+                APIFactory.getInstance(context).getToken();
+            }
+
+            if(APIFactory.getInstance(context).getAccessToken() != null)    {
+                JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
+                if(jwt != null && jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
+                    if(APIFactory.getInstance(context).getToken())  {
+                        return true;
+                    }
+                    else    {
+                        return false;
+                    }
+                }
+            }
+
+            return false;
+
+        }
+        else    {
+            return true;
+        }
+
     }
 
     public synchronized boolean getToken() {
