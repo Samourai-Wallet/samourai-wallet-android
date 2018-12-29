@@ -819,6 +819,13 @@ public class SendActivity extends AppCompatActivity {
                         ricochetHopsSwitch.setChecked(false);
                         return false;
                     }
+                    long hop0Fee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee");
+                    long perHopFee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee_per_hop");
+
+                    //WIP need to inclue samourai fee
+                    long ricochetFee = hop0Fee + (4 * perHopFee);
+
+                    tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
