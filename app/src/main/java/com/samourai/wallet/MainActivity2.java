@@ -159,7 +159,7 @@ public class MainActivity2 extends Activity {
         if(AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
         !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
             Toast.makeText(MainActivity2.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
-            doAppInit(false, null, null);
+            doAppInit0(false, null, null);
         }
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
@@ -179,7 +179,7 @@ public class MainActivity2 extends Activity {
                 strPCode = extras.getString("pcode");
             }
 
-            doAppInit(isDial, strUri, strPCode);
+            doAppInit0(isDial, strUri, strPCode);
 
         }
 
@@ -294,7 +294,7 @@ public class MainActivity2 extends Activity {
 
     }
 
-    private void doAppInit(boolean isDial, final String strUri, final String strPCode) {
+    private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
         boolean needToken = false;
         if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
@@ -314,13 +314,9 @@ public class MainActivity2 extends Activity {
                 public void run() {
                     Looper.prepare();
 
-                    if(APIFactory.getInstance(MainActivity2.this).getToken())    {
-                        doAppInit(isDial, strUri, strPCode);
-                    }
-                    else    {
-                        Toast.makeText(MainActivity2.this, R.string.api_key_error, Toast.LENGTH_SHORT).show();
-                        MainActivity2.this.finish();
-                    }
+                    APIFactory.getInstance(MainActivity2.this).stayingAlive();
+
+                    doAppInit1(isDial, strUri, strPCode);
 
                     Looper.loop();
 
@@ -329,6 +325,13 @@ public class MainActivity2 extends Activity {
 
             return;
         }
+        else    {
+            doAppInit1(isDial, strUri, strPCode);
+        }
+
+    }
+
+    private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
         if((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn())    {
 

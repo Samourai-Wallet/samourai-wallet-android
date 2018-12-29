@@ -45,22 +45,7 @@ public class WebSocketService extends Service {
         //
         context = this.getApplicationContext();
 
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-
-            if(APIFactory.getInstance(context).getAccessToken() == null)    {
-                APIFactory.getInstance(context).getToken();
-            }
-
-            if(APIFactory.getInstance(context).getAccessToken() != null)    {
-                JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
-                if(jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
-                    if(!APIFactory.getInstance(context).getToken())  {
-                        return;
-                    }
-                }
-            }
-
-        }
+        APIFactory.getInstance(context).stayingAlive();
 
         try {
             if(HD_WalletFactory.getInstance(context).get() == null)    {
