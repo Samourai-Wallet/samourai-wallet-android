@@ -278,15 +278,11 @@ public class SendActivity extends AppCompatActivity {
             ricochetTitle.setAlpha(1f);
             ricochetHopsSwitch.setAlpha(1f);
             ricochetHopsSwitch.setEnabled(true);
-            if (PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true)) {
-                SPEND_TYPE = SPEND_RICOCHET;
-            }
         } else {
             ricochetDesc.setAlpha(.6f);
             ricochetTitle.setAlpha(.6f);
             ricochetHopsSwitch.setAlpha(.6f);
             ricochetHopsSwitch.setEnabled(false);
-            SPEND_TYPE = SPEND_BOLTZMANN;
         }
     }
 
@@ -489,7 +485,6 @@ public class SendActivity extends AppCompatActivity {
 
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
-
     }
 
     private void setBalance() {
