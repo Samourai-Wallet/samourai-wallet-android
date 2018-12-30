@@ -93,11 +93,9 @@ import java.util.Vector;
 
 public class SendActivity extends AppCompatActivity {
 
-
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;
     private static final String TAG = "SendActivity";
-
 
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
@@ -137,6 +135,10 @@ public class SendActivity extends AppCompatActivity {
     private int change_index;
     private String ricochetMessage;
     private JSONObject ricochetJsonObj = null;
+
+    private int idxBIP44Internal = 0;
+    private int idxBIP49Internal = 0;
+    private int idxBIP84Internal = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +213,8 @@ public class SendActivity extends AppCompatActivity {
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
 
         SPEND_TYPE = SPEND_BOLTZMANN;
+
+        saveChangeIndexes();
 
         setUpRicochet();
 
@@ -473,7 +477,7 @@ public class SendActivity extends AppCompatActivity {
                 SPEND_TYPE = SPEND_RICOCHET;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true);
             } else {
-                SPEND_TYPE = PrefsUtil.getInstance(this).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
+                SPEND_TYPE = stoneWallSwitch.isChecked() ? SPEND_BOLTZMANN : SPEND_SIMPLE;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, false);
             }
 
@@ -918,6 +922,7 @@ public class SendActivity extends AppCompatActivity {
             if (_utxos1 == null && _utxos2 == null) {
                 // can't do boltzmann, revert to SPEND_SIMPLE
                 canDoBoltzmann = false;
+                restoreChangeIndexes();
                 SPEND_TYPE = SPEND_SIMPLE;
             } else {
 
@@ -934,6 +939,7 @@ public class SendActivity extends AppCompatActivity {
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE
                     canDoBoltzmann = false;
+                    restoreChangeIndexes();
                     SPEND_TYPE = SPEND_SIMPLE;
                 } else {
                     canDoBoltzmann = true;
@@ -1126,6 +1132,7 @@ public class SendActivity extends AppCompatActivity {
             }
 
             if (!canDoBoltzmann) {
+                restoreChangeIndexes();
                 stonewallOptionText.setAlpha(.6f);
                 stoneWallSwitch.setAlpha(.6f);
                 stoneWallDesc.setAlpha(.6f);
@@ -1648,6 +1655,32 @@ public class SendActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.ok, (dialog, whichButton) -> dialog.dismiss());
         if (!isFinishing()) {
             dlg.show();
+        }
+
+    }
+
+    private void saveChangeIndexes()   {
+
+        idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+        idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+        try {
+            idxBIP44Internal = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
+        }
+        catch(IOException | MnemonicException.MnemonicLengthException e) {
+            ;
+        }
+
+    }
+
+    private void restoreChangeIndexes()   {
+
+        BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
+        BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
+        try {
+            HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(idxBIP44Internal);
+        }
+        catch(IOException | MnemonicException.MnemonicLengthException e) {
+            ;
         }
 
     }
