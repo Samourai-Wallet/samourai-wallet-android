@@ -769,6 +769,7 @@ public class SendActivity extends AppCompatActivity {
         long totalValueSelected = 0L;
         long change = 0L;
         BigInteger fee = null;
+        boolean canDoBoltzmann = true;
 
 //                Log.d("SendActivity", "amount:" + amount);
 //                Log.d("SendActivity", "balance:" + balance);
@@ -782,6 +783,7 @@ public class SendActivity extends AppCompatActivity {
         else if (amount == balance) {
             // make sure we are using simple spend
             SPEND_TYPE = SPEND_SIMPLE;
+            canDoBoltzmann =  false;
 
 //                    Log.d("SendActivity", "amount == balance");
             // take all utxos, deduct fee
@@ -798,7 +800,6 @@ public class SendActivity extends AppCompatActivity {
             ;
         }
 
-        boolean canDoBoltzmann = true;
         org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
         if (SPEND_TYPE == SPEND_RICOCHET) {
 
