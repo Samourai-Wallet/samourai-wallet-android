@@ -315,7 +315,6 @@ public class PayloadUtil	{
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
             meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN));
-            meta.put("use_boltzmann", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BOLTZMANN, true));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("use_ricochet", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_RICOCHET, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
@@ -503,16 +502,6 @@ public class PayloadUtil	{
                 //
                 // move BIP126 over to boltzmann spend setting
                 //
-                if(meta.has("use_bip126")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_bip126"));
-                    editor.putBoolean("boltzmann", meta.getBoolean("use_bip126"));
-                    editor.commit();
-                }
-                if(meta.has("use_boltzmann")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_boltzmann"));
-                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
-                    editor.commit();
-                }
                 if(meta.has("rbf_opt_in")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.RBF_OPT_IN, meta.getBoolean("rbf_opt_in"));
                     editor.putBoolean("rbf", meta.getBoolean("rbf_opt_in") ? true : false);

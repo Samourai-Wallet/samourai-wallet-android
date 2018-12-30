@@ -210,11 +210,7 @@ public class SendActivity extends AppCompatActivity {
         tvTotalFee.setOnClickListener(clipboardCopy);
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
 
-        SPEND_TYPE = PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_BOLTZMANN, true) ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-        if (SPEND_TYPE > SPEND_BOLTZMANN) {
-            SPEND_TYPE = SPEND_BOLTZMANN;
-            PrefsUtil.getInstance(this).setValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN);
-        }
+        SPEND_TYPE = SPEND_BOLTZMANN;
 
         setUpRicochet();
 
@@ -243,7 +239,6 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpBoltzman() {
-        PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, true);
         stonewallOptionText.setAlpha(1f);
         stoneWallSwitch.setAlpha(1f);
         stoneWallDesc.setAlpha(1f);
@@ -251,7 +246,6 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch.setEnabled(true);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-            PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_BOLTZMANN, checked);
             //small delay for storing prefs.
             new Handler().postDelayed(() -> prepareSpend(), 100);
         });
@@ -800,7 +794,7 @@ public class SendActivity extends AppCompatActivity {
             ;
         }
 
-        boolean canDoBoltzmann = false;
+        boolean canDoBoltzmann = true;
         org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
         if (SPEND_TYPE == SPEND_RICOCHET) {
 
@@ -822,7 +816,6 @@ public class SendActivity extends AppCompatActivity {
                     long hop0Fee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee");
                     long perHopFee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee_per_hop");
 
-                    //WIP need to inclue samourai fee
                     long ricochetFee = hop0Fee + (4 * perHopFee);
 
                     tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
@@ -1132,7 +1125,7 @@ public class SendActivity extends AppCompatActivity {
                 strPrivacyWarning = "";
             }
 
-            if (!canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true)) {
+            if (!canDoBoltzmann) {
                 stonewallOptionText.setAlpha(.6f);
                 stoneWallSwitch.setAlpha(.6f);
                 stoneWallDesc.setAlpha(.6f);
