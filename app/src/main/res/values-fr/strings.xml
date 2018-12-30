@@ -38,7 +38,7 @@
     <string name="options_wipe">Supprimer ce portefeuille en toute sécurité</string>
     <string name="options_wipe2">Supprimer en toute sécurité le portefeuille de cet appareil.</string>
     <string name="options_stealth_display">Lanceur d\'application mode furtif</string>
-    <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
+    <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
     <string name="options_remote_commands">Permettre les commandes à distance</string>
     <string name="options_remote_commands2">Permettre les commandes à distance via SMS.</string>
     <string name="options_currency">Taux en cours</string>
@@ -321,7 +321,7 @@
     <string name="options_bump_fee">Augmenter les frais tx</string>
 
     <string name="cpfp_cannot_retrieve_tx">Les informations concernant la transaction ne peuvent être récupérées. Veuillez réessayer.</string>
-    <string name="fee_bump_not_necessary">Sachez qu\'il n'est peut-être pas nécessaire  d\'augmenter fortement les frais de cette transaction.</string>
+    <string name="fee_bump_not_necessary">Sachez qu\'il n\'est peut-être pas nécessaire  d\'augmenter fortement les frais de cette transaction.</string>
     <string name="bump_fee">Voudriez-vous augmenter les frais de transaction des mineurs afin d\'accélérer l\'obtention d\'une confirmation?\n\nFrais Additionnels des Mineurs:</string>
 
     <string name="options_sign">Signer le message</string>
@@ -562,7 +562,7 @@
     <item>Ricochet Segwit</item>
     <item>Whirlpool Segwit pre-mix</item>
     </string-array>
-    <string name="chain_id">Chaîne d'adresses</string>
+    <string name="chain_id">Chaîne d\'adresses</string>
     <string name="receive_chain">Recevoir l\'adresse</string>
     <string name="change_chain">Changer l\'adresse</string>
     
