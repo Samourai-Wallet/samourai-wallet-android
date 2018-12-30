@@ -816,7 +816,7 @@ public class SendActivity extends AppCompatActivity {
                     long hop0Fee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee");
                     long perHopFee = ricochetJsonObj.getJSONArray("hops").getJSONObject(0).getLong("fee_per_hop");
 
-                    long ricochetFee = hop0Fee + (4 * perHopFee);
+                    long ricochetFee = hop0Fee + (RicochetMeta.defaultNbHops * perHopFee);
 
                     tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
 

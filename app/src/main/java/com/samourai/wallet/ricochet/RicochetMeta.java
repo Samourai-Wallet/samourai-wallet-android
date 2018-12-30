@@ -64,6 +64,8 @@ public class RicochetMeta {
     public final static BigInteger samouraiFeeAmountV1 = BigInteger.valueOf(200000L);
     public final static BigInteger samouraiFeeAmountV2 = BigInteger.valueOf(200000L);
 
+    public final static int defaultNbHops = 4;
+
     private static RicochetMeta instance = null;
 
     private static int index = 0;
@@ -221,7 +223,7 @@ public class RicochetMeta {
         try {
 
             BigInteger biSpend = BigInteger.valueOf(spendAmount);
-            BigInteger biSamouraiFee = BigInteger.valueOf(samouraiFeeAmountV2.longValue() * ((nbHops - 4) + 1));    // 4 hops min. for base fee, each additional hop 0.001
+            BigInteger biSamouraiFee = BigInteger.valueOf(samouraiFeeAmountV2.longValue() * ((nbHops - defaultNbHops) + 1));    // default 4 hops min. for base fee, each additional hop 0.001
             BigInteger biFeePerKB = BigInteger.valueOf(feePerKBAmount);
 
             jObj.put("ts", System.currentTimeMillis() / 1000L);
