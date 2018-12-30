@@ -208,7 +208,7 @@ public class TxDetailsActivity extends AppCompatActivity {
     }
 
     private boolean isBoostingAvailable() {
-        return tx.getConfirmations() < 3;
+        return tx.getConfirmations() < 1;
     }
 
     private void fetchTxDetails() {
