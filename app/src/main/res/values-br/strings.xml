@@ -132,6 +132,7 @@
     <string name="bip39_must">Sua carteira deve usar uma senha. Por favor tente novamente.</string>
     <string name="bip39_unmatch">Senha não corresponde. Por favor tente novamente.</string>
     <string name="bip39_invalid">Não use nenhum caractere de espaço na sua senha. Por favor tente novamente.</string>
+    <string name="bip39_empty">Você deve definir uma passphrase.</string>
     <string name="please_select">Por favor selecione...</string>
     <string name="create_wallet">Criar carteira</string>
     <string name="restore_wallet">Restaurar carteira</string>
@@ -262,6 +263,8 @@
 
     <string name="cannot_reach_api">Os APIs da Samourai não podem ser acessados. Por favor verifique sua conexão e tente novamente ou tente mais tarde.</string>
     <string name="api_error">Os APIs da Samourai estão retornando um erro. Tente novamente ou mais tarde.</string>
+    <string name="api_key_error">Chave de API inválida.</string>
+    <string name="api_token_error">Token API inválido.</string>
 
     <string name="cannot_recognize_privkey">Não é possível reconhecer a chave privada</string>
     <string name="cannot_sweep_privkey">Erro limpando chave privada</string>
@@ -396,6 +399,7 @@
     <string name="share_qr">Compartilhar QR</string>
     <string name="send_tx">Enviar transação primária</string>
     <string name="tx_too_large_qr">Transação primária grande demais para exibir em QR code.</string>
+
     <string name="select_network">Selecionar rede...</string>
     <string name="MainNet">MainNet</string>
     <string name="TestNet">TestNet</string>
@@ -457,21 +461,51 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC em sua carteira e tente novamente.</string>
     <string name="help">Ajuda</string>
 
+    <string name="passphrase_disclaimer">Eu entendo que Samourai não pode me ajudar em caso de esquecimento ou perda de passphrases. Samourai nunca tem conhecimento do meu passphrase.</string>
+    <string name="confirm_pin_code">Confirmar código pin</string>
+    <string name="re_enter_your_pin_code">Digite o seu código PIN novamente</string>
+    <string name="re_enter_a_passphrase">Digite a sua passphrase novamente</string>
+    <string name="create_a_passphrase">Criar nova passphrase</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Criar uma passphrase segura para sua carteira</string>
+    <string name="set_pin_code">Definir código Pin</string>
+    <string name="accept_disclaimer_error">Você predcisa aceitar o aviso legal</string>
+    <string name="import_external_wallet">Importar carteira externa</string>
+    <string name="import_samourai_wallet">Importar backup de carteira samourai</string>
+    <string name="backup_file">Arquivo de backup</string>
+    <string name="import_an_encrypted_samourai_wallet">importe o backup criptografado para restaurar a sua carteira samourai com todos os metadados intactos</string>
+    <string name="back">VOLTAR</string>
+    <string name="finish">fim</string>
+    <string name="choose_file">selecione o arquivo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_bip39_password">Adcione a senha bip39</string>
+    <string name="close_bip39_password">Fechar senha bip39</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Digite a mnemonic seed para importar a carteira de outro fornecedor.</string>
+    <string name="last_updated">Atualizado em</string>
+    <string name="get_help">Obter ajuda</string>
+    <string name="offline_mode">Modo offline</string>
+    <string name="import_samourai_backup">Importar Samourai backup</string>
+    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="enter_your_wallet_passphrase">Digite a passphrase da sua carteira</string>
+    <string name="start_new_wallet">Criar nova carteira</string>
+    <string name="get_help_create">Criar carteira: Obter ajuda</string>
+    <string name="get_help_restore">Restaurar carteira: Obter ajuda</string>
+
     <string name="fee">Taxa de mineradores</string>
     <string name="fee_low_priority">Baixa prioridade: estimado 24</string>
     <string name="fee_mid_priority">Prioridade normal: estimado 6</string>
     <string name="fee_high_priority">Alta prioridade: estimado 2</string>
     <string name="fee_custom_priority">Taxa personalizada: estimado</string>
     <string name="blocks_to_cf">blocos antes da confirmação</string>
+
     <string name="invalid_mnemonic_word">Palavra mnemonic BIP39 inválida</string>
     <string name="invalid_mnemonic">Inválido BIP39 mnemonic</string>
     <string name="enter_your_code_here">Insira seu código aqui</string>
 
     <string name="declaimer_recovery_words">Eu confirmo que eu escrevi as palavras acima e guardei elas de maneira segura em um local seguro. Eu entendo que qualquer pessoa que tiver acesso a ambos minha senha e minhas palavras de recuperação, vai ter acesso a minha carteira e todos os fundos.</string>  
-
     <string name="return_to_wallet">Retornar para a carteira</string>
-    <string name="caution_message_recovery_words">Não é seguro manter essas palavras salvas no seu computador ou na nuvem. Escreva essas palavras em um pedaço de papel e mantenha elas em segredo e seguras.
-</string>
+    <string name="caution_message_recovery_words">Não é seguro manter essas palavras salvas no seu computador ou na nuvem. Escreva essas palavras em um pedaço de papel e mantenha elas em segredo e seguras.</string>
     <string name="these_words_are">Estas palavras são um backup de todas as chaves secretas em sua carteira.</string>
     <string name="recovery_words">PALAVRAS DE RECUPERAÇÃO</string>
 
@@ -486,8 +520,15 @@
     <string name="permission_dialog_message_camera">Sua carteira precisa de permissão para acessar a câmera para que possa escanear os códigos QR.</string>
 
     <string name="use_bech32">Use endereço bech32</string>
+
     <string name="boltzmann_cannot">Um gasto STONEWALL não pode ser composto com seu conjunto atual de unspents. Se você precisar de um gasto de STONEWALL, toque em \'NÃO\' e tente novamente com um conjunto modificado de unspents.</string>
     <string name="boltzmann_like_typed">Esteja ciente de que \'Receber change em saídas com tipos semelhantes\' está DESATIVADO e pode resultar em uma estrutura de transação menos ideal para seus gastos STONEWALL.</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Avançado</string>
+    <string name="broadcast_with_txtenna">Transmitir com TxTenna</string>
+    <string name="show_qr_code">Mostrar código QR</string>
+    <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa. Como você gostaria de proceder</string>
 
     <string name="insufficient_fee">Taxa insuficiente</string>
     <string name="action_utxo_amounts">Ver valores por tipo de endereço</string>
@@ -497,12 +538,6 @@
     <string name="total_p2wpkh">Total SegWit (bech32):</string>
     <string name="total_blocked">Total bloqueado:</string>
 
-    <string name="title_activity_main3">Main3Activity</string>
-    <string name="_0_00">0.00</string>
-    <string name="advanced">Avançado</string>
-    <string name="broadcast_with_txtenna">Transmitir com TxTenna</string>
-    <string name="show_qr_code">Mostrar código QR</string>
-    <string name="tx_connectivity_failure_msg">Não pode transmitir uma transação sem uma conexão de dados ativa.Como você gostaria de proceder</string>
 
     <string name="tx_creating_ok">Criando transação...</string>
     <string name="tx_creating_ko">Não é possível criar transação</string>
@@ -522,6 +557,7 @@
     </string-array>
 
     <string name="in_offline_mode">A carteira Samourai está no modo offline.</string>
+    <string name="broadcast_off">Transmitir trasações está desligado em sua Samourai Wallet.</string>
     <string name="tx_standby">Transação em stand-by</string>
     <string name="show_hex">Exibir Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna no Android em breve</string>
@@ -540,10 +576,58 @@
         <item>BIP84 Segwit</item>
         <item>BIP44 P2PKH</item>
         <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pré-mix</item>
+        <item>Whirlpool Segwit pós-mix</item>
     </string-array>
 
     <string name="chain_id">Cadeia de endereços</string>
     <string name="receive_chain">Endereço de recebimento</string>
     <string name="change_chain">Endereço de troco</string>
-    
+
+    <string name="whirlpool_postmix">Whirlpool Segwit pós-mix</string>
+    <string name="encrypted_backup_detected">Backup criptografado encontrado</string>
+    <string name="restore">RESTAURAR</string>
+    <string name="request_amount">Solicitar quantia</string>
+    <string name="address_type">Tipo de endereço</string>
+    <string name="path">Caminho</string>
+
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg">Saltos adicionais entre sua carteira e o destino para melhor fungibilidade</string>
+    <string name="review_transaction">REVER TRANSAÇÃO</string>
+    <string name="stonewall_increases_deniability">STONEWALL Increases deniability and   reduce linkability of this transaction.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Passar o bitcoin por um ciclo\n whirlpool vai ajudar a ocultar os vestigios que suas\ntransações deixam</string>
+    <string name="metadata_cleaner">limpador de metadados</string>
+    <string name="end_to_end_trustless">end-to-end trustlessness</string>
+    <string name="your_private_keys">Suas chaves privadas nunca saem do\n dispositivo em nenhum momento durante o\n ciclo Whirlpool</string>
+    <string name="different_cycles_for">ciclos diferentes para necessidades diferentes</string>
+    <string name="complete_a_slow_cycle">Pague uma pequena taxa para um ciclo rápido ou\n ganhe uma pequena recompensa em BTC quando você\ncompletar um ciclo lento</string>
+    <string name="supercharge_whirlpool_desc">Seus bitcoins serão adicionados no topo da fila para processamento imediato</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string>
+    <string name="standard_whirlpool_desc">Seus bitcoins serão adicionados no fim da fila, mas você receberá uma pequena recompensa em BTC quando o ciclo concluir</string>
+    <string name="standard">Padrão</string>
+    <string name="_48_hours">Mais de 48h</string>
+    <string name="free">GRATIS</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 min</string>
+    <string name="select_a_cycle_type">Selecione um tipo de ciclo</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Envio da transação</string>
+    <string name="pending">pendente</string>
+    <string name="transaction_id">ID da transação</string>
+    <string name="completed">Concluído</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Pagar novamente</string>
+    <string name="miner_fee_rate">Taxa de mineração</string>
+    <string name="status">Status</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Numbero de conbinações \ndeterministas</string>
+    <string name="transaction_entropy">Entropia da transação</string>
+    <string name="efficiency_score">Pontuação de eficiencia</string>
+    <string name="hide_log">ESCONDER LOG</string>
+    <string name="copy">Copiar</string>
+    <string name="show_log">Exibir Log</string>
+
 </resources>
