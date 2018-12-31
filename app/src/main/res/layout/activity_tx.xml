@@ -87,7 +87,7 @@
     <LinearLayout
 
         android:id="@+id/linearLayout8"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
@@ -117,7 +117,8 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:textAlignment="center"
-            android:visibility="visible" />
+            android:visibility="gone"
+            tools:text="+yellowmountain5eE" />
 
     </LinearLayout>
 
