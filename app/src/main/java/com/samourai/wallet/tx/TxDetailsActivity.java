@@ -128,17 +128,18 @@ public class TxDetailsActivity extends AppCompatActivity {
         calculateSatoshiDisplayAmount((long) tx.getAmount());
         amount.setText(BTCDisplayAmount);
         bottomButton.setVisibility(View.GONE);
-        if (this.isBoostingAvailable()) {
 
+        if (tx.getConfirmations() <= 3) {
             txStatus.setTextColor(ContextCompat.getColor(this, R.color.tx_broadcast_offline_bg));
             String txConfirmation = getString(R.string.unconfirmed) +
                     " (" +
                     tx.getConfirmations() +
                     "/3)";
             txStatus.setText(txConfirmation);
+        }
+        if (this.isBoostingAvailable()) {
             bottomButton.setVisibility(View.VISIBLE);
             bottomButton.setText("Boost transaction fee");
-
         }
 
         if (tx.getConfirmations() > 3) {
