@@ -117,7 +117,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         });
 
     }
- 
+
 
     private void payAgain() {
     }
@@ -139,7 +139,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         }
         if (this.isBoostingAvailable()) {
             bottomButton.setVisibility(View.VISIBLE);
-            bottomButton.setText("Boost transaction fee");
+            bottomButton.setText(R.string.boost_transaction_fee);
         }
 
         if (tx.getConfirmations() > 3) {
@@ -166,7 +166,6 @@ public class TxDetailsActivity extends AppCompatActivity {
         String message = getString(R.string.options_unconfirmed_tx);
 
         if (this.isRBFPossible()) {
-            Log.i(TAG, "doBoosting: RBF");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.app_name);
             builder.setMessage(message);
@@ -179,7 +178,6 @@ public class TxDetailsActivity extends AppCompatActivity {
             return;
         } else {
             if (this.isCPFPPossible()) {
-                Log.i(TAG, "doBoosting: CPFP");
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TxDetailsActivity.this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage(message);
