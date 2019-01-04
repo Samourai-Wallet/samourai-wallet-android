@@ -217,6 +217,16 @@ public class PayloadUtil	{
                 AddressFactory.getInstance().setHighestTxReceiveIdx(i, 0);
                 AddressFactory.getInstance().setHighestTxChangeIdx(i, 0);
             }
+
+            AddressFactory.getInstance().setHighestBIP49ReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBIP49ChangeIdx(0);
+            AddressFactory.getInstance().setHighestBIP84ReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBIP84ChangeIdx(0);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+
             HD_WalletFactory.getInstance(context).set(null);
         }
         catch(MnemonicException.MnemonicLengthException mle)	{
