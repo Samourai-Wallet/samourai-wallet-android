@@ -656,5 +656,6 @@
     <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
     <string name="tag_utxo">Label UTXO</string>
     <string name="boost_transaction_fee">Boost transaction fee</string>
+    <string name="refund">Refund</string>
 
 </resources>

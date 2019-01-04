@@ -232,25 +232,32 @@ public class SendActivity extends AppCompatActivity {
 
         setUpFee();
 
+        setBalance();
+
+        enableReviewButton(false);
+
+        setUpBoltzman();
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 //            bViaMenu = extras.getBoolean("via_menu", false);
             String strUri = extras.getString("uri");
             strPCode = extras.getString("pcode");
+
             if (strUri != null && strUri.length() > 0) {
                 processScan(strUri);
+            }
+            if (extras.containsKey("amount")) {
+                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
             }
             if (strPCode != null && strPCode.length() > 0) {
                 processPCode(strPCode, null);
             }
         }
-        enableReviewButton(false);
 
-        setUpBoltzman();
 
         validateSpend();
 
-        setBalance();
 
     }
 
