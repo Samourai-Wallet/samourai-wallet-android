@@ -220,6 +220,12 @@ public class SendActivity extends AppCompatActivity {
 
         setUpFee();
 
+        setBalance();
+
+        enableReviewButton(false);
+
+        setUpBoltzman();
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 //            bViaMenu = extras.getBoolean("via_menu", false);
@@ -232,13 +238,8 @@ public class SendActivity extends AppCompatActivity {
                 processPCode(strPCode, null);
             }
         }
-        enableReviewButton(false);
-
-        setUpBoltzman();
 
         validateSpend();
-
-        setBalance();
 
     }
 
@@ -488,7 +489,7 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(this).getXpubAmounts().get(HD_WalletFactory.getInstance(this).get().getAccount(selectedAccount).xpubstr());
+            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(this).get().getAccount(selectedAccount).xpubstr());
         } catch (IOException ioe) {
             ioe.printStackTrace();
             balance = 0L;
@@ -710,11 +711,9 @@ public class SendActivity extends AppCompatActivity {
         double dAmount = btc_amount;
 
         amount = (long) (Math.round(dAmount * 1e8));
-        ;
+        //                Log.i("SendActivity", "amount:" + amount);
 
-//                Log.i("SendActivity", "amount:" + amount);
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
-
 
         if ((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
@@ -759,7 +758,7 @@ public class SendActivity extends AppCompatActivity {
         neededAmount += SamouraiWallet.bDust.longValue();
 
         // get all UTXO
-        List<UTXO> utxos = SpendUtil.getUTXOS(this, address, neededAmount);
+        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount);
 
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
@@ -1490,8 +1489,8 @@ public class SendActivity extends AppCompatActivity {
         //        Log.i("SendFragment", "amount entered (converted):" + dAmount);
 
         final long amount = (long) (Math.round(dAmount * 1e8));
-//        Log.i("SendFragment", "amount entered (converted to long):" + amount);
-//        Log.i("SendFragment", "balance:" + balance);
+        Log.i("SendFragment", "amount entered (converted to long):" + amount);
+        Log.i("SendFragment", "balance:" + balance);
         if (amount > balance) {
             insufficientFunds = true;
         }
