@@ -843,7 +843,7 @@ public class BatchSendActivity extends Activity {
 
         long changeAmount = totalValueSelected - (amount + fee.longValue());
         String change_address = null;
-        int change_idx = -1;
+        int change_idx = 0;
         if(changeAmount > 0L)    {
             change_idx = BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
             change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
