@@ -387,6 +387,8 @@ public class SendActivity extends AppCompatActivity {
                 tvEstimatedBlockWait.setText(nbBlocks + " blocks");
                 setFee(value);
                 setFeeLabels();
+
+                restoreChangeIndexes();
             }
 
             @Override
@@ -396,7 +398,7 @@ public class SendActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                restoreChangeIndexes();
             }
         });
 
@@ -677,6 +679,7 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void review() {
+
         setUpBoltzman();
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
@@ -696,6 +699,8 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private boolean prepareSpend() {
+
+        restoreChangeIndexes();
 
         double btc_amount = 0.0;
 
@@ -922,7 +927,6 @@ public class SendActivity extends AppCompatActivity {
             if (_utxos1 == null && _utxos2 == null) {
                 // can't do boltzmann, revert to SPEND_SIMPLE
                 canDoBoltzmann = false;
-                restoreChangeIndexes();
                 SPEND_TYPE = SPEND_SIMPLE;
             } else {
 
@@ -1067,6 +1071,7 @@ public class SendActivity extends AppCompatActivity {
                     //
                     // fee sanity check
                     //
+                    restoreChangeIndexes();
                     Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outpoints, receivers);
                     tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                     byte[] serialized = tx.bitcoinSerialize();
