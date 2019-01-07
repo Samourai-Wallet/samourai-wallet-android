@@ -878,9 +878,17 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference idxPref = (Preference) findPreference("idx");
+                idxPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doIndexes();
+                        return true;
+                        }
+                     });
+
                 Preference addressCalcPref = (Preference) findPreference("acalc");
                 addressCalcPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
+                        public boolean onPreferenceClick(Preference preference) {
                         doAddressCalc();
                         return true;
                     }
@@ -1191,7 +1199,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 ).show();
 
     }
-
 
     private void getTrustedNode()	{
 
@@ -1550,6 +1557,56 @@ public class SettingsActivity2 extends PreferenceActivity	{
         Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
         intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
         startActivityForResult(intent, SCAN_PSBT);
+    }
+
+    private void doIndexes()	{
+
+        final StringBuilder builder = new StringBuilder();
+
+        int idxBIP84External = 0;
+        int idxBIP84Internal = 0;
+        int idxBIP49External = 0;
+        int idxBIP49Internal = 0;
+        int idxBIP44External = 0;
+        int idxBIP44Internal = 0;
+
+        idxBIP84External = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getReceive().getAddrIdx();
+        idxBIP84Internal = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
+        idxBIP49External = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getReceive().getAddrIdx();
+        idxBIP49Internal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
+
+        try {
+            idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
+            idxBIP44Internal = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getChange().getAddrIdx();
+        }
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+        catch (MnemonicException.MnemonicLengthException mle) {
+            mle.printStackTrace();
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        }
+
+        builder.append("44 receive: " + idxBIP44External + "\n");
+        builder.append("44 change: " + idxBIP44Internal + "\n");
+        builder.append("49 receive: " + idxBIP49External + "\n");
+        builder.append("49 change: " + idxBIP49Internal + "\n");
+        builder.append("84 receive :" + idxBIP84External + "\n");
+        builder.append("84 change :" + idxBIP84Internal + "\n");
+        builder.append("Ricochet :" + RicochetMeta.getInstance(SettingsActivity2.this).getIndex() + "\n");
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(builder.toString())
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
     }
 
     private void doAddressCalc()    {
