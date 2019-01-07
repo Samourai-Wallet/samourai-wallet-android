@@ -59,6 +59,7 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -89,7 +90,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Vector;
-
 
 public class SendActivity extends AppCompatActivity {
 
@@ -240,6 +240,16 @@ public class SendActivity extends AppCompatActivity {
         }
 
         validateSpend();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        AppUtil.getInstance(SendActivity.this).setIsInForeground(true);
+
+        AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
     }
 
