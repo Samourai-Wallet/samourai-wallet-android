@@ -30,7 +30,7 @@ import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.ReceiversUtil;
+//import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
@@ -56,7 +56,7 @@ public class MainActivity2 extends Activity {
 
             if(ACTION_RESTART.equals(intent.getAction())) {
 
-                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
+//                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
 
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                     if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {

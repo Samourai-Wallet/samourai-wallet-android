@@ -10,7 +10,7 @@
         android:title="@string/options_txs"
         android:key="txs"
         />
-
+<!--
     <Preference
         android:title="@string/options_cat_stealth"
         android:key="stealth"
@@ -20,7 +20,7 @@
         android:title="@string/options_cat_remote"
         android:key="remote"
         />
-
+-->
     <Preference
         android:title="@string/options_cat_networking"
         android:key="networking"

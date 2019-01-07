@@ -41,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity	{
                 return true;
             }
         });
-
+/*
         Preference stealthPref = (Preference) findPreference("stealth");
         stealthPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -80,7 +80,7 @@ public class SettingsActivity extends PreferenceActivity	{
                 }
             });
         }
-
+*/
         Preference walletPref = (Preference) findPreference("wallet");
         walletPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
