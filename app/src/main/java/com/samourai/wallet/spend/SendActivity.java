@@ -729,23 +729,15 @@ public class SendActivity extends AppCompatActivity {
         receivers = new HashMap<String, BigInteger>();
         receivers.put(address, BigInteger.valueOf(amount));
 
-        // store current change index to restore value in case of sending fail
-        change_index = 0;
         if (changeType == 84) {
-            change_index = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-        } else if (changeType == 49) {
-            change_index = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-        } else {
-            try {
-                change_index = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
-//                    Log.d("SendActivity", "storing change index:" + change_index);
-            } catch (IOException ioe) {
-                ;
-            } catch (MnemonicException.MnemonicLengthException mle) {
-                ;
-            }
+            change_index = idxBIP84Internal;
         }
-
+        else if (changeType == 49) {
+            change_index = idxBIP49Internal;
+        }
+        else {
+            change_index = idxBIP44Internal;
+        }
 
         // if possible, get UTXO by input 'type': p2pkh, p2sh-p2wpkh or p2wpkh, else get all UTXO
         long neededAmount = 0L;
