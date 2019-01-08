@@ -10,6 +10,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.constraint.Group;
+import android.support.transition.Slide;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,9 +22,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -65,6 +72,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.WebUtil;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -74,6 +82,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,9 +111,10 @@ public class SendActivity extends AppCompatActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
-    private Switch ricochetHopsSwitch, stoneWallSwitch;
+    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, stoneWallSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
+    private Group ricochetStaggeredOptionGroup;
 
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
@@ -170,6 +180,8 @@ public class SendActivity extends AppCompatActivity {
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
         ricochetTitle = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_desc);
         ricochetDesc = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_title);
+        ricochetStaggeredDelivery = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option);
+        ricochetStaggeredOptionGroup = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option_group);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
@@ -231,8 +243,12 @@ public class SendActivity extends AppCompatActivity {
 //            bViaMenu = extras.getBoolean("via_menu", false);
             String strUri = extras.getString("uri");
             strPCode = extras.getString("pcode");
+
             if (strUri != null && strUri.length() > 0) {
                 processScan(strUri);
+            }
+            if (extras.containsKey("amount")) {
+                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
             }
             if (strPCode != null && strPCode.length() > 0) {
                 processPCode(strPCode, null);
@@ -485,7 +501,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpRicochet() {
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
+            ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
                 SPEND_TYPE = SPEND_RICOCHET;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true);
@@ -496,7 +512,17 @@ public class SendActivity extends AppCompatActivity {
 
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
+
+        ricochetStaggeredDelivery.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.RICOCHET_STAGGERED, false));
+
+        ricochetStaggeredDelivery.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            PrefsUtil.getInstance(this).setValue(PrefsUtil.RICOCHET_STAGGERED, isChecked);
+
+            // Handle staggered delivery option
+
+        });
     }
+
 
     private void setBalance() {
 
@@ -814,7 +840,7 @@ public class SendActivity extends AppCompatActivity {
                 samouraiFeeViaBIP47 = true;
             }
 
-            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
+            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, ricochetStaggeredDelivery.isChecked());
             if (ricochetJsonObj != null) {
 
                 try {
@@ -1175,8 +1201,7 @@ public class SendActivity extends AppCompatActivity {
     private void initiateSpend() {
 
         if (SPEND_TYPE == SPEND_RICOCHET) {
-
-            ricochetSpend();
+            ricochetSpend(ricochetStaggeredDelivery.isChecked());
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
@@ -1267,7 +1292,7 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void ricochetSpend() {
+    private void ricochetSpend(boolean staggered) {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
@@ -1276,12 +1301,78 @@ public class SendActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
-
                         dialog.dismiss();
 
-                        Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
-                        startActivityForResult(intent, RICOCHET);
+                        if(staggered)    {
+
+//                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
+
+                            try {
+                                if(ricochetJsonObj.has("hops"))    {
+                                    JSONArray hops = ricochetJsonObj.getJSONArray("hops");
+                                    if(hops.getJSONObject(0).has("nTimeLock"))    {
+
+                                        JSONArray nLockTimeScript = new JSONArray();
+                                        for(int i = 0; i < hops.length(); i++)   {
+                                            JSONObject hopObj = hops.getJSONObject(i);
+                                            int seq = i;
+                                            long locktime = hopObj.getLong("nTimeLock");
+                                            String hex = hopObj.getString("tx");
+                                            JSONObject scriptObj = new JSONObject();
+                                            scriptObj.put("hop", i);
+                                            scriptObj.put("nlocktime", locktime);
+                                            scriptObj.put("tx", hex);
+                                            nLockTimeScript.put(scriptObj);
+                                        }
+
+                                        JSONObject nLockTimeObj = new JSONObject();
+                                        nLockTimeObj.put("script", nLockTimeScript);
+
+//                                        Log.d("SendActivity", "Ricochet nLockTime:" + nLockTimeObj.toString());
+
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                Looper.prepare();
+
+                                                String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                                                url += "pushtx/schedule";
+                                                try {
+                                                    String result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+//                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
+                                                    JSONObject resultObj = new JSONObject(result);
+                                                    if(resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok"))    {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else    {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                                catch (Exception e) {
+                                                    Log.d("SendActivity", e.getMessage());
+                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                Looper.loop();
+
+                                            }
+                                        }).start();
+
+                                    }
+                                }
+                            }
+                            catch(JSONException je) {
+                                Log.d("SendActivity", je.getMessage());
+                            }
+
+                        }
+                        else    {
+                            RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
+
+                            Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
+                            startActivityForResult(intent, RICOCHET);
+                        }
 
                     }
 

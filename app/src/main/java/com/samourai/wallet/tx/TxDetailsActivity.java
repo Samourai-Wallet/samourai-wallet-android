@@ -1,6 +1,5 @@
 package com.samourai.wallet.tx;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,17 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.boost.RBFTask;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.boost.CPFPTask;
-import com.samourai.wallet.util.BlockExplorerUtil;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.DateUtil;
-import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;
 
@@ -38,8 +41,15 @@ import org.bitcoinj.core.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.Objects;
 
 import io.reactivex.Observable;
@@ -95,7 +105,7 @@ public class TxDetailsActivity extends AppCompatActivity {
             if (this.isBoostingAvailable()) {
                 this.doBoosting();
             } else {
-                this.payAgain();
+                refundOrPayAgain();
             }
         });
 
@@ -117,10 +127,16 @@ public class TxDetailsActivity extends AppCompatActivity {
         });
 
     }
- 
 
-    private void payAgain() {
+    private void refundOrPayAgain() {
+        Intent intent = new Intent(this, SendActivity.class);
+        intent.putExtra("pcode", tx.getPaymentCode());
+        if (!isSpend()) {
+            intent.putExtra("amount", tx.getAmount());
+        }
+        startActivity(intent);
     }
+
 
     private void setTx() {
 
@@ -137,10 +153,6 @@ public class TxDetailsActivity extends AppCompatActivity {
                     "/3)";
             txStatus.setText(txConfirmation);
         }
-        if (this.isBoostingAvailable()) {
-            bottomButton.setVisibility(View.VISIBLE);
-            bottomButton.setText("Boost transaction fee");
-        }
 
         if (tx.getConfirmations() > 3) {
             String txConfirmation = String.valueOf(tx.getConfirmations()) +
@@ -155,9 +167,20 @@ public class TxDetailsActivity extends AppCompatActivity {
         txDate.setText(DateUtil.getInstance(this).formatted(tx.getTS()));
 
         if (tx.getPaymentCode() != null) {
+            bottomButton.setVisibility(View.VISIBLE);
             paynymDisplayName = BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode());
             showPaynym();
+            if (isSpend()) {
+                bottomButton.setText(R.string.pay_again);
+            } else {
+                bottomButton.setText(R.string.refund);
+            }
         }
+        if (this.isBoostingAvailable()) {
+            bottomButton.setVisibility(View.VISIBLE);
+            bottomButton.setText(R.string.boost_transaction_fee);
+        }
+
 
         fetchTxDetails();
     }
@@ -166,7 +189,6 @@ public class TxDetailsActivity extends AppCompatActivity {
         String message = getString(R.string.options_unconfirmed_tx);
 
         if (this.isRBFPossible()) {
-            Log.i(TAG, "doBoosting: RBF");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.app_name);
             builder.setMessage(message);
@@ -179,7 +201,6 @@ public class TxDetailsActivity extends AppCompatActivity {
             return;
         } else {
             if (this.isCPFPPossible()) {
-                Log.i(TAG, "doBoosting: CPFP");
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TxDetailsActivity.this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage(message);
@@ -211,6 +232,10 @@ public class TxDetailsActivity extends AppCompatActivity {
 
     private boolean isBoostingAvailable() {
         return tx.getConfirmations() < 1;
+    }
+
+    private boolean isSpend() {
+        return tx.getAmount() < 0;
     }
 
     private void fetchTxDetails() {
