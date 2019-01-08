@@ -303,11 +303,16 @@ public class SendActivity extends AppCompatActivity {
             ricochetTitle.setAlpha(1f);
             ricochetHopsSwitch.setAlpha(1f);
             ricochetHopsSwitch.setEnabled(true);
+            if (ricochetHopsSwitch.isChecked()) {
+                ricochetStaggeredOptionGroup.setVisibility(View.VISIBLE);
+            }
         } else {
+            ricochetStaggeredOptionGroup.setVisibility(View.GONE);
             ricochetDesc.setAlpha(.6f);
             ricochetTitle.setAlpha(.6f);
             ricochetHopsSwitch.setAlpha(.6f);
             ricochetHopsSwitch.setEnabled(false);
+
         }
     }
 
@@ -510,9 +515,20 @@ public class SendActivity extends AppCompatActivity {
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, false);
             }
 
+            if (isChecked) {
+                ricochetStaggeredOptionGroup.setVisibility(View.VISIBLE);
+            } else {
+                ricochetStaggeredOptionGroup.setVisibility(View.GONE);
+            }
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
 
+        if (ricochetHopsSwitch.isChecked()) {
+            ricochetStaggeredOptionGroup.setVisibility(View.VISIBLE);
+        } else {
+            ricochetStaggeredOptionGroup.setVisibility(View.GONE);
+
+        }
         ricochetStaggeredDelivery.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.RICOCHET_STAGGERED, false));
 
         ricochetStaggeredDelivery.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -1342,16 +1358,17 @@ public class SendActivity extends AppCompatActivity {
                                                     String result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
 //                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
                                                     JSONObject resultObj = new JSONObject(result);
-                                                    if(resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok"))    {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_SHORT).show();
+                                                    if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ok, Toast.LENGTH_LONG).show();
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
+                                                        finish();
                                                     }
-                                                    else    {
-                                                        Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                                catch (Exception e) {
+                                                } catch (Exception e) {
                                                     Log.d("SendActivity", e.getMessage());
-                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(SendActivity.this, R.string.ricochet_nlocktime_ko, Toast.LENGTH_LONG).show();
+                                                    finish();
                                                 }
 
                                                 Looper.loop();
