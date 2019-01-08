@@ -95,8 +95,8 @@
         android:layout_marginBottom="8dp"
         android:text="Staggered delivery"
         app:layout_constraintBottom_toTopOf="@+id/review_button"
-        app:layout_constraintStart_toStartOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
+        app:layout_constraintStart_toStartOf="@+id/ricochet_desc"
+        app:layout_constraintTop_toBottomOf="@+id/ricochet_desc"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -116,15 +116,14 @@
         android:id="@+id/ricochet_staggered_option"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/tx_staggered_delivery_desc"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ricochet_hops_switch"
         app:layout_constraintTop_toTopOf="@+id/tx_staggered_delivery_desc" />
 
     <android.support.constraint.Group
         android:id="@+id/ricochet_staggered_option_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="ricochet_staggered_option,tx_staggered_delivery_desc,tx_staggered_delivery" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="tx_staggered_delivery_desc,ricochet_staggered_option,tx_staggered_delivery" />
 </android.support.constraint.ConstraintLayout>
