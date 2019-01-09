@@ -89,10 +89,9 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
         // make tx
         final Transaction tx = SendFactory.getInstance(TxAnimUIActivity.this).makeTransaction(0, SendParams.getInstance().getOutpoints(), SendParams.getInstance().getReceivers());
-        if(tx == null)    {
+        if (tx == null) {
             failTx(R.string.tx_creating_ko);
-        }
-        else    {
+        } else {
 //            Toast.makeText(TxAnimUIActivity.this, "tx created OK", Toast.LENGTH_SHORT).show();
 
             final RBFSpend rbf;
@@ -149,14 +148,16 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 @Override
                 public void run() {
 
-                    progressView.getmArcProgress().startArc2(arcdelay);
-                    progressView.setTxStatusMessage(R.string.tx_signing_ok);
+                    TxAnimUIActivity.this.runOnUiThread(() -> {
+                        progressView.getmArcProgress().startArc2(arcdelay);
+                        progressView.setTxStatusMessage(R.string.tx_signing_ok);
+                    });
+
 
                     final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx);
-                    if(_tx == null)    {
+                    if (_tx == null) {
                         failTx(R.string.tx_signing_ko);
-                    }
-                    else    {
+                    } else {
 //                    Toast.makeText(TxAnimUIActivity.this, "tx signed OK", Toast.LENGTH_SHORT).show();
                     }
                     final String hexTx = new String(Hex.encode(_tx.bitcoinSerialize()));
@@ -168,16 +169,18 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            progressView.getmArcProgress().startArc3(arcdelay);
-                            progressView.setTxStatusMessage(R.string.tx_broadcast_ok);
+                            TxAnimUIActivity.this.runOnUiThread(() -> {
+                                progressView.getmArcProgress().startArc3(arcdelay);
+                                progressView.setTxStatusMessage(R.string.tx_broadcast_ok);
+                            });
 
-                            if(PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false)    {
+                            if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.BROADCAST_TX, true) == false) {
                                 offlineTx(R.string.broadcast_off, hexTx, strTxHash);
                                 return;
 
                             }
 
-                            if(AppUtil.getInstance(TxAnimUIActivity.this).isOfflineMode())    {
+                            if (AppUtil.getInstance(TxAnimUIActivity.this).isOfflineMode()) {
                                 offlineTx(R.string.offline_mode, hexTx, strTxHash);
                                 return;
                             }
@@ -221,8 +224,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 failTx(R.string.tx_broadcast_ko);
                                             }
                                         }
-                                    }
-                                    catch(JSONException je) {
+                                    } catch (JSONException je) {
                                         failTx(R.string.tx_broadcast_ko);
                                     }
 
@@ -231,11 +233,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                     resultHandler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            if(_isOK)    {
+                                            if (_isOK) {
                                                 progressView.showCheck();
                                                 progressView.setTxStatusMessage(R.string.tx_sent_ok);
-                                            }
-                                            else    {
+                                            } else {
                                                 failTx(R.string.tx_sent_ko);
                                             }
 
@@ -263,63 +264,65 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
-    private void failTx(int id)   {
-        progressView.reset();
-
-        progressView.offlineMode(1200);
-        progressView.setTxStatusMessage(R.string.tx_failed);
-        progressView.setTxSubText(id);
+    private void failTx(int id) {
+        TxAnimUIActivity.this.runOnUiThread(() -> {
+            progressView.reset();
+            progressView.offlineMode(1200);
+            progressView.setTxStatusMessage(R.string.tx_failed);
+            progressView.setTxSubText(id);
 //        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
 //        progressView.toggleOfflineButton();
+        });
     }
 
-    private void offlineTx(int id, final String hex, final String hash)   {
-        progressView.reset();
+    private void offlineTx(int id, final String hex, final String hash) {
+        TxAnimUIActivity.this.runOnUiThread(() -> {
 
-        progressView.offlineMode(1200);
-        progressView.setTxStatusMessage(R.string.tx_standby);
-        progressView.setTxSubText(id);
-        progressView.setTxSubText(R.string.in_offline_mode);
-        progressView.toggleOfflineButton();
+            progressView.reset();
 
-        progressView.getShowQRButton().setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                doShowTx(hex, hash);
-            }
-        });
+            progressView.offlineMode(1200);
+            progressView.setTxStatusMessage(R.string.tx_standby);
+            progressView.setTxSubText(id);
+            progressView.setTxSubText(R.string.in_offline_mode);
+            progressView.toggleOfflineButton();
 
-        progressView.getTxTennaButton().setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            progressView.getShowQRButton().setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    doShowTx(hex, hash);
+                }
+            });
+
+            progressView.getTxTennaButton().setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
 //                Toast.makeText(TxAnimUIActivity.this, R.string.tx_tenna_coming_soon, Toast.LENGTH_SHORT).show();
 
-                String pkgName = "com.samourai.txtenna";
+                    String pkgName = "com.samourai.txtenna";
 
-                String _hex = hex;
-                Intent txTennaIntent = new Intent("com.samourai.txtenna.HEX");
-                if(SamouraiWallet.getInstance().isTestNet())    {
-                    _hex += "-t";
+                    String _hex = hex;
+                    Intent txTennaIntent = new Intent("com.samourai.txtenna.HEX");
+                    if (SamouraiWallet.getInstance().isTestNet()) {
+                        _hex += "-t";
+                    }
+                    txTennaIntent.putExtra(Intent.EXTRA_TEXT, _hex);
+                    txTennaIntent.setType("text/plain");
+
+                    Uri marketUri = Uri.parse("market://search?q=pname:" + pkgName);
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW).setData(marketUri);
+
+                    PackageManager pm = getPackageManager();
+                    try {
+                        pm.getPackageInfo(pkgName, 0);
+                        startActivity(txTennaIntent);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        startActivity(marketIntent);
+                    }
+
                 }
-                txTennaIntent.putExtra(Intent.EXTRA_TEXT, _hex);
-                txTennaIntent.setType("text/plain");
-
-                Uri marketUri = Uri.parse("market://search?q=pname:" + pkgName);
-                Intent marketIntent = new Intent(Intent.ACTION_VIEW).setData(marketUri);
-
-                PackageManager pm = getPackageManager();
-                try {
-                    pm.getPackageInfo(pkgName, 0);
-                    startActivity(txTennaIntent);
-                }
-                catch (PackageManager.NameNotFoundException e) {
-                    startActivity(marketIntent);
-                }
-
-            }
+            });
         });
-
     }
 
-    private void handleResult(boolean isOK, RBFSpend rbf, String strTxHash, String hexTx, Transaction _tx)  {
+    private void handleResult(boolean isOK, RBFSpend rbf, String strTxHash, String hexTx, Transaction _tx) {
 
         try {
             if (isOK) {
@@ -386,14 +389,13 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     String strTS = sd.format(System.currentTimeMillis());
                     String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) SendParams.getInstance().getSpendAmount() / 1e8) + " BTC";
                     BIP47Meta.getInstance().setLatestEvent(SendParams.getInstance().getPCode(), event);
-                }
-                else if(SendParams.getInstance().getBatchSend() != null)   {
+                } else if (SendParams.getInstance().getBatchSend() != null) {
 
-                    for(BatchSendUtil.BatchSend d : SendParams.getInstance().getBatchSend())   {
+                    for (BatchSendUtil.BatchSend d : SendParams.getInstance().getBatchSend()) {
                         String address = d.addr;
                         String pcode = d.pcode;
                         // increment counter if BIP47 spend
-                        if(pcode != null && pcode.length() > 0)    {
+                        if (pcode != null && pcode.length() > 0) {
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
                             BIP47Meta.getInstance().incOutgoingIdx(pcode);
 
@@ -407,8 +409,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         }
                     }
 
-                }
-                else    {
+                } else {
                     ;
                 }
 
@@ -448,15 +449,15 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     HD_WalletFactory.getInstance(TxAnimUIActivity.this).get().getAccount(0).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
                 }
             }
-    } catch (MnemonicException.MnemonicLengthException mle) {
-        Toast.makeText(TxAnimUIActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
-    } catch (DecoderException de) {
-        Toast.makeText(TxAnimUIActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
-    } catch (IOException ioe) {
-        Toast.makeText(TxAnimUIActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
-    } finally {
+        } catch (MnemonicException.MnemonicLengthException mle) {
+            Toast.makeText(TxAnimUIActivity.this, "pushTx:" + mle.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (DecoderException de) {
+            Toast.makeText(TxAnimUIActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (IOException ioe) {
+            Toast.makeText(TxAnimUIActivity.this, "pushTx:" + ioe.getMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
             ;
-    }
+        }
 
     }
 
@@ -486,7 +487,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        if(cbMarkInputsUnspent.isChecked())    {
+                        if (cbMarkInputsUnspent.isChecked()) {
                             UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
@@ -502,7 +503,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 .setNeutralButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)TxAnimUIActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) TxAnimUIActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
                         clip = android.content.ClipData.newPlainText("TX", hexTx);
                         clipboard.setPrimaryClip(clip);
@@ -513,7 +514,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.show_qr, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        if(cbMarkInputsUnspent.isChecked())    {
+                        if (cbMarkInputsUnspent.isChecked()) {
                             UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
@@ -521,7 +522,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                             LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
                         }
 
-                        if(hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT)    {
+                        if (hexTx.length() <= QR_ALPHANUM_CHAR_LIMIT) {
 
                             final ImageView ivQR = new ImageView(TxAnimUIActivity.this);
 
@@ -563,11 +564,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                                             String strFileName = AppUtil.getInstance(TxAnimUIActivity.this).getReceiveQRFilename();
                                             File file = new File(strFileName);
-                                            if(!file.exists()) {
+                                            if (!file.exists()) {
                                                 try {
                                                     file.createNewFile();
-                                                }
-                                                catch(Exception e) {
+                                                } catch (Exception e) {
                                                     Toast.makeText(TxAnimUIActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -576,19 +576,17 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                             FileOutputStream fos = null;
                                             try {
                                                 fos = new FileOutputStream(file);
-                                            }
-                                            catch(FileNotFoundException fnfe) {
+                                            } catch (FileNotFoundException fnfe) {
                                                 ;
                                             }
 
-                                            if(file != null && fos != null) {
-                                                Bitmap bitmap = ((BitmapDrawable)ivQR.getDrawable()).getBitmap();
+                                            if (file != null && fos != null) {
+                                                Bitmap bitmap = ((BitmapDrawable) ivQR.getDrawable()).getBitmap();
                                                 bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
 
                                                 try {
                                                     fos.close();
-                                                }
-                                                catch(IOException ioe) {
+                                                } catch (IOException ioe) {
                                                     ;
                                                 }
 
@@ -609,8 +607,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                                         }
                                     }).show();
-                        }
-                        else    {
+                        } else {
 
                             Toast.makeText(TxAnimUIActivity.this, R.string.tx_too_large_qr, Toast.LENGTH_SHORT).show();
 
