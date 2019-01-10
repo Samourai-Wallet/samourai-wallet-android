@@ -121,6 +121,8 @@ import org.bouncycastle.util.encoders.Hex;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
 
 import java.io.IOException;
@@ -347,7 +349,7 @@ public class BalanceActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
-
+        makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         if (SamouraiWallet.getInstance().isTestNet()) {
@@ -378,7 +380,7 @@ public class BalanceActivity extends Activity {
             @Override
             public void onClick(View arg0) {
 
-                Intent intent = new Intent(BalanceActivity.this,  SendActivity.class);
+                Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                 intent.putExtra("via_menu", true);
                 startActivity(intent);
 
@@ -563,6 +565,29 @@ public class BalanceActivity extends Activity {
 
     }
 
+
+    private void makePaynymAvatarcache() {
+        try {
+
+            ArrayList<String> paymentCodes = new ArrayList<>(BIP47Meta.getInstance().getSortedByLabels(false, true));
+            for (String code : paymentCodes) {
+                Picasso.with(getBaseContext())
+                        .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + code + "/avatar").fetch(new Callback() {
+                    @Override
+                    public void onSuccess() {
+                    }
+
+                    @Override
+                    public void onError() {
+                    }
+                });
+            }
+
+        } catch (Exception ignored) {
+
+        }
+    }
+
     @Override
     public void onDestroy() {
 
@@ -700,9 +725,8 @@ public class BalanceActivity extends Activity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult);
-                    }
-                    else    {
-                        Intent intent = new Intent(BalanceActivity.this,  SendActivity.class);
+                    } else {
+                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult);
                         startActivity(intent);
                     }
@@ -1495,7 +1519,7 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "hash:" + params[0]);
 
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
-            if(txObj.has("inputs") && txObj.has("outputs"))    {
+            if (txObj.has("inputs") && txObj.has("outputs")) {
 
                 final SuggestedFee suggestedFee = FeeUtil.getInstance().getSuggestedFee();
 
@@ -1507,29 +1531,25 @@ public class BalanceActivity extends Activity {
                     int p2sh_p2wpkh = 0;
                     int p2wpkh = 0;
 
-                    for(int i = 0; i < inputs.length(); i++)   {
-                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                    for (int i = 0; i < inputs.length(); i++) {
+                        if (inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey")) {
                             String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
                             Script script = new Script(Hex.decode(scriptpubkey));
                             String address = null;
-                            if(Bech32Util.getInstance().isBech32Script(scriptpubkey))    {
+                            if (Bech32Util.getInstance().isBech32Script(scriptpubkey)) {
                                 try {
                                     address = Bech32Util.getInstance().getAddressFromScript(scriptpubkey);
-                                }
-                                catch(Exception e) {
+                                } catch (Exception e) {
                                     ;
                                 }
-                            }
-                            else    {
+                            } else {
                                 address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                             }
-                            if(FormatsUtil.getInstance().isValidBech32(address))    {
+                            if (FormatsUtil.getInstance().isValidBech32(address)) {
                                 p2wpkh++;
-                            }
-                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                                 p2sh_p2wpkh++;
-                            }
-                            else    {
+                            } else {
                                 p2pkh++;
                             }
                         }
@@ -1544,27 +1564,26 @@ public class BalanceActivity extends Activity {
 
                     UTXO utxo = null;
 
-                    for(int i = 0; i < inputs.length(); i++)   {
+                    for (int i = 0; i < inputs.length(); i++) {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("outpoint"))    {
+                        if (obj.has("outpoint")) {
                             JSONObject objPrev = obj.getJSONObject("outpoint");
-                            if(objPrev.has("value"))    {
+                            if (objPrev.has("value")) {
                                 total_inputs += objPrev.getLong("value");
                             }
                         }
                     }
 
-                    for(int i = 0; i < outputs.length(); i++)   {
+                    for (int i = 0; i < outputs.length(); i++) {
                         JSONObject obj = outputs.getJSONObject(i);
-                        if(obj.has("value"))    {
+                        if (obj.has("value")) {
                             total_outputs += obj.getLong("value");
 
                             String addr = obj.getString("address");
                             Log.d("BalanceActivity", "checking address:" + addr);
-                            if(utxo == null)    {
+                            if (utxo == null) {
                                 utxo = getUTXO(addr);
-                            }
-                            else    {
+                            } else {
                                 break;
                             }
                         }
@@ -1572,7 +1591,7 @@ public class BalanceActivity extends Activity {
 
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
-                    if(fee > estimatedFee.longValue())    {
+                    if (fee > estimatedFee.longValue()) {
                         feeWarning = true;
                     }
 
@@ -1581,7 +1600,7 @@ public class BalanceActivity extends Activity {
                     Log.d("BalanceActivity", "fee:" + fee);
                     Log.d("BalanceActivity", "estimated fee:" + estimatedFee.longValue());
                     Log.d("BalanceActivity", "fee warning:" + feeWarning);
-                    if(utxo != null)    {
+                    if (utxo != null) {
                         Log.d("BalanceActivity", "utxo found");
 
                         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
@@ -1593,27 +1612,24 @@ public class BalanceActivity extends Activity {
                         int receiveIdx = AddressFactory.getInstance(BalanceActivity.this).getHighestTxReceiveIdx(0);
                         Log.d("BalanceActivity", "receive index:" + receiveIdx);
                         final String addr;
-                        if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+                        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true) {
                             addr = utxo.getOutpoints().get(0).getAddress();
-                        }
-                        else    {
+                        } else {
                             addr = outputs.getJSONObject(0).getString("address");
                         }
                         final String ownReceiveAddr;
-                        if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                        if (FormatsUtil.getInstance().isValidBech32(addr)) {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
-                        }
-                        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                        } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
-                        }
-                        else    {
+                        } else {
                             ownReceiveAddr = AddressFactory.getInstance(BalanceActivity.this).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
                         }
                         Log.d("BalanceActivity", "receive address:" + ownReceiveAddr);
 
                         long totalAmount = utxo.getValue();
                         Log.d("BalanceActivity", "amount before fee:" + totalAmount);
-                        Triple<Integer,Integer, Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
+                        Triple<Integer, Integer, Integer> outpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector(utxo.getOutpoints()));
                         BigInteger cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(outpointTypes.getLeft(), outpointTypes.getMiddle(), outpointTypes.getRight(), 1);
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
 
@@ -1621,10 +1637,10 @@ public class BalanceActivity extends Activity {
                         p2sh_p2wpkh = outpointTypes.getMiddle();
                         p2wpkh = outpointTypes.getRight();
 
-                        if(totalAmount < (cpfpFee.longValue() + remainingFee)) {
+                        if (totalAmount < (cpfpFee.longValue() + remainingFee)) {
                             Log.d("BalanceActivity", "selecting additional utxo");
                             Collections.sort(utxos, new UTXO.UTXOComparator());
-                            for(UTXO _utxo : utxos)   {
+                            for (UTXO _utxo : utxos) {
                                 totalAmount += _utxo.getValue();
                                 selectedUTXO.add(_utxo);
                                 selected += _utxo.getOutpoints().size();
@@ -1633,11 +1649,11 @@ public class BalanceActivity extends Activity {
                                 p2sh_p2wpkh += outpointTypes.getMiddle();
                                 p2wpkh += outpointTypes.getRight();
                                 cpfpFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, 1);
-                                if(totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
+                                if (totalAmount > (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                     break;
                                 }
                             }
-                            if(totalAmount < (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
+                            if (totalAmount < (cpfpFee.longValue() + remainingFee + SamouraiWallet.bDust.longValue())) {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
@@ -1652,21 +1668,21 @@ public class BalanceActivity extends Activity {
                         Log.d("BalanceActivity", "cpfp fee:" + cpfpFee.longValue());
 
                         final List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
-                        for(UTXO u : selectedUTXO)   {
+                        for (UTXO u : selectedUTXO) {
                             outPoints.addAll(u.getOutpoints());
                         }
 
                         long _totalAmount = 0L;
-                        for(MyTransactionOutPoint outpoint : outPoints)   {
+                        for (MyTransactionOutPoint outpoint : outPoints) {
                             _totalAmount += outpoint.getValue().longValue();
                         }
                         Log.d("BalanceActivity", "checked total amount:" + _totalAmount);
-                        assert(_totalAmount == totalAmount);
+                        assert (_totalAmount == totalAmount);
 
                         long amount = totalAmount - cpfpFee.longValue();
                         Log.d("BalanceActivity", "amount after fee:" + amount);
 
-                        if(amount < SamouraiWallet.bDust.longValue())    {
+                        if (amount < SamouraiWallet.bDust.longValue()) {
                             Log.d("BalanceActivity", "dust output");
                             Toast.makeText(BalanceActivity.this, R.string.cannot_output_dust, Toast.LENGTH_SHORT).show();
                         }
@@ -1675,7 +1691,7 @@ public class BalanceActivity extends Activity {
                         receivers.put(ownReceiveAddr, BigInteger.valueOf(amount));
 
                         String message = "";
-                        if(feeWarning)  {
+                        if (feeWarning) {
                             message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
                             message += "\n\n";
                         }
@@ -1688,13 +1704,13 @@ public class BalanceActivity extends Activity {
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                                        if(AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                                        if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                                             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
                                         }
                                         startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
 
                                         Transaction tx = SendFactory.getInstance(BalanceActivity.this).makeTransaction(0, outPoints, receivers);
-                                        if(tx != null)    {
+                                        if (tx != null) {
                                             tx = SendFactory.getInstance(BalanceActivity.this).signTransaction(tx);
                                             final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
                                             Log.d("BalanceActivity", hexTx);
@@ -1707,7 +1723,7 @@ public class BalanceActivity extends Activity {
 
                                                 isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
 
-                                                if(isOK)    {
+                                                if (isOK) {
 
                                                     handler.post(new Runnable() {
                                                         public void run() {
@@ -1721,8 +1737,7 @@ public class BalanceActivity extends Activity {
                                                         }
                                                     });
 
-                                                }
-                                                else    {
+                                                } else {
                                                     handler.post(new Runnable() {
                                                         public void run() {
                                                             Toast.makeText(BalanceActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
@@ -1730,29 +1745,25 @@ public class BalanceActivity extends Activity {
                                                     });
 
                                                     // reset receive index upon tx fail
-                                                    if(FormatsUtil.getInstance().isValidBech32(addr))    {
+                                                    if (FormatsUtil.getInstance().isValidBech32(addr)) {
                                                         int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                         BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                    }
-                                                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                                    } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
                                                         int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                         BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                                    }
-                                                    else    {
+                                                    } else {
                                                         int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
                                                         HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                                     }
 
                                                 }
-                                            }
-                                            catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                            } catch (MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
                                                 handler.post(new Runnable() {
                                                     public void run() {
                                                         Toast.makeText(BalanceActivity.this, "pushTx:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
-                                            }
-                                            finally {
+                                            } finally {
                                                 ;
                                             }
 
@@ -1763,38 +1774,33 @@ public class BalanceActivity extends Activity {
                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                         try {
-                                            if(Bech32Util.getInstance().isBech32Script(addr))    {
+                                            if (Bech32Util.getInstance().isBech32Script(addr)) {
                                                 int prevIdx = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                 BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                            }
-                                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
+                                            } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
                                                 int prevIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().getAddrIdx() - 1;
                                                 BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getReceive().setAddrIdx(prevIdx);
-                                            }
-                                            else    {
+                                            } else {
                                                 int prevIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().getAddrIdx() - 1;
                                                 HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getReceive().setAddrIdx(prevIdx);
                                             }
-                                        }
-                                        catch(MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
+                                        } catch (MnemonicException.MnemonicLengthException | DecoderException | IOException e) {
                                             handler.post(new Runnable() {
                                                 public void run() {
                                                     Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-                                        }
-                                        finally {
+                                        } finally {
                                             dialog.dismiss();
                                         }
 
                                     }
                                 });
-                        if(!isFinishing())    {
+                        if (!isFinishing()) {
                             dlg.show();
                         }
 
-                    }
-                    else    {
+                    } else {
                         handler.post(new Runnable() {
                             public void run() {
                                 Toast.makeText(BalanceActivity.this, R.string.cannot_create_cpfp, Toast.LENGTH_SHORT).show();
@@ -1802,8 +1808,7 @@ public class BalanceActivity extends Activity {
                         });
                     }
 
-                }
-                catch(final JSONException je) {
+                } catch (final JSONException je) {
                     handler.post(new Runnable() {
                         public void run() {
                             Toast.makeText(BalanceActivity.this, "cpfp:" + je.getMessage(), Toast.LENGTH_SHORT).show();
@@ -1813,8 +1818,7 @@ public class BalanceActivity extends Activity {
 
                 FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
-            }
-            else    {
+            } else {
                 handler.post(new Runnable() {
                     public void run() {
                         Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
@@ -1837,22 +1841,22 @@ public class BalanceActivity extends Activity {
             ;
         }
 
-        private UTXO getUTXO(String address)    {
+        private UTXO getUTXO(String address) {
 
             UTXO ret = null;
             int idx = -1;
 
-            for(int i = 0; i < utxos.size(); i++)  {
+            for (int i = 0; i < utxos.size(); i++) {
                 UTXO utxo = utxos.get(i);
                 Log.d("BalanceActivity", "utxo address:" + utxo.getOutpoints().get(0).getAddress());
-                if(utxo.getOutpoints().get(0).getAddress().equals(address))    {
+                if (utxo.getOutpoints().get(0).getAddress().equals(address)) {
                     ret = utxo;
                     idx = i;
                     break;
                 }
             }
 
-            if(ret != null)    {
+            if (ret != null) {
                 utxos.remove(idx);
                 return ret;
             }
@@ -1867,13 +1871,13 @@ public class BalanceActivity extends Activity {
         private List<UTXO> utxos = null;
         private Handler handler = null;
         private RBFSpend rbf = null;
-        private HashMap<String,Long> input_values = null;
+        private HashMap<String, Long> input_values = null;
 
         @Override
         protected void onPreExecute() {
             handler = new Handler();
             utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(true);
-            input_values = new HashMap<String,Long>();
+            input_values = new HashMap<String, Long>();
         }
 
         @Override
@@ -1890,7 +1894,7 @@ public class BalanceActivity extends Activity {
             Log.d("BalanceActivity", "tx inputs:" + tx.getInputs().size());
             Log.d("BalanceActivity", "tx outputs:" + tx.getOutputs().size());
             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(params[0]);
-            if(tx != null && txObj.has("inputs") && txObj.has("outputs"))    {
+            if (tx != null && txObj.has("inputs") && txObj.has("outputs")) {
                 try {
                     JSONArray inputs = txObj.getJSONArray("inputs");
                     JSONArray outputs = txObj.getJSONArray("outputs");
@@ -1899,29 +1903,25 @@ public class BalanceActivity extends Activity {
                     int p2sh_p2wpkh = 0;
                     int p2wpkh = 0;
 
-                    for(int i = 0; i < inputs.length(); i++)   {
-                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
+                    for (int i = 0; i < inputs.length(); i++) {
+                        if (inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey")) {
                             String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
                             Script script = new Script(Hex.decode(scriptpubkey));
                             String address = null;
-                            if(Bech32Util.getInstance().isBech32Script(scriptpubkey))    {
+                            if (Bech32Util.getInstance().isBech32Script(scriptpubkey)) {
                                 try {
                                     address = Bech32Util.getInstance().getAddressFromScript(scriptpubkey);
-                                }
-                                catch(Exception e) {
+                                } catch (Exception e) {
                                     ;
                                 }
-                            }
-                            else    {
+                            } else {
                                 address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                             }
-                            if(FormatsUtil.getInstance().isValidBech32(address))    {
+                            if (FormatsUtil.getInstance().isValidBech32(address)) {
                                 p2wpkh++;
-                            }
-                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                                 p2sh_p2wpkh++;
-                            }
-                            else    {
+                            } else {
                                 p2pkh++;
                             }
                         }
@@ -1937,11 +1937,11 @@ public class BalanceActivity extends Activity {
                     long total_change = 0L;
                     List<String> selfAddresses = new ArrayList<String>();
 
-                    for(int i = 0; i < inputs.length(); i++)   {
+                    for (int i = 0; i < inputs.length(); i++) {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("outpoint"))    {
+                        if (obj.has("outpoint")) {
                             JSONObject objPrev = obj.getJSONObject("outpoint");
-                            if(objPrev.has("value"))    {
+                            if (objPrev.has("value")) {
                                 total_inputs += objPrev.getLong("value");
                                 String key = objPrev.getString("txid") + ":" + objPrev.getLong("vout");
                                 input_values.put(key, objPrev.getLong("value"));
@@ -1949,18 +1949,18 @@ public class BalanceActivity extends Activity {
                         }
                     }
 
-                    for(int i = 0; i < outputs.length(); i++)   {
+                    for (int i = 0; i < outputs.length(); i++) {
                         JSONObject obj = outputs.getJSONObject(i);
-                        if(obj.has("value"))    {
+                        if (obj.has("value")) {
                             total_outputs += obj.getLong("value");
 
                             String _addr = null;
-                            if(obj.has("address"))    {
+                            if (obj.has("address")) {
                                 _addr = obj.getString("address");
                             }
 
                             selfAddresses.add(_addr);
-                            if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
+                            if (_addr != null && rbf.getChangeAddrs().contains(_addr.toString())) {
                                 total_change += obj.getLong("value");
                             }
                         }
@@ -1968,7 +1968,7 @@ public class BalanceActivity extends Activity {
 
                     boolean feeWarning = false;
                     fee = total_inputs - total_outputs;
-                    if(fee > estimatedFee.longValue())    {
+                    if (fee > estimatedFee.longValue()) {
                         feeWarning = true;
                     }
 
@@ -1986,26 +1986,24 @@ public class BalanceActivity extends Activity {
                     txOutputs.addAll(tx.getOutputs());
 
                     long remainder = remainingFee;
-                    if(total_change > remainder)    {
-                        for(TransactionOutput output : txOutputs)   {
+                    if (total_change > remainder) {
+                        for (TransactionOutput output : txOutputs) {
                             Script script = output.getScriptPubKey();
                             String scriptPubKey = Hex.toHexString(script.getProgram());
                             Address _p2sh = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
                             Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
                             try {
-                                if((Bech32Util.getInstance().isBech32Script(scriptPubKey) && rbf.getChangeAddrs().contains(Bech32Util.getInstance().getAddressFromScript(scriptPubKey))) || (_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString())))    {
-                                    if(output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue()))    {
+                                if ((Bech32Util.getInstance().isBech32Script(scriptPubKey) && rbf.getChangeAddrs().contains(Bech32Util.getInstance().getAddressFromScript(scriptPubKey))) || (_p2sh != null && rbf.getChangeAddrs().contains(_p2sh.toString())) || (_p2pkh != null && rbf.getChangeAddrs().contains(_p2pkh.toString()))) {
+                                    if (output.getValue().longValue() >= (remainder + SamouraiWallet.bDust.longValue())) {
                                         output.setValue(Coin.valueOf(output.getValue().longValue() - remainder));
                                         remainder = 0L;
                                         break;
-                                    }
-                                    else    {
+                                    } else {
                                         remainder -= output.getValue().longValue();
                                         output.setValue(Coin.valueOf(0L));      // output will be discarded later
                                     }
                                 }
-                            }
-                            catch(Exception e) {
+                            } catch (Exception e) {
                                 ;
                             }
 
@@ -2018,21 +2016,21 @@ public class BalanceActivity extends Activity {
                     //
                     List<MyTransactionInput> _inputs = new ArrayList<MyTransactionInput>();
                     List<TransactionInput> txInputs = tx.getInputs();
-                    for(TransactionInput input : txInputs) {
-                        MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int)input.getOutpoint().getIndex());
+                    for (TransactionInput input : txInputs) {
+                        MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], input.getOutpoint(), input.getOutpoint().getHash().toString(), (int) input.getOutpoint().getIndex());
                         _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
                         _inputs.add(_input);
                         Log.d("BalanceActivity", "add outpoint:" + _input.getOutpoint().toString());
                     }
 
-                    Triple<Integer,Integer,Integer> outpointTypes = null;
-                    if(remainder > 0L)    {
+                    Triple<Integer, Integer, Integer> outpointTypes = null;
+                    if (remainder > 0L) {
                         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
                         long selectedAmount = 0L;
                         int selected = 0;
                         long _remainingFee = remainder;
                         Collections.sort(utxos, new UTXO.UTXOComparator());
-                        for(UTXO _utxo : utxos)   {
+                        for (UTXO _utxo : utxos) {
 
                             Log.d("BalanceActivity", "utxo value:" + _utxo.getValue());
 
@@ -2041,21 +2039,21 @@ public class BalanceActivity extends Activity {
                             //
                             boolean isChange = false;
                             boolean isSelf = false;
-                            for(MyTransactionOutPoint outpoint : _utxo.getOutpoints())  {
-                                if(rbf.containsChangeAddr(outpoint.getAddress()))    {
+                            for (MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
+                                if (rbf.containsChangeAddr(outpoint.getAddress())) {
                                     Log.d("BalanceActivity", "is change:" + outpoint.getAddress());
                                     Log.d("BalanceActivity", "is change:" + outpoint.getValue().longValue());
                                     isChange = true;
                                     break;
                                 }
-                                if(selfAddresses.contains(outpoint.getAddress()))    {
+                                if (selfAddresses.contains(outpoint.getAddress())) {
                                     Log.d("BalanceActivity", "is self:" + outpoint.getAddress());
                                     Log.d("BalanceActivity", "is self:" + outpoint.getValue().longValue());
                                     isSelf = true;
                                     break;
                                 }
                             }
-                            if(isChange || isSelf)    {
+                            if (isChange || isSelf) {
                                 continue;
                             }
 
@@ -2070,36 +2068,34 @@ public class BalanceActivity extends Activity {
                             p2wpkh += outpointTypes.getRight();
                             _remainingFee = FeeUtil.getInstance().estimatedFeeSegwit(p2pkh, p2sh_p2wpkh, p2wpkh, outputs.length() == 1 ? 2 : outputs.length()).longValue();
                             Log.d("BalanceActivity", "_remaining fee:" + _remainingFee);
-                            if(selectedAmount >= (_remainingFee + SamouraiWallet.bDust.longValue())) {
+                            if (selectedAmount >= (_remainingFee + SamouraiWallet.bDust.longValue())) {
                                 break;
                             }
                         }
                         long extraChange = 0L;
-                        if(selectedAmount < (_remainingFee + SamouraiWallet.bDust.longValue())) {
+                        if (selectedAmount < (_remainingFee + SamouraiWallet.bDust.longValue())) {
                             handler.post(new Runnable() {
                                 public void run() {
                                     Toast.makeText(BalanceActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                                 }
                             });
                             return "KO";
-                        }
-                        else    {
+                        } else {
                             extraChange = selectedAmount - _remainingFee;
                             Log.d("BalanceActivity", "extra change:" + extraChange);
                         }
 
                         boolean addedChangeOutput = false;
                         // parent tx didn't have change output
-                        if(outputs.length() == 1 && extraChange > 0L)    {
+                        if (outputs.length() == 1 && extraChange > 0L) {
                             try {
-                                boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) ||  Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress()) || PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
+                                boolean isSegwitChange = (FormatsUtil.getInstance().isValidBech32(outputs.getJSONObject(0).getString("address")) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outputs.getJSONObject(0).getString("address")).isP2SHAddress()) || PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false;
 
                                 String change_address = null;
-                                if(isSegwitChange)    {
+                                if (isSegwitChange) {
                                     int changeIdx = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
                                     change_address = BIP49Util.getInstance(BalanceActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, changeIdx).getAddressAsString();
-                                }
-                                else    {
+                                } else {
                                     int changeIdx = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddrIdx();
                                     change_address = HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).getChange().getAddressAt(changeIdx).getAddressString();
                                 }
@@ -2108,8 +2104,7 @@ public class BalanceActivity extends Activity {
                                 TransactionOutput output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(extraChange), toOutputScript.getProgram());
                                 txOutputs.add(output);
                                 addedChangeOutput = true;
-                            }
-                            catch(MnemonicException.MnemonicLengthException | IOException e) {
+                            } catch (MnemonicException.MnemonicLengthException | IOException e) {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         Toast.makeText(BalanceActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -2121,28 +2116,27 @@ public class BalanceActivity extends Activity {
 
                         }
                         // parent tx had change output
-                        else    {
-                            for(TransactionOutput output : txOutputs)   {
+                        else {
+                            for (TransactionOutput output : txOutputs) {
                                 Script script = output.getScriptPubKey();
                                 String scriptPubKey = Hex.toHexString(script.getProgram());
                                 String _addr = null;
-                                if(Bech32Util.getInstance().isBech32Script(scriptPubKey))    {
+                                if (Bech32Util.getInstance().isBech32Script(scriptPubKey)) {
                                     try {
                                         _addr = Bech32Util.getInstance().getAddressFromScript(scriptPubKey);
-                                    }
-                                    catch(Exception e) {
+                                    } catch (Exception e) {
                                         ;
                                     }
                                 }
-                                if(_addr == null)    {
+                                if (_addr == null) {
                                     Address _address = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
-                                    if(_address == null)    {
+                                    if (_address == null) {
                                         _address = output.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams());
                                     }
                                     _addr = _address.toString();
                                 }
                                 Log.d("BalanceActivity", "checking for change:" + _addr);
-                                if(rbf.containsChangeAddr(_addr))    {
+                                if (rbf.containsChangeAddr(_addr)) {
                                     Log.d("BalanceActivity", "before extra:" + output.getValue().longValue());
                                     output.setValue(Coin.valueOf(extraChange + output.getValue().longValue()));
                                     Log.d("BalanceActivity", "after extra:" + output.getValue().longValue());
@@ -2153,7 +2147,7 @@ public class BalanceActivity extends Activity {
                         }
 
                         // sanity check
-                        if(extraChange > 0L && !addedChangeOutput)    {
+                        if (extraChange > 0L && !addedChangeOutput) {
                             handler.post(new Runnable() {
                                 public void run() {
                                     Toast.makeText(BalanceActivity.this, R.string.cannot_create_change_output, Toast.LENGTH_SHORT).show();
@@ -2165,10 +2159,10 @@ public class BalanceActivity extends Activity {
                         //
                         // update keyBag w/ any new paths
                         //
-                        final HashMap<String,String> keyBag = rbf.getKeyBag();
-                        for(UTXO _utxo : selectedUTXO)    {
+                        final HashMap<String, String> keyBag = rbf.getKeyBag();
+                        for (UTXO _utxo : selectedUTXO) {
 
-                            for(MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
+                            for (MyTransactionOutPoint outpoint : _utxo.getOutpoints()) {
 
                                 MyTransactionInput _input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outpoint, outpoint.getTxHash().toString(), outpoint.getTxOutputN());
                                 _input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
@@ -2176,19 +2170,16 @@ public class BalanceActivity extends Activity {
                                 Log.d("BalanceActivity", "add selected outpoint:" + _input.getOutpoint().toString());
 
                                 String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(outpoint.getAddress());
-                                if(path != null)    {
-                                    if(FormatsUtil.getInstance().isValidBech32(outpoint.getAddress()))    {
+                                if (path != null) {
+                                    if (FormatsUtil.getInstance().isValidBech32(outpoint.getAddress())) {
                                         rbf.addKey(outpoint.toString(), path + "/84");
-                                    }
-                                    else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress()) != null && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress()).isP2SHAddress())    {
+                                    } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress()) != null && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), outpoint.getAddress()).isP2SHAddress()) {
                                         rbf.addKey(outpoint.toString(), path + "/49");
-                                    }
-                                    else    {
+                                    } else {
                                         rbf.addKey(outpoint.toString(), path);
                                     }
                                     Log.d("BalanceActivity", "outpoint address:" + outpoint.getAddress());
-                                }
-                                else    {
+                                } else {
                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outpoint.getAddress());
                                     int idx = BIP47Meta.getInstance().getIdx4Addr(outpoint.getAddress());
                                     rbf.addKey(outpoint.toString(), pcode + "/" + idx);
@@ -2208,9 +2199,9 @@ public class BalanceActivity extends Activity {
                     List<TransactionOutput> _txOutputs = new ArrayList<TransactionOutput>();
                     _txOutputs.addAll(txOutputs);
                     Collections.sort(_txOutputs, new BIP69OutputComparator());
-                    for(TransactionOutput to : _txOutputs) {
+                    for (TransactionOutput to : _txOutputs) {
                         // zero value outputs discarded here
-                        if(to.getValue().longValue() > 0L)    {
+                        if (to.getValue().longValue() > 0L) {
                             _tx.addOutput(to);
                         }
                     }
@@ -2218,14 +2209,14 @@ public class BalanceActivity extends Activity {
                     List<MyTransactionInput> __inputs = new ArrayList<MyTransactionInput>();
                     __inputs.addAll(_inputs);
                     Collections.sort(__inputs, new SendFactory.BIP69InputComparator());
-                    for(TransactionInput input : __inputs) {
+                    for (TransactionInput input : __inputs) {
                         _tx.addInput(input);
                     }
 
                     FeeUtil.getInstance().setSuggestedFee(suggestedFee);
 
                     String message = "";
-                    if(feeWarning)  {
+                    if (feeWarning) {
                         message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
                         message += "\n\n";
                     }
@@ -2245,14 +2236,14 @@ public class BalanceActivity extends Activity {
                                     final String strTxHash = __tx.getHashAsString();
                                     Log.d("BalanceActivity", "tx hash:" + strTxHash);
 
-                                    if(__tx != null)    {
+                                    if (__tx != null) {
 
                                         boolean isOK = false;
                                         try {
 
                                             isOK = PushTx.getInstance(BalanceActivity.this).pushTx(hexTx);
 
-                                            if(isOK)    {
+                                            if (isOK) {
 
                                                 handler.post(new Runnable() {
                                                     public void run() {
@@ -2270,8 +2261,7 @@ public class BalanceActivity extends Activity {
                                                     }
                                                 });
 
-                                            }
-                                            else    {
+                                            } else {
 
                                                 handler.post(new Runnable() {
                                                     public void run() {
@@ -2280,15 +2270,13 @@ public class BalanceActivity extends Activity {
                                                 });
 
                                             }
-                                        }
-                                        catch(final DecoderException de) {
+                                        } catch (final DecoderException de) {
                                             handler.post(new Runnable() {
                                                 public void run() {
                                                     Toast.makeText(BalanceActivity.this, "pushTx:" + de.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-                                        }
-                                        finally {
+                                        } finally {
                                             ;
                                         }
 
@@ -2302,12 +2290,11 @@ public class BalanceActivity extends Activity {
 
                                 }
                             });
-                    if(!isFinishing())    {
+                    if (!isFinishing()) {
                         dlg.show();
                     }
 
-                }
-                catch(final JSONException je) {
+                } catch (final JSONException je) {
                     handler.post(new Runnable() {
                         public void run() {
                             Toast.makeText(BalanceActivity.this, "rbf:" + je.getMessage(), Toast.LENGTH_SHORT).show();
@@ -2315,8 +2302,7 @@ public class BalanceActivity extends Activity {
                     });
                 }
 
-            }
-            else    {
+            } else {
                 Toast.makeText(BalanceActivity.this, R.string.cpfp_cannot_retrieve_tx, Toast.LENGTH_SHORT).show();
             }
 
@@ -2335,45 +2321,40 @@ public class BalanceActivity extends Activity {
             ;
         }
 
-        private Transaction signTx(Transaction tx)    {
+        private Transaction signTx(Transaction tx) {
 
-            HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
-            HashMap<String,ECKey> keyBag49 = new HashMap<String,ECKey>();
-            HashMap<String,ECKey> keyBag84 = new HashMap<String,ECKey>();
+            HashMap<String, ECKey> keyBag = new HashMap<String, ECKey>();
+            HashMap<String, ECKey> keyBag49 = new HashMap<String, ECKey>();
+            HashMap<String, ECKey> keyBag84 = new HashMap<String, ECKey>();
 
-            HashMap<String,String> keys = rbf.getKeyBag();
-            for(String outpoint : keys.keySet())   {
+            HashMap<String, String> keys = rbf.getKeyBag();
+            for (String outpoint : keys.keySet()) {
 
                 ECKey ecKey = null;
 
                 String[] s = keys.get(outpoint).split("/");
                 Log.i("BalanceActivity", "path length:" + s.length);
-                if(s.length == 4)    {
-                    if(s[3].equals("84"))    {
+                if (s.length == 4) {
+                    if (s[3].equals("84")) {
                         HD_Address addr = BIP84Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                         ecKey = addr.getECKey();
-                    }
-                    else    {
+                    } else {
                         HD_Address addr = BIP49Util.getInstance(BalanceActivity.this).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                         ecKey = addr.getECKey();
                     }
-                }
-                else if(s.length == 3)    {
+                } else if (s.length == 3) {
                     HD_Address hd_address = AddressFactory.getInstance(BalanceActivity.this).get(0, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                     String strPrivKey = hd_address.getPrivateKeyString();
                     DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
                     ecKey = pk.getKey();
-                }
-                else if(s.length == 2)    {
+                } else if (s.length == 2) {
                     try {
                         PaymentAddress address = BIP47Util.getInstance(BalanceActivity.this).getReceiveAddress(new PaymentCode(s[0]), Integer.parseInt(s[1]));
                         ecKey = address.getReceiveECKey();
-                    }
-                    catch(Exception e) {
+                    } catch (Exception e) {
                         ;
                     }
-                }
-                else    {
+                } else {
                     ;
                 }
 
@@ -2381,20 +2362,17 @@ public class BalanceActivity extends Activity {
                 Log.i("BalanceActivity", "path:" + keys.get(outpoint));
 //                Log.i("BalanceActivity", "ECKey address from ECKey:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
-                if(ecKey != null) {
-                    if(s.length == 4)    {
-                        if(s[3].equals("84"))    {
+                if (ecKey != null) {
+                    if (s.length == 4) {
+                        if (s[3].equals("84")) {
                             keyBag84.put(outpoint, ecKey);
-                        }
-                        else    {
+                        } else {
                             keyBag49.put(outpoint, ecKey);
                         }
-                    }
-                    else    {
+                    } else {
                         keyBag.put(outpoint, ecKey);
                     }
-                }
-                else {
+                } else {
                     throw new RuntimeException("ECKey error: cannot process private key");
 //                    Log.i("ECKey error", "cannot process private key");
                 }
@@ -2406,26 +2384,24 @@ public class BalanceActivity extends Activity {
 
                 ECKey ecKey = null;
                 String address = null;
-                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()) || keyBag84.containsKey(inputs.get(i).getOutpoint().toString()))    {
-                    if(keyBag84.containsKey(inputs.get(i).getOutpoint().toString()))    {
+                if (inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()) || keyBag84.containsKey(inputs.get(i).getOutpoint().toString())) {
+                    if (keyBag84.containsKey(inputs.get(i).getOutpoint().toString())) {
                         ecKey = keyBag84.get(inputs.get(i).getOutpoint().toString());
                         SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                         address = segwitAddress.getBech32AsString();
-                    }
-                    else    {
+                    } else {
                         ecKey = keyBag49.get(inputs.get(i).getOutpoint().toString());
                         SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                         address = segwitAddress.getAddressAsString();
                     }
-                }
-                else    {
+                } else {
                     ecKey = keyBag.get(inputs.get(i).getOutpoint().toString());
                     address = ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                 }
                 Log.d("BalanceActivity", "pubKey:" + Hex.toHexString(ecKey.getPubKey()));
                 Log.d("BalanceActivity", "address:" + address);
 
-                if(inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()) || keyBag84.containsKey(inputs.get(i).getOutpoint().toString()))    {
+                if (inputs.get(i).getValue() != null || keyBag49.containsKey(inputs.get(i).getOutpoint().toString()) || keyBag84.containsKey(inputs.get(i).getOutpoint().toString())) {
 
                     final SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     Script scriptPubKey = segwitAddress.segWitOutputScript();
@@ -2440,15 +2416,14 @@ public class BalanceActivity extends Activity {
                     witness.setPush(1, ecKey.getPubKey());
                     tx.setWitness(i, witness);
 
-                    if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    if (!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                         final ScriptBuilder sigScript = new ScriptBuilder();
                         sigScript.data(redeemScript.getProgram());
                         tx.getInput(i).setScriptSig(sigScript.build());
                         tx.getInput(i).getScriptSig().correctlySpends(tx, i, scriptPubKey, Coin.valueOf(input_values.get(inputs.get(i).getOutpoint().toString())), Script.ALL_VERIFY_FLAGS);
                     }
 
-                }
-                else    {
+                } else {
                     Log.i("BalanceActivity", "sign outpoint:" + inputs.get(i).getOutpoint().toString());
                     Log.i("BalanceActivity", "ECKey address from keyBag:" + ecKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
