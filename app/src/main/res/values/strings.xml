@@ -660,4 +660,9 @@
     <string name="boost_transaction_fee">Boost transaction fee</string>
     <string name="refund">Refund</string>
 
+    <string name="not_cahoots">Invalid #Cahoots</string>
+    <string name="not_valid_json">JSON parsing error</string>
+    <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
+    <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
+
 </resources>
