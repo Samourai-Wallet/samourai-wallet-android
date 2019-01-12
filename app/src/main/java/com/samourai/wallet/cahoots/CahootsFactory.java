@@ -9,9 +9,6 @@ import java.util.List;
 
 public class CahootsFactory {
 
-    public static final int CAHOOTS_STONEWALLx2 = 0;
-    public static final int CAHOOTS_STOWAWAY = 1;
-
     private static CahootsFactory instance = null;
 
     private static List<Cahoots> cahoots = null;
@@ -65,6 +62,7 @@ public class CahootsFactory {
         catch(JSONException ex) {
             throw new RuntimeException(ex);
         }
+
     }
 
 }
