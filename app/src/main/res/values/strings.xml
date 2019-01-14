@@ -646,7 +646,7 @@
     <string name="import_cahoots">Scan or paste a #Cahoots.</string>
     <string name="import_psbt">Scan or paste a PSBT.</string>
     <string name="enter_cahoots">Enter #Cahoots text</string>
-    <string name="enter_psbt">Enter PSBT text</string>
+    <string name="enter_psbt">Enter PSBT hex text</string>
     <string name="create_cahoots">Create #Cahoots spend</string>
     <string name="stowaway">Stowaway</string>
     <string name="stonewall">Stonewall</string>
@@ -664,5 +664,7 @@
     <string name="not_valid_json">JSON parsing error</string>
     <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
     <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
+    <string name="start_stowaway">Begin Stowaway as spender</string>
+    <string name="amount_sats">Enter amount in sats</string>
 
 </resources>
