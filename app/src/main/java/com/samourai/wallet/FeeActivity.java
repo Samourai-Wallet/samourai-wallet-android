@@ -25,6 +25,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -42,6 +43,7 @@ public class FeeActivity extends Activity {
     private int FEE_TYPE = FEE_LOW;
     private long feeLow, feeMed, feeHigh;
     private TextView totalMinerFee, estBlockWait, totalFeeText, selectedFeeLayman, selectedFee;
+    int multiplier = 10000;
 
     private SeekBar feeSeekBar;
 
@@ -85,7 +87,13 @@ public class FeeActivity extends Activity {
         feeMed = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
         feeHigh = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
 
-        feeSeekBar.setMax((int) ((feeHigh / 2) + feeHigh));
+        float high = ((float) feeHigh / 2) + (float) feeHigh;
+        int feeHighSliderValue = (int) (high * multiplier);
+        int feeMedSliderValue = (int) (feeMed * multiplier);
+
+
+        feeSeekBar.setMax(feeHighSliderValue - multiplier);
+
         if (feeLow == feeMed && feeMed == feeHigh) {
             feeLow = (long) ((double) feeMed * 0.85);
             feeHigh = (long) ((double) feeMed * 1.15);
@@ -173,10 +181,13 @@ public class FeeActivity extends Activity {
     }
 
     private void onSliderChange(int progress) {
+        DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
         // here we get progress value at 0 , so we need to add 1
-        double value = progress + 1;
-        selectedFee.setText(String.valueOf((int) value).concat(" sats/b"));
+
+        double value = ((double) progress + multiplier) / (double) multiplier;
+
+        selectedFee.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
         if (value == 0.0) {
             value = 1.0;
         }
@@ -197,16 +208,8 @@ public class FeeActivity extends Activity {
         }
         estBlockWait.setText(nbBlocks + " blocks");
         setFee(value);
+        setFeeLabels();
 
-        if (value >= feeHigh) {
-            selectedFeeLayman.setText(R.string.urgent);
-
-        } else if (progress >= feeMed) {
-            selectedFeeLayman.setText(R.string.normal);
-
-        } else if (progress >= feeLow) {
-            selectedFeeLayman.setText(R.string.low);
-        }
     }
 
     private void setFee(double fee) {
@@ -247,6 +250,21 @@ public class FeeActivity extends Activity {
     }
 
 
+    private void setFeeLabels() {
+        float sliderValue = (((float) feeSeekBar.getProgress()) / feeSeekBar.getMax());
+
+        float sliderInPercentage = sliderValue * 100;
+
+        if (sliderInPercentage < 33) {
+            selectedFeeLayman.setText(R.string.low);
+        } else if (sliderInPercentage > 33 && sliderInPercentage < 66) {
+            selectedFeeLayman.setText(R.string.normal);
+        } else if (sliderInPercentage > 66) {
+            selectedFeeLayman.setText(R.string.urgent);
+
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -264,7 +282,6 @@ public class FeeActivity extends Activity {
 
         super.onDestroy();
     }
-
 
 
 }
