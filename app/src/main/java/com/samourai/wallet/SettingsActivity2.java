@@ -119,6 +119,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1827,6 +1828,42 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         doScanCahoots();
 
                     }
+                }).setNeutralButton(R.string.start_stowaway, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        final EditText edAmount = new EditText(SettingsActivity2.this);
+                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setView(edAmount)
+                                .setMessage(R.string.amount_sats)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                        final String strAmount = edAmount.getText().toString().trim();
+                                        try {
+                                            long amount = Long.parseLong(strAmount);
+                                            doStowaway0(amount);
+                                        }
+                                        catch(NumberFormatException nfe) {
+                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
                 });
         if(!isFinishing())    {
             dlg.show();
@@ -1910,10 +1947,30 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doCahoots(final String strCahoots) {
 
+        Cahoots cahoots = null;
+        Transaction transaction = null;
+        int step = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(strCahoots);
+            if(jsonObject != null && jsonObject.has("cahoots") && jsonObject.getJSONObject("cahoots").has("step"))    {
+                step = jsonObject.getJSONObject("cahoots").getInt("step");
+                if(step == 4) {
+                    cahoots = new Stowaway(jsonObject);
+                    transaction = cahoots.getPSBT().getTransaction();
+                }
+            }
+        }
+        catch(JSONException je) {
+            ;
+        }
+
+        final int _step = step;
+        final Transaction _transaction = transaction;
+
         final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
 
         TextView showTx = new TextView(SettingsActivity2.this);
-        showTx.setText(strCahoots);
+        showTx.setText(step != 4 ? strCahoots : Hex.toHexString(transaction.bitcoinSerialize()));
         showTx.setTextIsSelectable(true);
         showTx.setPadding(40, 10, 40, 10);
         showTx.setTextSize(18.0f);
@@ -1922,7 +1979,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         hexLayout.setOrientation(LinearLayout.VERTICAL);
         hexLayout.addView(showTx);
 
-        new AlertDialog.Builder(SettingsActivity2.this)
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.cahoots)
                 .setView(hexLayout)
                 .setCancelable(false)
@@ -1938,7 +1995,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("Cahoots", strCahoots);
+                        clip = android.content.ClipData.newPlainText("Cahoots", _step != 4 ? strCahoots : Hex.toHexString(_transaction.bitcoinSerialize()));
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
 
@@ -2043,15 +2100,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         }
 
                     }
-                }).show();
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
 
     }
 
     private void doPSBT()    {
 
-        doStowaway0();
-
-/*
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.PSBT)
@@ -2119,7 +2176,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         if(!isFinishing())    {
             dlg.show();
         }
-*/
+
     }
 
     private void doPSBT(final String strPSBT)    {
@@ -2174,9 +2231,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void doStowaway0()    {
-        // Bob -> Alice
-        long spendAmount = 3910000L;
+    private void doStowaway0(long spendAmount)    {
+        // Bob -> Alice, spendAmount in sats
         NetworkParameters params = TestNet3Params.get();
 
         //
