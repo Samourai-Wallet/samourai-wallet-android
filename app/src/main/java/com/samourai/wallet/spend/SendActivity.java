@@ -649,7 +649,9 @@ public class SendActivity extends AppCompatActivity {
     };
 
     private String formattedSatValue(Object number) {
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        NumberFormat nformat = NumberFormat.getNumberInstance(Locale.US);
+        DecimalFormat decimalFormat = (DecimalFormat) nformat;
+        decimalFormat.applyPattern("#,###");
         return decimalFormat.format(number).replace(",", " ");
     }
 
