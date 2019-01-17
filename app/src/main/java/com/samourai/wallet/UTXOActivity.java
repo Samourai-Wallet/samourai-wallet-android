@@ -127,6 +127,8 @@ public class UTXOActivity extends Activity {
                                                     UTXOUtil.getInstance().remove(data.get(position).hash + "-" + data.get(position).idx);
                                                 }
 
+                                                update(false);
+
                                             }
                                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -518,7 +520,7 @@ public class UTXOActivity extends Activity {
             if(UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx) != null)    {
                 descr += " " + UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx);
                 word = new SpannableString(descr);
-                word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                word.setSpan(new ForegroundColorSpan(0xFF33ff00), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //                Log.d("UTXOActivity", "list: tag");
             }
             if(isBIP47(addr))    {
