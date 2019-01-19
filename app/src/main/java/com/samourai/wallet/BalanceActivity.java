@@ -1486,6 +1486,36 @@ public class BalanceActivity extends Activity {
 
             }
 
+            if(RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0)    {
+
+                List<JSONObject> staggered = RicochetMeta.getInstance(BalanceActivity.this).getStaggered();
+                List<JSONObject> _staggered = new ArrayList<JSONObject>();
+
+                for(JSONObject jObj : staggered)   {
+                    try {
+                        JSONArray jHops = jObj.getJSONArray("script");
+                        if(jHops.length() > 0)    {
+
+                            JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
+                            String txHash = jHop.getString("tx");
+
+                            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
+                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                                continue;
+                            }
+                            else    {
+                                _staggered.add(jObj);
+                            }
+
+                        }
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+                }
+
+            }
+
             return "OK";
         }
 
