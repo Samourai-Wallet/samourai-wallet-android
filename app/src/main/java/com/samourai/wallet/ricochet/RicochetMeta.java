@@ -71,6 +71,7 @@ public class RicochetMeta {
 
     private static int index = 0;
     private static LinkedList<JSONObject> fifo = null;
+    private static List<JSONObject> staggered = null;
     private static JSONObject lastRicochet = null;
 
     private static Context context = null;
@@ -83,6 +84,7 @@ public class RicochetMeta {
 
         if(instance == null) {
             fifo = new LinkedList<JSONObject>();
+            staggered = new ArrayList<JSONObject>();
 
             instance = new RicochetMeta();
         }
@@ -98,6 +100,10 @@ public class RicochetMeta {
         return fifo;
     }
 
+    public List<JSONObject> getStaggered() {
+        return staggered;
+    }
+
     public int getIndex() {
         return index;
     }
@@ -108,6 +114,10 @@ public class RicochetMeta {
 
     public void add(JSONObject jObj)   {
         fifo.add(jObj);
+    }
+
+    public void addStaggered(JSONObject jObj)   {
+        staggered.add(jObj);
     }
 
     public JSONObject peek()   {
@@ -176,6 +186,12 @@ public class RicochetMeta {
             }
             jsonPayload.put("queue", array);
 
+            JSONArray _staggered = new JSONArray();
+            for(JSONObject obj : staggered) {
+                _staggered.put(obj);
+            }
+            jsonPayload.put("staggered", _staggered);
+
         }
         catch(JSONException je) {
             ;
@@ -206,6 +222,16 @@ public class RicochetMeta {
                 for(int i = 0; i < array.length(); i++) {
                     JSONObject obj = array.getJSONObject(i);
                     fifo.add(obj);
+                }
+
+            }
+            if(jsonPayload.has("staggered"))    {
+                staggered.clear();
+
+                JSONArray _staggered = jsonPayload.getJSONArray("staggered");
+                for(int i = 0; i < _staggered.length(); i++) {
+                    JSONObject obj = _staggered.getJSONObject(i);
+                    staggered.add(obj);
                 }
 
             }
