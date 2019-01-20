@@ -195,6 +195,7 @@ public class SendActivity extends AppCompatActivity {
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
+        toAddressEditText.addTextChangedListener(AddressWatcher);
 
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
@@ -254,7 +255,6 @@ public class SendActivity extends AppCompatActivity {
                 processPCode(strPCode, null);
             }
         }
-
         validateSpend();
 
     }
@@ -648,6 +648,18 @@ public class SendActivity extends AppCompatActivity {
         }
     };
 
+    private TextWatcher AddressWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            validateSpend(); }
+    };
+
     private String formattedSatValue(Object number) {
         NumberFormat nformat = NumberFormat.getNumberInstance(Locale.US);
         DecimalFormat decimalFormat = (DecimalFormat) nformat;
@@ -708,7 +720,9 @@ public class SendActivity extends AppCompatActivity {
 
     private void setToAddress(String string) {
         tvToAddress.setText(string);
+        toAddressEditText.removeTextChangedListener(AddressWatcher);
         toAddressEditText.setText(string);
+        toAddressEditText.addTextChangedListener(AddressWatcher);
     }
 
     private String getToAddress() {
@@ -785,11 +799,9 @@ public class SendActivity extends AppCompatActivity {
 
         if (changeType == 84) {
             change_index = idxBIP84Internal;
-        }
-        else if (changeType == 49) {
+        } else if (changeType == 49) {
             change_index = idxBIP49Internal;
-        }
-        else {
+        } else {
             change_index = idxBIP44Internal;
         }
 
@@ -833,7 +845,7 @@ public class SendActivity extends AppCompatActivity {
         else if (amount == balance) {
             // make sure we are using simple spend
             SPEND_TYPE = SPEND_SIMPLE;
-            canDoBoltzmann =  false;
+            canDoBoltzmann = false;
 
 //                    Log.d("SendActivity", "amount == balance");
             // take all utxos, deduct fee
@@ -1321,17 +1333,17 @@ public class SendActivity extends AppCompatActivity {
 
                         dialog.dismiss();
 
-                        if(staggered)    {
+                        if (staggered) {
 
 //                            Log.d("SendActivity", "Ricochet staggered:" + ricochetJsonObj.toString());
 
                             try {
-                                if(ricochetJsonObj.has("hops"))    {
+                                if (ricochetJsonObj.has("hops")) {
                                     JSONArray hops = ricochetJsonObj.getJSONArray("hops");
-                                    if(hops.getJSONObject(0).has("nTimeLock"))    {
+                                    if (hops.getJSONObject(0).has("nTimeLock")) {
 
                                         JSONArray nLockTimeScript = new JSONArray();
-                                        for(int i = 0; i < hops.length(); i++)   {
+                                        for (int i = 0; i < hops.length(); i++) {
                                             JSONObject hopObj = hops.getJSONObject(i);
                                             int seq = i;
                                             long locktime = hopObj.getLong("nTimeLock");
@@ -1380,13 +1392,11 @@ public class SendActivity extends AppCompatActivity {
 
                                     }
                                 }
-                            }
-                            catch(JSONException je) {
+                            } catch (JSONException je) {
                                 Log.d("SendActivity", je.getMessage());
                             }
 
-                        }
-                        else    {
+                        } else {
                             RicochetMeta.getInstance(SendActivity.this).add(ricochetJsonObj);
 
                             Intent intent = new Intent(SendActivity.this, RicochetActivity.class);
@@ -1616,11 +1626,9 @@ public class SendActivity extends AppCompatActivity {
 
         if (amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
-        }
-        else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+        } else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
-        }
-        else {
+        } else {
             isValid = false;
         }
 
@@ -1776,27 +1784,25 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void saveChangeIndexes()   {
+    private void saveChangeIndexes() {
 
         idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         try {
             idxBIP44Internal = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
-        }
-        catch(IOException | MnemonicException.MnemonicLengthException e) {
+        } catch (IOException | MnemonicException.MnemonicLengthException e) {
             ;
         }
 
     }
 
-    private void restoreChangeIndexes()   {
+    private void restoreChangeIndexes() {
 
         BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
         BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
         try {
             HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(idxBIP44Internal);
-        }
-        catch(IOException | MnemonicException.MnemonicLengthException e) {
+        } catch (IOException | MnemonicException.MnemonicLengthException e) {
             ;
         }
 
