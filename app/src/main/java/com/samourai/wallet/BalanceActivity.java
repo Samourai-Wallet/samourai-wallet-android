@@ -76,6 +76,8 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
+import com.samourai.wallet.ricochet.RicochetActivity;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -132,6 +134,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -162,6 +166,7 @@ public class BalanceActivity extends Activity {
     private boolean isBTC = true;
 
     private PoWTask powTask = null;
+    private RicochetQueueTask ricochetQueueTask = null;
     private ProgressDialog progress = null;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
@@ -493,6 +498,13 @@ public class BalanceActivity extends Activity {
             doClaimPayNym();
         } else {
             ;
+        }
+
+        if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
+            if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+                ricochetQueueTask = new RicochetQueueTask();
+                ricochetQueueTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            }
         }
 
         if (!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen()) {
@@ -1438,6 +1450,83 @@ public class BalanceActivity extends Activity {
         Intent txIntent = new Intent(this, TxDetailsActivity.class);
         txIntent.putExtra("TX", tx.toJSON().toString());
         startActivity(txIntent);
+    }
+
+    private class RicochetQueueTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
+
+                final Iterator<JSONObject> itr = RicochetMeta.getInstance(BalanceActivity.this).getIterator();
+
+                while(itr.hasNext())    {
+
+                    try {
+                        JSONObject jObj = itr.next();
+                        JSONArray jHops = jObj.getJSONArray("hops");
+                        if(jHops.length() > 0)    {
+
+                            JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
+                            String txHash = jHop.getString("hash");
+
+                            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
+                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                                itr.remove();
+                                continue;
+                            }
+
+                        }
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+                }
+
+            }
+
+            if(RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0)    {
+
+                List<JSONObject> staggered = RicochetMeta.getInstance(BalanceActivity.this).getStaggered();
+                List<JSONObject> _staggered = new ArrayList<JSONObject>();
+
+                for(JSONObject jObj : staggered)   {
+                    try {
+                        JSONArray jHops = jObj.getJSONArray("script");
+                        if(jHops.length() > 0)    {
+
+                            JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
+                            String txHash = jHop.getString("tx");
+
+                            JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
+                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                                continue;
+                            }
+                            else    {
+                                _staggered.add(jObj);
+                            }
+
+                        }
+                    }
+                    catch(JSONException je) {
+                        ;
+                    }
+                }
+
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) { ; }
+
+        @Override
+        protected void onPreExecute() {
+            ;
+        }
+
     }
 
     private class PoWTask extends AsyncTask<String, Void, String> {
