@@ -165,7 +165,7 @@
     <string name="to">به</string>
     <string name="destination">آدرس یا کانالِ پرداخت</string>
 
-    <string name="insufficient_funds"موجودی ناکافی‌ست</string>
+    <string name="insufficient_funds">موجودی ناکافی‌ست</string>
     <string name="tx_length_error">سامورائی تراکنش‌های بیش از 100 کیلوبایت را پشتیبانی نمی‌کند. لطفاً تراکنش‌تان را به چند قسمت تقسیم کنید</string>
     <string name="invalid_amount">مقدارِ نامعتبر</string>
     <string name="amount">مقدار</string>
