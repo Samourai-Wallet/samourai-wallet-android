@@ -526,7 +526,7 @@
     <string name="use_bech32">použi bech32 adresu</string>
 
     <string name="boltzmann_cannot">A STONEWALL výdavky nemôžu byť zložené s vašou aktuálnou sadou nevyčerpaných. Ak potrebujete stráviť STONEWALL, klepnite na \'NO \' a skúste znova s upravenou sadou nevyčerpaných.</string>
-    <string name="boltzmann_like_typed">Be advised that \'Upozorňujeme, že položka "Prijať zmenu na rovnako napísané výstupy \" je vypnutá a môže mať za následok menej optimálnu štruktúru transakcií pre vaše náklady na STONEWALL.</string>
+    <string name="boltzmann_like_typed">Be advised that \'Upozorňujeme, že položka \"Prijať zmenu na rovnako napísané výstupy \" je vypnutá a môže mať za následok menej optimálnu štruktúru transakcií pre vaše náklady na STONEWALL.</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string>
     <string name="advanced">Rozšírené</string>
