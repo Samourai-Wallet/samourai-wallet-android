@@ -1459,9 +1459,15 @@ public class BalanceActivity extends Activity {
 
             if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
 
+                int count = 0;
+
                 final Iterator<JSONObject> itr = RicochetMeta.getInstance(BalanceActivity.this).getIterator();
 
                 while(itr.hasNext())    {
+
+                    if(count == 3)    {
+                        break;
+                    }
 
                     try {
                         JSONObject jObj = itr.next();
@@ -1474,7 +1480,7 @@ public class BalanceActivity extends Activity {
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
                             if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
                                 itr.remove();
-                                continue;
+                                count++;
                             }
 
                         }
@@ -1488,10 +1494,17 @@ public class BalanceActivity extends Activity {
 
             if(RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0)    {
 
+                int count = 0;
+
                 List<JSONObject> staggered = RicochetMeta.getInstance(BalanceActivity.this).getStaggered();
                 List<JSONObject> _staggered = new ArrayList<JSONObject>();
 
                 for(JSONObject jObj : staggered)   {
+
+                    if(count == 3)    {
+                        break;
+                    }
+
                     try {
                         JSONArray jHops = jObj.getJSONArray("script");
                         if(jHops.length() > 0)    {
@@ -1501,7 +1514,7 @@ public class BalanceActivity extends Activity {
 
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
                             if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
-                                continue;
+                                count++;
                             }
                             else    {
                                 _staggered.add(jObj);
