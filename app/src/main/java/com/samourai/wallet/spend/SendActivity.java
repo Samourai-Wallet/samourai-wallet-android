@@ -10,6 +10,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.Group;
+import android.support.transition.Slide;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -102,9 +107,10 @@ public class SendActivity extends AppCompatActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
-    private Switch ricochetHopsSwitch, stoneWallSwitch;
+    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, stoneWallSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
+    private Group ricochetStaggeredOptionGroup;
 
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
@@ -170,6 +176,8 @@ public class SendActivity extends AppCompatActivity {
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
         ricochetTitle = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_desc);
         ricochetDesc = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_title);
+        ricochetStaggeredDelivery = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option);
+        ricochetStaggeredOptionGroup = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_staggered_option_group);
         tvSelectedFeeRate = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate);
         tvSelectedFeeRateLayman = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.selected_fee_rate_in_layman);
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
@@ -485,7 +493,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpRicochet() {
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
+            ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
                 SPEND_TYPE = SPEND_RICOCHET;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true);
@@ -497,6 +505,7 @@ public class SendActivity extends AppCompatActivity {
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
     }
+
 
     private void setBalance() {
 
