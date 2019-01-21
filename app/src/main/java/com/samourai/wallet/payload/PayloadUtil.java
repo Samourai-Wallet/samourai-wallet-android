@@ -37,6 +37,7 @@ import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
@@ -338,7 +339,7 @@ public class PayloadUtil	{
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorUtil.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
-
+            meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
 
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
@@ -570,6 +571,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("blocked_utxos")) {
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
+                }
+                if(meta.has("utxo_tags")) {
+                    UTXOUtil.getInstance().fromJSON((JSONArray) meta.get("utxo_tags"));
                 }
 
                 if(meta.has("trusted_no")) {
