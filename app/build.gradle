@@ -126,6 +126,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
+    implementation 'com.github.Samourai-Wallet:boltzmann-java:develop-SNAPSHOT'
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.5.4'
     implementation 'org.java-websocket:Java-WebSocket:1.3.6'
     implementation 'com.android.support:recyclerview-v7:26.1.0'

@@ -37,12 +37,11 @@ import android.widget.ViewSwitcher;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.gson.Gson;
-import com.samourai.boltzmann.beans.Tx;
+import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
 import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
-import com.samourai.boltzmann.processor.TxProcessorSettings;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -184,8 +183,6 @@ public class SendActivity extends AppCompatActivity {
 
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
-
-    private TxProcessor txProcessor = new TxProcessor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1856,7 +1853,6 @@ public class SendActivity extends AppCompatActivity {
             return;
         }
 
-        TxProcessorSettings settings = new TxProcessorSettings();
         Map<String, Long> inputs = new HashMap<>();
         Map<String, Long> outputs = new HashMap<>();
 
@@ -1868,10 +1864,6 @@ public class SendActivity extends AppCompatActivity {
             entropyValue.setText(R.string.not_available);
             return;
         }
-
-        settings.setOptions(new TxosLinkerOptionEnum[]{TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY});
-        settings.setMaxCjIntrafeesRatio(0.005f);
-
 
         for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
             String toAddress = mapEntry.getKey();
@@ -1885,10 +1877,10 @@ public class SendActivity extends AppCompatActivity {
 
         Observable.create((ObservableOnSubscribe<Double>) emitter -> {
 
+            TxProcessor txProcessor = new TxProcessor(BoltzmannSettings.MAX_DURATION_DEFAULT, BoltzmannSettings.MAX_TXOS_DEFAULT);
             Txos txos = new Txos(inputs, outputs);
-            Tx tx = new Tx(txos);
-            TxProcessorResult result1 = txProcessor.processTx(tx, settings);
-            emitter.onNext(result1.getEntropy());
+            TxProcessorResult result0 = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY);
+            emitter.onNext(result0.getEntropy());
 
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
