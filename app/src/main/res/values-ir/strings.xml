@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="alpha_create_wallet">این کلمات را یادداشت کنید و در جای امنی بگذارید. آن‌ها را گم نکنید یا عبارت عبورتان را فراموش نکنید</string>
+    <string name="alpha_create_confirm_backup">کلماتم را یادداشت کردم</string>
+
+    <string name="creating_wallet">در حال ایجاد کیف پول. لطفاً منتظر بمانید</string>
+    <string name="restoring_wallet">در حال بازیابیِ کیف پول. لطفاً منتظر بمانید</string>
+    <string name="decrypting_bip38">.لطفاً منتظر بمانید BIP38 در حال رمزگشایی رمز عبورِ</string>
+
+    <string name="action_settings">تنظیمات</string>
+    <string name="action_support">پشتیبابی</string>
+    <string name="action_sweep">پاک کردنِ کلید خصوصی</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">فعال کردن تمام کدهای پرداختِ بایگانی شده</string>
+    <string name="action_sync_all">هماهنگ‌سازیِ تمام کدهای پرداخت</string>
+
+    <string name="about_us">درباره‌ی کیف پول سامورائی</string>
+
+    <string name="ok">باشه</string>
+    <string name="Cancel">لغو</string>
+
+    <string name="options_cat_prefs">جستجوگرِ بلاک</string>
+    <string name="options_cat_stealth">حالت مخفی</string>
+    <string name="options_cat_remote">از راه دور</string>
+    <string name="options_cat_wallet">کیف پول</string>
+    <string name="options_cat_networking">شبکه‌بندی</string>
+    <string name="options_cat_other">درباره</string>
+
+    <string name="options_mnemonic">نمایش یادیار</string>
+    <string name="options_mnemonic2">نمایش عبارت 12 کلمه‌ای بازیابی برای این کیف پول</string>
+    <string name="options_xpub">BIP44 XPUB نمایشِ</string>
+    <string name="options_xpub2">BIP44 نمایش کلید عمومی گسترده برای حساب کاربریِ</string>
+    <string name="options_xpub49">Segwit YPUB نمایشِ</string>
+    <string name="options_xpub49_2">(P2SH-wrapped) BIP49 نمایش کلید عمومیِ گسترده برای حساب کاربری سگویت</string>
+    <string name="options_xpub84">ZPUB نمایش سگویت</string>
+    <string name="options_xpub84_2">(Bech32) BIP84 نمایش کلید عمومی گسترده برای حساب کاربریِ سگویت</string>
+    <string name="options_wipe">پاک کردنِ امن کیف پول</string>
+    <string name="options_wipe2">کیف پول را به روشی امن از روی دستگاه پاک کن</string>
+    <string name="options_stealth_display">لانچرِ حالت مخفیانه</string>
+    <string name="options_stealth_display2">#حذف سامورائی از لانچر و صفحه‌ی خانه. باید به این صورت از طریق تلفن تماس بگیرید تا سامورایی اجرا شود: **پین کدِ شما</string>
+    <string name="options_remote_commands">فعال‌سازیِ دستورات از را دور</string>
+    <string name="options_remote_commands2">اجازه دادن برای اجرای دستورات از راه دور توسط پیامک</string>
+    <string name="options_currency">قیمت کفِ بازار</string>
+    <string name="options_currency2">صرافی و پولِ محلی خود را انتخاب کنید</string>
+    <string name="options_blockexplorer">جستجوگرِ بلاک</string>
+    <string name="options_blockexplorer2">استفاده از جستجوگرِ بلاک برای دیدن جزئیات تراکنش‌ها</string>
+    <string name="options_sim_switch">محافظت از تغییر سیم‌کارت</string>
+    <string name="options_sim_switch2">ارسال پیامک به شماره موبایلِ مورد اطمینان در صورت تغییر سیم‌کارت</string>
+    <string name="options_use_telno">استفاده از شماره موبایلِ مورد اطمینان برای دستورات از راه دور</string>
+    <string name="options_use_telno2">فقط دستورات ارسال شده از شماره موبایلِ مورد اطمینان اجازه‌ی اجرا دارند</string>
+    <string name="options_alert_telno">شماره موبایل مورد اطمینان</string>
+    <string name="options_alert_telno2">+شماره موبایل مورد اطمینان که می‌توانید دسترسی از راه دور را به آن محدود کنید. شماره را بدون فاصله وارد کنید برای مثال: 989123456789</string>
+    <string name="options_hash">APK hash</string>
+    <string name="options_hash2">نصب شده‌ی فعلی را نمایش بده. می‌توانید در کلیپ‌بورد هم کپی کنید APK فایلِ SHA256 هشِ</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">در اندروید OPEN VPN اجرای</string>
+    <string name="options_Tor">TOR مسیریابی از طریقِ</string>
+    <string name="options_Tor2">Orbot (Tor) اجرای</string>
+    <string name="options_export">خروجی گرفتن از نسخه‌ی پشتیبانِ کیف پول</string>
+    <string name="options_change_pin">تغییر پین</string>
+    <string name="options_change_pin2">تعریف پین کدِ جدید. برای باز کردن کیف پول‌تان استفاده می‌شود</string>
+    <string name="options_remote_pin">اجرای حالت مخفیانه و پینِ از راه دور</string>
+    <string name="options_remote_pin2">تعریف پینِ متفاوت برای حالت مخفیانه و عملکردهای راه دور</string>
+    <string name="options_autosave_backup">بکاپ را به طور خودکار در حافظه‌ی دستگاه ذخیره کن</string>
+    <string name="options_autosave_backup2">بکاپِ رمزگذاری شده توسط عبارت عبور را به طور دوره‌ای در حافظه‌ی دستگاه ذخیره کن</string>
+    <string name="options_version">نسخه</string>
+    <string name="options_txs">تراکنش‌ها</string>
+    <string name="options_boltzmann">STONEWALL خرج کردن با </string>
+    <string name="options_boltzmann_2">انجام می‌شود تا مبهم‌سازی افزایش یابد STONEWALL خرج کردن با استفاده از الگوریتمِ</string>
+    <string name="options_utxo">نمایش خروجی‌های خرج نشده</string>
+    <string name="options_trusted_node">تنظیم گره‌ي مورد اطمینان</string>
+    <string name="options_trusted_node2">گره‌ي بیت‌کوین خودتان را برای انتشار تراکنش‌ها مشخص کنید</string>
+    <string name="options_use_trusted_node">استفاده از گره‌ی مورد اطمینان</string>
+    <string name="options_use_trusted_node2">انتشار تراکنش‌ها از گره‌ی خودتان</string>
+    <string name="options_rbf0">جایگزینی به همراهِ کارمزد- RBF خرج کردن با استفاده از</string>
+    <string name="options_rbf0_2">خرج‌ها از «جایگزینی به همراه کارمزد» استفاده خواهند کرد تا افزایش کارمزد ممکن باشد</string>
+    <string name="options_troubleshoot">رفع مشکل</string>
+    <string name="options_passphrase_test">عبارت عبور/آزمایشِ بکاپ</string>
+    <string name="options_passphrase_test2">تأیید دسترسی به کیف پول و پشتیبانی از بکاپ</string>
+    <string name="options_send_backup_to_support">ارسال بکاپ به پشتیبانیِ فنی</string>
+    <string name="options_send_backup_to_support2">ارسال بکاپِ کیف پول به پشتیبانی فنی. حاوی اطلاعات کلید خصوصی نیست</string>
+    <string name="options_fee_provider">مرجع تخمین کارمزد</string>
+    <string name="options_fee_provider2">ارائه‌دهنده‌ی موردنظرتان را برای تخمین کارمزد تراکنش انتخاب کنید</string>
+    <string name="options_broadcast_on">انتشار تراکنش‌ها</string>
+    <string name="options_broadcast_on2">تیک را بردارید (خاموش بودن انتشار) تا تراکنش‌های خامِ امضا شده را به کلیپ‌بورد کپی کنید</string>
+    <string name="options_segwit">دریافت به آدرس سگویت</string>
+    <string name="options_segwit_2">ایجاد آدرس سگویت برای تراکنش‌های ورودی</string>
+    <string name="options_broadcast_hex">انتشار هگزِ تراکنش</string>
+    <string name="options_broadcast_hex2">انتشار تراکنش‌های امضا شده که در قالب هگز تحویل داده شده‌اند</string>
+    <string name="options_like_typed_change">دریافت مابقی پول در خروجی‌های هم‌نوع</string>
+    <string name="options_like_typed_change2">دریافت مابقی پول در آدرسی هم نوع با آدرسی که پول از آن خرج شده است. برای اینکه فقط در آدرس‌های سگویت مابقی پول را دریافت کنید این گزینه را خاموش بگذارید</string>
+    <string name="options_haptic">پینِ لمسی</string>
+    <string name="options_haptic_2">برای ورودِ هر رقمِ پین کد ویبره داشته باشد</string>
+    <string name="options_prune">فشرده‌سازیِ بکاپ</string>
+    <string name="options_prune2">فشرده‌سازیِ کیف پول و فایل‌های بکاپ</string>
+    <string name="options_address_calc">محاسبه‌گرِ آدرس</string>
+    <string name="options_address_calc2">محاسبه‌ی آدرس‌هایی که از عبارت بازیابیِ کیف پول‌تان به دست می‌آیند</string>
+    <string name="options_paynym_calc">PayNym محاسبه‌گرِ </string>
+    <string name="options_paynym_calc2">ها به اشتراک گذاشته شده‌اندPayNym محاسبه‌ی آدرس‌هایی که با دیگر</string>
+
+    <string name="prompt_send_backup_to_support">ارسال بکاپِ کیف پول به پشتیبانی فنی؟ شامل کلید خصوصی، عبارت بازیابی و عبارت عبور نمی‌شود</string>
+
+    <string name="timeline_today">امروز</string>
+    <string name="timeline_older">قدیمی‌تر</string>
+
+    <string name="tx_sent">تراکنش ارسال شد</string>
+    <string name="tx_failed">خطا در ارسالِ تراکنش</string>
+    <string name="you_received">دریافت</string>
+    <string name="you_sent">ارسال شد</string>
+    <string name="send">ارسال</string>
+    <string name="receive">دریافت</string>
+    <string name="cannot_select_utxo">نمی‌توان خروجی‌های خرج نشده را انتخاب کرد</string>
+    <string name="error_bip126_output">خطا در تشخیص آدرس خروجی</string>
+    <string name="error_change_output">خطا در تشخیص آدرس مابقیِ پول</string>
+
+    <string name="copied_to_clipboard">در کلیپ‌بورد کپی شد</string>
+    <string name="send_payment_code">کدِ پرداخت را ارسال کنید</string>
+
+    <string name="ask_you_sure_exit">مطمئنید می‌خواهید از سامورائی خارج بشید؟</string>
+    <string name="yes">بله</string>
+    <string name="no">نه</string>
+    <string name="close">بستن</string>
+
+    <string name="sim_warning">در حال  حاضر دستگاهِ حاوی کیف پول سامورائیِ شما سیم‌کارتِ دیگری برای مکاتبه با شماره ورودی این پیامک دارد</string>
+
+    <string name="pin_5_8">پین کدی بین 5 تا 8 حرف ایجاد کنید</string>
+    <string name="pin_5_8_confirm">تأیید پین کد</string>
+    <string name="pin_error">خطای پین کد</string>
+    <string name="no_internet">عدم دسترسی به اینترنت. لطفاً دوباره تلاش کنید</string>
+    <string name="bip38_pw">BIP38 رمز عبورِ </string>
+    <string name="bip38_pw_error">BIP38 خطای رمز عبورِ </string>
+    <string name="bip39_safe">لطفاً یک عبارتِ عبور ایجاد کرده و آن را مخفی نگهدارید. در صورت قطع دسترسی به کیف پول، به این عبارتِ عبور نیاز پیدا می‌کنید</string>
+    <string name="bip39_safe2">لطفاً عبارتِ عبورتان را تأیید کنید. آن را مخفی نگهدارید. در صورت قطع دسترسی به کیف پول، به این عبارتِ عبور نیاز پیدا می‌کنید</string>
+    <string name="bip39_restore">استفاده نمی‌کنید آن را خالی بگذارید BIP39 را نیز وارد کنید. اگر از عبارت عبور BIP39 یادیار(یا آنتروپی هگز) خود را وارد کنید و اگر نیاز بود عبارت عبور</string>
+    <string name="bip39_must">کیف پول‌تان باید عبارت عبور داشته باشد. لطفاً دوباره تلاش کنید</string>
+    <string name="bip39_unmatch">عبارت عبور درست نیست. لطفاً دوباره تلاش کنید</string>
+    <string name="bip39_invalid">در عبارت عبورتان از فاصله استفاده نکنید. لطفاً دوباره تلاش کنید</string>
+    <string name="bip39_empty">باید عبارت عبور را مشخص کنید</string>
+    <string name="please_select">لطفاً انتخاب کنید</string>
+    <string name="create_wallet">ایجاد کیف پول</string>
+    <string name="restore_wallet">بازیابی کیف پول</string>
+    <string name="wallet_passphrase">عبارت عبور کیف پول‌تان را وارد کنید</string>
+    <string name="bip39_passphrase">BIP39 عبارت عبورِ</string>
+    <string name="bip39_match">به خوبی تأیید شد BIP39 عبارت عبورِ</string>
+    <string name="bip39_decrypt_test">عبارت عبور کیف پول به خوبی تأیید شد. آیا می‌خواهید رمزگشایی آخرین بکاپِ خودکارتان را آزمایش کنید</string>
+    <string name="backup_read_ok">فایلِ بکاپ سالم است</string>
+    <string name="backup_read_error">خطا در خواندن فایلِ بکاپ</string>
+    <string name="mnemonic_hex">یادیار یا آنتروپیِ هگز</string>
+    <string name="pin_enter">پین کد را وارد کنید</string>
+    <string name="please_wait">لطفاً صبر کنید</string>
+    <string name="random_key_error">خطای ایجادِ کلید تصادفی</string>
+    <string name="login_error">ورود موفق نبود</string>
+    <string name="wallet_created_ok">کیف پول ایجاد شد</string>
+    <string name="wallet_created_ko">خطا در ایجاد کیف پول</string>
+    <string name="wallet_restored_ok">کیف پول بازیابی شد</string>
+    <string name="wallet_restored_ko">خطا در بازیابی کیف پول</string>
+
+    <string name="address_used_previously">شما قبلاً از این آدرس استفاده کرده‌اید. استفاده‌ي دوباره از آدرس‌ها می‌تواند حریم شخصی شما را نقض کند</string>
+
+    <string name="scan">اسکن</string>
+    <string name="scan_error">خطا در اسکن</string>
+    <string name="enter_privkey">وارد کردن کلید خصوصی</string>
+
+    <string name="to">به</string>
+    <string name="destination">آدرس یا کانالِ پرداخت</string>
+
+    <string name="insufficient_funds">موجودی> ناکافی‌ست</string>
+    <string name="tx_length_error">سامورائی تراکنش‌های بیش از 100 کیلوبایت را پشتیبانی نمی‌کند. لطفاً تراکنش‌تان را به چند قسمت تقسیم کنید</string>
+    <string name="invalid_amount">مقدارِ نامعتبر</string>
+    <string name="amount">مقدار</string>
+
+    <string name="receive_address_to_clipboard">می‌خواهید آدرسِ دریافت را در کلیپ‌بورد کپی کنید؟  ممکن است آدرس کپی شده برای اپلیکیشن‌های دیگر قابل دسترس باشد</string>
+    <string name="receive_address_to_share">می‌خواهید آدرس دریافت را به اشتراک بگذارید؟  ممکن است آدرس به اشتراک گذاشته شده توسط اپلیکیشن‌های دیگر خوانده شود</string>
+    <string name="sure_to_erase">از پاک کردن کیف پولتان مطمئنید؟</string>
+    <string name="wallet_erased">کیف پول از دستگاه‌تان پاک شد</string>
+
+    <string name="send_privacy_warning">هشدارِ حریم خصوصی: حواستان باشد که قبلاً نیز به این آدرس واریز داشتید</string>
+
+    <string name="securely_wiping_wait">...در حال پاک کردن امنِ کیف پول. لطفاً صبر کنید</string>
+
+    <string name="options_scramble_pin">دکمه‌های صفحه‌ی پین را جابجا کن</string>
+    <string name="options_scramble_pin2">برای ورود به کیف پول از صفحه اعدادِ درهم ریخته استفاده کن</string>
+
+    <string name="you_must_have_orbot">نصب کنید؟ Google Play را از orbot باید آن را نصب و فعال کرده باشید. می‌خواهید orbot برای ارسال ترافیک‌تان از طریق</string>
+
+    <string name="ssl_pinning_invalid"> با موفقیت انجام نشد. چنین چیزی می‌تواند به معنی فعالیت خرابکارانه باشد. لطفاً قبل از ادامه، اتصال شبکه و دستگاه‌تان را بررسی کنید SSL تصدیق گواهینامه‌ی</string>
+    <string name="ssl_no_connection">وجود ندارد. لطفاً قبل از ادامه اتصال شبکه و دستگاه خود را بررسی کنید SSL امکان اتصال به میزبان برای تصدیق گواهینامه‌ی</string>
+    <string name="retry">تلاش دوباره</string>
+    <string name="exit">خروج</string>
+
+    <string name="create_pin">ایجادِ پین کد</string>
+    <string name="confirm_pin">تأییدِ پین کد</string>
+
+    <string name="auto_fee">کارمزدِ با اولویت معمولی</string>
+    <string name="priority_fee">کارمزدِ با اولویت بالا</string>
+    <string name="low_fee">کارمزدِ با اولویت پایین</string>
+    <string name="custom_fee">تنظیم دستی</string>
+    <string name="sat_b">ساتوشی/بایت</string>
+
+    <string name="account_Samourai">کیف پول</string>
+    <string name="account_shuffling">Shifted</string>
+
+    <string name="max_available">:بیشترین مقدارِ موجود</string>
+
+    <string name="select_account">حساب کاربری را انتخاب کنید</string>
+    <string name="received_bitcoin">بیت‌کوین دریافت شده</string>
+    <string name="received">دریافت شده</string>
+    <string name="sent">تراکنش ارسال شد</string>
+    <string name="total">مجموع</string>
+    <string name="export_to_clipboard">ارسال به کلیپ‌بورد</string>
+    <string name="export_to_email">ارسال به ایمیل</string>
+    <string name="encryption_error">هنگام رمزگذاریِ بکاپ کیف پول‌تان خطایی رخ داده است. لطفاً دوباره تلاش کنید</string>
+    <string name="import_backup">از بکاپ</string>
+    <string name="import_mnemonic">یادیار/ عبارت بازیابی</string>
+    <string name="encrypted_backup">داده‌های رمزگذاری شده‌ی کیف پول</string>
+    <string name="decryption_error">هنگام رمزگشایی بکاپِ کیف پول‌تان خطایی رخ داده. لطفاً دوباره تلاش کنید</string>
+    <string name="restore_wallet_from_backup">بازیابیِ کیف پول از بکاپ</string>
+    <string name="restore_wallet_from_existing_backup">بکاپ در دستگاه یافت شد. برای بازیابیِ بکاپ «باشه» را لمس کنید در غیر این‌صورت بکاپ دیگری را کپی کرده و بچسبانید و سپس «باشه» را لمس کنید</string>
+
+    <string name="choose_email_client">:یکی از  ارائه دهندگانِ ایمیل را انتخاب کنید</string>
+
+    <string name="cannot_launch_app">امکان اجرای کیف پول سامورائی روی این دستگاه وجود ندارد</string>
+    <string name="confirm_change_pin">آیا مطمئنید می‌خواهید پین‌تان را تغییر دهید؟ </string>
+    <string name="success_change_pin">پین تغییر کرد</string>
+    <string name="alternative_pin_create">آیا مطمئنید می‌خواهید پین دیگری برای اجرای مخفیانه و دستورات راه دور ایجاد کنید؟ </string>
+    <string name="alternative_pin_deleted">شما در حال استفاده از پین کدِ دیگری برای عملکردهای مخفی و راه دور نیستید</string>
+    <string name="alternative_pin_wait">قبل از تعریف پین کدِ دیگر منتظر بمانید تا حالت مخفیانه به طور کامل فعال شود</string>
+
+    <string name="invalid_payment_code">کدِ پرداخت نامعتبر</string>
+    <string name="error_payment_code">خطا در تولید کدِ پرداخت</string>
+
+    <string name="bip47_setup1_title">Your PayNym</string>
+    <string name="bip47_setup4_title">PayNym اضافه کردن مخاطب به</string>
+    <string name="bip47_setup4_text1">به مخاطبان‌تان به ایجاد رکورد در بلاک‌چین نیاز دارید و برای این کار یک بار کارمزد تراکنش از شما کسر خواهد شد PayNym برای اضافه شدن این</string>
+    <string name="bip47_setup4_text2">از حساب کیف پول‌تان کسر خواهد شد</string>
+
+    <string name="bip47_add1_title">مخاطب جدید</string>
+    <string name="bip47_add1_text">کدِ پرداخت را اسکن کرده یا اینجا بچسبانید تا کانال پرداختِ جدیدی ایجاد کنید</string>
+
+    <string name="paste">چسباندن</string>
+    <string name="label">برچسب</string>
+    <string name="next">بعدی</string>
+    <string name="confirm">تایید</string>
+    <string name="payment_code">کدِ پرداخت</string>
+    <string name="payment_channel_init">نوتیفیکیشنِ تراکنش ارسال شد. کانال پرداخت شما در حال ایجاد شدن است</string>
+
+    <string name="bip47_no_label_error">باید برچسبی برای این کدِ پرداخت ایجاد کنید</string>
+
+    <string name="bip47_status_tbe">هنوز احراز نشده است</string>
+    <string name="bip47_status_pending">در حال انجام - 0/1 تأیید</string>
+    <string name="bip47_status_active">آماده‌ی ارسال</string>
+    <string name="bip47_status_incoming">آماده‌ي دریافت</string>
+    <string name="bip47_cannot_scan_own_pcode">نمی‌توانید کد پرداخت خودتان را اسکن کنید</string>
+    <string name="bip47_spend_to_pcode">ارسال از طریق همین کانالِ پرداخت؟</string>
+    <string name="bip47_sign">امضاء کردن پیام</string>
+    <string name="bip47_sign_text1">امضا کردن پیام با استفاده از کلید خصوصیِ آدرس نوتیفیکیشن بیپ47؟</string>
+    <string name="bip47_sign_text2">BIP47 امضا شده با آدرس نوتیفیکیشنِ</string>
+    <string name="bip47_wait_for_confirmation_or_retry"> این کانال پرداخت در انتظار 1 تأیید است تا ارسال آن فعال شود. می‌خواهید تلاشِ قبلی را لغو کرده و دوباره یک نوتیفیکیشن ارسال کنید؟ </string>
+
+    <string name="rbf_incoming">تراکنش ورودی «جایگزینی به همراه کارمزد» است. می‌خواهید در جستجوگر بلاک ببینید؟ </string>
+
+    <string name="invalid_passphrase">عبارت عبورِ نامعتبر</string>
+    <string name="passphrase">عبارت عبور</string>
+    <string name="passphrase_needed_for_backup">کیف پول شما توسط عبارتِ عبور محافظت نشده است. بکاپ‌های کیف پول با استفاده از عبارت عبور کیف پول‌تان رمزگذاری می‌شوند. اگر می‌خواهید از بکاپ‌های رمزگذاری شده و دیگر امکانات کیف پول سامورائی استفاده کنید کیف پول‌تان را با استفاده از سامورائی ایجاد کرده و وجوه‌تان را منتقل کنید</string>
+    <string name="passphrase_required">برای استفاده از این عملکرد به عبارتِ عبور نیاز دارید. لطفاً کیف پول جدیدی ایجاد کنید که به طور خودکار شامل عبارت عبور شود</string>
+
+    <string name="cannot_reach_api">اپلیکیشنِ سامورائی ممکن نیست. لطفاً اتصال‌تان را بررسی کرده و یا دوباره در زمان دیگری تلاش کنید API دسترسی به</string>
+    <string name="api_error"> اپلیکیشنِ سامورائی پیام خطا می‌دهد. لطفاً دوباره یا در زمان دیگری تلاش کنید API</string>
+    <string name="api_key_error">اپلیکیشن نامعتبر است API کلیدِ</string>
+    <string name="api_token_error">اپلیکیشن نامعتبر است API توکنِ</string>
+
+    <string name="cannot_recognize_privkey">کلید خصوصی قابل تشخیص نیست</string>
+    <string name="cannot_sweep_privkey">خطا در پاک کردنِ کلید خصوصی</string>
+    <string name="please_wait_sending">در حال ارسال تراکنش، لطفاً منتظر بمانید</string>
+    <string name="please_wait_ricochet">لطفاً منتظر بمانید Ricochet در حال پردازش صفِ</string>
+
+    <string name="change_is_dust">مابقی پولِ مرتبط با این تراکنش مقدار ناچیزی است. دوباره تلاش کنید یا مقدارِ مصرفی را افزایش داده و یا کل موجودی‌تان را خرج کنید</string>
+
+    <string name="tor_routing_on">است Tor سامورائی در حال مسیریابی از طریق</string>
+    <string name="tor_routing_off">نیست. برای فعال کردن لمس کنید Tor سامورائی در حال مسیریابی از طریق</string>
+    <string name="tor_install">لمس کنید Tor و مسیریابی سامورائی از طریق Orbot برای نصب</string>
+
+    <string name="premium_addons">افزونه‌های پولی</string>
+
+    <string name="ricochet_hop">Ricochet گره‌ی</string>
+    <string name="ricochet_hopping">:به Ricochet</string>
+    <string name="ricochet_spend1">:خرج شود به Ricochet</string>
+    <string name="ricochet_spend2">برای مقدار کلیِ</string>
+    <string name="ricochet_spend3">شامل کارمزد 0.002 بیت‌کوین برای سامورائی و ماینرها؟</string>
+
+    <string name="action_ricochet">Ricochet اجرای دوباره‌ی</string>
+    <string name="action_empty_ricochet">Ricochet خالی کردن صفِ</string>
+    <string name="ricochet">ارسال با 4 گرهِ اضافه - Ricochet</string>
+    <string name="action_ricochet_script">Ricochet نمایش اسکریپتِ</string>
+    <string name="action_ricochet_replay">Ricochet ارسال دوباره‌ی</string>
+    <string name="ricochet_replay">را دوباره منتشر کنید؟ Ricochet آیا می‌خواهید این پرداختِ </string>
+    <string name="ricochet_not_broadcast_replay">را دوباره انتشار دهید؟ Ricochet شما وجود داشت. می‌خواهید پرداخت Ricochet مشکلی در انتشار</string>
+    <string name="no_ricochet_replay">برای ارسال مجدد وجود ندارد Ricochet هیچ</string>
+    <string name="no_ricochet_display">برای نمایش وجود ندارد Ricochet هیچ اسکریپتِ</string>
+    <string name="ricochet_broadcast">شما منتشر شد Ricochet</string>
+
+    <string name="bip47_cannot_identify_outpoint">عدم توانایی در پنهان کردنِ کدِ پرداخت خروجی</string>
+    <string name="bip47_cannot_compose_notif_tx">عدم توانایی در ایجاد نوتیفیکیشنِ تراکنش</string>
+
+    <string name="pushtx_returns_null">خرج‌کرد موفقیت‌آمیز نبود. سرور پاسخی خالی ارسال کرد</string>
+
+    <string name="trusted_node">گره مورد اطمینان</string>
+    <string name="trusted_node_user_hint">rpc نام کاربریِ</string>
+    <string name="trusted_node_ip_hint">آدرس آی‌پی</string>
+    <string name="trusted_node_port_hint">پورت - پیش فرص 8332</string>
+    <string name="trusted_node_password_hint">rpc رمزعبور کاربرِ</string>
+    <string name="trusted_node_not_valid">لطفاً اطلاعات معتبری از گره‌ی مورد اطمینان‌تان ارائه دهید</string>
+    <string name="trusted_node_ko">گره‌ي مورد اطمینان شناسایی نشد. لطفاً نصب آن را بررسی کنید</string>
+    <string name="trusted_node_error">خطا در دسترسی به گره‌ی مورد اطمینان</string>
+    <string name="trusted_node_tx_error">تراکنش در گره‌ي مورد اطمینان موفقیت‌آمیز نبود</string>
+    <string name="trusted_node_not_core_131">گره مورد اطمینان تنظیم شده است. به یاد داشته باشید که کی پول سامورائی از بیت‌کوین کُورِ 0.13.1 و نسخه‌های بعد از آن پشتیبانی می‌کند</string>
+    <string name="trusted_node_tx_sent">تراکنش از طریق گره‌ی مورد اطمینان ارسال شد</string>
+    <string name="trusted_node_not_responding">گره‌ی مورد اطمینان پاسخ نمی‌دهد. لطفاً نصب آن را بررسی کنید</string>
+    <string name="trusted_node_breaks_consensus">گره‌ی مورد اطمینان نمی‌تواند در کلاینتی تنظیم شود که توافق جمعی را زیر پا می‌گذارد</string>
+
+    <string name="refresh_tx_pre">در حال دریافت تراکنش‌ها و موجودیِ حساب</string>
+    <string name="refresh_tx">تراکنش‌ها و موجودیِ حساب دریافت شد</string>
+    <string name="refresh_incoming_notif_tx">دریافت شد BIP47 نوتیفیکیشنِ تراکنش‌های ورودیِ</string>
+    <string name="refresh_outgoing_notif_tx">آپدیت شد BIP47 نوتیفیکیشِ تراکنش‌های خروجیِ</string>
+
+    <string name="options_unconfirmed_tx">:این تراکنش در انتظار تأیید است. لطفاً یکی از گزینه‌ها را انتخاب کنید</string>
+    <string name="options_block_explorer">مشاهده‌ی تراکنش</string>
+    <string name="options_bump_fee">افزایش کارمزد تراکنش</string>
+
+    <string name="cpfp_cannot_retrieve_tx">عدم توانایی در دریافت اطلاعاتِ تراکنش. لطفاً دوباره تلاش کنید</string>
+    <string name="fee_bump_not_necessary">به یاد داشته باشید که افزایش کارمزد ممکن است برای این تراکنش ضروری نباشد</string>
+    <string name="bump_fee">:آیا تمایل دارید برای تأیید سریع‌ترِ تراکنش کارمزد ماینرها را افزایش دهید؟ کارمزد اضافی ماینر</string>
+
+    <string name="options_sign">امضا کردنِ پیام</string>
+
+    <string name="trusted_node_pow_failed">گواهی اثبات کارِ برگشت داده شده توسط گره‌ی مورد اطمینان‌تان قابل تأیید نیست. لطفاً نصب گره مورد اطمینان خود را بررسی کنید</string>
+
+    <string name="options_fees">کارمزدهای فعلی ماینرها را نمایش بده</string>
+    <string name="current_fee_selection">:کارمزدتان روی این مقدار تنظیم شده است</string>
+    <string name="current_hi_fee_value">:بالاترین کارمزد فعلی</string>
+    <string name="current_mid_fee_value">:کارمزد عادی فعلی</string>
+    <string name="current_lo_fee_value">:پایین‌ترین کارمزد فعلی</string>
+    <string name="slash_sat">ساتوشی/بایت</string>
+    <string name="set_sat">کارمزد مورد نظرتان را به صورت ساتوشی/بایت وارد کنید</string>
+    <string name="custom_fee_too_low">کارمزد مورد نظرتان بیش از اندازه پایین است</string>
+    <string name="custom_fee_too_high">کارمزد مورد نظرتان بیش از اندازه زیاد است</string>
+
+    <string name="cpfp_spent">ارسال شد CPFPتراکنشِ</string>
+    <string name="rbf_spent">ارسال شد RBFتراکنشِ</string>
+    <string name="cannot_output_dust">امکان ایجاد تراکنش با خروجی ناچیز وجود ندارد</string>
+    <string name="cannot_create_change_output">امکان ایجاد خروجیِ مابقی پول وجود ندارد</string>
+    <string name="cannot_create_cpfp">وجود ندارد CPFPامکان ایجاد تراکنشِ</string>
+
+    <string name="error_reading_payload">خطا در خواندنِ بار. لطفاً دوباره تلاش کنید</string>
+
+    <string name="utxo_sign">امضا کردنِ پیام</string>
+    <string name="utxo_sign_text1">پیام را با استفاده از این کلید خصوصی امضا می‌کنید؟ </string>
+    <string name="utxo_sign_text2">utxo امضا شده با</string>
+    <string name="utxo_sign_text3">utxo امضا شده با</string>
+
+    <string name="recovery_checkup">بررسی بازیابی</string>
+    <string name="recovery_checkup_message">کلمه‌های بازیابی و عبارت عبور کیف پول‌تان نمایش داده می‌شود. اجازه ندهید کسی صفحه‌ی گوشی‌تان را ببیند. این اطلاعات دوباره نمایش داده نمی‌شود</string>
+    <string name="mnemonic">یادیار</string>
+    <string name="recovery_checkup_finish">اطلاعات بازیابی خود را ایمن کرده‌ام</string>
+    <string name="pin_reminder">:پین کد شما برای یادآوری</string>
+
+    <string name="opendime_confirmed_balance">موجودی تأیید شده</string>
+    <string name="opendime_privkey">کلید خصوصی</string>
+    <string name="opendime_verified">تایید شده</string>
+    <string name="opendime_valid_key">کلید خصوصیِ معتبر روی دستگاه قرار دارد</string>
+    <string name="opendime_not_verified">امکان تایید وجود ندارد</string>
+    <string name="opendime_no_valid_key">امکان تأیید کلید خصوصی روی دستگاه وجود ندارد</string>
+    <string name="opendime_view">مشاهده</string>
+    <string name="opendime_sweep">پاک کردن</string>
+    <string name="opendime_topup">بالا بردن</string>
+
+    <string name="select_app">اپلیکیشن را انتخاب کنید</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay protection</string>
+    <string name="replay_unprotected">محافظت نشده</string>
+    <string name="replay_in_progress">در دست اقدام</string>
+    <string name="replay_protected">محافظت شده</string>
+    <string name="replay_disclaimer">شکاف در زنجیره تشخیص داده شد</string>
+    <string name="replay_text">تمام آدرس‌ها در یک تراکنش ترکیب خواهند شد و به آدرسی در کیف پول‌تان ارسال می‌شوند. این عمل با نام ترکیبِ ورودی‌ها شناخته می‌شود و ممکن است حریم شخصی‌تان را نقض کند</string>
+    <string name="replay_ENABLE">REPLAY PROTECTION فعال کردنِ</string>
+
+    <string name="replay_broadcast_to_network">...انتشار در شبکه</string>
+    <string name="replay_seen_on_network">...در شبکه مشاهده شد</string>
+    <string name="replay_split_tx_broadcast">...چند قسمت سازیِ انتشار تراکنش</string>
+    <string name="replay_description">محافظت میکند replay attacks کیف پول‌تان تراکنش خاصی برای خود ارسال خواهد کرد که سکه‌هایتان را برای همیشه از زنجیره‌ي دیگر جدا می‌کند. این کار شما را از</string>
+    <string name="replay_waiting_for_confirmations">منتظر تأییدها</string>
+    <string name="replay_confirmed">تایید شده</string>
+    <string name="replay_confirmations">:تایید‌ها</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash(Bcash) (Bitcoin ABC(BAB)</string>
+
+    <string name="replay_awaiting_confirmation">در انتظار تأیید است Replay protection</string>
+    <string name="replay_dismiss">رد کردنِ هشدار</string>
+
+    <string name="show_qr">کدQR نمایشِ</string>
+    <string name="share_qr">کدQR اشتراک گذاریِ</string>
+    <string name="send_tx">ارسال تراکنش خام</string>
+    <string name="tx_too_large_qr">کد نمایش دادQR  تراکنشِ خام بیش از اندازه بزرگ است و نمی‌توان آن را در</string>
+
+    <string name="select_network">...شبکه را انتخاب کنید</string>
+    <string name="MainNet">شبکه‌ی اصلی</string>
+    <string name="TestNet">شبکه‌ی تست</string>
+
+    <string name="segwit_address">آدرسِ سگویت</string>
+    <string name="segwit_switch_prompt">وجوهی که در آدرس‌های سگویت قرار دارند برای انجام تراکنش بهینه‌تر هستند و هنگام ارسال‌شان به کیف پول‌تان کارمزد ماینرها کمتر خواهد بود</string>
+
+    <string name="privkey_clipboard">یک کلید خصوصی در کلیپ‌بوردتان تشخیص داده شد. محتویات کلیپ‌بورد پاک شود؟ </string>
+
+    <string name="tx_hex">هِگزِ تراکنش</string>
+    <string name="enter_tx_hex">تراکنش را در قالب هِگز وارد کنید</string>
+    <string name="broadcast">تراکنش را انتشار بده</string>
+
+    <string name="dusting_tx">تراکنشِ ناچیز</string>
+    <string name="dusting_attempt">تراکنش ناچیز و غیرمنتظره در کیف پول‌تان می‌تواند به معنای تلاش برای ردگیری آدرس‌ها و خرج‌کردهایتان باشد. این تراکنش ناچیز را به عنوان "غیرقابل خرج شدن" علامت بگذارید تا از ردگیری‌های احتمالی در امان باشید</string>
+    <string name="dusting_attempt_amount">:مقدار</string>
+    <string name="dusting_attempt_id">Hash-Index:</string>
+    <string name="dusting_attempt_ignore">صرف نظر</string>
+    <string name="dusting_attempt_mark_unspendable">علامت‌گذاری به عنوانِ غیرقابل خرج شدن</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">ناچیز</string>
+    <string name="do_not_spend">خرج نکنید</string>
+    <string name="dusting_tx_unblock">این تراکنشِ ناچیز در حال حاضر مسدود شده تا خرج نشود. آن را برای خرج کردن باز می‌کنید؟ </string>
+    <string name="mark_spend">علامت گذاریِ قابل خرج شدن</string>
+    <string name="mark_do_not_spend">علامت گذاریِ غیر قابل خرج شدن</string>
+    <string name="mark_utxo_spend">این خروجیِ خرج نشده قابل استفاده کردن شود؟</string>
+    <string name="mark_utxo_do_not_spend">این خروجیِ خرج نشده غیر قابل استفاده کردن شود؟</string>
+
+    <string name="options_sign_a_message">پیامی را امضا کنید</string>
+    <string name="options_display_redeem_script">Redeem script نمایشِ</string>
+    <string name="options_view_tx">نمایشِ تراکنش</string>
+    <string name="options_display_privkey">نمایشِ کلید خصوصی</string>
+    <string name="options_batch">خرج کردنِ گروهی</string>
+
+    <string name="do_not_repeat_sent_to">چک‌باکس را تیک بزنید تا درباره‌ي ارسال‌هایی که به این آدرس می‌آیند هشدار نگیرید</string>
+
+    <string name="mark_inputs_as_unspendable">خروجی‌های خرج نشده‌ای که ورودی‌های این تراکنش را تشکیل می‌دهند به عنوان غیر قابل خرج کردن علامت گذاری شود؟ </string>
+
+    <string name="copy_to_clipboard">کپی در کلیپ‌بورد</string>
+
+    <string name="no_bitpay">خطا: درخواست بیت‌کوین شما معتبر نیست. سامورائی فقط از ارسال به آدرس‌های معتبر بیت‌کوین پشتیبانی می‌کند</string>
+    <string name="learn_more">بیشتر بدانید</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">خود paynym مطالبه کردنِ</string>
+    <string name="claim_paynym_title1">رایگانِ خود PayNymID مطالبه کردنِ</string>
+    <string name="claim_paynym_text1">PayNym اجازه به دوستان و مخاطبان برای پیدا کردن و اتصال مستقیم از طریق کیف پول‌های سازگار با</string>
+    <string name="claim_paynym_title2">PayNymID مزایای</string>
+    <string name="claim_paynym_text2a">برایتان ایجاد خواهد شد. هیچ دو نفری مقادیر یکسان دریافت نخواهند کرد PayNym یک نام و تصویرِ منحصربه‌فرد به همراه هشِ کدِ</string>
+    <string name="claim_paynym_text2b">شما است و به کارت ملی‌تان ربطی ندارد PayNym بدون بررسی هویتتان! نام و تصویر شما بر اساس کدِ</string>
+    <string name="claim_paynym_text2c">به راحتی پیدا شوید! کیف پول‌های سازگار می‌توانند دنبال مخاطب جدید بگردند و پرداخت‌های خصوصی و امن را بدون گذاشتن ردی انجام دهند</string>
+    <string name="claim_paynym_id">من PayNymID مطالبه‌ی</string>
+    <string name="claim_paynym_id_refused">برایم جالب نیست. دوباره نپرس</string>
+
+    <string name="claim_paynym_prompt">؟PayNym.is من به PayNym و اضافه کردنِ کد عمومیِ PayNym مطالبه‌ي شناسه‌ی</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">برای مخاطبان‌تان نیازمند یک بار پرداخت کارمزد تراکنش برای ثبت در بلاک‌چین است. پرداخت PayNym ایجاد</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">موجودی بیت‌کوین‌تان را افزایش داده و دوباره تلاش کنید</string>
+    <string name="help">کمک</string>
+
+    <string name="passphrase_disclaimer">متوجه هستم در صورتی که عبارت عبورِ خود را گم کرده باشم سامورائی نمی‌تواند به من کمکی کند. سامورائی هیچ اطلاعی در رابطه با عبارت عبور من ندارد</string>
+    <string name="confirm_pin_code">تایید پین‌کد</string>
+    <string name="re_enter_your_pin_code">پین‌کد خود را دوباره وارد کنید</string>
+    <string name="re_enter_a_passphrase">عبارت عبورتان را دوباره وارد کنید</string>
+    <string name="create_a_passphrase">ایجاد عبارت عبور</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">ایجاد یک عبارت عبور امن برای کیف پول‌تان</string>
+    <string name="set_pin_code">تعیین پین‌کد</string>
+    <string name="accept_disclaimer_error">نیاز است رفع مسئولیتِ سامورائی را بپذیرید</string>
+    <string name="import_external_wallet">وارد کردن از کیف پول خارجی</string>
+    <string name="import_samourai_wallet">وارد کردن بک‌آپِ سامورائی</string>
+    <string name="backup_file">فایل بک‌آپ</string>
+    <string name="import_an_encrypted_samourai_wallet">بک‌آپِ رمزگذاری شده‌ی سامورائی را وارد کرده تا کیف پول و تمام داده‌های دیگرتان را بازیابی کنید</string>
+    <string name="back">عقب</string>
+    <string name="finish">پایان</string>
+    <string name="choose_file">انتخاب فایل</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">صفحه‎ی خالیِ سلام</string>
+    <string name="add_bip39_password">bip39 اضافه کردن پسوردِ</string>
+    <string name="close_bip39_password">bip39 بستن رمز عبورِ</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">برای وارد کردنِ کیف پول از ارائه دهنده‌ی دیگر عبارت بازیابی‌تان را وارد کنید</string>
+    <string name="last_updated">آخرین آپدیت</string>
+    <string name="get_help">دریافت کمک</string>
+    <string name="offline_mode">حالتِ آفلاین</string>
+    <string name="import_samourai_backup">وارد کردن بک‌آپِ سامورائی</string>
+    <string name="samourai_bitcoin_wallet">کیف پول بیت‌کوینِ سامورائی</string>
+    <string name="enter_your_wallet_passphrase">عبارت عبورِ کیف پول را وارد کنید</string>
+    <string name="start_new_wallet">ساخت کیف پول جدید</string>
+    <string name="get_help_create">ایجاد کیف پول: دریافت کمک</string>
+    <string name="get_help_restore">بازیابی کیف پول: دریافت کمک</string>
+
+    <string name="fee">کارمزدِ ماینر</string>
+    <string name="fee_low_priority">با اولویت کم: تخمین 24</string>
+    <string name="fee_mid_priority">اولویت متوسط: تخمین 6</string>
+    <string name="fee_high_priority">اولویت بالا: تخمین 2</string>
+    <string name="fee_custom_priority">کارمزد  دستی: تخمین</string>
+    <string name="blocks_to_cf">بلاک‌ قبل از تأیید</string>
+
+    <string name="invalid_mnemonic_word">نامعتبر است BIP39 کلمه‌ی یادیارِ</string>
+    <string name="invalid_mnemonic">نامعتبر است BIP39 یادیارِ</string>
+    <string name="enter_your_code_here">کد خودتان را اینجا وارد کنید</string>
+
+    <string name="declaimer_recovery_words">تأیید می‌کنم که کلمات بالا را یادداشت کرده و در جای امنی نگهداری کنم. متوجه هستم که هر کسی که به دو موردِ "عبارت عبور" و "کلمه‌های بازیابی" من دسترسی داشته باشد می‌تواند به کیف پول و تمام وجوهِ من دسترسی داشته باشد</string>
+    <string name="return_to_wallet">بازگشت به کیف پول</string>
+    <string name="caution_message_recovery_words">نگهداری از این کلمات در فضای ابری یا کامپیوترتان کار امنی نیست. این کلمات را روی کاغذِ با کیفیت یادداشت کرده و در جای امنی نگهداری کنید</string>
+    <string name="these_words_are">این کلماتِ بکاپ تمام کلیدهای مخفیِ کیف پول‌تان هستند</string>
+    <string name="recovery_words">کلمات بازیابی</string>
+
+    <string name="permission_alert_dialog_title_sms">در حال درخواست اجازه‌ی پیامک و تماس</string>
+    <string name="permission_dialog_message_sms">کیف پول‌تان برای استفاده از امکانات هشدار از راهِ دور به دسترسیِ ارسال و دریافت پیامک‌ها نیاز دارد</string>
+    <string name="permission_alert_dialog_title_outgoing">در حال درخواست اجازه‌ی تماسِ خروجی</string>
+    <string name="permission_dialog_message_outgoing">کیف پول‌تان برای استفاده از امکاناتِ اجرای مخفیانه به اجازه‌ی تماس خروجی نیاز دارد</string>
+
+    <string name="permission_alert_dialog_title_external">در حال درخواست اجازه‌ی خواندن/نوشتن</string>
+    <string name="permission_dialog_message_external">کیف پول‌تان برای ذخیره‌ی خودکار بکاپِ کیف پول در دستگاه‌تان به اجازه‌ی دسترسی به فضای ذخیره‌سازی نیاز دارد</string>
+    <string name="permission_alert_dialog_title_camera">در حال درخواست اجازه‌ي دوربین</string>
+    <string name="permission_dialog_message_camera">کد به اجازه دسترسی به دوربین نیاز داردQR کیف پول‌تان برای اسکنِ </string>
+
+    <string name="use_bech32">bech32 استفاده از آدرسِ</string>
+
+    <string name="boltzmann_cannot">نیاز دارید «نه» را لمس کنید و با مجموعه‌ی دیگری از خرج نشده‌ها تلاش کنید STONEWALL داشته باشید. اگر به خرجِ STONEWALL نمی‌توانید با استفاده از مجموعه‌ی فعلی خرج نشده‌هایتان یک خرجِ</string>
+    <string name="boltzmann_like_typed">غیربهینه است STONEWALL مطلع باشید که «دریافت مابقی پول در خروجی‌های هم‌نوع» خاموش است که نتیجه‌ی آن ساختار تراکنش برای خرج</string>
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">پیشرفته</string>
+    <string name="broadcast_with_txtenna">TxTenna انتشار با </string>
+    <string name="show_qr_code">کدQR نمایش</string>
+    <string name="tx_connectivity_failure_msg">نمی‌توان بدون اتصالِ به دیتا تراکنش را انتشار داد. چطور ادامه می‌دهید</string>
+
+    <string name="insufficient_fee">کارمزد ناکافی‌ست</string>
+    <string name="action_utxo_amounts">مشاهده‌ی مقادیر بر اساس نوعِ آدرس</string>
+
+    <string name="total_p2pkh">:(p2pkh) legacy مجموعِ</string>
+    <string name="total_p2sh_p2wpkh">:(p2sh) مجموعِ سگویت</string>
+    <string name="total_p2wpkh">:(bech32) مجموعِ سگویت</string>
+    <string name="total_blocked">:مجموعِ بلاک شده</string>
+
+
+    <string name="tx_creating_ok">...در حال ایجاد تراکنش</string>
+    <string name="tx_creating_ko">عدم توانایی در ایجاد تراکنش</string>
+    <string name="tx_signing_ok">...در حال امضای تراکنش</string>
+    <string name="tx_signing_ko">عدم توانایی در امضای تراکنش</string>
+    <string name="tx_broadcast_ok">...در حال انتشار تراکنش</string>
+    <string name="tx_broadcast_ko">عدم توانایی در انتشار تراکنش</string>
+    <string name="tx_sent_ok">تراکنش ارسال شد</string>
+    <string name="tx_sent_ko">تراکنش ارسال نشد</string>
+
+    <string name="prune_backup">فشرده‌سازی بار و فایل‌های بکاپ؟ </string>
+
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string name="in_offline_mode">کیف پولِ سامورائی در حالت آفلاین قرار دارد</string>
+    <string name="broadcast_off">حالتِ انتشار کیف پول ساموراییِ شما خاموش است</string>
+    <string name="tx_standby">تراکنش در حالت انتظار است</string>
+    <string name="show_hex">Hex نمایش کدِ</string>
+    <string name="tx_tenna_coming_soon">به اندروید می‌آید txTenna به زودی</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">فهرست</string>
+
+    <string name="receive_addresses">آدرس‌های دریافت</string>
+    <string name="send_addresses">آدرس‌های ارسال</string>
+    <string name="display_receive_redeem">redeem دریافت اسکریپتِ</string>
+    <string name="display_receive_privkey">دریافت کلید خصوصی</string>
+    <string name="invalid_index">فهرست معتبر</string>
+    <string name="type_address">نوعِ آدرس</string>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+    </string-array>
+
+    <string name="chain_id">آدرسِ زنجیره</string>
+    <string name="receive_chain">آدرسِ دریافت</string>
+    <string name="change_chain">آدرسِ مابقی پول</string>
+    <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+    <string name="encrypted_backup_detected">بکاپِ رمزگذاری شده تشخیص داده شد </string>
+    <string name="restore">بازیابی</string>
+    <string name="request_amount">درخواست مقدار</string>
+    <string name="address_type">نوعِ آدرس</string>
+    <string name="path">مسیر</string>
+
+    <string name="title_activity_send_new_ui">ارسال فعالیتِ جدید رابط کاربری</string>
+    <string name="ricochet_hops_msg">ایجاد گره‌های اضافی بین کیف پول شما و مقصد برای افزایش قابلیتِ تعویض</string>
+    <string name="review_transaction">بررسیِ تراکنش</string>
+    <string name="stonewall_increases_deniability">قابلیت انکار را افزایش داده و قابلیت ردگیری این تراکنش را کاهش می‌دهد STONEWALL</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">باعث پوشاندنِ رد تراکنش شما می‌شود whirlpool گردش بیت‌کوین در</string>
+    <string name="metadata_cleaner">پاک کننده مِتادیتا</string>
+    <string name="end_to_end_trustless">رمزنگاری سرتاسری بدون نیاز به اعتماد</string>
+    <string name="your_private_keys">کلیدهای خصوصیِ شما از دستگاه‌تان خارج نمی‌شود Whirlpool در هیچ قسمتی از چرخه‌ی</string>
+    <string name="different_cycles_for">چرخه‌های متفاوت برای نیازهای متفاوت</string>
+    <string name="complete_a_slow_cycle">یک کارمزد کم برای انجام سریعِ چرخه بپردازید و یا با انجام آهسته‌ی چرخه مقداری کمی بیت‌کوین به دست بیاورید</string>
+    <string name="supercharge_whirlpool_desc">سکه‌های شما برای پردازش آنی به بالای صف اضافه می‌شوند</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">فعالیتِ چرخه</string>
+    <string name="standard_whirlpool_desc">سکه‌های شما به انتهای صف اضافه می‌شوند اما با انجام چرخه پاداش بیت‌کوینی کوچکی می‌گیرید</string>
+    <string name="standard">استاندارد</string>
+    <string name="_48_hours">بیش از 48ساعت</string>
+    <string name="free">رایگان</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">بین 0 تا 5 دقیقه</string>
+    <string name="select_a_cycle_type">نوع چرخه را انتخاب کنید</string>
+    <string name="supercharge">شارژ فوق‌العاده</string>
+    <string name="transaction_broadcast">انتشارِ تراکنش</string>
+    <string name="pending">در حال انتظار</string>
+    <string name="transaction_id">شناسه‌ی تراکنش</string>
+    <string name="completed">انجام شد</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">پرداخت دوباره</string>
+    <string name="miner_fee_rate">نرخ کارمزدِ ماینرها</string>
+    <string name="status">وضعیت</string>
+    <string name="title_activity_tx_privacy_details">جزئیات حریم خصوصیِ تراکنش</string>
+    <string name="number_of_deterministic_combinations">تعداد ترکیب‌های قطعی</string>
+    <string name="transaction_entropy">آنتروپیِ تراکنش</string>
+    <string name="efficiency_score">امتیازِ بهینگی</string>
+    <string name="hide_log">مخفی کردن گزارش</string>
+    <string name="copy">کپی</string>
+    <string name="show_log">نمایش گزارش</string>
+
+</resources>

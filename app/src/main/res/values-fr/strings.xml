@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="alpha_create_wallet">Notez ces mots et gardez-les en lieu sûr. Veillez à ne pa perdre ces mots et mémorisez votre passphrase.</string>
+    <string name="alpha_create_wallet">Notez ces mots et gardez-les en lieu sûr. Veillez à ne pa perdre ces mots et mémorisez votre passphrase.</string>
     <string name="alpha_create_confirm_backup">J\'ai noté mes mots</string>
 
     <string name="creating_wallet">Création du portefeuille en cours. Veuillez patienter...</string>
@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuler</string>
 
-    <string name="options_cat_prefs">Explorateur de blocs</string>
+    <string name="options_cat_prefs">Monnaie, Explorateur de blocs</string>
     <string name="options_cat_stealth">Mode furtif</string>
     <string name="options_cat_remote">À distance</string>
     <string name="options_cat_wallet">Portefeuille</string>
@@ -485,101 +485,143 @@
     <string name="samourai_bitcoin_wallet">Portefeuille Bitcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
     <string name="start_new_wallet">Lancer nouveau portefeuille</string>
-  <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>
-  <string name="get_help_restore">Restaurer un portefeuille: obtenir de l\'aide</string>
+    <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>
+    <string name="get_help_restore">Restaurer un portefeuille: obtenir de l\'aide</string>
 
-  <string name="fee">Frais des mineurs</string>
+    <string name="fee">Frais des mineurs</string>
     <string name="fee_low_priority">Priorité niveau faible: nombre estimé 24</string>
     <string name="fee_mid_priority">Priorité niveau normal: nombre estimé 6</string>
     <string name="fee_high_priority">Priorité niveau élevé: nombre estimé 2</string>
     <string name="fee_custom_priority">Frais personnalisés: estimés</string>
     <string name="blocks_to_cf">Nombre de blocs avant confirmation</string>
 
-  <string name="invalid_mnemonic_word">Mot de récupération BIP39 invalide</string>
-  <string name="invalid_mnemonic">Phrase de récupération BIP39 invalide</string>
+    <string name="invalid_mnemonic_word">Mot de récupération BIP39 invalide</string>
+    <string name="invalid_mnemonic">Phrase de récupération BIP39 invalide</string>
     <string name="enter_your_code_here">Saisir votre code ici</string>
     <string name="declaimer_recovery_words">Je confirme avoir noté les mots ci-dessus et les avoir mis dans un endroit sûr et sécurisé. Je suis conscient que quiconque ayant accès à la fois à ma passphrase et à ma phrase de récupération peut s\'emparer de mon portefeuille et de tous mes fonds.</string>
-  <string name="return_to_wallet">Retour au portefeuille</string>
-  <string name="caution_message_recovery_words">Il ne serait pas sûr de conserver une copie de ces mots sur votre ordinateur ou dans le Cloud. Notez les sur une feuille de papier et conservez celle-ci dans un endroit secret et sécurisé.</string>
+    <string name="return_to_wallet">Retour au portefeuille</string>
+    <string name="caution_message_recovery_words">Il ne serait pas sûr de conserver une copie de ces mots sur votre ordinateur ou dans le Cloud. Notez les sur une feuille de papier et conservez celle-ci dans un endroit secret et sécurisé.</string>
     <string name="these_words_are">Ces mots sont une sauvegarde de toutes les clés secrètes que renferme votre portefeuille.</string>
-  <string name="recovery_words">MOTS DE RÉCUPÉRATION</string>
+    <string name="recovery_words">MOTS DE RÉCUPÉRATION</string>
 
-  <string name="permission_alert_dialog_title_sms">Demande autorisation SMS et état du téléphone</string>
-  <string name="permission_dialog_message_sms">Votre portefeuille a besoin d\'un accès aux fonctions envoyer et recevoir un SMS pour pouvoir utiliser la commande d\'alerte à distance.</string>
-  <string name="permission_alert_dialog_title_outgoing">Demande autorisation traitement appels sortants</string>
-  <string name="permission_dialog_message_outgoing">Votre portefeuille a besoin d\'un accès aux appels sortants pour pouvoir utiliser la fonction lancement en mode furtif.</string>
+    <string name="permission_alert_dialog_title_sms">Demande autorisation SMS et état du téléphone</string>
+    <string name="permission_dialog_message_sms">Votre portefeuille a besoin d\'un accès aux fonctions envoyer et recevoir un SMS pour pouvoir utiliser la commande d\'alerte à distance.</string>
+    <string name="permission_alert_dialog_title_outgoing">Demande autorisation traitement appels sortants</string>
+    <string name="permission_dialog_message_outgoing">Votre portefeuille a besoin d\'un accès aux appels sortants pour pouvoir utiliser la fonction lancement en mode furtif.</string>
 
-  <string name="permission_alert_dialog_title_external">Demande autorisation lire/écrire</string>
-  <string name="permission_dialog_message_external">Votre portefeuille a besoin d\'un accès au stockage de fichiers pour une sauvegarde automatique de votre portefeuille chiffré sur votre appareil.</string>
-  <string name="permission_alert_dialog_title_camera">Demande autorisation caméra</string>
-  <string name="permission_dialog_message_camera">Votre portefeuille a besoin d\'un accès à la caméra pour pouvoir scanner les codes QR.</string>
+    <string name="permission_alert_dialog_title_external">Demande autorisation lire/écrire</string>
+    <string name="permission_dialog_message_external">Votre portefeuille a besoin d\'un accès au stockage de fichiers pour une sauvegarde automatique de votre portefeuille chiffré sur votre appareil.</string>
+    <string name="permission_alert_dialog_title_camera">Demande autorisation caméra</string>
+    <string name="permission_dialog_message_camera">Votre portefeuille a besoin d\'un accès à la caméra pour pouvoir scanner les codes QR.</string>
 
-  <string name="use_bech32">Utiliser l\'adresse bech32</string>
+    <string name="use_bech32">Utiliser l\'adresse bech32</string>
 
-  <string name="boltzmann_cannot">Impossible d\'effectuer une dépense STONEWALL avec cet ensemble de sorties non dépensées en l\'état. Si vous désirez effectuer une dépense STONEWALL, appuyez sur \'NON\' et réessayez avec un ensemble de sorties non dépensées modifié.</string>
-  <string name="boltzmann_like_typed">Nous vous informons que la fonction \'Recevoir la monnaie à des sorties de même type\' est OFF; la transaction de votre dépense STONEWALL risque de se voir privée de conditions optimales.</string>
+    <string name="boltzmann_cannot">Impossible d\'effectuer une dépense STONEWALL avec cet ensemble de sorties non dépensées en l\'état. Si vous désirez effectuer une dépense STONEWALL, appuyez sur \'NON\' et réessayez avec un ensemble de sorties non dépensées modifié.</string>
+    <string name="boltzmann_like_typed">Nous vous informons que la fonction \'Recevoir la monnaie à des sorties de même type\' est OFF; la transaction de votre dépense STONEWALL risque de se voir privée de conditions optimales.</string>
 
-  <string name="insufficient_fee">Fonds insuffisants</string>
-  <string name="action_utxo_amounts">Aperçu des montants par type d\'adresse</string>
+    <string name="insufficient_fee">Fonds insuffisants</string>
+    <string name="action_utxo_amounts">Aperçu des montants par type d\'adresse</string>
 
-  <string name="total_p2pkh">Total originel (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-  <string name="total_p2wpkh">Total segwit (bech32):</string>
-  <string name="total_blocked">Total bloqué:</string>
+    <string name="total_p2pkh">Total originel (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+    <string name="total_p2wpkh">Total segwit (bech32):</string>
+    <string name="total_blocked">Total bloqué:</string>
 
-  <string name="tx_creating_ok">Création transaction...</string>
-  <string name="tx_creating_ko">Impossible de créer la transaction</string>
-  <string name="tx_signing_ok">Signature transaction...</string>
-  <string name="tx_signing_ko">Impossible de signer la transaction</string>
-  <string name="tx_broadcast_ok">Émission transaction...</string>
-  <string name="tx_broadcast_ko">Impossible d\'émettre la transaction</string>
-  <string name="tx_sent_ok">Transaction envoyée</string>
-  <string name="tx_sent_ko">Transaction non envoyée</string>
+    <string name="tx_creating_ok">Création transaction...</string>
+    <string name="tx_creating_ko">Impossible de créer la transaction</string>
+    <string name="tx_signing_ok">Signature transaction...</string>
+    <string name="tx_signing_ko">Impossible de signer la transaction</string>
+    <string name="tx_broadcast_ok">Émission transaction...</string>
+    <string name="tx_broadcast_ko">Impossible d\'émettre la transaction</string>
+    <string name="tx_sent_ok">Transaction envoyée</string>
+    <string name="tx_sent_ko">Transaction non envoyée</string>
 
-  <string name="options_prune">Réduire taille sauvegarde</string>
-  <string name="options_prune2">Réduire taille charge utile portefeuille et fichiers de sauvegarde.</string>
-  <string name="prune_backup">Réduire taille charge utile et fichiers de sauvegarde?</string>
-
-
-  <string name="options_address_calc">Calculateur d\'adresses</string>
-  <string name="options_address_calc2">Calculer les adresses dérivées de la phrase de récupération de votre portefeuille.</string>
-  <string name="options_paynym_calc">Calculateur PayNym</string>
-  <string name="options_paynym_calc2">Calculer les adresses partagées avec d\'autres PayNyms.</string>
-
-  <string name="enter_paynym">PayNym</string>
-  <string name="enter_index">Index</string>
-  <string name="receive_addresses">Recevoir les adresses</string>
-  <string name="send_addresses">Envoyer les adresses</string>
-  <string name="display_receive_redeem">Recevoir le script de règlement</string>
-  <string name="display_receive_privkey">Recevoir la clé privée</string>
-  <string name="invalid_index">Index invalide</string>
-
-  <string name="type_address">Type d\'adresse</string>
-  <string-array name="account_types">
-  <item>BIP49 Segwit</item>
-  <item>BIP84 Segwit</item>
-  <item>BIP44 P2PKH</item>
-  <item>Ricochet Segwit</item>
-  <item>Whirlpool Segwit pre-mix</item>
-  </string-array>
-  <string name="chain_id">Chaîne d\'adresses</string>
-  <string name="receive_chain">Recevoir l\'adresse</string>
-  <string name="change_chain">Changer l\'adresse</string>
-
-  <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
-
-  <string name="tx_standby">Transaction en attente</string>
-  <string name="show_hex">Afficher Code Hex</string>
-  <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
-
-  <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
-
-  <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
-  <string name="restore">RESTAURER</string>
-  <string name="request_amount">Demande Montant</string>
-  <string name="address_type">Type d\'Adresse</string>
-  <string name="path">Chemin d\'accès</string>
+    <string name="options_prune">Réduire taille sauvegarde</string>
+    <string name="options_prune2">Réduire taille charge utile portefeuille et fichiers de sauvegarde.</string>
+    <string name="prune_backup">Réduire taille charge utile et fichiers de sauvegarde?</string>
+    
+    
+    <string name="options_address_calc">Calculateur d\'adresses</string>
+    <string name="options_address_calc2">Calculer les adresses dérivées de la phrase de récupération de votre portefeuille.</string>
+    <string name="options_paynym_calc">Calculateur PayNym</string>
+    <string name="options_paynym_calc2">Calculer les adresses partagées avec d\'autres PayNyms.</string>
+    
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Index</string>
+    <string name="receive_addresses">Recevoir les adresses</string>
+    <string name="send_addresses">Envoyer les adresses</string>
+    <string name="display_receive_redeem">Recevoir le script de règlement</string>
+    <string name="display_receive_privkey">Recevoir la clé privée</string>
+    <string name="invalid_index">Index invalide</string>
+    
+    <string name="type_address">Type d\'adresse</string>
+    <string-array name="account_types">
+    <item>BIP49 Segwit</item>
+    <item>BIP84 Segwit</item>
+    <item>BIP44 P2PKH</item>
+    <item>Ricochet Segwit</item>
+    <item>Whirlpool Segwit pre-mix</item>
+    </string-array>
+    <string name="chain_id">Chaîne d\'adresses</string>
+    <string name="receive_chain">Recevoir l\'adresse</string>
+    <string name="change_chain">Changer l\'adresse</string>
+    
+    <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
+    
+    <string name="tx_standby">Transaction en attente</string>
+    <string name="show_hex">Afficher Code Hex</string>
+    <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
+    
+    <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
+      
+    <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
+    <string name="restore">RESTAURER</string>
+    <string name="request_amount">Demande Montant</string>
+    <string name="address_type">Type d\'Adresse</string>
+    <string name="path">Chemin d\'accès</string>  
   
-  <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>  
-
+    <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>  
+  
+    <string name="title_activity_send_new_ui">EnvoyerNouvelleUIActivité</string>
+    <string name="ricochet_hops_msg">Sauts additionnels entre votre portefeuille et la destination finale pour une fongibilité accrue</string>
+    <string name="review_transaction">VÉRIFIER TRANSACTION</string>
+    <string name="stonewall_increases_deniability">STONEWALL augmente la déniabilité et réduit la traçabilité de cette transaction.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Soumettre vos bitcoin à un cycle \n whirlpool effacera les traces laissées par vos \n transactions</string>
+    <string name="metadata_cleaner">nettoyeur médadonnées</string>
+    <string name="end_to_end_trustless">procédé sans tiers de confiance de bout-en-bout</string>
+    <string name="your_private_keys">Vos clés privées demeurent constamment sur votre \n appareil tout au long du\n cycle Whirlpool</string>
+    <string name="different_cycles_for">différents cycles pour différents besoins</string>
+    <string name="complete_a_slow_cycle">Payez des frais minimes pour un cycle rapide ou \n obtenez une petite récompense en BTC quand vous\n accomplissez un cycle lent</string>
+    <string name="supercharge_whirlpool_desc">Vos coins seront placés en début de file d\'attente pour traitement immédiat</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">ActivitéCycle</string>
+    <string name="standard_whirlpool_desc">Vos coins seront placés en fin de file d\'attente mais vous obtiendrez une petite récompense en BTC un fois le cycle terminé</string>
+    <string name="standard">Standard</string>
+    <string name="_48_hours">48 heures +</string>
+    <string name="free">GRATUIT</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 min</string>
+    <string name="select_a_cycle_type">Choisissez un cycle</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Émission Transaction</string>
+    <string name="pending">en attente</string>
+    <string name="transaction_id">Identifiant Transaction</string>
+    <string name="completed">Terminée</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Payer de nouveau</string>
+    <string name="miner_fee_rate">Taux frais mineur</string>
+    <string name="status">Statut</string>
+    <string name="title_activity_tx_privacy_details">DétailsConfidentialitéTx</string>
+    <string name="number_of_deterministic_combinations">Nombre de \ncombinaisons déterministes</string>
+    <string name="transaction_entropy">Entropie Transaction</string>
+    <string name="efficiency_score">Taux d\'efficacité</string>
+    <string name="hide_log">DISSIMULER JOURNAL</string>
+    <string name="copy">Copier</string>
+    <string name="show_log">AFFICHER JOURNAL</string>
+    
+    <string name="api_key_error">Clé API invalide.</string>
+    <string name="api_token_error">Token API invalide.</string>
+    
 </resources>

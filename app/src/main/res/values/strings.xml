@@ -41,8 +41,6 @@
     <string name="options_stealth_display2">Remove Samourai from the launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Samourai.</string>
     <string name="options_remote_commands">Enable remote commands</string>
     <string name="options_remote_commands2">Allow remote commands via SMS.</string>
-    <string name="options_currency">Street price</string>
-    <string name="options_currency2">Choose your exchange and local fiat currency.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">The block explorer used to view transaction details.</string>
     <string name="options_sim_switch">SIM switch defense</string>
@@ -98,6 +96,8 @@
     <string name="options_address_calc2">Calculate addresses derived from your wallet seed.</string>
     <string name="options_paynym_calc">PayNym calculator</string>
     <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
+    <string name="options_indexes">Wallet indexes</string>
+    <string name="options_indexes2">Current index values for this wallet.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -171,6 +171,7 @@
     <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
+    <string name="txid_to_clipboard">Copy this transaction id  to the clipboard? If copied, it may be visible to other applications.</string>
     <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
     <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
     <string name="wallet_erased">Wallet erased from device.</string>
@@ -604,7 +605,7 @@
     <string name="end_to_end_trustless">end-to-end trustlessness</string>
     <string name="your_private_keys">Your private keys never leave the\n device at any point during the\n Whirlpool cycle</string>
     <string name="different_cycles_for">different cycles for different needs</string>
-    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or a\n earn a small BTC reward when you\n complete a slow cycle</string>
+    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or \n earn a small BTC reward when you\n complete a slow cycle</string>
     <string name="supercharge_whirlpool_desc">Your coins will be added to the top of the queue for immediate processing</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
@@ -632,5 +633,38 @@
     <string name="hide_log">HIDE LOG</string>
     <string name="copy">Copy</string>
     <string name="show_log">Show Log</string>
+    <string name="unconfirmed">Unconfirmed</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="total_available_amount">Total available amount</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
+
+    <string name="experimental">Experimental</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Make every spend a CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Partially Signed Bitcoin Transaction.</string>
+    <string name="import_cahoots">Scan or paste a #Cahoots.</string>
+    <string name="import_psbt">Scan or paste a PSBT.</string>
+    <string name="enter_cahoots">Enter #Cahoots text</string>
+    <string name="enter_psbt">Enter PSBT hex text</string>
+    <string name="create_cahoots">Create #Cahoots spend</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Low</string>
+
+    <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
+    <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
+    <string name="tag_utxo">Label UTXO</string>
+    <string name="boost_transaction_fee">Boost transaction fee</string>
+    <string name="refund">Refund</string>
+
+    <string name="not_cahoots">Invalid #Cahoots</string>
+    <string name="not_valid_json">JSON parsing error</string>
+    <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
+    <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
+    <string name="start_stowaway">Begin Stowaway as spender</string>
+    <string name="amount_sats">Enter amount in sats</string>
 
 </resources>

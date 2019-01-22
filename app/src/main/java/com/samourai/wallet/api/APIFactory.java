@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
@@ -31,11 +32,14 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.R;
@@ -46,6 +50,7 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
 
 import org.bouncycastle.util.encoders.Base64;
@@ -69,7 +74,7 @@ public class APIFactory	{
 
     private static String APP_TOKEN = null;         // API app token
     private static String ACCESS_TOKEN = null;      // API access token
-    private static int ACCESS_TOKEN_REFRESH = 300;  // in seconds
+    private static long ACCESS_TOKEN_REFRESH = 300L;  // in seconds
 
     private static long xpub_balance = 0L;
     private static HashMap<String, Long> xpub_amounts = null;
@@ -154,6 +159,7 @@ public class APIFactory	{
         byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
         byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
 
+
         return xor(xorSegments0, xorSegments1);
     }
 
@@ -169,8 +175,37 @@ public class APIFactory	{
 
     }
 
-    public int getAccessTokenRefresh() {
+    public long getAccessTokenRefresh() {
         return ACCESS_TOKEN_REFRESH;
+    }
+
+    public boolean stayingAlive()   {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(APIFactory.getInstance(context).getAccessToken() == null)    {
+                APIFactory.getInstance(context).getToken();
+            }
+
+            if(APIFactory.getInstance(context).getAccessToken() != null)    {
+                JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
+                if(jwt != null && jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
+                    if(APIFactory.getInstance(context).getToken())  {
+                        return true;
+                    }
+                    else    {
+                        return false;
+                    }
+                }
+            }
+
+            return false;
+
+        }
+        else    {
+            return true;
+        }
+
     }
 
     public synchronized boolean getToken() {
@@ -412,17 +447,31 @@ public class APIFactory	{
                     if(addrObj != null && addrObj.has("final_balance") && addrObj.has("address"))  {
                         if(FormatsUtil.getInstance().isValidXpub((String)addrObj.get("address")))    {
                             xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
-                            if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                            if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr()) ||
+                                    addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()))    {
                                 AddressFactory.getInstance().setHighestBIP84ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestBIP84ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
-                            else if(addrObj.getString("address").equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                            else if(addrObj.getString("address").equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()) ||
+                                    addrObj.getString("address").equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()))    {
                                 AddressFactory.getInstance().setHighestBIP49ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestBIP49ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
                             else if(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null)    {
                                 AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+
+                                try {
+                                    HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                }
+                                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                                    ;
+                                }
                             }
                             else    {
                                 ;
@@ -475,6 +524,8 @@ public class APIFactory	{
 
             if(jsonObject.has("txs"))  {
 
+                List<String> seenHashes = new ArrayList<String>();
+
                 JSONArray txArray = (JSONArray)jsonObject.get("txs");
                 JSONObject txObj = null;
                 for(int i = 0; i < txArray.length(); i++)  {
@@ -501,6 +552,10 @@ public class APIFactory	{
                     }
                     if(txObj.has("time"))  {
                         ts = txObj.getLong("time");
+                    }
+
+                    if(!seenHashes.contains(hash))  {
+                        seenHashes.add(hash);
                     }
 
                     if(txObj.has("inputs"))  {
@@ -546,6 +601,9 @@ public class APIFactory	{
                         }
 
                         Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
+                        if(SentToFromBIP47Util.getInstance().getByHash(hash) != null)    {
+                            tx.setPaymentCode(SentToFromBIP47Util.getInstance().getByHash(hash));
+                        }
                         if(BIP47Meta.getInstance().getPCode4Addr(addr) != null)    {
                             tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
                         }
@@ -563,6 +621,15 @@ public class APIFactory	{
                             RBFUtil.getInstance().remove(hash);
                         }
 
+                    }
+                }
+
+                List<String> hashesSentToViaBIP47 = SentToFromBIP47Util.getInstance().getAllHashes();
+                if(hashesSentToViaBIP47.size() > 0)    {
+                    for(String s : hashesSentToViaBIP47)    {
+                        if(!seenHashes.contains(s)) {
+                            SentToFromBIP47Util.getInstance().removeHash(s);
+                        }
                     }
                 }
 
@@ -1565,6 +1632,11 @@ public class APIFactory	{
                 }
             }
 
+            for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
+                if(!seenOutputs.contains(_s))    {
+                    UTXOUtil.getInstance().remove(_s);
+                }
+            }
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
 //                Log.d("APIFactory", "not dusted:" + _s);
                 if(!seenOutputs.contains(_s))    {

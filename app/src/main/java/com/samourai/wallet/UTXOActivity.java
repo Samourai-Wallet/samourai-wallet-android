@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -43,6 +44,7 @@ import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.UTXOUtil;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
@@ -99,6 +101,48 @@ public class UTXOActivity extends Activity {
                     public boolean onMenuItemClick (MenuItem item)  {
                         int id = item.getItemId();
                         switch (id) {
+                            case R.id.item_tag:
+                            {
+
+                                final EditText edTag = new EditText(UTXOActivity.this);
+                                edTag.setSingleLine(true);
+                                if(UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx) != null)    {
+                                    edTag.setText(UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx));
+                                }
+
+                                AlertDialog.Builder dlg = new AlertDialog.Builder(UTXOActivity.this)
+                                        .setTitle(R.string.app_name)
+                                        .setView(edTag)
+                                        .setMessage(R.string.label)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                final String strTag = edTag.getText().toString().trim();
+
+                                                if(strTag != null && strTag.length() > 0)    {
+                                                    UTXOUtil.getInstance().add(data.get(position).hash + "-" + data.get(position).idx, strTag);
+                                                }
+                                                else    {
+                                                    UTXOUtil.getInstance().remove(data.get(position).hash + "-" + data.get(position).idx);
+                                                }
+
+                                                update(false);
+
+                                            }
+                                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                ;
+                                            }
+                                        });
+                                if(!isFinishing())    {
+                                    dlg.show();
+                                }
+
+                            }
+
+                            break;
+
                             case R.id.item_do_not_spend:
                             {
 
@@ -262,13 +306,11 @@ public class UTXOActivity extends Activity {
 
                             case R.id.item_view:
                             {
-                                int sel = PrefsUtil.getInstance(UTXOActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-                                if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls().length)    {
-                                    sel = 0;
+                                String blockExplorer = "https://m.oxt.me/transaction/";
+                                if (SamouraiWallet.getInstance().isTestNet()) {
+                                    blockExplorer = "https://blockstream.info/testnet/";
                                 }
-                                CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
-
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + data.get(position).hash));
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + data.get(position).hash));
                                 startActivity(browserIntent);
                             }
 
@@ -475,13 +517,19 @@ public class UTXOActivity extends Activity {
 
             String descr = "";
             Spannable word = null;
+            if(UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx) != null)    {
+                descr += " " + UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx);
+                word = new SpannableString(descr);
+                word.setSpan(new ForegroundColorSpan(0xFF33ff00), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                Log.d("UTXOActivity", "list: tag");
+            }
             if(isBIP47(addr))    {
                 String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(addr);
                 if(pcode != null && pcode.length() > 0)    {
-                    descr = " " + BIP47Meta.getInstance().getDisplayLabel(pcode);
+                    descr += " " + BIP47Meta.getInstance().getDisplayLabel(pcode);
                 }
                 else    {
-                    descr = " " + UTXOActivity.this.getText(R.string.paycode).toString();
+                    descr += " " + UTXOActivity.this.getText(R.string.paycode).toString();
                 }
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

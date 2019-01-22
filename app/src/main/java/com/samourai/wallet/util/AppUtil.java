@@ -16,6 +16,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 
@@ -109,6 +110,10 @@ public class AppUtil {
         APIFactory.getInstance(context).reset();
 		PrefsUtil.getInstance(context).clear();
         BlockedUTXO.getInstance().clear();
+        RicochetMeta.getInstance(context).empty();
+        SendAddressUtil.getInstance().reset();
+        SentToFromBIP47Util.getInstance().reset();
+        BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
 	}
 

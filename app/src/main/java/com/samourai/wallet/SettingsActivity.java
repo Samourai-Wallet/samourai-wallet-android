@@ -32,16 +32,6 @@ public class SettingsActivity extends PreferenceActivity	{
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        Preference prefsPref = (Preference) findPreference("prefs");
-        prefsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(SettingsActivity.this, SettingsActivity2.class);
-                intent.putExtra("branch", "prefs");
-                startActivity(intent);
-                return true;
-            }
-        });
-
         Preference txsPref = (Preference) findPreference("txs");
         txsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -51,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity	{
                 return true;
             }
         });
-
+/*
         Preference stealthPref = (Preference) findPreference("stealth");
         stealthPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -90,7 +80,7 @@ public class SettingsActivity extends PreferenceActivity	{
                 }
             });
         }
-
+*/
         Preference walletPref = (Preference) findPreference("wallet");
         walletPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {

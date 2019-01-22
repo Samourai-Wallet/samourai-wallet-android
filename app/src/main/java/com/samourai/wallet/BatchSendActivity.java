@@ -59,6 +59,7 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -740,10 +741,10 @@ public class BatchSendActivity extends Activity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
+        if(amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
             isValid = true;
         }
-        else if(btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+        else if(amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
         }
         else    {
@@ -842,7 +843,7 @@ public class BatchSendActivity extends Activity {
 
         long changeAmount = totalValueSelected - (amount + fee.longValue());
         String change_address = null;
-        int change_idx = -1;
+        int change_idx = 0;
         if(changeAmount > 0L)    {
             change_idx = BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
             change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
