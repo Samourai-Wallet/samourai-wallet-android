@@ -141,7 +141,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, stoneWallSwitch;
     private SeekBar feeSeekBar;
@@ -181,6 +181,11 @@ public class SendActivity extends AppCompatActivity {
     private int idxBIP44Internal = 0;
     private int idxBIP49Internal = 0;
     private int idxBIP84Internal = 0;
+
+    //stub address for entropy calculation
+    private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
+
+    private TxProcessor txProcessor = new TxProcessor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,6 +229,7 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
         stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
         stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
+        entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -682,14 +688,17 @@ public class SendActivity extends AppCompatActivity {
 
     private TextWatcher AddressWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            validateSpend(); }
+            validateSpend();
+        }
     };
 
     private String formattedSatValue(Object number) {
@@ -1254,7 +1263,7 @@ public class SendActivity extends AppCompatActivity {
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
-
+            CalculateEntropy(selectedUTXO, receivers);
             return true;
         }
         return false;
@@ -1840,10 +1849,10 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers ) {
+    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
 
         // for ricochet entropy will be 0 always
-        if(SPEND_TYPE == SPEND_RICOCHET){
+        if (SPEND_TYPE == SPEND_RICOCHET) {
             return;
         }
 
@@ -1871,7 +1880,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < selectedUTXO.size(); i++) {
-            inputs.put(stubTestNetAddress[i], selectedUTXO.get(i).getValue());
+            inputs.put(stubAddress[i], selectedUTXO.get(i).getValue());
         }
 
         Observable.create((ObservableOnSubscribe<Double>) emitter -> {
