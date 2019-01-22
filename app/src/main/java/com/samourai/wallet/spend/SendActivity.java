@@ -36,6 +36,13 @@ import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.gson.Gson;
+import com.samourai.boltzmann.beans.Tx;
+import com.samourai.boltzmann.beans.Txos;
+import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
+import com.samourai.boltzmann.processor.TxProcessor;
+import com.samourai.boltzmann.processor.TxProcessorResult;
+import com.samourai.boltzmann.processor.TxProcessorSettings;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -56,6 +63,9 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -65,6 +75,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
+import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -75,6 +86,8 @@ import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.yanzhenjie.zbar.Symbol;
 
+import junit.framework.Assert;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -82,6 +95,10 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptChunk;
+import org.bitcoinj.script.ScriptOpCodes;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,12 +110,27 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SendActivity extends AppCompatActivity {
 
@@ -1807,6 +1839,73 @@ public class SendActivity extends AppCompatActivity {
         }
 
     }
+
+    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers ) {
+
+        // for ricochet entropy will be 0 always
+        if(SPEND_TYPE == SPEND_RICOCHET){
+            return;
+        }
+
+        TxProcessorSettings settings = new TxProcessorSettings();
+        Map<String, Long> inputs = new HashMap<>();
+        Map<String, Long> outputs = new HashMap<>();
+
+        if (receivers.size() <= 1) {
+            entropyValue.setText(R.string.zero_bits);
+            return;
+        }
+        if (receivers.size() > 8) {
+            entropyValue.setText(R.string.not_available);
+            return;
+        }
+
+        settings.setOptions(new TxosLinkerOptionEnum[]{TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY});
+        settings.setMaxCjIntrafeesRatio(0.005f);
+
+
+        for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
+            String toAddress = mapEntry.getKey();
+            BigInteger valuSe = mapEntry.getValue();
+            outputs.put(toAddress, valuSe.longValue());
+        }
+
+        for (int i = 0; i < selectedUTXO.size(); i++) {
+            inputs.put(stubTestNetAddress[i], selectedUTXO.get(i).getValue());
+        }
+
+        Observable.create((ObservableOnSubscribe<Double>) emitter -> {
+
+            Txos txos = new Txos(inputs, outputs);
+            Tx tx = new Tx(txos);
+            TxProcessorResult result1 = txProcessor.processTx(tx, settings);
+            emitter.onNext(result1.getEntropy());
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Double>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(Double entropy) {
+                        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+                        entropyValue.setText(decimalFormat.format(entropy).concat(" bits"));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        entropyValue.setText(R.string.not_available);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
+    }
+
 
 }
 
