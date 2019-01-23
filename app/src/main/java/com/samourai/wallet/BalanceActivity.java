@@ -1304,38 +1304,15 @@ public class BalanceActivity extends Activity {
     private void displayBalance() {
 
         long balance = 0L;
-        if (SamouraiWallet.getInstance().getShowTotalBalance()) {
-            if (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0) {
-                balance = APIFactory.getInstance(BalanceActivity.this).getXpubBalance();
-            } else {
-                if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().size() > 0) {
-                    try {
-                        if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1).xpubstr()) != null) {
-                            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1).xpubstr());
-                        }
-                    } catch (IOException ioe) {
-                        ;
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                        ;
-                    } catch (NullPointerException npe) {
-                        ;
-                    }
-                }
-            }
-        } else {
-            if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().size() > 0) {
-                try {
-                    if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount()).xpubstr()) != null) {
-                        balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).xpubstr());
-                    }
-                } catch (IOException ioe) {
-                    ;
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                    ;
-                } catch (NullPointerException npe) {
-                    ;
-                }
-            }
+
+        try {
+            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
+        } catch (IOException ioe) {
+            ;
+        } catch (MnemonicException.MnemonicLengthException mle) {
+            ;
+        } catch (NullPointerException npe) {
+            ;
         }
 
         if (isBTC) {
