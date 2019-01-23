@@ -20,7 +20,7 @@
     <color name="tx_broadcast_normal_bg">#0ecf96</color>
     <color name="tx_broadcast_offline_bg">#d8b77d</color>
 
-    <color name="white">#fafafa</color>
+    <color name="white">#FAFAFA</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
     <color name="grey_accent">#6c768b</color>
     <color name="windowDark">#282d33</color>
