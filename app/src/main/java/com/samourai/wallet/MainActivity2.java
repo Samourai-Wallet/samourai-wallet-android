@@ -120,6 +120,10 @@ public class MainActivity2 extends Activity {
 
         loadedBalanceFragment = false;
 
+        if(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.TESTNET, false) == true)    {
+            SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
+        }
+
 //        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             BackgroundManager.get(MainActivity2.this).addListener(bgListener);
 //        }
@@ -165,18 +169,26 @@ public class MainActivity2 extends Activity {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
 
-            boolean isDial = false;
+            String action = getIntent().getAction();
+            String scheme = getIntent().getScheme();
             String strUri = null;
+            boolean isDial = false;
+//                String strUri = null;
             String strPCode = null;
-            Bundle extras = getIntent().getExtras();
-            if(extras != null && extras.containsKey("dialed"))	{
-                isDial = extras.getBoolean("dialed");
+            if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
+                strUri = getIntent().getData().toString();
             }
-            if(extras != null && extras.containsKey("uri"))	{
-                strUri = extras.getString("uri");
-            }
-            if(extras != null && extras.containsKey("pcode"))	{
-                strPCode = extras.getString("pcode");
+            else    {
+                Bundle extras = getIntent().getExtras();
+                if(extras != null && extras.containsKey("dialed"))	{
+                    isDial = extras.getBoolean("dialed");
+                }
+                if(extras != null && extras.containsKey("uri"))	{
+                    strUri = extras.getString("uri");
+                }
+                if(extras != null && extras.containsKey("pcode"))	{
+                    strPCode = extras.getString("pcode");
+                }
             }
 
             doAppInit0(isDial, strUri, strPCode);
