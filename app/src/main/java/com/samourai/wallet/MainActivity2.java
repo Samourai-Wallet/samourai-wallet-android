@@ -42,12 +42,6 @@ public class MainActivity2 extends Activity {
 
     private ProgressDialog progress = null;
 
-    /** An array of strings to populate dropdown list */
-    private static String[] account_selections = null;
-    private static ArrayAdapter<String> adapter = null;
-
-    private static boolean loadedBalanceFragment = false;
-
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
 
     protected BroadcastReceiver receiver_restart = new BroadcastReceiver() {
@@ -118,8 +112,6 @@ public class MainActivity2 extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        loadedBalanceFragment = false;
-
         if(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.TESTNET, false) == true)    {
             SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
         }
@@ -127,32 +119,6 @@ public class MainActivity2 extends Activity {
 //        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             BackgroundManager.get(MainActivity2.this).addListener(bgListener);
 //        }
-
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-
-                SamouraiWallet.getInstance().setCurrentSelectedAccount(itemPosition);
-                if(account_selections.length > 1)    {
-                    SamouraiWallet.getInstance().setShowTotalBalance(true);
-                }
-                else    {
-                    SamouraiWallet.getInstance().setShowTotalBalance(false);
-                }
-                if(loadedBalanceFragment)    {
-                    Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
-                    intent.putExtra("notifTx", false);
-                    intent.putExtra("fetch", false);
-                    startActivity(intent);
-                }
-
-                return false;
-            }
-        };
-
-        getActionBar().setListNavigationCallbacks(adapter, navigationListener);
-        getActionBar().setSelectedNavigationItem(1);
 
         // Apply PRNG fixes for Android 4.1
         if(!AppUtil.getInstance(MainActivity2.this).isPRNG_FIXED())    {
@@ -396,7 +362,6 @@ public class MainActivity2 extends Activity {
         else if(AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
 
             TimeOutUtil.getInstance().updatePin();
-            loadedBalanceFragment = true;
 
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
             intent.putExtra("notifTx", true);
@@ -414,21 +379,6 @@ public class MainActivity2 extends Activity {
 
         if(!PayloadUtil.getInstance(MainActivity2.this).walletFileExists())    {
             return;
-        }
-
-        account_selections = new String[] {
-                getString(R.string.total),
-                getString(R.string.account_Samourai),
-                getString(R.string.account_shuffling),
-        };
-
-        adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, account_selections);
-
-        if(account_selections.length > 1)    {
-            SamouraiWallet.getInstance().setShowTotalBalance(true);
-        }
-        else    {
-            SamouraiWallet.getInstance().setShowTotalBalance(false);
         }
 
     }

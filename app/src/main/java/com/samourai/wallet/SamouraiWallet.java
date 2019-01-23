@@ -45,22 +45,6 @@ public class SamouraiWallet {
         return instance;
     }
 
-    public void setCurrentSelectedAccount(int account) {
-        currentSelectedAccount = account;
-    }
-
-    public int getCurrentSelectedAccount() {
-        return currentSelectedAccount;
-    }
-
-    public void setShowTotalBalance(boolean show) {
-        showTotalBalance = show;
-    }
-
-    public boolean getShowTotalBalance() {
-        return showTotalBalance;
-    }
-
     public boolean hasPassphrase(Context ctx)	{
         String passphrase = null;
         try {
