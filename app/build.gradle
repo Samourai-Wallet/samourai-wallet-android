@@ -10,11 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 133
-<<<<<<< HEAD
         versionName "0.99.05-gb"
-=======
-        versionName "0.99.05"
->>>>>>> 52268774... Merge pull request #290 from LifeIsPizza/develop
         // Enabling multidex support.
         multiDexEnabled true
     }
