@@ -175,8 +175,7 @@ public class MainActivity2 extends Activity {
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
         LocalBroadcastManager.getInstance(MainActivity2.this).registerReceiver(receiver_restart, filter_restart);
 
-        doAccountSelection();
-
+        doAppInit0(false, null, null);
     }
 
     @Override
@@ -371,14 +370,6 @@ public class MainActivity2 extends Activity {
         else {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             validatePIN(strUri == null ? null : strUri);
-        }
-
-    }
-
-    private void doAccountSelection() {
-
-        if(!PayloadUtil.getInstance(MainActivity2.this).walletFileExists())    {
-            return;
         }
 
     }
