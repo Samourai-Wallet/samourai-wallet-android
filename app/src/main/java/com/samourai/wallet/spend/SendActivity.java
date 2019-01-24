@@ -1852,8 +1852,8 @@ public class SendActivity extends AppCompatActivity {
 
         for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
             String toAddress = mapEntry.getKey();
-            BigInteger valuSe = mapEntry.getValue();
-            outputs.put(toAddress, valuSe.longValue());
+            BigInteger value = mapEntry.getValue();
+            outputs.put(toAddress, value.longValue());
         }
 
         for (int i = 0; i < selectedUTXO.size(); i++) {
@@ -1866,8 +1866,7 @@ public class SendActivity extends AppCompatActivity {
             Txos txos = new Txos(inputs, outputs);
             TxProcessorResult result0 = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY);
             emitter.onNext(result0.getEntropy());
-
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Double>() {
                     @Override
