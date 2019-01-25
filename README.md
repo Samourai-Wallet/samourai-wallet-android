@@ -60,6 +60,10 @@ Ricochet using nLockTime (staggered) will spread out hops over different blocks 
 
 STONEWALL spend is designed to increase the number of combinations between inputs and outputs (transaction entropy). It replaces the previously used BIP126. The objective is to obtain a positive entropy score using [Boltzmann](https://github.com/Samourai-Wallet/boltzmann) evaluation of the transaction.
 
+### Stowaway:
+
+A Stowaway spend, also implemented as [PayJoin](https://joinmarket.me/blog/blog/payjoin/), is a collaborative-spend carried out with another user. UTXOs are joined and the spend amount is cloaked. It is based on an [idea](https://bitcointalk.org/index.php?topic=139581.0) by Gregory Maxwell. 
+
 ### Tor:
 
 Samourai indicates whether or not connections are being routed via Tor Socks5 proxy (uses Orbot).
