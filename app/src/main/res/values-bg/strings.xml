@@ -204,8 +204,6 @@
 
     <string name="max_available">Макс. налични:</string>
 
-    <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
-
     <string name="select_account">Изберете акаунт</string>
     <string name="received_bitcoin">Получени биткойни</string>
     <string name="received">Получено</string>
@@ -585,5 +583,51 @@
     <string name="chain_id">Верига на адресите</string>
     <string name="receive_chain">Адрес за получаване</string>
     <string name="change_chain">Адрес за ресто</string>
+     <string name="whirlpool_postmix">Whirlpool SegWit след-микс</string>
+    <string name="encrypted_backup_detected">Криптираното резервно копие изтрито</string>
+    <string name="restore">ВЪЗСТАНОВИ</string>
+    <string name="request_amount">Изберете кол-во</string>
+    <string name="address_type">Тип адрес</string>
+    <string name="path">Път</string>
+
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg">Допълнителни отблъсквания от Вашия портфейл до крайната дестинация за повишена дискретност</string>
+    <string name="review_transaction">ПРЕГЛЕД НА ТРАНЗАКЦИЯТА</string>
+    <string name="stonewall_increases_deniability">STONEWALL намалява шансовете тази транзакция да бъде свързана със самоличността Ви.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Прекарването на биткойните Ви през whirlpool-а ще покрие следите Ви, които транзакциите оставят след себе си.</string>
+    <string name="metadata_cleaner">Чистач на metadata</string>
+    <string name="end_to_end_trustless">end-to-end trustlessness</string>
+    <string name="your_private_keys">Частните Ви ключове никога не напускат устройството Ви по време на whirlpool цикъла.</string>
+    <string name="different_cycles_for">Различни цикли за различни нужди</string>
+    <string name="complete_a_slow_cycle">Платете малка такса за бърз цикъл или спечелете малко BTC, когато завършите бавен цикъл.</string>
+    <string name="supercharge_whirlpool_desc">Биткойните Ви ще бъдат добавени най-отпред на опашката за незабавна обработка.</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string>
+    <string name="standard_whirlpool_desc">Биткойните Ви ще бъдат добавени на края на опашката, но ще получите малко BTC, когато цикълът приключи.</string>
+    <string name="standard">Стандартно</string>
+    <string name="_48_hours">48 часа +</string>
+    <string name="free">БЕЗПЛАТНО</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 минути</string>
+    <string name="select_a_cycle_type">Изберете тип на цикъла</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Изпращане на транзакцията</string>
+    <string name="pending">в процес на изчакване</string>
+    <string name="transaction_id">ID на транзакцията</string>
+    <string name="completed">Завършена</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Платете отново</string>
+    <string name="miner_fee_rate">Такса към копачите</string>
+    <string name="status">Статус</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Брой възможни \nкомбинации</string>
+    <string name="transaction_entropy">Ентропия на транзакцията</string>
+    <string name="efficiency_score">Оценка на ефективността</string>
+    <string name="hide_log">СКРИЙ ЗАПИСА</string>
+    <string name="copy">Копиране</string>
+    <string name="show_log">Показване на записа</string>
+
 
 </resources>

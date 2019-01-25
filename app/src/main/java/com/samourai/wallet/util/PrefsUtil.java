@@ -14,15 +14,9 @@ public class PrefsUtil {
 	public static final String FP = "fp";
 	public static final String ICON_HIDDEN = "iconHidden";
 	public static final String ACCEPT_REMOTE = "acceptRemote";
-	public static final String CURRENT_FIAT = "currentFiat";
-	public static final String CURRENT_FIAT_SEL = "currentFiatSel";
-	public static final String CURRENT_EXCHANGE = "currentExchange";
-	public static final String CURRENT_EXCHANGE_SEL = "currentExchangeSel";
 	public static final String CURRENT_FEE_TYPE = "currentFeeType";
-	public static final String BLOCK_EXPLORER = "blockExplorer";
-	public static final String WALLET_ORIGIN = "origin";
+ 	public static final String WALLET_ORIGIN = "origin";
 	public static final String FIRST_RUN = "1stRun";
-	public static final String FIRST_USE_SHUFFLE = "1stUseShuffle";
 	public static final String SIM_IMSI = "IMSI";
 	public static final String CHECK_SIM = "checkSIM";
 	public static final String ALERT_MOBILE_NO = "alertSMSNo";
@@ -30,7 +24,6 @@ public class PrefsUtil {
 	public static final String SCRAMBLE_PIN = "scramblePin";
 	public static final String AUTO_BACKUP = "autoBackup";
 	public static final String SPEND_TYPE = "spendType";
-	public static final String USE_BOLTZMANN = "boltzmann";
 	public static final String USE_RICOCHET = "useRicochet";
 	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";
@@ -50,6 +43,7 @@ public class PrefsUtil {
 	public static final String PAYNYM_FEATURED_SEGWIT = "paynymFeatured_v1";
 	public static final String IS_RESTORE = "isRestore";
 	public static final String HAPTIC_PIN = "hapticPin";
+	public static final String RICOCHET_STAGGERED = "ricochetStaggeredDelivery";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;

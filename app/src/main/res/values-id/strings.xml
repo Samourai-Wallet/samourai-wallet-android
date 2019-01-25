@@ -197,8 +197,6 @@
 
     <string name="max_available">Max. tersedia:</string>
 
-    <string name="first_use_shuffle">Ini adalah akun yang anda pindahkan. Bitcoin yang anda terima melalui ShapeShift akan disimpan dalam akun ini, tidak berbagi ruang address yang sama dengan akun utama wallet anda.</string>
-
     <string name="select_account">Pilih akun</string>
     <string name="received_bitcoin">Menerima Bitcoin</string>
     <string name="received">Diterima</string>

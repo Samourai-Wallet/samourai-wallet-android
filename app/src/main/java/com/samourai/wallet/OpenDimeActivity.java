@@ -197,10 +197,12 @@ public class OpenDimeActivity extends Activity {
             public void onClick(View v) {
 
                 if(strAddress != null)    {
-                    int sel = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-                    CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
+                    String blockExplorer = "https://m.oxt.me/transaction/";
+                    if (SamouraiWallet.getInstance().isTestNet()) {
+                        blockExplorer = "https://blockstream.info/testnet/";
+                    }
 
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strAddress));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + strAddress));
                     startActivity(browserIntent);
                 }
 

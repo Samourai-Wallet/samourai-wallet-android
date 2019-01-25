@@ -26,10 +26,11 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.WebSocketService;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
-import com.samourai.wallet.util.ReceiversUtil;
+//import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
 import org.apache.commons.codec.DecoderException;
@@ -55,7 +56,7 @@ public class MainActivity2 extends Activity {
 
             if(ACTION_RESTART.equals(intent.getAction())) {
 
-                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
+//                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
 
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                     if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
@@ -128,20 +129,6 @@ public class MainActivity2 extends Activity {
             @Override
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 
-                if(itemPosition == 2 && PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.FIRST_USE_SHUFFLE, true) == true)    {
-
-                    new AlertDialog.Builder(MainActivity2.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(R.string.first_use_shuffle)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.FIRST_USE_SHUFFLE, false);
-                                }
-                            }).show();
-
-                }
-
                 SamouraiWallet.getInstance().setCurrentSelectedAccount(itemPosition);
                 if(account_selections.length > 1)    {
                     SamouraiWallet.getInstance().setShowTotalBalance(true);
@@ -172,7 +159,7 @@ public class MainActivity2 extends Activity {
         if(AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
         !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
             Toast.makeText(MainActivity2.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
-            doAppInit(false, null, null);
+            doAppInit0(false, null, null);
         }
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
@@ -192,7 +179,7 @@ public class MainActivity2 extends Activity {
                 strPCode = extras.getString("pcode");
             }
 
-            doAppInit(isDial, strUri, strPCode);
+            doAppInit0(isDial, strUri, strPCode);
 
         }
 
@@ -307,7 +294,7 @@ public class MainActivity2 extends Activity {
 
     }
 
-    private void doAppInit(final boolean isDial, final String strUri, final String strPCode) {
+    private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
         boolean needToken = false;
         if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
@@ -327,13 +314,9 @@ public class MainActivity2 extends Activity {
                 public void run() {
                     Looper.prepare();
 
-                    if(APIFactory.getInstance(MainActivity2.this).getToken())    {
-                        doAppInit(isDial, strUri, strPCode);
-                    }
-                    else    {
-                        Toast.makeText(MainActivity2.this, R.string.api_key_error, Toast.LENGTH_SHORT).show();
-                        MainActivity2.this.finish();
-                    }
+                    APIFactory.getInstance(MainActivity2.this).stayingAlive();
+
+                    doAppInit1(isDial, strUri, strPCode);
 
                     Looper.loop();
 
@@ -342,6 +325,13 @@ public class MainActivity2 extends Activity {
 
             return;
         }
+        else    {
+            doAppInit1(isDial, strUri, strPCode);
+        }
+
+    }
+
+    private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
         if((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn())    {
 

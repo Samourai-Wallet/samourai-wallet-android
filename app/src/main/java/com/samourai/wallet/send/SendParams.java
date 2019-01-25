@@ -6,12 +6,14 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.samourai.wallet.spend.SendActivity.SPEND_BOLTZMANN;
+
 public class SendParams	{
 
     private static List<MyTransactionOutPoint> outpoints = null;
     private static HashMap<String, BigInteger> receivers = null;
     private static String strPCode = null;
-    private int SPEND_TYPE = com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
+    private int SPEND_TYPE =  SPEND_BOLTZMANN;
     private long changeAmount = 0L;
     private int changeType = 49;
     private String strDestAddress = null;
@@ -38,7 +40,7 @@ public class SendParams	{
         this.outpoints = null;
         this.receivers = null;
         this.strPCode = null;
-        this.SPEND_TYPE = com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
+        this.SPEND_TYPE = SPEND_BOLTZMANN;
         this.changeAmount = 0L;
         this.changeType = 49;
         this.strDestAddress = null;

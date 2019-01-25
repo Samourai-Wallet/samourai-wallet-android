@@ -1,219 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:theme="@style/AppTheme"
-    android:background="@color/primary_dark">
+    android:fitsSystemWindows="true">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
-            >
+            android:background="@color/grey_accent"
+            android:elevation="0dp">
 
-            <LinearLayout
-                android:orientation="vertical"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_send"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:id="@+id/toField"
-                >
+                android:elevation="0dp"
+                android:minHeight="?attr/actionBarSize">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primary_light"
-                    android:text="@string/to" />
+            </android.support.v7.widget.Toolbar>
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/destination"
-                    android:layout_gravity="center_horizontal"
-                    android:hint="@string/destination"
-                    android:textColorHint="@color/primary_light"
-                    android:drawableEnd="@android:drawable/ic_menu_search"
-                    android:textColor="@color/primary_light"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:layout_below="@+id/toField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primary_light"
-                    android:text="Amount" />
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:layout_weight="50">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number|numberDecimal"
-                            android:digits="0123456789."
-                            android:ems="10"
-                            android:id="@+id/amountBTC"
-                            android:hint="0.0000"
-                            android:textColorHint="@color/primary_light"
-                            android:layout_marginEnd="8dp"
-                            android:textColor="@color/primary_light"
-                            android:maxLength="17"
-                            android:textSize="16sp"
-                            />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="6dp"
-                            android:fontFamily="@font/roboto_mono"
-                            android:text="BTC"
-                            android:typeface="monospace" />
-                    </RelativeLayout>
-
-<!--
-                    <TextView
-                        android:layout_weight="3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/primary_light"
-                        android:text="BTC-USD"
-                        android:textSize="14sp"
-                        android:gravity="center_horizontal"
-                        android:textAlignment="gravity"
-                        android:id="@+id/fiatSymbol" />
-
-                    <EditText
-                        android:layout_weight="3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number|numberDecimal"
-                        android:digits="0123456789."
-                        android:ems="10"
-                        android:id="@+id/amountFiat"
-                        android:hint="0.00"
-                        android:textColorHint="@color/primary_light"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@color/primary_light"
-                        android:maxLength="17"
-                        android:textSize="16sp"
-                        />
--->
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    >
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/primary_light"
-                        android:layout_marginRight="5dp"
-                        android:text="@string/max_available"
-                        android:id="@+id/max_prompt"
-                        />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/primary_light"
-                        android:id="@+id/max" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- fee layout -->
-            <include layout="@layout/fee_template" />
-
-            <LinearLayout
-                android:id="@+id/ricochetField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:background="@color/primary_dark"
-                android:orientation="vertical"
-                android:paddingBottom="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+            <include layout="@layout/send_form_segment" />
 
 
-                <TextView
-                    android:id="@+id/text1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="20dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/premium_addons"
-                    android:textAlignment="gravity"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/primary_light"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+        </android.support.design.widget.AppBarLayout>
 
 
-                <Switch
-                    android:id="@+id/ricochet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ricochet" />
+        <com.samourai.wallet.spend.widgets.SendTransactionDetailsView
+            android:id="@+id/sendTransactionDetailsView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-            </LinearLayout>
 
-        </LinearLayout>
+    </LinearLayout>
 
-    </ScrollView>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/send"
-        android:id="@+id/send"
-        android:background="@color/pinGreen"
-        android:elevation="2dp"
-        android:textColor="@color/primary_light"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

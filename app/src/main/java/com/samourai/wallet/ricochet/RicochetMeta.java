@@ -57,7 +57,7 @@ import org.spongycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
-    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1qvfguqt483c6v9apxh6e9y2q4k97nvymhn5p7pr";
+    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsw3c9cm";
     private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
@@ -65,10 +65,13 @@ public class RicochetMeta {
     public final static BigInteger samouraiFeeAmountV1 = BigInteger.valueOf(200000L);
     public final static BigInteger samouraiFeeAmountV2 = BigInteger.valueOf(200000L);
 
+    public final static int defaultNbHops = 4;
+
     private static RicochetMeta instance = null;
 
     private static int index = 0;
     private static LinkedList<JSONObject> fifo = null;
+    private static List<JSONObject> staggered = null;
     private static JSONObject lastRicochet = null;
 
     private static Context context = null;
@@ -81,6 +84,7 @@ public class RicochetMeta {
 
         if(instance == null) {
             fifo = new LinkedList<JSONObject>();
+            staggered = new ArrayList<JSONObject>();
 
             instance = new RicochetMeta();
         }
@@ -96,6 +100,10 @@ public class RicochetMeta {
         return fifo;
     }
 
+    public List<JSONObject> getStaggered() {
+        return staggered;
+    }
+
     public int getIndex() {
         return index;
     }
@@ -106,6 +114,10 @@ public class RicochetMeta {
 
     public void add(JSONObject jObj)   {
         fifo.add(jObj);
+    }
+
+    public void addStaggered(JSONObject jObj)   {
+        staggered.add(jObj);
     }
 
     public JSONObject peek()   {
@@ -174,6 +186,12 @@ public class RicochetMeta {
             }
             jsonPayload.put("queue", array);
 
+            JSONArray _staggered = new JSONArray();
+            for(JSONObject obj : staggered) {
+                _staggered.put(obj);
+            }
+            jsonPayload.put("staggered", _staggered);
+
         }
         catch(JSONException je) {
             ;
@@ -207,6 +225,16 @@ public class RicochetMeta {
                 }
 
             }
+            if(jsonPayload.has("staggered"))    {
+                staggered.clear();
+
+                JSONArray _staggered = jsonPayload.getJSONArray("staggered");
+                for(int i = 0; i < _staggered.length(); i++) {
+                    JSONObject obj = _staggered.getJSONObject(i);
+                    staggered.add(obj);
+                }
+
+            }
 
         }
         catch(JSONException ex) {
@@ -222,8 +250,14 @@ public class RicochetMeta {
         try {
 
             BigInteger biSpend = BigInteger.valueOf(spendAmount);
-            BigInteger biSamouraiFee = BigInteger.valueOf(samouraiFeeAmountV2.longValue() * ((nbHops - 4) + 1));    // 4 hops min. for base fee, each additional hop 0.001
+            BigInteger biSamouraiFee = BigInteger.valueOf(samouraiFeeAmountV2.longValue() * ((nbHops - defaultNbHops) + 1));    // default 4 hops min. for base fee, each additional hop 0.001
             BigInteger biFeePerKB = BigInteger.valueOf(feePerKBAmount);
+
+            long latestBlock = APIFactory.getInstance(context).getLatestBlockHeight();
+            long nTimeLock = 0L;
+            if(useTimeLock && latestBlock > 0L)    {
+                nTimeLock = latestBlock;
+            }
 
             jObj.put("ts", System.currentTimeMillis() / 1000L);
             jObj.put("hops", nbHops);
@@ -232,9 +266,11 @@ public class RicochetMeta {
             jObj.put("samourai_fee_via_bip47", samouraiFeeViaBIP47);
             jObj.put("feeKB", biFeePerKB.longValue());
             jObj.put("destination", strDestination);
-            jObj.put("nLockTime", useTimeLock);
             if(strPCode != null)    {
                 jObj.put("pcode", strPCode);
+            }
+            if(useTimeLock)    {
+                jObj.put("nTimeLock", nTimeLock);
             }
 
             JSONObject jHop = new JSONObject();
@@ -264,7 +300,7 @@ public class RicochetMeta {
             BigInteger hop0Fee = pair.getRight();
 //            Log.d("RicochetMeta", "hop0Fee (return):" + hop0Fee.longValue());
 
-            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47);
+            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47, nTimeLock);
             if(txHop0 == null)    {
                 return null;
             }
@@ -314,6 +350,9 @@ public class RicochetMeta {
             index++;
             jHop.put("tx", new String(Hex.encode(txHop0.bitcoinSerialize())));
             jHop.put("hash", txHop0.getHash().toString());
+            if(useTimeLock)    {
+                jHop.put("nTimeLock", nTimeLock);
+            }
 
             jHops.put(jHop);
 
@@ -377,7 +416,6 @@ public class RicochetMeta {
             else    {
                 remainingSamouraiFee = samouraiFeeAmountV2;
             }
-            long latestBlock = APIFactory.getInstance(context).getLatestBlockHeight();
             int _hop = 0;
             for (int i = (nbHops - 1); i >= 0; i--) {
                 _hop++;
@@ -390,7 +428,6 @@ public class RicochetMeta {
                     hopx = biSpend.add(biFeePerHop.multiply(BigInteger.valueOf((long) i)));
                 }
 
-                long nTimeLock = 0L;
                 if(useTimeLock && latestBlock > 0L)    {
                     nTimeLock = latestBlock + _hop;
                 }
@@ -408,9 +445,6 @@ public class RicochetMeta {
 
                 jHop = new JSONObject();
                 jHop.put("seq", (nbHops - i));
-                if(useTimeLock)    {
-                    jHop.put("nTimeLock", nTimeLock);
-                }
                 jHop.put("spend_amount", hopx.longValue());
                 jHop.put("fee", biFeePerHop.longValue());
                 jHop.put("prev_tx_hash", prevTxHash);
@@ -419,6 +453,9 @@ public class RicochetMeta {
                 jHop.put("script", prevScriptPubKey);
                 jHop.put("tx", new String(Hex.encode(txHop.bitcoinSerialize())));
                 jHop.put("hash", txHop.getHash().toString());
+                if(useTimeLock)    {
+                    jHop.put("nTimeLock", nTimeLock);
+                }
                 if(_hop < nbHops)    {
                     jHop.put("index", index);
                     jHop.put("destination", getDestinationAddress(index));
@@ -510,7 +547,7 @@ public class RicochetMeta {
         }
     }
 
-    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47) {
+    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47, long nTimeLock) {
 
         List<MyTransactionOutPoint> unspent = new ArrayList<MyTransactionOutPoint>();
         long totalValueSelected = 0L;
@@ -544,6 +581,9 @@ public class RicochetMeta {
         }
 
         Transaction tx = SendFactory.getInstance(context).makeTransaction(0, unspent, receivers);
+        if(nTimeLock > 0L)    {
+            tx.setLockTime(nTimeLock);
+        }
         tx = SendFactory.getInstance(context).signTransaction(tx);
 
         return tx;
@@ -602,6 +642,9 @@ public class RicochetMeta {
         Sha256Hash txHash = Sha256Hash.wrap(prevTxHash);
         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), prevTxN, txHash, Coin.valueOf(prevSpendAmount));
         TransactionInput txInput = new TransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[]{}, outPoint, Coin.valueOf(prevSpendAmount));
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+            txInput.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
+        }
         tx.addInput(txInput);
 
         TransactionSignature sig = tx.calculateWitnessSignature(0, ecKey, redeemScript.scriptCode(), Coin.valueOf(prevSpendAmount), Transaction.SigHash.ALL, false);
