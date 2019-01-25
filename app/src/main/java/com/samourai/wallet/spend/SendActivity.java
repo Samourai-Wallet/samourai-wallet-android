@@ -760,6 +760,7 @@ public class SendActivity extends AppCompatActivity {
         tvToAddress.setText(string);
         toAddressEditText.removeTextChangedListener(AddressWatcher);
         toAddressEditText.setText(string);
+        toAddressEditText.setSelection(toAddressEditText.getText().length());
         toAddressEditText.addTextChangedListener(AddressWatcher);
     }
 
