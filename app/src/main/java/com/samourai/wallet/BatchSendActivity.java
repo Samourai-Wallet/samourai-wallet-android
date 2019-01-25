@@ -119,8 +119,6 @@ public class BatchSendActivity extends Activity {
 
     private String defaultSeparator = null;
 
-    private int selectedAccount = 0;
-
     private String strPCode = null;
 
     @Override
@@ -144,22 +142,10 @@ public class BatchSendActivity extends Activity {
             }
         };
 
-        if(SamouraiWallet.getInstance().getShowTotalBalance())    {
-            if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2)    {
-                selectedAccount = 1;
-            }
-            else    {
-                selectedAccount = 0;
-            }
-        }
-        else    {
-            selectedAccount = 0;
-        }
-
         tvMaxPrompt = (TextView)findViewById(R.id.max_prompt);
         tvMax = (TextView)findViewById(R.id.max);
         try    {
-            balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(selectedAccount).xpubstr());
+            balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).xpubstr());
         }
         catch(IOException ioe)    {
             balance = 0L;

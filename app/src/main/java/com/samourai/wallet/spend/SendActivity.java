@@ -161,8 +161,6 @@ public class SendActivity extends AppCompatActivity {
     public final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BOLTZMANN;
 
-    private int selectedAccount = 0;
-
     private String strPCode = null;
     private long feeLow, feeMed, feeHigh;
     private String strPrivacyWarning;
@@ -234,18 +232,6 @@ public class SendActivity extends AppCompatActivity {
 
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
-
-
-        if (SamouraiWallet.getInstance().getShowTotalBalance()) {
-            if (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2) {
-                selectedAccount = 1;
-            } else {
-                selectedAccount = 0;
-            }
-        } else {
-            selectedAccount = 0;
-        }
-
 
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -574,11 +560,10 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 
-
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(this).get().getAccount(selectedAccount).xpubstr());
+            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
         } catch (IOException ioe) {
             ioe.printStackTrace();
             balance = 0L;
