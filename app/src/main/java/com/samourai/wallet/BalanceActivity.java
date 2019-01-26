@@ -1506,6 +1506,9 @@ public class BalanceActivity extends Activity {
                     catch(JSONException je) {
                         ;
                     }
+                    catch(ConcurrentModificationException cme) {
+                        ;
+                    }
                 }
 
             }
