@@ -133,6 +133,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -1463,6 +1464,9 @@ public class BalanceActivity extends Activity {
                         }
                     }
                     catch(JSONException je) {
+                        ;
+                    }
+                    catch(ConcurrentModificationException cme) {
                         ;
                     }
                 }
