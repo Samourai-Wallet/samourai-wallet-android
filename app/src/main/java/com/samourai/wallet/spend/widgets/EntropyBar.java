@@ -133,10 +133,10 @@ public class EntropyBar extends View {
             int left = getWidth() - ((mBarWidth * i) + mBarMargin);
             int right = getWidth() - (mBarWidth * (i + 1));
             int bottom = !disable ? (mBarHeight * i) + 6 : getHeight() - 2;
-            int currentDisabled = this.maxBars - this.enabledBars;
+            int disabledTrack = this.maxBars - this.enabledBars;
 
 
-            if (i < currentDisabled) {
+            if (i < disabledTrack) {
                 paint = mBarPaintDisabled;
             } else {
                 paint = mBarPaintActive;
