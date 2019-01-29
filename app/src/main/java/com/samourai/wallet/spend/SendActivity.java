@@ -225,6 +225,8 @@ public class SendActivity extends AppCompatActivity {
         stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
         stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
         entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
+        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
+        entropyBar.setMaxBars(4);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -745,6 +747,7 @@ public class SendActivity extends AppCompatActivity {
         tvToAddress.setText(string);
         toAddressEditText.removeTextChangedListener(AddressWatcher);
         toAddressEditText.setText(string);
+        toAddressEditText.setSelection(toAddressEditText.getText().length());
         toAddressEditText.addTextChangedListener(AddressWatcher);
     }
 
@@ -775,6 +778,7 @@ public class SendActivity extends AppCompatActivity {
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
             amountViewSwitcher.showNext();
+            entropyBar.setRange(3);
             hideKeyboard();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
@@ -1843,46 +1847,50 @@ public class SendActivity extends AppCompatActivity {
 
         if (receivers.size() <= 1) {
             entropyValue.setText(R.string.zero_bits);
+            entropyBar.disable();
             return;
         }
         if (receivers.size() > 8) {
             entropyValue.setText(R.string.not_available);
+            entropyBar.disable();
             return;
         }
 
         for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
             String toAddress = mapEntry.getKey();
-            BigInteger valuSe = mapEntry.getValue();
-            outputs.put(toAddress, valuSe.longValue());
+            BigInteger value = mapEntry.getValue();
+            outputs.put(toAddress, value.longValue());
         }
 
         for (int i = 0; i < selectedUTXO.size(); i++) {
             inputs.put(stubAddress[i], selectedUTXO.get(i).getValue());
         }
 
-        Observable.create((ObservableOnSubscribe<Double>) emitter -> {
+        Observable.create((ObservableOnSubscribe<TxProcessorResult>) emitter -> {
 
             TxProcessor txProcessor = new TxProcessor(BoltzmannSettings.MAX_DURATION_DEFAULT, BoltzmannSettings.MAX_TXOS_DEFAULT);
             Txos txos = new Txos(inputs, outputs);
-            TxProcessorResult result0 = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY);
-            emitter.onNext(result0.getEntropy());
-
-        }).subscribeOn(Schedulers.io())
+            TxProcessorResult result = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY, TxosLinkerOptionEnum.MERGE_INPUTS);
+            emitter.onNext(result);
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Double>() {
+                .subscribe(new Observer<TxProcessorResult>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                     }
 
                     @Override
-                    public void onNext(Double entropy) {
+                    public void onNext(TxProcessorResult entropyResult) {
+
                         DecimalFormat decimalFormat = new DecimalFormat("##.00");
-                        entropyValue.setText(decimalFormat.format(entropy).concat(" bits"));
+                        entropyValue.setText(decimalFormat.format(entropyResult.getEntropy()).concat(" bits"));
+                        entropyBar.setRange(entropyResult);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         entropyValue.setText(R.string.not_available);
+                        entropyBar.disable();
                     }
 
                     @Override

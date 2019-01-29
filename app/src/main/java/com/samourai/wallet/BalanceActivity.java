@@ -69,6 +69,8 @@ import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
+import com.samourai.wallet.cahoots.Cahoots;
+import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
@@ -133,6 +135,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -737,7 +740,17 @@ public class BalanceActivity extends Activity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult);
-                    } else {
+                    }
+                    else if(Cahoots.isCahoots(strResult) && SamouraiWallet.getInstance().isTestNet()) {
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult);
+                    }
+                    else if(Cahoots.isCahoots(strResult) && !SamouraiWallet.getInstance().isTestNet()) {
+                        ;
+                    }
+                    else if (FormatsUtil.getInstance().isPSBT(strResult)) {
+                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult);
+                    }
+                    else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult);
                         startActivity(intent);
@@ -1500,6 +1513,9 @@ public class BalanceActivity extends Activity {
                         }
                     }
                     catch(JSONException je) {
+                        ;
+                    }
+                    catch(ConcurrentModificationException cme) {
                         ;
                     }
                 }

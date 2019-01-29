@@ -108,6 +108,16 @@ public class Cahoots {
         }
     }
 
+    public static boolean isCahoots(String s)   {
+        try {
+            JSONObject obj = new JSONObject(s);
+            return isCahoots(obj);
+        }
+        catch(JSONException je) {
+            return false;
+        }
+    }
+
     public JSONObject toJSON() {
 
         JSONObject cObj = new JSONObject();
