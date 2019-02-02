@@ -214,42 +214,4 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
-    private void signTx(HashMap<String,ECKey> keyBag) {
-
-        Transaction transaction = psbt.getTransaction();
-        Log.d("Stowaway", "signTx:" + transaction.toString());
-
-        for(int i = 0; i < transaction.getInputs().size(); i++)   {
-
-            TransactionInput input = transaction.getInput(i);
-            TransactionOutPoint outpoint = input.getOutpoint();
-            if(keyBag.containsKey(outpoint.toString())) {
-
-                Log.d("Stowaway", "signTx outpoint:" + outpoint.toString());
-
-                ECKey key = keyBag.get(outpoint.toString());
-                SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), params);
-
-                Log.d("Stowaway", "signTx bech32:" + segwitAddress.getBech32AsString());
-
-                final Script redeemScript = segwitAddress.segWitRedeemScript();
-                final Script scriptCode = redeemScript.scriptCode();
-
-                long value = outpoints.get(outpoint.getHash().toString() + "-" + outpoint.getIndex());
-                Log.d("Stowaway", "signTx value:" + value);
-//                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, outpoint.getValue(), Transaction.SigHash.ALL, false);
-                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, Coin.valueOf(value), Transaction.SigHash.ALL, false);
-                final TransactionWitness witness = new TransactionWitness(2);
-                witness.setPush(0, sig.encodeToBitcoin());
-                witness.setPush(1, key.getPubKey());
-                transaction.setWitness(i, witness);
-
-            }
-
-        }
-
-        psbt.setTransaction(transaction);
-
-    }
-
 }
