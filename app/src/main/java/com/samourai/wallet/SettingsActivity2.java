@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.os.Bundle;
@@ -22,14 +20,11 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -37,26 +32,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.util.Log;
+import android.util.Log;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.core.Base58;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.DumpedPrivateKey;
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.ProtocolException;
-import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionInput;
-import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 
-import org.bitcoinj.params.TestNet3Params;
-import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,13 +52,6 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsFactory;
-import com.samourai.wallet.cahoots.Stowaway;
-import com.samourai.wallet.cahoots._TransactionOutPoint;
-import com.samourai.wallet.cahoots._TransactionOutput;
-import com.samourai.wallet.cahoots.psbt.PSBT;
-import com.samourai.wallet.cahoots.psbt.PSBTEntry;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -87,22 +60,12 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.segwit.bech32.Bech32Segwit;
-import com.samourai.wallet.segwit.bech32.Bech32Util;
-import com.samourai.wallet.segwit.bech32.Bech32UtilGeneric;
 import com.samourai.wallet.send.FeeUtil;
-import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
-import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -115,17 +78,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -1804,6 +1759,70 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         try {
                                             long amount = Long.parseLong(strAmount);
                                             CahootsUtil.getInstance(SettingsActivity2.this).doStowaway0(amount);
+                                        }
+                                        catch(NumberFormatException nfe) {
+                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        if(!isFinishing())    {
+                            dlg.show();
+                        }
+
+                    }
+                }).setNeutralButton(R.string.start_stonewall, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        final EditText edAmount = new EditText(SettingsActivity2.this);
+                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setView(edAmount)
+                                .setMessage(R.string.amount_sats)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                                        dialog.dismiss();
+
+                                        final String strAmount = edAmount.getText().toString().trim();
+                                        try {
+                                            long amount = Long.parseLong(strAmount);
+
+                                            final EditText edAddress = new EditText(SettingsActivity2.this);
+                                            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                                                    .setTitle(R.string.app_name)
+                                                    .setView(edAddress)
+                                                    .setMessage(R.string.segwit_address)
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                            dialog.dismiss();
+
+                                                            final String strAddress = edAddress.getText().toString().trim();
+                                                            try {
+                                                                CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
+                                                            }
+                                                            catch(NumberFormatException nfe) {
+                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                            if(!isFinishing())    {
+                                                dlg.show();
+                                            }
+
                                         }
                                         catch(NumberFormatException nfe) {
                                             Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();

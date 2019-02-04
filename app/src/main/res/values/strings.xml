@@ -665,6 +665,7 @@
     <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
     <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
     <string name="start_stowaway">Begin Stowaway as spender</string>
+    <string name="start_stonewall">Begin STONEWALL as spender</string>
     <string name="amount_sats">Enter amount in sats</string>
     <string name="zero_bits">0 bits</string>
     <string name="not_available">N/A</string>
