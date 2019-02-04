@@ -623,5 +623,49 @@
     
     <string name="api_key_error">Clé API invalide.</string>
     <string name="api_token_error">Token API invalide.</string>
+   
+   
+   
+    <string name="options_indexes">Indices Portefeuille</string>
+    <string name="options_indexes2">Valeurs de l\'indice actuel pour ce portefeuille.</string>
+    
+    
+    
+    <string name="unconfirmed">Non confirmée</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="total_available_amount">Montant total disponible</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Vous n\'avez pas encore de contacts PayNym</string>
+
+    <string name="experimental">Expérimental</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Faîtes de chaque dépense une CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Transaction Bitcoin Partiellement Signée.</string>
+    <string name="import_cahoots">Scanner ou coller un #Cahoots.</string>
+    <string name="import_psbt">Scanner ou coller une PSBT.</string>
+    <string name="enter_cahoots">Saisir texte #Cahoots</string>
+    <string name="enter_psbt">Saisir hex texte PSBT</string>
+    <string name="create_cahoots">Créer dépense #Cahoots</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Faible</string>
+
+    <string name="ricochet_nlocktime_ok">Votre Ricochet différé a été transmis pour émission. Veuillez patienter jusqu\'à ce que la hauteur de bloc permette l\'émission de toutes les transactions dans la série.</string>
+    <string name="ricochet_nlocktime_ko">Votre Ricochet différé n\'a pas pu être transmis pour émission. Veuillez réessayer.</string>
+    <string name="tag_utxo">Saisir un libellé pour l\'UTXO</string>
+    <string name="boost_transaction_fee">Augmenter frais de transaction</string>
+    <string name="refund">Rembourser</string>
+
+    <string name="not_cahoots">#Cahoots invalide</string>
+    <string name="not_valid_json">Erreur d\'analyse JSON</string>
+    <string name="unrecognized_cahoots">#Cahoots non reconnu</string>
+    <string name="cannot_compose_cahoots">Impossible d\'effectuer un #Cahoots</string>
+    <string name="start_stowaway">Lancer Stowaway pour dépenser</string>
+    <string name="amount_sats">Saisir montant en Satochis</string>
+
+    <string name="zero_bits">0 octets</string>
+    <string name="not_available">N/D (non disponible)</string>
     
 </resources>
