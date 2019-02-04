@@ -54,7 +54,7 @@ android {
             versionCode 137
             versionName "0.99.07"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.99.07"
+            resValue "string", "version_name", "0.99.07-gb"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
@@ -63,7 +63,7 @@ android {
             versionCode 137
             versionName "0.99.07"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.07"
+            resValue "string", "version_name", "0.99.07-gb"
         }
     }
     testOptions {
