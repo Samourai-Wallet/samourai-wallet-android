@@ -1,18 +1,20 @@
 package com.samourai.wallet.cahoots;
 
 import com.samourai.wallet.cahoots.psbt.PSBT;
+import com.samourai.wallet.segwit.SegwitAddress;
+
 import org.bitcoinj.core.*;
+import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.script.Script;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.spongycastle.util.encoders.Hex;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.HashMap;
+
+import android.util.Log;
 
 public class Cahoots {
 
@@ -27,6 +29,7 @@ public class Cahoots {
     protected PSBT psbt = null;
     protected long spendAmount = 0L;
     protected HashMap<String,Long> outpoints = null;
+    protected String strDestination = null;
     protected NetworkParameters params = null;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
@@ -40,17 +43,8 @@ public class Cahoots {
         this.psbt = c.getPSBT();
         this.spendAmount = c.spendAmount;
         this.outpoints = c.outpoints;
+        this.strDestination = c.strDestination;
         this.params = c.getParams();
-    }
-
-    protected Cahoots(long spendAmount, int type, NetworkParameters params)    {
-        this.ts = System.currentTimeMillis() / 1000L;
-        this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
-        this.type = type;
-        this.step = 0;
-        this.spendAmount = spendAmount;
-        this.outpoints = new HashMap<String,Long>();
-        this.params = params;
     }
 
     public int getVersion() {
@@ -95,6 +89,14 @@ public class Cahoots {
         this.outpoints = outpoints;
     }
 
+    public String getDestination() {
+        return strDestination;
+    }
+
+    public void setDestination(String strDestination) {
+        this.strDestination = strDestination;
+    }
+
     public NetworkParameters getParams() {
         return params;
     }
@@ -102,6 +104,16 @@ public class Cahoots {
     public static boolean isCahoots(JSONObject obj)   {
         try {
             return obj.has("cahoots") && obj.getJSONObject("cahoots").has("type");
+        }
+        catch(JSONException je) {
+            return false;
+        }
+    }
+
+    public static boolean isCahoots(String s)   {
+        try {
+            JSONObject obj = new JSONObject(s);
+            return isCahoots(obj);
         }
         catch(JSONException je) {
             return false;
@@ -130,6 +142,7 @@ public class Cahoots {
                 _outpoints.put(entry);
             }
             obj.put("outpoints", _outpoints);
+            obj.put("dest", strDestination == null ? "" : strDestination);
             obj.put("params", params instanceof TestNet3Params ? "testnet" : "mainnet");
 
             cObj.put("cahoots", obj);
@@ -155,18 +168,13 @@ public class Cahoots {
                 this.strID = obj.getString("id");
                 this.type = obj.getInt("type");
                 this.step = obj.getInt("step");
-                /*
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(obj.getString("psbt"), params);
-                if(this.psbt != null)    {
-                    this.psbt.read();
-                }
-                */
                 this.spendAmount = obj.getLong("spend_amount");
                 JSONArray _outpoints = obj.getJSONArray("outpoints");
                 for(int i = 0; i < _outpoints.length(); i++)   {
                     JSONObject entry = _outpoints.getJSONObject(i);
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
+                this.strDestination = obj.getString("dest");
                 this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(obj.getString("psbt"), params);
                 if(this.psbt != null)    {
                     this.psbt.read();
@@ -177,6 +185,44 @@ public class Cahoots {
 //            throw new RuntimeException(e);
             ;
         }
+    }
+
+    protected void signTx(HashMap<String,ECKey> keyBag) {
+
+        Transaction transaction = psbt.getTransaction();
+        Log.d("Cahoots", "signTx:" + transaction.toString());
+
+        for(int i = 0; i < transaction.getInputs().size(); i++)   {
+
+            TransactionInput input = transaction.getInput(i);
+            TransactionOutPoint outpoint = input.getOutpoint();
+            if(keyBag.containsKey(outpoint.toString())) {
+
+                Log.d("Cahoots", "signTx outpoint:" + outpoint.toString());
+
+                ECKey key = keyBag.get(outpoint.toString());
+                SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), params);
+
+                Log.d("CahootsCahoots", "signTx bech32:" + segwitAddress.getBech32AsString());
+
+                final Script redeemScript = segwitAddress.segWitRedeemScript();
+                final Script scriptCode = redeemScript.scriptCode();
+
+                long value = outpoints.get(outpoint.getHash().toString() + "-" + outpoint.getIndex());
+                Log.d("Cahoots", "signTx value:" + value);
+//                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, outpoint.getValue(), Transaction.SigHash.ALL, false);
+                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, Coin.valueOf(value), Transaction.SigHash.ALL, false);
+                final TransactionWitness witness = new TransactionWitness(2);
+                witness.setPush(0, sig.encodeToBitcoin());
+                witness.setPush(1, key.getPubKey());
+                transaction.setWitness(i, witness);
+
+            }
+
+        }
+
+        psbt.setTransaction(transaction);
+
     }
 
 }

@@ -36,6 +36,12 @@ import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.gson.Gson;
+import com.samourai.boltzmann.beans.BoltzmannSettings;
+import com.samourai.boltzmann.beans.Txos;
+import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
+import com.samourai.boltzmann.processor.TxProcessor;
+import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -56,6 +62,9 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32;
+import com.samourai.wallet.segwit.bech32.Bech32Segwit;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
@@ -65,6 +74,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
+import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -75,6 +85,8 @@ import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.yanzhenjie.zbar.Symbol;
 
+import junit.framework.Assert;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
@@ -82,6 +94,10 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptChunk;
+import org.bitcoinj.script.ScriptOpCodes;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,12 +109,27 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SendActivity extends AppCompatActivity {
 
@@ -109,7 +140,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, stoneWallSwitch;
     private SeekBar feeSeekBar;
@@ -130,8 +161,6 @@ public class SendActivity extends AppCompatActivity {
     public final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BOLTZMANN;
 
-    private int selectedAccount = 0;
-
     private String strPCode = null;
     private long feeLow, feeMed, feeHigh;
     private String strPrivacyWarning;
@@ -149,6 +178,9 @@ public class SendActivity extends AppCompatActivity {
     private int idxBIP44Internal = 0;
     private int idxBIP49Internal = 0;
     private int idxBIP84Internal = 0;
+
+    //stub address for entropy calculation
+    private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +224,9 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
         stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
         stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
+        entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
+        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
+        entropyBar.setMaxBars(4);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -199,18 +234,6 @@ public class SendActivity extends AppCompatActivity {
 
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
-
-
-        if (SamouraiWallet.getInstance().getShowTotalBalance()) {
-            if (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2) {
-                selectedAccount = 1;
-            } else {
-                selectedAccount = 0;
-            }
-        } else {
-            selectedAccount = 0;
-        }
-
 
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -539,11 +562,10 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 
-
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(this).get().getAccount(selectedAccount).xpubstr());
+            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
         } catch (IOException ioe) {
             ioe.printStackTrace();
             balance = 0L;
@@ -650,14 +672,17 @@ public class SendActivity extends AppCompatActivity {
 
     private TextWatcher AddressWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            validateSpend(); }
+            validateSpend();
+        }
     };
 
     private String formattedSatValue(Object number) {
@@ -722,6 +747,7 @@ public class SendActivity extends AppCompatActivity {
         tvToAddress.setText(string);
         toAddressEditText.removeTextChangedListener(AddressWatcher);
         toAddressEditText.setText(string);
+        toAddressEditText.setSelection(toAddressEditText.getText().length());
         toAddressEditText.addTextChangedListener(AddressWatcher);
     }
 
@@ -752,6 +778,7 @@ public class SendActivity extends AppCompatActivity {
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
             amountViewSwitcher.showNext();
+            entropyBar.setRange(3);
             hideKeyboard();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
@@ -1222,7 +1249,7 @@ public class SendActivity extends AppCompatActivity {
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
-
+            CalculateEntropy(selectedUTXO, receivers);
             return true;
         }
         return false;
@@ -1807,6 +1834,72 @@ public class SendActivity extends AppCompatActivity {
         }
 
     }
+
+    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
+
+        // for ricochet entropy will be 0 always
+        if (SPEND_TYPE == SPEND_RICOCHET) {
+            return;
+        }
+
+        Map<String, Long> inputs = new HashMap<>();
+        Map<String, Long> outputs = new HashMap<>();
+
+        if (receivers.size() <= 1) {
+            entropyValue.setText(R.string.zero_bits);
+            entropyBar.disable();
+            return;
+        }
+        if (receivers.size() > 8) {
+            entropyValue.setText(R.string.not_available);
+            entropyBar.disable();
+            return;
+        }
+
+        for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
+            String toAddress = mapEntry.getKey();
+            BigInteger value = mapEntry.getValue();
+            outputs.put(toAddress, value.longValue());
+        }
+
+        for (int i = 0; i < selectedUTXO.size(); i++) {
+            inputs.put(stubAddress[i], selectedUTXO.get(i).getValue());
+        }
+
+        Observable.create((ObservableOnSubscribe<TxProcessorResult>) emitter -> {
+
+            TxProcessor txProcessor = new TxProcessor(BoltzmannSettings.MAX_DURATION_DEFAULT, BoltzmannSettings.MAX_TXOS_DEFAULT);
+            Txos txos = new Txos(inputs, outputs);
+            TxProcessorResult result = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY, TxosLinkerOptionEnum.MERGE_INPUTS);
+            emitter.onNext(result);
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<TxProcessorResult>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(TxProcessorResult entropyResult) {
+
+                        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+                        entropyValue.setText(decimalFormat.format(entropyResult.getEntropy()).concat(" bits"));
+                        entropyBar.setRange(entropyResult);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        entropyValue.setText(R.string.not_available);
+                        entropyBar.disable();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
+    }
+
 
 }
 

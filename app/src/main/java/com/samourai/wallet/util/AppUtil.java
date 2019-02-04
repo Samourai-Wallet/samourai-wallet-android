@@ -103,8 +103,13 @@ public class AppUtil {
         deleteQR();
 
         final ComponentName component = new ComponentName(context.getApplicationContext().getPackageName(), "com.samourai.wallet.MainActivity");
-        context.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-        PrefsUtil.getInstance(context).setValue(PrefsUtil.ICON_HIDDEN, false);
+        try {
+            context.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            PrefsUtil.getInstance(context).setValue(PrefsUtil.ICON_HIDDEN, false);
+        }
+        catch(IllegalArgumentException iae) {
+            ;
+        }
 
         APIFactory.getInstance(context).setXpubBalance(0L);
         APIFactory.getInstance(context).reset();
