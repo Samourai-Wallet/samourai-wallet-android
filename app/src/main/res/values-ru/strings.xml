@@ -30,16 +30,16 @@
     <string name="options_mnemonic">Показать мнемонику</string>
     <string name="options_mnemonic2">Показать мнемонику из 12 слов для этого кошелька.</string>
     <string name="options_xpub">Показать BIP44 XPUB</string>
-    <string name="options_xpub2">Показать расширенный приватный ключ для BIP44-аккаунта.</string>
+    <string name="options_xpub2">Показать расширенный публичный ключ BIP44-аккаунта.</string>
     <string name="options_xpub49">Показать segwit YPUB</string>
-    <string name="options_xpub49_2">Показать расширенный приватный ключ для BIP49-segwit-аккаунта (в P2SH-виде).</string>
+    <string name="options_xpub49_2">Показать расширенный публичный ключ BIP49-segwit-аккаунта (в P2SH-виде).</string>
     <string name="options_xpub84">Показать segwit ZPUB</string>
-    <string name="options_xpub84_2">Показать расширенный приватный ключ для BIP84-segwit-аккаунта (bech32).</string>
+    <string name="options_xpub84_2">Показать расширенный публичный ключ BIP84-segwit-аккаунта (bech32).</string>
     <string name="options_wipe">Безопасное удаление кошелька</string>
     <string name="options_wipe2">Удалить этот кошелёк с телефона надёжным способом.</string>
     <string name="options_stealth_display">Скрыть иконку приложения</string>
     <string name="options_stealth_display2">Удалить иконку Samourai с домашнего экрана и из лаунчера. Для запуска Samourai нужно будет набрать **ВАШ_PIN# в приложении телефона.</string>
-    <string name="options_remote_commands">Включить удалённое управление</string>
+    <string name="options_remote_commands">Включить удалённое управление (УУ)</string>
     <string name="options_remote_commands2">Разрешить принимать удалённые команды через SMS.</string>
     <string name="options_currency">Местный курс</string>
     <string name="options_currency2">Выберите биржу и местную фиатную валюту для отображения сумм в ней.</string>
@@ -47,7 +47,7 @@
     <string name="options_blockexplorer2">Проводник, который будет использоваться для просмотра подробностей о транзакциях.</string>
     <string name="options_sim_switch">Защита от замены SIM</string>
     <string name="options_sim_switch2">Посылать SMS на доверенный номер телефона при замене SIM-карты.</string>
-    <string name="options_use_telno">Удалённое управление только с доверенного номера</string>
+    <string name="options_use_telno">УУ только с доверенного номера</string>
     <string name="options_use_telno2">Исполнять удалённые команды, полученные только с доверенного номера телефона.</string>
     <string name="options_alert_telno">Доверенный номер</string>
     <string name="options_alert_telno2">Задать доверенный номер телефона, с которого вы можете эксклюзивно разрешить приём команд (в международном формате без пробелов, например: +79990001122).</string>
@@ -523,9 +523,16 @@
 
     <string name="use_bech32">Использовать bech32-адрес</string>
 
+    
+    
     <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущими выходами транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
     <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL-выходов транзакций.</string>
-
+    <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string>
+    <string name="advanced">Дополнительно</string>
+    <string name="broadcast_with_txtenna">Отправить с помощью TxTenna</string>
+    <string name="show_qr_code">Показать QR-код</string>
+    <string name="tx_connectivity_failure_msg">Не удаётся отправить транзакцию в отсутствие подключения к интернету. Что следует сделать?</string>
     <string name="insufficient_fee">Недостаточная комиссия</string>
     <string name="action_utxo_amounts">Показать средства по типу адреса</string>
 
@@ -534,12 +541,7 @@
     <string name="total_p2wpkh">Всего segwit (bech32):</string>
     <string name="total_blocked">Всего заблокированных:</string>
 
-    <string name="title_activity_main3">Main3Activity</string>
-    <string name="_0_00">0.00</string>
-    <string name="advanced">Дополнительно</string>
-    <string name="broadcast_with_txtenna">Отправить с помощью TxTenna</string>
-    <string name="show_qr_code">Показать QR-код</string>
-    <string name="tx_connectivity_failure_msg">Не удаётся отправить транзакцию в отсутствие подключения к интернету. Что следует сделать?</string>
+
 
     <string name="tx_creating_ok">Создаём транзакцию...</string>
     <string name="tx_creating_ko">Не удалось создать транзакцию</string>
@@ -559,6 +561,7 @@
     </string-array>
 
     <string name="in_offline_mode">Samourai работает в офлайн-режиме.</string>
+    <string name="broadcast_off">Вещание с вашего кошелька Samourai отключено.</string>
     <string name="tx_standby">Транзакция ожидает отправки</string>
     <string name="show_hex">Показать hex-код</string>
     <string name="tx_tenna_coming_soon">txTenna для Android &#8211; скоро</string>
@@ -590,5 +593,45 @@
     <string name="request_amount">Запрашиваемая сумма</string>
     <string name="address_type">Тип адреса</string>
     <string name="path">Путь</string>
+
+<string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg">Дополнительные шаги между вашим кошельком и конечной точкой для улучшения взаимозаменяемости монет</string>
+    <string name="review_transaction">ПРОСМОТР ТРАНЗАКЦИИ</string>
+    <string name="stonewall_increases_deniability">STONEWALL позволяет правдоподобнее отрицать причастность и уменьшает количество возможных связей этой транзакции.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Прокручивание биткоинов через \n whirlpool заметёт следы, которые \n ваши транзакции могли оставить</string>
+    <string name="metadata_cleaner">уборщик метаданных</string>
+    <string name="end_to_end_trustless">сквозная безопасность</string>
+    <string name="your_private_keys">Ваши приватные ключи остаются на\n устройстве на протяжении всего\n цикла Whirlpool</string>
+    <string name="different_cycles_for">разные циклы для разных нужд</string>
+    <string name="complete_a_slow_cycle">Заплатите небольшую комиссию за быстрый цикл\n или заработайте немного биткоинов за\n прохождение медленного</string>
+    <string name="supercharge_whirlpool_desc">Ваши монеты будут добавлены в самое начало очереди для приоритетной обработки</string>
+    <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">АктивностьЦикла</string>
+    <string name="standard_whirlpool_desc">Ваши монеты будут добавлены в конец очереди, но принесут небольшое вознаграждение по завершении цикла</string>
+    <string name="standard">Стандарт</string>
+    <string name="_48_hours">48 часов +</string>
+    <string name="free">БЕСПЛАТНО</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 mins</string>
+    <string name="select_a_cycle_type">Выберите тип цикла</string>
+    <string name="supercharge">SuperCharge</string>
+    <string name="transaction_broadcast">Трансляция транзакции</string>
+    <string name="pending">в процессе</string>
+    <string name="transaction_id">ID транзакции</string>
+    <string name="completed">Выполнено</string>
+    <string name="title_activity_received_tx">" "</string>
+    <string name="pay_again">Заплатите снова</string>
+    <string name="miner_fee_rate">Размер комиссии майнерам</string>
+    <string name="status">Статус</string>
+    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="number_of_deterministic_combinations">Количество детерменировнных \nкомбинаций</string>
+    <string name="transaction_entropy">Энтропия транзакций</string>
+    <string name="efficiency_score">Оценка эффективности</string>
+    <string name="hide_log">СКРЫТЬ ЖУРНАЛ</string>
+    <string name="copy">Копировать</string>
+    <string name="show_log">Показать журнал</string>
+
 
 </resources>
