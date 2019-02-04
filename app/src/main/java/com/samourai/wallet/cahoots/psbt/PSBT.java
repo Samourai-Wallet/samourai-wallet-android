@@ -524,8 +524,11 @@ public class PSBT {
             bb = ByteBuffer.allocate(3);
             bb.order(ByteOrder.LITTLE_ENDIAN);
             bb.put((byte)0xfd);
+            /*
             bb.put((byte)(val & 0xff));
             bb.put((byte)((val >> 8) & 0xff));
+            */
+            bb.putShort((short)val);
         }
         else if(val < 0xffffffffL)   {
             bb = ByteBuffer.allocate(5);
