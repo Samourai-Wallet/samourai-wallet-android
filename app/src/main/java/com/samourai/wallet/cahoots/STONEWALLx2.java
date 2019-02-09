@@ -71,7 +71,6 @@ public class STONEWALLx2 extends Cahoots {
         Transaction transaction = new Transaction(params);
         for(_TransactionOutPoint outpoint : inputs.keySet())   {
             TransactionInput input = new TransactionInput(params, null, new byte[0], outpoint, outpoint.getValue());
-            Log.d("STONEWALLx2", "input value:" + input.getValue().longValue());
             transaction.addInput(input);
             outpoints.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
         }
