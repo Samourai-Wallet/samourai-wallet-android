@@ -892,9 +892,6 @@ public class CahootsUtil {
                 inputsB.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
         }
-
-        Log.d("CahootsUtil", "inputsB:" + inputsB.size());
-
         // spender change output
         int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
         SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(1, idx);
@@ -912,8 +909,6 @@ public class CahootsUtil {
         outputsB.put(output_B1, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
         */
 
-        Log.d("CahootsUtil", "outputsB:" + outputsB.size());
-
         STONEWALLx2 stonewall2 = new STONEWALLx2(stonewall1);
         stonewall2.inc(inputsB, outputsB, null);
         System.out.println("step 2:" + stonewall2.toJSON().toString());
@@ -928,7 +923,6 @@ public class CahootsUtil {
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
-                Log.d("CahootsUtil", "outpoint address:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getAddress());
             }
         }
 
@@ -970,7 +964,6 @@ public class CahootsUtil {
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
-                Log.d("CahootsUtil", "outpoint address:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getAddress());
             }
         }
 

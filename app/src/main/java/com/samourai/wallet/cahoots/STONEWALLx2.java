@@ -71,7 +71,6 @@ public class STONEWALLx2 extends Cahoots {
         Transaction transaction = new Transaction(params);
         for(_TransactionOutPoint outpoint : inputs.keySet())   {
             TransactionInput input = new TransactionInput(params, null, new byte[0], outpoint, outpoint.getValue());
-            Log.d("STONEWALLx2", "input value:" + input.getValue().longValue());
             transaction.addInput(input);
             outpoints.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
         }
@@ -89,7 +88,6 @@ public class STONEWALLx2 extends Cahoots {
             String[] s = ((String)triple.getRight()).split("/");
             psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
-        System.out.println(psbt.toString());
         for(_TransactionOutput output : outputs.keySet())   {
             Triple triple = outputs.get(output);
             // output type 2
@@ -136,7 +134,6 @@ public class STONEWALLx2 extends Cahoots {
             String[] s = ((String)triple.getRight()).split("/");
             psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
-        System.out.println(psbt.toString());
         for(_TransactionOutput output : outputs.keySet())   {
             Triple triple = outputs.get(output);
             // output type 2

@@ -341,6 +341,14 @@ public class PSBT {
         }
         entry.setData(data);
 
+        System.out.println("PSBT entry type:" + type);
+        if(keydata != null)    {
+            System.out.println("PSBT entry keydata:" + Hex.toHexString(keydata));
+            System.out.println("PSBT entry keydata length:" + keydata.length);
+        }
+        System.out.println("PSBT entry data:" + Hex.toHexString(data));
+        System.out.println("PSBT entry data length:" + data.length);
+
         return entry;
     }
 
