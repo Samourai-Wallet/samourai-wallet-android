@@ -44,6 +44,18 @@ public class Stowaway extends Cahoots {
         this.params = params;
     }
 
+    public Stowaway(long spendAmount, NetworkParameters params, String strPayNymInit, String strPayNymCollab)    {
+        this.ts = System.currentTimeMillis() / 1000L;
+        this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
+        this.type = Cahoots.CAHOOTS_STOWAWAY;
+        this.step = 0;
+        this.spendAmount = spendAmount;
+        this.outpoints = new HashMap<String, Long>();
+        this.strPayNymInit = strPayNymInit;
+        this.strPayNymCollab = strPayNymCollab;
+        this.params = params;
+    }
+
     public boolean inc(HashMap<_TransactionOutPoint, Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs, HashMap<String,ECKey> keyBag) throws Exception    {
 
         switch(this.getStep())    {
