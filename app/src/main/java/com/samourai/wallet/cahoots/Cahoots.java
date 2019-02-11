@@ -1,6 +1,5 @@
 package com.samourai.wallet.cahoots;
 
-import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.segwit.SegwitAddress;
 
@@ -227,7 +226,6 @@ public class Cahoots {
 
                 long value = outpoints.get(outpoint.getHash().toString() + "-" + outpoint.getIndex());
                 Log.d("Cahoots", "signTx value:" + value);
-//                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, outpoint.getValue(), Transaction.SigHash.ALL, false);
                 TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, Coin.valueOf(value), Transaction.SigHash.ALL, false);
                 final TransactionWitness witness = new TransactionWitness(2);
                 witness.setPush(0, sig.encodeToBitcoin());
