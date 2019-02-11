@@ -2,19 +2,15 @@ package com.samourai.wallet.cahoots;
 
 import android.util.Log;
 
-import com.samourai.wallet.SettingsActivity2;
 import com.samourai.wallet.bip69.BIP69InputComparator;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.cahoots.psbt.PSBTEntry;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.send.SendFactory;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.*;
-import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.TestNet3Params;
-import org.bitcoinj.script.Script;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
