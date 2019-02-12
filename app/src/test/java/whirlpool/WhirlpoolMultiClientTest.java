@@ -3,9 +3,9 @@ package whirlpool;
 import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
+import com.samourai.whirlpool.client.mix.handler.Bip84PostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.IPostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.IPremixHandler;
-import com.samourai.whirlpool.client.mix.handler.PostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.PremixHandler;
 import com.samourai.whirlpool.client.mix.handler.UtxoWithBalance;
 import com.samourai.whirlpool.client.utils.MultiClientManager;
@@ -62,7 +62,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         WhirlpoolClient whirlpoolClient = WhirlpoolClientImpl.newClient(config);
         UtxoWithBalance utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 100000102, 2);
         IPremixHandler premixHandler = new PremixHandler(utxo, computeECKey("cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j"));
-        IPostmixHandler postmixHandler = new PostmixHandler(computeBip47wallet("all all all all all all all all all all all all", "w0"),1, bip47Util);
+        IPostmixHandler postmixHandler = new Bip84PostmixHandler(computeBip84wallet("all all all all all all all all all all all all", "w0"));
         MixParams mixParams = new MixParams(pool, premixHandler, postmixHandler);
         WhirlpoolClientListener listener = multiClientManager.register(whirlpoolClient);
         whirlpoolClient.whirlpool(mixParams, nbMixs, listener);
@@ -71,7 +71,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         whirlpoolClient = WhirlpoolClientImpl.newClient(config);
         utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 100000102, 2);
         premixHandler = new PremixHandler(utxo, computeECKey("cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j"));
-        postmixHandler = new PostmixHandler(computeBip47wallet("all all all all all all all all all all all all", "w0"),1, bip47Util);
+        postmixHandler = new Bip84PostmixHandler(computeBip84wallet("all all all all all all all all all all all all", "w0"));
         mixParams = new MixParams(pool, premixHandler, postmixHandler);
         listener = multiClientManager.register(whirlpoolClient);
         whirlpoolClient.whirlpool(mixParams, nbMixs, listener);
@@ -80,7 +80,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         whirlpoolClient = WhirlpoolClientImpl.newClient(config);
         utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 100000102, 2);
         premixHandler = new PremixHandler(utxo, computeECKey("cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j"));
-        postmixHandler = new PostmixHandler(computeBip47wallet("all all all all all all all all all all all all", "w0"),1, bip47Util);
+        postmixHandler = new Bip84PostmixHandler(computeBip84wallet("all all all all all all all all all all all all", "w0"));
         mixParams = new MixParams(pool, premixHandler, postmixHandler);
         listener = multiClientManager.register(whirlpoolClient);
         whirlpoolClient.whirlpool(mixParams, nbMixs, listener);
@@ -89,7 +89,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         whirlpoolClient = WhirlpoolClientImpl.newClient(config);
         utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 100000102, 2);
         premixHandler = new PremixHandler(utxo, computeECKey("cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j"));
-        postmixHandler = new PostmixHandler(computeBip47wallet("all all all all all all all all all all all all", "w0"),1, bip47Util);
+        postmixHandler = new Bip84PostmixHandler(computeBip84wallet("all all all all all all all all all all all all", "w0"));
         mixParams = new MixParams(pool, premixHandler, postmixHandler);
         listener = multiClientManager.register(whirlpoolClient);
         whirlpoolClient.whirlpool(mixParams, nbMixs, listener);
@@ -98,7 +98,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         whirlpoolClient = WhirlpoolClientImpl.newClient(config);
         utxo = new UtxoWithBalance("7ea75da574ebabf8d17979615b059ab53aae3011926426204e730d164a0d0f16", 100000102, 2);
         premixHandler = new PremixHandler(utxo, computeECKey("cUwS52vEv4ursFBdGJWgHiZyBNqqSF5nFTsunUpocRBYGLY72z4j"));
-        postmixHandler = new PostmixHandler(computeBip47wallet("all all all all all all all all all all all all", "w0"),1, bip47Util);
+        postmixHandler = new Bip84PostmixHandler(computeBip84wallet("all all all all all all all all all all all all", "w0"));
         mixParams = new MixParams(pool, premixHandler, postmixHandler);
         listener = multiClientManager.register(whirlpoolClient);
         whirlpoolClient.whirlpool(mixParams, nbMixs, listener);
