@@ -43,8 +43,15 @@ public class AndroidHttpClient implements IHttpClient {
     }
 
     @Override
-    public void postUrlEncoded(String url, Map<String,String> body) {
-        // TODO
+    public void postUrlEncoded(String url, Map<String, String> body) throws HttpException {
+        try {
+            String jsonString = gson.toJson(body);
+            webUtil.postURL(null, url, jsonString);
+            //webUtil.tor_postURL(null, url, body) // TODO use TOR
+        }
+        catch(Exception e) {
+            String responseBody = e.getMessage();
+            throw new HttpException(e, responseBody);
+        }
     }
-
 }
