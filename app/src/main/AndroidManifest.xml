@@ -37,7 +37,7 @@
         tools:node="replace" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".SamouraiApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
