@@ -172,33 +172,40 @@
             android:name=".service.RefreshService"
             android:enabled="true" />
 
-        <receiver
-            android:name=".receivers.BootIntentReceiver"
+        <service
+            android:name=".tor.TorService"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            android:stopWithTask="true" />
 
-                <category android:name="android.intent.category.HOME" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".receivers.InterceptOutgoingReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="1001">
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".receivers.SMSReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="999">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+
+                <receiver
+                    android:name=".receivers.BootIntentReceiver"
+                    android:enabled="true"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.BOOT_COMPLETED" />
+                        <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
+                        <category android:name="android.intent.category.HOME" />
+                    </intent-filter>
+                </receiver>
+                <receiver
+                    android:name=".receivers.InterceptOutgoingReceiver"
+                    android:enabled="true"
+                    android:exported="true">
+                    <intent-filter android:priority="1001">
+                        <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+
+                        <category android:name="android.intent.category.DEFAULT" />
+                    </intent-filter>
+                </receiver>
+                <receiver
+                    android:name=".receivers.SMSReceiver"
+                    android:enabled="true"
+                    android:exported="true">
+                    <intent-filter android:priority="999">
+                        <action android:name="android.provider.Telephony.SMS_RECEIVED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
