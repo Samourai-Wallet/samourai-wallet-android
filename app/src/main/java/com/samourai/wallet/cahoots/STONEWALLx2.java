@@ -42,6 +42,19 @@ public class STONEWALLx2 extends Cahoots {
         this.params = params;
     }
 
+    public STONEWALLx2(long spendAmount, String address, NetworkParameters params, String strPayNymInit, String strPayNymCollab)    {
+        this.ts = System.currentTimeMillis() / 1000L;
+        this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
+        this.type = Cahoots.CAHOOTS_STONEWALLx2;
+        this.step = 0;
+        this.spendAmount = spendAmount;
+        this.outpoints = new HashMap<String, Long>();
+        this.strDestination = address;
+        this.strPayNymInit = strPayNymInit;
+        this.strPayNymCollab = strPayNymCollab;
+        this.params = params;
+    }
+
     public boolean inc(HashMap<_TransactionOutPoint, Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs, HashMap<String,ECKey> keyBag) throws Exception    {
 
         switch(this.getStep())    {
@@ -71,7 +84,6 @@ public class STONEWALLx2 extends Cahoots {
         Transaction transaction = new Transaction(params);
         for(_TransactionOutPoint outpoint : inputs.keySet())   {
             TransactionInput input = new TransactionInput(params, null, new byte[0], outpoint, outpoint.getValue());
-            Log.d("STONEWALLx2", "input value:" + input.getValue().longValue());
             transaction.addInput(input);
             outpoints.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getValue().longValue());
         }
