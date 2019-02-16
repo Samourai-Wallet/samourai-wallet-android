@@ -69,6 +69,8 @@ import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
+import com.samourai.wallet.cahoots.Cahoots;
+import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
@@ -133,6 +135,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -737,7 +740,17 @@ public class BalanceActivity extends Activity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult);
-                    } else {
+                    }
+                    else if(Cahoots.isCahoots(strResult) && SamouraiWallet.getInstance().isTestNet()) {
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult);
+                    }
+                    else if(Cahoots.isCahoots(strResult) && !SamouraiWallet.getInstance().isTestNet()) {
+                        ;
+                    }
+                    else if (FormatsUtil.getInstance().isPSBT(strResult)) {
+                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult);
+                    }
+                    else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult);
                         startActivity(intent);
@@ -1304,38 +1317,15 @@ public class BalanceActivity extends Activity {
     private void displayBalance() {
 
         long balance = 0L;
-        if (SamouraiWallet.getInstance().getShowTotalBalance()) {
-            if (SamouraiWallet.getInstance().getCurrentSelectedAccount() == 0) {
-                balance = APIFactory.getInstance(BalanceActivity.this).getXpubBalance();
-            } else {
-                if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().size() > 0) {
-                    try {
-                        if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1).xpubstr()) != null) {
-                            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount() - 1).xpubstr());
-                        }
-                    } catch (IOException ioe) {
-                        ;
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                        ;
-                    } catch (NullPointerException npe) {
-                        ;
-                    }
-                }
-            }
-        } else {
-            if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().size() > 0) {
-                try {
-                    if (APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.getInstance().getCurrentSelectedAccount()).xpubstr()) != null) {
-                        balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).xpubstr());
-                    }
-                } catch (IOException ioe) {
-                    ;
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                    ;
-                } catch (NullPointerException npe) {
-                    ;
-                }
-            }
+
+        try {
+            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
+        } catch (IOException ioe) {
+            ;
+        } catch (MnemonicException.MnemonicLengthException mle) {
+            ;
+        } catch (NullPointerException npe) {
+            ;
         }
 
         if (isBTC) {
@@ -1523,6 +1513,9 @@ public class BalanceActivity extends Activity {
                         }
                     }
                     catch(JSONException je) {
+                        ;
+                    }
+                    catch(ConcurrentModificationException cme) {
                         ;
                     }
                 }

@@ -1,12 +1,12 @@
 package whirlpool;
 
 import com.google.common.util.concurrent.SettableFuture;
-import com.samourai.wallet.bip47.rpc.BIP47Wallet;
+import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
+import com.samourai.whirlpool.client.mix.handler.Bip84PostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.IPostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.IPremixHandler;
-import com.samourai.whirlpool.client.mix.handler.PostmixHandler;
 import com.samourai.whirlpool.client.mix.handler.PremixHandler;
 import com.samourai.whirlpool.client.mix.handler.UtxoWithBalance;
 import com.samourai.whirlpool.client.mix.listener.MixStep;
@@ -77,9 +77,8 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         IPremixHandler premixHandler = new PremixHandler(utxo, ecKey);
 
         // output
-        BIP47Wallet bip47w = computeBip47wallet("all all all all all all all all all all all all", "w0");
-        int paymentCodeIndex = 0; // TODO always increment
-        IPostmixHandler postmixHandler = new PostmixHandler(bip47w, paymentCodeIndex, bip47Util);
+        Bip84Wallet bip84Wallet = computeBip84wallet("all all all all all all all all all all all all", "w0");
+        IPostmixHandler postmixHandler = new Bip84PostmixHandler(bip84Wallet);
 
         // listener will be notified of whirlpool progress in realtime
         final SettableFuture<Boolean> success = SettableFuture.create();
@@ -111,11 +110,11 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
                 // override with custom code here: one mix success (check if more mixs remaining with currentMix==nbMixs)
             }
 
-            @Override
+            /*@Override
             protected void log(String message) {
                 super.log(message);
                 System.out.println("whirlpool: "+message);
-            }
+            }*/
         };
 
         // start mixing
@@ -138,9 +137,6 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
             Thread.sleep(1000);
         }
         while(success.get() == null);
-
-        log.info("receiveKey=" + ((PostmixHandler)postmixHandler).getReceiveKey());
-
     }
 
     private Pool findPool(String poolId) throws Exception {

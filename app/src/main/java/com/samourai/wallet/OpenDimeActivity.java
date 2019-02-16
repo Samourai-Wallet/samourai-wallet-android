@@ -79,7 +79,7 @@ public class OpenDimeActivity extends Activity {
     }
 
     private static final String ACTION_USB_PERMISSION = "com.samourai.wallet.USB_PERMISSION";
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = OpenDimeActivity.class.getSimpleName();
 
     private List<UsbFile> files = new ArrayList<UsbFile>();
     private UsbFile currentDir = null;

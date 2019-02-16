@@ -146,6 +146,11 @@ public class AndroidStompClient implements IStompClient {
         }
     }
 
+    @Override
+    public IStompClient copyForNewClient() {
+        return new AndroidStompClient();
+    }
+
     private String getDestination(Map<String, String> stompHeaders) {
         return stompHeaders.get(StompHeader.DESTINATION);
     }
