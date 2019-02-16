@@ -9,11 +9,16 @@ import org.bitcoinj.params.MainNetParams;
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 //
 // Partially Signed Bitcoin Transaction Format
@@ -96,9 +101,15 @@ public class PSBT {
         sbLog = new StringBuilder();
     }
 
-    public PSBT(byte[] psbt, NetworkParameters params)   {
+    public PSBT(byte[] psbt, NetworkParameters params) throws Exception   {
 
-        String strPSBT = Hex.toHexString(psbt);
+        String strPSBT = null;
+        if(isGZIP(psbt))    {
+            strPSBT = fromGZIP(psbt);
+        }
+        else    {
+            strPSBT = Hex.toHexString(psbt);
+        }
 
         if(!isPSBT(strPSBT))    {
             return;
@@ -483,6 +494,20 @@ public class PSBT {
         return Z85.getInstance().encode(serialize());
     }
 
+    public byte[] toGZIP() throws IOException {
+
+        String data = toString();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+        GZIPOutputStream gzip = new GZIPOutputStream(bos);
+        gzip.write(data.getBytes());
+        gzip.close();
+        byte[] compressed = bos.toByteArray();
+        bos.close();
+
+        return compressed;
+    }
+
     public static int readCompactInt(ByteBuffer psbtByteBuffer) throws Exception  {
 
         byte b = psbtByteBuffer.get();
@@ -739,6 +764,27 @@ public class PSBT {
             return false;
         }
 
+    }
+
+    public boolean isGZIP(byte[] buf)   {
+        int head = ((int) buf[0] & 0xff) | ((buf[1] << 8 ) & 0xff00 );
+        return java.util.zip.GZIPInputStream.GZIP_MAGIC == head;
+    }
+
+    public String fromGZIP(byte[] gzip) throws Exception    {
+        ByteArrayInputStream bis = new ByteArrayInputStream(gzip);
+        GZIPInputStream gis = new GZIPInputStream(bis);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+        gis.close();
+        bis.close();
+
+        return sb.toString();
     }
 
     public void Log(String s, boolean eol)  {
