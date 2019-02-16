@@ -2,6 +2,7 @@ package com.samourai.wallet.cahoots;
 
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.util.Z85;
 
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
@@ -144,7 +145,7 @@ public class Cahoots {
             obj.put("id", strID);
             obj.put("type", type);
             obj.put("step", step);
-            obj.put("psbt", psbt == null ? "" : psbt.toZ85String());
+            obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
             obj.put("spend_amount", spendAmount);
             JSONArray _outpoints = new JSONArray();
             for(String outpoint : outpoints.keySet())   {
@@ -191,7 +192,7 @@ public class Cahoots {
                 this.strDestination = obj.getString("dest");
                 this.strPayNymCollab = obj.getString("paynym_collab");
                 this.strPayNymInit = obj.getString("paynym_init");
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(obj.getString("psbt"), params);
+                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
                     this.psbt.read();
                 }
