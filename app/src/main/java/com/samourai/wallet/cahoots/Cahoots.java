@@ -158,7 +158,9 @@ public class Cahoots {
             obj.put("dest", strDestination == null ? "" : strDestination);
             obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
             obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
-            obj.put("params", params instanceof TestNet3Params ? "testnet" : "mainnet");
+            if(params instanceof TestNet3Params)    {
+                obj.put("params","testnet");
+            }
 
             cObj.put("cahoots", obj);
         }
@@ -176,8 +178,13 @@ public class Cahoots {
             if(cObj.has("cahoots"))    {
                 obj = cObj.getJSONObject("cahoots");
             }
-            if(obj != null && obj.has("type") && obj.has("step") && obj.has("psbt") && obj.has("ts") && obj.has("id") && obj.has("version") && obj.has("spend_amount") && obj.has("params"))    {
-                this.params = obj.getString("params").equals("testnet") ? TestNet3Params.get() : MainNetParams.get();
+            if(obj != null && obj.has("type") && obj.has("step") && obj.has("psbt") && obj.has("ts") && obj.has("id") && obj.has("version") && obj.has("spend_amount"))    {
+                if(obj.has("params") && obj.getString("params").equals("testnet"))    {
+                    this.params = TestNet3Params.get();
+                }
+                else    {
+                    this.params = MainNetParams.get();
+                }
                 this.version = obj.getInt("version");
                 this.ts = obj.getLong("ts");
                 this.strID = obj.getString("id");
