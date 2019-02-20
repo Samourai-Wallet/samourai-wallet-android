@@ -1574,6 +1574,14 @@ public class SendActivity extends AppCompatActivity {
 
     private void processPCode(String pcode, String meta) {
 
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setBalance();
+            }
+        }, 2000);
+
         if (FormatsUtil.getInstance().isValidPaymentCode(pcode)) {
 
             if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_CFM) {
