@@ -3,9 +3,18 @@ package com.samourai.wallet;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.multidex.MultiDex;
+import android.util.Log;
+
+import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.PrefsUtil;
 
 public class SamouraiApplication extends Application {
 
@@ -15,6 +24,12 @@ public class SamouraiApplication extends Application {
     public void onCreate() {
         super.onCreate();
         setUpChannels();
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+            Intent startIntent = new Intent(this, TorService.class);
+            startIntent.setAction(TorService.START_SERVICE);
+            startService(startIntent);
+        }
+
     }
 
     private void setUpChannels() {
