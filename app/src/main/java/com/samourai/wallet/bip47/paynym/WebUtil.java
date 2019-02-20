@@ -3,7 +3,9 @@ package com.samourai.wallet.bip47.paynym;
 import android.content.Context;
 import android.util.Log;
 
+import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.TorUtil;
 
 import org.apache.commons.io.IOUtils;
@@ -27,8 +29,13 @@ import ch.boye.httpclientandroidlib.client.methods.HttpGet;
 import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.netcipher.client.StrongHttpsClient;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
-public class WebUtil	{
+public class WebUtil {
 
     public static final String PAYNYM_API = "https://paynym.is/";
 
@@ -40,18 +47,17 @@ public class WebUtil	{
     private static final int proxyPort = 9050;
 
     private static WebUtil instance = null;
-    private static Context context = null;
+    private Context context = null;
 
-    private WebUtil()   {
-        ;
+    private WebUtil(Context ctx) {
+        this.context = ctx;
     }
 
-    public static WebUtil getInstance(Context ctx)  {
+    public static WebUtil getInstance(Context ctx) {
 
-        context = ctx;
-        if(instance == null)  {
+        if (instance == null) {
 
-            instance = new WebUtil();
+            instance = new WebUtil(ctx);
         }
 
         return instance;
@@ -59,22 +65,19 @@ public class WebUtil	{
 
     public String postURL(String request, String urlParameters) throws Exception {
 
-        if(context == null) {
+        if (context == null) {
             return postURL(null, null, request, urlParameters);
-        }
-        else    {
+        } else {
             Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
-            if(TorUtil.getInstance(context).statusFromBroadcast())    {
-                if(urlParameters.startsWith("tx="))    {
-                    HashMap<String,String> args = new HashMap<String,String>();
+            if (TorUtil.getInstance(context).statusFromBroadcast()) {
+                if (urlParameters.startsWith("tx=")) {
+                    HashMap<String, String> args = new HashMap<String, String>();
                     args.put("tx", urlParameters.substring(3));
                     return tor_postURL(request, args);
-                }
-                else    {
+                } else {
                     return tor_postURL(request + urlParameters, null);
                 }
-            }
-            else    {
+            } else {
                 return postURL(null, null, request, urlParameters);
             }
 
@@ -82,109 +85,60 @@ public class WebUtil	{
 
     }
 
-    public String postURL(String contentType, String authToken, String request, String urlParameters) throws Exception {
+    public String postURL(String contentType, String authToken, String requestURL, String urlParameters) throws Exception {
 
         String error = null;
 
-        for (int ii = 0; ii < DefaultRequestRetry; ++ii) {
-            URL url = new URL(request);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            try {
-                connection.setDoOutput(true);
-                connection.setDoInput(true);
-                connection.setInstanceFollowRedirects(false);
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType);
-                connection.setRequestProperty("charset", "utf-8");
-                connection.setRequestProperty("Accept", "application/json");
-                connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-                if(authToken != null)    {
-                    connection.setRequestProperty("auth-token", authToken);
-                }
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
-                connection.setUseCaches (false);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .proxy(TorManager.getInstance(this.context).getProxy());
 
-                connection.setConnectTimeout(DefaultRequestTimeout);
-                connection.setReadTimeout(DefaultRequestTimeout);
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        Request request = new Request.Builder()
+                .url(requestURL)
+                .addHeader("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType)
+                .post(formBodyBuilder.build())
+                .build();
 
-                connection.connect();
-
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(urlParameters);
-                wr.flush();
-                wr.close();
-
-                connection.setInstanceFollowRedirects(false);
-
-                if (connection.getResponseCode() == 200) {
-//					System.out.println("postURL:return code 200");
-                    return IOUtils.toString(connection.getInputStream(), "UTF-8");
-                }
-                else if (connection.getResponseCode() == 400) {
-//					System.out.println("postURL:return code 200");
-                    return "{\"status\":\"error\", \"result\":400}";
-                }
-                else {
-                    error = IOUtils.toString(connection.getErrorStream(), "UTF-8");
-                    System.out.println("postURL:return code " + error);
-                }
-
-                Thread.sleep(5000);
+        try (Response response = builder.build().newCall(request).execute()) {
+            if(response.body() == null){
+                return  "";
             }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-            finally {
-                connection.disconnect();
-            }
+            return response.body().string();
         }
 
-        throw new Exception("Invalid Response " + error);
-    }
+     }
 
-    public String tor_postURL(String URL, HashMap<String,String> args) throws Exception {
+    public String tor_postURL(String URL, HashMap<String, String> args) throws Exception {
 
-        StrongHttpsClient httpclient = new StrongHttpsClient(context, R.raw.debiancacerts);
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
-        httpclient.useProxy(true, strProxyType, strProxyIP, proxyPort);
-
-        HttpPost httppost = new HttpPost(new URI(URL));
-        httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-        httppost.setHeader("charset", "utf-8");
-        httppost.setHeader("Accept", "application/json");
-        httppost.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
-
-        if(args != null)    {
+        if (args != null) {
             List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-            for(String key : args.keySet())   {
-                urlParameters.add(new BasicNameValuePair(key, args.get(key)));
+            for (String key : args.keySet()) {
+                formBodyBuilder.add(key, args.get(key));
             }
-            httppost.setEntity(new UrlEncodedFormEntity(urlParameters));
         }
 
-        HttpResponse response = httpclient.execute(httppost);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .proxy(TorManager.getInstance(this.context).getProxy());
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(response.getStatusLine()).append("\n\n");
-
-        InputStream is = response.getEntity().getContent();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
-        while ((line = br.readLine()) != null)  {
-            sb.append(line);
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(formBodyBuilder.build())
+                .build();
 
-        httpclient.close();
-
-        String result = sb.toString();
-//        Log.d("WebUtil", "POST result via Tor:" + result);
-        int idx = result.indexOf("{");
-        if(idx != -1)    {
-            return result.substring(idx);
-        }
-        else    {
-            return result;
+        try (Response response = builder.build().newCall(request).execute()) {
+            if(response.body() == null){
+                return  "";
+            }
+            return response.body().string();
         }
 
     }

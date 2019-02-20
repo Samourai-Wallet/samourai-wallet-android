@@ -264,7 +264,7 @@ public class APIFactory	{
 
     private synchronized JSONObject getXPUB(String[] xpubs, boolean parse) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -319,7 +319,7 @@ public class APIFactory	{
 
     private synchronized JSONObject registerXPUB(String xpub, int purpose) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -733,7 +733,7 @@ public class APIFactory	{
     */
     public synchronized JSONObject lockXPUB(String xpub, int purpose) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -847,7 +847,7 @@ public class APIFactory	{
 
     public JSONObject getNotifTx(String hash, String addr) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -1073,7 +1073,7 @@ public class APIFactory	{
 
     public synchronized int getNotifTxConfirmations(String hash) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
 //        Log.i("APIFactory", "Notif tx:" + hash);
 
@@ -1124,7 +1124,7 @@ public class APIFactory	{
 
     public synchronized JSONObject getUnspentOutputs(String[] xpubs) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
         String response = null;
@@ -1288,7 +1288,7 @@ public class APIFactory	{
 
     public synchronized JSONObject getTxInfo(String hash) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url = WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -1313,7 +1313,7 @@ public class APIFactory	{
 
     public synchronized JSONObject getBlockHeader(String hash) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
         JSONObject jsonObject  = null;
 
@@ -1368,7 +1368,7 @@ public class APIFactory	{
 
             }
             else    {
-                String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                String _url =  WebUtil.getAPIUrl(context);
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
                 String response = null;
                 if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -1887,7 +1887,7 @@ public class APIFactory	{
 
     public synchronized UTXO getUnspentOutputsForSweep(String address) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+        String _url =  WebUtil.getAPIUrl(context);
 
         try {
 
