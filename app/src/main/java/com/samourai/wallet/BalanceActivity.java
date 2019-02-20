@@ -100,6 +100,8 @@ import com.samourai.wallet.send.boost.RBFTask;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.spend.SendActivity;
+import com.samourai.wallet.tor.TorManager;
+import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -143,6 +145,11 @@ import java.util.List;
 import java.util.Vector;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class BalanceActivity extends Activity {
 
@@ -171,7 +178,8 @@ public class BalanceActivity extends Activity {
     private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
     private ProgressDialog progress = null;
-
+    private Menu menu = null;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -336,24 +344,6 @@ public class BalanceActivity extends Activity {
         }
     };
 
-    protected BroadcastReceiver torStatusReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            Log.i("BalanceActivity", "torStatusReceiver onReceive()");
-
-            if (OrbotHelper.ACTION_STATUS.equals(intent.getAction())) {
-
-                boolean enabled = (intent.getStringExtra(OrbotHelper.EXTRA_STATUS).equals(OrbotHelper.STATUS_ON));
-                Log.i("BalanceActivity", "status:" + enabled);
-
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(enabled);
-
-            }
-        }
-    };
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
@@ -458,7 +448,7 @@ public class BalanceActivity extends Activity {
 
             }
         });
-
+        setUpTor();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -484,9 +474,6 @@ public class BalanceActivity extends Activity {
         IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
 
-//        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
-        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
-
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
         }
@@ -503,7 +490,7 @@ public class BalanceActivity extends Activity {
             ;
         }
 
-        if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
+        if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
             if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
                 ricochetQueueTask = new RicochetQueueTask();
                 ricochetQueueTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -608,13 +595,10 @@ public class BalanceActivity extends Activity {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiverDisplay);
-
-        unregisterReceiver(torStatusReceiver);
-
         if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
-
+        compositeDisposable.dispose();
         super.onDestroy();
     }
 
@@ -623,8 +607,7 @@ public class BalanceActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
             menu.findItem(R.id.action_tor).setVisible(false);
-        } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-            OrbotHelper.requestStartTor(BalanceActivity.this);
+        } else if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
         } else {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
@@ -636,7 +619,7 @@ public class BalanceActivity extends Activity {
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
         menu.findItem(R.id.action_batch).setVisible(false);
-
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -661,17 +644,17 @@ public class BalanceActivity extends Activity {
         } else if (id == R.id.action_utxo) {
             doUTXO();
         } else if (id == R.id.action_tor) {
-
-            if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
-                ;
-            } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-                item.setIcon(R.drawable.tor_off);
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
-            } else {
-                OrbotHelper.requestStartTor(BalanceActivity.this);
-                item.setIcon(R.drawable.tor_on);
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(true);
+            if (TorManager.getInstance(this).state == TorManager.CONNECTION_STATES.CONNECTING) {
+                return true;
             }
+
+            if (TorManager.getInstance(this).isConnected() || TorManager.getInstance(this).isProcessRunning) {
+                stopTor();
+                PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
+            } else {
+                startTor();
+            }
+
 
             return true;
 
@@ -714,6 +697,38 @@ public class BalanceActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startTor() {
+        Intent startIntent = new Intent(this, TorService.class);
+        startIntent.setAction(TorService.START_SERVICE);
+        startService(startIntent);
+
+    }
+
+    private void stopTor() {
+        Intent startIntent = new Intent(this, TorService.class);
+        startIntent.setAction(TorService.STOP_SERVICE);
+        startService(startIntent);
+
+    }
+
+    private void setUpTor() {
+        Disposable disposable = TorManager.getInstance(this)
+                .torStatus
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(state -> {
+                    if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                        PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
+                        if (this.menu != null)
+                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+                    } else {
+                        if (this.menu != null)
+                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+                    }
+                });
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -1100,7 +1115,7 @@ public class BalanceActivity extends Activity {
                                         privKeyReader.getFormat().equals(PrivKeyReader.BIP38) ||
                                         FormatsUtil.getInstance().isValidXprv(s[i])
                                 )
-                                ) {
+                        ) {
 
                             new AlertDialog.Builder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
@@ -1444,35 +1459,34 @@ public class BalanceActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
 
-            if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
+            if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
 
                 int count = 0;
 
                 final Iterator<JSONObject> itr = RicochetMeta.getInstance(BalanceActivity.this).getIterator();
 
-                while(itr.hasNext())    {
+                while (itr.hasNext()) {
 
-                    if(count == 3)    {
+                    if (count == 3) {
                         break;
                     }
 
                     try {
                         JSONObject jObj = itr.next();
                         JSONArray jHops = jObj.getJSONArray("hops");
-                        if(jHops.length() > 0)    {
+                        if (jHops.length() > 0) {
 
                             JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
                             String txHash = jHop.getString("hash");
 
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
-                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                            if (txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1) {
                                 itr.remove();
                                 count++;
                             }
 
                         }
-                    }
-                    catch(JSONException je) {
+                    } catch (JSONException je) {
                         ;
                     }
                     catch(ConcurrentModificationException cme) {
@@ -1482,40 +1496,37 @@ public class BalanceActivity extends Activity {
 
             }
 
-            if(RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0)    {
+            if (RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0) {
 
                 int count = 0;
 
                 List<JSONObject> staggered = RicochetMeta.getInstance(BalanceActivity.this).getStaggered();
                 List<JSONObject> _staggered = new ArrayList<JSONObject>();
 
-                for(JSONObject jObj : staggered)   {
+                for (JSONObject jObj : staggered) {
 
-                    if(count == 3)    {
+                    if (count == 3) {
                         break;
                     }
 
                     try {
                         JSONArray jHops = jObj.getJSONArray("script");
-                        if(jHops.length() > 0)    {
+                        if (jHops.length() > 0) {
 
                             JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
                             String txHash = jHop.getString("tx");
 
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
-                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                            if (txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1) {
                                 count++;
-                            }
-                            else    {
+                            } else {
                                 _staggered.add(jObj);
                             }
 
                         }
-                    }
-                    catch(JSONException je) {
+                    } catch (JSONException je) {
                         ;
-                    }
-                    catch(ConcurrentModificationException cme) {
+                    } catch (ConcurrentModificationException cme) {
                         ;
                     }
                 }
@@ -1526,7 +1537,9 @@ public class BalanceActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(String result) { ; }
+        protected void onPostExecute(String result) {
+            ;
+        }
 
         @Override
         protected void onPreExecute() {
