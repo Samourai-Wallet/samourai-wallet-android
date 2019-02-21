@@ -135,5 +135,10 @@ dependencies {
     implementation 'com.auth0.android:jwtdecode:1.1.1'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.6.0'
 
+
+    implementation 'com.github.jehy:Tor-Onion-Proxy-Library:0.0.7'
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+
     testImplementation 'junit:junit:4.12'
 }

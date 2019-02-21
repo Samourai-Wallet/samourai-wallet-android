@@ -1393,7 +1393,7 @@ public class SendActivity extends AppCompatActivity {
 
                                                 Looper.prepare();
 
-                                                String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                                                String url =  WebUtil.getAPIUrl(SendActivity.this);
                                                 url += "pushtx/schedule";
                                                 try {
                                                     String result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());

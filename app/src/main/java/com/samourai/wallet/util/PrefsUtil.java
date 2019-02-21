@@ -44,6 +44,7 @@ public class PrefsUtil {
 	public static final String IS_RESTORE = "isRestore";
 	public static final String HAPTIC_PIN = "hapticPin";
 	public static final String RICOCHET_STAGGERED = "ricochetStaggeredDelivery";
+	public static final String ENABLE_TOR = "enable_tor";
 
 	private static Context context = null;
 	private static PrefsUtil instance = null;
