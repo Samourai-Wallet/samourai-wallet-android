@@ -544,9 +544,7 @@ public class BalanceActivity extends Activity {
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-            OrbotHelper.requestStartTor(BalanceActivity.this);
-        }
+
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
@@ -700,17 +698,16 @@ public class BalanceActivity extends Activity {
     }
 
     private void startTor() {
-        Intent startIntent = new Intent(this, TorService.class);
+        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
         startIntent.setAction(TorService.START_SERVICE);
         startService(startIntent);
 
     }
 
     private void stopTor() {
-        Intent startIntent = new Intent(this, TorService.class);
+        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
         startIntent.setAction(TorService.STOP_SERVICE);
         startService(startIntent);
-
     }
 
     private void setUpTor() {
@@ -802,7 +799,7 @@ public class BalanceActivity extends Activity {
                     } catch (DecryptionException de) {
                         ;
                     }
-
+                    BalanceActivity.this.stopTor();
                     Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     BalanceActivity.this.startActivity(intent);
