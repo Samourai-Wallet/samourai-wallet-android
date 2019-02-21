@@ -55,7 +55,6 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.params.TestNet3Params;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -425,7 +424,7 @@ public class CahootsUtil {
 
     public void doStowaway0(long spendAmount)    {
         // Bob -> Alice, spendAmount in sats
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         //
         //
@@ -707,7 +706,7 @@ public class CahootsUtil {
 
     public void doSTONEWALLx2_0(long spendAmount, String address)    {
         // Bob -> Alice, spendAmount in sats
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         //
         //

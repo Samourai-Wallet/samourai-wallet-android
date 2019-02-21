@@ -212,30 +212,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                if(SamouraiWallet.getInstance().isTestNet())    {
+                Preference cahootsPref = (Preference) findPreference("cahoots");
+                cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doCahoots();
+                        return true;
+                    }
+                });
 
-                    Preference cahootsPref = (Preference) findPreference("cahoots");
-                    cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doCahoots();
-                            return true;
-                        }
-                    });
-
-                    Preference psbtPref = (Preference) findPreference("psbt");
-                    psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doPSBT();
-                            return true;
-                        }
-                    });
-
-                }
-                else    {
-                    PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("txPrefs");
-                    PreferenceGroup xcategory = (PreferenceGroup) findPreference(getResources().getString(R.string.experimental));
-                    preferenceScreen.removePreference(xcategory);
-                }
+                Preference psbtPref = (Preference) findPreference("psbt");
+                psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPSBT();
+                        return true;
+                    }
+                });
 
             }
             else if(strBranch.equals("stealth"))   {

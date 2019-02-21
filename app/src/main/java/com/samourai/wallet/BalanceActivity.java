@@ -741,11 +741,8 @@ public class BalanceActivity extends Activity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     }
-                    else if(Cahoots.isCahoots(strResult.trim()) && SamouraiWallet.getInstance().isTestNet()) {
+                    else if(Cahoots.isCahoots(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
-                    }
-                    else if(Cahoots.isCahoots(strResult.trim()) && !SamouraiWallet.getInstance().isTestNet()) {
-                        ;
                     }
                     else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
