@@ -91,7 +91,7 @@ public class TorService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (Objects.requireNonNull(intent.getAction()).equals(TorService.STOP_SERVICE)) {
-            Disposable disposable = TorManager.getInstance(this)
+            Disposable disposable = TorManager.getInstance(getApplicationContext())
                     .stopTor()
                     .subscribe(stat -> {
                         compositeDisposable.dispose();
@@ -105,7 +105,7 @@ public class TorService extends Service {
         if (intent.getAction().equals(TorService.RESTART_SERVICE)) {
             title = "Tor: Disconnected";
             if (TorManager
-                    .getInstance(this).isConnected()) {
+                    .getInstance(getApplicationContext()).isConnected()) {
                 stopTOr();
             } else {
                 startTOR();
@@ -113,7 +113,7 @@ public class TorService extends Service {
             return START_STICKY;
         }
         if (Objects.requireNonNull(intent.getAction()).equals(TorService.START_SERVICE)) {
-            if (TorManager.getInstance(this).isProcessRunning) {
+            if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
                 restartTorProcess();
             } else {
                 startTOR();
@@ -133,7 +133,7 @@ public class TorService extends Service {
         }
 
         torDisposable = TorManager
-                .getInstance(this)
+                .getInstance(getApplicationContext())
                 .startTor()
                 .debounce(100, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
@@ -153,7 +153,7 @@ public class TorService extends Service {
                     if (state == TorManager.CONNECTION_STATES.CONNECTED) {
                         TorUtil.getInstance(this).setStatusFromBroadcast(true);
                     } else {
-                        TorUtil.getInstance(this).setStatusFromBroadcast(true);
+                        TorUtil.getInstance(this).setStatusFromBroadcast(false);
                     }
                 });
         logger();
@@ -162,7 +162,7 @@ public class TorService extends Service {
 
     private void logger() {
         Disposable logger = Observable.interval(2, TimeUnit.SECONDS, Schedulers.io())
-                .map(tick -> TorManager.getInstance(this).getLatestLogs())
+                .map(tick -> TorManager.getInstance(getApplicationContext()).getLatestLogs())
                 .observeOn(AndroidSchedulers.mainThread())
                 .retryWhen(errors -> errors.zipWith(Observable.range(1, 3), (n, i) -> i))
                 .subscribe(this::updateNotification, error -> {
@@ -204,7 +204,7 @@ public class TorService extends Service {
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setGroupSummary(false)
                 .setSmallIcon(R.drawable.ic_launcher);
-        switch (TorManager.getInstance(this).state) {
+        switch (TorManager.getInstance(getApplicationContext()).state) {
             case CONNECTED: {
                 notification.setColorized(true);
                 notification.addAction(getAction("Stop"));
@@ -228,7 +228,7 @@ public class TorService extends Service {
     }
 
     private void restartTorProcess() {
-        if (TorManager.getInstance(this).isProcessRunning) {
+        if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
             Disposable disposable = TorManager.getInstance(this)
                     .stopTor()
                     .subscribeOn(Schedulers.io())
@@ -251,7 +251,7 @@ public class TorService extends Service {
     }
 
     private void stopTOr() {
-        if (TorManager.getInstance(this).isProcessRunning) {
+        if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
 
             //
             Disposable disposable = TorManager.getInstance(this)
