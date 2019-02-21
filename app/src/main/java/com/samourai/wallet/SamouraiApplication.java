@@ -25,10 +25,16 @@ public class SamouraiApplication extends Application {
         super.onCreate();
         setUpChannels();
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            Intent startIntent = new Intent(this, TorService.class);
-            startIntent.setAction(TorService.START_SERVICE);
-            startService(startIntent);
+            startService();
         }
+
+    }
+
+    public void startService() {
+        Intent startIntent = new Intent(this, TorService.class);
+        startIntent.setAction(TorService.START_SERVICE);
+        startService(startIntent);
+
 
     }
 
