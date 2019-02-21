@@ -803,12 +803,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         }
                         else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
                             torPref.setSummary(R.string.tor_routing_off);
+
                         }
                         else    {
-                            OrbotHelper.requestStartTor(SettingsActivity2.this);
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
+
                             torPref.setSummary(R.string.tor_routing_on);
                         }
 
