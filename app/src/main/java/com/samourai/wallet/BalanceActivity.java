@@ -603,9 +603,7 @@ public class BalanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
-            menu.findItem(R.id.action_tor).setVisible(false);
-        } else if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
         } else {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
