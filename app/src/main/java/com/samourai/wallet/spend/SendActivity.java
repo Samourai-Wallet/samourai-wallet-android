@@ -17,6 +17,7 @@ import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +46,7 @@ import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SettingsActivity2;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -54,6 +56,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -1744,6 +1747,8 @@ public class SendActivity extends AppCompatActivity {
             doFees();
         } else if (id == R.id.action_batch) {
             doBatchSpend();
+        } else if (id == R.id.action_stowaway) {
+            doStowaway();
         } else if (id == R.id.action_support) {
             doSupport();
         } else {
@@ -1792,6 +1797,40 @@ public class SendActivity extends AppCompatActivity {
     private void doBatchSpend() {
         Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
         startActivity(intent);
+    }
+
+    private void doStowaway() {
+
+        final EditText edAmount = new EditText(SendActivity.this);
+        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                .setTitle(R.string.app_name)
+                .setView(edAmount)
+                .setMessage(R.string.amount_sats)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        final String strAmount = edAmount.getText().toString().trim();
+                        try {
+                            long amount = Long.parseLong(strAmount);
+                            CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
+                        }
+                        catch(NumberFormatException nfe) {
+                            Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
     }
 
     private void doFees() {
