@@ -40,6 +40,12 @@
         android:showAsAction="never"
         />
 
+    <item android:id="@+id/action_stowaway"
+        android:title="@string/action_stowaway"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+
     <item android:id="@+id/action_support"
         android:title="@string/action_support"
         android:orderInCategory="100"
