@@ -227,8 +227,13 @@ public class CahootsUtil {
         hexLayout.setOrientation(LinearLayout.VERTICAL);
         hexLayout.addView(showTx);
 
+        String title = context.getString(R.string.cahoots);
+        title += ", ";
+        title += (_step + 1);
+        title += "/5";
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(context)
-                .setTitle(R.string.cahoots)
+                .setTitle(title)
                 .setView(hexLayout)
                 .setCancelable(true)
                 .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
