@@ -56,6 +56,7 @@ import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -1497,6 +1498,15 @@ public class SendActivity extends AppCompatActivity {
             return;
         }
 
+        if(Cahoots.isCahoots(data.trim())) {
+            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim());
+            return;
+        }
+        if (FormatsUtil.getInstance().isPSBT(data.trim())) {
+            CahootsUtil.getInstance(SendActivity.this).doPSBT(data.trim());
+            return;
+        }
+
         if (FormatsUtil.getInstance().isValidPaymentCode(data)) {
             processPCode(data, null);
             return;
@@ -1821,6 +1831,7 @@ public class SendActivity extends AppCompatActivity {
                         catch(NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
+
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
