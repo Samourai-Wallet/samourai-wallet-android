@@ -670,5 +670,6 @@
     <string name="amount_sats">Enter amount in sats</string>
     <string name="zero_bits">0 bits</string>
     <string name="not_available">N/A</string>
+    <string name="show_tx">Display transaction</string>
 
 </resources>

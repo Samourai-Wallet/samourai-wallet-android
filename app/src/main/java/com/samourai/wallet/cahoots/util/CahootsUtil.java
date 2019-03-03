@@ -44,6 +44,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 
@@ -203,7 +204,7 @@ public class CahootsUtil {
             JSONObject jsonObject = new JSONObject(strCahoots);
             if(jsonObject != null && jsonObject.has("cahoots") && jsonObject.getJSONObject("cahoots").has("step"))    {
                 step = jsonObject.getJSONObject("cahoots").getInt("step");
-                if(step == 4) {
+                if(step == 4 || step == 3) {
                     cahoots = new Stowaway(jsonObject);
                     transaction = cahoots.getPSBT().getTransaction();
                 }
@@ -368,6 +369,59 @@ public class CahootsUtil {
 
                 }
             });
+            dlg.setNeutralButton(R.string.show_tx, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    String tx = "";
+                    if(_transaction != null) {
+                        tx = _transaction.toString();
+                    }
+
+                    TextView showText = new TextView(context);
+                    showText.setText(tx);
+                    showText.setTextIsSelectable(true);
+                    showText.setPadding(40, 10, 40, 10);
+                    showText.setTextSize(18.0f);
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.app_name)
+                            .setView(showText)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
+            });
+        }
+        else if(_step == 3)   {
+            dlg.setNeutralButton(R.string.show_tx, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    String tx = "";
+                    if(_transaction != null) {
+                        tx = _transaction.toString();
+                    }
+
+                    TextView showText = new TextView(context);
+                    showText.setText(tx);
+                    showText.setTextIsSelectable(true);
+                    showText.setPadding(40, 10, 40, 10);
+                    showText.setTextSize(18.0f);
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.app_name)
+                            .setView(showText)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
+            });
+        }
+        else    {
+            ;
         }
 
         if(!((Activity)context).isFinishing())    {
