@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -63,9 +64,11 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -1734,12 +1737,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         dialog.dismiss();
 
+                        long amountCahoots = CahootsUtil.getInstance(SettingsActivity2.this).getCahootsValue();
+                        String strCahootsAmount = SettingsActivity2.this.getText(R.string.amount_sats).toString();
+                        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
+
                         final EditText edAmount = new EditText(SettingsActivity2.this);
                         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
                         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                                 .setTitle(R.string.app_name)
                                 .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
+                                .setMessage(strCahootsAmount)
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -1770,12 +1777,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         dialog.dismiss();
 
+                        long amountCahoots = CahootsUtil.getInstance(SettingsActivity2.this).getCahootsValue();
+                        String strCahootsAmount = SettingsActivity2.this.getText(R.string.amount_sats).toString();
+                        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
+
                         final EditText edAmount = new EditText(SettingsActivity2.this);
                         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
                         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                                 .setTitle(R.string.app_name)
                                 .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
+                                .setMessage(strCahootsAmount)
                                 .setCancelable(false)
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -1798,11 +1809,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                             dialog.dismiss();
 
                                                             final String strAddress = edAddress.getText().toString().trim();
-                                                            try {
-                                                                CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
+                                                            if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                                try {
+                                                                    CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
+                                                                }
+                                                                catch(NumberFormatException nfe) {
+                                                                    Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                                }
                                                             }
-                                                            catch(NumberFormatException nfe) {
-                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                            else    {
+                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

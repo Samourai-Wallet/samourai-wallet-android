@@ -55,6 +55,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
+import org.bitcoinj.core.TransactionOutput;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -444,14 +445,7 @@ public class CahootsUtil {
 
     private void doStowaway1(Stowaway stowaway0) throws Exception    {
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         // sort in descending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
 
@@ -521,14 +515,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         // sort in ascending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
         Collections.reverse(utxos);
@@ -726,14 +713,7 @@ public class CahootsUtil {
 
     private void doSTONEWALLx2_1(STONEWALLx2 stonewall0) throws Exception    {
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -801,6 +781,18 @@ public class CahootsUtil {
         _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey_A0);
         outputsA.put(output_A0, Triple.of(segwitAddress0.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/0/" + idx));
 
+        // contributor is also receiver, check for address re-use here
+        if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
+            SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(0, idx + 1);
+            Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress1.getBech32AsString());
+            byte[] scriptPubKey1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
+            TransactionOutput output1 = new TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey1);
+            Transaction tx = stonewall0.getTransaction();
+            tx.clearOutputs();
+            tx.addOutput(output1);
+            stonewall0.getPSBT().setTransaction(tx);
+        }
+
         // contributor change output
         idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
         SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(1, idx);
@@ -822,14 +814,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -1008,6 +993,29 @@ public class CahootsUtil {
 
         // broadcast ???
         doCahoots(stonewall4.toJSON().toString());
+    }
+
+    private List<UTXO> getCahootsUTXO() {
+        List<UTXO> ret = new ArrayList<UTXO>();
+        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
+        for(UTXO utxo : _utxos)   {
+            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
+            if(script.startsWith("0014") && APIFactory.getInstance(context).getUnspentPaths().get(utxo.getOutpoints().get(0).getAddress()) != null)   {
+                ret.add(utxo);
+            }
+        }
+
+        return ret;
+    }
+
+    public long getCahootsValue() {
+        long ret = 0L;
+        List<UTXO> _utxos = getCahootsUTXO();
+        for(UTXO utxo : _utxos)   {
+            ret += utxo.getValue();
+        }
+
+        return ret;
     }
 
 }

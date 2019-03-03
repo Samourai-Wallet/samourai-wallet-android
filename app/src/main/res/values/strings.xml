@@ -14,7 +14,6 @@
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
-    <string name="action_stowaway">Stowaway (PayJoin)</string>
 
     <string name="about_us">About Samourai Wallet</string>
 
@@ -169,6 +168,7 @@
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
+    <string name="invalid_address">Invalid address</string>
     <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
