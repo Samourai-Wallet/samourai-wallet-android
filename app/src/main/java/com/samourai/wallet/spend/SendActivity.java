@@ -685,7 +685,17 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            validateSpend();
+
+            if(editable.toString().equalsIgnoreCase("Stowaway"))    {
+                doStowaway();
+            }
+            else if(editable.toString().equalsIgnoreCase("STONEWALLx2"))    {
+                doSTONEWALLx2();
+            }
+            else    {
+                validateSpend();
+            }
+
         }
     };
 
@@ -1757,8 +1767,6 @@ public class SendActivity extends AppCompatActivity {
             doFees();
         } else if (id == R.id.action_batch) {
             doBatchSpend();
-        } else if (id == R.id.action_stowaway) {
-            doStowaway();
         } else if (id == R.id.action_support) {
             doSupport();
         } else {
@@ -1811,12 +1819,16 @@ public class SendActivity extends AppCompatActivity {
 
     private void doStowaway() {
 
+        long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue();
+        String strCahootsAmount = SendActivity.this.getText(R.string.amount_sats).toString();
+        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
+
         final EditText edAmount = new EditText(SendActivity.this);
         edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
         AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                 .setTitle(R.string.app_name)
                 .setView(edAmount)
-                .setMessage(R.string.amount_sats)
+                .setMessage(strCahootsAmount)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -1832,6 +1844,77 @@ public class SendActivity extends AppCompatActivity {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
 
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
+        }
+
+    }
+
+    private void doSTONEWALLx2() {
+
+        long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue();
+        String strCahootsAmount = SendActivity.this.getText(R.string.amount_sats).toString();
+        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
+
+        final EditText edAmount = new EditText(SendActivity.this);
+        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                .setTitle(R.string.app_name)
+                .setView(edAmount)
+                .setMessage(strCahootsAmount)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        final String strAmount = edAmount.getText().toString().trim();
+                        try {
+                            long amount = Long.parseLong(strAmount);
+
+                            final EditText edAddress = new EditText(SendActivity.this);
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setView(edAddress)
+                                    .setMessage(R.string.segwit_address)
+                                    .setCancelable(false)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                                            dialog.dismiss();
+
+                                            final String strAddress = edAddress.getText().toString().trim();
+                                            if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                try {
+                                                    CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
+                                                }
+                                                catch(NumberFormatException nfe) {
+                                                    Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            else    {
+                                                Toast.makeText(SendActivity.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            if(!isFinishing())    {
+                                dlg.show();
+                            }
+
+                        }
+                        catch(NumberFormatException nfe) {
+                            Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
