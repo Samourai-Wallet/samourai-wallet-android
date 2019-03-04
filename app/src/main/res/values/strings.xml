@@ -671,5 +671,9 @@
     <string name="zero_bits">0 bits</string>
     <string name="not_available">N/A</string>
     <string name="show_tx">Display transaction</string>
+    <string name="unrecognized_step">Unrecognized #Cahoots step</string>
+    <string name="cannot_process_stowaway">Cannot process Stowaway</string>
+    <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
+    <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
 
 </resources>

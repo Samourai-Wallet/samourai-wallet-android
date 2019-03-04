@@ -1677,173 +1677,44 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doCahoots()    {
 
+        final EditText edCahoots = new EditText(SettingsActivity2.this);
+        edCahoots.setSingleLine(false);
+        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edCahoots.setLines(10);
+        edCahoots.setHint(R.string.cahoots);
+        edCahoots.setGravity(Gravity.START);
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                edCahoots.setSelection(0);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+        edCahoots.addTextChangedListener(textWatcher);
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.cahoots)
-                .setCancelable(true)
-                .setPositiveButton(R.string.enter_cahoots, new DialogInterface.OnClickListener() {
+                .setView(edCahoots)
+                .setMessage(R.string.enter_cahoots)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         dialog.dismiss();
 
-                        final EditText edCahoots = new EditText(SettingsActivity2.this);
-                        edCahoots.setSingleLine(false);
-                        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                        edCahoots.setLines(10);
-                        edCahoots.setHint(R.string.cahoots);
-                        edCahoots.setGravity(Gravity.START);
-                        TextWatcher textWatcher = new TextWatcher() {
+                        final String strCahoots = edCahoots.getText().toString().trim();
 
-                            public void afterTextChanged(Editable s) {
-                                edCahoots.setSelection(0);
-                            }
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                ;
-                            }
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                ;
-                            }
-                        };
-                        edCahoots.addTextChangedListener(textWatcher);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edCahoots)
-                                .setMessage(R.string.enter_cahoots)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strCahoots = edCahoots.getText().toString().trim();
-
-                                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
+                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
 
                     }
-
-                }).setNegativeButton(R.string.start_stowaway, new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                         dialog.dismiss();
-
-                        long amountCahoots = CahootsUtil.getInstance(SettingsActivity2.this).getCahootsValue();
-                        String strCahootsAmount = SettingsActivity2.this.getText(R.string.amount_sats).toString();
-                        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(strCahootsAmount)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-                                            CahootsUtil.getInstance(SettingsActivity2.this).doStowaway0(amount);
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
-                }).setNeutralButton(R.string.start_stonewall, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                        long amountCahoots = CahootsUtil.getInstance(SettingsActivity2.this).getCahootsValue();
-                        String strCahootsAmount = SettingsActivity2.this.getText(R.string.amount_sats).toString();
-                        strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(strCahootsAmount)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-
-                                            final EditText edAddress = new EditText(SettingsActivity2.this);
-                                            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                                    .setTitle(R.string.app_name)
-                                                    .setView(edAddress)
-                                                    .setMessage(R.string.segwit_address)
-                                                    .setCancelable(false)
-                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                            dialog.dismiss();
-
-                                                            final String strAddress = edAddress.getText().toString().trim();
-                                                            if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
-                                                                try {
-                                                                    CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
-                                                                }
-                                                                catch(NumberFormatException nfe) {
-                                                                    Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            }
-                                                            else    {
-                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                            if(!isFinishing())    {
-                                                dlg.show();
-                                            }
-
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
                     }
                 });
         if(!isFinishing())    {

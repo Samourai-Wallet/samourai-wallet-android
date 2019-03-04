@@ -1838,7 +1838,12 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
+                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue())    {
+                                CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
+                            }
+                            else    {
+                                Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                            }
                         }
                         catch(NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
@@ -1878,37 +1883,44 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            final EditText edAddress = new EditText(SendActivity.this);
-                            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
-                                    .setTitle(R.string.app_name)
-                                    .setView(edAddress)
-                                    .setMessage(R.string.segwit_address)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
+                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue())    {
+                                CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
 
-                                            dialog.dismiss();
+                                final EditText edAddress = new EditText(SendActivity.this);
+                                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                                        .setTitle(R.string.app_name)
+                                        .setView(edAddress)
+                                        .setMessage(R.string.segwit_address)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                            final String strAddress = edAddress.getText().toString().trim();
-                                            if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
-                                                try {
-                                                    CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
+                                                dialog.dismiss();
+
+                                                final String strAddress = edAddress.getText().toString().trim();
+                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                    try {
+                                                        CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
+                                                    }
+                                                    catch(NumberFormatException nfe) {
+                                                        Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
-                                                catch(NumberFormatException nfe) {
-                                                    Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
+                                                else    {
+                                                    Toast.makeText(SendActivity.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
-                                            else    {
-                                                Toast.makeText(SendActivity.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
+                                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
                                             }
-                                        }
-                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            if(!isFinishing())    {
-                                dlg.show();
+                                        });
+                                if(!isFinishing())    {
+                                    dlg.show();
+                                }
+                            }
+                            else    {
+                                Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
 
                         }
