@@ -27,6 +27,7 @@ public class TorManager {
     }
 
     static TorManager instance;
+    private int currentPort = 0;
 
 
     private Context context;
@@ -67,6 +68,7 @@ public class TorManager {
                 while (!onionProxyManager.isRunning())
                     Thread.sleep(90);
                 proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", onionProxyManager.getIPv4LocalHostSocksPort()));
+                currentPort = onionProxyManager.getIPv4LocalHostSocksPort();
                 if (torStatus.hasObservers()) {
                     torStatus.onNext(CONNECTION_STATES.CONNECTED);
                 }
@@ -98,18 +100,27 @@ public class TorManager {
                             torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
                         }
                     }
+                    int port = onionProxyManager.getIPv4LocalHostSocksPort();
+                    if (currentPort != port) {
+                        setTheProxy(port);
+                    }
+
                 } catch (Exception e) {
                     Log.i(TAG, "getLatestLogs: LOG");
                     e.printStackTrace();
                 }
                 return log;
             } else {
-                return "";
+                return "Disconnected state";
             }
         } catch (IOException e) {
             e.printStackTrace();
             return "";
         }
+    }
+
+    private void setTheProxy(int port) {
+        this.proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", port));
     }
 
     public boolean isConnected() {
