@@ -122,7 +122,7 @@ public class CahootsUtil {
             }
         }
         catch(JSONException je) {
-            Toast.makeText(context, R.string.not_valid_json, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -146,11 +146,12 @@ public class CahootsUtil {
                         doStowaway4(stowaway);
                         break;
                     default:
-                        Toast.makeText(context, "unrecognized step", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
             catch(Exception e) {
+                Toast.makeText(context, R.string.cannot_process_stonewall, Toast.LENGTH_SHORT).show();
                 Log.d("CahootsUtil", e.getMessage());
                 e.printStackTrace();
             }
@@ -177,11 +178,12 @@ public class CahootsUtil {
                         doSTONEWALLx2_4(stonewall);
                         break;
                     default:
-                        Toast.makeText(context, "unrecognized step", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
             catch(Exception e) {
+                Toast.makeText(context, R.string.cannot_process_stowaway, Toast.LENGTH_SHORT).show();
                 Log.d("CahootsUtil", e.getMessage());
                 e.printStackTrace();
             }
@@ -211,7 +213,7 @@ public class CahootsUtil {
             }
         }
         catch(JSONException je) {
-            ;
+            Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         final int _step = step;
