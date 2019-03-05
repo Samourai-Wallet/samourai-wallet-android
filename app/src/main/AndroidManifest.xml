@@ -273,6 +273,15 @@
             android:exported="true"
             android:label=""
             android:theme="@style/ui_2_theme" />
+
+        <receiver
+            android:name="com.msopentech.thali.android.toronionproxy.ConnectionChangeReceiver"
+            android:label="NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

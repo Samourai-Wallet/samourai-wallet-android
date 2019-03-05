@@ -71,7 +71,6 @@ public class TorService extends Service {
                 .build();
 
         startForeground(TOR_SERVICE_NOTIFICATION_ID, notification);
-        registerReceiver(networkStateReceiver, new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
     }
 
@@ -150,6 +149,7 @@ public class TorService extends Service {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
+
                     if (state == TorManager.CONNECTION_STATES.CONNECTED) {
                         TorUtil.getInstance(this).setStatusFromBroadcast(true);
                     } else {
@@ -177,20 +177,18 @@ public class TorService extends Service {
     @Override
     public void onDestroy() {
         compositeDisposable.dispose();
-        unregisterReceiver(networkStateReceiver);
         super.onDestroy();
     }
 
     private void updateNotification(String content) {
+        Log.i(TAG, "Tor Log: ".concat(content));
         if (content.isEmpty()) {
             content = "Bootstrapping...";
         }
         if (TorManager.getInstance(this).state == TorManager.CONNECTION_STATES.CONNECTED) {
             title = "Tor: Connected";
         }
-        if (TorManager.getInstance(this).state == TorManager.CONNECTION_STATES.CONNECTING) {
-            title = "Tor: Connecting...";
-        }
+
         if (TorManager.getInstance(this).state == TorManager.CONNECTION_STATES.DISCONNECTED) {
             title = "Tor: Disconnected";
         }
@@ -269,27 +267,6 @@ public class TorService extends Service {
         return null;
     }
 
-    private BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo ni = null;
-
-            if (manager != null) {
-                ni = manager.getActiveNetworkInfo();
-            }
-            if (ni != null) {
-                if (ni.isConnected()) {
-                    restartTorProcess();
-                } else {
-                    stopTOr();
-                }
-            } else {
-                stopTOr();
-            }
-
-        }
-    };
 
 
 }
