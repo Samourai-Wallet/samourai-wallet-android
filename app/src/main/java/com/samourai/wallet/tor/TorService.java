@@ -37,7 +37,6 @@ import static com.samourai.wallet.SamouraiApplication.TOR_CHANNEL_ID;
 
 
 public class TorService extends Service {
-    private boolean boom = false;
 
     public static String START_SERVICE = "START_SERVICE";
     public static String STOP_SERVICE = "STOP_SERVICE";
@@ -78,7 +77,7 @@ public class TorService extends Service {
     private NotificationCompat.Action getAction(String message) {
 
         Intent broadcastIntent = new Intent(this, TorBroadCastReceiver.class);
-        broadcastIntent.setAction(RESTART_SERVICE);
+        broadcastIntent.setAction(STOP_SERVICE);
 
         PendingIntent actionIntent = PendingIntent.getBroadcast(this,
                 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -266,7 +265,6 @@ public class TorService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
 
 }

@@ -30,7 +30,6 @@ public class TorManager {
     private int currentPort = 0;
 
 
-    private Context context;
     private Proxy proxy = null;
     public CONNECTION_STATES state = CONNECTION_STATES.DISCONNECTED;
     public Subject<CONNECTION_STATES> torStatus = PublishSubject.create();
@@ -46,7 +45,7 @@ public class TorManager {
     }
 
     private TorManager(Context context) {
-        this.context = context;
+
         torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
         onionProxyManager = new AndroidOnionProxyManager(context, fileStorageLocation);
     }
@@ -102,7 +101,7 @@ public class TorManager {
                     }
                     int port = onionProxyManager.getIPv4LocalHostSocksPort();
                     if (currentPort != port) {
-                        setTheProxy(port);
+                        setProxy(port);
                     }
 
                 } catch (Exception e) {
@@ -119,7 +118,7 @@ public class TorManager {
         }
     }
 
-    private void setTheProxy(int port) {
+    private void setProxy(int port) {
         this.proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", port));
     }
 
@@ -162,22 +161,6 @@ public class TorManager {
 
     public Subject<CONNECTION_STATES> getTorStatus() {
         return torStatus;
-    }
-
-    Observable<Boolean> isRunning() {
-        return Observable.fromCallable(() -> {
-            if (onionProxyManager != null) {
-                try {
-
-                    return onionProxyManager.isRunning();
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    return false;
-                }
-            }
-            return false;
-        });
-
     }
 
 
