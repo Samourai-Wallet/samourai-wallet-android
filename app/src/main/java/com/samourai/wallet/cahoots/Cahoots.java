@@ -156,8 +156,8 @@ public class Cahoots {
             }
             obj.put("outpoints", _outpoints);
             obj.put("dest", strDestination == null ? "" : strDestination);
-            obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
-            obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
+//            obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
+//            obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
             if(params instanceof TestNet3Params)    {
                 obj.put("params","testnet");
             }
@@ -197,8 +197,8 @@ public class Cahoots {
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
                 this.strDestination = obj.getString("dest");
-                this.strPayNymCollab = obj.getString("paynym_collab");
-                this.strPayNymInit = obj.getString("paynym_init");
+//                this.strPayNymCollab = obj.getString("paynym_collab");
+//                this.strPayNymInit = obj.getString("paynym_init");
                 this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
                     this.psbt.read();

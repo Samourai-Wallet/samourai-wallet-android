@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -63,9 +64,11 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -212,30 +215,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                if(SamouraiWallet.getInstance().isTestNet())    {
+                Preference cahootsPref = (Preference) findPreference("cahoots");
+                cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doCahoots();
+                        return true;
+                    }
+                });
 
-                    Preference cahootsPref = (Preference) findPreference("cahoots");
-                    cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doCahoots();
-                            return true;
-                        }
-                    });
-
-                    Preference psbtPref = (Preference) findPreference("psbt");
-                    psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doPSBT();
-                            return true;
-                        }
-                    });
-
-                }
-                else    {
-                    PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("txPrefs");
-                    PreferenceGroup xcategory = (PreferenceGroup) findPreference(getResources().getString(R.string.experimental));
-                    preferenceScreen.removePreference(xcategory);
-                }
+                Preference psbtPref = (Preference) findPreference("psbt");
+                psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPSBT();
+                        return true;
+                    }
+                });
 
             }
             else if(strBranch.equals("stealth"))   {
@@ -1683,160 +1677,44 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doCahoots()    {
 
+        final EditText edCahoots = new EditText(SettingsActivity2.this);
+        edCahoots.setSingleLine(false);
+        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edCahoots.setLines(10);
+        edCahoots.setHint(R.string.cahoots);
+        edCahoots.setGravity(Gravity.START);
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                edCahoots.setSelection(0);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+        edCahoots.addTextChangedListener(textWatcher);
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.cahoots)
-                .setCancelable(true)
-                .setPositiveButton(R.string.enter_cahoots, new DialogInterface.OnClickListener() {
+                .setView(edCahoots)
+                .setMessage(R.string.enter_cahoots)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         dialog.dismiss();
 
-                        final EditText edCahoots = new EditText(SettingsActivity2.this);
-                        edCahoots.setSingleLine(false);
-                        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                        edCahoots.setLines(10);
-                        edCahoots.setHint(R.string.cahoots);
-                        edCahoots.setGravity(Gravity.START);
-                        TextWatcher textWatcher = new TextWatcher() {
+                        final String strCahoots = edCahoots.getText().toString().trim();
 
-                            public void afterTextChanged(Editable s) {
-                                edCahoots.setSelection(0);
-                            }
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                ;
-                            }
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                ;
-                            }
-                        };
-                        edCahoots.addTextChangedListener(textWatcher);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edCahoots)
-                                .setMessage(R.string.enter_cahoots)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strCahoots = edCahoots.getText().toString().trim();
-
-                                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
+                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
 
                     }
-
-                }).setNegativeButton(R.string.start_stowaway, new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                         dialog.dismiss();
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-                                            CahootsUtil.getInstance(SettingsActivity2.this).doStowaway0(amount);
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
-                }).setNeutralButton(R.string.start_stonewall, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-
-                                            final EditText edAddress = new EditText(SettingsActivity2.this);
-                                            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                                    .setTitle(R.string.app_name)
-                                                    .setView(edAddress)
-                                                    .setMessage(R.string.segwit_address)
-                                                    .setCancelable(false)
-                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                            dialog.dismiss();
-
-                                                            final String strAddress = edAddress.getText().toString().trim();
-                                                            try {
-                                                                CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
-                                                            }
-                                                            catch(NumberFormatException nfe) {
-                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                            if(!isFinishing())    {
-                                                dlg.show();
-                                            }
-
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
                     }
                 });
         if(!isFinishing())    {

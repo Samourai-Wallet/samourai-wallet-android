@@ -168,6 +168,7 @@
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
+    <string name="invalid_address">Invalid address</string>
     <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
@@ -669,5 +670,10 @@
     <string name="amount_sats">Enter amount in sats</string>
     <string name="zero_bits">0 bits</string>
     <string name="not_available">N/A</string>
+    <string name="show_tx">Display transaction</string>
+    <string name="unrecognized_step">Unrecognized #Cahoots step</string>
+    <string name="cannot_process_stowaway">Cannot process Stowaway</string>
+    <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
+    <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
 
 </resources>
