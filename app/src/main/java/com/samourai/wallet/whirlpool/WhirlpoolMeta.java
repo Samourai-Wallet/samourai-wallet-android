@@ -7,10 +7,8 @@ import org.json.JSONObject;
 
 public class WhirlpoolMeta {
 
-    private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 1;
-
-    private final static int WHIRLPOOL_POSTMIX = Integer.MAX_VALUE;
-    private final static int WHIRLPOOL_POSTMIX_CP = Integer.MAX_VALUE - 1;
+    private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
+    private final static int WHIRLPOOL_POSTMIX = Integer.MAX_VALUE - 1;
 
     private static int preIdx  = 0;
     private static int postIdx  = 0;
@@ -38,10 +36,6 @@ public class WhirlpoolMeta {
 
     public int getWhirlpoolPostmix() {
         return WHIRLPOOL_POSTMIX;
-    }
-
-    public int getWhirlpoolPostmixCP() {
-        return WHIRLPOOL_POSTMIX_CP;
     }
 
     public static int getPreIdx() {

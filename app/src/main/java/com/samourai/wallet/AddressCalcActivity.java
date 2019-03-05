@@ -133,9 +133,8 @@ public class AddressCalcActivity extends Activity {
                         segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else if(spType.getSelectedItemPosition() == 5)    {
-                        PaymentCode paymentCodeCP = BIP47Util.getInstance(AddressCalcActivity.this).getPaymentCode(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPostmixCP());
-                        PaymentAddress receiveAddress = BIP47Util.getInstance(AddressCalcActivity.this).getReceiveAddress(paymentCodeCP, WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPostmix(), index);
-                        segwitAddress = new SegwitAddress(receiveAddress.getReceiveECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                        hd_addr = BIP84Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(AddressCalcActivity.this).getWhirlpoolPostmix()).getChain(chain).getAddressAt(index);
+                        segwitAddress = new SegwitAddress(hd_addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
                     }
                     else    {
                         hd_addr = BIP49Util.getInstance(AddressCalcActivity.this).getWallet().getAccountAt(0).getChain(chain).getAddressAt(index);
