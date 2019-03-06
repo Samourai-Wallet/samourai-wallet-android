@@ -17,9 +17,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
@@ -30,8 +32,11 @@ import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.netcipher.client.StrongHttpsClient;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -87,30 +92,39 @@ public class WebUtil {
 
     public String postURL(String contentType, String authToken, String requestURL, String urlParameters) throws Exception {
 
-        String error = null;
+        MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
 
-        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        RequestBody body = RequestBody.create(JSON, urlParameters);
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+
+        builder.callTimeout(DefaultRequestTimeout, TimeUnit.MILLISECONDS);
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        Request request = new Request.Builder()
+        Request.Builder rbuilder = new Request.Builder()
                 .url(requestURL)
-                .addHeader("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType)
-                .post(formBodyBuilder.build())
+                .addHeader("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType);
+
+        if (authToken != null) {
+            rbuilder.addHeader("auth-token", authToken);
+        }
+
+        Request request = rbuilder
+                .post(body)
                 .build();
 
         try (Response response = builder.build().newCall(request).execute()) {
-            if(response.body() == null){
-                return  "";
+            if (response.body() == null) {
+                return "";
             }
             return response.body().string();
         }
 
-     }
+    }
 
     public String tor_postURL(String URL, HashMap<String, String> args) throws Exception {
 
