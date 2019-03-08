@@ -31,6 +31,7 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
@@ -64,7 +65,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 public class TxAnimUIActivity extends AppCompatActivity {
 

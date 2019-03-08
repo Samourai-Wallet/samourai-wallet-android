@@ -43,7 +43,7 @@
     <style name="ui_2_theme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:colorAccent">@android:color/white</item>
         <item name="android:windowBackground">@color/windowDark</item>
-        <item name="android:statusBarColor">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/grey_accent</item>
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:navigationBarColor">@color/windowDark</item>
     </style>

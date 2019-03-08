@@ -1,77 +1,138 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    android:orientation="vertical">
+    android:background="@color/windowDark"
+    android:orientation="vertical"
+    tools:context="com.samourai.wallet.whirlpool.EmptyWhirlPool">
 
-    <include layout="@layout/alert_layout" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/alert"
-        >
+        android:layout_height="wrap_content"
+        android:background="@color/grey_accent"
+        android:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_scrollFlags="scroll|enterAlways">
 
-    <ListView
-        android:id="@+id/txList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@drawable/list_divider"
-        android:layout_below="@+id/BalanceBar"
-        />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="36dp"
+                android:gravity="center_horizontal"
+                android:text="3222323.1 BTC"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                fab:layout_constraintBottom_toBottomOf="parent"
+                fab:layout_constraintEnd_toEndOf="parent"
+                fab:layout_constraintStart_toStartOf="parent"
+                fab:layout_constraintTop_toTopOf="parent" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:indeterminate="true"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="-8dp" />
+    </android.support.design.widget.AppBarLayout>
+
 
     <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/wallet_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_white_24dp"
+        app:layout_anchor="@id/rv_cycles"
+        app:layout_anchorGravity="bottom|right|end"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_scrollFlags="scroll|enterAlways"
         fab:fab_addButtonColorNormal="#FF14a1fb"
         fab:fab_addButtonColorPressed="@color/blue_semi_transparent_pressed"
         fab:fab_addButtonPlusIconColor="@color/white"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp">
+        fab:fab_labelStyle="@style/menu_labels_style">
 
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/bip47"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_paynym_white_24dp"
             fab:fab_colorNormal="#FF673ab7"
             fab:fab_colorPressed="#FF512da8"
-            fab:fab_title="@string/action_bip47"
-            />
+            fab:fab_icon="@drawable/ic_paynym_white_24dp"
+            fab:fab_size="mini"
+            fab:fab_title="@string/action_bip47" />
 
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_samourai_send_24dp"
             fab:fab_colorNormal="#e91e63"
             fab:fab_colorPressed="#c2185b"
-            fab:fab_title="@string/send"
-            />
+            fab:fab_icon="@drawable/ic_samourai_send_24dp"
+            fab:fab_size="mini"
+            fab:fab_title="@string/send" />
 
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             android:id="@+id/receive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_samourai_deposit_24dp"
             fab:fab_colorNormal="#00bfa5"
             fab:fab_colorPressed="#009688"
-            fab:fab_title="@string/receive"
-            />
+            fab:fab_icon="@drawable/ic_samourai_deposit_24dp"
+            fab:fab_size="mini"
+            fab:fab_title="@string/receive" />
 
     </net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu>
 
-</RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_cycles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+
+
+</android.support.design.widget.CoordinatorLayout>
+
