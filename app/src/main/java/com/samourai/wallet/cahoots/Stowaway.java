@@ -2,19 +2,15 @@ package com.samourai.wallet.cahoots;
 
 import android.util.Log;
 
-import com.samourai.wallet.SettingsActivity2;
 import com.samourai.wallet.bip69.BIP69InputComparator;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.cahoots.psbt.PSBTEntry;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.send.SendFactory;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.*;
-import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.TestNet3Params;
-import org.bitcoinj.script.Script;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
@@ -41,6 +37,18 @@ public class Stowaway extends Cahoots {
         this.step = 0;
         this.spendAmount = spendAmount;
         this.outpoints = new HashMap<String, Long>();
+        this.params = params;
+    }
+
+    public Stowaway(long spendAmount, NetworkParameters params, String strPayNymInit, String strPayNymCollab)    {
+        this.ts = System.currentTimeMillis() / 1000L;
+        this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
+        this.type = Cahoots.CAHOOTS_STOWAWAY;
+        this.step = 0;
+        this.spendAmount = spendAmount;
+        this.outpoints = new HashMap<String, Long>();
+        this.strPayNymInit = strPayNymInit;
+        this.strPayNymCollab = strPayNymCollab;
         this.params = params;
     }
 

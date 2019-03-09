@@ -736,23 +736,20 @@ public class BalanceActivity extends Activity {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
-                PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(strResult));
+                PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(strResult.trim()));
                 try {
                     if (privKeyReader.getFormat() != null) {
-                        doPrivKey(strResult);
+                        doPrivKey(strResult.trim());
                     }
-                    else if(Cahoots.isCahoots(strResult) && SamouraiWallet.getInstance().isTestNet()) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult);
+                    else if(Cahoots.isCahoots(strResult.trim())) {
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
                     }
-                    else if(Cahoots.isCahoots(strResult) && !SamouraiWallet.getInstance().isTestNet()) {
-                        ;
-                    }
-                    else if (FormatsUtil.getInstance().isPSBT(strResult)) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult);
+                    else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
+                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     }
                     else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-                        intent.putExtra("uri", strResult);
+                        intent.putExtra("uri", strResult.trim());
                         startActivity(intent);
                     }
                 } catch (Exception e) {
