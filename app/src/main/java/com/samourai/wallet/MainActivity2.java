@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
@@ -27,6 +28,8 @@ import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.spend.SendActivity;
+import com.samourai.wallet.tor.TorManager;
+import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -38,22 +41,30 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainActivity2 extends Activity {
 
     private ProgressDialog progress = null;
 
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
 
+    private TextView loaderTxView;
+    private CompositeDisposable compositeDisposables = new CompositeDisposable();
+
     protected BroadcastReceiver receiver_restart = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if(ACTION_RESTART.equals(intent.getAction())) {
+            if (ACTION_RESTART.equals(intent.getAction())) {
 
 //                ReceiversUtil.getInstance(MainActivity2.this).initReceivers();
 
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    if (AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                         stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
                     }
                     startService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
@@ -64,9 +75,9 @@ public class MainActivity2 extends Activity {
         }
     };
 
-    protected BackgroundManager.Listener bgListener = new BackgroundManager.Listener()  {
+    protected BackgroundManager.Listener bgListener = new BackgroundManager.Listener() {
 
-        public void onBecameForeground()    {
+        public void onBecameForeground() {
 
             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
             intent.putExtra("notifTx", false);
@@ -77,23 +88,22 @@ public class MainActivity2 extends Activity {
 
         }
 
-        public void onBecameBackground()    {
+        public void onBecameBackground() {
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if(AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (AppUtil.getInstance(MainActivity2.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                     stopService(new Intent(MainActivity2.this.getApplicationContext(), WebSocketService.class));
                 }
             }
 
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             PayloadUtil.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
-                        }
-                        catch(Exception e) {
+                        } catch (Exception e) {
                             ;
                         }
 
@@ -112,26 +122,49 @@ public class MainActivity2 extends Activity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.TESTNET, false) == true)    {
+        loaderTxView = findViewById(R.id.loader_text);
+
+
+        if (PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.TESTNET, false) == true) {
             SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
         }
 
 //        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            BackgroundManager.get(MainActivity2.this).addListener(bgListener);
+        BackgroundManager.get(MainActivity2.this).addListener(bgListener);
 //        }
 
         // Apply PRNG fixes for Android 4.1
-        if(!AppUtil.getInstance(MainActivity2.this).isPRNG_FIXED())    {
+        if (!AppUtil.getInstance(MainActivity2.this).isPRNG_FIXED()) {
             PRNGFixes.apply();
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if(AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
-        !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
+            loaderTxView.setText("initializing Tor...");
+            ((SamouraiApplication) getApplication()).startService();
+            Disposable disposable = TorManager.getInstance(this)
+                    .torStatus
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(connection_states -> {
+                        if (connection_states == TorManager.CONNECTION_STATES.CONNECTED) {
+                            initAppOnCreate();
+                            compositeDisposables.dispose();
+                        }
+                    });
+            compositeDisposables.add(disposable);
+        } else {
+            initAppOnCreate();
+        }
+
+    }
+
+    private void initAppOnCreate() {
+        if (AppUtil.getInstance(MainActivity2.this).isOfflineMode() &&
+                !(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists())) {
             Toast.makeText(MainActivity2.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             doAppInit0(false, null, null);
-        }
-        else  {
+        } else {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
 
@@ -141,18 +174,17 @@ public class MainActivity2 extends Activity {
             boolean isDial = false;
 //                String strUri = null;
             String strPCode = null;
-            if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
+            if (action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
                 strUri = getIntent().getData().toString();
-            }
-            else    {
+            } else {
                 Bundle extras = getIntent().getExtras();
-                if(extras != null && extras.containsKey("dialed"))	{
+                if (extras != null && extras.containsKey("dialed")) {
                     isDial = extras.getBoolean("dialed");
                 }
-                if(extras != null && extras.containsKey("uri"))	{
+                if (extras != null && extras.containsKey("uri")) {
                     strUri = extras.getString("uri");
                 }
-                if(extras != null && extras.containsKey("pcode"))	{
+                if (extras != null && extras.containsKey("pcode")) {
                     strPCode = extras.getString("pcode");
                 }
             }
@@ -165,7 +197,29 @@ public class MainActivity2 extends Activity {
 
     @Override
     protected void onResume() {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
+
+            ((SamouraiApplication) getApplication()).startService();
+
+            Disposable disposable = TorManager.getInstance(getApplicationContext())
+                    .torStatus
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(connection_states -> {
+                        if (connection_states == TorManager.CONNECTION_STATES.CONNECTED) {
+                            initAppOnResume();
+                            compositeDisposables.dispose();
+                        }
+                    });
+            compositeDisposables.add(disposable);
+        } else {
+            initAppOnResume();
+        }
         super.onResume();
+
+    }
+
+    private void initAppOnResume() {
 
         AppUtil.getInstance(MainActivity2.this).setIsInForeground(true);
 
@@ -176,6 +230,7 @@ public class MainActivity2 extends Activity {
         LocalBroadcastManager.getInstance(MainActivity2.this).registerReceiver(receiver_restart, filter_restart);
 
         doAppInit0(false, null, null);
+
     }
 
     @Override
@@ -189,12 +244,12 @@ public class MainActivity2 extends Activity {
 
     @Override
     protected void onDestroy() {
-
+        compositeDisposables.dispose();
         AppUtil.getInstance(MainActivity2.this).deleteQR();
         AppUtil.getInstance(MainActivity2.this).deleteBackup();
 
 //        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            BackgroundManager.get(this).removeListener(bgListener);
+        BackgroundManager.get(this).removeListener(bgListener);
 //        }
 
         super.onDestroy();
@@ -274,17 +329,16 @@ public class MainActivity2 extends Activity {
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
         boolean needToken = false;
-        if(APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
+        if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
             needToken = true;
-        }
-        else {
+        } else {
             JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
-            if(jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh()))    {
+            if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
                 needToken = true;
             }
         }
 
-        if(needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
+        if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
 
             new Thread(new Runnable() {
                 @Override
@@ -301,8 +355,7 @@ public class MainActivity2 extends Activity {
             }).start();
 
             return;
-        }
-        else    {
+        } else {
             doAppInit1(isDial, strUri, strPCode);
         }
 
@@ -310,7 +363,7 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
-        if((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn())    {
+        if ((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn()) {
 
             progress = new ProgressDialog(MainActivity2.this);
             progress.setCancelable(false);
@@ -340,25 +393,20 @@ public class MainActivity2 extends Activity {
                 }
             }).start();
 
-        }
-        else if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
+        } else if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-            if(AppUtil.getInstance(MainActivity2.this).isSideLoaded())    {
+            if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
                 doSelectNet();
-            }
-            else    {
+            } else {
                 initDialog();
             }
-        }
-        else if(isDial && AccessFactory.getInstance(MainActivity2.this).validateHash(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""), AccessFactory.getInstance(MainActivity2.this).getGUID(), new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations)) {
+        } else if (isDial && AccessFactory.getInstance(MainActivity2.this).validateHash(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""), AccessFactory.getInstance(MainActivity2.this).getGUID(), new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations)) {
             TimeOutUtil.getInstance().updatePin();
             launchFromDialer(AccessFactory.getInstance(MainActivity2.this).getPIN());
-        }
-        else if(TimeOutUtil.getInstance().isTimedOut()) {
+        } else if (TimeOutUtil.getInstance().isTimedOut()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             validatePIN(strUri == null ? null : strUri);
-        }
-        else if(AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
+        } else if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
 
             TimeOutUtil.getInstance().updatePin();
 
@@ -366,15 +414,14 @@ public class MainActivity2 extends Activity {
             intent.putExtra("notifTx", true);
             intent.putExtra("fetch", true);
             startActivity(intent);
-        }
-        else {
+        } else {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             validatePIN(strUri == null ? null : strUri);
         }
 
     }
 
-    private void doSelectNet()  {
+    private void doSelectNet() {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
@@ -400,7 +447,7 @@ public class MainActivity2 extends Activity {
 
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
