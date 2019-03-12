@@ -61,21 +61,13 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        Button createAccount = (Button) findViewById(R.id.button_create_new_wallet);
-        FrameLayout snackBarView = (FrameLayout) findViewById(R.id.snackbar_landing);
-        TextView textView = (TextView) findViewById(R.id.restore_textview);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RestoreWalletFromBackup();
-            }
-        });
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
-                startActivity(intent);
-            }
+        Button createAccount = findViewById(R.id.button_create_new_wallet);
+        FrameLayout snackBarView = findViewById(R.id.snackbar_landing);
+        TextView textView = findViewById(R.id.restore_textview);
+        textView.setOnClickListener(view -> RestoreWalletFromBackup());
+        createAccount.setOnClickListener(view -> {
+            Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
+            startActivity(intent);
         });
         setAppVersion();
         if (PayloadUtil.getInstance(this).getBackupFile().exists()) {
@@ -109,27 +101,19 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
         builder.setTitle("Restore backup");
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.landing_restore_dialog, null);
-        final EditText password = (EditText) view.findViewById(R.id.restore_dialog_password_edittext);
+        final EditText password = view.findViewById(R.id.restore_dialog_password_edittext);
         builder.setView(view);
-        builder.setPositiveButton("RESTORE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                String backupData = readFromBackupFile();
-                final String decrypted = PayloadUtil.getInstance(LandingActivity.this).getDecryptedBackupPayload(backupData, new CharSequenceX(password.getText()));
-                if (decrypted == null || decrypted.length() < 1) {
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } else {
-                    RestoreWalletFromSamouraiBackup(decrypted);
-                }
+        builder.setPositiveButton("RESTORE", (dialog, which) -> {
+            dialog.dismiss();
+            String backupData = readFromBackupFile();
+            final String decrypted = PayloadUtil.getInstance(LandingActivity.this).getDecryptedBackupPayload(backupData, new CharSequenceX(password.getText()));
+            if (decrypted == null || decrypted.length() < 1) {
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } else {
+                RestoreWalletFromSamouraiBackup(decrypted);
             }
         });
-        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("CANCEL", (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -229,46 +213,43 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
 
     private void RestoreWalletFromSamouraiBackup(final String decrypted) {
         toggleLoading();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                try {
-                    JSONObject json = new JSONObject(decrypted);
-                    HD_Wallet hdw = PayloadUtil.getInstance(LandingActivity.this).restoreWalletfromJSON(json);
-                    HD_WalletFactory.getInstance(LandingActivity.this).set(hdw);
-                    String guid = AccessFactory.getInstance(LandingActivity.this).createGUID();
-                    String hash = AccessFactory.getInstance(LandingActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(LandingActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
-                    PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
-                    PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
-                    PayloadUtil.getInstance(LandingActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
+        new Thread(() -> {
+            Looper.prepare();
+            try {
+                JSONObject json = new JSONObject(decrypted);
+                HD_Wallet hdw = PayloadUtil.getInstance(LandingActivity.this).restoreWalletfromJSON(json);
+                HD_WalletFactory.getInstance(LandingActivity.this).set(hdw);
+                String guid = AccessFactory.getInstance(LandingActivity.this).createGUID();
+                String hash = AccessFactory.getInstance(LandingActivity.this).getHash(guid, new CharSequenceX(AccessFactory.getInstance(LandingActivity.this).getPIN()), AESUtil.DefaultPBKDF2Iterations);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.ACCESS_HASH, hash);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
+                PayloadUtil.getInstance(LandingActivity.this).saveWalletToJSON(new CharSequenceX(guid + AccessFactory.getInstance().getPIN()));
 
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                    mle.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (DecoderException de) {
-                    de.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (java.lang.NullPointerException npe) {
-                    npe.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } catch (DecryptionException de) {
-                    de.printStackTrace();
-                    Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                } finally {
-                    AppUtil.getInstance(LandingActivity.this).restartApp();
-                }
-
-                Looper.loop();
-                toggleLoading();
-
+            } catch (MnemonicException.MnemonicLengthException mle) {
+                mle.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } catch (DecoderException de) {
+                de.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } catch (JSONException je) {
+                je.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } catch (NullPointerException npe) {
+                npe.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } catch (DecryptionException de) {
+                de.printStackTrace();
+                Toast.makeText(LandingActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+            } finally {
+                AppUtil.getInstance(LandingActivity.this).restartApp();
             }
+
+            Looper.loop();
+            toggleLoading();
+
         }).start();
     }
 
