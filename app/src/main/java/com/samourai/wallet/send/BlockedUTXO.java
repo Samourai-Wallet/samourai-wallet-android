@@ -16,7 +16,7 @@ public class BlockedUTXO {
     private static ConcurrentHashMap<String,Long> blockedUTXO = null;
     private static CopyOnWriteArrayList<String> notDustedUTXO = null;
 
-    public final static long BLOCKED_UTXO_THRESHOLD = 1000L;
+    public final static long BLOCKED_UTXO_THRESHOLD = 1001L;
 
     private BlockedUTXO() { ; }
 
