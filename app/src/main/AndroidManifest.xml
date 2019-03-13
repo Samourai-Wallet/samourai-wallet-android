@@ -211,6 +211,7 @@
         <activity android:name=".RestoreSeedWalletActivity" />
         <activity
             android:name=".LandingActivity"
+            android:label=""
             android:theme="@style/AppThemeLanding" />
         <activity android:name=".RecoveryWordsActivity" />
         <activity
