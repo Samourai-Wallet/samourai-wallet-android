@@ -96,11 +96,11 @@ public class TorService extends Service {
                         stopSelf();
                     }, error -> {
 //                        compositeDisposable.dispose();
-                        stopSelf();
+//                        stopSelf();
                     });
             compositeDisposable.add(disposable);
-        }
-        if (intent.getAction().equals(TorService.RESTART_SERVICE)) {
+
+        } else if (intent.getAction().equals(TorService.RESTART_SERVICE)) {
             title = "Tor: Disconnected";
             if (TorManager
                     .getInstance(getApplicationContext()).isConnected()) {
@@ -109,8 +109,7 @@ public class TorService extends Service {
                 startTOR();
             }
             return START_STICKY;
-        }
-        if (Objects.requireNonNull(intent.getAction()).equals(TorService.START_SERVICE)) {
+        } else if (Objects.requireNonNull(intent.getAction()).equals(TorService.START_SERVICE)) {
             if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
                 restartTorProcess();
             } else {
@@ -212,7 +211,7 @@ public class TorService extends Service {
                 break;
             }
             case DISCONNECTED: {
-                notification.addAction(getAction("Start"));
+                notification.addAction(getAction("Stop"));
                 notification.setColor(ContextCompat.getColor(this, R.color.red));
                 break;
             }
