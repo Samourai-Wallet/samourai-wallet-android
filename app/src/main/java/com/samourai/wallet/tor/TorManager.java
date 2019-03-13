@@ -31,7 +31,7 @@ public class TorManager {
 
 
     private Proxy proxy = null;
-    public CONNECTION_STATES state = CONNECTION_STATES.DISCONNECTED;
+    public CONNECTION_STATES state = CONNECTION_STATES.CONNECTING;
     public Subject<CONNECTION_STATES> torStatus = PublishSubject.create();
     OnionProxyManager onionProxyManager;
     public boolean isProcessRunning = false;
