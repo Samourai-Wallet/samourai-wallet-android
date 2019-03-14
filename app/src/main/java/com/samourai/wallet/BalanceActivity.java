@@ -642,9 +642,6 @@ public class BalanceActivity extends Activity {
         } else if (id == R.id.action_utxo) {
             doUTXO();
         } else if (id == R.id.action_tor) {
-            if (TorManager.getInstance(this).state == TorManager.CONNECTION_STATES.CONNECTING) {
-                return true;
-            }
 
             if (TorManager.getInstance(this).isConnected() || TorManager.getInstance(this).isProcessRunning) {
                 stopTor();
