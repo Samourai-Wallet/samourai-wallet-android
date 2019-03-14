@@ -21,6 +21,7 @@ public class TorManager {
     private static final String TAG = "TorManager";
 
     public enum CONNECTION_STATES {
+        IDLE,
         CONNECTED,
         DISCONNECTED,
         CONNECTING
@@ -31,9 +32,9 @@ public class TorManager {
 
 
     private Proxy proxy = null;
-    public CONNECTION_STATES state = CONNECTION_STATES.CONNECTING;
+    public CONNECTION_STATES state = CONNECTION_STATES.IDLE;
     public Subject<CONNECTION_STATES> torStatus = PublishSubject.create();
-    OnionProxyManager onionProxyManager;
+    private OnionProxyManager onionProxyManager;
     public boolean isProcessRunning = false;
     String fileStorageLocation = "torfiles";
 
