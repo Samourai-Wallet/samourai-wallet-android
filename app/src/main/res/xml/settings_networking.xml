@@ -6,10 +6,5 @@
         android:summary="@string/options_VPN2"
         android:key="VPN"
         />
-    <Preference
-        android:title="@string/options_Tor"
-        android:summary="@string/options_Tor2"
-        android:key="Tor"
-        />
 
 </PreferenceScreen>
