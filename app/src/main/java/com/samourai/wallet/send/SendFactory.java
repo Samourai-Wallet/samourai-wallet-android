@@ -430,8 +430,8 @@ public class SendFactory	{
             }
         }
 
-        int changeType = 49;
-        int mixedType = 49;
+        int changeType = 84;
+        int mixedType = 84;
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
             //
             // inputs are pre-grouped by type
