@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -13,32 +14,43 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnticipateInterpolator;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
@@ -72,6 +84,8 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.home.adapters.ItemDividerDecorator;
+import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -86,7 +100,6 @@ import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -94,7 +107,6 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
-import com.samourai.wallet.util.TypefaceUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -112,19 +124,21 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
-import androidx.lifecycle.ViewModelProvider;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
+
+import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 
 public class BalanceActivity extends AppCompatActivity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
+    private static final String TAG = "BalanceActivity";
 
     private LinearLayout layoutAlert = null;
 
@@ -135,13 +149,15 @@ public class BalanceActivity extends AppCompatActivity {
     private ListView txList = null;
     private List<Tx> txs = null;
     private HashMap<String, Boolean> txStates = null;
-    private TransactionAdapter txAdapter = null;
+    private TxAdapter txAdapter = null;
     private SwipeRefreshLayout swipeRefreshLayout = null;
 
     private FloatingActionsMenu ibQuickSend = null;
     private FloatingActionButton actionReceive = null;
     private FloatingActionButton actionSend = null;
     private FloatingActionButton actionBIP47 = null;
+    private RecyclerView TxRecyclerView;
+    private ProgressBar progressBar;
 
     private boolean isBTC = true;
     private BalanceViewModel balanceViewModel;
@@ -149,7 +165,9 @@ public class BalanceActivity extends AppCompatActivity {
     private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
     private ProgressDialog progress = null;
-
+    private com.github.clans.fab.FloatingActionMenu menuFab;
+    private SwipeRefreshLayout txSwipeLayout;
+    private CollapsingToolbarLayout mCollapsingToolbar;
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -319,29 +337,73 @@ public class BalanceActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.i("BalanceActivity", "torStatusReceiver onReceive()");
 
             if (OrbotHelper.ACTION_STATUS.equals(intent.getAction())) {
 
                 boolean enabled = (intent.getStringExtra(OrbotHelper.EXTRA_STATUS).equals(OrbotHelper.STATUS_ON));
-                Log.i("BalanceActivity", "status:" + enabled);
 
                 TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(enabled);
 
             }
         }
     };
+    private Toolbar toolbar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
+        balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if (SamouraiWallet.getInstance().isTestNet()) {
-            setTitle(getText(R.string.app_name) + ":" + "TestNet");
-        }
+        TxRecyclerView = findViewById(R.id.rv_txes);
+        progressBar = findViewById(R.id.progressBar);
+        toolbar = findViewById(R.id.toolbar);
+        mCollapsingToolbar = findViewById(R.id.toolbar_layout);
+        txSwipeLayout = findViewById(R.id.tx_swipe_container);
 
+        setSupportActionBar(toolbar);
+        TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
+        menuFab = findViewById(R.id.fab_menu);
+        progressBar.setVisibility(View.VISIBLE);
+
+        findViewById(R.id.send_fab).setOnClickListener(view -> {
+            Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+            intent.putExtra("via_menu", true);
+            startActivity(intent);
+            menuFab.toggle(true);
+        });
+        setBalance(0L);
+        findViewById(R.id.receive_fab).setOnClickListener(view -> {
+            menuFab.toggle(true);
+
+            try {
+                HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
+
+                if (hdw != null) {
+                    Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
+                    startActivity(intent);
+                }
+
+
+            } catch (IOException | MnemonicException.MnemonicLengthException e) {
+                ;
+            }
+        });
+        findViewById(R.id.paynym_fab).setOnClickListener(view -> {
+            menuFab.toggle(true);
+            Intent intent = new Intent(BalanceActivity.this, com.samourai.wallet.bip47.BIP47Activity.class);
+            startActivity(intent);
+        });
+        getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+        txSwipeLayout.setOnRefreshListener(() -> {
+            refreshTx(false, true, false);
+            txSwipeLayout.setRefreshing(false);
+            progressBar.setVisibility(View.VISIBLE);
+        });
+
+//        getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_trans2x);
 //        LayoutInflater inflator = BalanceActivity.this.getLayoutInflater();
 //        tvBalanceBar = (LinearLayout) inflator.inflate(R.layout.balance_layout, null);
 //        tvBalanceBar.setOnTouchListener(new View.OnTouchListener() {
@@ -362,7 +424,7 @@ public class BalanceActivity extends AppCompatActivity {
 //
 //        ibQuickSend = (FloatingActionsMenu) findViewById(R.id.wallet_menu);
 //        actionSend = (FloatingActionButton) findViewById(R.id.send);
-//        actionSend.setOnClickListener(new OnClickListener() {
+//        actionSend.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View arg0) {
 //
@@ -372,7 +434,6 @@ public class BalanceActivity extends AppCompatActivity {
 //
 //            }
 //        });
-//
 //        actionReceive = (FloatingActionButton) findViewById(R.id.receive);
 //        actionReceive.setOnClickListener(new OnClickListener() {
 //            @Override
@@ -457,29 +518,29 @@ public class BalanceActivity extends AppCompatActivity {
 //                android.R.color.holo_orange_light,
 //                android.R.color.holo_red_light);
 //
-//        IntentFilter filter = new IntentFilter(ACTION_INTENT);
-//        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
-//        IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
-//        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
-//
-////        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
-//        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
-//
-//        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
-//        }
-//        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
-//            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
-//        }
-//
-//        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false) {
-//            doFeaturePayNymUpdate();
-//        } else if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
-//                PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false) {
-//            doClaimPayNym();
-//        } else {
-//            ;
-//        }
+        IntentFilter filter = new IntentFilter(ACTION_INTENT);
+        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
+        IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
+        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
+
+        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
+
+        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
+        }
+        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
+            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
+        }
+
+        if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false) {
+            doFeaturePayNymUpdate();
+        } else if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
+                PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false) {
+            doClaimPayNym();
+        } else {
+            ;
+        }
 //
 //        if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
 //            if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
@@ -492,47 +553,74 @@ public class BalanceActivity extends AppCompatActivity {
 //            doClipboardCheck();
 //        }
 //
-//        final Handler handler = new Handler();
-////        handler.post(new Runnable() {
-////            @Override
-////            public void run() {
-////
-////                progress = new ProgressDialog(BalanceActivity.this);
-////                progress.setCancelable(true);
-////                progress.setTitle(R.string.app_name);
-////                progress.setMessage(getText(R.string.refresh_tx_pre));
-////                progress.show();
-////            }
-////        });
-//
-//        final Handler delayedHandler = new Handler();
-//        delayedHandler.postDelayed(new Runnable() {
+        final Handler handler = new Handler();
+//        handler.post(new Runnable() {
 //            @Override
 //            public void run() {
 //
-//                boolean notifTx = false;
-//                Bundle extras = getIntent().getExtras();
-//                if (extras != null && extras.containsKey("notifTx")) {
-//                    notifTx = extras.getBoolean("notifTx");
-//                }
-//
-//                refreshTx(notifTx, false, true);
-//
-////                updateDisplay();
+//                progress = new ProgressDialog(BalanceActivity.this);
+//                progress.setCancelable(true);
+//                progress.setTitle(R.string.app_name);
+//                progress.setMessage(getText(R.string.refresh_tx_pre));
+//                progress.show();
 //            }
-//        }, 100L);
+//        });
 //
-//        if (!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-//            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-//        }
+        final Handler delayedHandler = new Handler();
+        delayedHandler.postDelayed(() -> {
 
+            boolean notifTx = false;
+            Bundle extras = getIntent().getExtras();
+            if (extras != null && extras.containsKey("notifTx")) {
+                notifTx = extras.getBoolean("notifTx");
+            }
+
+            refreshTx(notifTx, false, true);
+
+            updateDisplay();
+        }, 100L);
+
+        if (!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+            startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
         initViewModel();
+        updateDisplay();
+        progressBar.setVisibility(View.VISIBLE);
 
     }
 
     private void initViewModel() {
-        balanceViewModel = ViewModelProviders.of(this)
-                .get(BalanceViewModel.class);
+        TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>());
+        adapter.setHasStableIds(true);
+        adapter.setClickListner((position, tx) -> txDetails(tx));
+
+        TxRecyclerView.setAdapter(adapter);
+        balanceViewModel.getTxs().observe(this, adapter::setTxes);
+        balanceViewModel.getBalance().observe(this, balance -> {
+            Log.i(TAG, "initViewModel: ".concat(String.valueOf(balance)));
+            setBalance(balance);
+        });
+
+        setBalance(balanceViewModel.getBalance().getValue());
+
+    }
+
+    private void setBalance(Long balance) {
+        if (balance == null) {
+            return;
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
+            toolbar.setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
+            setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
+            mCollapsingToolbar.setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
+
+        }
+
+
+        Log.i(TAG, "setBalance: ".concat(getBTCDisplayAmount(balance)));
+
     }
 
     @Override
@@ -557,7 +645,7 @@ public class BalanceActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
 
-        ibQuickSend.collapse();
+//        ibQuickSend.collapse();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
@@ -575,10 +663,12 @@ public class BalanceActivity extends AppCompatActivity {
                         .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + code + "/avatar").fetch(new Callback() {
                     @Override
                     public void onSuccess() {
+                        /*NO OP*/
                     }
 
                     @Override
                     public void onError() {
+                        /*NO OP*/
                     }
                 });
             }
@@ -725,14 +815,11 @@ public class BalanceActivity extends AppCompatActivity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
-                    }
-                    else if(Cahoots.isCahoots(strResult.trim())) {
+                    } else if (Cahoots.isCahoots(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
-                    }
-                    else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
+                    } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
-                    }
-                    else {
+                    } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
                         startActivity(intent);
@@ -801,14 +888,32 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void updateDisplay() {
         txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-        if (txs != null) {
-            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
-        }
-        tvBalanceAmount.setText("");
-        tvBalanceUnits.setText("");
-        displayBalance();
-        txAdapter.notifyDataSetChanged();
+        Log.i(TAG, "updateDisplay: ".concat(String.valueOf(txs.size())));
+        balanceViewModel.setTx(txs);
+        long balance = 0L;
 
+        try {
+            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
+        } catch (IOException ioe) {
+            ;
+        } catch (MnemonicException.MnemonicLengthException mle) {
+            ;
+        } catch (NullPointerException npe) {
+            ;
+        }
+
+        balanceViewModel.setBalance(balance);
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+//        if (txs != null) {
+//            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
+//        }
+//        tvBalanceAmount.setText("");
+//        tvBalanceUnits.setText("");
+//        displayBalance();
+////        txAdapter.notifyDataSetChanged();
+//
 //        if (progress != null && progress.isShowing()) {
 //            progress.dismiss();
 //            progress.cancel();
@@ -1085,7 +1190,7 @@ public class BalanceActivity extends AppCompatActivity {
                                         privKeyReader.getFormat().equals(PrivKeyReader.BIP38) ||
                                         FormatsUtil.getInstance().isValidXprv(s[i])
                                 )
-                                ) {
+                        ) {
 
                             new AlertDialog.Builder(BalanceActivity.this)
                                     .setTitle(R.string.app_name)
@@ -1116,162 +1221,6 @@ public class BalanceActivity extends AppCompatActivity {
 
     }
 
-    private class TransactionAdapter extends BaseAdapter {
-
-        private LayoutInflater inflater = null;
-        private static final int TYPE_ITEM = 0;
-        private static final int TYPE_BALANCE = 1;
-
-        TransactionAdapter() {
-            inflater = (LayoutInflater) BalanceActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            if (txs == null) {
-                txs = new ArrayList<Tx>();
-                txStates = new HashMap<String, Boolean>();
-            }
-            return txs.size() + 1;
-        }
-
-        @Override
-        public String getItem(int position) {
-            if (txs == null) {
-                txs = new ArrayList<Tx>();
-                txStates = new HashMap<String, Boolean>();
-            }
-            if (position == 0) {
-                return "";
-            }
-            return txs.get(position - 1).toString();
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position - 1;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? TYPE_BALANCE : TYPE_ITEM;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, final ViewGroup parent) {
-
-            View view = null;
-
-            int type = getItemViewType(position);
-            if (convertView == null) {
-                if (type == TYPE_BALANCE) {
-                    view = tvBalanceBar;
-                } else {
-                    view = inflater.inflate(R.layout.tx_layout_simple, parent, false);
-                }
-            } else {
-                view = convertView;
-            }
-
-            if (type == TYPE_BALANCE) {
-                ;
-            } else {
-                view.findViewById(R.id.TransactionStatus).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((ListView) parent).performItemClick(v, position, 0);
-                    }
-                });
-
-                view.findViewById(R.id.ConfirmationCount).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((ListView) parent).performItemClick(v, position, 0);
-                    }
-                });
-
-                Tx tx = txs.get(position - 1);
-
-                TextView tvTodayLabel = (TextView) view.findViewById(R.id.TodayLabel);
-                String strDateGroup = DateUtil.getInstance(BalanceActivity.this).group(tx.getTS());
-                if (position == 1) {
-                    tvTodayLabel.setText(strDateGroup);
-                    tvTodayLabel.setVisibility(View.VISIBLE);
-                } else {
-                    Tx prevTx = txs.get(position - 2);
-                    String strPrevDateGroup = DateUtil.getInstance(BalanceActivity.this).group(prevTx.getTS());
-
-                    if (strPrevDateGroup.equals(strDateGroup)) {
-                        tvTodayLabel.setVisibility(View.GONE);
-                    } else {
-                        tvTodayLabel.setText(strDateGroup);
-                        tvTodayLabel.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                String strDetails = null;
-                String strTS = DateUtil.getInstance(BalanceActivity.this).formatted(tx.getTS());
-                long _amount = 0L;
-                if (tx.getAmount() < 0.0) {
-                    _amount = Math.abs((long) tx.getAmount());
-                    strDetails = BalanceActivity.this.getString(R.string.you_sent);
-                } else {
-                    _amount = (long) tx.getAmount();
-                    strDetails = BalanceActivity.this.getString(R.string.you_received);
-                }
-                String strAmount = null;
-                String strUnits = null;
-                if (isBTC) {
-                    strAmount = getBTCDisplayAmount(_amount);
-                    strUnits = getBTCDisplayUnits();
-                } else {
-                    strAmount = getSatoshiDisplayAmount(_amount);
-                    strUnits = getSatoshiDisplayUnits();
-                }
-
-                TextView tvDirection = (TextView) view.findViewById(R.id.TransactionDirection);
-                TextView tvDirection2 = (TextView) view.findViewById(R.id.TransactionDirection2);
-                TextView tvDetails = (TextView) view.findViewById(R.id.TransactionDetails);
-                ImageView ivTxStatus = (ImageView) view.findViewById(R.id.TransactionStatus);
-                TextView tvConfirmationCount = (TextView) view.findViewById(R.id.ConfirmationCount);
-
-                tvDirection.setTypeface(TypefaceUtil.getInstance(BalanceActivity.this).getAwesomeTypeface());
-                if (tx.getAmount() < 0.0) {
-                    tvDirection.setTextColor(Color.RED);
-                    tvDirection.setText(Character.toString((char) TypefaceUtil.awesome_arrow_up));
-                } else {
-                    tvDirection.setTextColor(Color.GREEN);
-                    tvDirection.setText(Character.toString((char) TypefaceUtil.awesome_arrow_down));
-                }
-
-                if (txStates.containsKey(tx.getHash()) && txStates.get(tx.getHash()) == false) {
-                    txStates.put(tx.getHash(), false);
-                    displayTxStatus(false, tx.getConfirmations(), tvConfirmationCount, ivTxStatus);
-                } else {
-                    txStates.put(tx.getHash(), true);
-                    displayTxStatus(true, tx.getConfirmations(), tvConfirmationCount, ivTxStatus);
-                }
-
-                tvDirection2.setText(strDetails + " " + strAmount + " " + strUnits);
-                if (tx.getPaymentCode() != null) {
-                    String strTaggedTS = strTS + " ";
-                    String strSubText = " " + BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()) + " ";
-                    strTaggedTS += strSubText;
-                    tvDetails.setText(strTaggedTS);
-                } else {
-                    tvDetails.setText(strTS);
-                }
-            }
-
-            return view;
-        }
-
-    }
 
     private void refreshTx(final boolean notifTx, final boolean dragged, final boolean launch) {
 
@@ -1410,7 +1359,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     }
 
-    private void doExplorerView(Tx tx) {
+    private void txDetails(Tx tx) {
 //
 //        if(strHash != null) {
 //            int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
@@ -1429,75 +1378,71 @@ public class BalanceActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
+            if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
 
                 int count = 0;
 
                 final Iterator<JSONObject> itr = RicochetMeta.getInstance(BalanceActivity.this).getIterator();
 
-                while(itr.hasNext())    {
+                while (itr.hasNext()) {
 
-                    if(count == 3)    {
+                    if (count == 3) {
                         break;
                     }
 
                     try {
                         JSONObject jObj = itr.next();
                         JSONArray jHops = jObj.getJSONArray("hops");
-                        if(jHops.length() > 0)    {
+                        if (jHops.length() > 0) {
 
                             JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
                             String txHash = jHop.getString("hash");
 
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
-                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                            if (txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1) {
                                 itr.remove();
                                 count++;
                             }
 
                         }
-                    }
-                    catch(JSONException je) {
+                    } catch (JSONException je) {
                         ;
                     }
                 }
 
             }
 
-            if(RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0)    {
+            if (RicochetMeta.getInstance(BalanceActivity.this).getStaggered().size() > 0) {
 
                 int count = 0;
 
                 List<JSONObject> staggered = RicochetMeta.getInstance(BalanceActivity.this).getStaggered();
                 List<JSONObject> _staggered = new ArrayList<JSONObject>();
 
-                for(JSONObject jObj : staggered)   {
+                for (JSONObject jObj : staggered) {
 
-                    if(count == 3)    {
+                    if (count == 3) {
                         break;
                     }
 
                     try {
                         JSONArray jHops = jObj.getJSONArray("script");
-                        if(jHops.length() > 0)    {
+                        if (jHops.length() > 0) {
 
                             JSONObject jHop = jHops.getJSONObject(jHops.length() - 1);
                             String txHash = jHop.getString("tx");
 
                             JSONObject txObj = APIFactory.getInstance(BalanceActivity.this).getTxInfo(txHash);
-                            if(txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1)    {
+                            if (txObj != null && txObj.has("block_height") && txObj.getInt("block_height") != -1) {
                                 count++;
-                            }
-                            else    {
+                            } else {
                                 _staggered.add(jObj);
                             }
 
                         }
-                    }
-                    catch(JSONException je) {
+                    } catch (JSONException je) {
                         ;
-                    }
-                    catch(ConcurrentModificationException cme) {
+                    } catch (ConcurrentModificationException cme) {
                         ;
                     }
                 }
@@ -1508,7 +1453,9 @@ public class BalanceActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) { ; }
+        protected void onPostExecute(String result) {
+            ;
+        }
 
         @Override
         protected void onPreExecute() {
