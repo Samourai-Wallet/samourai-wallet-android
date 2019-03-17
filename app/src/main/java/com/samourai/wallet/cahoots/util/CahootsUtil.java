@@ -44,7 +44,6 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 

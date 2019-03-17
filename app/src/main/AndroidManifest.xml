@@ -223,7 +223,7 @@
         </provider>
 
         <activity
-            android:name=".spend.SendActivity"
+            android:name=".SendActivity"
             android:exported="true"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|orientation|screenSize"

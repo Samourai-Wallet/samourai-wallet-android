@@ -1,4 +1,4 @@
-package com.samourai.wallet.spend;
+package com.samourai.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,11 +37,6 @@ import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
 import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
-import com.samourai.wallet.BatchSendActivity;
-import com.samourai.wallet.R;
-import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.TxAnimUIActivity;
-import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Activity;
