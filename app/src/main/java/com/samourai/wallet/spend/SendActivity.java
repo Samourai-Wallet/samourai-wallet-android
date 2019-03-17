@@ -63,6 +63,7 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
+import com.samourai.wallet.send.SpendUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;

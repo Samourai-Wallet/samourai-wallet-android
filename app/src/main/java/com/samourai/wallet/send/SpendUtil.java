@@ -1,4 +1,4 @@
-package com.samourai.wallet.spend;
+package com.samourai.wallet.send;
 
 import android.content.Context;
 
