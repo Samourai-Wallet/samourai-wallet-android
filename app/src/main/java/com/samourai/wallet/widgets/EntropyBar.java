@@ -1,4 +1,4 @@
-package com.samourai.wallet.spend.widgets;
+package com.samourai.wallet.widgets;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,14 +8,10 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
-import com.samourai.wallet.api.Tx;
-
-import static android.support.constraint.Constraints.TAG;
 
 
 public class EntropyBar extends View {
