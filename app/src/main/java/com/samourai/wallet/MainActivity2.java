@@ -328,6 +328,11 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
+        if(!SamouraiWallet.getInstance().isTestNet())    {
+            doAppInit1(isDial, strUri, strPCode);
+            return;
+        }
+
         boolean needToken = false;
         if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
             needToken = true;

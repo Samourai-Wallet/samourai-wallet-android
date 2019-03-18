@@ -137,7 +137,7 @@ public class APIFactory	{
     }
 
     public String getAccessToken() {
-        return ACCESS_TOKEN;
+        return SamouraiWallet.getInstance().isTestNet() ? ACCESS_TOKEN : "";
     }
 
     public void setAccessToken(String accessToken) {
@@ -181,7 +181,7 @@ public class APIFactory	{
 
     public boolean stayingAlive()   {
 
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
+        if(!AppUtil.getInstance(context).isOfflineMode() && SamouraiWallet.getInstance().isTestNet())    {
 
             if(APIFactory.getInstance(context).getAccessToken() == null)    {
                 APIFactory.getInstance(context).getToken();
