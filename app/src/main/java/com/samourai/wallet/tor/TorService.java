@@ -252,8 +252,10 @@ public class TorService extends Service {
             //
             Disposable disposable = TorManager.getInstance(this)
                     .stopTor()
-                    .subscribe(stat -> {
-//
+                    .subscribe(state -> {
+
+                        TorUtil.getInstance(this).setStatusFromBroadcast(false);
+
                     }, Throwable::printStackTrace);
             compositeDisposable.add(disposable);
         }
