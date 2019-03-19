@@ -9,8 +9,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 138
-        versionName "0.99.09c"
+        versionCode 140
+        versionName "0.99.25"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -51,19 +51,19 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 138
-            versionName "0.99.09c"
+            versionCode 140
+            versionName "0.99.25"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.99.09c"
+            resValue "string", "version_name", "0.99.25"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 138
-            versionName "0.99.09c"
+            versionCode 140
+            versionName "0.99.25"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.09c"
+            resValue "string", "version_name", "0.99.25"
         }
     }
     testOptions {
@@ -138,9 +138,14 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:streamsupport:1.6.0'
     implementation 'com.github.clans:fab:1.6.4'
 
+
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     implementation "android.arch.lifecycle:extensions:1.1.1"
 
     testImplementation 'junit:junit:4.12'
-}
+    implementation project(path: ':tor')
+ }

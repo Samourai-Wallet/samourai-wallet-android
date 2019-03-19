@@ -127,7 +127,6 @@ public class BalanceActivity extends AppCompatActivity {
     private RicochetQueueTask ricochetQueueTask = null;
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
-    private AppBarLayout app_bar;
     private CollapsingToolbarLayout mCollapsingToolbar;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
@@ -329,7 +328,6 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
         menuFab = findViewById(R.id.fab_menu);
         progressBar.setVisibility(View.VISIBLE);
-        app_bar = findViewById(R.id.app_bar);
         findViewById(R.id.send_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
             intent.putExtra("via_menu", true);
@@ -675,11 +673,14 @@ public class BalanceActivity extends AppCompatActivity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
-                    } else if (Cahoots.isCahoots(strResult.trim())) {
+                    }
+                    else if(Cahoots.isCahoots(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
-                    } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
+                    }
+                    else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
-                    } else {
+                    }
+                    else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
                         startActivity(intent);
@@ -696,6 +697,7 @@ public class BalanceActivity extends AppCompatActivity {
         }
 
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

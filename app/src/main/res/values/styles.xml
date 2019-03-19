@@ -32,6 +32,10 @@
         <item name="android:colorButtonNormal">@color/accent</item>
     </style>
 
+    <style name="LandingToolbar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="actionMenuTextColor">@color/white</item>
+    </style>
+
     <style name="popMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:textColor">@android:color/black</item>
     </style>
@@ -46,6 +50,15 @@
         <item name="android:statusBarColor">@color/grey_accent</item>
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:navigationBarColor">@color/windowDark</item>
+    </style>
+    
+    <style name="AppTheme.Launcher" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">
+            @color/window
+        </item>
+        <item name="android:windowBackground">
+            @drawable/launch_screen
+        </item>
     </style>
 
 
