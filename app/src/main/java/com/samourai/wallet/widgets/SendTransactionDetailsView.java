@@ -1,4 +1,4 @@
-package com.samourai.wallet.spend.widgets;
+package com.samourai.wallet.widgets;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

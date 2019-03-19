@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -25,7 +24,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
-import com.samourai.wallet.spend.SendActivity;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -67,10 +66,9 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.samourai.wallet.spend.SendActivity.SPEND_BOLTZMANN;
+import static com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
 
 public class PayloadUtil	{
 
