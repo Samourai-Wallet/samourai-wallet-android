@@ -25,7 +25,7 @@
     <color name="grey_accent">#6c768b</color>
     <color name="windowDark">#282d33</color>
     <color name="blue_ui_2">#1561cb</color>
-    <color name="txt_grey">#c7cad1</color>
+    <color name="txt_grey">#C7CAD1</color>
 
     <color name="cyan_ui_2">#58b9b8</color>
     <color name="green_ui_2">#0ecf96</color>
@@ -40,4 +40,5 @@
     <color name="disabled_grey" >#797979</color>
 
     <color name="whirlpool_window_dark">#262c33</color>
+    <color name="warning_yellow">#B6B260</color>
 </resources>

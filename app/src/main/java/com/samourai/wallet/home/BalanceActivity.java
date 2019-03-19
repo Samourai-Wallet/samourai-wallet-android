@@ -1,7 +1,6 @@
 package com.samourai.wallet.home;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -14,8 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,43 +20,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.ContextCompat;
+import android.support.transition.ChangeBounds;
+import android.support.transition.TransitionManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.InputType;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnticipateInterpolator;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
-
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.BIP38PrivateKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.script.Script;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -107,32 +86,30 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Hex;
-
-import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
-import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
-
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
+
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.BIP38PrivateKey;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
-
-import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 
 public class BalanceActivity extends AppCompatActivity {
 
@@ -140,41 +117,28 @@ public class BalanceActivity extends AppCompatActivity {
     private final static int SCAN_QR = 2012;
     private static final String TAG = "BalanceActivity";
 
-    private LinearLayout layoutAlert = null;
 
-    private LinearLayout tvBalanceBar = null;
-    private TextView tvBalanceAmount = null;
-    private TextView tvBalanceUnits = null;
-
-    private ListView txList = null;
     private List<Tx> txs = null;
-    private HashMap<String, Boolean> txStates = null;
-    private TxAdapter txAdapter = null;
-    private SwipeRefreshLayout swipeRefreshLayout = null;
-
-    private FloatingActionsMenu ibQuickSend = null;
-    private FloatingActionButton actionReceive = null;
-    private FloatingActionButton actionSend = null;
-    private FloatingActionButton actionBIP47 = null;
     private RecyclerView TxRecyclerView;
     private ProgressBar progressBar;
-
-    private boolean isBTC = true;
     private BalanceViewModel balanceViewModel;
 
     private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
-    private ProgressDialog progress = null;
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
+    private AppBarLayout app_bar;
     private CollapsingToolbarLayout mCollapsingToolbar;
+
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
 
             if (ACTION_INTENT.equals(intent.getAction())) {
-
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
                 final boolean notifTx = intent.getBooleanExtra("notifTx", false);
                 final boolean fetch = intent.getBooleanExtra("fetch", false);
 
@@ -192,33 +156,31 @@ public class BalanceActivity extends AppCompatActivity {
                 }
 
                 Handler handler = new Handler();
-                handler.post(new Runnable() {
-                    public void run() {
-                        refreshTx(notifTx, false, false);
+                handler.post(() -> {
+                    refreshTx(notifTx, false, false);
 
-                        if (BalanceActivity.this != null) {
+                    if (BalanceActivity.this != null) {
 
-                            if (rbfHash != null) {
-                                new AlertDialog.Builder(BalanceActivity.this)
-                                        .setTitle(R.string.app_name)
-                                        .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
-                                        .setCancelable(true)
-                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
+                        if (rbfHash != null) {
+                            new AlertDialog.Builder(BalanceActivity.this)
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(rbfHash + "\n\n" + getString(R.string.rbf_incoming))
+                                    .setCancelable(true)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                doExplorerView(rbfHash);
+                                            doExplorerView(rbfHash);
 
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                ;
-                                            }
-                                        }).show();
-
-                            }
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    }).show();
 
                         }
+
                     }
                 });
 
@@ -367,14 +329,14 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
         menuFab = findViewById(R.id.fab_menu);
         progressBar.setVisibility(View.VISIBLE);
-
+        app_bar = findViewById(R.id.app_bar);
         findViewById(R.id.send_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
             intent.putExtra("via_menu", true);
             startActivity(intent);
             menuFab.toggle(true);
         });
-        setBalance(0L);
+        setBalance(0L, false);
         findViewById(R.id.receive_fab).setOnClickListener(view -> {
             menuFab.toggle(true);
 
@@ -403,121 +365,6 @@ public class BalanceActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
         });
 
-//        getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_trans2x);
-//        LayoutInflater inflator = BalanceActivity.this.getLayoutInflater();
-//        tvBalanceBar = (LinearLayout) inflator.inflate(R.layout.balance_layout, null);
-//        tvBalanceBar.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (isBTC) {
-//                    isBTC = false;
-//                } else {
-//                    isBTC = true;
-//                }
-//                displayBalance();
-//                txAdapter.notifyDataSetChanged();
-//                return false;
-//            }
-//        });
-//        tvBalanceAmount = (TextView) tvBalanceBar.findViewById(R.id.BalanceAmount);
-//        tvBalanceUnits = (TextView) tvBalanceBar.findViewById(R.id.BalanceUnits);
-//
-//        ibQuickSend = (FloatingActionsMenu) findViewById(R.id.wallet_menu);
-//        actionSend = (FloatingActionButton) findViewById(R.id.send);
-//        actionSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View arg0) {
-//
-//                Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-//                intent.putExtra("via_menu", true);
-//                startActivity(intent);
-//
-//            }
-//        });
-//        actionReceive = (FloatingActionButton) findViewById(R.id.receive);
-//        actionReceive.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View arg0) {
-//
-//                try {
-//                    HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
-//
-//                    if (hdw != null) {
-//                        Intent intent = new Intent(BalanceActivity.this, ReceiveActivity.class);
-//                        startActivity(intent);
-//                    }
-//
-//                } catch (IOException | MnemonicException.MnemonicLengthException e) {
-//                    ;
-//                }
-//
-//            }
-//        });
-//
-//        actionBIP47 = (FloatingActionButton) findViewById(R.id.bip47);
-//        actionBIP47.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View arg0) {
-//                Intent intent = new Intent(BalanceActivity.this, com.samourai.wallet.bip47.BIP47Activity.class);
-//                startActivity(intent);
-//            }
-//        });
-//
-//        txs = new ArrayList<Tx>();
-//        txStates = new HashMap<String, Boolean>();
-//        txList = (ListView) findViewById(R.id.txList);
-//        txAdapter = new TransactionAdapter();
-//        txList.setAdapter(txAdapter);
-//        txList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-//
-//                if (position == 0) {
-//                    return;
-//                }
-//
-//                long viewId = view.getId();
-//                View v = (View) view.getParent();
-//                final Tx tx = txs.get(position - 1);
-//                ImageView ivTxStatus = (ImageView) v.findViewById(R.id.TransactionStatus);
-//                TextView tvConfirmationCount = (TextView) v.findViewById(R.id.ConfirmationCount);
-//                if (viewId == R.id.ConfirmationCount || viewId == R.id.TransactionStatus) {
-//
-//                    if (txStates.containsKey(tx.getHash()) && txStates.get(tx.getHash()) == true) {
-//                        txStates.put(tx.getHash(), false);
-//                        displayTxStatus(false, tx.getConfirmations(), tvConfirmationCount, ivTxStatus);
-//                    } else {
-//                        txStates.put(tx.getHash(), true);
-//                        displayTxStatus(true, tx.getConfirmations(), tvConfirmationCount, ivTxStatus);
-//                    }
-//
-//                } else {
-//                    doExplorerView(tx);
-//                }
-//
-//            }
-//        });
-//
-//        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//
-//                new Handler().post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        refreshTx(false, true, false);
-//                        swipeRefreshLayout.setRefreshing(false);
-//                    }
-//                });
-//
-//            }
-//        });
-//        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-//                android.R.color.holo_green_light,
-//                android.R.color.holo_orange_light,
-//                android.R.color.holo_red_light);
-//
         IntentFilter filter = new IntentFilter(ACTION_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
         IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
@@ -541,31 +388,19 @@ public class BalanceActivity extends AppCompatActivity {
         } else {
             ;
         }
-//
-//        if(RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0)    {
-//            if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-//                ricochetQueueTask = new RicochetQueueTask();
-//                ricochetQueueTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-//            }
-//        }
-//
-//        if (!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen()) {
-//            doClipboardCheck();
-//        }
-//
-        final Handler handler = new Handler();
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                progress = new ProgressDialog(BalanceActivity.this);
-//                progress.setCancelable(true);
-//                progress.setTitle(R.string.app_name);
-//                progress.setMessage(getText(R.string.refresh_tx_pre));
-//                progress.show();
-//            }
-//        });
-//
+
+        if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
+            if (ricochetQueueTask == null || ricochetQueueTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+                ricochetQueueTask = new RicochetQueueTask();
+                ricochetQueueTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            }
+        }
+
+        if (!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen()) {
+            doClipboardCheck();
+        }
+
+
         final Handler delayedHandler = new Handler();
         delayedHandler.postDelayed(() -> {
 
@@ -587,6 +422,7 @@ public class BalanceActivity extends AppCompatActivity {
         updateDisplay();
         progressBar.setVisibility(View.VISIBLE);
 
+
     }
 
     private void initViewModel() {
@@ -595,26 +431,50 @@ public class BalanceActivity extends AppCompatActivity {
         adapter.setClickListner((position, tx) -> txDetails(tx));
 
         TxRecyclerView.setAdapter(adapter);
-        balanceViewModel.getTxs().observe(this, adapter::setTxes);
-        balanceViewModel.getBalance().observe(this, balance -> {
-            Log.i(TAG, "initViewModel: ".concat(String.valueOf(balance)));
-            setBalance(balance);
-        });
 
-        setBalance(balanceViewModel.getBalance().getValue());
+        balanceViewModel.getBalance().observe(this, balance -> {
+
+            if (balanceViewModel.getSatState().getValue() != null) {
+                setBalance(balance, balanceViewModel.getSatState().getValue());
+            } else {
+                setBalance(balance, false);
+            }
+        });
+        adapter.setTxes(balanceViewModel.getTxs().getValue());
+        setBalance(balanceViewModel.getBalance().getValue(), false);
+
+        balanceViewModel.getSatState().observe(this, state -> {
+            if (state == null) {
+                state = false;
+            }
+            setBalance(balanceViewModel.getBalance().getValue(), state);
+            adapter.toggleDisplayUnit(state);
+        });
+        balanceViewModel.getTxs().observe(this, new Observer<List<Tx>>() {
+            @Override
+            public void onChanged(@Nullable List<Tx> list) {
+                adapter.setTxes(list);
+            }
+        });
+        mCollapsingToolbar.setOnClickListener(view -> balanceViewModel.toggleSat());
 
     }
 
-    private void setBalance(Long balance) {
+    private void setBalance(Long balance, boolean isSat) {
         if (balance == null) {
             return;
         }
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
-            toolbar.setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
-            setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
-            mCollapsingToolbar.setTitle(getBTCDisplayAmount(balance).concat(" ").concat(getBTCDisplayUnits()));
+            TransitionManager.beginDelayedTransition(mCollapsingToolbar, new ChangeBounds());
+
+            String displayAmount = "".concat(isSat ? getSatoshiDisplayAmount(balance) : getBTCDisplayAmount(balance));
+            String Unit = isSat ? getSatoshiDisplayUnits() : getBTCDisplayUnits();
+
+            displayAmount = displayAmount.concat(" ").concat(Unit);
+            toolbar.setTitle(displayAmount);
+            setTitle(displayAmount);
+            mCollapsingToolbar.setTitle(displayAmount);
 
         }
 
@@ -696,14 +556,14 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
-            menu.findItem(R.id.action_tor).setVisible(false);
-        } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-            OrbotHelper.requestStartTor(BalanceActivity.this);
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
-        } else {
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
-        }
+//        if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
+//            menu.findItem(R.id.action_tor).setVisible(false);
+//        } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
+//            OrbotHelper.requestStartTor(BalanceActivity.this);
+//            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+//        } else {
+//            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+//        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
@@ -888,8 +748,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void updateDisplay() {
         txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-        Log.i(TAG, "updateDisplay: ".concat(String.valueOf(txs.size())));
-        balanceViewModel.setTx(txs);
+
         long balance = 0L;
 
         try {
@@ -901,24 +760,32 @@ public class BalanceActivity extends AppCompatActivity {
         } catch (NullPointerException npe) {
             ;
         }
+        if (balanceViewModel.getBalance().getValue() != null) {
+            if (balance != 0L) {
+                balanceViewModel.setBalance(balance);
+            }
+        } else {
+            balanceViewModel.setBalance(balance);
+        }
+        if (txs.size() != 0) {
+            balanceViewModel.setTx(txs);
+        } else {
+            if (balanceViewModel.getTxs().getValue() != null && balanceViewModel.getTxs().getValue().size() == 0) {
+                balanceViewModel.setTx(txs);
+            }
+        }
 
-        balanceViewModel.setBalance(balance);
+
         if (progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.INVISIBLE);
         }
-//        if (txs != null) {
-//            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
-//        }
-//        tvBalanceAmount.setText("");
-//        tvBalanceUnits.setText("");
+        if (txs != null) {
+            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
+        }
+
 //        displayBalance();
-////        txAdapter.notifyDataSetChanged();
-//
-//        if (progress != null && progress.isShowing()) {
-//            progress.dismiss();
-//            progress.cancel();
-//            progress = null;
-//        }
+//        txAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -1245,30 +1112,6 @@ public class BalanceActivity extends AppCompatActivity {
 
     }
 
-    private void displayBalance() {
-
-        long balance = 0L;
-
-        try {
-            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
-        } catch (IOException ioe) {
-            ;
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            ;
-        } catch (NullPointerException npe) {
-            ;
-        }
-
-        if (isBTC) {
-            tvBalanceAmount.setText(getBTCDisplayAmount(balance));
-            tvBalanceUnits.setText(getBTCDisplayUnits());
-        } else {
-            tvBalanceAmount.setText(getSatoshiDisplayAmount(balance));
-            tvBalanceUnits.setText(getSatoshiDisplayUnits());
-        }
-
-    }
-
     private String getBTCDisplayAmount(long value) {
         return Coin.valueOf(value).toPlainString();
     }
@@ -1296,54 +1139,6 @@ public class BalanceActivity extends AppCompatActivity {
 
     }
 
-    private void displayTxStatus(boolean heads, long confirmations, TextView tvConfirmationCount, ImageView ivTxStatus) {
-
-        if (heads) {
-            if (confirmations == 0) {
-                rotateTxStatus(tvConfirmationCount, true);
-                ivTxStatus.setVisibility(View.VISIBLE);
-                ivTxStatus.setImageResource(R.drawable.ic_query_builder_white);
-                tvConfirmationCount.setVisibility(View.GONE);
-            } else if (confirmations > 3) {
-                rotateTxStatus(tvConfirmationCount, true);
-                ivTxStatus.setVisibility(View.VISIBLE);
-                ivTxStatus.setImageResource(R.drawable.ic_done_white);
-                tvConfirmationCount.setVisibility(View.GONE);
-            } else {
-                rotateTxStatus(ivTxStatus, false);
-                tvConfirmationCount.setVisibility(View.VISIBLE);
-                tvConfirmationCount.setText(Long.toString(confirmations));
-                ivTxStatus.setVisibility(View.GONE);
-            }
-        } else {
-            if (confirmations < 100) {
-                rotateTxStatus(ivTxStatus, false);
-                tvConfirmationCount.setVisibility(View.VISIBLE);
-                tvConfirmationCount.setText(Long.toString(confirmations));
-                ivTxStatus.setVisibility(View.GONE);
-            } else {
-                rotateTxStatus(ivTxStatus, false);
-                tvConfirmationCount.setVisibility(View.VISIBLE);
-                tvConfirmationCount.setText("\u221e");
-                ivTxStatus.setVisibility(View.GONE);
-            }
-        }
-
-    }
-
-    private void rotateTxStatus(View view, boolean clockwise) {
-
-        float degrees = 360f;
-        if (!clockwise) {
-            degrees = -360f;
-        }
-
-        ObjectAnimator animation = ObjectAnimator.ofFloat(view, "rotationY", 0.0f, degrees);
-        animation.setDuration(1000);
-        animation.setRepeatCount(0);
-        animation.setInterpolator(new AnticipateInterpolator());
-        animation.start();
-    }
 
     private void doExplorerView(String strHash) {
 
@@ -1360,13 +1155,6 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void txDetails(Tx tx) {
-//
-//        if(strHash != null) {
-//            int sel = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-//            if(sel >= BlockExplorerUtil.getInstance().getBlockExplorerTxUrls().length)    {
-//                sel = 0;
-//            }
-//            CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerTxUrls()[sel];
 
         Intent txIntent = new Intent(this, TxDetailsActivity.class);
         txIntent.putExtra("TX", tx.toJSON().toString());
@@ -1585,5 +1373,6 @@ public class BalanceActivity extends AppCompatActivity {
         }).start();
 
     }
+
 
 }

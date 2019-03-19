@@ -2,9 +2,10 @@ package com.samourai.wallet.home.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.transition.ChangeBounds;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -46,6 +45,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private List<Tx> txes;
     private CompositeDisposable disposables = new CompositeDisposable();
     private OnClickListener listener;
+    private Boolean displaySatUnit = false;
 
     public interface OnClickListener {
         void onClick(int position, Tx tx);
@@ -54,7 +54,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     public TxAdapter(Context mContext, List<Tx> txes) {
         this.mContext = mContext;
         this.txes = new ArrayList<>();
-        Disposable disposable = makeSectionedDataSet(txes).observeOn(Schedulers.computation())
+        Disposable disposable = makeSectionedDataSet(txes)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Tx> list) -> {
@@ -99,6 +99,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
         Tx tx = txes.get(position);
         if (tx.section == null) {
+
             long _amount = 0L;
             Log.i(TAG, "onBindViewHolder: ".concat(String.valueOf(position)));
             if (tx.getAmount() < 0.0) {
@@ -115,16 +116,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             } else {
                 holder.tvPendingStatus.setVisibility(View.INVISIBLE);
             }
-            if (tx.getAmount() < 0.0) {
-                holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.out_going_tx_whtie_arrow));
-                holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                holder.tvAmount.setText("-".concat(getBTCDisplayAmount(_amount).concat(" BTC")));
 
-            } else {
-                holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
-                holder.tvAmount.setText(getBTCDisplayAmount(_amount).concat(" BTC"));
-                holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
-            }
             if (tx.getPaymentCode() != null) {
                 holder.tvPaynymId.setVisibility(View.VISIBLE);
                 holder.tvPaynymId.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
@@ -135,6 +127,21 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.itemView.setOnClickListener(view -> {
                     listener.onClick(position, tx);
                 });
+            if (tx.getAmount() < 0.0) {
+
+                holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.out_going_tx_whtie_arrow));
+
+                holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                holder.tvAmount.setText("-".concat(displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC")));
+
+            } else {
+                TransitionManager.beginDelayedTransition((ViewGroup) holder.tvAmount.getRootView(), new ChangeBounds());
+
+                holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
+                String amount = displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
+                holder.tvAmount.setText(amount);
+                holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
+            }
         } else {
             SimpleDateFormat fmt = new SimpleDateFormat("dd MMM YYY", Locale.ENGLISH);
             Date date = new Date(tx.getTS());
@@ -162,21 +169,28 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         return txes.get(position).section != null ? VIEW_SECTION : VIEW_ITEM;
     }
 
+    public void toggleDisplayUnit(Boolean showSat) {
+        this.displaySatUnit = showSat;
+        this.notifyDataSetChanged();
+    }
+
     public void setTxes(List<Tx> txs) {
+        if (txs == null) {
+            return;
+        }
         Disposable disposable = makeSectionedDataSet(txs)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Tx> list) -> {
-                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TxDiffUtil(this.txes, list));
+//                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TxDiffUtil(this.txes, list));
                     this.txes = list;
-                    diffResult.dispatchUpdatesTo(this);
+                    this.notifyDataSetChanged();
                 });
         disposables.add(disposable);
 
     }
 
-    public
-    class TxViewHolder extends RecyclerView.ViewHolder {
+    public class TxViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvSection, tvDateView, tvAmount, tvPendingStatus, tvPaynymId;
         private ImageView tvDirection;
