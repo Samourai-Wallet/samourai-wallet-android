@@ -76,6 +76,8 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.spend.SendActivity;
+import com.samourai.wallet.tor.TorManager;
+import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -110,6 +112,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class BalanceActivity extends AppCompatActivity {
 
@@ -128,6 +134,9 @@ public class BalanceActivity extends AppCompatActivity {
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
     private CollapsingToolbarLayout mCollapsingToolbar;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Toolbar toolbar;
+    private Menu menu;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -308,7 +317,6 @@ public class BalanceActivity extends AppCompatActivity {
             }
         }
     };
-    private Toolbar toolbar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -416,6 +424,7 @@ public class BalanceActivity extends AppCompatActivity {
         if (!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
+        setUpTor();
         initViewModel();
         updateDisplay();
         progressBar.setVisibility(View.VISIBLE);
@@ -547,6 +556,7 @@ public class BalanceActivity extends AppCompatActivity {
         if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
+        compositeDisposable.dispose();
 
         super.onDestroy();
     }
@@ -554,14 +564,11 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-//        if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
-//            menu.findItem(R.id.action_tor).setVisible(false);
-//        } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-//            OrbotHelper.requestStartTor(BalanceActivity.this);
-//            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
-//        } else {
-//            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
-//        }
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+        } else {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
@@ -569,6 +576,7 @@ public class BalanceActivity extends AppCompatActivity {
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
         menu.findItem(R.id.action_batch).setVisible(false);
+        this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -595,18 +603,13 @@ public class BalanceActivity extends AppCompatActivity {
             doUTXO();
         } else if (id == R.id.action_tor) {
 
-            if (!OrbotHelper.isOrbotInstalled(BalanceActivity.this)) {
-                ;
-            } else if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-                item.setIcon(R.drawable.tor_off);
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
+            if (TorManager.getInstance(this).isConnected() || TorManager.getInstance(this).isProcessRunning) {
+                stopTor();
+                PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
             } else {
-                OrbotHelper.requestStartTor(BalanceActivity.this);
-                item.setIcon(R.drawable.tor_on);
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(true);
+                startTor();
             }
 
-            return true;
 
         } else if (id == R.id.action_backup) {
 
@@ -645,9 +648,41 @@ public class BalanceActivity extends AppCompatActivity {
         } else {
             ;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    private void startTor() {
+        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+        startIntent.setAction(TorService.START_SERVICE);
+        startService(startIntent);
+
+    }
+
+    private void stopTor() {
+        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+        startIntent.setAction(TorService.STOP_SERVICE);
+        startService(startIntent);
+    }
+
+    private void setUpTor() {
+        Disposable disposable = TorManager.getInstance(this)
+                .torStatus
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(state -> {
+                    if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                        PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
+                        if (this.menu != null)
+                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+                    } else {
+                        if (this.menu != null)
+                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
