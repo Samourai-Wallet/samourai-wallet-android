@@ -37,7 +37,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
@@ -137,6 +140,8 @@ public class BalanceActivity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Toolbar toolbar;
     private Menu menu;
+    private ImageView menuTorIcon;
+    private ProgressBar progressBarMenu;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -564,11 +569,6 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
-        } else {
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
-        }
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
@@ -579,6 +579,25 @@ public class BalanceActivity extends AppCompatActivity {
         this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem alertMenuItem = menu.findItem(R.id.action_tor);
+        FrameLayout rootView = (FrameLayout) alertMenuItem.getActionView();
+
+        menuTorIcon = rootView.findViewById(R.id.tor_menu_icon);
+        progressBarMenu = rootView.findViewById(R.id.tor_menu_progress);
+
+        rootView.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+            progressBarMenu.setVisibility(View.INVISIBLE);
+            menuTorIcon.setImageResource(R.drawable.tor_on);
+        } else {
+            progressBarMenu.setVisibility(View.INVISIBLE);
+            menuTorIcon.setImageResource(R.drawable.tor_off);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -652,6 +671,8 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void startTor() {
+        progressBarMenu.setVisibility(View.VISIBLE);
+        menuTorIcon.setImageResource(R.drawable.tor_on);
         Intent startIntent = new Intent(getApplicationContext(), TorService.class);
         startIntent.setAction(TorService.START_SERVICE);
         startService(startIntent);
@@ -672,16 +693,26 @@ public class BalanceActivity extends AppCompatActivity {
                 .subscribe(state -> {
                     if (state == TorManager.CONNECTION_STATES.CONNECTED) {
                         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
-                        if (this.menu != null)
-                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+                        if (this.progressBarMenu != null) {
+                            this.progressBarMenu.setVisibility(View.INVISIBLE);
+                            this.menuTorIcon.setImageResource(R.drawable.tor_on);
+                        }
+
+                    } else if (state == TorManager.CONNECTION_STATES.CONNECTING) {
+                        if (this.progressBarMenu != null) {
+                            this.progressBarMenu.setVisibility(View.VISIBLE);
+                            this.menuTorIcon.setImageResource(R.drawable.tor_on);
+                        }
                     } else {
-                        if (this.menu != null)
-                            this.menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+                        if (this.progressBarMenu != null) {
+                            this.progressBarMenu.setVisibility(View.INVISIBLE);
+                            this.menuTorIcon.setImageResource(R.drawable.tor_off);
+                        }
+
                     }
                 });
         compositeDisposable.add(disposable);
     }
-
 
 
     @Override
@@ -708,14 +739,11 @@ public class BalanceActivity extends AppCompatActivity {
                 try {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
-                    }
-                    else if(Cahoots.isCahoots(strResult.trim())) {
+                    } else if (Cahoots.isCahoots(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
-                    }
-                    else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
+                    } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
-                    }
-                    else {
+                    } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
                         startActivity(intent);

@@ -14,10 +14,11 @@
         android:title=""
         android:visible="true"
         app:showAsAction="always" />
-    <item android:id="@+id/action_tor"
-        android:icon="@drawable/tor_off"
+    <item
+        android:id="@+id/action_tor"
         android:visible="true"
         android:title=""
+        app:actionLayout="@layout/tor_option_menu"
         app:showAsAction="always"
         />
     <item
