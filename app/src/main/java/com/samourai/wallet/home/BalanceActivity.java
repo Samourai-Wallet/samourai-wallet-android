@@ -225,7 +225,7 @@ public class BalanceActivity extends AppCompatActivity {
 
             if (DISPLAY_INTENT.equals(intent.getAction())) {
 
-                updateDisplay();
+                updateDisplay(true);
 
                 List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
                 for (UTXO utxo : utxos) {
@@ -241,7 +241,6 @@ public class BalanceActivity extends AppCompatActivity {
                                 address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                             }
                         } catch (Exception e) {
-                            ;
                         }
                         String path = APIFactory.getInstance(BalanceActivity.this).getUnspentPaths().get(address);
                         if (path != null && path.startsWith("M/1/")) {
@@ -340,7 +339,7 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
         menuFab = findViewById(R.id.fab_menu);
-        progressBar.setVisibility(View.VISIBLE);
+
         findViewById(R.id.send_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
             intent.putExtra("via_menu", true);
@@ -361,7 +360,6 @@ public class BalanceActivity extends AppCompatActivity {
 
 
             } catch (IOException | MnemonicException.MnemonicLengthException e) {
-                ;
             }
         });
         findViewById(R.id.paynym_fab).setOnClickListener(view -> {
@@ -397,7 +395,6 @@ public class BalanceActivity extends AppCompatActivity {
                 PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false) {
             doClaimPayNym();
         } else {
-            ;
         }
 
         if (RicochetMeta.getInstance(BalanceActivity.this).getQueue().size() > 0) {
@@ -423,7 +420,7 @@ public class BalanceActivity extends AppCompatActivity {
 
             refreshTx(notifTx, false, true);
 
-            updateDisplay();
+            updateDisplay(false);
         }, 100L);
 
         if (!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
@@ -431,9 +428,8 @@ public class BalanceActivity extends AppCompatActivity {
         }
         setUpTor();
         initViewModel();
-        updateDisplay();
+        updateDisplay(false);
         progressBar.setVisibility(View.VISIBLE);
-
 
     }
 
@@ -654,9 +650,7 @@ public class BalanceActivity extends AppCompatActivity {
 
                     }
                 } catch (MnemonicException.MnemonicLengthException mle) {
-                    ;
                 } catch (IOException ioe) {
-                    ;
                 }
             } else {
                 Toast.makeText(BalanceActivity.this, R.string.passphrase_required, Toast.LENGTH_SHORT).show();
@@ -665,7 +659,6 @@ public class BalanceActivity extends AppCompatActivity {
         } else if (id == R.id.action_scan_qr) {
             doScan();
         } else {
-            ;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -728,7 +721,6 @@ public class BalanceActivity extends AppCompatActivity {
 
             }
         } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_COLD_STORAGE) {
-            ;
         } else if (resultCode == Activity.RESULT_OK && requestCode == SCAN_QR) {
 
             if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
@@ -749,14 +741,11 @@ public class BalanceActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 } catch (Exception e) {
-                    ;
                 }
 
             }
         } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
-            ;
         } else {
-            ;
         }
 
     }
@@ -777,13 +766,9 @@ public class BalanceActivity extends AppCompatActivity {
                     try {
                         PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
                     } catch (MnemonicException.MnemonicLengthException mle) {
-                        ;
                     } catch (JSONException je) {
-                        ;
                     } catch (IOException ioe) {
-                        ;
                     } catch (DecryptionException de) {
-                        ;
                     }
 
                     Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
@@ -805,13 +790,12 @@ public class BalanceActivity extends AppCompatActivity {
 
             return true;
         } else {
-            ;
         }
 
         return false;
     }
 
-    private void updateDisplay() {
+    private void updateDisplay(boolean fromRefreshService) {
         txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
 
         long balance = 0L;
@@ -819,11 +803,8 @@ public class BalanceActivity extends AppCompatActivity {
         try {
             balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
         } catch (IOException ioe) {
-            ;
         } catch (MnemonicException.MnemonicLengthException mle) {
-            ;
         } catch (NullPointerException npe) {
-            ;
         }
         if (balanceViewModel.getBalance().getValue() != null) {
             if (balance != 0L) {
@@ -841,7 +822,7 @@ public class BalanceActivity extends AppCompatActivity {
         }
 
 
-        if (progressBar.getVisibility() == View.VISIBLE) {
+        if (progressBar.getVisibility() == View.VISIBLE && fromRefreshService) {
             progressBar.setVisibility(View.INVISIBLE);
         }
         if (txs != null) {
