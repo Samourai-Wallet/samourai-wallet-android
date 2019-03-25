@@ -31,7 +31,7 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <com.samourai.wallet.spend.widgets.SendTransactionDetailsView
+        <com.samourai.wallet.widgets.SendTransactionDetailsView
             android:id="@+id/sendTransactionDetailsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

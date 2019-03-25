@@ -40,8 +40,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.crypto.BIP38PrivateKey;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.script.Script;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -52,6 +57,7 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -78,7 +84,6 @@ import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
-import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.tx.TxDetailsActivity;
@@ -91,16 +96,13 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
 
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.crypto.BIP38PrivateKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,7 +116,6 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -306,22 +307,6 @@ public class BalanceActivity extends AppCompatActivity {
         }
     };
 
-    protected BroadcastReceiver torStatusReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-
-            if (OrbotHelper.ACTION_STATUS.equals(intent.getAction())) {
-
-                boolean enabled = (intent.getStringExtra(OrbotHelper.EXTRA_STATUS).equals(OrbotHelper.STATUS_ON));
-
-                TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(enabled);
-
-            }
-        }
-    };
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
@@ -378,9 +363,6 @@ public class BalanceActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
         IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
-
-        TorUtil.getInstance(BalanceActivity.this).setStatusFromBroadcast(false);
-        registerReceiver(torStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
 
         if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
@@ -498,10 +480,6 @@ public class BalanceActivity extends AppCompatActivity {
 //        IntentFilter filter = new IntentFilter(ACTION_INTENT);
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
-        if (TorUtil.getInstance(BalanceActivity.this).statusFromBroadcast()) {
-            OrbotHelper.requestStartTor(BalanceActivity.this);
-        }
-
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
         Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
@@ -551,8 +529,6 @@ public class BalanceActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiverDisplay);
-
-        unregisterReceiver(torStatusReceiver);
 
         if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
