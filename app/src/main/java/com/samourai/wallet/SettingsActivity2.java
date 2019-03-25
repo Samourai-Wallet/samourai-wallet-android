@@ -67,7 +67,6 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.TorUtil;
 
 import com.yanzhenjie.zbar.Symbol;
 
@@ -78,8 +77,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
-
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
