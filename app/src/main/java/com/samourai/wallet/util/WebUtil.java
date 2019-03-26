@@ -105,7 +105,7 @@ public class WebUtil {
                     args.put("tx", urlParameters.substring(3));
                     return tor_postURL(request, args);
                 } else {
-                    return tor_postURL(request + urlParameters, null);
+                    return tor_postURL(request + urlParameters, new HashMap());
                 }
             } else {
                 return postURL(null, request, urlParameters);
@@ -296,7 +296,7 @@ public class WebUtil {
 
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
-        if (args != null) {
+        if (args != null && args.size()!=0) {
             List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
             for (String key : args.keySet()) {
                 formBodyBuilder.add(key, args.get(key));
@@ -318,6 +318,38 @@ public class WebUtil {
         Request request = new Request.Builder()
                 .url(URL)
                 .post(formBodyBuilder.build())
+                .build();
+
+        try (Response response = builder.build().newCall(request).execute()) {
+            if(response.body() == null){
+                return  "";
+            }
+            return response.body().string();
+
+        }
+
+    }
+
+    public String tor_postURL(String URL, JSONObject args) throws Exception {
+
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, args.toString());
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .proxy(TorManager.getInstance(this.context).getProxy());
+
+        if(URL.contains("onion")){
+            getHostNameVerifier(builder);
+        }
+
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+
+        Request request = new Request.Builder()
+                .url(URL)
+                .post(body)
                 .build();
 
         try (Response response = builder.build().newCall(request).execute()) {
