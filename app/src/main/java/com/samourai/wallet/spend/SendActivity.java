@@ -78,6 +78,7 @@ import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.spend.widgets.EntropyBar;
 import com.samourai.wallet.spend.widgets.SendTransactionDetailsView;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -1407,10 +1408,17 @@ public class SendActivity extends AppCompatActivity {
 
                                                 Looper.prepare();
 
-                                                String url =  WebUtil.getAPIUrl(SendActivity.this);
+                                                String url = WebUtil.getAPIUrl(SendActivity.this);
                                                 url += "pushtx/schedule";
                                                 try {
-                                                    String result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+                                                    String result = "";
+                                                    if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                                                        result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj);
+
+                                                    } else {
+                                                        result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());
+
+                                                    }
 //                                                    Log.d("SendActivity", "Ricochet staggered result:" + result);
                                                     JSONObject resultObj = new JSONObject(result);
                                                     if (resultObj.has("status") && resultObj.getString("status").equalsIgnoreCase("ok")) {
