@@ -96,6 +96,15 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.util.TorUtil;
+import com.samourai.wallet.util.TypefaceUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.bouncycastle.util.encoders.Hex;
+
+import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
+import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
