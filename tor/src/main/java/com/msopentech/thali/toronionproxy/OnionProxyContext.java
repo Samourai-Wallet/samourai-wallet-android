@@ -190,18 +190,7 @@ abstract public class OnionProxyContext {
     }
 
     protected String getTorExecutableFileName() {
-        switch(OsData.getOsType()) {
-            case ANDROID:
-            case LINUX_32:
-            case LINUX_64:
-                return "tor.so";
-            case WINDOWS:
-                return "tor.exe";
-            case MAC:
-                return "tor.real";
-            default:
-                throw new RuntimeException("We don't support Tor on this OS");
-        }
+        return "tor.so";
     }
 
     abstract public String getProcessId();
