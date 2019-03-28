@@ -67,7 +67,7 @@ abstract public class OnionProxyContext {
         switch(OsData.getOsType()) {
             case ANDROID:
                 FileUtilities.cleanInstallOneFile(
-                        getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
+                        getJNIBinary(getPathToTorExecutable() + getTorExecutableFileName()),
                         torExecutableFile);
                 break;
             case WINDOWS:
@@ -194,7 +194,7 @@ abstract public class OnionProxyContext {
             case ANDROID:
             case LINUX_32:
             case LINUX_64:
-                return "tor";
+                return "tor.so";
             case WINDOWS:
                 return "tor.exe";
             case MAC:
@@ -207,4 +207,5 @@ abstract public class OnionProxyContext {
     abstract public String getProcessId();
     abstract public WriteObserver generateWriteObserver(File file);
     abstract protected InputStream getAssetOrResourceByName(String fileName) throws IOException;
+    abstract protected InputStream getJNIBinary(String fileName) throws IOException;
 }
