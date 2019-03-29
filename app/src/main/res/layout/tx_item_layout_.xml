@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/TransactionsToday"
     android:layout_width="match_parent"
-    android:clickable="true"
-    android:background="@drawable/tx_ripples"
     android:layout_height="wrap_content"
+    android:background="@drawable/tx_ripples"
+    android:clickable="true"
     android:orientation="vertical">
 
 
@@ -14,7 +14,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tx_time"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
         android:id="@+id/tx_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:text="17:10"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -50,16 +50,13 @@
         app:layout_constraintStart_toStartOf="@+id/TransactionDirection"
         app:layout_constraintTop_toBottomOf="@+id/tvAmount" />
 
-    <TextView
+    <ImageView
         android:id="@+id/tx_pending_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginEnd="16dp"
-        android:text="pending"
-        android:textColor="@color/warning_yellow"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:visibility="invisible"
+        android:src="@drawable/ic_chevron_right_white_24dp"
+        android:tint="#7E7E7E"
         app:layout_constraintBottom_toBottomOf="@+id/tvAmount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvAmount" />
@@ -69,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:text="+blackFlower"
         android:textColor="@color/text_ui2_grey"
         android:textSize="11sp"

@@ -13,9 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.util.DateUtil;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONObject;
@@ -101,7 +103,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         if (tx.section == null) {
 
             long _amount = 0L;
-            Log.i(TAG, "onBindViewHolder: ".concat(String.valueOf(position)));
             if (tx.getAmount() < 0.0) {
                 _amount = Math.abs((long) tx.getAmount());
 
@@ -109,14 +110,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 _amount = (long) tx.getAmount();
 
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("H:mm", Locale.US);
             holder.tvDateView.setText(sdf.format(tx.getTS() * 1000L));
-            if (tx.getConfirmations() <= 6) {
-                holder.tvPendingStatus.setVisibility(View.VISIBLE);
-            } else {
-                holder.tvPendingStatus.setVisibility(View.INVISIBLE);
-            }
-
             if (tx.getPaymentCode() != null) {
                 holder.tvPaynymId.setVisibility(View.VISIBLE);
                 holder.tvPaynymId.setText(BIP47Meta.getInstance().getDisplayLabel(tx.getPaymentCode()));
@@ -143,16 +138,12 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
             }
         } else {
-            SimpleDateFormat fmt = new SimpleDateFormat("dd MMM YYY", Locale.ENGLISH);
+            SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
             Date date = new Date(tx.getTS());
-            if (DateUtils.isToday(tx.getTS())) {
-
-                holder.tvSection.setText("Today");
-
+            if (tx.getTS() == -1L) {
+                holder.tvSection.setText("  Pending");
             } else {
                 holder.tvSection.setText(fmt.format(date));
-
-
             }
 
         }
@@ -207,7 +198,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
             }
 
-            tvPendingStatus = itemView.findViewById(R.id.tx_pending_status);
             tvDirection = itemView.findViewById(R.id.TransactionDirection);
             tvAmount = itemView.findViewById(R.id.tvAmount);
             tvPaynymId = itemView.findViewById(R.id.paynymId);
@@ -216,11 +206,26 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     }
 
 
-    private Observable<List<Tx>> makeSectionedDataSet(List<Tx> txes) {
+
+    private synchronized Observable<List<Tx>> makeSectionedDataSet(List<Tx> txes) {
         return Observable.fromCallable(() -> {
             Collections.sort(txes, (tx, t1) -> Long.compare(tx.getTS(), t1.getTS()));
             ArrayList<Long> sectionDates = new ArrayList<>();
             List<Tx> sectioned = new ArrayList<>();
+            // for pending state
+            boolean contains_pending = false;
+            //if there is only pending tx today we don't want to add today's section
+            boolean show_todays_tx = false;
+            for (int i = 0; i < txes.size(); i++) {
+                Tx tx = txes.get(i);
+                if (tx.getConfirmations() < 6) {
+                    contains_pending = true;
+                }
+                if (tx.getConfirmations() >= 6 && DateUtils.isToday(tx.getTS()*1000)) {
+                    show_todays_tx = true;
+                }
+            }
+
             for (Tx tx : txes) {
                 Date date = new Date();
                 date.setTime(tx.getTS() * 1000);
@@ -230,27 +235,57 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 calendarDM.set(Calendar.MINUTE, 0);
                 calendarDM.set(Calendar.SECOND, 0);
                 if (!sectionDates.contains(calendarDM.getTime().getTime())) {
-                    sectionDates.add(calendarDM.getTime().getTime());
+                    if (DateUtils.isToday(calendarDM.getTime().getTime())) {
+                        if (show_todays_tx)
+                            sectionDates.add(calendarDM.getTime().getTime());
+                    } else {
+                        sectionDates.add(calendarDM.getTime().getTime());
+                    }
                 }
 
             }
 
             Collections.sort(sectionDates, Long::compare);
 
+
+            if (contains_pending)
+                sectionDates.add(-1L);
+
+
             for (Long key : sectionDates) {
+
                 Tx section = new Tx(new JSONObject());
-                section.section = new Date(key).toString();
+                if (key != -1) {
+                    section.section = new Date(key).toString();
+                } else {
+                    section.section = "pending";
+                }
+
                 section.setTS(key);
                 for (Tx tx : txes) {
                     Date date = new Date();
                     date.setTime(tx.getTS() * 1000);
                     SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
-                    if (fmt.format(key).equals(fmt.format(date))) {
-                        sectioned.add(tx);
+                    if (key == -1) {
+                        if (tx.getConfirmations() < 6) {
+                            sectioned.add(tx);
+                        }
+                    } else if (fmt.format(key).equals(fmt.format(date))) {
+                        if(DateUtils.isToday(tx.getTS() * 1000)){
+                            if(tx.getConfirmations() >= 6){
+                                sectioned.add(tx);
+                            }
+
+                        }else {
+                            sectioned.add(tx);
+                        }
+
                     }
+
                 }
                 sectioned.add(section);
             }
+
             Collections.reverse(sectioned);
             return sectioned;
         });

@@ -20,17 +20,17 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="210dp"
             android:fitsSystemWindows="true"
             app:contentScrim="#6c768b"
             app:expandedTitleGravity="center_horizontal|center"
             app:expandedTitleMarginTop="82dp"
+            app:expandedTitleTextAppearance="@style/BalanceToolbarExpandedTitleStyle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:transitionName="SimpleTransition"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
@@ -69,49 +69,51 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+
     <com.github.clans.fab.FloatingActionMenu
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fab_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        app:fab_colorNormal="#DA4336"
-        app:fab_colorPressed="#E75043"
-        app:fab_colorRipple="#99FFFFFF"
-        fab:fab_addButtonPlusIconColor="@color/white"
         fab:layout_anchor="@+id/rv_txes"
         fab:layout_anchorGravity="right|bottom"
         fab:menu_animationDelayPerItem="32"
-        fab:menu_shadowColor="#444">
+        fab:menu_shadowColor="#444"
+        fab:menu_colorNormal="@color/accent"
+        fab:menu_colorPressed="#0AA1E9"
+        fab:menu_colorRipple="#A8A8A8"
+        tools:showIn="@layout/activity_balance">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/paynym_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_paynym_white_24dp"
-            app:fab_colorNormal="#FF673ab7"
-            app:fab_colorPressed="#FF512da8"
-            app:fab_label="@string/action_bip47"
-            app:fab_size="mini" />
+            fab:fab_colorNormal="#FF673ab7"
+            fab:fab_colorPressed="#FF512da8"
+            fab:fab_label="@string/action_bip47"
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/send_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_samourai_send_24dp"
-            app:fab_colorNormal="#FFb34d5e"
-            app:fab_colorPressed="#FF873a47"
-            app:fab_colorRipple="#99FFFFFF"
-            app:fab_label="@string/send"
-            app:fab_size="mini" />
+            fab:fab_colorNormal="#e91e63"
+            fab:fab_colorPressed="#c2185b"
+            fab:fab_colorRipple="#A7174F"
+            fab:fab_label="@string/send"
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/receive_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_receive_qr"
-            app:fab_colorNormal="#FF51a66b"
-            app:fab_colorPressed="#FF448b5a"
+            android:src="@drawable/ic_samourai_deposit_24dp"
+            app:fab_colorNormal="#00bfa5"
+            app:fab_colorPressed="#009688"
             app:fab_label="@string/receive"
             app:fab_size="mini"
             app:fab_title="@string/receive" />

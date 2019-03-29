@@ -45,6 +45,7 @@
     </style>
 
     <style name="ui_2_theme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="android:colorAccent">@android:color/white</item>
         <item name="android:windowBackground">@color/windowDark</item>
         <item name="android:statusBarColor">@color/grey_accent</item>
@@ -68,6 +69,13 @@
         <item name="android:progressTint">@color/green_ui_2</item>
         <!--<item name="android:minHeight">8dip</item>-->
         <!--<item name="android:maxHeight">22dip</item>-->
+    </style>
+
+    <style name="BalanceToolbarExpandedTitleStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">42sp</item>
+        <item name="android:textColor">@color/primary_light</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@font/roboto_mono</item>
     </style>
 
 </resources>
