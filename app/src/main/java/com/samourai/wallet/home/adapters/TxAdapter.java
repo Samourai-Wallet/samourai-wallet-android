@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -230,6 +231,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 Date date = new Date();
                 date.setTime(tx.getTS() * 1000);
                 Calendar calendarDM = Calendar.getInstance();
+                calendarDM.setTimeZone(TimeZone.getTimeZone("UTC"));
                 calendarDM.setTime(date);
                 calendarDM.set(Calendar.HOUR, 0);
                 calendarDM.set(Calendar.MINUTE, 0);
