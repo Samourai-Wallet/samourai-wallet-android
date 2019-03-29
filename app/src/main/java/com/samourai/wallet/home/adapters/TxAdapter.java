@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -207,6 +206,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     }
 
 
+
     private synchronized Observable<List<Tx>> makeSectionedDataSet(List<Tx> txes) {
         return Observable.fromCallable(() -> {
             Collections.sort(txes, (tx, t1) -> Long.compare(tx.getTS(), t1.getTS()));
@@ -221,7 +221,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 if (tx.getConfirmations() < 6) {
                     contains_pending = true;
                 }
-                if (tx.getConfirmations() >= 6 && DateUtils.isToday(tx.getTS() * 1000)) {
+                if (tx.getConfirmations() >= 6 && DateUtils.isToday(tx.getTS()*1000)) {
                     show_todays_tx = true;
                 }
             }
@@ -230,12 +230,10 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 Date date = new Date();
                 date.setTime(tx.getTS() * 1000);
                 Calendar calendarDM = Calendar.getInstance();
-                calendarDM.setTimeZone(TimeZone.getTimeZone("GMT"));
                 calendarDM.setTime(date);
                 calendarDM.set(Calendar.HOUR, 0);
                 calendarDM.set(Calendar.MINUTE, 0);
                 calendarDM.set(Calendar.SECOND, 0);
-
                 if (!sectionDates.contains(calendarDM.getTime().getTime())) {
                     if (DateUtils.isToday(calendarDM.getTime().getTime())) {
                         if (show_todays_tx)
@@ -273,12 +271,12 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                             sectioned.add(tx);
                         }
                     } else if (fmt.format(key).equals(fmt.format(date))) {
-                        if (DateUtils.isToday(tx.getTS() * 1000)) {
-                            if (tx.getConfirmations() >= 6) {
+                        if(DateUtils.isToday(tx.getTS() * 1000)){
+                            if(tx.getConfirmations() >= 6){
                                 sectioned.add(tx);
                             }
 
-                        } else {
+                        }else {
                             sectioned.add(tx);
                         }
 
