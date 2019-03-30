@@ -545,7 +545,6 @@ public class BalanceActivity extends Activity {
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
 
-
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
 
         Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
@@ -603,7 +602,7 @@ public class BalanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && TorManager.getInstance(getApplicationContext()).isConnected()) {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
         } else {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
