@@ -6,6 +6,7 @@ import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.ConnectivityStatus;
 
 import java.util.Objects;
 
@@ -89,6 +91,12 @@ public class NetworkDashboard extends AppCompatActivity {
 
             }
         });
+
+        if(ConnectivityStatus.hasConnectivity(getApplicationContext())){
+            setDataConnectionState(CONNECTION_STATUS.ENABLED);
+        }else{
+            setDataConnectionState(CONNECTION_STATUS.DISABLED);
+        }
     }
 
     private void listenToTorStatus() {
@@ -98,7 +106,11 @@ public class NetworkDashboard extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::setTorConnectionState);
         disposables.add(disposable);
+
+        // set current tor state
+        setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
     }
+
 
     private void setDataConnectionState(CONNECTION_STATUS enabled) {
         if (enabled == CONNECTION_STATUS.ENABLED) {
@@ -168,4 +180,10 @@ public class NetworkDashboard extends AppCompatActivity {
         startService(startIntent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            onBackPressed();
+        return true;
+    }
 }
