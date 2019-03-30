@@ -74,6 +74,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.home.adapters.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
+import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -589,6 +590,9 @@ public class BalanceActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
+        if(id == R.id.action_network_dashboard){
+            startActivity(new Intent(this, NetworkDashboard.class));
+        }
         if (id == R.id.action_settings) {
             doSettings();
         } else if (id == R.id.action_support) {
