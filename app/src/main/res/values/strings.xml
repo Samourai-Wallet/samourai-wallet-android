@@ -675,5 +675,8 @@
     <string name="cannot_process_stowaway">Cannot process Stowaway</string>
     <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
     <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
 
 </resources>

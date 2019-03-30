@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     -->
-
     <!--
     <uses-feature
         android:name="android.hardware.telephony"
@@ -46,7 +45,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".network.NetworkDashboard"
+            android:theme="@style/ui_2_theme"
+            android:exported="true"
+            android:parentActivityName=".home.BalanceActivity"
+            android:label="@string/title_activity_network_dashboard">
 
+        </activity>
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"

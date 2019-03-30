@@ -4,6 +4,7 @@
     <item name="blue" type="color">#FF33B5E5</item>
     <item name="green" type="color">#FF99CC00</item>
     <item name="red" type="color">#FFFF4444</item>
+    <item name="disabledRed" type="color">#A82D2D</item>
     <item name="darkgrey" type="color">#FF1a1c1f</item>
 
     <color name="window">#272c33</color>
