@@ -550,6 +550,13 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && TorManager.getInstance(getApplicationContext()).isConnected()) {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
+        } else {
+            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
+        }
+
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
