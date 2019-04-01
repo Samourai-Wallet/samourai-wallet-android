@@ -14,12 +14,7 @@
         android:title=""
         android:visible="true"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_tor"
-        android:title=""
-        android:visible="true"
-        app:actionLayout="@layout/tor_option_menu"
-        app:showAsAction="always" />
+
 
     <item
         android:id="@+id/action_network_dashboard"

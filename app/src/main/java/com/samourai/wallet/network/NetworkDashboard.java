@@ -2,10 +2,12 @@ package com.samourai.wallet.network;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.PrefsUtil;
 
 import java.util.Objects;
 
@@ -69,18 +72,17 @@ public class NetworkDashboard extends AppCompatActivity {
         listenToTorStatus();
 
         dataButton.setOnClickListener(view -> {
-            if (dataConnectionStatus.getText().equals("Disabled")) {
-                setDataConnectionState(CONNECTION_STATUS.ENABLED);
-            } else {
-                setDataConnectionState(CONNECTION_STATUS.DISABLED);
-            }
+            boolean pref = PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.OFFLINE, false);
+
+            PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.OFFLINE, !pref);
+            this.setDataState();
+//            new Handler().postDelayed(, 100);
+
         });
 
         dojoBtn.setOnClickListener(view -> {
             DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
             dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
-
-
         });
 
         torButton.setOnClickListener(view -> {
@@ -92,10 +94,20 @@ public class NetworkDashboard extends AppCompatActivity {
             }
         });
 
-        if(ConnectivityStatus.hasConnectivity(getApplicationContext())){
+        setDataState();
+    }
+
+    private void setDataState() {
+        if (ConnectivityStatus.hasConnectivity(getApplicationContext())) {
             setDataConnectionState(CONNECTION_STATUS.ENABLED);
-        }else{
+            if (PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
+                startTor();
+            }
+        } else {
             setDataConnectionState(CONNECTION_STATUS.DISABLED);
+            if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                stopTor();
+            }
         }
     }
 
