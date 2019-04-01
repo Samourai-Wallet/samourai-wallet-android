@@ -3,6 +3,7 @@ package com.samourai.wallet.network;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +16,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.msopentech.thali.android.toronionproxy.NetworkManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.ConnectionChangeReceiver;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -41,6 +46,7 @@ public class NetworkDashboard extends AppCompatActivity {
     LinearLayout offlineMessage;
     int activeColor, disabledColor, waiting;
     CompositeDisposable disposables = new CompositeDisposable();
+    private static final String TAG = "NetworkDashboard";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +77,7 @@ public class NetworkDashboard extends AppCompatActivity {
         setDojoConnectionState(CONNECTION_STATUS.CONFIGURE);
         listenToTorStatus();
 
-        dataButton.setOnClickListener(view -> {
-            boolean pref = PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.OFFLINE, false);
-
-            PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.OFFLINE, !pref);
-            this.setDataState();
-//            new Handler().postDelayed(, 100);
-
-        });
+        dataButton.setOnClickListener(view -> toggleNetwork());
 
         dojoBtn.setOnClickListener(view -> {
             DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
@@ -88,27 +87,58 @@ public class NetworkDashboard extends AppCompatActivity {
         torButton.setOnClickListener(view -> {
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
                 stopTor();
+                PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, false);
             } else {
                 startTor();
-
+                PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, true);
             }
         });
 
         setDataState();
+
+        Disposable onlineSubscription = NetworkManager.getInstance().onlineSignal()
+                .debounce(100, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(state->{
+                    new Handler().postDelayed(() -> {
+                        setDataState();
+                    },300);
+                }, error -> {
+                    Log.i(TAG, "onCreate: ".concat(error.getMessage()));
+                });
+        disposables.add(onlineSubscription);
+    }
+
+    private void toggleNetwork() {
+        boolean pref = PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.OFFLINE, false);
+        PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.OFFLINE, !pref);
+        this.setDataState();
     }
 
     private void setDataState() {
         if (ConnectivityStatus.hasConnectivity(getApplicationContext())) {
             setDataConnectionState(CONNECTION_STATUS.ENABLED);
             if (PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
-                startTor();
-            }
+                if (!TorManager.getInstance(getApplicationContext()).isConnected()) {
+                    startTor();
+                }
+             }
         } else {
             setDataConnectionState(CONNECTION_STATUS.DISABLED);
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
                 stopTor();
             }
+            if(!ConnectionChangeReceiver.isConnected(getApplicationContext())){
+               Snackbar.make(torButton.getRootView(),"No data connection",Snackbar.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        disposables.dispose();
+        super.onDestroy();
     }
 
     private void listenToTorStatus() {
@@ -116,10 +146,9 @@ public class NetworkDashboard extends AppCompatActivity {
                 .torStatus
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::setTorConnectionState);
-        disposables.add(disposable);
+                .subscribe( this::setTorConnectionState);
 
-        // set current tor state
+        disposables.add(disposable);
         setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
     }
 
@@ -166,8 +195,8 @@ public class NetworkDashboard extends AppCompatActivity {
             torConnectionIcon.setColorFilter(waiting);
             torConnectionStatus.setText("Tor initializing");
         } else {
-            dojoBtn.setText("Enable");
-            dojoBtn.setEnabled(true);
+            torButton.setText("Enable");
+            torButton.setEnabled(true);
             torConnectionIcon.setColorFilter(disabledColor);
             torConnectionStatus.setText("Disabled");
         }
@@ -179,11 +208,17 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void startTor() {
+        if (ConnectivityStatus.hasConnectivity(getApplicationContext())) {
 
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
+            Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+            startIntent.setAction(TorService.START_SERVICE);
+            startService(startIntent);
 
+        } else {
+            Snackbar.make(torButton.getRootView(), R.string.in_offline_mode, Snackbar.LENGTH_LONG)
+                    .setAction("Turn off", view -> toggleNetwork())
+                    .show();
+        }
     }
 
     private void stopTor() {

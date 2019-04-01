@@ -14,6 +14,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
 
 public class SamouraiApplication extends Application {
@@ -31,11 +32,11 @@ public class SamouraiApplication extends Application {
     }
 
     public void startService() {
-        Intent startIntent = new Intent(this, TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
-
-
+        if (ConnectivityStatus.hasConnectivity(getApplicationContext()) && PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
+            Intent startIntent = new Intent(this, TorService.class);
+            startIntent.setAction(TorService.START_SERVICE);
+            startService(startIntent);
+        }
     }
 
     private void setUpChannels() {
