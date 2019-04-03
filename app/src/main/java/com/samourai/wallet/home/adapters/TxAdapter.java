@@ -233,9 +233,10 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 Calendar calendarDM = Calendar.getInstance();
                 calendarDM.setTimeZone(TimeZone.getTimeZone("UTC"));
                 calendarDM.setTime(date);
-                calendarDM.set(Calendar.HOUR, 0);
+                calendarDM.set(Calendar.HOUR_OF_DAY, 0);
                 calendarDM.set(Calendar.MINUTE, 0);
                 calendarDM.set(Calendar.SECOND, 0);
+                calendarDM.set(Calendar.MILLISECOND, 0);
                 if (!sectionDates.contains(calendarDM.getTime().getTime())) {
                     if (DateUtils.isToday(calendarDM.getTime().getTime())) {
                         if (show_todays_tx)
