@@ -14,14 +14,10 @@ See the Apache 2 License for the specific language governing permissions and lim
 package com.msopentech.thali.android.toronionproxy;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.util.Log;
-
 import com.msopentech.thali.toronionproxy.OnionProxyContext;
 import com.msopentech.thali.toronionproxy.WriteObserver;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,11 +39,6 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
     @Override
     protected InputStream getAssetOrResourceByName(String fileName) throws IOException {
         return context.getResources().getAssets().open(fileName);
-    }
-    @Override
-    protected InputStream getJNIBinary(String fileName) throws IOException {
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        return new FileInputStream(appInfo.nativeLibraryDir.concat("/".concat(fileName)));
     }
 
     @Override
