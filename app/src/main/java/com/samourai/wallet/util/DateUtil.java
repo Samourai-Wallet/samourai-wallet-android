@@ -7,6 +7,7 @@ import com.samourai.wallet.R;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateUtil {
 
@@ -50,10 +51,12 @@ public class DateUtil {
         if(now - date < hours24) {
             if(thenDay < nowDay) {
                 SimpleDateFormat sd = new SimpleDateFormat("E dd MMM HH:mm");
+                sd.setTimeZone(TimeZone.getDefault());
                 ret = sd.format(date * 1000L);
             }
             else {
                 SimpleDateFormat sd = new SimpleDateFormat("HH:mm");
+                sd.setTimeZone(TimeZone.getDefault());
                 ret = group(date) + " " + sd.format(date * 1000L);
             }
 
@@ -61,10 +64,12 @@ public class DateUtil {
         else {
             if(thenYear < nowYear) {
                 SimpleDateFormat sd = new SimpleDateFormat("dd MMM yyyy");
+                sd.setTimeZone(TimeZone.getDefault());
                 ret = sd.format(date * 1000L);
             }
             else {
                 SimpleDateFormat sd = new SimpleDateFormat("E dd MMM HH:mm");
+                sd.setTimeZone(TimeZone.getDefault());
                 ret = sd.format(date * 1000L);
             }
         }
