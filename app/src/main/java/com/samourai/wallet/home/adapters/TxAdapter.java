@@ -49,6 +49,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private CompositeDisposable disposables = new CompositeDisposable();
     private OnClickListener listener;
     private Boolean displaySatUnit = false;
+    private static int MAX_CONFIRM_COUNT = 3;
 
     public interface OnClickListener {
         void onClick(int position, Tx tx);
@@ -207,7 +208,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     }
 
 
-
     private synchronized Observable<List<Tx>> makeSectionedDataSet(List<Tx> txes) {
         return Observable.fromCallable(() -> {
             Collections.sort(txes, (tx, t1) -> Long.compare(tx.getTS(), t1.getTS()));
@@ -219,10 +219,10 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             boolean show_todays_tx = false;
             for (int i = 0; i < txes.size(); i++) {
                 Tx tx = txes.get(i);
-                if (tx.getConfirmations() < 6) {
+                if (tx.getConfirmations() < MAX_CONFIRM_COUNT) {
                     contains_pending = true;
                 }
-                if (tx.getConfirmations() >= 6 && DateUtils.isToday(tx.getTS()*1000)) {
+                if (tx.getConfirmations() >= MAX_CONFIRM_COUNT && DateUtils.isToday(tx.getTS() * 1000)) {
                     show_todays_tx = true;
                 }
             }
@@ -270,16 +270,16 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                     date.setTime(tx.getTS() * 1000);
                     SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
                     if (key == -1) {
-                        if (tx.getConfirmations() < 6) {
+                        if (tx.getConfirmations() < MAX_CONFIRM_COUNT) {
                             sectioned.add(tx);
                         }
                     } else if (fmt.format(key).equals(fmt.format(date))) {
-                        if(DateUtils.isToday(tx.getTS() * 1000)){
-                            if(tx.getConfirmations() >= 6){
+                        if (DateUtils.isToday(tx.getTS() * 1000)) {
+                            if (tx.getConfirmations() >= MAX_CONFIRM_COUNT) {
                                 sectioned.add(tx);
                             }
 
-                        }else {
+                        } else {
                             sectioned.add(tx);
                         }
 
