@@ -33,7 +33,7 @@ public class SamouraiApplication extends Application {
     }
 
     public void startService() {
-        if (ConnectivityStatus.hasConnectivity(getApplicationContext())) {
+        if (ConnectivityStatus.hasConnectivity(getApplicationContext()) && PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
             Intent startIntent = new Intent(this, TorService.class);
             startIntent.setAction(TorService.START_SERVICE);
             startService(startIntent);
