@@ -46,7 +46,16 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:theme="@style/ui_2_theme"
+            android:exported="true"
+            android:name=".paynym.addPaynym.AddPaynymActivity">
+        </activity>
+        <activity
+            android:name=".paynym.PayNymHome"
+            android:exported="true"
+            android:label="@string/paynyms"
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
