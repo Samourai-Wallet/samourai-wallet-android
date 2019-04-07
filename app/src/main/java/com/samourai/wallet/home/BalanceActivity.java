@@ -331,7 +331,8 @@ public class BalanceActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
+        Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
+        TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
 
         findViewById(R.id.send_fab).setOnClickListener(view -> {
