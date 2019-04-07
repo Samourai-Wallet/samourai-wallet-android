@@ -1,0 +1,106 @@
+package com.samourai.wallet.paynym.fragments;
+
+import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.samourai.wallet.R;
+import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.wallet.widgets.CircleImageView;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+
+public class PaynymListFragment extends Fragment {
+
+    private PaynymListFragmentViewModel mViewModel;
+    private RecyclerView list;
+    private static final String TAG = "PaynymListFragment";
+
+    public static PaynymListFragment newInstance() {
+        return new PaynymListFragment();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.paynym_account_list_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        list = view.findViewById(R.id.paynym_accounts_rv);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.divider_grey);
+        list.addItemDecoration(new ItemDividerDecorator(drawable));
+        list.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        list.setNestedScrollingEnabled(true);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(PaynymListFragmentViewModel.class);
+        PaynymAdapter pyanymAdapter = new PaynymAdapter();
+        list.setAdapter(pyanymAdapter);
+        mViewModel.pcodes.observe(this, pyanymAdapter::setPcodes);
+
+    }
+
+    public void addPcodes(ArrayList<String> list) {
+        mViewModel.pcodes.postValue(list);
+    }
+
+    class PaynymAdapter extends RecyclerView.Adapter<PaynymAdapter.ViewHolder> {
+        private ArrayList<String> pcodes = new ArrayList<>();
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.paynym_list_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            String strPaymentCode = pcodes.get(position);
+            Picasso.with(getContext()).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
+                    .into(holder.avatar);
+            holder.paynymCode.setText(BIP47Meta.getInstance().getLabel(strPaymentCode));
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return pcodes.size();
+        }
+
+        public void setPcodes(ArrayList<String> list) {
+            pcodes.clear();
+            pcodes.addAll(list);
+            this.notifyDataSetChanged();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            CircleImageView avatar;
+            TextView paynymCode;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                avatar = itemView.findViewById(R.id.paynym_avatar);
+                paynymCode = itemView.findViewById(R.id.paynym_code);
+            }
+        }
+    }
+}
