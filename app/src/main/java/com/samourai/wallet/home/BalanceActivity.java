@@ -74,6 +74,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.home.adapters.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
+import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -551,12 +552,6 @@ public class BalanceActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && TorManager.getInstance(getApplicationContext()).isConnected()) {
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_on);
-        } else {
-            menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
-        }
-
         menu.findItem(R.id.action_refresh).setVisible(false);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
@@ -569,24 +564,7 @@ public class BalanceActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        final MenuItem alertMenuItem = menu.findItem(R.id.action_tor);
-        FrameLayout rootView = (FrameLayout) alertMenuItem.getActionView();
 
-        menuTorIcon = rootView.findViewById(R.id.tor_menu_icon);
-        progressBarMenu = rootView.findViewById(R.id.tor_menu_progress);
-
-        rootView.setOnClickListener(v -> onOptionsItemSelected(alertMenuItem));
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-            progressBarMenu.setVisibility(View.INVISIBLE);
-            menuTorIcon.setImageResource(R.drawable.tor_on);
-        } else {
-            progressBarMenu.setVisibility(View.INVISIBLE);
-            menuTorIcon.setImageResource(R.drawable.tor_off);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -596,6 +574,9 @@ public class BalanceActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
+        if(id == R.id.action_network_dashboard){
+            startActivity(new Intent(this, NetworkDashboard.class));
+        }
         if (id == R.id.action_settings) {
             doSettings();
         } else if (id == R.id.action_support) {
@@ -608,17 +589,7 @@ public class BalanceActivity extends AppCompatActivity {
             }
         } else if (id == R.id.action_utxo) {
             doUTXO();
-        } else if (id == R.id.action_tor) {
-
-            if (TorManager.getInstance(this).isConnected() || TorManager.getInstance(this).isProcessRunning) {
-                stopTor();
-                PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
-            } else {
-                startTor();
-            }
-
-
-        } else if (id == R.id.action_backup) {
+        }  else if (id == R.id.action_backup) {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
                 try {
@@ -657,7 +628,6 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void startTor() {
         progressBarMenu.setVisibility(View.VISIBLE);
-        menuTorIcon.setImageResource(R.drawable.tor_on);
         Intent startIntent = new Intent(getApplicationContext(), TorService.class);
         startIntent.setAction(TorService.START_SERVICE);
         startService(startIntent);

@@ -135,7 +135,7 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext())) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext()))  {
             loaderTxView.setText("initializing Tor...");
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
