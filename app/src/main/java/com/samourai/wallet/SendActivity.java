@@ -805,9 +805,13 @@ public class SendActivity extends AppCompatActivity {
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
-        if ((FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) || PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+            changeType = 84;
+        }
+        else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
-        } else {
+        }
+        else {
             changeType = 44;
         }
 
