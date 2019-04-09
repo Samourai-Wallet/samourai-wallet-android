@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="alpha_create_wallet">Zapíš si tieto slová na papier a bezpečne si ich ulož. Nikdy ich nestrať a ani heslo k peňaženke.</string>
+    <string name="alpha_create_wallet">Zapíšte si tieto slová na papier a bezpečne si ich uložte. Nikdy ich nestrate a ani nezabudnite heslo k peňaženke.</string>
     <string name="alpha_create_confirm_backup">Slová som si bezpečne zapísal</string>
 
     <string name="creating_wallet">Vytváram peňaženku. Prosím čakajte...</string>
     <string name="restoring_wallet">Obnovujem peňaženku. Prosím čakajte...</string>
-    <string name="decrypting_bip38">Dekryptujem BIP38 heslo. Prosím čakajte...</string>
+    <string name="decrypting_bip38">Dešifrujem heslo typu BIP38. Prosím čakajte...</string>
 
     <string name="action_settings">Nastavenia</string>
     <string name="action_support">Podpora</string>
