@@ -40,9 +40,15 @@ public class NetworkDashboard extends AppCompatActivity {
 
     enum CONNECTION_STATUS {ENABLED, DISABLED, CONFIGURE, WAITING}
 
-    Button torButton, dataButton, dojoBtn;
-    TextView dataConnectionStatus, torConnectionStatus, dojoConnectionStatus;
-    ImageView dataConnectionIcon, torConnectionIcon, dojoConnectionIcon;
+    Button torButton;
+    Button dataButton;
+//    Button dojoBtn;
+    TextView dataConnectionStatus;
+    TextView torConnectionStatus;
+//    TextView dojoConnectionStatus;
+    ImageView dataConnectionIcon;
+    ImageView torConnectionIcon;
+//    ImageView dojoConnectionIcon;
     LinearLayout offlineMessage;
     int activeColor, disabledColor, waiting;
     CompositeDisposable disposables = new CompositeDisposable();
@@ -63,27 +69,27 @@ public class NetworkDashboard extends AppCompatActivity {
 
         dataButton = findViewById(R.id.networking_data_btn);
         torButton = findViewById(R.id.networking_tor_btn);
-        dojoBtn = findViewById(R.id.networking_dojo_btn);
+//        dojoBtn = findViewById(R.id.networking_dojo_btn);
 
         dataConnectionStatus = findViewById(R.id.network_data_status);
         torConnectionStatus = findViewById(R.id.network_tor_status);
-        dojoConnectionStatus = findViewById(R.id.network_dojo_status);
+//        dojoConnectionStatus = findViewById(R.id.network_dojo_status);
 
         dataConnectionIcon = findViewById(R.id.network_data_status_icon);
         torConnectionIcon = findViewById(R.id.network_tor_status_icon);
-        dojoConnectionIcon = findViewById(R.id.network_dojo_status_icon);
+//        dojoConnectionIcon = findViewById(R.id.network_dojo_status_icon);
 
 
         setDojoConnectionState(CONNECTION_STATUS.CONFIGURE);
         listenToTorStatus();
 
         dataButton.setOnClickListener(view -> toggleNetwork());
-
+/*
         dojoBtn.setOnClickListener(view -> {
             DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
             dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
         });
-
+*/
         torButton.setOnClickListener(view -> {
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
                 stopTor();
@@ -169,17 +175,17 @@ public class NetworkDashboard extends AppCompatActivity {
 
     private void setDojoConnectionState(CONNECTION_STATUS enabled) {
         if (enabled == CONNECTION_STATUS.ENABLED) {
-            dojoBtn.setText("Disable");
-            dojoConnectionIcon.setColorFilter(activeColor);
-            dojoConnectionStatus.setText("Enabled");
+//            dojoBtn.setText("Disable");
+//            dojoConnectionIcon.setColorFilter(activeColor);
+//            dojoConnectionStatus.setText("Enabled");
         } else if (enabled == CONNECTION_STATUS.CONFIGURE) {
-            dojoBtn.setText("configure");
-            dojoConnectionIcon.setColorFilter(waiting);
-            dojoConnectionStatus.setText("Not configured");
+//            dojoBtn.setText("configure");
+//            dojoConnectionIcon.setColorFilter(waiting);
+//            dojoConnectionStatus.setText("Not configured");
         } else {
-            dojoBtn.setText("Enable");
-            dojoConnectionIcon.setColorFilter(disabledColor);
-            dojoConnectionStatus.setText("Disabled");
+//            dojoBtn.setText("Enable");
+//            dojoConnectionIcon.setColorFilter(disabledColor);
+//            dojoConnectionStatus.setText("Disabled");
         }
     }
 
