@@ -86,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:text="Balance and transaction history will not be updated until a  working data connection is established"
+                    android:text="Balance and transaction history will not be updated until a working data connection is established"
                     android:textAlignment="viewStart" />
             </LinearLayout>
 
