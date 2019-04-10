@@ -75,6 +75,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.home.adapters.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -697,6 +698,8 @@ public class BalanceActivity extends AppCompatActivity {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
+                    } else if (DojoUtil.getInstance().isValidPairingPayload(strResult.trim())) {
+                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
                     } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
@@ -708,6 +711,7 @@ public class BalanceActivity extends AppCompatActivity {
             }
         } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
         } else {
+            ;
         }
 
     }

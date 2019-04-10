@@ -1,5 +1,7 @@
 package com.samourai.wallet.network.dojo;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,13 +38,18 @@ public class DojoUtil {
         try {
             JSONObject obj = new JSONObject(data);
 
+            Log.d("DojoUtil", obj.toString());
+
             if(obj.has("pairing"))    {
 
                 JSONObject pObj = obj.getJSONObject("pairing");
-                if(pObj.has("type") && pObj.has("version") && pObj.has("apiKey") && pObj.has("url"))    {
+                Log.d("DojoUtil", pObj.toString());
+                if(pObj.has("type") && pObj.has("version") && pObj.has("apikey") && pObj.has("url"))    {
+                    Log.d("DojoUtil", "true");
                     return true;
                 }
                 else    {
+                    Log.d("DojoUtil", "false");
                     return false;
                 }
 
@@ -83,7 +90,7 @@ public class DojoUtil {
         try {
             JSONObject obj = new JSONObject(data);
             JSONObject pObj = obj.getJSONObject("pairing");
-            return pObj.getString("apiKey");
+            return pObj.getString("apikey");
         }
         catch(JSONException je) {
             return null;
