@@ -1,4 +1,4 @@
-package com.samourai.wallet.network;
+package com.samourai.wallet.network.dojo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
