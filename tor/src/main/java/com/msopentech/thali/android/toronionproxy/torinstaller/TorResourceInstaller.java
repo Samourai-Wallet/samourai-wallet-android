@@ -75,17 +75,13 @@ public class TorResourceInstaller implements TorServiceConstants {
 
         File fileNativeDir = new File(getNativeLibraryDir(context));
         fileTor = new File(fileNativeDir, TOR_ASSET_KEY);
-        Log.i(TAG, "installResources: 1 fileTor => ".concat(fileTor.getAbsolutePath()));
         if (fileTor.exists()) {
             if (fileTor.canExecute()) {
-                Log.i(TAG, "installResources: 2 fileTor => ".concat(fileTor.getAbsolutePath()));
                 return fileTor;
             } else {
                 setExecutable(fileTor);
-                Log.i(TAG, "installResources: 3 fileTor => ".concat(fileTor.getAbsolutePath()));
 
                 if (fileTor.canExecute()) {
-                    Log.i(TAG, "installResources: 4 fileTor => ".concat(fileTor.getAbsolutePath()));
                     return fileTor;
                 }
             }
@@ -95,7 +91,6 @@ public class TorResourceInstaller implements TorServiceConstants {
             InputStream is = new FileInputStream(fileTor);
             streamToFile(is, fileTor, false, true);
             setExecutable(fileTor);
-            Log.i(TAG, "installResources: 5 fileTor => ".concat(fileTor.getAbsolutePath()));
 
             if (fileTor.exists() && fileTor.canExecute())
                 return fileTor;
@@ -105,10 +100,8 @@ public class TorResourceInstaller implements TorServiceConstants {
         fileTor = new File(installFolder, TOR_ASSET_KEY);
         //fileTor = NativeLoader.initNativeLibs(context,fileTor);
         NativeLoader.initNativeLibs(context, fileTor);
-        Log.i(TAG, "installResources: 6 fileTor => ".concat(fileTor.getAbsolutePath()));
 
         setExecutable(fileTor);
-        Log.i(TAG, "installResources: 7 fileTor => ".concat(fileTor.getAbsolutePath()));
 
         if (fileTor != null && fileTor.exists() && fileTor.canExecute())
             return fileTor;
