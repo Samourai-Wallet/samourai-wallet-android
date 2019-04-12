@@ -28,9 +28,6 @@ public class NativeLoader {
         try {
             zipFile = new ZipFile(context.getApplicationInfo().sourceDir);
             ZipEntry entry = zipFile.getEntry("lib/" + arch + "/" + LIB_SO_NAME);
-            Log.i(TAG, "loadFromZip: ".concat(entry.getName()));
-            Log.i(TAG, "loadFromZip: ".concat(zipFile.getName()));
-            Log.i(TAG, "loadFromZip: ".concat("lib/" + arch + "/" + LIB_SO_NAME));
             if (entry == null) {
                 throw new Exception("Unable to find file in apk:" + "lib/" + arch + "/" + LIB_NAME);
             }
@@ -43,7 +40,6 @@ public class NativeLoader {
             int len;
             while ((len = stream.read(buf)) > 0) {
                 Thread.yield();
-                Log.i(TAG, "loadFromZip: BIN LOAD->  ".concat(String.valueOf(buf.length)));
                 out.write(buf, 0, len);
             }
             out.close();
