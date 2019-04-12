@@ -19,14 +19,21 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0' // for jitpack
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        // for jitpack
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.jehy'
+rootProject.allprojects {
+    repositories {
+        maven {
+            url "https://raw.githubusercontent.com/guardianproject/gpmaven/master"
+        }
+    }
+}
 
 repositories {
     google()
@@ -46,12 +53,18 @@ android {
         versionName '0.0.7'
         versionCode 7
         archivesBaseName = 'ThaliOnionProxyAndroid'
+
     }
     defaultConfig {
-        minSdkVersion 21 // Please see the readme if you need Sdk support below 16
+        minSdkVersion 21
+        // Please see the readme if you need Sdk support below 16
         targetSdkVersion 28
     }
-
+    sourceSets {
+        main {
+            jni.srcDirs = []
+        }
+    }
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
@@ -64,7 +77,8 @@ android {
 dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'
-    androidTestImplementation 'org.slf4j:slf4j-android:1.7.7'
+    implementation 'org.torproject:tor-android-binary:0.3.5.8-rc-v2'
+    androidTestImplementation 'org.slf4j:slf4j-android:1.7.25'
 }
 
 task sourcesJar(type: Jar) {

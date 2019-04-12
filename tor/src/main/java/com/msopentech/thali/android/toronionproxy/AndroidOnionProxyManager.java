@@ -32,34 +32,22 @@ package com.msopentech.thali.android.toronionproxy;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.util.Log;
 
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
 
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
-import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
-import static android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY;
 
 public class AndroidOnionProxyManager extends OnionProxyManager {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidOnionProxyManager.class);

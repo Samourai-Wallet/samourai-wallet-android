@@ -67,6 +67,8 @@ http://www.gnu.org/licenses/lgpl.html
 
 package com.msopentech.thali.toronionproxy;
 
+import android.util.Log;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,11 +147,13 @@ public class FileUtilities {
      * @throws java.io.IOException - If any of the file operations fail
      */
     public static void cleanInstallOneFile(InputStream readFrom, File fileToWriteTo) throws IOException {
-        if (fileToWriteTo.exists() && !fileToWriteTo.delete()) {
-            throw new RuntimeException("Could not remove existing file " + fileToWriteTo.getName());
-        }
+//        if (fileToWriteTo.exists() && !fileToWriteTo.delete()) {
+//            throw new RuntimeException("Could not remove existing file " + fileToWriteTo.getName());
+//        }
+
         OutputStream out = new FileOutputStream(fileToWriteTo);
         FileUtilities.copy(readFrom, out);
+        Log.i("cleanInstallOneFile", "cleanInstallOneFile: ".concat(fileToWriteTo.getAbsolutePath()));
     }
 
     public static void recursiveFileDelete(File fileOrDirectory) {

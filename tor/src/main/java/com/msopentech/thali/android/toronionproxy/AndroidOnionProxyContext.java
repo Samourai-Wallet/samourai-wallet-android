@@ -14,6 +14,8 @@ See the Apache 2 License for the specific language governing permissions and lim
 package com.msopentech.thali.android.toronionproxy;
 
 import android.content.Context;
+
+import com.msopentech.thali.android.toronionproxy.torinstaller.TorResourceInstaller;
 import com.msopentech.thali.toronionproxy.OnionProxyContext;
 import com.msopentech.thali.toronionproxy.WriteObserver;
 
@@ -25,6 +27,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class AndroidOnionProxyContext extends OnionProxyContext {
     private final Context context;
+    private static final String TAG = "AndroidOnionProxyContex";
 
     public AndroidOnionProxyContext(Context context, String workingSubDirectoryName) {
         super(context.getDir(workingSubDirectoryName, MODE_PRIVATE));
@@ -44,5 +47,11 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
     @Override
     public String getProcessId() {
         return String.valueOf(android.os.Process.myPid());
+    }
+
+
+    @Override
+    protected TorResourceInstaller getTorInstaller() {
+        return new TorResourceInstaller(context, this.workingDirectory);
     }
 }
