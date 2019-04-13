@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Samourai is offline"
+                    android:text="@string/is_offline"
                     android:textStyle="bold" />
 
                 <TextView
@@ -86,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:text="Balance and transaction history will not be updated until a  working data connection is established"
+                    android:text="@string/history_will_be_updated"
                     android:textAlignment="viewStart" />
             </LinearLayout>
 
