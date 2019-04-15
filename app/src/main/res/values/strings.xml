@@ -675,5 +675,14 @@
     <string name="cannot_process_stowaway">Cannot process Stowaway</string>
     <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
     <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
+    <string name="powering_samourai_wallet_">Powering Samourai Wallet with your own personal node offers the best level of privacy and independence when interacting with the bitcoin network. Dojo makes running a full node easy and simple.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play full bitcoin node\n\n -Automatically configured Tor hidden service\n\n -Independence from default Samourai servers</string>
+    <string name="dojo_connect_instruction">If you already have a Dojo Full Node or are \nrunning the free and open source Dojo Software\non your own hardware, scan the pairing QR code\nlocated on the Dojo Maintenance control panel</string>
+    <string name="dojo_headline">Power Samourai with your  own personal DOJO full node</string>
+    <string name="connect_to_existing_dojo">Connect to existing Dojo</string>
+    <string name="preorder">preorder</string>
 
 </resources>

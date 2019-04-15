@@ -15,6 +15,9 @@ public class Tx {
     private long ts = 0L;
     private boolean isRBF = false;
 
+    // for recycler view view type
+    public String section = null;
+
     public Tx(String hash, String address, double amount, long date, long confirmations) {
         this.strHash = hash;
         this.strAddress = address;

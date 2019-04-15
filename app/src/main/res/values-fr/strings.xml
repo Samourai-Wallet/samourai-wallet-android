@@ -668,4 +668,14 @@
     <string name="zero_bits">0 octets</string>
     <string name="not_available">N/D (non disponible)</string>
     
+    <string name="start_stonewall">Lancer STONEWALL pour dépenser</string>
+    
+    <string name="invalid_address">Adresse invalide</string>
+    <string name="show_tx">Afficher transaction</string>
+    <string name="unrecognized_step">Étape #Cahoots non reconnue</string>
+    <string name="cannot_process_stowaway">Traitement Stowaway impossible</string>
+    <string name="cannot_process_stonewall">Traitement STONEWALL impossible</string>
+    <string name="cannot_process_cahoots">Traitement #Cahoots impossible</string>
+    
+    
 </resources>

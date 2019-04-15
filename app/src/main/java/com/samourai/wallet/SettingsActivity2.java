@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,8 +19,6 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -34,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
-import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -64,16 +60,13 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
-import com.samourai.wallet.spend.SendActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.TorUtil;
 
 import com.yanzhenjie.zbar.Symbol;
 
@@ -84,8 +77,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
-
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 

@@ -1,77 +1,125 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    android:orientation="vertical">
+    android:background="@color/windowDark"
+    android:orientation="vertical"
+    tools:context="com.samourai.wallet.whirlpool.EmptyWhirlPool">
 
-    <include layout="@layout/alert_layout" />
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_accent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:fitsSystemWindows="true"
+            app:contentScrim="#6c768b"
+            app:expandedTitleGravity="center_horizontal|center"
+            app:expandedTitleMarginTop="82dp"
+            app:expandedTitleTextAppearance="@style/BalanceToolbarExpandedTitleStyle"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-8dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
+        android:id="@+id/tx_swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/alert"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView24">
 
-    <ListView
-        android:id="@+id/txList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@drawable/list_divider"
-        android:layout_below="@+id/BalanceBar"
-        />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_txes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/wallet_menu"
+
+    <com.github.clans.fab.FloatingActionMenu
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        fab:fab_addButtonColorNormal="#FF14a1fb"
-        fab:fab_addButtonColorPressed="@color/blue_semi_transparent_pressed"
-        fab:fab_addButtonPlusIconColor="@color/white"
-        fab:fab_labelStyle="@style/menu_labels_style"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_margin="16dp"
+        fab:layout_anchor="@+id/rv_txes"
+        fab:layout_anchorGravity="right|bottom"
+        fab:menu_animationDelayPerItem="32"
+        fab:menu_shadowColor="#444"
+        fab:menu_colorNormal="@color/accent"
+        fab:menu_colorPressed="#0AA1E9"
+        fab:menu_colorRipple="#A8A8A8"
+        tools:showIn="@layout/activity_balance">
 
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/bip47"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/paynym_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_paynym_white_24dp"
+            android:src="@drawable/ic_paynym_white_24dp"
             fab:fab_colorNormal="#FF673ab7"
             fab:fab_colorPressed="#FF512da8"
-            fab:fab_title="@string/action_bip47"
-            />
+            fab:fab_label="@string/action_bip47"
+            fab:fab_size="mini" />
 
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/send"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/send_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_samourai_send_24dp"
+            android:src="@drawable/ic_samourai_send_24dp"
             fab:fab_colorNormal="#e91e63"
             fab:fab_colorPressed="#c2185b"
-            fab:fab_title="@string/send"
-            />
+            fab:fab_colorRipple="#A7174F"
+            fab:fab_label="@string/send"
+            fab:fab_size="mini" />
 
-        <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
-            android:id="@+id/receive"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/receive_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_size="mini"
-            fab:fab_icon="@drawable/ic_samourai_deposit_24dp"
-            fab:fab_colorNormal="#00bfa5"
-            fab:fab_colorPressed="#009688"
-            fab:fab_title="@string/receive"
-            />
+            android:src="@drawable/ic_samourai_deposit_24dp"
+            app:fab_colorNormal="#00bfa5"
+            app:fab_colorPressed="#009688"
+            app:fab_label="@string/receive"
+            app:fab_size="mini"
+            app:fab_title="@string/receive" />
 
-    </net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu>
+    </com.github.clans.fab.FloatingActionMenu>
 
-</RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+
