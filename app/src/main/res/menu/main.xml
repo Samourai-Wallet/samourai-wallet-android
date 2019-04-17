@@ -14,13 +14,14 @@
         android:title=""
         android:visible="true"
         app:showAsAction="always" />
+
+
     <item
-        android:id="@+id/action_tor"
-        android:visible="true"
+        android:id="@+id/action_network_dashboard"
+        android:icon="@drawable/ic_network_check_black_24dp"
         android:title=""
-        app:actionLayout="@layout/tor_option_menu"
-        app:showAsAction="always"
-        />
+        android:visible="true"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_scan_qr"
         android:icon="@drawable/ic_crop_free_white_24dp"

@@ -6,18 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.util.DateUtil;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONObject;
@@ -113,6 +110,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
             }
             SimpleDateFormat sdf = new SimpleDateFormat("H:mm", Locale.US);
+            sdf.setTimeZone(TimeZone.getDefault());
+
             holder.tvDateView.setText(sdf.format(tx.getTS() * 1000L));
             if (tx.getPaymentCode() != null) {
                 holder.tvPaynymId.setVisibility(View.VISIBLE);
@@ -140,7 +139,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
             }
         } else {
-            SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+            SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            fmt.setTimeZone(TimeZone.getDefault());
             Date date = new Date(tx.getTS());
             if (tx.getTS() == -1L) {
                 holder.tvSection.setText("  Pending");
@@ -175,7 +175,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Tx> list) -> {
-//                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TxDiffUtil(this.txes, list));
                     this.txes = list;
                     this.notifyDataSetChanged();
                 });
@@ -231,7 +230,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 Date date = new Date();
                 date.setTime(tx.getTS() * 1000);
                 Calendar calendarDM = Calendar.getInstance();
-                calendarDM.setTimeZone(TimeZone.getTimeZone("UTC"));
+                calendarDM.setTimeZone(TimeZone.getDefault());
                 calendarDM.setTime(date);
                 calendarDM.set(Calendar.HOUR_OF_DAY, 0);
                 calendarDM.set(Calendar.MINUTE, 0);
@@ -254,7 +253,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             if (contains_pending)
                 sectionDates.add(-1L);
 
-
             for (Long key : sectionDates) {
 
                 Tx section = new Tx(new JSONObject());
@@ -269,6 +267,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                     Date date = new Date();
                     date.setTime(tx.getTS() * 1000);
                     SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+                    fmt.setTimeZone(TimeZone.getDefault());
                     if (key == -1) {
                         if (tx.getConfirmations() < MAX_CONFIRM_COUNT) {
                             sectioned.add(tx);

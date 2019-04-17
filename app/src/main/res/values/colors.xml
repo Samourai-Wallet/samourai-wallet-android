@@ -4,6 +4,7 @@
     <item name="blue" type="color">#FF33B5E5</item>
     <item name="green" type="color">#FF99CC00</item>
     <item name="red" type="color">#FFFF4444</item>
+    <item name="disabledRed" type="color">#A82D2D</item>
     <item name="darkgrey" type="color">#FF1a1c1f</item>
 
     <color name="window">#272c33</color>
@@ -24,7 +25,7 @@
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
     <color name="grey_accent">#6c768b</color>
     <color name="windowDark">#282d33</color>
-    <color name="blue_ui_2">#1561cb</color>
+    <color name="blue_ui_2">#1561CB</color>
     <color name="txt_grey">#C7CAD1</color>
 
     <color name="cyan_ui_2">#58b9b8</color>

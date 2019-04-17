@@ -179,7 +179,7 @@ public class TorService extends Service {
     }
 
     private void updateNotification(String content) {
-        Log.i(TAG, "Tor Log: ".concat(content));
+//        Log.i(TAG, "Tor Log: ".concat(content));
         if (content.isEmpty()) {
             content = "Bootstrapping...";
         }
