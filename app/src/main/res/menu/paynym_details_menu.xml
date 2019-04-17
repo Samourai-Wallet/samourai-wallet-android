@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/send_menu_paynym_details"
+        android:icon="@drawable/ic_action_send"
+        android:title="Item"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/edit_menu_paynym_details"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="Item"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/view_code_paynym_details"
+        android:title="View Payment code"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/resync_menu_paynym_details"
+        android:title="Resync Paynym"
+        app:showAsAction="never" />
+</menu>

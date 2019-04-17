@@ -1,6 +1,7 @@
 package com.samourai.wallet.paynym.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.bip47.paynym.WebUtil;
+import com.samourai.wallet.paynym.PayNymDetailsActivity;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;
@@ -62,6 +65,10 @@ public class PaynymListFragment extends Fragment {
         mViewModel.pcodes.postValue(list);
     }
 
+    public void  onPayNymItemClick(String pcode) {
+        startActivity(new Intent(getActivity(), PayNymDetailsActivity.class).putExtra("pcode", pcode));
+    }
+
     class PaynymAdapter extends RecyclerView.Adapter<PaynymAdapter.ViewHolder> {
         private ArrayList<String> pcodes = new ArrayList<>();
 
@@ -74,10 +81,10 @@ public class PaynymListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             String strPaymentCode = pcodes.get(position);
-            Picasso.with(getContext()).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
+            Picasso.with(getContext()).load(WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
                     .into(holder.avatar);
             holder.paynymCode.setText(BIP47Meta.getInstance().getLabel(strPaymentCode));
-
+            holder.avatar.getRootView().setOnClickListener(view -> onPayNymItemClick(pcodes.get(position)));
         }
 
         @Override

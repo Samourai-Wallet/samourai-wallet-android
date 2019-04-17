@@ -46,11 +46,14 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".paynym.PayNymDetailsActivity"
             android:theme="@style/ui_2_theme"
+            />
+        <activity
+            android:name=".paynym.addPaynym.AddPaynymActivity"
             android:exported="true"
-            android:label="Add"
-            android:name=".paynym.addPaynym.AddPaynymActivity">
-        </activity>
+            android:label="@string/add_new"
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".paynym.PayNymHome"
             android:exported="true"
@@ -234,11 +237,10 @@
 
         <activity
             android:name=".SendActivity"
-            android:exported="true"
-            android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
             android:theme="@style/ui_2_theme"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlPoolActivity"
             android:exported="true"

@@ -675,5 +675,8 @@
     <string name="cannot_process_stowaway">Cannot process Stowaway</string>
     <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
     <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="add_new">Add New</string>
+    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="follow">Follow</string>
 
 </resources>

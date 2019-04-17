@@ -24,6 +24,7 @@ public class AddPaynymActivity extends AppCompatActivity {
     private ViewSwitcher viewSwitcher;
     private RecyclerView searchPaynymList;
     private static final String TAG = "AddPaynymActivity";
+    private String pcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class AddPaynymActivity extends AppCompatActivity {
         searchPaynymList = findViewById(R.id.search_list_addpaynym);
         searchPaynymList.setLayoutManager(new LinearLayoutManager(this));
         searchPaynymList.setAdapter(new SearchAdapter());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 
@@ -62,7 +65,9 @@ public class AddPaynymActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
