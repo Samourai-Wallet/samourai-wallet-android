@@ -54,7 +54,7 @@
 
         </activity>
         <activity
-            android:name=".paynym.PayNymDetailsActivity"
+            android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:theme="@style/ui_2_theme"
             />
         <activity
