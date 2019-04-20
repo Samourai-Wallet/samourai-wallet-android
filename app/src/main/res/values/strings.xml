@@ -690,5 +690,6 @@
 
     <string name="is_offline">Samourai is offline</string>
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
+    <string name="you_received_s">You received</string>
 
 </resources>

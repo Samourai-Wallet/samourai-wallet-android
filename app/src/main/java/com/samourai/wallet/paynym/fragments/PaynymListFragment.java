@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.paynym.WebUtil;
-import com.samourai.wallet.paynym.PayNymDetailsActivity;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;

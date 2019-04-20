@@ -43,7 +43,14 @@ import org.bitcoinj.crypto.MnemonicException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class PayNymDetailsActivity extends AppCompatActivity {
@@ -54,11 +61,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     private RecyclerView historyRecyclerView;
     private Button followBtn;
     private static final String TAG = "PayNymDetailsActivity";
-    private List<String> addresses;
     private BalanceViewModel balanceViewModel;
+    private Group followGroup, txListGroup;
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private List<Tx> txesList = new ArrayList<>();
     private PaynymTxListAdapter paynymTxListAdapter;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,8 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         followMessage = findViewById(R.id.follow_message);
         historyRecyclerView = findViewById(R.id.recycler_view_paynym_history);
         followBtn = findViewById(R.id.paynym_follow_btn);
+        followGroup = findViewById(R.id.follow_group_paynym);
+        txListGroup = findViewById(R.id.tx_list_group);
 
         if (getIntent().hasExtra("pcode")) {
             pcode = getIntent().getStringExtra("pcode");
@@ -90,11 +100,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
             hideFollow();
         }
 
-
-        addresses = SentToFromBIP47Util.getInstance().get(pcode);
-        if(addresses!=null){
-            addresses = new ArrayList<>();
-        }
         paynymTxListAdapter = new PaynymTxListAdapter(txesList, getApplicationContext());
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         historyRecyclerView.setAdapter(paynymTxListAdapter);
@@ -106,15 +111,13 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     }
 
     private void hideFollow() {
-        followMessage.setVisibility(View.GONE);
-        followBtn.setVisibility(View.GONE);
-        historyRecyclerView.setVisibility(View.VISIBLE);
+        txListGroup.setVisibility(View.VISIBLE);
+        followGroup.setVisibility(View.GONE);
     }
 
     private void showFollow() {
-        followMessage.setVisibility(View.VISIBLE);
-        followBtn.setVisibility(View.VISIBLE);
-        historyRecyclerView.setVisibility(View.GONE);
+        txListGroup.setVisibility(View.GONE);
+        followGroup.setVisibility(View.VISIBLE);
     }
 
     private void showFollowAlert() {
@@ -147,37 +150,53 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     }
 
     private void loadTxes() {
-        List<Tx> txs = APIFactory.getInstance(this).getAllXpubTxs();
-        Log.i(TAG, "loadTxes: 1 ---> ".concat(gson.toJson(txs)));
-        try {
-            APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (MnemonicException.MnemonicLengthException e) {
-            e.printStackTrace();
-        }
 
-        if (txs != null)
-            for (Tx tx : txs) {
-                if (tx.getPaymentCode() != null) {
-                    if (tx.getPaymentCode().equals(pcode) && tx.getAmount() > 0) {
-                        txesList.add(tx);
-                    }
-
-                }
-                for (String hash : addresses) {
-                    if (hash.equals(tx.getHash())) {
-                        txesList.add(tx);
-                    }
-                }
-                Log.i(TAG, "loadTxes: ".concat(gson.toJson(txesList)));
-                if(txesList.size() != 0){
-                    hideFollow();
-                }
-                paynymTxListAdapter.notifyDataSetChanged();
+        Disposable disposable = Observable.fromCallable(() -> {
+            List<Tx> txesListSelected = new ArrayList<>();
+            List<Tx> txs = APIFactory.getInstance(this).getAllXpubTxs();
+            try {
+                APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (MnemonicException.MnemonicLengthException e) {
+                e.printStackTrace();
             }
 
+            if (txs != null)
+                for (Tx tx : txs) {
+                    if (tx.getPaymentCode() != null) {
 
+                        if (tx.getPaymentCode().equals(pcode)) {
+                            txesListSelected.add(tx);
+                        }
+
+                    }
+                    List<String> hashes = SentToFromBIP47Util.getInstance().get(pcode);
+                    if (hashes != null)
+                        for (String hash : hashes) {
+                            if (hash.equals(tx.getHash())) {
+                                if (!txesListSelected.contains(tx)) {
+                                    txesListSelected.add(tx);
+                                }
+                            }
+                        }
+                }
+            return txesListSelected;
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(txes -> {
+                    this.txesList.clear();
+                    this.txesList.addAll(txes);
+                    paynymTxListAdapter.notifyDataSetChanged();
+                });
+        disposables.add(disposable);
+    }
+
+    @Override
+    protected void onDestroy() {
+        disposables.dispose();
+        super.onDestroy();
     }
 
     @Override

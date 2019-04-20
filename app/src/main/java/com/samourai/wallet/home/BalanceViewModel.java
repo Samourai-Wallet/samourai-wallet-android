@@ -72,10 +72,8 @@ public class BalanceViewModel extends AndroidViewModel {
                             txs.postValue(txes);
                             toggleSat.setValue(false);
                             balance.postValue(xpub_balance);
-                            Log.i(TAG, "BalanceViewModel: disposable.complee".concat(String.valueOf(txes.size())));
 
                         }, error -> {
-                            Log.i(TAG, "BalanceViewModel: disposable.error ".concat(error.getMessage()));
                             txs.postValue(new ArrayList<>());
                             toggleSat.setValue(false);
                             balance.postValue(0L);
