@@ -38,6 +38,7 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.yanzhenjie.zbar.Symbol;
 
@@ -1102,7 +1103,7 @@ public class BIP47Activity extends Activity {
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if(change > 0L)  {
-            String change_address = BIP49Util.getInstance(BIP47Activity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(BIP47Activity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
+            String change_address = BIP84Util.getInstance(BIP47Activity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(BIP47Activity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(change));
         }
         Log.d("BIP47Activity", "outpoints:" + outpoints.size());
