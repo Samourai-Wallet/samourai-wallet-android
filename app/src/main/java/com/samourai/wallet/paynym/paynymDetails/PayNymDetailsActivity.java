@@ -38,6 +38,8 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.home.BalanceViewModel;
+import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
+import com.samourai.wallet.paynym.fragments.ShowPayNymQRBottomSheet;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
@@ -281,12 +283,19 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 finish();
                 break;
             }
+            case R.id.view_code_paynym_details: {
+                Bundle bundle =new Bundle();
+                bundle.putString("pcode",pcode);
+                ShowPayNymQRBottomSheet showPayNymQRBottomSheet = new ShowPayNymQRBottomSheet();
+                showPayNymQRBottomSheet.setArguments(bundle);
+                showPayNymQRBottomSheet.show(getSupportFragmentManager(), showPayNymQRBottomSheet.getTag());
+                break;
+            }
 
 
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     @Override
