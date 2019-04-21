@@ -1,6 +1,7 @@
 package com.samourai.wallet.paynym.paynymDetails;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.tx.TxDetailsActivity;
 
 import org.bitcoinj.core.Coin;
 
@@ -63,6 +65,11 @@ public class PaynymTxListAdapter extends RecyclerView.Adapter<PaynymTxListAdapte
             holder.icon.setImageResource(R.drawable.incoming_tx_green);
             holder.amount.setText(context.getString(R.string.you_received).concat(" ").concat(this.getBTCDisplayAmount(_amount)).concat(" BTC"));
         }
+        holder.amount.getRootView().setOnClickListener(view -> {
+            Intent txIntent = new Intent(context, TxDetailsActivity.class);
+            txIntent.putExtra("TX", tx.toJSON().toString());
+            context.startActivity(txIntent);
+        });
     }
 
     @Override

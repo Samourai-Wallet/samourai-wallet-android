@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="280dp"
     android:layout_gravity="center"
     android:layout_margin="12dp"
     android:background="@drawable/alert_round">
@@ -22,58 +22,29 @@
         app:srcCompat="@drawable/ic_person_add_24dp" />
 
     <TextView
-        android:id="@+id/textView44"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="sans-serif"
-        android:text="A one time connection fee of 0.0001255"
-        android:textAlignment="viewStart"
-        android:textColor="#9B9B9B"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/follow_title_paynun_dialog" />
-
-    <TextView
-        android:id="@+id/follow_title_paynun_dialog"
+        android:id="@+id/follow_title_paynym_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="Follow +blackflower"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#666464"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView13"
         app:layout_constraintStart_toStartOf="@+id/imageView13"
-        app:layout_constraintTop_toBottomOf="@+id/imageView13" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView13"
+        tools:text="Follow +blackflower" />
 
     <Button
-        android:id="@+id/dojo_paste_config"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Paste Details"
-        android:textAllCaps="true"
-        android:textColor="@color/primary_dark"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/dojo_scan_qr"
-        app:layout_constraintEnd_toStartOf="@+id/dojo_scan_qr"
-        app:layout_constraintTop_toTopOf="@+id/dojo_scan_qr" />
-
-    <Button
-        android:id="@+id/dojo_scan_qr"
+        android:id="@+id/follow_paynym_btn"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="Scan QR code"
+        android:layout_marginBottom="4dp"
+        android:text="Ok, Follow"
         android:textAllCaps="true"
         android:textColor="@color/blue"
         android:textStyle="bold"
@@ -81,5 +52,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView44" />
+        app:layout_constraintTop_toBottomOf="@+id/textView48" />
+
+    <TextView
+        android:id="@+id/textView48"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/paynym_follow_message"
+        android:textColor="@color/text_ui2_grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/one_time_fee_message" />
+
+    <TextView
+        android:id="@+id/one_time_fee_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/paynym_follow_fee_message"
+        android:textColor="@color/text_ui2_grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/follow_title_paynym_dialog" />
+
+    <Button
+        android:id="@+id/cancel_btn"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/cancel"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@+id/follow_paynym_btn"
+        app:layout_constraintEnd_toStartOf="@+id/follow_paynym_btn"
+        app:layout_constraintTop_toTopOf="@+id/follow_paynym_btn" />
+
 </android.support.constraint.ConstraintLayout>

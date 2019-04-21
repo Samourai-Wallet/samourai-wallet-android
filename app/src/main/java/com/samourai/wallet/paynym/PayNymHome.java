@@ -2,6 +2,7 @@ package com.samourai.wallet.paynym;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -9,13 +10,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -24,9 +31,13 @@ import com.samourai.wallet.paynym.fragments.PaynymListFragment;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.ViewPager;
 import com.squareup.picasso.Picasso;
+import com.yanzhenjie.zbar.Symbol;
 
+import org.bitcoinj.core.AddressFormatException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -38,6 +49,11 @@ import static com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API;
 
 
 public class PayNymHome extends AppCompatActivity {
+
+
+    private static final int EDIT_PCODE = 2000;
+    private static final int RECOMMENDED_PCODE = 2001;
+    private static final int SCAN_PCODE = 2077;
 
     private TabLayout paynymTabLayout;
     private ViewPager payNymViewPager;
@@ -91,14 +107,18 @@ public class PayNymHome extends AppCompatActivity {
         });
 
         payNymHomeViewModel.followersList.observe(this, followersList -> {
-            tabTitle[1] = "Followers ".concat(" (").concat(String.valueOf(followersList.size())).concat(")");
+            if (followersList != null) {
+                tabTitle[1] = "Followers ".concat(" (").concat(String.valueOf(followersList.size())).concat(")");
+            }
             followersFragment.addPcodes(followersList);
             adapter.notifyDataSetChanged();
         });
         payNymHomeViewModel.followingList.observe(this, followingList -> {
 
             followingFragment.addPcodes(followingList);
-            tabTitle[0] = "Following ".concat(" (").concat(String.valueOf(followingList.size())).concat(")");
+            if (followingList != null) {
+                tabTitle[0] = "Following ".concat(" (").concat(String.valueOf(followingList.size())).concat(")");
+            }
             adapter.notifyDataSetChanged();
 
         });
@@ -108,13 +128,17 @@ public class PayNymHome extends AppCompatActivity {
 
     private void initPaynym() {
         progressBar.setVisibility(View.VISIBLE);
-        Disposable disposable = getPanym()
+        payNymViewPager.setVisibility(View.INVISIBLE);
+        Disposable disposable = getPaynym()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(jsonObject -> {
                     progressBar.setVisibility(View.GONE);
+                    payNymViewPager.setVisibility(View.VISIBLE);
                     payNymHomeViewModel.setPaynymPayload(jsonObject);
                 }, error -> {
+
+                    payNymViewPager.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
 
                 });
@@ -127,7 +151,7 @@ public class PayNymHome extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private Observable<JSONObject> getPanym() {
+    private Observable<JSONObject> getPaynym() {
 
         return Observable.fromCallable(() -> {
             final String strPaymentCode = BIP47Util.getInstance(PayNymHome.this).getPaymentCode().toString();
@@ -152,12 +176,87 @@ public class PayNymHome extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        if (followingFragment != null && followingFragment.isVisible()) {
+            followingFragment.rebuildList();
+        }
+        if (followersFragment != null && followersFragment.isVisible()) {
+            followersFragment.rebuildList();
+        }
+        super.onResume();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                break;
+            }
+            case R.id.action_support: {
+                doSupport();
+                break;
+            }
+            case R.id.action_scan_qr: {
+                Intent intent = new Intent(this, ZBarScannerActivity.class);
+                intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+                startActivityForResult(intent, SCAN_PCODE);
+                break;
+            }
+            case R.id.action_unarchive: {
+                doUnArchive();
+                break;
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bip47_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void doSupport() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/section/14-payment-codes"));
+        startActivity(intent);
+    }
+
+    private void doUnArchive() {
+
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(true);
+
+        //
+        // check for own payment code
+        //
+        try {
+            if (_pcodes.contains(BIP47Util.getInstance(this).getPaymentCode().toString())) {
+                _pcodes.remove(BIP47Util.getInstance(this).getPaymentCode().toString());
+                BIP47Meta.getInstance().remove(BIP47Util.getInstance(this).getPaymentCode().toString());
+            }
+        } catch (AddressFormatException afe) {
+            ;
+        }
+
+        for (String pcode : _pcodes) {
+            BIP47Meta.getInstance().setArchived(pcode, false);
+        }
+
+        String[] pcodes = new String[_pcodes.size()];
+        int i = 0;
+        for (String pcode : _pcodes) {
+            pcodes[i] = pcode;
+            ++i;
+        }
+        initPaynym();
+//
+    }
+
+
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -185,6 +284,7 @@ public class PayNymHome extends AppCompatActivity {
             return tabTitle[position];
         }
     }
+
 }
 
 

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class PaynymListFragment extends Fragment {
@@ -30,6 +32,7 @@ public class PaynymListFragment extends Fragment {
     private PaynymListFragmentViewModel mViewModel;
     private RecyclerView list;
     private static final String TAG = "PaynymListFragment";
+    private PaynymAdapter pyanymAdapter;
 
     public static PaynymListFragment newInstance() {
         return new PaynymListFragment();
@@ -55,18 +58,40 @@ public class PaynymListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(PaynymListFragmentViewModel.class);
-        PaynymAdapter pyanymAdapter = new PaynymAdapter();
+        pyanymAdapter = new PaynymAdapter();
         list.setAdapter(pyanymAdapter);
         mViewModel.pcodes.observe(this, pyanymAdapter::setPcodes);
 
     }
 
     public void addPcodes(ArrayList<String> list) {
-        mViewModel.pcodes.postValue(list);
+
+        mViewModel.pcodes.postValue(filterArchived(list));
     }
 
-    public void  onPayNymItemClick(String pcode) {
+    private ArrayList<String> filterArchived(ArrayList<String> list) {
+        ArrayList<String> filtered = new ArrayList<>();
+
+        for (String item : list) {
+            if (!BIP47Meta.getInstance().getArchived(item)) {
+                filtered.add(item);
+            }
+        }
+        return filtered;
+    }
+
+    public void onPayNymItemClick(String pcode) {
         startActivity(new Intent(getActivity(), PayNymDetailsActivity.class).putExtra("pcode", pcode));
+    }
+
+    public void rebuildList() {
+        if (pyanymAdapter != null) {
+            if (mViewModel != null) {
+                mViewModel.pcodes.postValue(filterArchived(mViewModel.pcodes.getValue() == null ? new ArrayList<>() : mViewModel.pcodes.getValue()));
+            } else {
+                pyanymAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     class PaynymAdapter extends RecyclerView.Adapter<PaynymAdapter.ViewHolder> {
@@ -80,6 +105,7 @@ public class PaynymListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+
             String strPaymentCode = pcodes.get(position);
             Picasso.with(getContext()).load(WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
                     .into(holder.avatar);

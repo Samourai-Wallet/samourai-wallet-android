@@ -107,7 +107,7 @@ public class AddPaynymActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return 12;
+            return 0;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

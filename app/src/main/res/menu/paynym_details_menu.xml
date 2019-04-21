@@ -17,8 +17,15 @@
         android:id="@+id/view_code_paynym_details"
         android:title="View Payment code"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/resync_menu_paynym_details"
         android:title="Resync Paynym"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/archive_paynym"
+        android:title="Archive "
         app:showAsAction="never" />
 </menu>
