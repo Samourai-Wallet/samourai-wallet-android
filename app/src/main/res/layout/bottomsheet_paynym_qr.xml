@@ -62,13 +62,26 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="60dp"
-            android:text="TextView"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:background="?selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@+id/paynym_qr_image_view"
             app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/paynym_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/close_qr_modal"
+            app:layout_constraintEnd_toStartOf="@+id/share_paynym_pcode"
+            app:layout_constraintStart_toEndOf="@+id/close_qr_modal"
+            app:layout_constraintTop_toTopOf="@+id/close_qr_modal" />
 
 
     </android.support.constraint.ConstraintLayout>

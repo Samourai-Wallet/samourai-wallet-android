@@ -28,6 +28,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.paynym.addPaynym.AddPaynymActivity;
 import com.samourai.wallet.paynym.fragments.PaynymListFragment;
+import com.samourai.wallet.paynym.fragments.ShowPayNymQRBottomSheet;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.ViewPager;
 import com.squareup.picasso.Picasso;
@@ -65,6 +66,7 @@ public class PayNymHome extends AppCompatActivity {
     private ImageView userAvatar;
     private FloatingActionButton paynymFab;
     private PaynymListFragment followersFragment, followingFragment;
+    private String pcode;
     private String tabTitle[] = {"Following", "Followers"};
 
     @Override
@@ -87,14 +89,15 @@ public class PayNymHome extends AppCompatActivity {
         payNymViewPager.setAdapter(adapter);
 
         payNymHomeViewModel = ViewModelProviders.of(this).get(PayNymHomeViewModel.class);
-        final String strPaymentCode = BIP47Util.getInstance(this).getPaymentCode().toString();
-        paynymCode.setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
+        this.pcode = BIP47Util.getInstance(this).getPaymentCode().toString();
+
+        paynymCode.setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
         followersFragment = PaynymListFragment.newInstance();
         followingFragment = PaynymListFragment.newInstance();
 
         initPaynym();
 
-        Picasso.with(getApplicationContext()).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
+        Picasso.with(getApplicationContext()).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + pcode + "/avatar")
                 .into(userAvatar);
 
 
@@ -210,6 +213,14 @@ public class PayNymHome extends AppCompatActivity {
                 doUnArchive();
                 break;
             }
+            case R.id.action_paynym_share_qr: {
+                Bundle bundle = new Bundle();
+                bundle.putString("pcode", pcode);
+                ShowPayNymQRBottomSheet showPayNymQRBottomSheet = new ShowPayNymQRBottomSheet();
+                showPayNymQRBottomSheet.setArguments(bundle);
+                showPayNymQRBottomSheet.show(getSupportFragmentManager(), showPayNymQRBottomSheet.getTag());
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -254,8 +265,6 @@ public class PayNymHome extends AppCompatActivity {
         initPaynym();
 //
     }
-
-
 
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

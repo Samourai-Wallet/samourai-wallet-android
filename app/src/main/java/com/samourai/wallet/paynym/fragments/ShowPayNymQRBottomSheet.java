@@ -22,7 +22,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
+import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47ShowQR;
+import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.util.AppUtil;
 
 
@@ -61,8 +64,34 @@ public class ShowPayNymQRBottomSheet extends BottomSheetDialogFragment {
         });
 
         ((TextView) view.findViewById(R.id.paynym_string_pcode)).setText(pcode);
+        ((TextView) view.findViewById(R.id.paynym_title)).setText(BIP47Meta.getInstance().getLabel(pcode));
+
+        view.findViewById(R.id.paynym_string_pcode).setOnClickListener(view12 -> {
+            copy();
+        });
+
         disposables.add(disposable);
         return view;
+    }
+
+    private void copy() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.receive_address_to_share)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = null;
+                    clip = android.content.ClipData.newPlainText("Receive address", pcode);
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(getContext(), "payment code copied", Toast.LENGTH_SHORT).show();
+                    }
+
+                }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+
+        }).show();
     }
 
     private void share() {
@@ -80,7 +109,7 @@ public class ShowPayNymQRBottomSheet extends BottomSheetDialogFragment {
                             try {
                                 file.createNewFile();
                             } catch (Exception e) {
-                                Toast.makeText( getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                         file.setReadable(true, false);
