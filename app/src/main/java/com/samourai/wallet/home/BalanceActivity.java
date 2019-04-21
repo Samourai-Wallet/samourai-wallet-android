@@ -698,8 +698,9 @@ public class BalanceActivity extends AppCompatActivity {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
-                    } else if (DojoUtil.getInstance().isValidPairingPayload(strResult.trim())) {
-                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
+                        DojoUtil.getInstance(BalanceActivity.this).setDojoParams(strResult.trim());
+                        Toast.makeText(BalanceActivity.this, DojoUtil.getInstance(BalanceActivity.this).getDojoParams(), Toast.LENGTH_SHORT).show();
                     } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());

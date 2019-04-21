@@ -144,6 +144,10 @@ public class APIFactory	{
         ACCESS_TOKEN = accessToken;
     }
 
+    public void setAppToken(String token)   {
+        APP_TOKEN = token;
+    }
+
     public String getAppToken()  {
 
         if(APP_TOKEN != null)    {
@@ -152,6 +156,7 @@ public class APIFactory	{
         else    {
             return new String(getXORKey());
         }
+
     }
 
     public byte[] getXORKey() {

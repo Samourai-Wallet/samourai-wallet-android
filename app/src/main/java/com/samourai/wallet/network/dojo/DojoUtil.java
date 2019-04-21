@@ -1,6 +1,10 @@
 package com.samourai.wallet.network.dojo;
 
-import android.util.Log;
+import android.content.Context;
+
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.util.WebUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,11 +24,16 @@ import org.json.JSONObject;
 
 public class DojoUtil {
 
+    private static String dojoParams = null;
     private static DojoUtil instance = null;
+
+    private static Context context = null;
 
     private DojoUtil()  { ; }
 
-    public static DojoUtil getInstance()    {
+    public static DojoUtil getInstance(Context ctx)    {
+
+        context = ctx;
 
         if(instance == null)    {
             instance = new DojoUtil();
@@ -38,18 +47,13 @@ public class DojoUtil {
         try {
             JSONObject obj = new JSONObject(data);
 
-            Log.d("DojoUtil", obj.toString());
-
             if(obj.has("pairing"))    {
 
                 JSONObject pObj = obj.getJSONObject("pairing");
-                Log.d("DojoUtil", pObj.toString());
                 if(pObj.has("type") && pObj.has("version") && pObj.has("apikey") && pObj.has("url"))    {
-                    Log.d("DojoUtil", "true");
                     return true;
                 }
                 else    {
-                    Log.d("DojoUtil", "false");
                     return false;
                 }
 
@@ -62,6 +66,14 @@ public class DojoUtil {
             return false;
         }
 
+    }
+
+    public String getDojoParams() {
+        return dojoParams;
+    }
+
+    public void setDojoParams(String dojoParams) {
+        DojoUtil.dojoParams = dojoParams;
     }
 
     public String getVersion(String data)  {
@@ -111,6 +123,42 @@ public class DojoUtil {
         }
         catch(JSONException je) {
             return null;
+        }
+
+    }
+
+    public JSONObject toJSON() {
+
+        JSONObject obj = null;
+
+        try {
+            obj = new JSONObject(dojoParams);
+        }
+        catch(JSONException je) {
+            ;
+        }
+
+        return obj;
+    }
+
+    public void fromJSON(JSONObject obj) {
+
+        if(isValidPairingPayload(obj.toString()))    {
+            dojoParams = obj.toString();
+
+            if(dojoParams != null)    {
+
+                if(SamouraiWallet.getInstance().isTestNet())    {
+                    WebUtil.SAMOURAI_API2_TESTNET_TOR = getUrl(dojoParams);
+                }
+                else    {
+                    WebUtil.SAMOURAI_API2_TOR = getUrl(dojoParams);
+                }
+
+                String apiToken = getApiKey(dojoParams);
+                APIFactory.getInstance(context).setAppToken(apiToken);
+
+            }
         }
 
     }

@@ -32,15 +32,11 @@ import javax.net.ssl.X509TrustManager;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
-import ch.boye.httpclientandroidlib.client.methods.HttpGet;
-import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.netcipher.client.StrongHttpsClient;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -53,12 +49,9 @@ public class WebUtil {
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
     public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
     public static final String SAMOURAI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
-    public static final String SAMOURAI_API2_TOR = "http://5fpla3ethnaqfjxu.onion/v2/";
-    public static final String SAMOURAI_API2_TESTNET_TOR = "http://5fpla3ethnaqfjxu.onion/test/v2/";
+    public static String SAMOURAI_API2_TOR = "http://5fpla3ethnaqfjxu.onion/v2/";
+    public static String SAMOURAI_API2_TESTNET_TOR = "http://5fpla3ethnaqfjxu.onion/test/v2/";
 
-    public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
-    public static final String BTCe_EXCHANGE_URL = "https://wex.nz/api/3/ticker/";
-    public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
 
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
@@ -69,12 +62,6 @@ public class WebUtil {
     private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
     private static final String strProxyIP = "127.0.0.1";
     private static final int proxyPort = 9050;
-
-    /*
-    private static final String strProxyType = StrongHttpsClient.TYPE_HTTP;
-    private static final String strProxyIP = "127.0.0.1";
-    private static final int proxyPort = 8118;
-    */
 
     private static WebUtil instance = null;
     private Context context = null;
