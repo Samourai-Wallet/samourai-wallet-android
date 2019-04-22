@@ -58,6 +58,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="TextView" />
+
+                <ProgressBar
+                    android:id="@+id/paynym_image_progress"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/paybyn_user_avatar"
+                    app:layout_constraintEnd_toEndOf="@+id/paybyn_user_avatar"
+                    app:layout_constraintStart_toStartOf="@+id/paybyn_user_avatar"
+                    app:layout_constraintTop_toTopOf="@+id/paybyn_user_avatar" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar

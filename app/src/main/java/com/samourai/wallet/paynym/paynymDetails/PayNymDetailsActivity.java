@@ -19,7 +19,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -47,6 +49,7 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
 
@@ -87,6 +90,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     private List<Tx> txesList = new ArrayList<>();
     private PaynymTxListAdapter paynymTxListAdapter;
     private CompositeDisposable disposables = new CompositeDisposable();
+    private ProgressBar paynymAvatrPorgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +106,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         followBtn = findViewById(R.id.paynym_follow_btn);
         followGroup = findViewById(R.id.follow_group_paynym);
         txListGroup = findViewById(R.id.tx_list_group);
+        paynymAvatrPorgress = findViewById(R.id.paynym_image_progress);
 
         if (getIntent().hasExtra("pcode")) {
             pcode = getIntent().getStringExtra("pcode");
@@ -134,8 +139,21 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     private void setPayNym() {
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         getSupportActionBar().setTitle(BIP47Meta.getInstance().getLabel(pcode));
-        Picasso.with(getApplicationContext()).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + pcode + "/avatar")
-                .into(userAvatar);
+        paynymAvatrPorgress.setVisibility(View.VISIBLE);
+        Picasso.with(getApplicationContext())
+                .load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + pcode + "/avatar")
+                .into(userAvatar, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        paynymAvatrPorgress.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        paynymAvatrPorgress.setVisibility(View.GONE);
+                        Toast.makeText(PayNymDetailsActivity.this, "Unable to load avatar", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void hideFollow() {
@@ -284,8 +302,8 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 break;
             }
             case R.id.view_code_paynym_details: {
-                Bundle bundle =new Bundle();
-                bundle.putString("pcode",pcode);
+                Bundle bundle = new Bundle();
+                bundle.putString("pcode", pcode);
                 ShowPayNymQRBottomSheet showPayNymQRBottomSheet = new ShowPayNymQRBottomSheet();
                 showPayNymQRBottomSheet.setArguments(bundle);
                 showPayNymQRBottomSheet.show(getSupportFragmentManager(), showPayNymQRBottomSheet.getTag());
