@@ -47,6 +47,7 @@ public class MainActivity2 extends Activity {
     private ProgressDialog progress = null;
 
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
+    private AlertDialog.Builder dlg ;
 
     private TextView loaderTxView;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
@@ -423,8 +424,10 @@ public class MainActivity2 extends Activity {
     }
 
     private void doSelectNet() {
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+        if(dlg!=null){
+            return;
+        }
+          dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.select_network)
                 .setCancelable(false)
