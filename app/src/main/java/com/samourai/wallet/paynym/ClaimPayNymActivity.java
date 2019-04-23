@@ -199,12 +199,10 @@ public class ClaimPayNymActivity extends Activity {
                                 .setMessage(strNymName)
 //                                    .setView(imgLayout)
                                 .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                                    setResult(RESULT_OK);
+                                    ClaimPayNymActivity.this.finish();
 
-                                        ClaimPayNymActivity.this.finish();
-
-                                    }
                                 });
                         if(!isFinishing())    {
                             dlg.show();
