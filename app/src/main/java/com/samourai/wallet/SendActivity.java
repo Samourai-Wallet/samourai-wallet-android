@@ -115,6 +115,7 @@ public class SendActivity extends AppCompatActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;
+    public final static int CONFIRM_PIN = 2014;
     private static final String TAG = "SendActivity";
 
     private SendTransactionDetailsView sendTransactionDetailsView;
@@ -1318,8 +1319,16 @@ public class SendActivity extends AppCompatActivity {
                         amount,
                         change_index
                 );
-                Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
-                startActivity(_intent);
+
+                if (PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CONFIRM_PIN, false)) {
+                    Intent pinIntent = new Intent(SendActivity.this, PinEntryActivity.class);
+                    pinIntent.putExtra("sendTx", true);
+                    startActivityForResult(pinIntent, CONFIRM_PIN);
+                } else {
+                    Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
+                    startActivity(_intent);
+                }
+
 
             }
         });
@@ -1692,7 +1701,6 @@ public class SendActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == Activity.RESULT_OK && requestCode == SCAN_QR) {
 
             if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
@@ -1711,6 +1719,9 @@ public class SendActivity extends AppCompatActivity {
             ;
         } else if (resultCode == Activity.RESULT_CANCELED && requestCode == RICOCHET) {
             ;
+        } else if (resultCode == Activity.RESULT_OK && requestCode == CONFIRM_PIN) {
+            Intent _intent = new Intent(this, TxAnimUIActivity.class);
+            startActivity(_intent);
         } else {
             ;
         }

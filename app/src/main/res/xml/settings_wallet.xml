@@ -22,6 +22,13 @@
         android:key="haptic"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_pin_confirm"
+        android:summary="@string/options_ask_for_pin"
+        android:defaultValue="false"
+        android:key="confirmPin"
+        />
+
     <Preference
         android:title="@string/options_mnemonic"
         android:summary="@string/options_mnemonic2"

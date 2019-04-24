@@ -106,6 +106,7 @@
 
     <string name="tx_sent">Transaction sent</string>
     <string name="tx_failed">Error sending transaction</string>
+    <string name="tx_canceled">Transaction canceled</string>
     <string name="you_received">Received</string>
     <string name="you_sent">Sent</string>
     <string name="send">Send</string>
@@ -687,5 +688,8 @@
 
     <string name="is_offline">Samourai is offline</string>
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
+    <string name="options_pin_confirm">PIN Confirmation</string>
+    <string name="options_ask_for_pin">Will ask for PIN confirmation before sending transactions</string>
+    <string name="incorrect_pin">Incorrect PIN</string>
 
 </resources>

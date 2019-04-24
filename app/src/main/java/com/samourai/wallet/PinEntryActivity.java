@@ -26,6 +26,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -71,6 +72,7 @@ public class PinEntryActivity extends Activity {
 
     private boolean create = false;             // create PIN
     private boolean confirm = false;            // confirm PIN
+    private boolean sendTx = false;
     private String strConfirm = null;
     private String strSeed = null;
     private String strPassphrase = null;
@@ -126,6 +128,8 @@ public class PinEntryActivity extends Activity {
             strSeed = extras.getString("seed");
             strPassphrase = extras.getString("passphrase");
             Toast.makeText(PinEntryActivity.this, R.string.pin_5_8_confirm, Toast.LENGTH_LONG).show();
+        } else if (extras != null && extras.containsKey("sendTx") && extras.getBoolean("sendTx")) {
+            sendTx = true;
         } else if (extras != null && extras.containsKey("opendime") && extras.getBoolean("opendime") == true) {
             isOpenDime = true;
         } else {
@@ -263,7 +267,6 @@ public class PinEntryActivity extends Activity {
     }
 
     private void validateThread(final String pin, final String uri) {
-
         final ProgressDialog progress = new ProgressDialog(PinEntryActivity.this);
 
         if (progress != null && progress.isShowing()) {
@@ -290,7 +293,7 @@ public class PinEntryActivity extends Activity {
 
                 String randomKey = AccessFactory.getInstance(PinEntryActivity.this).getGUID();
                 if (randomKey.length() < 1) {
-                    if (progress != null && progress.isShowing()) {
+                    if (progress.isShowing()) {
                         progress.dismiss();
                     }
                     Toast.makeText(PinEntryActivity.this, R.string.random_key_error, Toast.LENGTH_SHORT).show();
@@ -299,75 +302,96 @@ public class PinEntryActivity extends Activity {
 
                 String hash = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.ACCESS_HASH, "");
                 if (AccessFactory.getInstance(PinEntryActivity.this).validateHash(hash, randomKey, new CharSequenceX(pin), AESUtil.DefaultPBKDF2Iterations)) {
+                    if (sendTx) {
+                        failures = 0;
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    } else {
+                        AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
 
-                    AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
+                        try {
+                            HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
 
-                    try {
-                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
-
-                        if (progress != null && progress.isShowing()) {
-                            progress.dismiss();
-                        }
-
-                        if (hdw == null) {
-
-                            failures++;
-                            Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
-
-                            if (failures == 3) {
-                                failures = 0;
-                                doBackupRestore();
-                            } else {
-                                Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                            if (progress.isShowing()) {
+                                progress.dismiss();
                             }
 
-                        }
+                            if (hdw == null) {
 
-                        AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
-                        TimeOutUtil.getInstance().updatePin();
-                        if (isOpenDime) {
-                            Intent intent = new Intent(PinEntryActivity.this, OpenDimeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } else if (uri != null) {
-                            Log.i("PinEntryActivity", "uri to restartApp()");
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp("uri", uri);
-                        } else {
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
-                        }
+                                failures++;
+                                Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                        mle.printStackTrace();
-                    } catch (DecoderException de) {
-                        de.printStackTrace();
-                    } finally {
-                        if (progress != null && progress.isShowing()) {
-                            progress.dismiss();
+                                if (failures == 3) {
+                                    failures = 0;
+                                    doBackupRestore();
+                                } else {
+                                    Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                            }
+
+                            AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
+                            TimeOutUtil.getInstance().updatePin();
+                            if (isOpenDime) {
+                                Intent intent = new Intent(PinEntryActivity.this, OpenDimeActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else if (uri != null) {
+                                Log.i("PinEntryActivity", "uri to restartApp()");
+                                AppUtil.getInstance(PinEntryActivity.this).restartApp("uri", uri);
+                            } else {
+                                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                            }
+
+                        } catch (MnemonicException.MnemonicLengthException mle) {
+                            mle.printStackTrace();
+                        } catch (DecoderException de) {
+                            de.printStackTrace();
+                        } finally {
+                            if (progress.isShowing()) {
+                                progress.dismiss();
+                            }
                         }
                     }
 
                 } else {
-                    if (progress != null && progress.isShowing()) {
+                    if (progress.isShowing()) {
                         progress.dismiss();
                     }
 
                     failures++;
-                    Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
+                    int wrongPinMsg = sendTx ? R.string.incorrect_pin : R.string.login_error;
+                    Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(wrongPinMsg) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
                     if (failures == 3) {
                         failures = 0;
-                        doBackupRestore();
+                        if (sendTx) {
+                            Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.tx_canceled), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(PinEntryActivity.this, BalanceActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } else {
+                            doBackupRestore();
+                        }
                     } else {
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        if (sendTx) {
+                            intent.putExtra("sendTx", true);
+                            startActivityForResult(intent, SendActivity.CONFIRM_PIN);
+                            setResult(Activity.RESULT_OK);
+                            finish();
+                        } else {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
                     }
 
                 }
 
-                if (progress != null && progress.isShowing()) {
+                if (progress.isShowing()) {
                     progress.dismiss();
                 }
 
