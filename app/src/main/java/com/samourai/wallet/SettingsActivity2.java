@@ -580,8 +580,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                final CheckBoxPreference cbPrefPinConfirm = (CheckBoxPreference) findPreference("pinConfirm");
-                cbPref11.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                final CheckBoxPreference cbPrefPinConfirm = (CheckBoxPreference) findPreference("confirmPin");
+                cbPrefPinConfirm.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CONFIRM_PIN, !cbPrefPinConfirm.isChecked());
                         return true;
