@@ -74,6 +74,18 @@ public class DojoUtil {
 
     public void setDojoParams(String dojoParams) {
         DojoUtil.dojoParams = dojoParams;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            String url = getUrl(dojoParams);
+            WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/v2/", "/test/v2/");
+        }
+        else    {
+            WebUtil.SAMOURAI_API2_TOR = getUrl(dojoParams);
+        }
+
+        String apiToken = getApiKey(dojoParams);
+        APIFactory.getInstance(context).setAppToken(apiToken);
+
     }
 
     public String getVersion(String data)  {
@@ -144,21 +156,7 @@ public class DojoUtil {
     public void fromJSON(JSONObject obj) {
 
         if(isValidPairingPayload(obj.toString()))    {
-            dojoParams = obj.toString();
-
-            if(dojoParams != null)    {
-
-                if(SamouraiWallet.getInstance().isTestNet())    {
-                    WebUtil.SAMOURAI_API2_TESTNET_TOR = getUrl(dojoParams);
-                }
-                else    {
-                    WebUtil.SAMOURAI_API2_TOR = getUrl(dojoParams);
-                }
-
-                String apiToken = getApiKey(dojoParams);
-                APIFactory.getInstance(context).setAppToken(apiToken);
-
-            }
+            setDojoParams(obj.toString());
         }
 
     }
