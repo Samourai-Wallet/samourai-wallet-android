@@ -75,7 +75,7 @@ import com.google.common.base.Splitter;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;

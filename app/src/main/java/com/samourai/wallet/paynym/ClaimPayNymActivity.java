@@ -1,4 +1,4 @@
-package com.samourai.wallet.bip47.paynym;
+package com.samourai.wallet.paynym;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.util.AppUtil;
 
 import com.samourai.wallet.R;
