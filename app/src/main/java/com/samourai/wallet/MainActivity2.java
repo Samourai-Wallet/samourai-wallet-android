@@ -47,7 +47,8 @@ public class MainActivity2 extends Activity {
     private ProgressDialog progress = null;
 
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
-    private AlertDialog.Builder dlg ;
+    private AlertDialog.Builder dlg;
+    private boolean pinEntryActivityLaunched = false;
 
     private TextView loaderTxView;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
@@ -259,21 +260,23 @@ public class MainActivity2 extends Activity {
     }
 
     private void validatePIN(String strUri) {
+        if (!pinEntryActivityLaunched) {
 
-        if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
-            return;
+            if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
+                return;
+            }
+
+            AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
+            Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (strUri != null) {
+                intent.putExtra("uri", strUri);
+                PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
+            }
+            startActivity(intent);
+            pinEntryActivityLaunched=true;
+
         }
-
-        AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-
-        Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (strUri != null) {
-            intent.putExtra("uri", strUri);
-            PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
-        }
-        startActivity(intent);
-
     }
 
     private void launchFromDialer(final String pin) {
