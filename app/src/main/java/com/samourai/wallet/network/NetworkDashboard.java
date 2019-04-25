@@ -1,6 +1,7 @@
 package com.samourai.wallet.network;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -19,9 +20,14 @@ import android.widget.Toast;
 
 import com.msopentech.thali.android.toronionproxy.NetworkManager;
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
+import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
 import com.samourai.wallet.network.dojo.DojoUtil;
+import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.CharSequenceX;
@@ -29,6 +35,9 @@ import com.samourai.wallet.util.ConnectionChangeReceiver;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
 
+import org.bitcoinj.crypto.MnemonicException;
+
+import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -58,6 +67,8 @@ public class NetworkDashboard extends AppCompatActivity {
     private boolean waitingForPairing = false;
     private String strPairingParams = null;
     private LinearLayout dojoLayout = null;
+
+    private RegisterTask registerTask = null;
 
     private static final String TAG = "NetworkDashboard";
 
@@ -276,6 +287,67 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void initDojo() {
-        //
+
+        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44LOCK, false);
+        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49LOCK, false);
+        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84LOCK, false);
+
+        Handler handler = new Handler();
+
+        handler.post(new Runnable() {
+            public void run() {
+                if (registerTask == null || registerTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+                    registerTask = new RegisterTask();
+                    registerTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                }
+            }
+
+        });
+
     }
+
+    private class RegisterTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
+
+                try {
+                    String[] s = HD_WalletFactory.getInstance(NetworkDashboard.this).get().getXPUBs();
+                    APIFactory.getInstance(NetworkDashboard.this).lockXPUB(s[0], 44);
+                }
+                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                    ;
+                }
+
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
+                String ypub = BIP49Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).ypubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(ypub, 49);
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).zpubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
+            }
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ;
+        }
+
+    }
+
+
 }
