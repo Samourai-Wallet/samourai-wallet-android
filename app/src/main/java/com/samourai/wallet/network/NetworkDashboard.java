@@ -21,8 +21,10 @@ import android.widget.Toast;
 import com.msopentech.thali.android.toronionproxy.NetworkManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
+import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ConnectionChangeReceiver;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
@@ -94,7 +96,11 @@ public class NetworkDashboard extends AppCompatActivity {
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
                 stopTor();
                 PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, false);
-            } else {
+            }
+            else {
+                if (AppUtil.getInstance(NetworkDashboard.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                    stopService(new Intent(NetworkDashboard.this.getApplicationContext(), WebSocketService.class));
+                }
                 startTor();
                 PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, true);
             }

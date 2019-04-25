@@ -4,36 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Looper;
-import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-//import android.util.Log;
 
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import com.neovisionaries.ws.client.WebSocketFrame;
 
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.CharSequenceX;
-import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.TorUtil;
 
-import org.bitcoinj.params.MainNetParams;
-import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,10 +32,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WebSocketHandler {
 
@@ -155,7 +142,7 @@ public class WebSocketHandler {
 
         protected Void doInBackground(Void... args) {
 
-            if(AppUtil.getInstance(context).isOfflineMode())    {
+            if(AppUtil.getInstance(context).isOfflineMode() || TorUtil.getInstance(context).statusFromBroadcast())    {
                 return null;
             }
 
