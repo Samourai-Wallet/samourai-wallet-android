@@ -98,6 +98,8 @@
     <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
     <string name="options_indexes">Wallet indexes</string>
     <string name="options_indexes2">Current index values for this wallet.</string>
+    <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
