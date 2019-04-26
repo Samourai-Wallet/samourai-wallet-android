@@ -26,11 +26,6 @@
         android:id="@+id/action_unarchive"
         android:orderInCategory="100"
         android:title="@string/action_unarchive"
-        app:showAsAction="never" />   <item
-
-        android:id="@+id/action_unarchive"
-        android:orderInCategory="100"
-        android:title="@string/action_unarchive"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sync_all"
