@@ -32,6 +32,7 @@ import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
@@ -39,7 +40,6 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -49,6 +49,7 @@ import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.ricochet.RicochetActivity;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -62,12 +63,7 @@ import com.samourai.wallet.send.SpendUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
-import com.samourai.wallet.widgets.EntropyBar;
-import com.samourai.wallet.widgets.SendTransactionDetailsView;
-import com.samourai.wallet.widgets.EntropyBar;
-import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.samourai.wallet.tor.TorManager;
-import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -76,6 +72,8 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.widgets.EntropyBar;
+import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -90,7 +88,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -1615,15 +1615,26 @@ public class SendActivity extends AppCompatActivity {
                 }
             } else {
 //                Toast.makeText(SendActivity.this, "Payment must be added and notification tx sent", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, PayNymDetailsActivity.class);
+                intent.putExtra("pcode", pcode);
+                intent.putExtra("label", "");
 
                 if (meta != null && meta.startsWith("?") && meta.length() > 1) {
                     meta = meta.substring(1);
-                }
 
-                Intent intent = new Intent(this, BIP47Activity.class);
-                intent.putExtra("pcode", pcode);
-                if (meta != null && meta.length() > 0) {
-                    intent.putExtra("meta", meta);
+                    if (meta.length() > 0) {
+                        String _meta = null;
+                        Map<String, String> map = new HashMap<String, String>();
+                        meta.length();
+                        try {
+                            _meta = URLDecoder.decode(meta, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                        intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                    }
+
                 }
                 startActivity(intent);
             }
