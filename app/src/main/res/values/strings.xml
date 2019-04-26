@@ -693,5 +693,6 @@
     <string name="you_received_s">You received</string>
     <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
     <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
+    <string name="initializing_tor">initializing Tor...</string>
 
 </resources>

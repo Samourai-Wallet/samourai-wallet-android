@@ -138,7 +138,7 @@ public class MainActivity2 extends Activity {
         }
 
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext()))  {
-            loaderTxView.setText("initializing Tor...");
+            loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
                     .torStatus
