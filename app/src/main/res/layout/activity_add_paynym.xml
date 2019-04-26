@@ -125,7 +125,7 @@
                 android:layout_weight="6">
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/add_paynym_scan_qr"
                     style="@style/Widget.AppCompat.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -144,15 +144,15 @@
                     app:layout_constraintVertical_bias="0.39999998" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/add_paynym_paste"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="paste payment code"
-                    app:layout_constraintEnd_toEndOf="@+id/button"
-                    app:layout_constraintStart_toStartOf="@+id/button"
-                    app:layout_constraintTop_toBottomOf="@+id/button" />
+                    app:layout_constraintEnd_toEndOf="@+id/add_paynym_scan_qr"
+                    app:layout_constraintStart_toStartOf="@+id/add_paynym_scan_qr"
+                    app:layout_constraintTop_toBottomOf="@+id/add_paynym_scan_qr" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
 

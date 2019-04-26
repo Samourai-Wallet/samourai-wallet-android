@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
-        android:backgroundTint="@color/accent"
+        app:backgroundTint="@color/accent"
         android:clickable="true"
         android:src="@drawable/fab_add" />
 
