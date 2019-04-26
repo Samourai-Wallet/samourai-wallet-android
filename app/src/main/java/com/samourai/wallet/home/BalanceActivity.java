@@ -19,7 +19,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
@@ -37,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -65,7 +63,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
@@ -117,6 +115,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -1317,63 +1316,47 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void doFeaturePayNymUpdate() {
 
-        new Thread(new Runnable() {
-
-            private Handler handler = new Handler();
-
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                try {
-
-                    JSONObject obj = new JSONObject();
-                    obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+        Disposable disposable = Observable.fromCallable(() -> {
+            JSONObject obj = new JSONObject();
+            obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
 //                    Log.d("BalanceActivity", obj.toString());
-                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+            String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
 //                    Log.d("BalanceActivity", res);
 
-                    JSONObject responseObj = new JSONObject(res);
-                    if (responseObj.has("token")) {
-                        String token = responseObj.getString("token");
+            JSONObject responseObj = new JSONObject(res);
+            if (responseObj.has("token")) {
+                String token = responseObj.getString("token");
 
-                        String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
+                String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
 //                        Log.d("BalanceActivity", sig);
 
-                        obj = new JSONObject();
-                        obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
-                        obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
-                        obj.put("signature", sig);
+                obj = new JSONObject();
+                obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+                obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
+                obj.put("signature", sig);
 
 //                        Log.d("BalanceActivity", "nym/add:" + obj.toString());
-                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
+                res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
 //                        Log.d("BalanceActivity", res);
 
-                        responseObj = new JSONObject(res);
-                        if (responseObj.has("segwit") && responseObj.has("token")) {
-                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
-                        } else if (responseObj.has("claimed") && responseObj.getBoolean("claimed") == true) {
-                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
-                        } else {
-                            ;
-                        }
-
-                    } else {
-                        ;
-                    }
-
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                responseObj = new JSONObject(res);
+                if (responseObj.has("segwit") && responseObj.has("token")) {
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                } else if (responseObj.has("claimed") && responseObj.getBoolean("claimed") == true) {
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
                 }
 
-                Looper.loop();
-
             }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    Log.i(TAG, "doFeaturePayNymUpdate: Feature update complete");
+                },error->{
+                    Log.i(TAG, "doFeaturePayNymUpdate: Feature update Fail");
+                });
+        compositeDisposable.add(disposable);
 
-        }).start();
 
     }
 
