@@ -75,15 +75,15 @@ public class AddPaynymActivity extends AppCompatActivity {
     private void pastePcode() {
         try {
 
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        if (clipboard.getPrimaryClip().getDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
-            ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-            processScan(item.getText().toString());
-        } else {
-            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_LONG).show();
-        }
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            if (clipboard.getPrimaryClip().getDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
+                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+                processScan(item.getText().toString());
+            } else {
+                Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_LONG).show();
+            }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Toast.makeText(this, "Unable to access Clipboard", Toast.LENGTH_LONG).show();
 
         }
@@ -126,14 +126,12 @@ public class AddPaynymActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "onQueryTextSubmit: ".concat(query));
 
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i(TAG, "onQueryTextChange: ".concat(newText));
                 return false;
             }
         });

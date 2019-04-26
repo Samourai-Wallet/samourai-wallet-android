@@ -158,7 +158,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     private void setPayNym() {
 
         followMessage.setText(getResources().getString(R.string.follow).concat(" ").concat(BIP47Meta.getInstance().getDisplayLabel(pcode)).concat(" ").concat(getResources().getText(R.string.paynym_follow_message_2).toString()));
-        Log.i(TAG, "onCreate: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
 
         if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT) {
             showFollow();
@@ -317,7 +316,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                     this.txesList.clear();
                     this.txesList.addAll(txes);
                     paynymTxListAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "loadTxes: ".concat(String.valueOf(txes.size())));
                 });
         disposables.add(disposable);
     }
