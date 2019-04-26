@@ -99,58 +99,54 @@ public class ShowPayNymQRBottomSheet extends BottomSheetDialogFragment {
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.receive_address_to_share)
                 .setCancelable(false)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
 
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        String strFileName = AppUtil.getInstance(getContext()).getReceiveQRFilename();
-                        File file = new File(strFileName);
-                        if (!file.exists()) {
-                            try {
-                                file.createNewFile();
-                            } catch (Exception e) {
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        file.setReadable(true, false);
-
-                        FileOutputStream fos = null;
+                    String strFileName = AppUtil.getInstance(getContext()).getReceiveQRFilename();
+                    File file = new File(strFileName);
+                    if (!file.exists()) {
                         try {
-                            fos = new FileOutputStream(file);
-                        } catch (FileNotFoundException fnfe) {
+                            file.createNewFile();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    file.setReadable(true, false);
+
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                    } catch (FileNotFoundException fnfe) {
+                        ;
+                    }
+
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = null;
+                    clip = android.content.ClipData.newPlainText("Receive address", pcode);
+                    clipboard.setPrimaryClip(clip);
+
+                    if (file != null && fos != null) {
+                        Bitmap bitmap = ((BitmapDrawable) payNymQr.getDrawable()).getBitmap();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+
+                        try {
+                            fos.close();
+                        } catch (IOException ioe) {
                             ;
                         }
 
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("Receive address", pcode);
-                        clipboard.setPrimaryClip(clip);
-
-                        if (file != null && fos != null) {
-                            Bitmap bitmap = ((BitmapDrawable) payNymQr.getDrawable()).getBitmap();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
-
-                            try {
-                                fos.close();
-                            } catch (IOException ioe) {
-                                ;
-                            }
-
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_SEND);
-                            intent.setType("image/png");
-                            if (android.os.Build.VERSION.SDK_INT >= 24) {
-                                //From API 24 sending FIle on intent ,require custom file provider
-                                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                                        getContext(),
-                                        getContext()
-                                                .getPackageName() + ".provider", file));
-                            } else {
-                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                            }
-                            startActivity(Intent.createChooser(intent, getContext().getText(R.string.send_payment_code)));
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_SEND);
+                        intent.setType("image/png");
+                        if (android.os.Build.VERSION.SDK_INT >= 24) {
+                            //From API 24 sending FIle on intent ,require custom file provider
+                            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                    getContext(),
+                                    getContext()
+                                            .getPackageName() + ".provider", file));
+                        } else {
+                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                         }
-
+                        startActivity(Intent.createChooser(intent, getContext().getText(R.string.send_payment_code)));
                     }
 
                 }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

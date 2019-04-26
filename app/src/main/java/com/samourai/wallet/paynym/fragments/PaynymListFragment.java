@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,11 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
-import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.widgets.CircleImageView;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class PaynymListFragment extends Fragment {
@@ -66,7 +64,7 @@ public class PaynymListFragment extends Fragment {
 
     public void addPcodes(ArrayList<String> list) {
 
-        mViewModel.pcodes.postValue(filterArchived(list));
+        mViewModel.pcodes.postValue(list);
     }
 
     private ArrayList<String> filterArchived(ArrayList<String> list) {
@@ -84,15 +82,6 @@ public class PaynymListFragment extends Fragment {
         startActivity(new Intent(getActivity(), PayNymDetailsActivity.class).putExtra("pcode", pcode));
     }
 
-    public void rebuildList() {
-        if (pyanymAdapter != null) {
-            if (mViewModel != null) {
-                mViewModel.pcodes.postValue(filterArchived(mViewModel.pcodes.getValue() == null ? new ArrayList<>() : mViewModel.pcodes.getValue()));
-            } else {
-                pyanymAdapter.notifyDataSetChanged();
-            }
-        }
-    }
 
     class PaynymAdapter extends RecyclerView.Adapter<PaynymAdapter.ViewHolder> {
         private ArrayList<String> pcodes = new ArrayList<>();
@@ -109,7 +98,7 @@ public class PaynymListFragment extends Fragment {
             String strPaymentCode = pcodes.get(position);
             Picasso.with(getContext()).load(WebUtil.PAYNYM_API + strPaymentCode + "/avatar")
                     .into(holder.avatar);
-            holder.paynymCode.setText(BIP47Meta.getInstance().getLabel(strPaymentCode));
+            holder.paynymCode.setText(BIP47Meta.getInstance().getDisplayLabel(strPaymentCode));
             holder.avatar.getRootView().setOnClickListener(view -> onPayNymItemClick(pcodes.get(position)));
         }
 

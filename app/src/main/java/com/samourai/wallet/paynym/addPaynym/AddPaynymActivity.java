@@ -1,8 +1,11 @@
 package com.samourai.wallet.paynym.addPaynym;
 
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -15,8 +18,24 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.common.base.Splitter;
 import com.samourai.wallet.R;
-import com.samourai.wallet.paynym.fragments.PaynymListFragment;
+import com.samourai.wallet.bip47.BIP47Add;
+import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
+import com.samourai.wallet.util.FormatsUtil;
+import com.yanzhenjie.zbar.Symbol;
+
+import org.bitcoinj.core.AddressFormatException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 public class AddPaynymActivity extends AppCompatActivity {
 
@@ -25,6 +44,10 @@ public class AddPaynymActivity extends AppCompatActivity {
     private RecyclerView searchPaynymList;
     private static final String TAG = "AddPaynymActivity";
     private String pcode;
+
+    private static final int EDIT_PCODE = 2000;
+    private static final int SCAN_PCODE = 2077;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +60,34 @@ public class AddPaynymActivity extends AppCompatActivity {
         searchPaynymList.setAdapter(new SearchAdapter());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        findViewById(R.id.add_paynym_scan_qr).setOnClickListener(view -> {
+            Intent intent = new Intent(this, ZBarScannerActivity.class);
+            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+            startActivityForResult(intent, SCAN_PCODE);
+        });
+
+        findViewById(R.id.add_paynym_paste).setOnClickListener(view -> {
+            pastePcode();
+
+        });
     }
 
+    private void pastePcode() {
+        try {
+
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (clipboard.getPrimaryClip().getDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
+            ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+            processScan(item.getText().toString());
+        } else {
+            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_LONG).show();
+        }
+
+        }catch (Exception ex){
+            Toast.makeText(this, "Unable to access Clipboard", Toast.LENGTH_LONG).show();
+
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,6 +139,68 @@ public class AddPaynymActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_PCODE) {
+            if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
+                String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+                processScan(strResult);
+            }
+        }
+    }
+
+    private void processScan(String data) {
+
+        if (data.startsWith("bitcoin://") && data.length() > 10) {
+            data = data.substring(10);
+        }
+        if (data.startsWith("bitcoin:") && data.length() > 8) {
+            data = data.substring(8);
+        }
+
+        if (FormatsUtil.getInstance().isValidPaymentCode(data)) {
+
+            try {
+                if (data.equals(BIP47Util.getInstance(this).getPaymentCode().toString())) {
+                    Toast.makeText(this, R.string.bip47_cannot_scan_own_pcode, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (AddressFormatException afe) {
+                ;
+            }
+
+            Intent intent = new Intent(this, PayNymDetailsActivity.class);
+            intent.putExtra("pcode", data);
+            startActivityForResult(intent, EDIT_PCODE);
+
+        } else if (data.contains("?") && (data.length() >= data.indexOf("?"))) {
+
+            String meta = data.substring(data.indexOf("?") + 1);
+
+            String _meta = null;
+            try {
+                Map<String, String> map = new HashMap<String, String>();
+                if (meta != null && meta.length() > 0) {
+                    _meta = URLDecoder.decode(meta, "UTF-8");
+                    map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                }
+
+                Intent intent = new Intent(this, BIP47Add.class);
+                intent.putExtra("pcode", data.substring(0, data.indexOf("?")));
+                intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                startActivityForResult(intent, EDIT_PCODE);
+            } catch (UnsupportedEncodingException uee) {
+                ;
+            } catch (Exception e) {
+                ;
+            }
+
+        } else {
+            Toast.makeText(this, R.string.scan_error, Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
 
     class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
