@@ -697,9 +697,11 @@ public class BalanceActivity extends AppCompatActivity {
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
+
                         Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
                         intent.putExtra("params", strResult.trim());
                         startActivity(intent);
+
                     } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());

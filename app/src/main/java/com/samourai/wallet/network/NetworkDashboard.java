@@ -21,23 +21,17 @@ import android.widget.Toast;
 import com.msopentech.thali.android.toronionproxy.NetworkManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.crypto.AESUtil;
-import com.samourai.wallet.hd.HD_WalletFactory;
+
 import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
 import com.samourai.wallet.network.dojo.DojoUtil;
-import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.service.RefreshService;
+
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
-import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectionChangeReceiver;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.WebUtil;
 
-import org.bitcoinj.crypto.MnemonicException;
-
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +39,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 
 public class NetworkDashboard extends AppCompatActivity {
 
@@ -67,7 +60,6 @@ public class NetworkDashboard extends AppCompatActivity {
     private boolean waitingForPairing = false;
     private String strPairingParams = null;
     private LinearLayout dojoLayout = null;
-
     private RegisterTask registerTask = null;
 
     private static final String TAG = "NetworkDashboard";
@@ -137,6 +129,10 @@ public class NetworkDashboard extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null && extras.containsKey("params")) {
+
+            DojoUtil.getInstance(NetworkDashboard.this).clear();
+
+            Log.d("NetworkDashboard", "getting extras");
             strPairingParams = extras.getString("params");
             enableDojoConfigure(strPairingParams);
         }
@@ -280,6 +276,9 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void enableDojoConfigure(String params)  {
+
+        Log.d("NetworkDashboard", "enableDojoConfigure()");
+
         dojoLayout.setVisibility(View.VISIBLE);
         waitingForPairing = true;
         startTor();
@@ -287,6 +286,8 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void initDojo() {
+
+        Log.d("NetworkDashboard", "initDojo()");
 
         PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44LOCK, false);
         PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49LOCK, false);
@@ -298,6 +299,9 @@ public class NetworkDashboard extends AppCompatActivity {
             public void run() {
                 if (registerTask == null || registerTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
                     registerTask = new RegisterTask();
+
+                    Log.d("NetworkDashboard", "registerTask launched");
+
                     registerTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 }
             }
@@ -310,6 +314,15 @@ public class NetworkDashboard extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
+
+            Log.d("NetworkDashboard", "registerTask: query Dojo");
+            Log.d("NetworkDashboard", WebUtil.SAMOURAI_API2_TESTNET_TOR);
+
+            APIFactory.getInstance(NetworkDashboard.this).getToken();
+
+            APIFactory.getInstance(NetworkDashboard.this).initWallet();
+
+            /*
 
             if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
@@ -333,6 +346,8 @@ public class NetworkDashboard extends AppCompatActivity {
                 APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
             }
 
+            */
+
             return "OK";
         }
 
@@ -348,6 +363,5 @@ public class NetworkDashboard extends AppCompatActivity {
         }
 
     }
-
 
 }

@@ -9,19 +9,6 @@ import com.samourai.wallet.util.WebUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/*
-
-{
-  "pairing": {
-    "type": "dojo.api",
-    "version": "1.0.0",
-    "apikey": "myApiKey",
-    "url": "http://nh2blhfu7gt3ld6c.onion/v2"
-  }
-}
-
- */
-
 public class DojoUtil {
 
     private static String dojoParams = null;
@@ -40,6 +27,10 @@ public class DojoUtil {
         }
 
         return instance;
+    }
+
+    public void clear() {
+        dojoParams = null;
     }
 
     public boolean isValidPairingPayload(String data) {
@@ -155,8 +146,23 @@ public class DojoUtil {
 
     public void fromJSON(JSONObject obj) {
 
-        if(isValidPairingPayload(obj.toString()))    {
-            setDojoParams(obj.toString());
+        if(isValidPairingPayload(obj.toString())) {
+
+            dojoParams = obj.toString();
+
+            if (dojoParams != null) {
+
+                if (SamouraiWallet.getInstance().isTestNet()) {
+                    WebUtil.SAMOURAI_API2_TESTNET_TOR = getUrl(dojoParams);
+                } else {
+                    WebUtil.SAMOURAI_API2_TOR = getUrl(dojoParams);
+                }
+
+                String apiToken = getApiKey(dojoParams);
+                APIFactory.getInstance(context).setAppToken(apiToken);
+
+            }
+
         }
 
     }
