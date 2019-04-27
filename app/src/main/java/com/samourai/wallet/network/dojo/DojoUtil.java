@@ -76,6 +76,22 @@ public class DojoUtil {
 
         String apiToken = getApiKey(dojoParams);
         APIFactory.getInstance(context).setAppToken(apiToken);
+        APIFactory.getInstance(context).getToken();
+
+    }
+
+    public void removeDojoParams() {
+        DojoUtil.dojoParams = null;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            WebUtil.SAMOURAI_API2_TESTNET_TOR = WebUtil.SAMOURAI_API2_TESTNET_TOR_DIST;
+        }
+        else    {
+            WebUtil.SAMOURAI_API2_TOR = WebUtil.SAMOURAI_API2_TOR_DIST;
+        }
+
+        APIFactory.getInstance(context).setAppToken(null);
+        APIFactory.getInstance(context).getToken();
 
     }
 

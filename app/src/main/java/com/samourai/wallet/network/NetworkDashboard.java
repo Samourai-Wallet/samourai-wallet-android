@@ -188,18 +188,6 @@ public class NetworkDashboard extends AppCompatActivity {
             dataButton.setText("Disable");
             dataConnectionIcon.setColorFilter(activeColor);
             dataConnectionStatus.setText("Enabled");
-
-            if(waitingForPairing)    {
-                waitingForPairing = false;
-
-                if (strPairingParams != null) {
-                    DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
-                    Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
-                    initDojo();
-                }
-
-            }
-
         } else {
             dataButton.setText("Enable");
             showOfflineMessage(true);
@@ -230,16 +218,35 @@ public class NetworkDashboard extends AppCompatActivity {
             torButton.setEnabled(true);
             torConnectionIcon.setColorFilter(activeColor);
             torConnectionStatus.setText("Enabled");
-        } else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
+
+            if(waitingForPairing)    {
+                waitingForPairing = false;
+
+                if (strPairingParams != null) {
+                    DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
+                    Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
+                    initDojo();
+                }
+
+            }
+
+        }
+        else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
             torButton.setText("loading...");
             torButton.setEnabled(false);
             torConnectionIcon.setColorFilter(waiting);
             torConnectionStatus.setText("Tor initializing");
-        } else {
+        }
+        else  {
             torButton.setText("Enable");
             torButton.setEnabled(true);
             torConnectionIcon.setColorFilter(disabledColor);
             torConnectionStatus.setText("Disabled");
+
+            if (strPairingParams != null) {
+                DojoUtil.getInstance(NetworkDashboard.this).removeDojoParams();
+            }
+
         }
     }
 
