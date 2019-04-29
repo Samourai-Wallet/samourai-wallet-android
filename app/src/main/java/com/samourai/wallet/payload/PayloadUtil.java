@@ -342,6 +342,7 @@ public class PayloadUtil	{
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
             meta.put("haptic_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.HAPTIC_PIN, true));
+            meta.put("confirm_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.CONFIRM_PIN, false));
             meta.put("auto_backup", PrefsUtil.getInstance(context).getValue(PrefsUtil.AUTO_BACKUP, true));
             meta.put("remote", PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false));
             meta.put("use_trusted", PrefsUtil.getInstance(context).getValue(PrefsUtil.TRUSTED_LOCK, false));
@@ -587,6 +588,11 @@ public class PayloadUtil	{
                 if(meta.has("haptic_pin")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.HAPTIC_PIN, meta.getBoolean("haptic_pin"));
                     editor.putBoolean("haptic", meta.getBoolean("haptic_pin"));
+                    editor.commit();
+                }
+                if(meta.has("confirm_pin")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.CONFIRM_PIN, meta.getBoolean("confirm_pin"));
+                    editor.putBoolean("confirmPin", meta.getBoolean("confirm_pin"));
                     editor.commit();
                 }
                 if(meta.has("auto_backup")) {
