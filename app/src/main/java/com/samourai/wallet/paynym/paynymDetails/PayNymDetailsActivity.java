@@ -110,6 +110,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     private CompositeDisposable disposables = new CompositeDisposable();
     private ProgressBar paynymAvatarPorgress, progressBar;
     private ConstraintLayout historyLayout, followLayout;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,9 +169,9 @@ public class PayNymDetailsActivity extends AppCompatActivity {
             showWaitingForConfirm();
         }
         if (BIP47Meta.getInstance().incomingExists(pcode)) {
-            followsYoutext.setVisibility(View.VISIBLE);
+//            followsYoutext.setVisibility(View.VISIBLE);
         } else {
-            followsYoutext.setVisibility(View.GONE);
+//            followsYoutext.setVisibility(View.GONE);
         }
 
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
@@ -190,13 +191,22 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                         Toast.makeText(PayNymDetailsActivity.this, "Unable to load avatar", Toast.LENGTH_SHORT).show();
                     }
                 });
+        if (menu != null) {
 
+            if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
+                menu.findItem(R.id.retry_notiftx).setVisible(true);
+            } else {
+                menu.findItem(R.id.retry_notiftx).setVisible(false);
+            }
+
+        }
     }
 
     private void showWaitingForConfirm() {
         historyLayout.setVisibility(View.VISIBLE);
         followLayout.setVisibility(View.GONE);
         confirmMessage.setVisibility(View.VISIBLE);
+        followBtn.setVisibility(View.GONE);
     }
 
     private void showHistory() {
@@ -207,6 +217,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
 
     private void showFollow() {
         historyLayout.setVisibility(View.GONE);
+        followBtn.setVisibility(View.VISIBLE);
         followLayout.setVisibility(View.VISIBLE);
         confirmMessage.setVisibility(View.GONE);
     }
@@ -353,6 +364,8 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 } else {
                     if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT) {
                         followPaynym();
+                    }else {
+                        Snackbar.make(historyLayout.getRootView(),"Follow transaction is still pending",Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -386,6 +399,10 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 ShowPayNymQRBottomSheet showPayNymQRBottomSheet = new ShowPayNymQRBottomSheet();
                 showPayNymQRBottomSheet.setArguments(bundle);
                 showPayNymQRBottomSheet.show(getSupportFragmentManager(), showPayNymQRBottomSheet.getTag());
+                break;
+            }
+            case R.id.retry_notiftx: {
+                doNotifTx();
                 break;
             }
 
@@ -441,6 +458,16 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.paynym_details_menu, menu);
+        if (pcode != null) {
+
+            if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
+                menu.findItem(R.id.retry_notiftx).setVisible(true);
+            } else {
+                menu.findItem(R.id.retry_notiftx).setVisible(false);
+            }
+
+        }
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 

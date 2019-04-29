@@ -17,6 +17,11 @@
         android:id="@+id/view_code_paynym_details"
         android:title="View Payment code"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/retry_notiftx"
+        android:title="Retry follow transaction"
+        android:visible="false"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/resync_menu_paynym_details"
