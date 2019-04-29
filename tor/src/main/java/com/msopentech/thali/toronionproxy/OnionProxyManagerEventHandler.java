@@ -67,7 +67,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         //String rendQuery = info.get("REND_QUERY");
         //if(rendQuery != null) msg += ", service: " + rendQuery;
         if(!path.isEmpty()) msg += ", path: " + shortenPath(path);
-        LOG.info(msg);
+//        LOG.info(msg);
         lastLog=msg;
     }
 

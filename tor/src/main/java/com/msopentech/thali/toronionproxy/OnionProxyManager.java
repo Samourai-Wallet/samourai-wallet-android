@@ -29,6 +29,8 @@ See the Apache 2 License for the specific language governing permissions and lim
 
 package com.msopentech.thali.toronionproxy;
 
+import android.util.Log;
+
 import net.freehaven.tor.control.ConfigEntry;
 import net.freehaven.tor.control.TorControlConnection;
 
@@ -471,7 +473,7 @@ public abstract class OnionProxyManager {
 
     protected synchronized void installAndConfigureFiles() throws IOException, InterruptedException {
         onionProxyContext.installFiles();
-
+        Log.i("onionProxyC", "installAndConfigureFiles: ".concat(onionProxyContext.getTorExecutableFile().getAbsolutePath()));
         if (!setExecutable(onionProxyContext.getTorExecutableFile())) {
             throw new RuntimeException("could not make Tor executable.");
         }

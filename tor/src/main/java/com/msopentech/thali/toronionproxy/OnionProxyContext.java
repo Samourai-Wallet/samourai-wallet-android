@@ -13,7 +13,12 @@ See the Apache 2 License for the specific language governing permissions and lim
 
 package com.msopentech.thali.toronionproxy;
 
+import android.util.Log;
+
+import com.msopentech.thali.android.toronionproxy.torinstaller.TorResourceInstaller;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,22 +34,24 @@ abstract public class OnionProxyContext {
     protected final static String GEO_IP_NAME = "geoip";
     protected final static String GEO_IPV_6_NAME = "geoip6";
     protected final static String TORRC_NAME = "torrc";
+    protected final static String TORBINARY_KEY = "tor.so";
     protected final static String PID_NAME = "pid";
     protected final File workingDirectory;
     protected final File geoIpFile;
     protected final File geoIpv6File;
     protected final File torrcFile;
-    protected final File torExecutableFile;
+    protected File torExecutableFile;
     protected final File cookieFile;
     protected final File hostnameFile;
     protected final File pidFile;
+    private static final String TAG = "OnionProxyContext";
 
     public OnionProxyContext(File workingDirectory) {
         this.workingDirectory = workingDirectory;
         geoIpFile = new File(getWorkingDirectory(), GEO_IP_NAME);
         geoIpv6File = new File(getWorkingDirectory(), GEO_IPV_6_NAME);
         torrcFile = new File(getWorkingDirectory(), TORRC_NAME);
-        torExecutableFile = new File(getWorkingDirectory(), getTorExecutableFileName());
+        torExecutableFile = new File(getWorkingDirectory(), TORBINARY_KEY);
         cookieFile = new File(getWorkingDirectory(), ".tor/control_auth_cookie");
         hostnameFile = new File(getWorkingDirectory(), "/" + HIDDENSERVICE_DIRECTORY_NAME + "/hostname");
         pidFile = new File(getWorkingDirectory(), PID_NAME);
@@ -54,36 +61,43 @@ abstract public class OnionProxyContext {
         // This is sleezy but we have cases where an old instance of the Tor OP needs an extra second to
         // clean itself up. Without that time we can't do things like delete its binary (which we currently
         // do by default, something we hope to fix with https://github.com/thaliproject/Tor_Onion_Proxy_Library/issues/13
-        Thread.sleep(1000,0);
+        Thread.sleep(1000, 0);
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
             throw new RuntimeException("Could not create root directory!");
         }
+        Log.i(TAG, "installFiles: ".concat("".concat(String.valueOf(getAssetOrResourceByName(GEO_IP_NAME).available()))));
 
-        FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(GEO_IP_NAME), geoIpFile);
-        FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(GEO_IPV_6_NAME), geoIpv6File);
-        FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(TORRC_NAME), torrcFile);
+        try {
+            TorResourceInstaller torResourceInstaller = this.getTorInstaller();
 
-        switch(OsData.getOsType()) {
-            case ANDROID:
-                FileUtilities.cleanInstallOneFile(
-                        getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
-                        torExecutableFile);
-                break;
-            case WINDOWS:
-            case LINUX_32:
-            case LINUX_64:
-            case MAC:
-                FileUtilities.extractContentFromZip(getWorkingDirectory(),
-                        getAssetOrResourceByName(getPathToTorExecutable() + "tor.zip"));
-                break;
-            default:
-                throw new RuntimeException("We don't support Tor on this OS yet");
+            File fileTorBin = torResourceInstaller.installResources();
+
+            Log.i(TAG, "installFiles: fileTorBin ".concat(fileTorBin.getAbsolutePath()));
+            if (!fileTorBin.getAbsolutePath().contains("app_torfiles")) {
+                FileUtilities.cleanInstallOneFile(new FileInputStream(fileTorBin), new File(getWorkingDirectory(), TORBINARY_KEY));
+            }
+            FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(GEO_IP_NAME), geoIpFile);
+            FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(GEO_IPV_6_NAME), geoIpv6File);
+            FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(TORRC_NAME), torrcFile);
+
+            boolean success = fileTorBin != null && fileTorBin.canExecute();
+            Log.i(TAG, "installFiles: success ".concat(String.valueOf(success)));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            Log.i(TAG, "installFiles: ".concat(e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.i(TAG, "installFiles: ".concat(e.getMessage()));
+
         }
     }
 
     /**
      * Sets environment variables and working directory needed for Tor
+     *
      * @param processBuilder we will call start on this to run Tor
      */
     public void setEnvironmentArgsAndWorkingDirectoryForStart(ProcessBuilder processBuilder) {
@@ -105,8 +119,8 @@ abstract public class OnionProxyContext {
 
     public String[] getEnvironmentArgsForExec() {
         List<String> envArgs = new ArrayList<String>();
-        envArgs.add("HOME=" + getWorkingDirectory().getAbsolutePath() );
-        switch(OsData.getOsType()) {
+        envArgs.add("HOME=" + getWorkingDirectory().getAbsolutePath());
+        switch (OsData.getOsType()) {
             case LINUX_32:
             case LINUX_64:
                 // We have to provide the LD_LIBRARY_PATH because when looking for dynamic libraries
@@ -148,12 +162,14 @@ abstract public class OnionProxyContext {
         return workingDirectory;
     }
 
-    public File getPidFile() { return pidFile; }
+    public File getPidFile() {
+        return pidFile;
+    }
 
     public void deleteAllFilesButHiddenServices() throws InterruptedException {
         // It can take a little bit for the Tor OP to detect the connection is dead and kill itself
-        Thread.sleep(1000,0);
-        for(File file : getWorkingDirectory().listFiles()) {
+        Thread.sleep(1000, 0);
+        for (File file : getWorkingDirectory().listFiles()) {
             if (file.isDirectory()) {
                 if (file.getName().compareTo(HIDDENSERVICE_DIRECTORY_NAME) != 0) {
                     FileUtilities.recursiveFileDelete(file);
@@ -166,45 +182,11 @@ abstract public class OnionProxyContext {
         }
     }
 
-    /**
-     * Files we pull out of the AAR or JAR are typically at the root but for executables outside
-     * of Android the executable for a particular platform is in a specific sub-directory.
-     * @return Path to executable in JAR Resources
-     */
-    protected String getPathToTorExecutable() {
-        String path = "native/";
-        switch (OsData.getOsType()) {
-            case ANDROID:
-                return "";
-            case WINDOWS:
-                return path + "windows/x86/"; // We currently only support the x86 build but that should work everywhere
-            case MAC:
-                return path +  "osx/x64/"; // I don't think there even is a x32 build of Tor for Mac, but could be wrong.
-            case LINUX_32:
-                return path + "linux/x86/";
-            case LINUX_64:
-                return path + "linux/x64/";
-            default:
-                throw new RuntimeException("We don't support Tor on this OS");
-        }
-    }
-
-    protected String getTorExecutableFileName() {
-        switch(OsData.getOsType()) {
-            case ANDROID:
-            case LINUX_32:
-            case LINUX_64:
-                return "tor";
-            case WINDOWS:
-                return "tor.exe";
-            case MAC:
-                return "tor.real";
-            default:
-                throw new RuntimeException("We don't support Tor on this OS");
-        }
-    }
-
     abstract public String getProcessId();
+
     abstract public WriteObserver generateWriteObserver(File file);
+
     abstract protected InputStream getAssetOrResourceByName(String fileName) throws IOException;
+
+    abstract protected TorResourceInstaller getTorInstaller();
 }
