@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +21,7 @@ import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.common.base.Splitter;
 import com.samourai.wallet.R;
-import com.samourai.wallet.bip47.BIP47Add;
+import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.util.FormatsUtil;
@@ -36,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
+import static com.samourai.wallet.bip47.BIP47Meta.strSamouraiDonationPCode;
 
 public class AddPaynymActivity extends AppCompatActivity {
 
@@ -69,6 +69,14 @@ public class AddPaynymActivity extends AppCompatActivity {
         findViewById(R.id.add_paynym_paste).setOnClickListener(view -> {
             pastePcode();
 
+        });
+
+        findViewById(R.id.dev_fund_button).setOnClickListener(view -> {
+
+            Intent intent = new Intent(this, PayNymDetailsActivity.class);
+            intent.putExtra("pcode", strSamouraiDonationPCode);
+            intent.putExtra("label", BIP47Meta.getInstance().getDisplayLabel(strSamouraiDonationPCode));
+            startActivityForResult(intent, EDIT_PCODE);
         });
     }
 
@@ -183,7 +191,7 @@ public class AddPaynymActivity extends AppCompatActivity {
                     map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
                 }
 
-                Intent intent = new Intent(this, BIP47Add.class);
+                Intent intent = new Intent(this, PayNymDetailsActivity.class);
                 intent.putExtra("pcode", data.substring(0, data.indexOf("?")));
                 intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
                 startActivityForResult(intent, EDIT_PCODE);

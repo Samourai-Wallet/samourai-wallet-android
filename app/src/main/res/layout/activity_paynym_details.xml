@@ -86,7 +86,7 @@
                 <TextView
                     android:id="@+id/follows_you_text"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="10dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="2dp"
                     android:layout_marginEnd="8dp"
@@ -101,7 +101,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/paynym_label"
                     app:layout_constraintTop_toTopOf="@+id/paynym_label"
-                    tools:visibility="invisible" />
+                    android:visibility="invisible" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar
@@ -175,7 +175,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="@string/paynym_follow_message_2" />
+                    tools:text="Follow --USER-- " />
 
                 <Button
                     android:id="@+id/paynym_follow_btn"

@@ -43,6 +43,7 @@
                 android:text="Featured PayNym" />
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/dev_fund_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -110,8 +111,8 @@
                     android:layout_height="32dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:tint="@color/grey_accent"
                     android:layout_marginBottom="8dp"
+                    android:tint="@color/grey_accent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
