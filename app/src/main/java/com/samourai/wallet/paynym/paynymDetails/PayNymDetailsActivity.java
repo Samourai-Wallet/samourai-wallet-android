@@ -174,6 +174,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
 //            followsYoutext.setVisibility(View.GONE);
         }
 
+        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         paynymLabel.setText(getLabel());
         paynymAvatarPorgress.setVisibility(View.VISIBLE);
@@ -279,6 +280,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
         editPaynymBottomSheet.setSaveButtonListener(view -> {
             doNotifTx();
+            doUploadFollow(false);
         });
 
     }
@@ -364,8 +366,8 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 } else {
                     if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT) {
                         followPaynym();
-                    }else {
-                        Snackbar.make(historyLayout.getRootView(),"Follow transaction is still pending",Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(historyLayout.getRootView(), "Follow transaction is still pending", Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -825,13 +827,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                                     BIP49Util.getInstance(PayNymDetailsActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                                 }
 
-                                PayloadUtil.getInstance(PayNymDetailsActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PayNymDetailsActivity.this).getGUID() + AccessFactory.getInstance(PayNymDetailsActivity.this).getPIN()));
-
+                                savePayLoad();
                             } else {
                                 Toast.makeText(PayNymDetailsActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                             }
                             runOnUiThread(() -> {
-                                doUploadFollow(false);
+
                                 setPayNym();
                             });
                         } catch (JSONException je) {
@@ -862,6 +863,10 @@ public class PayNymDetailsActivity extends AppCompatActivity {
 
     }
 
+    private void savePayLoad() throws MnemonicException.MnemonicLengthException, DecryptionException, JSONException, IOException {
+        PayloadUtil.getInstance(PayNymDetailsActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PayNymDetailsActivity.this).getGUID() + AccessFactory.getInstance(PayNymDetailsActivity.this).getPIN()));
+    }
+
     private void doUpdatePayNymInfo(final String pcode) {
 
         Disposable disposable = Observable.fromCallable(() -> {
@@ -887,6 +892,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
 
                     if (success) {
                         setPayNym();
+                        savePayLoad();
                     }
 
                 }, errror -> {
@@ -930,7 +936,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                         responseObj.has("token");
                     }
 
-
+                    savePayLoad();
                 }
 
             } catch (JSONException je) {
