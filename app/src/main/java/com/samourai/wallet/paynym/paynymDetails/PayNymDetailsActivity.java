@@ -2,6 +2,9 @@ package com.samourai.wallet.paynym.paynymDetails;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -153,7 +156,13 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         followBtn.setOnClickListener(view -> {
             followPaynym();
         });
-
+        paynymLabel.setOnClickListener(view -> {
+            ClipboardManager clipboard = (ClipboardManager)
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("paynym", ((TextView) view).getText().toString());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this,"Paynym id copied",Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setPayNym() {
@@ -173,7 +182,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         } else {
 //            followsYoutext.setVisibility(View.GONE);
         }
-
         Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         paynymLabel.setText(getLabel());
@@ -201,13 +209,15 @@ public class PayNymDetailsActivity extends AppCompatActivity {
             }
 
         }
+
     }
 
     private void showWaitingForConfirm() {
         historyLayout.setVisibility(View.VISIBLE);
-        followLayout.setVisibility(View.GONE);
+        followLayout.setVisibility(View.VISIBLE);
         confirmMessage.setVisibility(View.VISIBLE);
         followBtn.setVisibility(View.GONE);
+        followMessage.setVisibility(View.GONE);
     }
 
     private void showHistory() {
@@ -221,6 +231,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         followBtn.setVisibility(View.VISIBLE);
         followLayout.setVisibility(View.VISIBLE);
         confirmMessage.setVisibility(View.GONE);
+        followMessage.setVisibility(View.VISIBLE);
     }
 
     private void showFollowAlert(String strAmount, View.OnClickListener onClickListener) {
@@ -279,8 +290,9 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         editPaynymBottomSheet.setArguments(bundle);
         editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
         editPaynymBottomSheet.setSaveButtonListener(view -> {
+            updatePaynym(editPaynymBottomSheet.getLabel(), editPaynymBottomSheet.getPcode());
             doNotifTx();
-            doUploadFollow(false);
+
         });
 
     }
@@ -865,6 +877,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
 
     private void savePayLoad() throws MnemonicException.MnemonicLengthException, DecryptionException, JSONException, IOException {
         PayloadUtil.getInstance(PayNymDetailsActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(PayNymDetailsActivity.this).getGUID() + AccessFactory.getInstance(PayNymDetailsActivity.this).getPIN()));
+        Log.i(TAG, "savePayLoad: ");
     }
 
     private void doUpdatePayNymInfo(final String pcode) {
@@ -956,7 +969,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 .subscribe(success -> {
                     progressBar.setVisibility(View.INVISIBLE);
                     setPayNym();
-
+                    doUpdatePayNymInfo(pcode);
                 }, error -> {
                     progressBar.setVisibility(View.INVISIBLE);
                     Log.i(TAG, "doUploadFollow: Error->  ".concat(error.getMessage()));
@@ -977,16 +990,16 @@ public class PayNymDetailsActivity extends AppCompatActivity {
             while (loop) {
                 addrs.clear();
                 for (int i = idx; i < (idx + 20); i++) {
-//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+//                            Log.i("PayNymDetailsActivity", "sync receive from " + i + ":" + BIP47Util.getInstance(PayNymDetailsActivity.this).getReceivePubKey(payment_code, i));
                     BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(this).getReceivePubKey(payment_code, i), i);
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(this).getReceivePubKey(payment_code, i), payment_code.toString());
                     addrs.add(BIP47Util.getInstance(this).getReceivePubKey(payment_code, i));
-//                            Log.i("BIP47Activity", "p2pkh " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i).getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+//                            Log.i("PayNymDetailsActivity", "p2pkh " + i + ":" + BIP47Util.getInstance(PayNymDetailsActivity.this).getReceiveAddress(payment_code, i).getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 
                 }
                 String[] s = addrs.toArray(new String[addrs.size()]);
                 int nb = APIFactory.getInstance(this).syncBIP47Incoming(s);
-//                        Log.i("BIP47Activity", "sync receive idx:" + idx + ", nb == " + nb);
+//                        Log.i("PayNymDetailsActivity", "sync receive idx:" + idx + ", nb == " + nb);
                 if (nb == 0) {
                     loop = false;
                 }
@@ -1001,7 +1014,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 addrs.clear();
                 for (int i = idx; i < (idx + 20); i++) {
                     PaymentAddress sendAddress = BIP47Util.getInstance(this).getSendAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+//                            Log.i("PayNymDetailsActivity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                            BIP47Meta.getInstance().setOutgoingIdx(payment_code.toString(), i);
                     BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(this).getSendPubKey(payment_code, i), i);
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(this).getSendPubKey(payment_code, i), payment_code.toString());
@@ -1010,7 +1023,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 }
                 String[] s = addrs.toArray(new String[addrs.size()]);
                 int nb = APIFactory.getInstance(this).syncBIP47Outgoing(s);
-//                        Log.i("BIP47Activity", "sync send idx:" + idx + ", nb == " + nb);
+//                        Log.i("PayNymDetailsActivity", "sync send idx:" + idx + ", nb == " + nb);
                 if (nb == 0) {
                     loop = false;
                 }
