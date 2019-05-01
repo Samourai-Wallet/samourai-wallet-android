@@ -160,7 +160,7 @@
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/follow_message"
-                    tools:visibility="gone" />
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/follow_message"

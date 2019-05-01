@@ -177,11 +177,11 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
             showWaitingForConfirm();
         }
-        if (BIP47Meta.getInstance().incomingExists(pcode)) {
+//        if (BIP47Meta.getInstance().incomingExists(pcode)) {
 //            followsYoutext.setVisibility(View.VISIBLE);
-        } else {
+//        } else {
 //            followsYoutext.setVisibility(View.GONE);
-        }
+//        }
         Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         paynymLabel.setText(getLabel());
