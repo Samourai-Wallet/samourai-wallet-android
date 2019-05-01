@@ -6,6 +6,7 @@
         android:id="@+id/action_search_addpaynym"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="Search"
+        android:visible="false"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
 </menu>
