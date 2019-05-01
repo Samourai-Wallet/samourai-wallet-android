@@ -280,6 +280,10 @@ public class PayNymHome extends AppCompatActivity {
                 }
                 break;
             }
+            case R.id.sign: {
+                doSign();
+                break;
+            }
 
             case R.id.action_paynym_share_qr: {
                 Bundle bundle = new Bundle();
@@ -307,6 +311,15 @@ public class PayNymHome extends AppCompatActivity {
                 processScan(strResult);
             }
         }
+    }
+
+    private void doSign() {
+
+        MessageSignUtil.getInstance(this).doSign(this.getString(R.string.bip47_sign),
+                this.getString(R.string.bip47_sign_text1),
+                this.getString(R.string.bip47_sign_text2),
+                BIP47Util.getInstance(this).getNotificationAddress().getECKey());
+
     }
 
     private void doSupport() {
