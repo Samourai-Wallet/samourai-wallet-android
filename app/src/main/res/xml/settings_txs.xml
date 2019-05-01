@@ -70,6 +70,12 @@
             android:key="psbt"
             />
 
+        <Preference
+            android:title="@string/options_whirlpool_gui"
+            android:summary="@string/options_whirlpool_gui2"
+            android:key="whirlpool_gui"
+            />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
