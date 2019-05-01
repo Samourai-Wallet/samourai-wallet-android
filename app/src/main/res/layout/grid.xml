@@ -1,138 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/pinBG"
-    android:gravity="center"
-    >
+    android:background="@color/windowDark"
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/prompt"
+    <android.support.v7.widget.Toolbar
+        app:title=""
+        android:id="@+id/toolbar_pinEntry"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        >
-        <TextView
-            android:id="@+id/prompt2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="26sp"
-            android:textColor="#FFffffff"
-            android:background="#FF212429"
-            android:gravity="center_horizontal"
-            android:textAlignment="gravity"
-            android:text="@string/pin_enter"
-            />
-    </LinearLayout>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/transparent" />
 
-    <LinearLayout
-        android:id="@+id/inputLayout"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_below="@id/prompt"
-        >
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <com.samourai.wallet.widgets.PinEntryView
+            android:id="@+id/pinentry_view"
+            android:layout_width="0dp"
+            android:maxHeight="330dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="64dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pin_entry_mask_layout">
+
+
+        </com.samourai.wallet.widgets.PinEntryView>
+
+        <LinearLayout
+            android:id="@+id/pin_entry_mask_layout"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:background="#3a3d43"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline5">
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView14"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_lock_white_24dp" />
+
         <TextView
-            android:id="@+id/userInput"
-            android:layout_width="match_parent"
+            android:id="@+id/textView46"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="40dp"
-            android:textColor="#FFffffff"
-            android:background="#272c33"
-            android:gravity="center_horizontal"
-            android:textAlignment="gravity"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-    </LinearLayout>
+            android:text="@string/wallet_locked"
+            app:layout_constraintEnd_toEndOf="@+id/imageView14"
+            app:layout_constraintHorizontal_bias="0.545"
+            app:layout_constraintStart_toStartOf="@+id/imageView14"
+            app:layout_constraintTop_toBottomOf="@+id/imageView14" />
 
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:columnCount="3"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/inputLayout"
-        >
+        <ProgressBar
+            android:id="@+id/progress_pin_entry"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:indeterminate="true"
+            android:progressBackgroundTint="@android:color/transparent"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@+id/textView46"
+            app:layout_constraintStart_toStartOf="@+id/textView46"
+            app:layout_constraintTop_toBottomOf="@+id/textView46" />
 
-        <Button android:id="@+id/ta" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="0"
-            android:layout_column="0" />
-        <Button android:id="@+id/tb" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="0"
-            android:layout_column="1" />
-        <Button android:id="@+id/tc" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="0"
-            android:layout_column="2" />
-        <Button android:id="@+id/td" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:layout_row="1"
-            android:onClick="OnNumberPadClick"
-            android:layout_column="0" />
-        <Button android:id="@+id/te" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:layout_row="1"
-            android:onClick="OnNumberPadClick"
-            android:layout_column="1" />
-        <Button android:id="@+id/tf" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:layout_row="1"
-            android:onClick="OnNumberPadClick"
-            android:layout_column="2" />
-        <Button android:id="@+id/tg" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="2"
-            android:layout_column="0" />
-        <Button android:id="@+id/th" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:layout_row="2"
-            android:onClick="OnNumberPadClick"
-            android:layout_column="1" />
-        <Button android:id="@+id/ti" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="2"
-            android:layout_column="2" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.30" />
 
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="70dp"
-            android:id="@+id/tback"
-            android:layout_row="3"
-            android:layout_column="0"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_backspace_white_24dp"
-            android:background="@color/pinBG" />
-
-        <Button android:id="@+id/tj" android:textSize="50dp" android:textColor="@color/primary_light" android:background="@drawable/rounded_rectangle_black" android:layout_height="70dp" android:layout_width="wrap_content" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-            android:typeface="sans"
-            android:onClick="OnNumberPadClick"
-            android:layout_row="3"
-            android:layout_column="1" />
-
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="70dp"
-            android:id="@+id/tsend"
-            android:layout_row="3"
-            android:layout_column="2"
-            android:background="@drawable/rounded_rectangle_green"
-            android:src="@drawable/ic_done_white_24dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp" />
-
-    </GridLayout>
-
-</RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>
