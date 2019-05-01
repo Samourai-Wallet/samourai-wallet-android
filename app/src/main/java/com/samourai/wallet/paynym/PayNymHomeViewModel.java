@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
@@ -83,6 +84,11 @@ public class PayNymHomeViewModel extends AndroidViewModel {
                     if (((JSONObject) _following.get(i)).has("segwit")) {
                         BIP47Meta.getInstance().setSegwit(((JSONObject) _following.get(i)).getString("code"), ((JSONObject) _following.get(i)).getBoolean("segwit"));
                     }
+                    JSONObject paynym = (JSONObject) _following.get(i);
+                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.getString("code")).contains(paynym.getString("code").substring(0, 4))) {
+                        BIP47Meta.getInstance().setLabel(paynym.getString("code"), paynym.getString("nymName"));
+                    }
+
                 }
                 for (String pcode : _pcodes) {
                     if (!followings.contains(pcode)) {
@@ -94,13 +100,18 @@ public class PayNymHomeViewModel extends AndroidViewModel {
                 this.followingList.postValue(followings);
             }
             if (jsonObject.has("followers")) {
-                JSONArray _following = jsonObject.getJSONArray("followers");
-                for (int i = 0; i < _following.length(); i++) {
-                    followers.add(((JSONObject) _following.get(i)).getString("code"));
-                    if (((JSONObject) _following.get(i)).has("segwit")) {
-                        BIP47Meta.getInstance().setSegwit(((JSONObject) _following.get(i)).getString("code"), ((JSONObject) _following.get(i)).getBoolean("segwit"));
+                JSONArray _follower = jsonObject.getJSONArray("followers");
+                for (int i = 0; i < _follower.length(); i++) {
+                    followers.add(((JSONObject) _follower.get(i)).getString("code"));
+                    if (((JSONObject) _follower.get(i)).has("segwit")) {
+                        BIP47Meta.getInstance().setSegwit(((JSONObject) _follower.get(i)).getString("code"), ((JSONObject) _follower.get(i)).getBoolean("segwit"));
+                    }
+                    JSONObject paynym = (JSONObject) _follower.get(i);
+                    if (BIP47Meta.getInstance().getDisplayLabel(paynym.getString("code")).contains(paynym.getString("code").substring(0, 4))) {
+                        BIP47Meta.getInstance().setLabel(paynym.getString("code"), paynym.getString("nymName"));
                     }
                 }
+
                 sortByLabel(followers);
                 this.followersList.postValue(followers);
             }
