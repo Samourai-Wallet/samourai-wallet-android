@@ -617,20 +617,7 @@ public class BalanceActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void startTor() {
-        progressBarMenu.setVisibility(View.VISIBLE);
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
-
-    }
-
-    private void stopTor() {
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.STOP_SERVICE);
-        startService(startIntent);
-    }
-
+ 
     private void setUpTor() {
         Disposable disposable = TorManager.getInstance(this)
                 .torStatus
