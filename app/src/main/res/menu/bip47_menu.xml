@@ -6,14 +6,14 @@
         android:id="@+id/action_scan_qr"
         android:icon="@drawable/ic_crop_free_white_24dp"
         android:orderInCategory="100"
-        android:title="Scan Code"
+        android:title="@string/scan_code"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_paynym_share_qr"
         android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="100"
-        android:title="Scan Code"
+        android:title="@string/share_qr"
         app:showAsAction="always" />
 
     <item

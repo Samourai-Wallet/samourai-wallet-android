@@ -700,5 +700,7 @@
 
     <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
     <string name="message_copied">message copied</string>
+    <string name="scan_code">Scan Code</string>
+    <string name="follows_you">Follows you</string>
 
 </resources>
