@@ -702,6 +702,6 @@
     <string name="message_copied">message copied</string>
     <string name="scan_code">Scan Code</string>
     <string name="follows_you">Follows you</string>
-    <string name="edit_paynymn">Edit paynym</string>
+    <string name="edit_paynym">Edit paynym</string>
 
 </resources>

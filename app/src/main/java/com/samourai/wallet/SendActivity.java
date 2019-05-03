@@ -140,6 +140,7 @@ public class SendActivity extends AppCompatActivity {
     public final static int SPEND_BOLTZMANN = 1;
     public final static int SPEND_RICOCHET = 2;
     private int SPEND_TYPE = SPEND_BOLTZMANN;
+    private boolean openedPaynym = false;
 
     private String strPCode = null;
     private long feeLow, feeMed, feeHigh;
@@ -242,22 +243,6 @@ public class SendActivity extends AppCompatActivity {
 
         setUpBoltzman();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-//            bViaMenu = extras.getBoolean("via_menu", false);
-            String strUri = extras.getString("uri");
-            strPCode = extras.getString("pcode");
-
-            if (strUri != null && strUri.length() > 0) {
-                processScan(strUri);
-            }
-            if (extras.containsKey("amount")) {
-                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
-            }
-            if (strPCode != null && strPCode.length() > 0) {
-                processPCode(strPCode, null);
-            }
-        }
         validateSpend();
 
     }
@@ -569,7 +554,29 @@ public class SendActivity extends AppCompatActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
+        checkDeepLinks();
+    }
 
+    private void checkDeepLinks() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+//            bViaMenu = extras.getBoolean("via_menu", false);
+            String strUri = extras.getString("uri");
+            if (extras.containsKey("amount")) {
+                btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
+            }
+            strPCode = extras.getString("pcode");
+            if (strPCode != null && strPCode.length() > 0) {
+                processPCode(strPCode, null);
+            } else if (strUri != null && strUri.length() > 0) {
+                processScan(strUri);
+            }
+        new Handler().postDelayed(this::validateSpend,800);
+        }else {
+            validateSpend();
+
+        }
     }
 
     private TextWatcher BTCWatcher = new TextWatcher() {
@@ -1636,7 +1643,10 @@ public class SendActivity extends AppCompatActivity {
                     }
 
                 }
-                startActivity(intent);
+                if (!openedPaynym) {
+                    startActivity(intent);
+                    openedPaynym = true;
+                }
             }
 
         } else {
@@ -1682,11 +1692,8 @@ public class SendActivity extends AppCompatActivity {
 
         if (amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(getToAddress())) {
             isValid = true;
-        } else if (amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
-            isValid = true;
-        } else {
-            isValid = false;
-        }
+        } else
+            isValid = amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress);
 
         if (insufficientFunds) {
             Toast.makeText(this, getString(R.string.insufficient_funds), Toast.LENGTH_SHORT).show();
@@ -1931,7 +1938,7 @@ public class SendActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 

@@ -287,7 +287,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
                 });
                 Toast.makeText(PinEntryActivity.this, R.string.pin_error, Toast.LENGTH_SHORT).show();
-                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
             }
 
             String randomKey = AccessFactory.getInstance(PinEntryActivity.this).getGUID();
@@ -297,7 +297,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
                 });
                 Toast.makeText(PinEntryActivity.this, R.string.random_key_error, Toast.LENGTH_SHORT).show();
-                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
             }
 
             String hash = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.ACCESS_HASH, "");
@@ -341,11 +341,8 @@ public class PinEntryActivity extends AppCompatActivity {
                             startActivity(intent);
                         });
 
-                    } else if (uri != null) {
-                        Log.i("PinEntryActivity", "uri to restartApp()");
-                        AppUtil.getInstance(PinEntryActivity.this).restartApp("uri", uri);
-                    } else {
-                        AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                    }  else {
+                        AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                     }
 
                 } catch (MnemonicException.MnemonicLengthException mle) {
@@ -372,6 +369,8 @@ public class PinEntryActivity extends AppCompatActivity {
                     } else {
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (getIntent().getExtras() != null)
+                            intent.putExtras(getIntent().getExtras());
                         startActivity(intent);
                     }
                 });
@@ -500,7 +499,7 @@ public class PinEntryActivity extends AppCompatActivity {
                         } else {
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                             TimeOutUtil.getInstance().updatePin();
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                            AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                         }
 
                     } else {
@@ -566,13 +565,13 @@ public class PinEntryActivity extends AppCompatActivity {
                                 final String pw = passphrase.getText().toString();
                                 if (pw == null || pw.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                                 }
 
                                 final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
                                 if (decrypted == null || decrypted.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                                 }
 
 
@@ -625,7 +624,7 @@ public class PinEntryActivity extends AppCompatActivity {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
 
                                                             dialog.dismiss();
-                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
 
                                                         }
                                                     }).show();
@@ -641,7 +640,7 @@ public class PinEntryActivity extends AppCompatActivity {
                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
 
                             }
                         });
@@ -654,6 +653,8 @@ public class PinEntryActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (getIntent().getExtras() != null)
+                intent.putExtras(getIntent().getExtras());
             startActivity(intent);
         }
 

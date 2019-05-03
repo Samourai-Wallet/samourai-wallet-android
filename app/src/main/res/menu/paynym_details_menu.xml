@@ -10,7 +10,7 @@
     <item
         android:id="@+id/edit_menu_paynym_details"
         android:icon="@drawable/ic_edit_white_24dp"
-        android:title="@string/edit_paynymn"
+        android:title="@string/edit_paynym"
         app:showAsAction="always" />
 
     <item

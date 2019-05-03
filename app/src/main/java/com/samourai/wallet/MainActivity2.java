@@ -273,8 +273,11 @@ public class MainActivity2 extends Activity {
                 intent.putExtra("uri", strUri);
                 PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
             }
+            if(getBundleExtras()!=null){
+                intent.putExtras(getBundleExtras());
+            }
             startActivity(intent);
-            pinEntryActivityLaunched=true;
+            pinEntryActivityLaunched = true;
 
         }
     }
@@ -366,39 +369,33 @@ public class MainActivity2 extends Activity {
 
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    private Bundle getBundleExtras() {
+        Bundle bundle = getIntent().getExtras();
+        if(bundle==null){
+            return null;
+        }
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && getIntent().getScheme() != null && getIntent().getScheme().equals("bitcoin")) {
+            bundle.putString("uri",getIntent().getData().toString());
+        }else {
+            if(bundle.containsKey("uri")){
+                bundle.putString("uri",bundle.getString("uri"));
+            }
+        }
+
+        return bundle;
+
+    }
+
     private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
-        if ((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn()) {
-
-            progress = new ProgressDialog(MainActivity2.this);
-            progress.setCancelable(false);
-            progress.setTitle(R.string.app_name);
-            progress.setMessage(getText(R.string.please_wait));
-            progress.show();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    APIFactory.getInstance(MainActivity2.this).initWallet();
-
-                    if (progress != null && progress.isShowing()) {
-                        progress.dismiss();
-                        progress = null;
-                    }
-
-                    Intent intent = new Intent(MainActivity2.this, SendActivity.class);
-                    intent.putExtra("uri", strUri);
-                    intent.putExtra("pcode", strPCode);
-                    startActivity(intent);
-
-                    Looper.loop();
-
-                }
-            }).start();
-
-        } else if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
+          if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
                 doSelectNet();
@@ -418,6 +415,9 @@ public class MainActivity2 extends Activity {
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
             intent.putExtra("notifTx", true);
             intent.putExtra("fetch", true);
+            if(getBundleExtras()!=null){
+                intent.putExtras(getBundleExtras());
+            }
             startActivity(intent);
         } else {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);

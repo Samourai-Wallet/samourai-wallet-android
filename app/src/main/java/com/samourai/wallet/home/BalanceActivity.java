@@ -70,6 +70,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
@@ -413,7 +414,26 @@ public class BalanceActivity extends AppCompatActivity {
         initViewModel();
         updateDisplay(false);
         progressBar.setVisibility(View.VISIBLE);
+        checkDeepLinks();
+    }
 
+    private void checkDeepLinks() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle == null) {
+            return;
+        }
+        if (bundle.containsKey("pcode") || bundle.containsKey("uri") || bundle.containsKey("amount")) {
+            Intent intent = new Intent(this, SendActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     private void initViewModel() {
