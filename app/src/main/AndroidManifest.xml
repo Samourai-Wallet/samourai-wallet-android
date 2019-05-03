@@ -229,7 +229,7 @@
         <activity
             android:name=".LandingActivity"
             android:label=""
-            android:theme="@style/AppThemeLanding" />
+            android:theme="@style/ui_2_theme_dark_status" />
         <activity android:name=".RecoveryWordsActivity" />
         <activity
             android:name=".TxAnimUIActivity"
