@@ -84,6 +84,9 @@ public class LandingActivity extends AppCompatActivity  {
         setAppVersion();
         if (PayloadUtil.getInstance(this).getBackupFile().exists()) {
             snackBarView.setVisibility(View.VISIBLE);
+        }else {
+            snackBarView.setVisibility(View.INVISIBLE);
+
         }
         if (!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
