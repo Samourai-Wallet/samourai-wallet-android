@@ -5,12 +5,12 @@
     <item
         android:id="@+id/send_menu_paynym_details"
         android:icon="@drawable/ic_action_send"
-        android:title="Item"
+        android:title="@string/bip47_spend_to_pcode"
         app:showAsAction="always" />
     <item
         android:id="@+id/edit_menu_paynym_details"
         android:icon="@drawable/ic_edit_white_24dp"
-        android:title="Item"
+        android:title="@string/edit_paynymn"
         app:showAsAction="always" />
 
     <item
