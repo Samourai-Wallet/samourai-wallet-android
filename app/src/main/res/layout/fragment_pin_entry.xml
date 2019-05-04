@@ -6,7 +6,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
@@ -35,8 +35,8 @@
                     style="@android:style/TextAppearance.WindowTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAllCaps="true"
-                    android:text="@string/set_pin_code" />
+                    android:text="@string/set_pin_code"
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:id="@+id/pin_entry_description"
@@ -48,12 +48,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/passphrase_mask_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="26dp"
             android:layout_marginTop="26dp"
+            android:layout_marginBottom="26dp"
             android:gravity="center"
-            android:id="@+id/passphrase_mask_container"
             android:orientation="horizontal">
 
 
@@ -61,14 +61,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <com.samourai.wallet.widgets.PinEntryView
                 android:id="@+id/pin_entry_view"
-                android:layout_width="match_parent"
+                android:layout_width="320dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_horizontal|center_vertical" />
         </LinearLayout>
 
     </LinearLayout>

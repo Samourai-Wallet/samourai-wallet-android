@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by Sarath kumar on 1/23/2018.
  */
-public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
+public class MnemonicSeedEditText extends android.support.v7.widget.AppCompatMultiAutoCompleteTextView {
     TextWatcher textWatcher;
     private static final String TAG = "MnemonicSeedEditText";
     String lastString;
@@ -46,6 +46,7 @@ public class MnemonicSeedEditText extends MultiAutoCompleteTextView {
     public MnemonicSeedEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        this.setDropDownBackgroundResource(R.drawable.rounded_rectangle_pinview);
         init();
     }
 

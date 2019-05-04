@@ -54,6 +54,21 @@
 
         </activity>
         <activity
+            android:name=".paynym.paynymDetails.PayNymDetailsActivity"
+            android:theme="@style/ui_2_theme"
+            android:label=""
+            />
+        <activity
+            android:name=".paynym.addPaynym.AddPaynymActivity"
+            android:exported="true"
+            android:label="@string/add_new"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".paynym.PayNymHome"
+            android:exported="true"
+            android:label="@string/paynyms"
+            android:theme="@style/ui_2_theme" />
+        <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
@@ -61,6 +76,7 @@
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -72,16 +88,16 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".home.BalanceActivity"
-            android:theme="@style/ui_2_theme"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/ui_2_theme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".UTXOActivity"
@@ -110,7 +126,8 @@
         <activity
             android:name=".PinEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
+            android:theme="@style/ui_2_theme_dark_status"
+            android:label="" />
         <activity
             android:name=".bip47.BIP47Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -142,33 +159,27 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name=".bip47.paynym.ClaimPayNymActivity"
+            android:name=".paynym.ClaimPayNymActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
         <activity
             android:name=".ExodusActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".PayNymCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
+            android:label="@string/app_name" />
 
-        <activity android:name="com.samourai.wallet.PayNymCalcActivity"
-            android:label="@string/app_name"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
-
-        <receiver android:name=".tor.TorBroadCastReceiver"/>
-        <activity android:name="com.samourai.wallet.AddressCalcActivity"
-            android:label="@string/app_name"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            >
-        </activity>
+        <receiver android:name=".tor.TorBroadCastReceiver" />
 
         <activity
-            android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
-            android:screenOrientation="landscape"
+            android:name=".AddressCalcActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            />
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.dm.zbar.android.scanner.ZBarScannerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape" />
 
         <service
             android:name=".service.WebSocketService"
@@ -218,7 +229,7 @@
         <activity
             android:name=".LandingActivity"
             android:label=""
-            android:theme="@style/AppThemeLanding" />
+            android:theme="@style/ui_2_theme_dark_status" />
         <activity android:name=".RecoveryWordsActivity" />
         <activity
             android:name=".TxAnimUIActivity"
@@ -237,11 +248,10 @@
 
         <activity
             android:name=".SendActivity"
-            android:exported="true"
-            android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
             android:theme="@style/ui_2_theme"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlPoolActivity"
             android:exported="true"

@@ -32,7 +32,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.BuildConfig;
-import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.R;
 import com.squareup.picasso.Picasso;

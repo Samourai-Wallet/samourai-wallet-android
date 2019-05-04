@@ -84,6 +84,7 @@
                         android:hint="@string/enter_your_code_here"
                         android:dropDownHeight="100dp"
                         android:minHeight="80dp"
+                        android:imeOptions="flagNoPersonalizedLearning"
                         android:padding="12dp"
                         android:paddingEnd="18dp"
                         android:paddingStart="18dp"
@@ -113,7 +114,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:imeOptions="actionDone"
+                            android:imeOptions="actionDone|flagNoPersonalizedLearning"
                             android:inputType="textPassword"
                             android:maxLines="1" />
                     </LinearLayout>
@@ -282,7 +283,7 @@
                             android:layout_weight="1"
                             android:focusable="true"
                             android:focusableInTouchMode="true"
-                            android:imeOptions="actionDone"
+                            android:imeOptions="actionDone|flagNoPersonalizedLearning"
                             android:inputType="textPassword"
                             android:maxLines="1" />
 

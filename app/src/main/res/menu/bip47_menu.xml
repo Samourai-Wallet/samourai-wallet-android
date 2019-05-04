@@ -1,29 +1,39 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_show_qr"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <item
+        android:id="@+id/action_scan_qr"
+        android:icon="@drawable/ic_crop_free_white_24dp"
         android:orderInCategory="100"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_account_circle"
-        />
-    <item android:id="@+id/action_claim_paynym"
-        android:title="@string/claim_paynym"
+        android:title="@string/scan_code"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_paynym_share_qr"
+        android:icon="@drawable/ic_share_white_24dp"
         android:orderInCategory="100"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_fiber_new"
-        />
-    <item android:id="@+id/action_unarchive"
+        android:title="@string/share_qr"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/sign"
+        android:orderInCategory="100"
+        android:title="@string/options_sign"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_unarchive"
+        android:orderInCategory="100"
         android:title="@string/action_unarchive"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sync_all"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        />
-    <item android:id="@+id/action_sync_all"
         android:title="@string/action_sync_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_support"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        />
-    <item android:id="@+id/action_support"
         android:title="@string/action_support"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        />
+        app:showAsAction="never" />
 </menu>

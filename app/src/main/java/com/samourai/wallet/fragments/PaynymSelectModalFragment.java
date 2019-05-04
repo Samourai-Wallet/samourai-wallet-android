@@ -15,8 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.paynym.PayNymHome;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class PaynymSelectModalFragment extends BottomSheetDialogFragment {
             recyclerView.setVisibility(View.GONE);
             emptyview.setVisibility(View.VISIBLE);
             emptyview.findViewById(R.id.paynym_add_btn).setOnClickListener(view1 -> {
-                startActivity(new Intent(getContext(), BIP47Activity.class));
+                startActivity(new Intent(getContext(), PayNymHome.class));
                 dismiss();
             });
         }

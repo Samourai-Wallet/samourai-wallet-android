@@ -13,14 +13,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
@@ -37,7 +36,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -65,18 +63,20 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.home.adapters.ItemDividerDecorator;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
@@ -97,26 +97,15 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
-import com.samourai.wallet.util.TorUtil;
-import com.samourai.wallet.util.TypefaceUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.bouncycastle.util.encoders.Hex;
-
-import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
-import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
-
-import org.bouncycastle.util.encoders.Hex;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -127,6 +116,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -333,7 +323,8 @@ public class BalanceActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        TxRecyclerView.addItemDecoration(new ItemDividerDecorator(getApplicationContext()));
+        Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
+        TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
 
         findViewById(R.id.send_fab).setOnClickListener(view -> {
@@ -360,7 +351,7 @@ public class BalanceActivity extends AppCompatActivity {
         });
         findViewById(R.id.paynym_fab).setOnClickListener(view -> {
             menuFab.toggle(true);
-            Intent intent = new Intent(BalanceActivity.this, com.samourai.wallet.bip47.BIP47Activity.class);
+            Intent intent = new Intent(BalanceActivity.this, PayNymHome.class);
             startActivity(intent);
         });
         getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
@@ -423,7 +414,26 @@ public class BalanceActivity extends AppCompatActivity {
         initViewModel();
         updateDisplay(false);
         progressBar.setVisibility(View.VISIBLE);
+        checkDeepLinks();
+    }
 
+    private void checkDeepLinks() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle == null) {
+            return;
+        }
+        if (bundle.containsKey("pcode") || bundle.containsKey("uri") || bundle.containsKey("amount")) {
+            Intent intent = new Intent(this, SendActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     private void initViewModel() {
@@ -627,20 +637,7 @@ public class BalanceActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void startTor() {
-        progressBarMenu.setVisibility(View.VISIBLE);
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
-
-    }
-
-    private void stopTor() {
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.STOP_SERVICE);
-        startService(startIntent);
-    }
-
+ 
     private void setUpTor() {
         Disposable disposable = TorManager.getInstance(this)
                 .torStatus
@@ -1326,63 +1323,47 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void doFeaturePayNymUpdate() {
 
-        new Thread(new Runnable() {
-
-            private Handler handler = new Handler();
-
-            @Override
-            public void run() {
-
-                Looper.prepare();
-
-                try {
-
-                    JSONObject obj = new JSONObject();
-                    obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+        Disposable disposable = Observable.fromCallable(() -> {
+            JSONObject obj = new JSONObject();
+            obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
 //                    Log.d("BalanceActivity", obj.toString());
-                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
+            String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/token", obj.toString());
 //                    Log.d("BalanceActivity", res);
 
-                    JSONObject responseObj = new JSONObject(res);
-                    if (responseObj.has("token")) {
-                        String token = responseObj.getString("token");
+            JSONObject responseObj = new JSONObject(res);
+            if (responseObj.has("token")) {
+                String token = responseObj.getString("token");
 
-                        String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
+                String sig = MessageSignUtil.getInstance(BalanceActivity.this).signMessage(BIP47Util.getInstance(BalanceActivity.this).getNotificationAddress().getECKey(), token);
 //                        Log.d("BalanceActivity", sig);
 
-                        obj = new JSONObject();
-                        obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
-                        obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
-                        obj.put("signature", sig);
+                obj = new JSONObject();
+                obj.put("nym", BIP47Util.getInstance(BalanceActivity.this).getPaymentCode().toString());
+                obj.put("code", BIP47Util.getInstance(BalanceActivity.this).getFeaturePaymentCode().toString());
+                obj.put("signature", sig);
 
 //                        Log.d("BalanceActivity", "nym/add:" + obj.toString());
-                        res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
+                res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BalanceActivity.this).postURL("application/json", token, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym/add", obj.toString());
 //                        Log.d("BalanceActivity", res);
 
-                        responseObj = new JSONObject(res);
-                        if (responseObj.has("segwit") && responseObj.has("token")) {
-                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
-                        } else if (responseObj.has("claimed") && responseObj.getBoolean("claimed") == true) {
-                            PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
-                        } else {
-                            ;
-                        }
-
-                    } else {
-                        ;
-                    }
-
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                responseObj = new JSONObject(res);
+                if (responseObj.has("segwit") && responseObj.has("token")) {
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
+                } else if (responseObj.has("claimed") && responseObj.getBoolean("claimed") == true) {
+                    PrefsUtil.getInstance(BalanceActivity.this).setValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, true);
                 }
 
-                Looper.loop();
-
             }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    Log.i(TAG, "doFeaturePayNymUpdate: Feature update complete");
+                },error->{
+                    Log.i(TAG, "doFeaturePayNymUpdate: Feature update Fail");
+                });
+        compositeDisposable.add(disposable);
 
-        }).start();
 
     }
 

@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.common.base.Splitter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -49,6 +50,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
@@ -65,23 +67,6 @@ import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -91,6 +76,25 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 public class BatchSendActivity extends Activity {
 
@@ -675,10 +679,25 @@ public class BatchSendActivity extends Activity {
                     meta = meta.substring(1);
                 }
 
-                Intent intent = new Intent(BatchSendActivity.this, BIP47Activity.class);
+                Intent intent = new Intent(BatchSendActivity.this, PayNymDetailsActivity.class);
                 intent.putExtra("pcode", pcode);
                 if(meta != null && meta.length() > 0)    {
-                    intent.putExtra("meta", meta);
+                    if (meta.startsWith("?") && meta.length() > 1) {
+                        meta = meta.substring(1);
+
+                        if (meta.length() > 0) {
+                            String _meta = null;
+                            Map<String, String> map = new HashMap<String, String>();
+                            meta.length();
+                            try {
+                                _meta = URLDecoder.decode(meta, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                            intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                        }
+                    }
                 }
                 startActivity(intent);
             }

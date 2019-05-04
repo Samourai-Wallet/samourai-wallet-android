@@ -52,8 +52,14 @@
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:navigationBarColor">@color/windowDark</item>
     </style>
+
+    <style name="ui_2_theme_dark_status" parent="ui_2_theme">
+        <item name="android:navigationBarColor">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/windowDark</item>
+
+    </style>
     
-    <style name="AppTheme.Launcher" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Launcher" parent="ui_2_theme_dark_status">
         <item name="android:statusBarColor">
             @color/window
         </item>
@@ -76,6 +82,16 @@
         <item name="android:textColor">@color/primary_light</item>
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">@font/roboto_mono</item>
+    </style>
+
+    <style name="FloatingLabelStylePaynym" parent="TextAppearance.AppCompat">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
 </resources>
