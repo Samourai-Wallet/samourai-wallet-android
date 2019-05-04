@@ -61,9 +61,9 @@ android {
             minSdkVersion 21
             targetSdkVersion 26
             versionCode 146
-            versionName "0.99.60"
+            versionName "0.99.60d"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.60"
+            resValue "string", "version_name", "0.99.60d"
         }
     }
     testOptions {

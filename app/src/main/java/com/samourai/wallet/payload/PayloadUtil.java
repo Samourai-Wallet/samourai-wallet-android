@@ -20,6 +20,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
@@ -359,6 +360,7 @@ public class PayloadUtil	{
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
+            meta.put("dojo", DojoUtil.getInstance(context).toJSON());
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -654,6 +656,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
+                }
+                if(meta.has("dojo")) {
+                    DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
                 }
 
                 /*

@@ -217,13 +217,14 @@
 
             </View>
 
-<!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="12dp"
                 android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:id="@+id/network_dojo_layout"
+                >
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -263,7 +264,7 @@
                     android:text="Disable"
                     android:textColor="#6eb8c5" />
             </LinearLayout>
--->
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

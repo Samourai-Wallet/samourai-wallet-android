@@ -20,6 +20,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
@@ -144,6 +145,10 @@ public class APIFactory	{
         ACCESS_TOKEN = accessToken;
     }
 
+    public void setAppToken(String token)   {
+        APP_TOKEN = token;
+    }
+
     public String getAppToken()  {
 
         if(APP_TOKEN != null)    {
@@ -152,9 +157,14 @@ public class APIFactory	{
         else    {
             return new String(getXORKey());
         }
+
     }
 
     public byte[] getXORKey() {
+
+        if(APP_TOKEN != null)    {
+            return APP_TOKEN.getBytes();
+        }
 
         byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
         byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
@@ -213,6 +223,10 @@ public class APIFactory	{
 //        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
         String _url = WebUtil.SAMOURAI_API2_TESTNET;
 
+        if(DojoUtil.getInstance(context).getDojoParams() != null)    {
+            _url = WebUtil.SAMOURAI_API2_TESTNET_TOR;
+        }
+
         JSONObject jsonObject  = null;
 
         try {
@@ -233,6 +247,8 @@ public class APIFactory	{
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("apikey", new String(getXORKey()));
+                Log.i("APIFactory", "API key (XOR):" + new String(getXORKey()));
+                Log.i("APIFactory", "API key url:" + _url);
                 response = WebUtil.getInstance(context).tor_postURL(_url + "auth/login", args);
                 Log.i("APIFactory", "API token response:" + response);
             }
@@ -242,6 +258,7 @@ public class APIFactory	{
                 if(jsonObject != null && jsonObject.has("authorizations"))    {
                     JSONObject authObj = jsonObject.getJSONObject("authorizations");
                     if(authObj.has("access_token"))    {
+                        Log.i("APIFactory", "setting access token:" + authObj.getString("access_token"));
                         setAccessToken(authObj.getString("access_token"));
                         return true;
                     }
@@ -291,6 +308,7 @@ public class APIFactory	{
                 args.put("active", StringUtils.join(xpubs, "|"));
                 Log.i("APIFactory", "XPUB:" + args.toString());
                 args.put("at", getAccessToken());
+                Log.i("APIFactory", "XPUB access token:" + getAccessToken());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "multiaddr", args);
                 Log.i("APIFactory", "XPUB response:" + response);
             }
@@ -795,10 +813,11 @@ public class APIFactory	{
                         args.put("address", address);
                         args.put("signature", Uri.encode(sig));
                         args.put("message", "lock");
-//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+                        Log.i("APIFactory", "lock XPUB:" + _url);
+                        Log.i("APIFactory", "lock XPUB:" + args.toString());
                         args.put("at", getAccessToken());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
-//                        Log.i("APIFactory", "lock XPUB response:" + response);
+                        Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
