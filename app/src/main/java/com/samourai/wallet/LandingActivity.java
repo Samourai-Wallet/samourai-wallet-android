@@ -167,8 +167,7 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     public void RestoreWalletFromBackup() {
-        ContextWrapper themeWrapper = new ContextThemeWrapper(this, R.style.restoreDialogStyle);
-        AlertDialog.Builder builder = new AlertDialog.Builder(themeWrapper);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Restore backup");
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.landing_restore_dialog, null);
