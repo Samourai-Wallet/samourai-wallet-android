@@ -1024,7 +1024,7 @@ public class SendActivity extends AppCompatActivity {
                 }
 
                 // boltzmann spend (STONEWALL)
-                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
+                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address, 0);
 
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE

@@ -365,9 +365,9 @@ public class SendFactory	{
 
     }
 
-    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address) {
+    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address, int account) {
 
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null);
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null, account);
         if(set0 == null)    {
             return null;
         }
@@ -400,7 +400,7 @@ public class SendFactory	{
         else    {
             return null;
         }
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft());
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft(), account);
         if(set1 == null)    {
             return null;
         }
@@ -415,7 +415,7 @@ public class SendFactory	{
         return ret;
     }
 
-    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints) {
+    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints, int account) {
 
         if(utxos == null || utxos.size() == 0)    {
             return null;
@@ -602,7 +602,7 @@ public class SendFactory	{
                 _address = address;
             }
             else    {
-                _address = getChangeAddress(mixedType, 0);
+                _address = getChangeAddress(mixedType, account);
             }
             if(FormatsUtil.getInstance().isValidBech32(_address))   {
                 txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());
@@ -613,7 +613,7 @@ public class SendFactory	{
             }
             txOutputs.add(txSpendOutput);
 
-            changeAddress = getChangeAddress(changeType, 0);
+            changeAddress = getChangeAddress(changeType, account);
             if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
                 txChangeOutput = Bech32Util.getInstance().getTransactionOutput(changeAddress, changeDue.longValue());
             }
