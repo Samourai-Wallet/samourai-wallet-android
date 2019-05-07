@@ -541,7 +541,7 @@ public class CahootsUtil {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress());
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsA.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
@@ -635,7 +635,7 @@ public class CahootsUtil {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress());
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsB.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
@@ -679,7 +679,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address);
+                ECKey eckey = SendFactory.getPrivKey(address, 0);
                 keyBag_A.put(outpoint.toString(), eckey);
             }
         }
@@ -720,7 +720,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address);
+                ECKey eckey = SendFactory.getPrivKey(address, 0);
                 keyBag_B.put(outpoint.toString(), eckey);
             }
         }
@@ -819,7 +819,7 @@ public class CahootsUtil {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress());
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsA.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
@@ -920,7 +920,7 @@ public class CahootsUtil {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress());
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsB.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
@@ -960,7 +960,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address);
+                ECKey eckey = SendFactory.getPrivKey(address, 0);
                 keyBag_A.put(outpoint.toString(), eckey);
             }
         }
@@ -1001,7 +1001,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address);
+                ECKey eckey = SendFactory.getPrivKey(address, 0);
                 keyBag_B.put(outpoint.toString(), eckey);
             }
         }

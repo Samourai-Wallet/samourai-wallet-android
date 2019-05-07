@@ -992,7 +992,7 @@ public class BIP47Activity extends Activity {
                 address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             }
 //            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-            ECKey ecKey = SendFactory.getPrivKey(address);
+            ECKey ecKey = SendFactory.getPrivKey(address, 0);
             if (ecKey == null || !ecKey.hasPrivKey()) {
                 Toast.makeText(BIP47Activity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
                 return;
