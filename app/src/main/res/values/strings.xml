@@ -35,6 +35,10 @@
     <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
     <string name="options_xpub84">Show Segwit ZPUB</string>
     <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
+    <string name="options_xpub84_premix">Show Whirlpool pre-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
+    <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>

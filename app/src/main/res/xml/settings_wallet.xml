@@ -47,6 +47,18 @@
         />
 
     <Preference
+        android:title="@string/options_xpub84_premix"
+        android:summary="@string/options_xpub84_premix2"
+        android:key="zpub_pre"
+        />
+
+    <Preference
+        android:title="@string/options_xpub84_postmix"
+        android:summary="@string/options_xpub84_postmix2"
+        android:key="zpub_post"
+        />
+
+    <Preference
         android:title="@string/options_change_pin"
         android:summary="@string/options_change_pin2"
         android:key="change_pin"

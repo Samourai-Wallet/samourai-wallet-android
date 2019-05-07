@@ -68,6 +68,7 @@ import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.yanzhenjie.zbar.Symbol;
 
 import java.io.BufferedReader;
@@ -488,7 +489,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference xpubPref = (Preference) findPreference("xpub");
                 xpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(44);
+                        getXPUB(44, 0);
                         return true;
                     }
                 });
@@ -496,7 +497,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference ypubPref = (Preference) findPreference("ypub");
                 ypubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(49);
+                        getXPUB(49, 0);
                         return true;
                     }
                 });
@@ -504,7 +505,23 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference zpubPref = (Preference) findPreference("zpub");
                 zpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(84);
+                        getXPUB(84, 0);
+                        return true;
+                    }
+                });
+
+                Preference zpubPrePref = (Preference) findPreference("zpub_pre");
+                zpubPrePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount());
+                        return true;
+                    }
+                });
+
+                Preference zpubPostPref = (Preference) findPreference("zpub_post");
+                zpubPostPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix());
                         return true;
                     }
                 });
@@ -983,20 +1000,20 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB(int purpose)	{
+    private void getXPUB(int purpose, int account)	{
 
         String xpub = "";
 
         switch(purpose)    {
             case 49:
-                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(account).ypubstr();
                 break;
             case 84:
-                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
+                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(account).zpubstr();
                 break;
             default:
                 try {
-                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).xpubstr();
+                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(account).xpubstr();
                 }
                 catch (IOException ioe) {
                     ioe.printStackTrace();
