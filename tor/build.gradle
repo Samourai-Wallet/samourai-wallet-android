@@ -79,9 +79,6 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'org.torproject:tor-android-binary:0.3.5.8-rc-v2'
     androidTestImplementation 'org.slf4j:slf4j-android:1.7.25'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
 
 task sourcesJar(type: Jar) {
