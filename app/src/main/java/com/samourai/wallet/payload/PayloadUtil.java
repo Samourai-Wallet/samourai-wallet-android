@@ -303,6 +303,14 @@ public class PayloadUtil	{
             wallet.put("bip84_accounts", bip84_account);
 
             //
+            // export Whirlpool accounts for debug payload
+            //
+            JSONArray whirlpool_account = new JSONArray();
+            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).toJSON(84));
+            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).toJSON(84));
+            wallet.put("whirlpool_account", whirlpool_account);
+
+            //
             // can remove ???
             //
             /*
