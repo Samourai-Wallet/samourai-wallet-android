@@ -725,27 +725,27 @@ public class BalanceActivity extends AppCompatActivity {
             builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
             AlertDialog alert = builder.create();
 
-            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
 
-                    try {
-                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                    } catch (JSONException je) {
-                    } catch (IOException ioe) {
-                    } catch (DecryptionException de) {
-                    }
-
-                    Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    BalanceActivity.this.startActivity(intent);
-
-                    if (TorManager.getInstance(getApplicationContext()).isConnected()) {
-                        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-                        startIntent.setAction(TorService.STOP_SERVICE);
-                        startService(startIntent);
-                    }
+                try {
+                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                } catch (MnemonicException.MnemonicLengthException mle) {
+                } catch (JSONException je) {
+                } catch (IOException ioe) {
+                } catch (DecryptionException de) {
                 }
+
+                if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+                    startIntent.setAction(TorService.STOP_SERVICE);
+                    startService(startIntent);
+                }
+                Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                BalanceActivity.this.startActivity(intent);
+
             });
 
             alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
