@@ -703,5 +703,7 @@
     <string name="scan_code">Scan Code</string>
     <string name="follows_you">Follows you</string>
     <string name="edit_paynym">Edit paynym</string>
+    <string name="sycing_pcodes">Syncing payment codes</string>
+    <string name="sync_complete">Payment code sync complete</string>
 
 </resources>
