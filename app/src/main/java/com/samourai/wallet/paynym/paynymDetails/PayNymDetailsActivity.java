@@ -394,6 +394,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
                 editPaynymBottomSheet.setSaveButtonListener(view -> {
                     updatePaynym(editPaynymBottomSheet.getLabel(), editPaynymBottomSheet.getPcode());
+                    setPayNym();
                 });
 
                 break;
@@ -902,9 +903,9 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(success -> {
+                    setPayNym();
 
                     if (success) {
-                        setPayNym();
                         savePayLoad();
                     }
 
