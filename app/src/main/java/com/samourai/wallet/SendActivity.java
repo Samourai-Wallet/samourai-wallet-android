@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.constraint.Group;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
@@ -103,11 +104,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -126,7 +130,7 @@ public class SendActivity extends AppCompatActivity {
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
     private Group ricochetStaggeredOptionGroup;
-
+    private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
 
@@ -162,6 +166,7 @@ public class SendActivity extends AppCompatActivity {
 
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
+    private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -555,6 +560,18 @@ public class SendActivity extends AppCompatActivity {
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
         checkDeepLinks();
+        if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
+            //some time, user may navigate to this activity even before wallet initialization completes
+            //so we will set a delay to reload balance info
+            Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                    .subscribe(this::setBalance);
+            compositeDisposables.add(disposable);
+            if (!shownWalletLoadingMessage) {
+                Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
+                shownWalletLoadingMessage = true;
+            }
+
+        }
     }
 
     private void checkDeepLinks() {
@@ -572,8 +589,8 @@ public class SendActivity extends AppCompatActivity {
             } else if (strUri != null && strUri.length() > 0) {
                 processScan(strUri);
             }
-        new Handler().postDelayed(this::validateSpend,800);
-        }else {
+            new Handler().postDelayed(this::validateSpend, 800);
+        } else {
             validateSpend();
 
         }
@@ -789,6 +806,13 @@ public class SendActivity extends AppCompatActivity {
         if (imm != null) {
             imm.hideSoftInputFromWindow(amountViewSwitcher.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposables != null && !compositeDisposables.isDisposed())
+            compositeDisposables.dispose();
     }
 
     private boolean prepareSpend() {

@@ -89,7 +89,7 @@ public class APIFactory	{
     private static JSONObject utxoObj1 = null;
 
     private static HashMap<String, Long> bip47_amounts = null;
-
+    public boolean walletInit = false;
     private static long latest_block_height = -1L;
     private static String latest_block_hash = null;
 
@@ -1650,15 +1650,19 @@ public class APIFactory	{
                     BlockedUTXO.getInstance().remove(_s);
 //                    Log.d("APIFactory", "blocked removed:" + _s);
                 }
+
+
             }
 
         }
         catch (IndexOutOfBoundsException ioobe) {
             ioobe.printStackTrace();
+
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        walletInit = true;
 
     }
 
