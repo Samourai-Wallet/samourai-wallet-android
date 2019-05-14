@@ -668,15 +668,16 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-
-            if(editable.toString().equalsIgnoreCase("Stowaway"))    {
+            Log.i(TAG, "afterTextChanged: ".concat(editable.toString()));
+            if (editable.toString().equalsIgnoreCase("Stowaway")) {
                 doStowaway();
-            }
-            else if(editable.toString().equalsIgnoreCase("STONEWALLx2"))    {
+            } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
                 doSTONEWALLx2();
-            }
-            else    {
-                validateSpend();
+            } else {
+                if (editable.toString().length() != 0)
+                    validateSpend();
+                else
+                    setToAddress("");
             }
 
         }
