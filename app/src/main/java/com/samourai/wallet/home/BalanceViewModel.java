@@ -166,21 +166,8 @@ public class BalanceViewModel extends AndroidViewModel {
                         if (addrObj != null && addrObj.has("final_balance") && addrObj.has("address")) {
                             if (FormatsUtil.getInstance().isValidXpub((String) addrObj.get("address"))) {
                                 xpub_amounts.put((String) addrObj.get("address"), addrObj.getLong("final_balance"));
-                                if(addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
-                                        addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).zpubstr()))    {
-                                    AddressFactory.getInstance().setHighestPreReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                    AddressFactory.getInstance().setHighestPreChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                    BIP84Util.getInstance(getApplication()).getWallet().getAccount(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                }
-                                else if(addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).xpubstr()) ||
-                                        addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).zpubstr()))    {
-                                    AddressFactory.getInstance().setHighestPostReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                    AddressFactory.getInstance().setHighestPostChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                    BIP84Util.getInstance(getApplication()).getWallet().getAccount(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                }
-                                else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
+
+                                if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).zpubstr())) {
                                     AddressFactory.getInstance().setHighestBIP84ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestBIP84ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
