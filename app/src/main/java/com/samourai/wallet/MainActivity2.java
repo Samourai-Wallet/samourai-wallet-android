@@ -266,12 +266,12 @@ public class MainActivity2 extends Activity {
         AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
 
         Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (strUri != null) {
             intent.putExtra("uri", strUri);
             PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
         }
         startActivity(intent);
+        finish();
 
     }
 
