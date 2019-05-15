@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.widgets.PinEntryView;
 
 
@@ -68,6 +69,9 @@ public class PinEntryFragment extends Fragment {
         entryView.setEntryListener(new PinEntryView.pinEntryListener() {
             @Override
             public void onPinEntered(String key, View view) {
+                if (passPhrase.length() >= AccessFactory.MAX_PIN_LENGTH) {
+                    return;
+                }
                 passPhrase = passPhrase.append(key);
                 addKeyText();
                 propagateToActivity();

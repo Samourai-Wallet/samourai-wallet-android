@@ -239,6 +239,9 @@ public class PinEntryActivity extends Activity {
     }
 
     public void OnNumberPadClick(View view) {
+        if (userInput.toString().length() == AccessFactory.MAX_PIN_LENGTH) {
+            return;
+        }
         if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
             vibrator.vibrate(55);
         }
