@@ -80,7 +80,6 @@ public class PinEntryActivity extends Activity {
 
     private String strUri = null;
 
-    private static int failures = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -311,11 +310,11 @@ public class PinEntryActivity extends Activity {
 
                         if (hdw == null) {
 
-                            failures++;
+                            int failures = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.PIN_FAILURES, 0) + 1;
+                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.PIN_FAILURES, failures);
                             Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
                             if (failures == 3) {
-                                failures = 0;
                                 doBackupRestore();
                             } else {
                                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
@@ -325,6 +324,7 @@ public class PinEntryActivity extends Activity {
 
                         }
 
+                        PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.PIN_FAILURES, 0);
                         AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                         TimeOutUtil.getInstance().updatePin();
                         if (isOpenDime) {
@@ -353,11 +353,11 @@ public class PinEntryActivity extends Activity {
                         progress.dismiss();
                     }
 
-                    failures++;
+                    int failures = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.PIN_FAILURES, 0) + 1;
+                    PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.PIN_FAILURES, failures);
                     Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
                     if (failures == 3) {
-                        failures = 0;
                         doBackupRestore();
                     } else {
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
@@ -488,6 +488,7 @@ public class PinEntryActivity extends Activity {
                             finish();
 
                         } else {
+                            PrefsUtil.getInstance(PinEntryActivity.this).setValue(PrefsUtil.PIN_FAILURES, 0);
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                             TimeOutUtil.getInstance().updatePin();
                             AppUtil.getInstance(PinEntryActivity.this).restartApp();
