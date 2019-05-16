@@ -1767,7 +1767,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
     }
-
+/*
     private void doWhirlpoolGUIPairing()    {
 
         JSONObject pairingObj = null;
@@ -1790,6 +1790,147 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
         if(pairingObj == null)    {
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(pairingObj.toString());
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+        pairingLayout.setOrientation(LinearLayout.VERTICAL);
+        pairingLayout.addView(showQR);
+        pairingLayout.addView(showText);
+
+        final String _pairing = pairingObj.toString();
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(pairingLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                })
+                .show();
+
+    }
+*/
+    private void doWhirlpoolGUIPairing()    {
+
+        final JSONObject pairingObj = new JSONObject();
+        final JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("type", "whirlpool.gui");
+            jsonObj.put("version", "2.0.0");
+            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
+
+            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
+            if(SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this))    {
+                String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                jsonObj.put("mnemonic", encrypted);
+                jsonObj.put("passphrase", true);
+
+                pairingObj.put("pairing", jsonObj);
+            }
+            else    {
+
+                final EditText password = new EditText(SettingsActivity2.this);
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                password.setHint(R.string.create_password);
+
+                new AlertDialog.Builder(SettingsActivity2.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.pairing_password)
+                        .setView(password)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                final String pw = password.getText().toString();
+                                if (pw != null && pw.length() >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length() <= AppUtil.MAX_BACKUP_PW_LENGTH) {
+
+                                    final EditText password2 = new EditText(SettingsActivity2.this);
+                                    password2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                                    password2.setHint(R.string.confirm_password);
+
+                                    new AlertDialog.Builder(SettingsActivity2.this)
+                                            .setTitle(R.string.app_name)
+                                            .setMessage(R.string.pairing_password)
+                                            .setView(password2)
+                                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                    final String pw2 = password2.getText().toString();
+
+                                                    if (pw2 != null && pw2.equals(pw)) {
+
+                                                        try {
+                                                            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                            jsonObj.put("mnemonic", encrypted);
+                                                            jsonObj.put("passphrase", false);
+
+                                                            pairingObj.put("pairing", jsonObj);
+                                                        }
+                                                        catch(Exception e) {
+                                                            ;
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(SettingsActivity2.this, R.string.password_error, Toast.LENGTH_SHORT).show();
+                                                    }
+
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    ;
+                                                }
+                                            }).show();
+
+                                } else {
+                                    Toast.makeText(SettingsActivity2.this, R.string.password_invalid, Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        }).show();
+
+            }
+
+        }
+        catch(Exception e) {
+            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(pairingObj == null || !pairingObj.has("pairing"))    {
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
             return;
         }
