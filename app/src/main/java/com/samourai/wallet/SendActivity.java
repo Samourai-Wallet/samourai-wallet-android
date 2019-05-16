@@ -1920,7 +1920,7 @@ public class SendActivity extends AppCompatActivity {
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                                         .setTitle(R.string.app_name)
                                         .setView(edAddress)
-                                        .setMessage(R.string.segwit_address)
+                                        .setMessage(R.string.address)
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -1928,7 +1928,7 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
 
                                                 final String strAddress = edAddress.getText().toString().trim();
-                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
                                                     }

@@ -690,6 +690,7 @@
     <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
+    <string name="address">Address</string>
 
     <string name="is_offline">Samourai is offline</string>
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
