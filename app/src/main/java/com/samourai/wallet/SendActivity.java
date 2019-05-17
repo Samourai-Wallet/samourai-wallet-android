@@ -250,6 +250,7 @@ public class SendActivity extends AppCompatActivity {
 
         validateSpend();
 
+        checkDeepLinks();
     }
 
     @Override
@@ -559,7 +560,6 @@ public class SendActivity extends AppCompatActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
-        checkDeepLinks();
         if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
             //some time, user may navigate to this activity even before wallet initialization completes
             //so we will set a delay to reload balance info
@@ -583,7 +583,10 @@ public class SendActivity extends AppCompatActivity {
             if (extras.containsKey("amount")) {
                 btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
             }
-            strPCode = extras.getString("pcode");
+
+            if (extras.getString("pcode") != null)
+                strPCode = extras.getString("pcode");
+
             if (strPCode != null && strPCode.length() > 0) {
                 processPCode(strPCode, null);
             } else if (strUri != null && strUri.length() > 0) {
