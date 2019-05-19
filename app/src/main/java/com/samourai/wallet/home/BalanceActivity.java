@@ -423,6 +423,8 @@ public class BalanceActivity extends AppCompatActivity {
             return;
         }
         if (bundle.containsKey("pcode") || bundle.containsKey("uri") || bundle.containsKey("amount")) {
+            if (balanceViewModel.getBalance().getValue() != null)
+                bundle.putLong("balance", balanceViewModel.getBalance().getValue());
             Intent intent = new Intent(this, SendActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);

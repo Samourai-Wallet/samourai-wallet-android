@@ -251,6 +251,24 @@ public class SendActivity extends AppCompatActivity {
         validateSpend();
 
         checkDeepLinks();
+
+        Disposable disposable = APIFactory.getInstance(getApplicationContext())
+                .walletBalanceObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    setBalance();
+                }, Throwable::printStackTrace);
+        compositeDisposables.add(disposable);
+
+
+        if (getIntent().getExtras() != null) {
+            if (!getIntent().getExtras().containsKey("balance")) {
+                return;
+            }
+            balance = getIntent().getExtras().getLong("balance");
+        }
+
     }
 
     @Override
@@ -536,16 +554,17 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+            Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+            if (tempBalance != 0L) {
+                balance = tempBalance;
+            }
+            checkDeepLinks();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            balance = 0L;
         } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
-            balance = 0L;
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
-            balance = 0L;
         }
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
