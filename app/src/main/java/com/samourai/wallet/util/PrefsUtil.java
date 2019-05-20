@@ -11,6 +11,7 @@ public class PrefsUtil {
 	public static final String GUID_V = "guid_version";
 	public static final String ACCESS_HASH = "accessHash";
 	public static final String ACCESS_HASH2 = "accessHash2";
+	public static final String PIN_FAILURES = "pinFailures";
 	public static final String FP = "fp";
 	public static final String ICON_HIDDEN = "iconHidden";
 	public static final String ACCEPT_REMOTE = "acceptRemote";
