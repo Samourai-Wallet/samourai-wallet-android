@@ -72,6 +72,9 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.EmptyWhirlPool;
+import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
+import com.samourai.wallet.whirlpool.WhirlPoolActivity;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.yanzhenjie.zbar.Symbol;
@@ -674,6 +677,9 @@ public class SendActivity extends AppCompatActivity {
             }
             else if(editable.toString().equalsIgnoreCase("STONEWALLx2"))    {
                 doSTONEWALLx2();
+            }
+            else if(editable.toString().equalsIgnoreCase("whirlpool"))    {
+                doWhirlpool();
             }
             else    {
                 validateSpend();
@@ -1942,6 +1948,11 @@ public class SendActivity extends AppCompatActivity {
             dlg.show();
         }
 
+    }
+
+    private void doWhirlpool()  {
+        Intent intent = new Intent(SendActivity.this, EmptyWhirlPool.class);
+        startActivity(intent);
     }
 
     private void doFees() {
