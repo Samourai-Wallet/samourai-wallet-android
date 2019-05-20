@@ -1,7 +1,6 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +12,15 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.models.Coin;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> {
 
     private Context mContext;
-    private ArrayList<Coin> mCoins;
+    private List<Coin> mCoins;
 
 
-    public CoinsAdapter(Context context, ArrayList<Coin> coins) {
+    public CoinsAdapter(Context context, List<Coin> coins) {
         mCoins = coins;
         mContext = context;
     }
@@ -38,7 +37,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         final Coin coin = mCoins.get(position);
 
         holder.addressTxView.setText(coin.getAddress());
-        holder.btcTxView.setText(String.valueOf(coin.getValue()).concat(" BTC"));
+        holder.btcTxView.setText(org.bitcoinj.core.Coin.valueOf(coin.getValue()).toPlainString().concat(" BTC"));
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
 
@@ -60,7 +59,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
 
     }
 
-    public ArrayList<Coin> getCoins() {
+    public List<Coin> getCoins() {
         return mCoins;
     }
 
