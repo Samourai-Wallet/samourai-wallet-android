@@ -72,7 +72,8 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
                 }
 
                 Toast.makeText(NewWhirlpoolCycle.this,"Selected: ".concat(getSelectedCoins().toString() + "\n" + org.bitcoinj.core.Coin.valueOf(totalSelected).toPlainString().concat(" BTC")),Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(NewWhirlpoolCycle.this,WhirlPoolActivity.class);
+                Intent intent = new Intent(NewWhirlpoolCycle.this, WhirlPoolActivity.class);
+                intent.putExtra("total", totalSelected);
                 startActivity(intent);
             }
         });

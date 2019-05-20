@@ -716,5 +716,6 @@
 
     <string name="review_whirlpool">Review Whirlpool Details</string>
     <string name="total_selected">Total selected</string>
+    <string name="cycle">Cycle</string>
 
 </resources>
