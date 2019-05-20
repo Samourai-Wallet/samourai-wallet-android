@@ -714,4 +714,7 @@
     <string name="password_error">Error creating password</string>
     <string name="password_invalid">Invalid password</string>
 
+    <string name="review_whirlpool">Review Whirlpool Details</string>
+    <string name="total_selected">Total selected</string>
+
 </resources>

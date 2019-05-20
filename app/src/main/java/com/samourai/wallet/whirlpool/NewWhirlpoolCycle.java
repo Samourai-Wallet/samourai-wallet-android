@@ -16,8 +16,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
@@ -37,6 +41,7 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
     private List<Coin> coins = new ArrayList<Coin>();
     private List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
     private ViewGroup reviewButton;
+    private TextView tvTotalSelected = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +52,9 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tvTotalSelected = findViewById(R.id.totalSelected);
         reviewButton = findViewById(R.id.review_button);
-        coinsAdapter = new CoinsAdapter(this, coins);
+        coinsAdapter = new CoinsAdapter(this, coins, tvTotalSelected);
         loadUTXOs();
         recyclerView.setAdapter(coinsAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -57,12 +63,21 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         reviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(NewWhirlpoolCycle.this,"Selected--->   ".concat(getSelectedCoins().toString()),Toast.LENGTH_LONG).show();
+
+                long totalSelected = 0L;
+                for(Coin coin : coins)   {
+                    if(coin.getSelected())  {
+                        totalSelected += coin.getValue();
+                    }
+                }
+
+                Toast.makeText(NewWhirlpoolCycle.this,"Selected: ".concat(getSelectedCoins().toString() + "\n" + org.bitcoinj.core.Coin.valueOf(totalSelected).toPlainString().concat(" BTC")),Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(NewWhirlpoolCycle.this,WhirlPoolActivity.class);
                 startActivity(intent);
-
             }
         });
+
+        tvTotalSelected.setText(getText(R.string.total_selected) + ": " + "0 BTC");
     }
 
     private ArrayList<Coin> getSelectedCoins() {
@@ -138,4 +153,5 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
             }
         }
     }
+
 }
