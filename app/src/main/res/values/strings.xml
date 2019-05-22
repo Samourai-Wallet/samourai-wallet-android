@@ -710,7 +710,7 @@
 
     <string name="create_password">Create password</string>
     <string name="confirm_password">Confirm password</string>
-    <string name="pairing_password">Define pairing password</string>
+    <string name="pairing_password">Define pairing password: (6-255 characters)</string>
     <string name="password_error">Error creating password</string>
     <string name="password_invalid">Invalid password</string>
 
