@@ -706,5 +706,6 @@
     <string name="edit_paynym">Edit paynym</string>
     <string name="sycing_pcodes">Syncing payment codes</string>
     <string name="sync_complete">Payment code sync complete</string>
+    <string name="options_paynym_indexes">Show PayNym indexes</string>
 
 </resources>

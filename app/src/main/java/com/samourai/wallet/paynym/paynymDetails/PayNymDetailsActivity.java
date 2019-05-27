@@ -420,6 +420,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 doNotifTx();
                 break;
             }
+            case R.id.paynym_indexes: {
+                int outgoing = BIP47Meta.getInstance().getOutgoingIdx(pcode);
+                int incoming = BIP47Meta.getInstance().getIncomingIdx(pcode);
+                Toast.makeText(PayNymDetailsActivity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
+                break;
+            }
 
 
         }
