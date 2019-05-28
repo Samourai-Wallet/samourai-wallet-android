@@ -303,6 +303,14 @@ public class PayloadUtil	{
             wallet.put("bip84_accounts", bip84_account);
 
             //
+            // export Whirlpool accounts for debug payload
+            //
+            JSONArray whirlpool_account = new JSONArray();
+            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).toJSON(84));
+            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).toJSON(84));
+            wallet.put("whirlpool_account", whirlpool_account);
+
+            //
             // can remove ???
             //
             /*
@@ -355,6 +363,8 @@ public class PayloadUtil	{
             meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
             meta.put("xpublock49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49LOCK, false));
             meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
+            meta.put("xpubprelock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPRELOCK, false));
+            meta.put("xpubpostlock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTLOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
@@ -642,6 +652,12 @@ public class PayloadUtil	{
                 }
                 if(meta.has("xpublock84")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, meta.getBoolean("xpublock84"));
+                }
+                if(meta.has("xpubprelock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPRELOCK, meta.getBoolean("xpubprelock"));
+                }
+                if(meta.has("xpubpostlock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTLOCK, meta.getBoolean("xpubpostlock"));
                 }
                 if(meta.has("paynym_claimed")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));

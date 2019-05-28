@@ -73,6 +73,9 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.EmptyWhirlPool;
+import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
+import com.samourai.wallet.whirlpool.WhirlPoolActivity;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.yanzhenjie.zbar.Symbol;
@@ -712,7 +715,11 @@ public class SendActivity extends AppCompatActivity {
                 doStowaway();
             } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
                 doSTONEWALLx2();
-            } else {
+            }
+            else if(editable.toString().equalsIgnoreCase("whirlpool"))    {
+                doWhirlpool();
+            }
+            else {
                 if (editable.toString().length() != 0)
                     validateSpend();
                 else
@@ -1071,7 +1078,7 @@ public class SendActivity extends AppCompatActivity {
                 }
 
                 // boltzmann spend (STONEWALL)
-                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
+                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address, 0);
 
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE
@@ -1989,6 +1996,11 @@ public class SendActivity extends AppCompatActivity {
             dlg.show();
         }
 
+    }
+
+    private void doWhirlpool()  {
+        Intent intent = new Intent(SendActivity.this, EmptyWhirlPool.class);
+        startActivity(intent);
     }
 
     private void doFees() {
