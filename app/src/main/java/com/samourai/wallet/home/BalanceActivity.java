@@ -423,6 +423,8 @@ public class BalanceActivity extends AppCompatActivity {
             return;
         }
         if (bundle.containsKey("pcode") || bundle.containsKey("uri") || bundle.containsKey("amount")) {
+            if (balanceViewModel.getBalance().getValue() != null)
+                bundle.putLong("balance", balanceViewModel.getBalance().getValue());
             Intent intent = new Intent(this, SendActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
@@ -554,9 +556,12 @@ public class BalanceActivity extends AppCompatActivity {
         if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
-        compositeDisposable.dispose();
 
         super.onDestroy();
+
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()) {
+            compositeDisposable.dispose();
+        }
     }
 
     @Override
@@ -583,7 +588,7 @@ public class BalanceActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
-        if(id == R.id.action_network_dashboard){
+        if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));
         }
         if (id == R.id.action_settings) {
@@ -598,7 +603,7 @@ public class BalanceActivity extends AppCompatActivity {
             }
         } else if (id == R.id.action_utxo) {
             doUTXO();
-        }  else if (id == R.id.action_backup) {
+        } else if (id == R.id.action_backup) {
 
             if (SamouraiWallet.getInstance().hasPassphrase(BalanceActivity.this)) {
                 try {
@@ -635,7 +640,7 @@ public class BalanceActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
- 
+
     private void setUpTor() {
         Disposable disposable = TorManager.getInstance(this)
                 .torStatus
@@ -725,22 +730,27 @@ public class BalanceActivity extends AppCompatActivity {
             builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
             AlertDialog alert = builder.create();
 
-            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
 
-                    try {
-                        PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                    } catch (JSONException je) {
-                    } catch (IOException ioe) {
-                    } catch (DecryptionException de) {
-                    }
-
-                    Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    BalanceActivity.this.startActivity(intent);
-
+                try {
+                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                } catch (MnemonicException.MnemonicLengthException mle) {
+                } catch (JSONException je) {
+                } catch (IOException ioe) {
+                } catch (DecryptionException de) {
                 }
+
+                if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+                    startIntent.setAction(TorService.STOP_SERVICE);
+                    startService(startIntent);
+                }
+                Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                BalanceActivity.this.startActivity(intent);
+
             });
 
             alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -1361,7 +1371,7 @@ public class BalanceActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> {
                     Log.i(TAG, "doFeaturePayNymUpdate: Feature update complete");
-                },error->{
+                }, error -> {
                     Log.i(TAG, "doFeaturePayNymUpdate: Feature update Fail");
                 });
         compositeDisposable.add(disposable);

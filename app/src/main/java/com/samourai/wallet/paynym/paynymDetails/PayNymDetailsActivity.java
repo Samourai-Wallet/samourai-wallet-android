@@ -394,6 +394,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
                 editPaynymBottomSheet.setSaveButtonListener(view -> {
                     updatePaynym(editPaynymBottomSheet.getLabel(), editPaynymBottomSheet.getPcode());
+                    setPayNym();
                 });
 
                 break;
@@ -417,6 +418,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
             }
             case R.id.retry_notiftx: {
                 doNotifTx();
+                break;
+            }
+            case R.id.paynym_indexes: {
+                int outgoing = BIP47Meta.getInstance().getOutgoingIdx(pcode);
+                int incoming = BIP47Meta.getInstance().getIncomingIdx(pcode);
+                Toast.makeText(PayNymDetailsActivity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
                 break;
             }
 
@@ -902,9 +909,9 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(success -> {
+                    setPayNym();
 
                     if (success) {
-                        setPayNym();
                         savePayLoad();
                     }
 

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.constraint.Group;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
@@ -103,11 +104,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -126,7 +130,7 @@ public class SendActivity extends AppCompatActivity {
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
     private Group ricochetStaggeredOptionGroup;
-
+    private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
 
@@ -162,6 +166,7 @@ public class SendActivity extends AppCompatActivity {
 
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
+    private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,6 +249,25 @@ public class SendActivity extends AppCompatActivity {
         setUpBoltzman();
 
         validateSpend();
+
+        checkDeepLinks();
+
+        Disposable disposable = APIFactory.getInstance(getApplicationContext())
+                .walletBalanceObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    setBalance();
+                }, Throwable::printStackTrace);
+        compositeDisposables.add(disposable);
+
+
+        if (getIntent().getExtras() != null) {
+            if (!getIntent().getExtras().containsKey("balance")) {
+                return;
+            }
+            balance = getIntent().getExtras().getLong("balance");
+        }
 
     }
 
@@ -530,16 +554,17 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+            Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+            if (tempBalance != 0L) {
+                balance = tempBalance;
+            }
+            checkDeepLinks();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            balance = 0L;
         } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
-            balance = 0L;
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
-            balance = 0L;
         }
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -554,7 +579,18 @@ public class SendActivity extends AppCompatActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
-        checkDeepLinks();
+        if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
+            //some time, user may navigate to this activity even before wallet initialization completes
+            //so we will set a delay to reload balance info
+            Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                    .subscribe(this::setBalance);
+            compositeDisposables.add(disposable);
+            if (!shownWalletLoadingMessage) {
+                Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
+                shownWalletLoadingMessage = true;
+            }
+
+        }
     }
 
     private void checkDeepLinks() {
@@ -566,14 +602,17 @@ public class SendActivity extends AppCompatActivity {
             if (extras.containsKey("amount")) {
                 btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
             }
-            strPCode = extras.getString("pcode");
+
+            if (extras.getString("pcode") != null)
+                strPCode = extras.getString("pcode");
+
             if (strPCode != null && strPCode.length() > 0) {
                 processPCode(strPCode, null);
             } else if (strUri != null && strUri.length() > 0) {
                 processScan(strUri);
             }
-        new Handler().postDelayed(this::validateSpend,800);
-        }else {
+            new Handler().postDelayed(this::validateSpend, 800);
+        } else {
             validateSpend();
 
         }
@@ -668,15 +707,16 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-
-            if(editable.toString().equalsIgnoreCase("Stowaway"))    {
+            Log.i(TAG, "afterTextChanged: ".concat(editable.toString()));
+            if (editable.toString().equalsIgnoreCase("Stowaway")) {
                 doStowaway();
-            }
-            else if(editable.toString().equalsIgnoreCase("STONEWALLx2"))    {
+            } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
                 doSTONEWALLx2();
-            }
-            else    {
-                validateSpend();
+            } else {
+                if (editable.toString().length() != 0)
+                    validateSpend();
+                else
+                    setToAddress("");
             }
 
         }
@@ -788,6 +828,13 @@ public class SendActivity extends AppCompatActivity {
         if (imm != null) {
             imm.hideSoftInputFromWindow(amountViewSwitcher.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposables != null && !compositeDisposables.isDisposed())
+            compositeDisposables.dispose();
     }
 
     private boolean prepareSpend() {
@@ -1895,7 +1942,7 @@ public class SendActivity extends AppCompatActivity {
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                                         .setTitle(R.string.app_name)
                                         .setView(edAddress)
-                                        .setMessage(R.string.segwit_address)
+                                        .setMessage(R.string.address)
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -1903,7 +1950,7 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
 
                                                 final String strAddress = edAddress.getText().toString().trim();
-                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
                                                     }

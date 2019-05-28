@@ -28,9 +28,14 @@
         android:title="Resync Paynym"
         app:showAsAction="never" />
 
-
     <item
         android:id="@+id/archive_paynym"
         android:title="Archive "
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/paynym_indexes"
+        android:title="@string/options_paynym_indexes"
+        app:showAsAction="never" />
+
 </menu>
