@@ -1,4 +1,4 @@
-package com.samourai.wallet.bip47.paynym;
+package com.samourai.wallet.paynym;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.util.AppUtil;
 
 import com.samourai.wallet.R;
@@ -199,12 +200,10 @@ public class ClaimPayNymActivity extends Activity {
                                 .setMessage(strNymName)
 //                                    .setView(imgLayout)
                                 .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                                    setResult(RESULT_OK);
+                                    ClaimPayNymActivity.this.finish();
 
-                                        ClaimPayNymActivity.this.finish();
-
-                                    }
                                 });
                         if(!isFinishing())    {
                             dlg.show();

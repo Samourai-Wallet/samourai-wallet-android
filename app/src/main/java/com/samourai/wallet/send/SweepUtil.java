@@ -150,12 +150,7 @@ public class SweepUtil  {
 
                                 String receive_address = null;
                                 if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true) == true)    {
-                                    if(FormatsUtil.getInstance().isValidBech32(address))    {
-                                        receive_address = AddressFactory.getInstance(context).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
-                                    }
-                                    else    {
-                                        receive_address = AddressFactory.getInstance(context).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
-                                    }
+                                    receive_address = AddressFactory.getInstance(context).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
                                 }
                                 else    {
                                     receive_address = AddressFactory.getInstance(context).get(AddressFactory.RECEIVE_CHAIN).getAddressString();

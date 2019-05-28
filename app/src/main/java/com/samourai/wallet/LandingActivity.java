@@ -84,6 +84,9 @@ public class LandingActivity extends AppCompatActivity  {
         setAppVersion();
         if (PayloadUtil.getInstance(this).getBackupFile().exists()) {
             snackBarView.setVisibility(View.VISIBLE);
+        }else {
+            snackBarView.setVisibility(View.INVISIBLE);
+
         }
         if (!PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(LandingActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionsUtil.getInstance(LandingActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.READ_WRITE_EXTERNAL_PERMISSION_CODE);
@@ -164,8 +167,7 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     public void RestoreWalletFromBackup() {
-        ContextWrapper themeWrapper = new ContextThemeWrapper(this, R.style.restoreDialogStyle);
-        AlertDialog.Builder builder = new AlertDialog.Builder(themeWrapper);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Restore backup");
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.landing_restore_dialog, null);

@@ -1,21 +1,19 @@
-package com.samourai.wallet.home.adapters;
+package com.samourai.wallet.widgets;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.samourai.wallet.R;
-
 public class ItemDividerDecorator extends RecyclerView.ItemDecoration {
+
 
     private Drawable mDivider;
 
-    public ItemDividerDecorator(Context context) {
-        mDivider = context.getResources().getDrawable(R.drawable.divider);
+    public ItemDividerDecorator(Drawable mDivider) {
+        this.mDivider = mDivider;
     }
+
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         int left = parent.getPaddingLeft();
