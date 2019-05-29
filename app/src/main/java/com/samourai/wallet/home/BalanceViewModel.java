@@ -56,6 +56,7 @@ public class BalanceViewModel extends AndroidViewModel {
 
     public BalanceViewModel(@NonNull Application application) {
         super(application);
+        toggleSat.setValue(false);
 
         try {
             JSONObject response = PayloadUtil.getInstance(application).deserializeMultiAddr();
@@ -109,13 +110,18 @@ public class BalanceViewModel extends AndroidViewModel {
         return balance;
     }
 
-    public MutableLiveData<Boolean> getSatState() {
+    MutableLiveData<Boolean> getSatState() {
         return toggleSat;
     }
 
-    public void toggleSat() {
+    void toggleSat() {
 
-        this.toggleSat.setValue(!toggleSat.getValue());
+        if (toggleSat.getValue() == null) {
+            this.toggleSat.setValue(false);
+        } else {
+            this.toggleSat.setValue(!toggleSat.getValue());
+        }
+
     }
 
     public void setTx(List<Tx> txes) {

@@ -63,8 +63,10 @@ public class PaynymListFragment extends Fragment {
     }
 
     public void addPcodes(ArrayList<String> list) {
-
-        mViewModel.pcodes.postValue(list);
+        if (mViewModel == null) {
+            mViewModel = ViewModelProviders.of(this).get(PaynymListFragmentViewModel.class);
+        }
+        mViewModel.addPcodes(list);
     }
 
     private ArrayList<String> filterArchived(ArrayList<String> list) {
