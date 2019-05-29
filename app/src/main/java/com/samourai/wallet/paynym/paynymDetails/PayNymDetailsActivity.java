@@ -174,15 +174,25 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         } else {
             showHistory();
         }
+//        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getIncomingIdx(pcode))));
+
+        if(BIP47Meta.getInstance().getIncomingIdx(pcode) == BIP47Meta.STATUS_NOT_SENT)
         if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
             showWaitingForConfirm();
         }
+
+        if(BIP47Meta.getInstance().getIncomingIdx(pcode) >= 0){
+            historyLayout.setVisibility(View.VISIBLE);
+        }
+//        if(BIP47Meta.getInstance().getIncomingIdx(pcode)) ){
+//
+//        }
 //        if (BIP47Meta.getInstance().incomingExists(pcode)) {
 //            followsYoutext.setVisibility(View.VISIBLE);
 //        } else {
 //            followsYoutext.setVisibility(View.GONE);
 //        }
-        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
+//        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         paynymLabel.setText(getLabel());
         paynymAvatarPorgress.setVisibility(View.VISIBLE);
