@@ -74,67 +74,79 @@
     <Button
         android:id="@+id/utxo_selection_confirm_btn"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="0dp"
         android:background="@drawable/button_blue"
         android:text="@string/next"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager" />
+
+    <Button
+        android:id="@+id/pool_selection_review_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_blue"
+        android:text="REVIEW CYCLE DETAILS \n Total being cylced :  "
+        android:textAllCaps="false"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.91928864" />
+        app:layout_constraintGuide_percent="0.92" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/pool_selection_review_btn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/whirlpool_btn_blue"
-        android:visibility="gone"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn"
-        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager"
-        android:focusable="true">
+    <!--<android.support.constraint.ConstraintLayout-->
+        <!--android:id="@+id/pool_selection_review_btn"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:background="@drawable/whirlpool_btn_blue"-->
+        <!--android:clickable="true"-->
+        <!--android:focusable="true"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager">-->
 
 
-        <TextView
-            android:id="@+id/textView49"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="REVIEW CYCLE DETAILS"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <!--<TextView-->
+            <!--android:id="@+id/textView49"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:text="REVIEW CYCLE DETAILS"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="16sp"-->
+            <!--android:textStyle="bold"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent" />-->
 
-        <TextView
-            android:id="@+id/textView51"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="5dp"
-            android:text="Total being cylced : "
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView49" />
-    </android.support.constraint.ConstraintLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/textView51"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="4dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:text="Total being cylced : "-->
+            <!--android:textColor="@color/white"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/textView49" />-->
+    <!--</android.support.constraint.ConstraintLayout>-->
 
 
 </android.support.constraint.ConstraintLayout>

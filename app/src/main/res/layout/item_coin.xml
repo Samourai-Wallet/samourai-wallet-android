@@ -6,51 +6,63 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
+    android:background="?attr/selectableItemBackground"
     android:focusable="true">
 
     <TextView
-        android:id="@+id/coin_item_address"
+        android:id="@+id/coin_utxo_address"
         android:layout_width="0dp"
         android:layout_height="21dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:ellipsize="marquee"
         android:fontFamily="@font/roboto_mono"
-        android:freezesText="true"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
-        tools:text="16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5"
+        android:textColor="@color/text_ui2_grey"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textIsSelectable="true"
-        app:layout_constraintEnd_toStartOf="@+id/coin_item_checkbox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/coin_item_amount"
+        app:layout_constraintStart_toStartOf="@+id/coin_item_amount"
+        app:layout_constraintTop_toBottomOf="@+id/coin_item_amount"
+        tools:text="16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5" />
 
     <TextView
-        android:id="@+id/coin_item_btc_value"
+        android:id="@+id/coin_item_amount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="8dp"
-        tools:text="3.12 BTC"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/coin_item_address"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/coin_item_address"
-        app:layout_constraintTop_toBottomOf="@+id/coin_item_address" />
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/coin_item_checkbox"
+        app:layout_constraintStart_toEndOf="@+id/imageView15"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="3.12 BTC" />
 
     <CheckBox
         android:id="@+id/coin_item_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:tint="@color/red"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/circle_shape" />
 </android.support.constraint.ConstraintLayout>

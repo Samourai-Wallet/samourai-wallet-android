@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.whirlpool.newWhirlPool.NewWhirlpoolCycleActivity;
 
 public class ChooseCycleType extends AppCompatActivity {
 
@@ -28,7 +29,7 @@ public class ChooseCycleType extends AppCompatActivity {
         standardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ChooseCycleType.this,NewWhirlpoolCycle.class);
+                Intent intent = new Intent(ChooseCycleType.this, NewWhirlpoolCycleActivity.class);
                 startActivity(intent);
             }
         });
@@ -36,7 +37,7 @@ public class ChooseCycleType extends AppCompatActivity {
         superChargeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ChooseCycleType.this,NewWhirlpoolCycle.class);
+                Intent intent = new Intent(ChooseCycleType.this, NewWhirlpoolCycleActivity.class);
                 startActivity(intent);
             }
         });
