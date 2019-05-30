@@ -1,24 +1,26 @@
-package com.samourai.wallet.whirlpool;
+package com.samourai.wallet.whirlpool.newWhirlPool;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.Button;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
@@ -26,63 +28,66 @@ import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
 
-public class NewWhirlpoolCycle extends AppCompatActivity {
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
-    private RecyclerView recyclerView;
-    private CoinsAdapter coinsAdapter;
+
+public class ChooseUTXOsFragment extends Fragment {
+
+    private static final String TAG = "ChooseUTXOsFragment";
+
+
+    private OnUTXOSelectionListener onUTXOSelectionListener;
     private ArrayList<Coin> coins = new ArrayList<Coin>();
-    private ViewGroup reviewButton;
+
+    public ChooseUTXOsFragment() {
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_whirlpool_cycle);
-        Toolbar toolbar = findViewById(R.id.toolbar_new_whirlpool);
-        recyclerView = findViewById(R.id.coins_recyclerview);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        reviewButton = findViewById(R.id.review_button);
-        coinsAdapter = new CoinsAdapter(this, coins);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView recyclerView = view.findViewById(R.id.coins_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        CoinsAdapter coinsAdapter = new CoinsAdapter(getContext(), coins);
         loadDummyCoins();
         recyclerView.setAdapter(coinsAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new SeparatorDecoration(this, ContextCompat.getColor(this, R.color.item_separator_grey), 1));
-
-        reviewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(NewWhirlpoolCycle.this,"Selected--->   ".concat(getSelectedCoins().toString()),Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(NewWhirlpoolCycle.this,WhirlPoolActivity.class);
-                startActivity(intent);
-
+        recyclerView.addItemDecoration(new SeparatorDecoration(getContext(), ContextCompat.getColor(getContext(), R.color.item_separator_grey), 1));
+        coinsAdapter.setOnItemsSelectListener(coinArrayList -> {
+            if (this.onUTXOSelectionListener != null) {
+                this.onUTXOSelectionListener.onSelect(coinArrayList);
             }
         });
-    }
-
-
-    private ArrayList<Coin> getSelectedCoins() {
-        ArrayList<Coin> coins = new ArrayList<Coin>();
-        ArrayList<Coin> adapterCoins = coinsAdapter.getCoins();
-        for (int i = 0; i < coinsAdapter.getCoins().size(); i++) {
-            if (adapterCoins.get(i).getSelected()) {
-                coins.add(adapterCoins.get(i));
-            }
-        }
-        return coins;
     }
 
     private void loadDummyCoins() {
         for (int i = 0; i <= 100; i++) {
             Coin coin = new Coin();
-            if(i/2==4){
-                // generating disabled coin
-                coin.setBlocked(true);
-            }
             coin.setAddress("16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5");
             coin.setValue(3.1F);
             coins.add(coin);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_choose_utxos, container, false);
+    }
+
+
+    public void setOnUTXOSelectionListener(OnUTXOSelectionListener onUTXOSelectionListener) {
+        this.onUTXOSelectionListener = onUTXOSelectionListener;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.onUTXOSelectionListener = null;
+    }
+
+    public interface OnUTXOSelectionListener {
+        void onSelect(ArrayList<Coin> coins);
     }
 
 
