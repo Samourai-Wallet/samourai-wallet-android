@@ -2050,4 +2050,104 @@ public class APIFactory	{
 
     }
 
+    //
+    // use for post-mix
+    //
+    private synchronized JSONObject getRawXPUB(String[] xpubs) {
+
+        String _url = WebUtil.getAPIUrl(context);
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String response = null;
+
+            if(AppUtil.getInstance(context).isOfflineMode())    {
+                response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
+            }
+            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                // use POST
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                Log.i("APIFactory", "XPUB:" + args.toString());
+                args.append("&at=");
+                args.append(getAccessToken());
+                response = WebUtil.getInstance(context).postURL(_url + "multiaddr?", args.toString());
+                Log.i("APIFactory", "XPUB response:" + response);
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("active", StringUtils.join(xpubs, "|"));
+                Log.i("APIFactory", "XPUB:" + args.toString());
+                args.put("at", getAccessToken());
+                response = WebUtil.getInstance(context).tor_postURL(_url + "multiaddr", args);
+                Log.i("APIFactory", "XPUB response:" + response);
+            }
+
+            try {
+                jsonObject = new JSONObject(response);
+                return jsonObject;
+            }
+            catch(JSONException je) {
+                je.printStackTrace();
+                jsonObject = null;
+            }
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public synchronized JSONObject getRawUnspentOutputs(String[] xpubs) {
+
+        String _url =  WebUtil.getAPIUrl(context);
+
+        JSONObject jsonObject  = null;
+        String response = null;
+
+        try {
+
+            if(AppUtil.getInstance(context).isOfflineMode())    {
+                response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+            }
+            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
+                Log.d("APIFactory", "UTXO args:" + args.toString());
+                args.append("&at=");
+                args.append(getAccessToken());
+                response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
+                Log.d("APIFactory", "UTXO:" + response);
+            }
+            else    {
+                HashMap<String,String> args = new HashMap<String,String>();
+                args.put("active", StringUtils.join(xpubs, "|"));
+                args.put("at", getAccessToken());
+                response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
+            }
+
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            try {
+                jsonObject = new JSONObject(response);
+            }
+            catch(JSONException je) {
+                ;
+            }
+        }
+
+        return jsonObject;
+    }
+
 }
