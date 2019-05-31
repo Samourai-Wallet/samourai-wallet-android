@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/window"
     android:fitsSystemWindows="false">
 
 
@@ -31,32 +32,35 @@
 
 
                 <TextView
-                    android:id="@+id/txtview_paynym"
+                    android:id="@+id/whirlpool_total_amount_spendable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
+                    android:text="0.00 BTC"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="+TextView" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/paynym_payment_code"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
+                    android:text="Total Being Cycled"
                     android:textAlignment="center"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview_paynym"
-                    tools:text="TextView" />
+                    app:layout_constraintTop_toBottomOf="@+id/whirlpool_total_amount_spendable" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar
@@ -76,7 +80,7 @@
             android:layout_width="match_parent"
             app:tabIndicatorColor="@color/white"
             android:layout_height="wrap_content"
-            app:tabIndicatorHeight="4dp"
+            app:tabIndicatorHeight="2dp"
             app:layout_collapseMode="parallax"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +98,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
         android:clickable="true"
-        android:src="@drawable/fab_add"
+        android:src="@drawable/ic_whirlpool"
+        android:tint="@color/white"
         app:backgroundTint="@color/accent" />
 
     <LinearLayout
