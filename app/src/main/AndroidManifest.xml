@@ -278,7 +278,8 @@
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
-            android:theme="@style/ui_2_theme" />
+            android:exported="true"
+            android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".tx.TxDetailsActivity"
             android:exported="true"
