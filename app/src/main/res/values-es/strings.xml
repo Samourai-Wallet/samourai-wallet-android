@@ -477,7 +477,7 @@
     <string name="create_a_secure_passphrase_for_your_wallet">Crea una contraseña segura para tu billetera</string>
     <string name="set_pin_code">Establecer código PIN</string>
     <string name="accept_disclaimer_error">Es necesario que aceptes el aviso legal</string>
-    <string name="import_external_wallet"Importar billetera externa</string>
+    <string name="import_external_wallet">Importar billetera externa</string>
     <string name="import_samourai_wallet">Importar copia de seguridad Samourai</string>
     <string name="backup_file">Hacer copia de seguridad del fichero</string>
     <string name="import_an_encrypted_samourai_wallet">importa una copia de seguridad Samourai para recuperar una billetera con todos los metadatos intactos</string>
