@@ -1,46 +1,37 @@
-package com.samourai.wallet.whirlpool.newWhirlPool;
+package com.samourai.wallet.whirlpool.newPool.fragments;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.ColorInt;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Group;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.AutoTransition;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.whirlpool.WhirlPoolActivity;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
+import com.samourai.wallet.whirlpool.newPool.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import io.reactivex.Observable;
+
+import static android.graphics.Typeface.BOLD;
 
 public class NewWhirlpoolCycleActivity extends AppCompatActivity {
 
@@ -54,10 +45,13 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     private ImageView stepperPoint1, stepperPoint2, stepperPoint3;
     private ChooseUTXOsFragment chooseUTXOsFragment;
     private SelectPoolFragment selectPoolFragment;
-    private ChooseUTXOsFragment chooseUTXOsFragment2;
+    private ReviewPoolFragment reviewPoolFragment;
     private ViewPager newPoolViewPager;
-    private Button confirmUTXObtn;
-    private ConstraintLayout confirmPoolSelectionBtn;
+    private Button confirmButton;
+
+    private LiveData<ArrayList<Coin>> selectedCoins = new MutableLiveData<>();
+    private ArrayList<Long> fees = new ArrayList<>();
+    private Observable<Long> selectedFee = Observable.just(0L);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,35 +65,71 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
 
+        fees.add(20L);
+        fees.add(30L);
+        fees.add(60L);
+
         chooseUTXOsFragment = new ChooseUTXOsFragment();
         selectPoolFragment = new SelectPoolFragment();
-        chooseUTXOsFragment2 = new ChooseUTXOsFragment();
+        reviewPoolFragment = new ReviewPoolFragment();
+        selectPoolFragment.setFees(this.fees);
 
         newPoolViewPager = findViewById(R.id.new_pool_viewpager);
-//
+
         setUpStepper();
 
         newPoolViewPager.setAdapter(new NewPoolStepsPager(getSupportFragmentManager()));
         newPoolViewPager.enableSwipe(false);
 
 
-        confirmUTXObtn = findViewById(R.id.utxo_selection_confirm_btn);
-        confirmPoolSelectionBtn = findViewById(R.id.pool_selection_review_btn);
-        confirmUTXObtn.setVisibility(View.VISIBLE);
-        confirmPoolSelectionBtn.setVisibility(View.GONE);
+        confirmButton = findViewById(R.id.utxo_selection_confirm_btn);
+
+        confirmButton.setVisibility(View.VISIBLE);
+
+        enableConfirmButton(false);
 
         chooseUTXOsFragment.setOnUTXOSelectionListener(coins -> {
             if (coins.size() == 0) {
-                enableUTXOConfirmButton(false);
+                enableConfirmButton(false);
             } else {
-                enableUTXOConfirmButton(true);
+                enableConfirmButton(true);
             }
         });
-        confirmUTXObtn.setOnClickListener(view -> {
-            newPoolViewPager.setCurrentItem(1);
+        confirmButton.setOnClickListener(view -> {
+            switch (newPoolViewPager.getCurrentItem()) {
+                case 0: {
+                    newPoolViewPager.setCurrentItem(1);
+                    initUTXOReviewButton();
+                    enableConfirmButton(false);
+                    break;
+                }
+                case 1: {
+                    newPoolViewPager.setCurrentItem(2);
+                    confirmButton.setText(getString(R.string.begin_cycle));
+                    confirmButton.setBackgroundResource(R.drawable.button_green);
+                    break;
+                }
+                case 2: {
+                    processWhirlPool();
+                    break;
+                }
+            }
+        });
+
+
+        selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
+            if (pool != null) {
+                enableConfirmButton(true);
+            } else {
+                enableConfirmButton(false);
+            }
         });
 
         setUpViewPager();
+
+    }
+
+    private void processWhirlPool() {
 
     }
 
@@ -116,9 +146,12 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
                 switch (position) {
                     case 0: {
                         enableStep1(true);
+                        confirmButton.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+                        confirmButton.setText("NEXT");
                         break;
                     }
                     case 1: {
+                        initUTXOReviewButton();
                         enableStep2(true);
                         break;
                     }
@@ -136,6 +169,28 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
         });
     }
 
+    private void initUTXOReviewButton() {
+
+        String reviewMessage = "REVIEW CYCLE DETAILS\n";
+        String reviewAmountMessage = "Total being cycled: ";
+        String amount = "1.1".concat(" BTC");
+
+        SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));
+        spannable.setSpan(
+                new StyleSpan(BOLD),
+                0, reviewMessage.length() - 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+
+        spannable.setSpan(
+                new RelativeSizeSpan(.8f),
+                reviewMessage.length() - 1, spannable.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        confirmButton.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+        confirmButton.setText(spannable);
+    }
+
     private void setUpStepper() {
         stepperMessage1 = findViewById(R.id.stepper_1_message);
         stepperMessage2 = findViewById(R.id.stepper_2_message);
@@ -147,6 +202,9 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
         stepperPoint1 = findViewById(R.id.stepper_point_1);
         stepperPoint2 = findViewById(R.id.stepper_point_2);
         stepperPoint3 = findViewById(R.id.stepper_point_3);
+
+        enableStep3(false);
+        enableStep2(false);
 
     }
 
@@ -172,16 +230,15 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     }
 
 
-    private void enableUTXOConfirmButton(boolean enable) {
+    private void enableConfirmButton(boolean enable) {
         if (enable) {
-            confirmUTXObtn.setEnabled(true);
-            confirmUTXObtn.setBackgroundResource(R.drawable.button_blue);
+            confirmButton.setEnabled(true);
+            confirmButton.setBackgroundResource(R.drawable.button_blue);
         } else {
-            confirmUTXObtn.setEnabled(false);
-            confirmUTXObtn.setBackgroundResource(R.drawable.disabled_grey_button);
+            confirmButton.setEnabled(false);
+            confirmButton.setBackgroundResource(R.drawable.disabled_grey_button);
         }
     }
-
 
     class NewPoolStepsPager extends FragmentPagerAdapter {
 
@@ -201,7 +258,7 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
 
                 }
                 case 2: {
-                    return chooseUTXOsFragment2;
+                    return reviewPoolFragment;
                 }
             }
             return chooseUTXOsFragment;
@@ -221,15 +278,13 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     private void enableStep1(boolean enable) {
         if (enable) {
             stepperMessage1.setTextColor(ContextCompat.getColor(this, R.color.white));
-            stepperPoint1.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen), PorterDuff.Mode.SRC_ATOP);
+            stepperPoint1.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen));
+            stepperMessage1.setAlpha(1f);
             enableStep2(false);
             enableStep3(false);
-            confirmUTXObtn.setVisibility(View.VISIBLE);
-            confirmPoolSelectionBtn.setVisibility(View.GONE);
-
         } else {
             stepperMessage1.setTextColor(ContextCompat.getColor(this, R.color.disabled_white));
-            stepperPoint1.setColorFilter(ContextCompat.getColor(this, R.color.disabled_white), PorterDuff.Mode.SRC_ATOP);
+            stepperPoint1.setColorFilter(ContextCompat.getColor(this, R.color.disabled_white));
             stepperPoint1.setAlpha(0.6f);
 
         }
@@ -238,14 +293,15 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     private void enableStep2(boolean enable) {
         if (enable) {
             stepperMessage2.setTextColor(ContextCompat.getColor(this, R.color.white));
-            stepperPoint2.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen), PorterDuff.Mode.SRC_ATOP);
+            stepperMessage2.setAlpha(1f);
+            stepperPoint2.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen));
+            stepperPoint2.setAlpha(1f);
+            stepperMessage1.setAlpha(0.6f);
             stepperLine1.setBackgroundResource(R.color.whirlpoolGreen);
             enableStep3(false);
-            confirmUTXObtn.setVisibility(View.GONE);
-            confirmPoolSelectionBtn.setVisibility(View.VISIBLE);
         } else {
             stepperMessage2.setTextColor(ContextCompat.getColor(this, R.color.disabled_white));
-            stepperPoint2.setColorFilter(ContextCompat.getColor(this, R.color.disabled_white), PorterDuff.Mode.SRC_ATOP);
+            stepperPoint2.setColorFilter(ContextCompat.getColor(this, R.color.disabled_white));
             stepperPoint2.setAlpha(0.6f);
             stepperLine1.setBackgroundResource(R.color.disabled_white);
         }
@@ -254,7 +310,9 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     private void enableStep3(boolean enable) {
         if (enable) {
             stepperMessage3.setTextColor(ContextCompat.getColor(this, R.color.white));
-            stepperPoint3.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen), PorterDuff.Mode.SRC_ATOP);
+            stepperPoint3.setColorFilter(ContextCompat.getColor(this, R.color.whirlpoolGreen));
+            stepperPoint3.setAlpha(1f);
+            stepperMessage2.setAlpha(0.6f);
             stepperLine2.setBackgroundResource(R.color.whirlpoolGreen);
         } else {
             stepperMessage3.setTextColor(ContextCompat.getColor(this, R.color.disabled_white));

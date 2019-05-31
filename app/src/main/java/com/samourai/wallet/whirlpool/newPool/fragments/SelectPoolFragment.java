@@ -1,10 +1,9 @@
-package com.samourai.wallet.whirlpool.newWhirlPool;
+package com.samourai.wallet.whirlpool.newPool;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
@@ -15,14 +14,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
-import com.google.gson.GsonBuilder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
 import com.samourai.wallet.whirlpool.models.Pool;
@@ -39,8 +37,10 @@ public class SelectPoolFragment extends Fragment {
     private PoolsAdapter poolsAdapter;
     private ArrayList<Pool> pools = new ArrayList<Pool>();
     private Button feeNormalBtn, feeLowBtn, feeHighBtn;
+    private TextView poolFee;
     private PoolCyclePriority poolCyclePriority = PoolCyclePriority.NORMAL;
     private OnPoolSelectionComplete onPoolSelectionComplete;
+    private ArrayList<Long> fees = new ArrayList<>();
 
     public SelectPoolFragment() {
     }
@@ -65,9 +65,14 @@ public class SelectPoolFragment extends Fragment {
 
         loadPools();
 
+        poolFee = view.findViewById(R.id.pool_fee_txt);
         feeLowBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.LOW));
         feeHighBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.HIGH));
         feeNormalBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.NORMAL));
+
+        if (fees.size() >= 2)
+            poolFee.setText(String.valueOf(fees.get(1)).concat(" sat/b"));
+
         poolsAdapter.setOnItemsSelectListener(position -> {
             for (int i = 0; i < pools.size(); i++) {
                 if (i == position) {
@@ -85,6 +90,10 @@ public class SelectPoolFragment extends Fragment {
             }
             poolsAdapter.update(pools);
         });
+    }
+
+    public void setFees(ArrayList<Long> fees) {
+        this.fees = fees;
     }
 
     private void loadPools() {
@@ -123,21 +132,29 @@ public class SelectPoolFragment extends Fragment {
                 feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+                if (fees.size() >= 1)
+                    poolFee.setText(String.valueOf(fees.get(0)).concat(" sat/b"));
                 break;
             }
-            case HIGH: {
-                feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
-                feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
-                break;
-            }
-
             case NORMAL: {
                 feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
                 feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
+                if (fees.size() >= 2)
+                    poolFee.setText(String.valueOf(fees.get(1)).concat(" sat/b"));
                 break;
             }
+
+            case HIGH: {
+                feeNormalBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
+                feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
+                feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
+                if (fees.size() >= 2)
+                    poolFee.setText(String.valueOf(fees.get(2)).concat(" sat/b"));
+                break;
+            }
+
+
         }
         this.poolCyclePriority = poolCyclePriority;
     }

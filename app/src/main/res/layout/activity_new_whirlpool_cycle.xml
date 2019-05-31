@@ -77,19 +77,6 @@
         android:layout_height="0dp"
         android:background="@drawable/button_blue"
         android:text="@string/next"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager" />
-
-    <Button
-        android:id="@+id/pool_selection_review_btn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/button_blue"
-        android:text="REVIEW CYCLE DETAILS \n Total being cylced :  "
-        android:textAllCaps="false"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
