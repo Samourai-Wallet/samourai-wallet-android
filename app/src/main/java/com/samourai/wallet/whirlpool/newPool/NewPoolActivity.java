@@ -1,4 +1,4 @@
-package com.samourai.wallet.whirlpool.newPool.fragments;
+package com.samourai.wallet.whirlpool.newPool;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,11 +18,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
-import com.samourai.wallet.whirlpool.newPool.SelectPoolFragment;
+import com.samourai.wallet.whirlpool.models.Pool;
+import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
+import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
+import com.samourai.wallet.whirlpool.newPool.fragments.ChooseUTXOsFragment;
+import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
@@ -33,12 +38,10 @@ import io.reactivex.Observable;
 
 import static android.graphics.Typeface.BOLD;
 
-public class NewWhirlpoolCycleActivity extends AppCompatActivity {
+public class NewPoolActivity extends AppCompatActivity {
 
     private static final String TAG = "NewWhirlpoolCycleActivi";
-    private RecyclerView recyclerView;
-    private CoinsAdapter coinsAdapter;
-    private ViewGroup reviewButton;
+
 
     private TextView stepperMessage1, stepperMessage2, stepperMessage3, cycleTotalAmount;
     private View stepperLine1, stepperLine2;
@@ -49,9 +52,10 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
     private ViewPager newPoolViewPager;
     private Button confirmButton;
 
-    private LiveData<ArrayList<Coin>> selectedCoins = new MutableLiveData<>();
+    private ArrayList<Coin> selectedCoins = new ArrayList<>();
     private ArrayList<Long> fees = new ArrayList<>();
-    private Observable<Long> selectedFee = Observable.just(0L);
+    private Pool selectedPool = null;
+    private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +85,6 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
         newPoolViewPager.setAdapter(new NewPoolStepsPager(getSupportFragmentManager()));
         newPoolViewPager.enableSwipe(false);
 
-
         confirmButton = findViewById(R.id.utxo_selection_confirm_btn);
 
         confirmButton.setVisibility(View.VISIBLE);
@@ -95,12 +98,18 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
                 enableConfirmButton(true);
             }
         });
+        selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
+            selectedPool = pool;
+            selectedPoolPriority = priority;
+            enableConfirmButton(selectedPool != null);
+        });
+
         confirmButton.setOnClickListener(view -> {
             switch (newPoolViewPager.getCurrentItem()) {
                 case 0: {
                     newPoolViewPager.setCurrentItem(1);
                     initUTXOReviewButton();
-                    enableConfirmButton(false);
+                    enableConfirmButton(selectedPool != null);
                     break;
                 }
                 case 1: {
@@ -116,21 +125,12 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
             }
         });
 
-
-        selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
-            if (pool != null) {
-                enableConfirmButton(true);
-            } else {
-                enableConfirmButton(false);
-            }
-        });
-
         setUpViewPager();
 
     }
 
     private void processWhirlPool() {
-
+        Toast.makeText(this,"Begin Pool",Toast.LENGTH_SHORT).show();
     }
 
     private void setUpViewPager() {
@@ -153,9 +153,11 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
                     case 1: {
                         initUTXOReviewButton();
                         enableStep2(true);
+                        enableConfirmButton(selectedPool != null);
                         break;
                     }
                     case 2: {
+                        //pass Pool information to @ReviewPoolFragment
                         enableStep3(true);
                         break;
                     }
@@ -210,7 +212,6 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG, "onBackPressed: ".concat(String.valueOf(newPoolViewPager.getCurrentItem())));
         switch (newPoolViewPager.getCurrentItem()) {
             case 0: {
                 super.onBackPressed();
@@ -218,17 +219,14 @@ public class NewWhirlpoolCycleActivity extends AppCompatActivity {
             }
             case 1: {
                 newPoolViewPager.setCurrentItem(0);
-                enableStep1(true);
                 break;
             }
             case 2: {
                 newPoolViewPager.setCurrentItem(1);
-                enableStep2(true);
                 break;
             }
         }
     }
-
 
     private void enableConfirmButton(boolean enable) {
         if (enable) {

@@ -1,10 +1,9 @@
-package com.samourai.wallet.whirlpool.newWhirlPool;
+package com.samourai.wallet.whirlpool.newPool.fragments;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
@@ -15,21 +14,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
-
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 
 
 public class ChooseUTXOsFragment extends Fragment {

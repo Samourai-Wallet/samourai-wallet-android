@@ -1,4 +1,4 @@
-package com.samourai.wallet.whirlpool.newPool;
+package com.samourai.wallet.whirlpool.newPool.fragments;
 
 import android.content.Context;
 import android.graphics.Canvas;
