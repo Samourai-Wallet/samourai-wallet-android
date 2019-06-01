@@ -565,9 +565,14 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
-            if (tempBalance != 0L) {
-                balance = tempBalance;
+            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
+            }
+            else    {
+                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+                if (tempBalance != 0L) {
+                    balance = tempBalance;
+                }
             }
             checkDeepLinks();
         } catch (IOException ioe) {
@@ -1801,6 +1806,15 @@ public class SendActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.send_menu, menu);
+
+        if(account != 0)    {
+            menu.findItem(R.id.action_batch).setVisible(false);
+            menu.findItem(R.id.action_ricochet).setVisible(false);
+            menu.findItem(R.id.action_empty_ricochet).setVisible(false);
+            menu.findItem(R.id.action_utxo).setVisible(false);
+            menu.findItem(R.id.action_postmix).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1835,6 +1849,8 @@ public class SendActivity extends AppCompatActivity {
             doFees();
         } else if (id == R.id.action_batch) {
             doBatchSpend();
+        } else if (id == R.id.action_postmix) {
+            doPostMixSpend();
         } else if (id == R.id.action_support) {
             doSupport();
         } else {
@@ -1882,6 +1898,12 @@ public class SendActivity extends AppCompatActivity {
 
     private void doBatchSpend() {
         Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
+        startActivity(intent);
+    }
+
+    private void doPostMixSpend() {
+        Intent intent = new Intent(SendActivity.this, SendActivity.class);
+        intent.putExtra("_account", WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix());
         startActivity(intent);
     }
 
