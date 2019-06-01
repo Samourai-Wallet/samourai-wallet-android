@@ -306,8 +306,14 @@ public class PayloadUtil	{
             // export Whirlpool accounts for debug payload
             //
             JSONArray whirlpool_account = new JSONArray();
-            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).toJSON(84));
-            whirlpool_account.put(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).toJSON(84));
+            JSONObject preObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).toJSON(84);
+            preObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPreReceiveIdx());
+            preObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPreChangeIdx());
+            whirlpool_account.put(preObj);
+            JSONObject postObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).toJSON(84);
+            postObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPostReceiveIdx());
+            postObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPostChangeIdx());
+            whirlpool_account.put(postObj);
             wallet.put("whirlpool_account", whirlpool_account);
 
             //
