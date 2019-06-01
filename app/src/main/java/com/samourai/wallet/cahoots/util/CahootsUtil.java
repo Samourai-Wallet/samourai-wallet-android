@@ -225,6 +225,7 @@ public class CahootsUtil {
         showTx.setTextIsSelectable(true);
         showTx.setPadding(40, 10, 40, 10);
         showTx.setTextSize(18.0f);
+        showTx.setLines(10);
 
         LinearLayout hexLayout = new LinearLayout(context);
         hexLayout.setOrientation(LinearLayout.VERTICAL);
@@ -383,6 +384,7 @@ public class CahootsUtil {
                     showText.setTextIsSelectable(true);
                     showText.setPadding(40, 10, 40, 10);
                     showText.setTextSize(18.0f);
+                    showText.setLines(10);
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.app_name)
                             .setView(showText)
@@ -409,6 +411,7 @@ public class CahootsUtil {
                     showText.setTextIsSelectable(true);
                     showText.setPadding(40, 10, 40, 10);
                     showText.setTextSize(18.0f);
+                    showText.setLines(10);
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.app_name)
                             .setView(showText)
