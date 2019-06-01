@@ -23,6 +23,7 @@ import com.samourai.wallet.whirlpool.adapters.CyclesAdapter;
 import com.samourai.wallet.whirlpool.fragments.WhirlpoolCyclesFragment;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Cycle;
+import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     private RecyclerView CycleRecyclerView;
     private WhirlpoolCyclesFragment dashboard, inProgressCycles, completedCycles;
-    private CyclesAdapter CyclesAdapter;
     private ArrayList<Cycle> cycles = new ArrayList();
     private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
     private ViewPager cyclesViewPager;
@@ -60,9 +60,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         CyclesViewPagerAdapter adapter = new CyclesViewPagerAdapter(getSupportFragmentManager());
         cyclesViewPager.setAdapter(adapter);
         cyclesViewPager.setCurrentItem(1);
-        findViewById(R.id.whirlpool_fab).setOnClickListener( view -> {
-//            startActivity(new Intent(this,));
-        });
+        findViewById(R.id.whirlpool_fab).setOnClickListener( view -> startActivity(new Intent( this, NewPoolActivity.class)));
     }
 
     @Override
@@ -71,14 +69,6 @@ public class WhirlpoolMain extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void loadDummyCycles() {
-        for (int i = 0; i <= 62; i++) {
-            Cycle cycle = new Cycle();
-            cycle.setAmount(300 + 0.0030f + i);
-            cycle.setStatus(Cycle.CycleStatus.PENDING);
-            cycles.add(cycle);
-        }
-    }
 
 
     @Override
