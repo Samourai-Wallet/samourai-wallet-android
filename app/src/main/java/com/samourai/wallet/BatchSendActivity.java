@@ -955,6 +955,7 @@ public class BatchSendActivity extends Activity {
                                     SendActivity.SPEND_SIMPLE,
                                     _change,
                                     49,
+                                    0,
                                     "",
                                     false,
                                     false,
