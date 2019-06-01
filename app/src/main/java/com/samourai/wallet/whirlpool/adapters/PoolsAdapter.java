@@ -38,8 +38,8 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Pool pool = mPools.get(position);
         holder.poolAmount.setText(getBTCDisplayAmount(pool.getPoolAmount()).concat(" BTC Pool"));
-        holder.poolFees.setText("POOL FEES    ".concat(getBTCDisplayAmount(pool.getPoolFee())).concat(" BTC"));
-        holder.totalFees.setText("TOTAL FEE    ".concat(getBTCDisplayAmount(pool.getTotalFee())).concat(" BTC"));
+        holder.poolFees.setText("POOL FEE    ".concat(getBTCDisplayAmount(pool.getPoolFee())).concat(" BTC"));
+        holder.totalFees.setText("TOTAL FEES    ".concat(getBTCDisplayAmount(pool.getTotalFee())).concat(" BTC"));
         holder.minorFees.setText("MINER FEE    ".concat(getBTCDisplayAmount(pool.getMinerFee())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);
         holder.checkBox.setChecked(pool.isSelected());

@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
+import android.support.constraint.Group;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
     private ArrayList<Coin> mCoins;
     private OnItemsSelected onItemsSelected;
     private static final String TAG = "CoinsAdapter";
+
     public CoinsAdapter(Context context, ArrayList<Coin> coins) {
         mCoins = coins;
         mContext = context;
@@ -39,6 +41,14 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         holder.btcTxView.setText(String.valueOf(coin.getValue()).concat(" BTC"));
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
+
+        // Placeholder for showing tx with coinbase tag
+        if(position==2){
+            holder.coinbaseGroup.setVisibility(View.VISIBLE);
+        }else {
+            holder.coinbaseGroup.setVisibility(View.GONE);
+
+        }
 
         if (coin.getBlocked()) {
             holder.btcTxView.setAlpha(.6f);
@@ -76,12 +86,14 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
 
         private TextView btcTxView, addressTxView;
         private CheckBox checkBox;
+        private Group coinbaseGroup;
 
         ViewHolder(View itemView) {
             super(itemView);
             btcTxView = itemView.findViewById(R.id.coin_item_amount);
             addressTxView = itemView.findViewById(R.id.coin_utxo_address);
             checkBox = itemView.findViewById(R.id.coin_item_checkbox);
+            coinbaseGroup = itemView.findViewById(R.id.coinbase_tx_group);
         }
     }
 
