@@ -60,6 +60,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -1487,10 +1488,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
         idxBIP84Internal = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49External = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getReceive().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
-        idxPremixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getReceive().getAddrIdx();
-        idxPremixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getChange().getAddrIdx();
-        idxPostmixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getReceive().getAddrIdx();
-        idxPostmixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
+//        idxPremixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getReceive().getAddrIdx();
+//        idxPremixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getChange().getAddrIdx();
+//        idxPremixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreReceiveIdx();
+//        idxPremixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreChangeIdx();
+//        idxPostmixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getReceive().getAddrIdx();
+//        idxPostmixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
+        idxPostmixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostReceiveIdx();
+        idxPostmixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostChangeIdx();
 
         try {
             idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
@@ -1512,8 +1517,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
         builder.append("84 receive :" + idxBIP84External + "\n");
         builder.append("84 change :" + idxBIP84Internal + "\n");
         builder.append("Ricochet :" + RicochetMeta.getInstance(SettingsActivity2.this).getIndex() + "\n");
-        builder.append("Premix receive :" + idxPremixExternal + "\n");
-        builder.append("Premix change :" + idxPremixInternal + "\n");
+//        builder.append("Premix receive :" + idxPremixExternal + "\n");
+//        builder.append("Premix change :" + idxPremixInternal + "\n");
         builder.append("Postmix receive :" + idxPostmixExternal + "\n");
         builder.append("Postmix change :" + idxPostmixInternal + "\n");
 
