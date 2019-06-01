@@ -77,7 +77,7 @@ public class SendFactory	{
         Transaction tx = null;
 
         try {
-            int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
+//            int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
             tx = makeTransaction(accountIdx, receivers, unspent);
         }
         catch(Exception e) {

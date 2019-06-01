@@ -76,6 +76,7 @@ import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.whirlpool.EmptyWhirlPool;
 import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
 import com.samourai.wallet.whirlpool.WhirlPoolActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.yanzhenjie.zbar.Symbol;
@@ -166,10 +167,13 @@ public class SendActivity extends AppCompatActivity {
     private int idxBIP44Internal = 0;
     private int idxBIP49Internal = 0;
     private int idxBIP84Internal = 0;
+    private int idxBIP84PostMixInternal = 0;
 
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
+
+    private int account = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +227,10 @@ public class SendActivity extends AppCompatActivity {
 
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            account = getIntent().getExtras().getInt("_account");
+        }
 
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -1078,7 +1086,7 @@ public class SendActivity extends AppCompatActivity {
                 }
 
                 // boltzmann spend (STONEWALL)
-                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address, 0);
+                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address, account);
 
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE
@@ -1212,7 +1220,7 @@ public class SendActivity extends AppCompatActivity {
                     // fee sanity check
                     //
                     restoreChangeIndexes();
-                    Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outpoints, receivers);
+                    Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(account, outpoints, receivers);
                     tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
                     byte[] serialized = tx.bitcoinSerialize();
                     Log.d("SendActivity", "size:" + serialized.length);
@@ -1373,6 +1381,7 @@ public class SendActivity extends AppCompatActivity {
                         SPEND_TYPE,
                         _change,
                         changeType,
+                        account,
                         address,
                         strPrivacyWarning.length() > 0,
                         cbShowAgain != null ? cbShowAgain.isChecked() : false,
@@ -2030,6 +2039,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void saveChangeIndexes() {
 
+        idxBIP84PostMixInternal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
         idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         try {
@@ -2042,6 +2052,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void restoreChangeIndexes() {
 
+        BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().setAddrIdx(idxBIP84PostMixInternal);
         BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
         BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
         try {
@@ -2116,7 +2127,6 @@ public class SendActivity extends AppCompatActivity {
                 });
 
     }
-
 
 }
 
