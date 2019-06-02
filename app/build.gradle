@@ -119,7 +119,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('com.github.Samourai-Wallet:extlibj:0.0.3') {
+    implementation ('com.github.Samourai-Wallet:extlibj:0.0.4') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
