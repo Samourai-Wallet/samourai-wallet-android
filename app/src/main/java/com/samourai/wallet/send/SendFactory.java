@@ -22,6 +22,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -661,7 +662,13 @@ public class SendFactory	{
             type = 44;
         }
 
-        if(type == 84)    {
+        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+            String change_address = BIP84Util.getInstance(context).getAddressAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, idx).getBech32AsString();
+            AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+            return change_address;
+        }
+        else if(type == 84)    {
             String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(account).getChange().getAddrIdx()).getBech32AsString();
             BIP84Util.getInstance(context).getWallet().getAccount(account).getChange().incAddrIdx();
             return change_address;

@@ -881,7 +881,10 @@ public class SendActivity extends AppCompatActivity {
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
-        if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            changeType = 84;
+        }
+        else if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = 84;
         }
         else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
@@ -894,7 +897,10 @@ public class SendActivity extends AppCompatActivity {
         receivers = new HashMap<String, BigInteger>();
         receivers.put(address, BigInteger.valueOf(amount));
 
-        if (changeType == 84) {
+        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            change_index = idxBIP84PostMixInternal;
+        }
+        else if (changeType == 84) {
             change_index = idxBIP84Internal;
         } else if (changeType == 49) {
             change_index = idxBIP49Internal;
@@ -923,6 +929,10 @@ public class SendActivity extends AppCompatActivity {
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
         List<UTXO> utxosP2PKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
+        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
+            utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
+        }
 
         selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
@@ -1005,6 +1015,9 @@ public class SendActivity extends AppCompatActivity {
             List<UTXO> _utxos2 = null;
 
             long valueP2WPKH = UTXOFactory.getInstance().getTotalP2WPKH();
+            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
+            }
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
             long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
 
@@ -1016,7 +1029,12 @@ public class SendActivity extends AppCompatActivity {
             boolean selectedP2SH_P2WPKH = false;
             boolean selectedP2PKH = false;
 
-            if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
+            if((valueP2WPKH > (neededAmount * 2)) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                Log.d("SendActivity", "set 1 P2WPKH 2x");
+                _utxos1 = utxosP2WPKH;
+                selectedP2WPKH = true;
+            }
+            else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
@@ -1355,7 +1373,11 @@ public class SendActivity extends AppCompatActivity {
                 // add change
                 if (_change > 0L) {
                     if (SPEND_TYPE == SPEND_SIMPLE) {
-                        if (changeType == 84) {
+                        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                            String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
+                            receivers.put(change_address, BigInteger.valueOf(_change));
+                        }
+                        else if (changeType == 84) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else if (changeType == 49) {
