@@ -1835,7 +1835,6 @@ public class SendActivity extends AppCompatActivity {
             menu.findItem(R.id.action_batch).setVisible(false);
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
-            menu.findItem(R.id.action_utxo).setVisible(false);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -1914,6 +1913,9 @@ public class SendActivity extends AppCompatActivity {
 
     private void doUTXO() {
         Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
+        if(account != 0)    {
+            intent.putExtra("_account", account);
+        }
         startActivity(intent);
     }
 
