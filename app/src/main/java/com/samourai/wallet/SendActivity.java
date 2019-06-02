@@ -228,10 +228,6 @@ public class SendActivity extends AppCompatActivity {
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
-            account = getIntent().getExtras().getInt("_account");
-        }
-
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = android.content.ClipData
@@ -244,6 +240,12 @@ public class SendActivity extends AppCompatActivity {
 
         tvTotalFee.setOnClickListener(clipboardCopy);
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                account = WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix();
+            }
+        }
 
         SPEND_TYPE = SPEND_BOLTZMANN;
 
@@ -916,7 +918,7 @@ public class SendActivity extends AppCompatActivity {
         neededAmount += SamouraiWallet.bDust.longValue();
 
         // get all UTXO
-        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount);
+        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount, account);
 
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
@@ -1812,7 +1814,6 @@ public class SendActivity extends AppCompatActivity {
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
             menu.findItem(R.id.action_utxo).setVisible(false);
-            menu.findItem(R.id.action_postmix).setVisible(false);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -1849,8 +1850,6 @@ public class SendActivity extends AppCompatActivity {
             doFees();
         } else if (id == R.id.action_batch) {
             doBatchSpend();
-        } else if (id == R.id.action_postmix) {
-            doPostMixSpend();
         } else if (id == R.id.action_support) {
             doSupport();
         } else {
@@ -1898,12 +1897,6 @@ public class SendActivity extends AppCompatActivity {
 
     private void doBatchSpend() {
         Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
-        startActivity(intent);
-    }
-
-    private void doPostMixSpend() {
-        Intent intent = new Intent(SendActivity.this, SendActivity.class);
-        intent.putExtra("_account", WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix());
         startActivity(intent);
     }
 
