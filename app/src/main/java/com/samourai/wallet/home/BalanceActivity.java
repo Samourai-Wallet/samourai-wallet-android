@@ -71,6 +71,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
@@ -636,7 +637,14 @@ public class BalanceActivity extends AppCompatActivity {
 
         } else if (id == R.id.action_scan_qr) {
             doScan();
+        } else if (id == R.id.action_postmix) {
+
+            Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+            startActivity(intent);
+
         } else {
+            ;
         }
         return super.onOptionsItemSelected(item);
     }

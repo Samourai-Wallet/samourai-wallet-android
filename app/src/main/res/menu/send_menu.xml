@@ -19,12 +19,6 @@
         android:showAsAction="never"
         />
 
-    <item android:id="@+id/action_postmix"
-        android:title="@string/options_postmix"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        />
-
     <item android:id="@+id/action_utxo"
         android:title="@string/options_utxo"
         android:orderInCategory="100"
