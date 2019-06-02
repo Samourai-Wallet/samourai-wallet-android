@@ -2301,6 +2301,8 @@ public class APIFactory	{
                             utxosPostMix.put(script, utxo);
                         }
 
+                        UTXOFactory.getInstance().addPostMix(script, utxos.get(script));
+
                     }
                     catch(Exception e) {
                         ;
