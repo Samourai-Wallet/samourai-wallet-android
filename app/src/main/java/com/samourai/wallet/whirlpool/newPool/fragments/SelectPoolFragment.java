@@ -71,7 +71,7 @@ public class SelectPoolFragment extends Fragment {
         feeNormalBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.NORMAL));
 
         if (fees.size() >= 2)
-            poolFee.setText(String.valueOf(fees.get(1)).concat(" sat/b"));
+            poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
 
         poolsAdapter.setOnItemsSelectListener(position -> {
             for (int i = 0; i < pools.size(); i++) {
@@ -133,7 +133,7 @@ public class SelectPoolFragment extends Fragment {
                 feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
                 if (fees.size() >= 1)
-                    poolFee.setText(String.valueOf(fees.get(0)).concat(" sat/b"));
+                    poolFee.setText(String.valueOf(fees.get(0)).concat(" ").concat(getString(R.string.sat_b)));
                 break;
             }
             case NORMAL: {
@@ -141,7 +141,7 @@ public class SelectPoolFragment extends Fragment {
                 feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
-                    poolFee.setText(String.valueOf(fees.get(1)).concat(" sat/b"));
+                    poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
                 break;
             }
 
@@ -150,7 +150,7 @@ public class SelectPoolFragment extends Fragment {
                 feeHighBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
-                    poolFee.setText(String.valueOf(fees.get(2)).concat(" sat/b"));
+                    poolFee.setText(String.valueOf(fees.get(2)).concat(" ").concat(getString(R.string.sat_b)));
                 break;
             }
 
@@ -161,20 +161,8 @@ public class SelectPoolFragment extends Fragment {
 
 
     @Override
-    public void onAttach
-            (Context
-                     context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
     public void onDetach() {
+        this.onPoolSelectionComplete = null;
         super.onDetach();
     }
 

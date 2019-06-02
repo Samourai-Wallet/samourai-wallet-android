@@ -147,7 +147,7 @@ public class NewPoolActivity extends AppCompatActivity {
                     case 0: {
                         enableStep1(true);
                         confirmButton.setBackgroundResource(R.drawable.whirlpool_btn_blue);
-                        confirmButton.setText("NEXT");
+                        confirmButton.setText(R.string.next);
                         break;
                     }
                     case 1: {
@@ -173,8 +173,8 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private void initUTXOReviewButton() {
 
-        String reviewMessage = "REVIEW CYCLE DETAILS\n";
-        String reviewAmountMessage = "Total being cycled: ";
+        String reviewMessage = getString(R.string.review_cycle_details).concat("\n");
+        String reviewAmountMessage = getString(R.string.total_being_cycled).concat(" ");
         String amount = "1.1".concat(" BTC");
 
         SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));

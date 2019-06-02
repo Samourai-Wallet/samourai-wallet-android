@@ -54,7 +54,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
-                    android:text="Total Being Cycled"
+                    android:text="@string/total_being_cycled"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"

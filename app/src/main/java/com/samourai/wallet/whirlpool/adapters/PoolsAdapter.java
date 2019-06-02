@@ -3,7 +3,6 @@ package com.samourai.wallet.whirlpool.adapters;
 import android.content.Context;
 import android.support.constraint.Group;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,20 +37,16 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Pool pool = mPools.get(position);
         holder.poolAmount.setText(getBTCDisplayAmount(pool.getPoolAmount()).concat(" BTC Pool"));
-        holder.poolFees.setText("POOL FEE    ".concat(getBTCDisplayAmount(pool.getPoolFee())).concat(" BTC"));
-        holder.totalFees.setText("TOTAL FEES    ".concat(getBTCDisplayAmount(pool.getTotalFee())).concat(" BTC"));
-        holder.minorFees.setText("MINER FEE    ".concat(getBTCDisplayAmount(pool.getMinerFee())).concat(" BTC"));
+        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDisplayAmount(pool.getPoolFee())).concat(" BTC"));
+        holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("    ").concat(getBTCDisplayAmount(pool.getTotalFee())).concat(" BTC"));
+        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("    ").concat(getBTCDisplayAmount(pool.getMinerFee())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);
         holder.checkBox.setChecked(pool.isSelected());
-        Log.i(TAG, pool.getPoolAmount() + "onBindViewHolder: ".concat(String.valueOf(pool.getPoolAmount())).concat(String.valueOf(pool.isSelected())));
         if (pool.isSelected()) {
-//            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView,new Fade());
             holder.feesGroup.setVisibility(View.VISIBLE);
         }
 
         holder.itemView.setOnClickListener(view -> {
-            Log.i(TAG, "onBindViewHolder:    holder.itemView. CLIKEDD>>>>>>> >> ");
-//            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
             holder.feesGroup.setVisibility(holder.feesGroup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
 
