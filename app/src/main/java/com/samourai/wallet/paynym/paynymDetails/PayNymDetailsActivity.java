@@ -804,7 +804,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                             return;
                         }
 
-                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx);
+                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx, 0);
                         final String hexTx = new String(org.bouncycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
                         Log.d("SendActivity", tx.getHashAsString());
                         Log.d("SendActivity", hexTx);

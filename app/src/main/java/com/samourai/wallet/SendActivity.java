@@ -1226,7 +1226,7 @@ public class SendActivity extends AppCompatActivity {
                     //
                     restoreChangeIndexes();
                     Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(account, outpoints, receivers);
-                    tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
+                    tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx, account);
                     byte[] serialized = tx.bitcoinSerialize();
                     Log.d("SendActivity", "size:" + serialized.length);
                     Log.d("SendActivity", "vsize:" + tx.getVirtualTransactionSize());

@@ -926,7 +926,7 @@ public class BatchSendActivity extends Activity {
 
             final long _amount = amount;
 
-            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx, 0);
             final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
             final String strTxHash = tx.getHashAsString();
 

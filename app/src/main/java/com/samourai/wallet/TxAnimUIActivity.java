@@ -153,7 +153,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     });
 
 
-                    final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx);
+                    final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx, SendParams.getInstance().getAccount());
                     if (_tx == null) {
                         failTx(R.string.tx_signing_ko);
                     } else {

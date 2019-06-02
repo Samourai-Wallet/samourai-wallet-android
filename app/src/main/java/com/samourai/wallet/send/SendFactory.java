@@ -87,7 +87,7 @@ public class SendFactory	{
         return tx;
     }
 
-    public Transaction signTransaction(Transaction unsignedTx)    {
+    public Transaction signTransaction(Transaction unsignedTx, int account)    {
 
         HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
 
@@ -105,7 +105,7 @@ public class SendFactory	{
                 }
 //                Log.i("SendFactory", "address from script:" + address);
                 ECKey ecKey = null;
-                ecKey = getPrivKey(address, 0);
+                ecKey = getPrivKey(address, account);
                 if(ecKey != null) {
                     keyBag.put(input.getOutpoint().toString(), ecKey);
                 }
@@ -700,7 +700,13 @@ public class SendFactory	{
                 String[] s = path.split("/");
                 if(FormatsUtil.getInstance().isValidBech32(address))    {
                     Log.d("SendFactory", "address type:" + "bip84");
-                    HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccount(account).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    HD_Address addr = null;
+                    if(account == 0)    {
+                        addr = BIP84Util.getInstance(context).getWallet().getAccount(account).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    }
+                    else    {
+                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(account).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    }
                     ecKey = addr.getECKey();
                 }
                 else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
