@@ -1,7 +1,7 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +9,26 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
 import com.samourai.wallet.whirlpool.models.Coin;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> {
 
     private Context mContext;
-    private ArrayList<Coin> mCoins;
+    private List<Coin> mCoins;
+    private TextView tvTotalSelected = null;
+    private Handler handler = null;
 
-
-    public CoinsAdapter(Context context, ArrayList<Coin> coins) {
+    public CoinsAdapter(Context context, List<Coin> coins, TextView tvTotalSelected) {
         mCoins = coins;
         mContext = context;
+        this.tvTotalSelected = tvTotalSelected;
+        handler = new Handler();
     }
 
     @Override
@@ -38,7 +43,7 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         final Coin coin = mCoins.get(position);
 
         holder.addressTxView.setText(coin.getAddress());
-        holder.btcTxView.setText(String.valueOf(coin.getValue()).concat(" BTC"));
+        holder.btcTxView.setText(org.bitcoinj.core.Coin.valueOf(coin.getValue()).toPlainString().concat(" BTC"));
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
 
@@ -55,12 +60,28 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
                 Coin mCoin = (Coin) compoundButton.getTag();
                 mCoin.setSelected(compoundButton.isChecked());
                 mCoins.get(holder.getAdapterPosition()).setSelected(compoundButton.isChecked());
+
+                long totalSelected = 0L;
+                for(Coin coin : mCoins)   {
+                    if(coin.getSelected())  {
+                        totalSelected += coin.getValue();
+                    }
+                }
+
+                final long _totalSelected = totalSelected;
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvTotalSelected.setText(org.bitcoinj.core.Coin.valueOf(_totalSelected).toPlainString().concat(" BTC"));
+                    }
+                });
+
             }
         });
 
     }
 
-    public ArrayList<Coin> getCoins() {
+    public List<Coin> getCoins() {
         return mCoins;
     }
 

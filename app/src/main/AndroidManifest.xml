@@ -129,10 +129,6 @@
             android:theme="@style/ui_2_theme_dark_status"
             android:label="" />
         <activity
-            android:name=".bip47.BIP47Activity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
-        <activity
             android:name=".bip47.BIP47Add"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />

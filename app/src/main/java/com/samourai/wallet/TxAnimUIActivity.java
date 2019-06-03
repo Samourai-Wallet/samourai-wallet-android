@@ -87,7 +87,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
         progressView.getmArcProgress().startArc1(arcdelay);
 
         // make tx
-        final Transaction tx = SendFactory.getInstance(TxAnimUIActivity.this).makeTransaction(0, SendParams.getInstance().getOutpoints(), SendParams.getInstance().getReceivers());
+        final Transaction tx = SendFactory.getInstance(TxAnimUIActivity.this).makeTransaction(SendParams.getInstance().getAccount(), SendParams.getInstance().getOutpoints(), SendParams.getInstance().getReceivers());
         if (tx == null) {
             failTx(R.string.tx_creating_ko);
         } else {
@@ -153,7 +153,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     });
 
 
-                    final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx);
+                    final Transaction _tx = SendFactory.getInstance(TxAnimUIActivity.this).signTransaction(tx, SendParams.getInstance().getAccount());
                     if (_tx == null) {
                         failTx(R.string.tx_signing_ko);
                     } else {
@@ -333,7 +333,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                 if (SendParams.getInstance().getChangeAmount() > 0L && SendParams.getInstance().getSpendType() == SendActivity.SPEND_SIMPLE) {
 
-                    if (SendParams.getInstance().getChangeType() == 84) {
+                    if(SendParams.getInstance().getAccount() != 0)    {
+                        BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccountAt(SendParams.getInstance().getAccount()).getChange().incAddrIdx();
+                    }
+                    else if (SendParams.getInstance().getChangeType() == 84) {
                         BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
                     } else if (SendParams.getInstance().getChangeType() == 49) {
                         BIP49Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
@@ -440,7 +443,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(TxAnimUIActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                 // reset change index upon tx fail
-                if (SendParams.getInstance().getChangeType() == 84) {
+                if(SendParams.getInstance().getAccount() != 0)    {
+                    BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccountAt(SendParams.getInstance().getAccount()).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
+                }
+                else if (SendParams.getInstance().getChangeType() == 84) {
                     BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
                 } else if (SendParams.getInstance().getChangeType() == 49) {
                     BIP49Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());

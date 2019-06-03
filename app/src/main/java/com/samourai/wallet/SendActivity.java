@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.constraint.Group;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
@@ -72,6 +73,10 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.EmptyWhirlPool;
+import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
+import com.samourai.wallet.whirlpool.WhirlPoolActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 import com.yanzhenjie.zbar.Symbol;
@@ -103,11 +108,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -126,7 +134,7 @@ public class SendActivity extends AppCompatActivity {
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
     private Group ricochetStaggeredOptionGroup;
-
+    private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
 
@@ -159,9 +167,13 @@ public class SendActivity extends AppCompatActivity {
     private int idxBIP44Internal = 0;
     private int idxBIP49Internal = 0;
     private int idxBIP84Internal = 0;
+    private int idxBIP84PostMixInternal = 0;
 
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
+    private CompositeDisposable compositeDisposables = new CompositeDisposable();
+
+    private int account = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,6 +241,12 @@ public class SendActivity extends AppCompatActivity {
         tvTotalFee.setOnClickListener(clipboardCopy);
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
 
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                account = WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix();
+            }
+        }
+
         SPEND_TYPE = SPEND_BOLTZMANN;
 
         saveChangeIndexes();
@@ -244,6 +262,25 @@ public class SendActivity extends AppCompatActivity {
         setUpBoltzman();
 
         validateSpend();
+
+        checkDeepLinks();
+
+        Disposable disposable = APIFactory.getInstance(getApplicationContext())
+                .walletBalanceObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    setBalance();
+                }, Throwable::printStackTrace);
+        compositeDisposables.add(disposable);
+
+
+        if (getIntent().getExtras() != null) {
+            if (!getIntent().getExtras().containsKey("balance")) {
+                return;
+            }
+            balance = getIntent().getExtras().getLong("balance");
+        }
 
     }
 
@@ -530,16 +567,22 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            balance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
+            }
+            else    {
+                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+                if (tempBalance != 0L) {
+                    balance = tempBalance;
+                }
+            }
+            checkDeepLinks();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            balance = 0L;
         } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
-            balance = 0L;
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
-            balance = 0L;
         }
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
@@ -554,7 +597,18 @@ public class SendActivity extends AppCompatActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
-        checkDeepLinks();
+        if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
+            //some time, user may navigate to this activity even before wallet initialization completes
+            //so we will set a delay to reload balance info
+            Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                    .subscribe(this::setBalance);
+            compositeDisposables.add(disposable);
+            if (!shownWalletLoadingMessage) {
+                Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
+                shownWalletLoadingMessage = true;
+            }
+
+        }
     }
 
     private void checkDeepLinks() {
@@ -566,14 +620,17 @@ public class SendActivity extends AppCompatActivity {
             if (extras.containsKey("amount")) {
                 btcEditText.setText(String.valueOf(getBtcValue(extras.getDouble("amount"))));
             }
-            strPCode = extras.getString("pcode");
+
+            if (extras.getString("pcode") != null)
+                strPCode = extras.getString("pcode");
+
             if (strPCode != null && strPCode.length() > 0) {
                 processPCode(strPCode, null);
             } else if (strUri != null && strUri.length() > 0) {
                 processScan(strUri);
             }
-        new Handler().postDelayed(this::validateSpend,800);
-        }else {
+            new Handler().postDelayed(this::validateSpend, 800);
+        } else {
             validateSpend();
 
         }
@@ -673,7 +730,11 @@ public class SendActivity extends AppCompatActivity {
                 doStowaway();
             } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
                 doSTONEWALLx2();
-            } else {
+            }
+            else if(editable.toString().equalsIgnoreCase("whirlpool"))    {
+                doWhirlpool();
+            }
+            else {
                 if (editable.toString().length() != 0)
                     validateSpend();
                 else
@@ -791,6 +852,13 @@ public class SendActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposables != null && !compositeDisposables.isDisposed())
+            compositeDisposables.dispose();
+    }
+
     private boolean prepareSpend() {
 
         restoreChangeIndexes();
@@ -850,7 +918,7 @@ public class SendActivity extends AppCompatActivity {
         neededAmount += SamouraiWallet.bDust.longValue();
 
         // get all UTXO
-        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount);
+        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount, account);
 
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
@@ -1025,7 +1093,7 @@ public class SendActivity extends AppCompatActivity {
                 }
 
                 // boltzmann spend (STONEWALL)
-                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address);
+                pair = SendFactory.getInstance(SendActivity.this).boltzmann(_utxos1, _utxos2, BigInteger.valueOf(amount), address, account);
 
                 if (pair == null) {
                     // can't do boltzmann, revert to SPEND_SIMPLE
@@ -1159,8 +1227,8 @@ public class SendActivity extends AppCompatActivity {
                     // fee sanity check
                     //
                     restoreChangeIndexes();
-                    Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(0, outpoints, receivers);
-                    tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx);
+                    Transaction tx = SendFactory.getInstance(SendActivity.this).makeTransaction(account, outpoints, receivers);
+                    tx = SendFactory.getInstance(SendActivity.this).signTransaction(tx, account);
                     byte[] serialized = tx.bitcoinSerialize();
                     Log.d("SendActivity", "size:" + serialized.length);
                     Log.d("SendActivity", "vsize:" + tx.getVirtualTransactionSize());
@@ -1320,6 +1388,7 @@ public class SendActivity extends AppCompatActivity {
                         SPEND_TYPE,
                         _change,
                         changeType,
+                        account,
                         address,
                         strPrivacyWarning.length() > 0,
                         cbShowAgain != null ? cbShowAgain.isChecked() : false,
@@ -1739,6 +1808,14 @@ public class SendActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.send_menu, menu);
+
+        if(account != 0)    {
+            menu.findItem(R.id.action_batch).setVisible(false);
+            menu.findItem(R.id.action_ricochet).setVisible(false);
+            menu.findItem(R.id.action_empty_ricochet).setVisible(false);
+            menu.findItem(R.id.action_utxo).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1896,7 +1973,7 @@ public class SendActivity extends AppCompatActivity {
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                                         .setTitle(R.string.app_name)
                                         .setView(edAddress)
-                                        .setMessage(R.string.segwit_address)
+                                        .setMessage(R.string.address)
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -1904,7 +1981,7 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
 
                                                 final String strAddress = edAddress.getText().toString().trim();
-                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()) && FormatsUtil.getInstance().isValidBech32(strAddress))    {
+                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
                                                     }
@@ -1945,6 +2022,11 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
+    private void doWhirlpool()  {
+        Intent intent = new Intent(SendActivity.this, EmptyWhirlPool.class);
+        startActivity(intent);
+    }
+
     private void doFees() {
 
         SuggestedFee highFee = FeeUtil.getInstance().getHighFee();
@@ -1972,6 +2054,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void saveChangeIndexes() {
 
+        idxBIP84PostMixInternal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
         idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         try {
@@ -1984,6 +2067,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void restoreChangeIndexes() {
 
+        BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().setAddrIdx(idxBIP84PostMixInternal);
         BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
         BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
         try {
@@ -2058,7 +2142,6 @@ public class SendActivity extends AppCompatActivity {
                 });
 
     }
-
 
 }
 

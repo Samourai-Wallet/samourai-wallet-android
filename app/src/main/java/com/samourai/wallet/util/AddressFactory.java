@@ -37,6 +37,10 @@ public class AddressFactory {
     private static int highestBIP49ChangeIdx = 0;
     private static int highestBIP84ReceiveIdx = 0;
     private static int highestBIP84ChangeIdx = 0;
+    private static int highestPreReceiveIdx = 0;
+    private static int highestPreChangeIdx = 0;
+    private static int highestPostReceiveIdx = 0;
+    private static int highestPostChangeIdx = 0;
 
     private static HashMap<String,Integer> xpub2account = null;
     private static HashMap<Integer,String> account2xpub = null;
@@ -298,6 +302,38 @@ public class AddressFactory {
 
     public void setHighestBIP84ChangeIdx(int idx) {
         highestBIP84ChangeIdx = idx;
+    }
+
+    public int getHighestPreReceiveIdx() {
+        return highestPreReceiveIdx;
+    }
+
+    public void setHighestPreReceiveIdx(int idx) {
+        highestPreReceiveIdx = idx;
+    }
+
+    public int getHighestPreChangeIdx() {
+        return highestPreChangeIdx;
+    }
+
+    public void setHighestPreChangeIdx(int idx) {
+        highestPreChangeIdx = idx;
+    }
+
+    public int getHighestPostReceiveIdx() {
+        return highestPostReceiveIdx;
+    }
+
+    public void setHighestPostReceiveIdx(int idx) {
+        highestPostReceiveIdx = idx;
+    }
+
+    public int getHighestPostChangeIdx() {
+        return highestPostChangeIdx;
+    }
+
+    public void setHighestPostChangeIdx(int idx) {
+        highestPostChangeIdx = idx;
     }
 
     public boolean canIncReceiveAddress(int account, int idx) {
