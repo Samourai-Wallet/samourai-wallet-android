@@ -71,6 +71,9 @@ public class Stowaway extends Cahoots {
         }
     }
 
+    //
+    // receiver
+    //
     public boolean doStep1(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         if(this.getStep() != 0 || this.getSpendAmount() == 0L)   {
@@ -117,6 +120,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     public boolean doStep2(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         Transaction transaction = psbt.getTransaction();
@@ -186,6 +192,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // receiver
+    //
     public boolean doStep3(HashMap<String,ECKey> keyBag)    {
 
         Transaction transaction = this.getTransaction();
@@ -213,6 +222,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     public boolean doStep4(HashMap<String,ECKey> keyBag)    {
 
         signTx(keyBag);

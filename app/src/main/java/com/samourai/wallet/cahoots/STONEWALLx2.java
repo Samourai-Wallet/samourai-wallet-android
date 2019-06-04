@@ -78,6 +78,9 @@ public class STONEWALLx2 extends Cahoots {
         }
     }
 
+    //
+    // counterparty
+    //
     protected boolean doStep1(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         if(this.getStep() != 0 || this.getSpendAmount() == 0L)   {
@@ -123,6 +126,9 @@ public class STONEWALLx2 extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     protected boolean doStep2(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         Transaction transaction = psbt.getTransaction();
@@ -179,6 +185,9 @@ public class STONEWALLx2 extends Cahoots {
         return true;
     }
 
+    //
+    // counterparty
+    //
     protected boolean doStep3(HashMap<String,ECKey> keyBag)    {
 
         Transaction transaction = this.getTransaction();
@@ -206,6 +215,9 @@ public class STONEWALLx2 extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     protected boolean doStep4(HashMap<String,ECKey> keyBag)    {
 
         signTx(keyBag);

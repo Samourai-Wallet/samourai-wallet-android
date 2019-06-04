@@ -36,6 +36,7 @@ import com.samourai.wallet.cahoots.Stowaway;
 import com.samourai.wallet.cahoots._TransactionOutPoint;
 import com.samourai.wallet.cahoots._TransactionOutput;
 import com.samourai.wallet.cahoots.psbt.PSBT;
+import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
@@ -44,8 +45,10 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -486,7 +489,10 @@ public class CahootsUtil {
 
     }
 
-    public void doStowaway0(long spendAmount)    {
+    //
+    // sender
+    //
+    public void doStowaway0(long spendAmount, int account)    {
         // Bob -> Alice, spendAmount in sats
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
@@ -495,15 +501,19 @@ public class CahootsUtil {
         // step0: B sends spend amount to A,  creates step0
         //
         //
-        Stowaway stowaway0 = new Stowaway(spendAmount, params, 0);
+        Log.d("CahootsUtil", "sender account (0):" + account);
+        Stowaway stowaway0 = new Stowaway(spendAmount, params, account);
         System.out.println(stowaway0.toJSON().toString());
 
         doCahoots(stowaway0.toJSON().toString());
     }
 
+    //
+    // receiver
+    //
     private void doStowaway1(Stowaway stowaway0) throws Exception    {
 
-        List<UTXO> utxos = getCahootsUTXO();
+        List<UTXO> utxos = getCahootsUTXO(0);
         // sort in descending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
 
@@ -535,7 +545,7 @@ public class CahootsUtil {
         //
         //
 
-        String zpub = BIP84Util.getInstance(context).getWallet().getAccount(stowaway0.getAccount()).zpubstr();
+        String zpub = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsA = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
 //        inputsA.put(outpoint_A0, Triple.of(Hex.decode("0221b719bc26fb49971c7dd328a6c7e4d17dfbf4e2217bee33a65c53ed3daf041e"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/4"));
 //        inputsA.put(outpoint_A1, Triple.of(Hex.decode("020ab261e1a3cf986ecb3cd02299de36295e804fd799934dc5c99dde0d25e71b93"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/2"));
@@ -566,14 +576,20 @@ public class CahootsUtil {
         doCahoots(stowaway1.toJSON().toString());
     }
 
+    //
+    // sender
+    //
     private void doStowaway2(Stowaway stowaway1) throws Exception    {
+
+        Log.d("CahootsUtil", "sender account (2):" + stowaway1.getAccount());
+//        int account = stowaway1.getAccount();
 
         Transaction transaction = stowaway1.getTransaction();
         Log.d("CahootsUtil", "step2 tx:" + org.spongycastle.util.encoders.Hex.toHexString(transaction.bitcoinSerialize()));
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = getCahootsUTXO();
+        List<UTXO> utxos = getCahootsUTXO(stowaway1.getAccount());
         // sort in ascending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
         Collections.reverse(utxos);
@@ -631,14 +647,14 @@ public class CahootsUtil {
         //
         //
 
-        String zpub = BIP84Util.getInstance(context).getWallet().getAccount(stowaway1.getAccount()).zpubstr();
+        String zpub = BIP84Util.getInstance(context).getWallet().getAccountAt(stowaway1.getAccount()).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsB = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
 
         for(UTXO utxo : selectedUTXO)  {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), stowaway1.getAccount());
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsB.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
@@ -647,24 +663,39 @@ public class CahootsUtil {
         Log.d("CahootsUtil", "inputsB:" + inputsB.size());
 
         // change output
-        int idx = BIP84Util.getInstance(context).getWallet().getAccount(stowaway1.getAccount()).getChange().getAddrIdx();
-        SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(1, idx);
+        SegwitAddress segwitAddress = null;
+        int idx  = 0;
+        if(stowaway1.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+            HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccountAt(stowaway1.getAccount()).getChange().getAddressAt(idx);
+            segwitAddress = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+        }
+        else    {
+            idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
+            segwitAddress = BIP84Util.getInstance(context).getAddressAt(1, idx);
+        }
         HashMap<_TransactionOutput, Triple<byte[], byte[], String>> outputsB = new HashMap<_TransactionOutput, Triple<byte[], byte[], String>>();
         Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress.getBech32AsString());
         byte[] scriptPubKey_B = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
         _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stowaway1.getSpendAmount()) - fee), scriptPubKey_B);
-        outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(stowaway1.getAccount()).zpubstr()), "M/1/" + idx));
+        outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(stowaway1.getAccount()).zpubstr()), "M/1/" + idx));
 
         Log.d("CahootsUtil", "outputsB:" + outputsB.size());
 
         Stowaway stowaway2 = new Stowaway(stowaway1);
+//        stowaway2.setAccount(account);
         stowaway2.inc(inputsB, outputsB, null);
         System.out.println("step 2:" + stowaway2.toJSON().toString());
 
         doCahoots(stowaway2.toJSON().toString());
     }
 
+    //
+    // receiver
+    //
     private void doStowaway3(Stowaway stowaway2) throws Exception    {
+
+        Log.d("CahootsUtil", "sender account (3):" + stowaway2.getAccount());
 
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
         List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
@@ -705,10 +736,22 @@ public class CahootsUtil {
         doCahoots(stowaway3.toJSON().toString());
     }
 
+    //
+    // sender
+    //
     private void doStowaway4(Stowaway stowaway3) throws Exception    {
 
+        Log.d("CahootsUtil", "sender account (4):" + stowaway3.getAccount());
+//        stowaway3.setAccount(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix());
+
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
+        List<UTXO> utxos = null;
+        if(stowaway3.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+        }
+        else    {
+            utxos = APIFactory.getInstance(context).getUtxos(true);
+        }
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
@@ -723,7 +766,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address, 0);
+                ECKey eckey = SendFactory.getPrivKey(address, stowaway3.getAccount());
                 keyBag_B.put(outpoint.toString(), eckey);
             }
         }
@@ -754,6 +797,9 @@ public class CahootsUtil {
         doCahoots(stowaway4.toJSON().toString());
     }
 
+    //
+    // sender
+    //
     public void doSTONEWALLx2_0(long spendAmount, String address)    {
         // Bob -> Alice, spendAmount in sats
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
@@ -769,9 +815,12 @@ public class CahootsUtil {
         doCahoots(stonewall0.toJSON().toString());
     }
 
+    //
+    // counterparty
+    //
     private void doSTONEWALLx2_1(STONEWALLx2 stonewall0) throws Exception    {
 
-        List<UTXO> utxos = getCahootsUTXO();
+        List<UTXO> utxos = getCahootsUTXO(0);
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -854,6 +903,9 @@ public class CahootsUtil {
         doCahoots(stonewall1.toJSON().toString());
     }
 
+    //
+    // sender
+    //
     private void doSTONEWALLx2_2(STONEWALLx2 stonewall1) throws Exception    {
 
         Transaction transaction = stonewall1.getTransaction();
@@ -861,7 +913,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = getCahootsUTXO();
+        List<UTXO> utxos = getCahootsUTXO(0);
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -945,6 +997,9 @@ public class CahootsUtil {
         doCahoots(stonewall2.toJSON().toString());
     }
 
+    //
+    // counterparty
+    //
     private void doSTONEWALLx2_3(STONEWALLx2 stonewall2) throws Exception    {
 
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
@@ -986,6 +1041,9 @@ public class CahootsUtil {
         doCahoots(stonewall3.toJSON().toString());
     }
 
+    //
+    // sender
+    //
     private void doSTONEWALLx2_4(STONEWALLx2 stonewall3) throws Exception    {
 
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
@@ -1035,9 +1093,15 @@ public class CahootsUtil {
         doCahoots(stonewall4.toJSON().toString());
     }
 
-    private List<UTXO> getCahootsUTXO() {
+    private List<UTXO> getCahootsUTXO(int account) {
         List<UTXO> ret = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
+        List<UTXO> _utxos = null;
+        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            _utxos = APIFactory.getInstance(context).getUtxosPostMix();
+        }
+        else    {
+            _utxos = APIFactory.getInstance(context).getUtxos(true);
+        }
         for(UTXO utxo : _utxos)   {
             String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
             if(script.startsWith("0014") && APIFactory.getInstance(context).getUnspentPaths().get(utxo.getOutpoints().get(0).getAddress()) != null)   {
@@ -1048,9 +1112,9 @@ public class CahootsUtil {
         return ret;
     }
 
-    public long getCahootsValue() {
+    public long getCahootsValue(int account) {
         long ret = 0L;
-        List<UTXO> _utxos = getCahootsUTXO();
+        List<UTXO> _utxos = getCahootsUTXO(account);
         for(UTXO utxo : _utxos)   {
             ret += utxo.getValue();
         }
