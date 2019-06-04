@@ -19,6 +19,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONArray;
@@ -166,19 +167,22 @@ public class BalanceViewModel extends AndroidViewModel {
                         if (addrObj != null && addrObj.has("final_balance") && addrObj.has("address")) {
                             if (FormatsUtil.getInstance().isValidXpub((String) addrObj.get("address"))) {
                                 xpub_amounts.put((String) addrObj.get("address"), addrObj.getLong("final_balance"));
+
                                 if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).zpubstr())) {
                                     AddressFactory.getInstance().setHighestBIP84ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestBIP84ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                } else if (addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
+                                }
+                                else if (addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).ypubstr())) {
                                     AddressFactory.getInstance().setHighestBIP49ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestBIP49ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                } else if (AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null) {
+                                }
+                                else if (AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null) {
                                     AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
 

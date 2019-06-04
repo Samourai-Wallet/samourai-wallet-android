@@ -42,17 +42,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Review whirlpool Details"
+            android:text="@string/review_whirlpool"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/totalSelected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:gravity="center_horizontal"
-            android:text="Total selected: 3.2121234 BTC"
             android:textAlignment="center"
             android:textSize="12sp" />
 

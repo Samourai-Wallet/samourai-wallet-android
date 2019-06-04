@@ -591,7 +591,7 @@ public class RicochetMeta {
         if(nTimeLock > 0L)    {
             tx.setLockTime(nTimeLock);
         }
-        tx = SendFactory.getInstance(context).signTransaction(tx);
+        tx = SendFactory.getInstance(context).signTransaction(tx, 0);
 
         return tx;
     }

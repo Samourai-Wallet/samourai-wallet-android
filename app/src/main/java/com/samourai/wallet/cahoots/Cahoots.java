@@ -34,6 +34,7 @@ public class Cahoots {
     protected String strPayNymCollab = null;
     protected String strPayNymInit = null;
     protected NetworkParameters params = null;
+    protected int account = 0;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
 
@@ -50,6 +51,7 @@ public class Cahoots {
         this.strPayNymCollab = c.strPayNymCollab;
         this.strPayNymInit = c.strPayNymInit;
         this.params = c.getParams();
+        this.account = c.getAccount();
     }
 
     public int getVersion() {
@@ -114,6 +116,14 @@ public class Cahoots {
         return params;
     }
 
+    public int getAccount() {
+        return account;
+    }
+
+    public void setAccount(int account) {
+        this.account = account;
+    }
+
     public static boolean isCahoots(JSONObject obj)   {
         try {
             return obj.has("cahoots") && obj.getJSONObject("cahoots").has("type");
@@ -161,6 +171,7 @@ public class Cahoots {
             if(params instanceof TestNet3Params)    {
                 obj.put("params","testnet");
             }
+            obj.put("account",account);
 
             cObj.put("cahoots", obj);
         }
@@ -202,6 +213,12 @@ public class Cahoots {
                 this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
                     this.psbt.read();
+                }
+                if(obj.has("account"))    {
+                    this.account = obj.getInt("account");
+                }
+                else    {
+                    this.account = 0;
                 }
             }
         }

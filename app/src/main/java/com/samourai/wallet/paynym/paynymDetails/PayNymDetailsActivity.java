@@ -420,6 +420,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 doNotifTx();
                 break;
             }
+            case R.id.paynym_indexes: {
+                int outgoing = BIP47Meta.getInstance().getOutgoingIdx(pcode);
+                int incoming = BIP47Meta.getInstance().getIncomingIdx(pcode);
+                Toast.makeText(PayNymDetailsActivity.this, "Incoming index:" + incoming + ", Outgoing index:" + outgoing, Toast.LENGTH_SHORT).show();
+                break;
+            }
 
 
         }
@@ -712,7 +718,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             }
 //            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-            ECKey ecKey = SendFactory.getPrivKey(address);
+            ECKey ecKey = SendFactory.getPrivKey(address, 0);
             if (ecKey == null || !ecKey.hasPrivKey()) {
                 Toast.makeText(PayNymDetailsActivity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
                 return;
@@ -798,7 +804,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                             return;
                         }
 
-                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx);
+                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx, 0);
                         final String hexTx = new String(org.bouncycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
                         Log.d("SendActivity", tx.getHashAsString());
                         Log.d("SendActivity", hexTx);

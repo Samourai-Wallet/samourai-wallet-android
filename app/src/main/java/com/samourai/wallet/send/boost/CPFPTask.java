@@ -266,7 +266,7 @@ public class CPFPTask extends AsyncTask<String, Void, String> {
 
                                     Transaction tx = SendFactory.getInstance(activity).makeTransaction(0, outPoints, receivers);
                                     if (tx != null) {
-                                        tx = SendFactory.getInstance(activity).signTransaction(tx);
+                                        tx = SendFactory.getInstance(activity).signTransaction(tx, 0);
                                         final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
                                         Log.d("activity", hexTx);
 
