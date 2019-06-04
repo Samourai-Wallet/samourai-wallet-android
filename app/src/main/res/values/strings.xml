@@ -712,6 +712,16 @@
     <string name="sycing_pcodes">Syncing payment codes</string>
     <string name="sync_complete">Payment code sync complete</string>
     <string name="options_paynym_indexes">Show PayNym indexes</string>
+    <string name="begin_cycle">BEGIN CYCLE</string>
+    <string name="pool_fee">POOL FEE</string>
+    <string name="total_fees">TOTAL FEES</string>
+    <string name="miner_fee">MINER FEE</string>
+    <string name="total_being_cycled">Total being cycled:</string>
+    <string name="review_cycle_details">REVIEW CYCLE DETAILS</string>
+    <string name="cycled_transactions">Cycled Transactions</string>
+    <string name="initial_transaction">Initial Transaction</string>
+    <string name="progress">Progress</string>
+    <string name="waiting_for_blockchain_confirmation">Waiting for blockchain confirmation</string>
 
     <string name="create_password">Create password</string>
     <string name="confirm_password">Confirm password</string>

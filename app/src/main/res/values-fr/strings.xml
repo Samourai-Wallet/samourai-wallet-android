@@ -678,4 +678,24 @@
     <string name="cannot_process_cahoots">Traitement #Cahoots impossible</string>
     
     
+    
+    
+    <string name="title_activity_network_dashboard">Mise en réseau</string>
+    
+    <string name="powering_samourai_wallet_">En faisant fonctionner votre portefeuille Samourai avec votre propre noeud (node) personnel, vous optimisez votre niveau de confidentialité et d\'indépendance  pendant vos activités sur le réseau Bitcoin. Dojo simplifie et facilite l\'utilisation d\'un noeud complet.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Installation Plug and Play du noeud\n\n Bitcoin complet -Service\n\n caché Tor automatiquement configuré -Indépendance par défaut des serveurs Samourai</string>
+    <string name="dojo_connect_instruction">Si vous disposez déjà d\'un noeud Dojo complet ou si vous\nutilisez le logiciel Dojo open source et gratuit\nsur votre propre hardware, scannez le code QR d\'appairage\nsitué  sur la Maintenance du panneau de configuration du Dojo</string>
+    <string name="dojo_headline">Faîtes fonctionner Samourai avec votre propre noeud complet DOJO personnel</string>
+    <string name="connect_to_existing_dojo">Connectez-vous au Dojo existant</string>
+    <string name="preorder">pré-commande</string>
+    
+    <string name="is_offline">Samourai est hors-ligne</string>
+    <string name="history_will_be_updated">Solde et Historique des transactions ne sont mis à jour qu\'une fois établie une connection de données active</string>
+    
+    <string name="options_whirlpool_gui">Appairer avec Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Appairer avec Whirlpool GUI pour un mixage en continu.</string>
+    <string name="cannot_pair_whirlpool_gui">Préparation à l\'appairage avec Whirlpool GUI impossible.</string>
+    
+    
+    
 </resources>

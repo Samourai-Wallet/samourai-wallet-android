@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/white"> <!-- ripple color -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- put your background color here-->
+            <solid android:color="@color/windowDark" />
+            <stroke
+                android:width="2dp"
+                android:color="#51FFFFFF" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+</ripple>

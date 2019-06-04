@@ -73,9 +73,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.whirlpool.EmptyWhirlPool;
-import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
-import com.samourai.wallet.whirlpool.WhirlPoolActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
@@ -2023,7 +2021,7 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void doWhirlpool()  {
-        Intent intent = new Intent(SendActivity.this, EmptyWhirlPool.class);
+        Intent intent = new Intent(SendActivity.this, WhirlpoolMain.class);
         startActivity(intent);
     }
 
