@@ -704,7 +704,7 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim(), 0);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance().isValidPairingPayload(strResult.trim())) {

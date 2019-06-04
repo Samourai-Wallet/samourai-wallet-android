@@ -1595,7 +1595,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
         if(Cahoots.isCahoots(data.trim())) {
-            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim());
+            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
@@ -1970,7 +1970,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void doSTONEWALLx2() {
 
-        long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue(0);
+        long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account);
         String strCahootsAmount = SendActivity.this.getText(R.string.amount_sats).toString();
         strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
 
@@ -1990,7 +1990,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(0))    {
+                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account))    {
 
                                 final EditText edAddress = new EditText(SendActivity.this);
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
@@ -2006,7 +2006,7 @@ public class SendActivity extends AppCompatActivity {
                                                 final String strAddress = edAddress.getText().toString().trim();
                                                 if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
                                                     try {
-                                                        CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
+                                                        CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress, account);
                                                     }
                                                     catch(NumberFormatException nfe) {
                                                         Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();

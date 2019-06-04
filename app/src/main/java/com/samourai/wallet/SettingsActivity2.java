@@ -1695,7 +1695,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         final String strCahoots = edCahoots.getText().toString().trim();
 
-                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
+                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots, 0);
 
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

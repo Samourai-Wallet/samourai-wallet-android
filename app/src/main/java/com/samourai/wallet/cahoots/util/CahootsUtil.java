@@ -91,7 +91,7 @@ public class CahootsUtil {
         return instance;
     }
 
-    public void processCahoots(String strCahoots)    {
+    public void processCahoots(String strCahoots, int ctpyAccount)    {
 
         Stowaway stowaway = null;
         STONEWALLx2 stonewall = null;
@@ -168,6 +168,7 @@ public class CahootsUtil {
             try {
                 switch(step)    {
                     case 0:
+                        stonewall.setCounterpartyAccount(ctpyAccount);  // set counterparty account
                         doSTONEWALLx2_1(stonewall);
                         break;
                     case 1:
@@ -800,7 +801,7 @@ public class CahootsUtil {
     //
     // sender
     //
-    public void doSTONEWALLx2_0(long spendAmount, String address)    {
+    public void doSTONEWALLx2_0(long spendAmount, String address, int account)    {
         // Bob -> Alice, spendAmount in sats
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
@@ -809,7 +810,7 @@ public class CahootsUtil {
         // step0: B sends spend amount to A,  creates step0
         //
         //
-        STONEWALLx2 stonewall0 = new STONEWALLx2(spendAmount, address, params, 0);
+        STONEWALLx2 stonewall0 = new STONEWALLx2(spendAmount, address, params, account);
         System.out.println(stonewall0.toJSON().toString());
 
         doCahoots(stonewall0.toJSON().toString());
@@ -820,7 +821,7 @@ public class CahootsUtil {
     //
     private void doSTONEWALLx2_1(STONEWALLx2 stonewall0) throws Exception    {
 
-        List<UTXO> utxos = getCahootsUTXO(0);
+        List<UTXO> utxos = getCahootsUTXO(stonewall0.getCounterpartyAccount());
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -864,38 +865,57 @@ public class CahootsUtil {
         //
         //
 
-        String zpub = BIP84Util.getInstance(context).getWallet().getAccount(stonewall0.getAccount()).zpubstr();
+        String zpub = BIP84Util.getInstance(context).getWallet().getAccountAt(stonewall0.getCounterpartyAccount()).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsA = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
 
         for(UTXO utxo : selectedUTXO)  {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), stonewall0.getCounterpartyAccount());
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsA.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
         }
 
-        // contributor mix output
-        int idx = BIP84Util.getInstance(context).getWallet().getAccount(stonewall0.getAccount()).getReceive().getAddrIdx();
-        SegwitAddress segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(stonewall0.getAccount(),0, idx);
-        if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
-            segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(stonewall0.getAccount(), 0, idx + 1);
-        }
         HashMap<_TransactionOutput, Triple<byte[], byte[], String>> outputsA = new HashMap<_TransactionOutput, Triple<byte[], byte[], String>>();
-        Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress0.getBech32AsString());
-        byte[] scriptPubKey_A0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
-        _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey_A0);
-        outputsA.put(output_A0, Triple.of(segwitAddress0.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(stonewall0.getAccount()).zpubstr()), "M/0/" + idx));
+        if(stonewall0.getCounterpartyAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            // contributor mix output
+            int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+            SegwitAddress segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(stonewall0.getCounterpartyAccount(),1, idx);
+            Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress0.getBech32AsString());
+            byte[] scriptPubKey_A0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
+            _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey_A0);
+            outputsA.put(output_A0, Triple.of(segwitAddress0.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(stonewall0.getCounterpartyAccount()).zpubstr()), "M/1/" + idx));
 
-        // contributor change output
-        idx = BIP84Util.getInstance(context).getWallet().getAccount(stonewall0.getAccount()).getChange().getAddrIdx();
-        SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(stonewall0.getAccount(), 1, idx);
-        Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress1.getBech32AsString());
-        byte[] scriptPubKey_A1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
-        _TransactionOutput output_A1 = new _TransactionOutput(params, null, Coin.valueOf(totalContributedAmount - stonewall0.getSpendAmount()), scriptPubKey_A1);
-        outputsA.put(output_A1, Triple.of(segwitAddress1.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(stonewall0.getAccount()).zpubstr()), "M/1/" + idx));
+            // contributor change output
+            ++idx;
+            SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(stonewall0.getCounterpartyAccount(), 1, idx);
+            Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress1.getBech32AsString());
+            byte[] scriptPubKey_A1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
+            _TransactionOutput output_A1 = new _TransactionOutput(params, null, Coin.valueOf(totalContributedAmount - stonewall0.getSpendAmount()), scriptPubKey_A1);
+            outputsA.put(output_A1, Triple.of(segwitAddress1.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(stonewall0.getCounterpartyAccount()).zpubstr()), "M/1/" + idx));
+        }
+        else    {
+            // contributor mix output
+            int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().getAddrIdx();
+            SegwitAddress segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0,0, idx);
+            if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
+                segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0, 0, idx + 1);
+            }
+            Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress0.getBech32AsString());
+            byte[] scriptPubKey_A0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
+            _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey_A0);
+            outputsA.put(output_A0, Triple.of(segwitAddress0.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/0/" + idx));
+
+            // contributor change output
+            idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
+            SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(0, 1, idx);
+            Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress1.getBech32AsString());
+            byte[] scriptPubKey_A1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
+            _TransactionOutput output_A1 = new _TransactionOutput(params, null, Coin.valueOf(totalContributedAmount - stonewall0.getSpendAmount()), scriptPubKey_A1);
+            outputsA.put(output_A1, Triple.of(segwitAddress1.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
+        }
 
         STONEWALLx2 stonewall1 = new STONEWALLx2(stonewall0);
         stonewall1.inc(inputsA, outputsA, null);
@@ -913,7 +933,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = getCahootsUTXO(0);
+        List<UTXO> utxos = getCahootsUTXO(stonewall1.getAccount());
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -968,27 +988,37 @@ public class CahootsUtil {
         //
         //
 
-        String zpub = BIP84Util.getInstance(context).getWallet().getAccount(stonewall1.getAccount()).zpubstr();
+        String zpub = BIP84Util.getInstance(context).getWallet().getAccountAt(stonewall1.getAccount()).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsB = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
 
         for(UTXO utxo : selectedUTXO)  {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 _TransactionOutPoint _outpoint = new _TransactionOutPoint(outpoint);
 
-                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), 0);
+                ECKey eckey = SendFactory.getPrivKey(_outpoint.getAddress(), stonewall1.getAccount());
                 String path = APIFactory.getInstance(context).getUnspentPaths().get(_outpoint.getAddress());
                 inputsB.put(_outpoint, Triple.of(eckey.getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(zpub), path));
             }
         }
 
         // spender change output
-        int idx = BIP84Util.getInstance(context).getWallet().getAccount(stonewall1.getAccount()).getChange().getAddrIdx();
-        SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(stonewall1.getAccount(), 1, idx);
         HashMap<_TransactionOutput, Triple<byte[], byte[], String>> outputsB = new HashMap<_TransactionOutput, Triple<byte[], byte[], String>>();
-        Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress.getBech32AsString());
-        byte[] scriptPubKey_B0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
-        _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B0);
-        outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(stonewall1.getAccount()).zpubstr()), "M/1/" + idx));
+        if(stonewall1.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+            SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(stonewall1.getAccount(), 1, idx);
+            Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress.getBech32AsString());
+            byte[] scriptPubKey_B0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
+            _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B0);
+            outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(stonewall1.getAccount()).zpubstr()), "M/1/" + idx));
+        }
+        else    {
+            int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
+            SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(0, 1, idx);
+            Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress.getBech32AsString());
+            byte[] scriptPubKey_B0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
+            _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B0);
+            outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
+        }
 
         STONEWALLx2 stonewall2 = new STONEWALLx2(stonewall1);
         stonewall2.inc(inputsB, outputsB, null);
@@ -1003,7 +1033,13 @@ public class CahootsUtil {
     private void doSTONEWALLx2_3(STONEWALLx2 stonewall2) throws Exception    {
 
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
+        List<UTXO> utxos = null;
+        if(stonewall2.getCounterpartyAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+        }
+        else    {
+            utxos = APIFactory.getInstance(context).getUtxos(true);
+        }
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
@@ -1018,7 +1054,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address, 0);
+                ECKey eckey = SendFactory.getPrivKey(address, stonewall2.getCounterpartyAccount());
                 keyBag_A.put(outpoint.toString(), eckey);
             }
         }
@@ -1047,7 +1083,13 @@ public class CahootsUtil {
     private void doSTONEWALLx2_4(STONEWALLx2 stonewall3) throws Exception    {
 
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
+        List<UTXO> utxos = null;
+        if(stonewall3.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+        }
+        else    {
+            utxos = APIFactory.getInstance(context).getUtxos(true);
+        }
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
@@ -1062,7 +1104,7 @@ public class CahootsUtil {
             String key = outpoint.getHash().toString() + "-" + outpoint.getIndex();
             if(utxo2Address.containsKey(key))    {
                 String address = utxo2Address.get(key);
-                ECKey eckey = SendFactory.getPrivKey(address, 0);
+                ECKey eckey = SendFactory.getPrivKey(address, stonewall3.getAccount());
                 keyBag_B.put(outpoint.toString(), eckey);
             }
         }
