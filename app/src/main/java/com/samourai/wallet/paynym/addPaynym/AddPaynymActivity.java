@@ -17,12 +17,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.common.base.Splitter;
 import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.util.FormatsUtil;
 import com.yanzhenjie.zbar.Symbol;
@@ -61,9 +60,12 @@ public class AddPaynymActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewById(R.id.add_paynym_scan_qr).setOnClickListener(view -> {
-            Intent intent = new Intent(this, ZBarScannerActivity.class);
-            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-            startActivityForResult(intent, SCAN_PCODE);
+            CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+            cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+                cameraFragmentBottomSheet.dismissAllowingStateLoss();
+                processScan(code);
+            });
         });
 
         findViewById(R.id.add_paynym_paste).setOnClickListener(view -> {
@@ -145,15 +147,6 @@ public class AddPaynymActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_PCODE) {
-            if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
-                String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-                processScan(strResult);
-            }
-        }
-    }
 
     private void processScan(String data) {
 
