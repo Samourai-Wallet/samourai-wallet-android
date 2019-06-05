@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.send.cahoots.ManualStoneWall">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+        </android.support.v7.widget.Toolbar>
+
+
+        <view
+            android:id="@+id/cahoot_step_group"
+            class="com.samourai.wallet.widgets.StepCircleView$StepCircleViewGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="22dp"
+            android:animateLayoutChanges="true"
+            android:animationCache="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.samourai.wallet.widgets.StepCircleView
+                android:id="@+id/cahoot_step1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:active="false"
+                app:step_text="Step 1">
+
+            </com.samourai.wallet.widgets.StepCircleView>
+
+            <com.samourai.wallet.widgets.StepCircleView
+                android:id="@+id/cahoot_step2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:step_text="Step 2">
+
+            </com.samourai.wallet.widgets.StepCircleView>
+
+            <com.samourai.wallet.widgets.StepCircleView
+                android:id="@+id/cahoot_step3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:step_text="Step 3">
+
+            </com.samourai.wallet.widgets.StepCircleView>
+
+            <com.samourai.wallet.widgets.StepCircleView
+                android:id="@+id/cahoots_step4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:step_text="Step 4">
+
+            </com.samourai.wallet.widgets.StepCircleView>
+
+            <com.samourai.wallet.widgets.StepCircleView
+                android:id="@+id/cahoots_step5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:step_text="Step 5">
+
+            </com.samourai.wallet.widgets.StepCircleView>
+        </view>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <TextView
+        android:id="@+id/stonewall_instruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/share_this_qr_code_with_your_participant"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+    <ViewFlipper
+        android:id="@+id/view_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:inAnimation="@anim/fab_slide_in_from_right"
+        android:outAnimation="@anim/fab_slide_out_to_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stonewall_instruction">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/qr_code_imageview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/border_button2_shape" />
+
+            <Button
+                android:id="@+id/button2"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Share"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="@+id/button3"
+                app:layout_constraintEnd_toStartOf="@+id/button3"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/button3" />
+
+            <Button
+                android:id="@+id/button3"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/copy_to_clipboard"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/qr_code_imageview"
+                app:layout_constraintTop_toBottomOf="@+id/qr_code_imageview"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <include layout="@layout/stonewall_broadcast_details" />
+
+
+    </ViewFlipper>
+
+    <Button
+        android:id="@+id/manual_stonewall_broadcast"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_green"
+        android:text="Broadcast Transaction"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+</android.support.constraint.ConstraintLayout>

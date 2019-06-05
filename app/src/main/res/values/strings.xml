@@ -732,5 +732,8 @@
     <string name="review_whirlpool">Review Whirlpool Details</string>
     <string name="total_selected">Total selected</string>
     <string name="cycle">Cycle</string>
+    <string name="estimated_entropy">Estimated Entropy</string>
+    <string name="share_this_qr_code_with_your_participant">Share this QR code with your participant</string>
+    <string name="review_tx_before_braodcast">Review the transaction before broadcasting</string>
 
 </resources>
