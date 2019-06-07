@@ -137,7 +137,7 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext()))  {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext())) {
             loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
@@ -273,7 +273,7 @@ public class MainActivity2 extends Activity {
                 intent.putExtra("uri", strUri);
                 PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
             }
-            if(getBundleExtras()!=null){
+            if (getBundleExtras() != null) {
                 intent.putExtras(getBundleExtras());
             }
             startActivity(intent);
@@ -331,7 +331,7 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
-        if(!SamouraiWallet.getInstance().isTestNet())    {
+        if (!SamouraiWallet.getInstance().isTestNet()) {
             doAppInit1(isDial, strUri, strPCode);
             return;
         }
@@ -366,9 +366,7 @@ public class MainActivity2 extends Activity {
         } else {
             doAppInit1(isDial, strUri, strPCode);
         }
-
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -378,24 +376,27 @@ public class MainActivity2 extends Activity {
 
     private Bundle getBundleExtras() {
         Bundle bundle = getIntent().getExtras();
-        if(bundle==null){
+        if (bundle == null) {
             return null;
         }
         if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && getIntent().getScheme() != null && getIntent().getScheme().equals("bitcoin")) {
-            bundle.putString("uri",getIntent().getData().toString());
-        }else {
-            if(bundle.containsKey("uri")){
-                bundle.putString("uri",bundle.getString("uri"));
+            bundle.putString("uri", getIntent().getData().toString());
+        } else {
+            if (bundle.containsKey("uri")) {
+                bundle.putString("uri", bundle.getString("uri"));
+            } else if (bundle.containsKey("get_address")) {
+                bundle.putString("get_address", "");
+            } else if (bundle.containsKey("send_address")) {
+                bundle.putString("send_address", bundle.getString("send_address"));
             }
         }
 
         return bundle;
-
     }
 
     private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
-          if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
+        if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
                 doSelectNet();
@@ -415,7 +416,7 @@ public class MainActivity2 extends Activity {
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
             intent.putExtra("notifTx", true);
             intent.putExtra("fetch", true);
-            if(getBundleExtras()!=null){
+            if (getBundleExtras() != null) {
                 intent.putExtras(getBundleExtras());
             }
             startActivity(intent);
@@ -427,10 +428,10 @@ public class MainActivity2 extends Activity {
     }
 
     private void doSelectNet() {
-        if(dlg!=null){
+        if (dlg != null) {
             return;
         }
-          dlg = new AlertDialog.Builder(this)
+        dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.select_network)
                 .setCancelable(false)

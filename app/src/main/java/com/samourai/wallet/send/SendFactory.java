@@ -54,18 +54,20 @@ import java.util.Vector;
 
 //import android.util.Log;
 
-public class SendFactory	{
+public class SendFactory {
 
     private static SendFactory instance = null;
     private static Context context = null;
 
-    private SendFactory () { ; }
+    private SendFactory() {
+        ;
+    }
 
     public static SendFactory getInstance(Context ctx) {
 
         context = ctx;
 
-        if(instance == null)	{
+        if (instance == null) {
             instance = new SendFactory();
         }
 
@@ -79,17 +81,16 @@ public class SendFactory	{
         try {
             int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
             tx = makeTransaction(accountIdx, receivers, unspent);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return tx;
     }
 
-    public Transaction signTransaction(Transaction unsignedTx)    {
+    public Transaction signTransaction(Transaction unsignedTx) {
 
-        HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
+        HashMap<String, ECKey> keyBag = new HashMap<String, ECKey>();
 
         for (TransactionInput input : unsignedTx.getInputs()) {
 
@@ -97,39 +98,33 @@ public class SendFactory	{
                 byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                 String address = null;
 //                Log.i("SendFactory", "connected pubkey script:" + Hex.toHexString(scriptBytes));
-                if(Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes)))    {
+                if (Bech32Util.getInstance().isBech32Script(Hex.toHexString(scriptBytes))) {
                     address = Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(scriptBytes));
-                }
-                else    {
+                } else {
                     address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                 }
 //                Log.i("SendFactory", "address from script:" + address);
                 ECKey ecKey = null;
                 ecKey = getPrivKey(address);
-                if(ecKey != null) {
+                if (ecKey != null) {
                     keyBag.put(input.getOutpoint().toString(), ecKey);
-                }
-                else {
+                } else {
                     throw new RuntimeException("ECKey error: cannot process private key");
 //                    Log.i("ECKey error", "cannot process private key");
                 }
-            }
-            catch(ScriptException se) {
+            } catch (ScriptException se) {
+                ;
+            } catch (Exception e) {
                 ;
             }
-            catch(Exception e) {
-                ;
-            }
-
         }
 
         Transaction signedTx = signTransaction(unsignedTx, keyBag);
-        if(signedTx == null)    {
+        if (signedTx == null) {
             return null;
-        }
-        else    {
+        } else {
             String hexString = new String(Hex.encode(signedTx.bitcoinSerialize()));
-            if(hexString.length() > (100 * 1024)) {
+            if (hexString.length() > (100 * 1024)) {
                 Toast.makeText(context, R.string.tx_length_error, Toast.LENGTH_SHORT).show();
 //              Log.i("SendFactory", "Transaction length too long");
             }
@@ -138,9 +133,9 @@ public class SendFactory	{
         }
     }
 
-    public Transaction signTransactionForSweep(Transaction unsignedTx, PrivKeyReader privKeyReader)    {
+    public Transaction signTransactionForSweep(Transaction unsignedTx, PrivKeyReader privKeyReader) {
 
-        HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
+        HashMap<String, ECKey> keyBag = new HashMap<String, ECKey>();
 
         for (TransactionInput input : unsignedTx.getInputs()) {
 
@@ -149,15 +144,13 @@ public class SendFactory	{
 
                 String script = Hex.toHexString(scriptBytes);
                 String address = null;
-                if(Bech32Util.getInstance().isBech32Script(script))    {
+                if (Bech32Util.getInstance().isBech32Script(script)) {
                     try {
                         address = Bech32Util.getInstance().getAddressFromScript(script);
-                    }
-                    catch(Exception e) {
+                    } catch (Exception e) {
                         ;
                     }
-                }
-                else    {
+                } else {
                     address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                 }
 
@@ -173,30 +166,26 @@ public class SendFactory	{
                     continue;
                 }
 
-                if(ecKey != null) {
+                if (ecKey != null) {
                     keyBag.put(input.getOutpoint().toString(), ecKey);
-                }
-                else {
+                } else {
                     Toast.makeText(context, R.string.cannot_recognize_privkey, Toast.LENGTH_SHORT).show();
 //                    Log.i("ECKey error", "cannot process private key");
                 }
-            }
-            catch(ScriptException se) {
+            } catch (ScriptException se) {
                 ;
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 ;
             }
 
         }
 
         Transaction signedTx = signTransaction(unsignedTx, keyBag);
-        if(signedTx == null)    {
+        if (signedTx == null) {
             return null;
-        }
-        else    {
+        } else {
             String hexString = new String(Hex.encode(signedTx.bitcoinSerialize()));
-            if(hexString.length() > (100 * 1024)) {
+            if (hexString.length() > (100 * 1024)) {
                 Toast.makeText(context, R.string.tx_length_error, Toast.LENGTH_SHORT).show();
 //              Log.i("SendFactory", "Transaction length too long");
             }
@@ -211,7 +200,7 @@ public class SendFactory	{
     private Transaction makeTransaction(int accountIdx, HashMap<String, BigInteger> receivers, List<MyTransactionOutPoint> unspent) throws Exception {
 
         BigInteger amount = BigInteger.ZERO;
-        for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();
             amount = amount.add(mapEntry.getValue());
         }
@@ -219,7 +208,7 @@ public class SendFactory	{
         List<TransactionOutput> outputs = new ArrayList<TransactionOutput>();
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-        for(Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, BigInteger> mapEntry = iterator.next();
             String toAddress = mapEntry.getKey();
             BigInteger value = mapEntry.getValue();
@@ -228,20 +217,18 @@ public class SendFactory	{
                 throw new Exception(context.getString(R.string.dust_amount));
             }
 */
-            if(value == null || (value.compareTo(BigInteger.ZERO) <= 0 && !FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))) {
+            if (value == null || (value.compareTo(BigInteger.ZERO) <= 0 && !FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))) {
                 throw new Exception(context.getString(R.string.invalid_amount));
             }
 
             TransactionOutput output = null;
             Script toOutputScript = null;
-            if(!FormatsUtil.getInstance().isValidBitcoinAddress(toAddress) && FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress))    {
+            if (!FormatsUtil.getInstance().isValidBitcoinAddress(toAddress) && FormatsUtil.getInstance().isValidBIP47OpReturn(toAddress)) {
                 toOutputScript = new ScriptBuilder().op(ScriptOpCodes.OP_RETURN).data(Hex.decode(toAddress)).build();
                 output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(0L), toOutputScript.getProgram());
-            }
-            else if(FormatsUtil.getInstance().isValidBech32(toAddress))   {
+            } else if (FormatsUtil.getInstance().isValidBech32(toAddress)) {
                 output = Bech32Util.getInstance().getTransactionOutput(toAddress, value.longValue());
-            }
-            else    {
+            } else {
                 toOutputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), toAddress));
                 output = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(value.longValue()), toOutputScript.getProgram());
             }
@@ -250,15 +237,15 @@ public class SendFactory	{
         }
 
         List<MyTransactionInput> inputs = new ArrayList<MyTransactionInput>();
-        for(MyTransactionOutPoint outPoint : unspent) {
+        for (MyTransactionOutPoint outPoint : unspent) {
             Script script = new Script(outPoint.getScriptBytes());
 
-            if(script.getScriptType() == Script.ScriptType.NO_TYPE) {
+            if (script.getScriptType() == Script.ScriptType.NO_TYPE) {
                 continue;
             }
 
             MyTransactionInput input = new MyTransactionInput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, new byte[0], outPoint, outPoint.getTxHash().toString(), outPoint.getTxOutputN());
-            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true)    {
+            if (PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false) == true) {
                 input.setSequenceNumber(SamouraiWallet.RBF_SEQUENCE_VAL.longValue());
             }
             inputs.add(input);
@@ -268,19 +255,19 @@ public class SendFactory	{
         // deterministically sort inputs and outputs, see BIP69 (OBPP)
         //
         Collections.sort(inputs, new BIP69InputComparator());
-        for(TransactionInput input : inputs) {
+        for (TransactionInput input : inputs) {
             tx.addInput(input);
         }
 
         Collections.sort(outputs, new BIP69OutputComparator());
-        for(TransactionOutput to : outputs) {
+        for (TransactionOutput to : outputs) {
             tx.addOutput(to);
         }
 
         return tx;
     }
 
-    private synchronized Transaction signTransaction(Transaction transaction, HashMap<String,ECKey> keyBag) throws ScriptException {
+    private synchronized Transaction signTransaction(Transaction transaction, HashMap<String, ECKey> keyBag) throws ScriptException {
 
         List<TransactionInput> inputs = transaction.getInputs();
 
@@ -302,19 +289,17 @@ public class SendFactory	{
 
             String script = Hex.toHexString(connectedPubKeyScript);
             String address = null;
-            if(Bech32Util.getInstance().isBech32Script(script))    {
+            if (Bech32Util.getInstance().isBech32Script(script)) {
                 try {
                     address = Bech32Util.getInstance().getAddressFromScript(script);
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     ;
                 }
-            }
-            else    {
+            } else {
                 address = new Script(connectedPubKeyScript).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             }
 
-            if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+            if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
 
                 final SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 //                System.out.println("pubKey:" + Hex.toHexString(key.getPubKey()));
@@ -332,29 +317,25 @@ public class SendFactory	{
                 witness.setPush(1, key.getPubKey());
                 transaction.setWitness(i, witness);
 
-                if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                if (!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                     final ScriptBuilder sigScript = new ScriptBuilder();
                     sigScript.data(redeemScript.getProgram());
                     transaction.getInput(i).setScriptSig(sigScript.build());
                     transaction.getInput(i).getScriptSig().correctlySpends(transaction, i, scriptPubKey, connectedOutput.getValue(), Script.ALL_VERIFY_FLAGS);
                 }
 
-            }
-            else    {
-                if(key != null && key.hasPrivKey() || key.isEncrypted()) {
+            } else {
+                if (key != null && key.hasPrivKey() || key.isEncrypted()) {
                     sig = transaction.calculateSignature(i, key, connectedPubKeyScript, Transaction.SigHash.ALL, false);
-                }
-                else {
+                } else {
                     sig = TransactionSignature.dummy();   // watch only ?
                 }
 
-                if(scriptPubKey.isSentToAddress()) {
+                if (scriptPubKey.isSentToAddress()) {
                     input.setScriptSig(ScriptBuilder.createInputScript(sig, key));
-                }
-                else if(scriptPubKey.isSentToRawPubKey()) {
+                } else if (scriptPubKey.isSentToRawPubKey()) {
                     input.setScriptSig(ScriptBuilder.createInputScript(sig));
-                }
-                else {
+                } else {
                     throw new RuntimeException("Unknown script type: " + scriptPubKey);
                 }
             }
@@ -368,19 +349,19 @@ public class SendFactory	{
     public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address) {
 
         Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null);
-        if(set0 == null)    {
+        if (set0 == null) {
             return null;
         }
         Log.d("SendFactory", "set0 utxo returned:" + set0.getRight().toString());
 
         long set0Value = 0L;
-        for(UTXO u : set0.getRight())   {
+        for (UTXO u : set0.getRight()) {
             set0Value += u.getValue();
         }
 
         long utxosBisValue = 0L;
-        if(utxosBis != null)    {
-            for(UTXO u : utxosBis)   {
+        if (utxosBis != null) {
+            for (UTXO u : utxosBis) {
                 utxosBisValue += u.getValue();
             }
         }
@@ -389,19 +370,17 @@ public class SendFactory	{
         Log.d("SendFactory", "utxosBis value:" + utxosBisValue);
 
         List<UTXO> _utxo = null;
-        if(set0.getRight() != null && set0.getRight().size() > 0 && set0Value > spendAmount.longValue())    {
+        if (set0.getRight() != null && set0.getRight().size() > 0 && set0Value > spendAmount.longValue()) {
             Log.d("SendFactory", "set0 selected for 2nd pass");
             _utxo = set0.getRight();
-        }
-        else if(utxosBis != null && utxosBisValue > spendAmount.longValue())   {
+        } else if (utxosBis != null && utxosBisValue > spendAmount.longValue()) {
             Log.d("SendFactory", "utxosBis selected for 2nd pass");
             _utxo = utxosBis;
-        }
-        else    {
+        } else {
             return null;
         }
         Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft());
-        if(set1 == null)    {
+        if (set1 == null) {
             return null;
         }
 
@@ -417,68 +396,63 @@ public class SendFactory	{
 
     public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints) {
 
-        if(utxos == null || utxos.size() == 0)    {
+        if (utxos == null || utxos.size() == 0) {
             return null;
         }
 
         List<String> seenPreviousSetHash = null;
-        if(firstPassOutpoints != null)    {
+        if (firstPassOutpoints != null) {
             seenPreviousSetHash = new ArrayList<String>();
 
-            for(MyTransactionOutPoint outpoint : firstPassOutpoints)   {
+            for (MyTransactionOutPoint outpoint : firstPassOutpoints) {
                 seenPreviousSetHash.add(outpoint.getTxHash().toString());
             }
         }
 
         int changeType = 84;
         int mixedType = 84;
-        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true)    {
+        if (PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == true) {
             //
             // inputs are pre-grouped by type
             // type of address for change must match type of address for inputs
             //
             String utxoAddress = utxos.get(0).getOutpoints().get(0).getAddress();
-            if(FormatsUtil.getInstance().isValidBech32(utxoAddress))    {
+            if (FormatsUtil.getInstance().isValidBech32(utxoAddress)) {
                 changeType = 84;
-            }
-            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), utxoAddress).isP2SHAddress())   {
+            } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), utxoAddress).isP2SHAddress()) {
                 changeType = 49;
-            }
-            else    {
+            } else {
                 changeType = 44;
             }
 
             //
             // type of address for 'mixed' amount must match type of address for destination
             //
-            if(FormatsUtil.getInstance().isValidBech32(address))    {
+            if (FormatsUtil.getInstance().isValidBech32(address)) {
                 mixedType = 84;
-            }
-            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())   {
+            } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                 mixedType = 49;
-            }
-            else    {
+            } else {
                 mixedType = 44;
             }
         }
 
-        Triple<Integer,Integer,Integer> firstPassOutpointTypes = null;
-        if(firstPassOutpoints != null)    {
+        Triple<Integer, Integer, Integer> firstPassOutpointTypes = null;
+        if (firstPassOutpoints != null) {
             firstPassOutpointTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(firstPassOutpoints));
-        }
-        else    {
+        } else {
             firstPassOutpointTypes = Triple.of(0, 0, 0);
         }
 
         long totalOutpointsAmount = 0L;
-        for(UTXO utxo : utxos)   {
+        for (UTXO utxo : utxos) {
             totalOutpointsAmount += utxo.getValue();
         }
         Log.d("SendFactory", "total outputs amount:" + totalOutpointsAmount);
         Log.d("SendFactory", "spend amount:" + spendAmount.toString());
         Log.d("SendFactory", "utxos:" + utxos.size());
 
-        if(totalOutpointsAmount <= spendAmount.longValue())    {
+        if (totalOutpointsAmount <= spendAmount.longValue()) {
             Log.d("SendFactory", "spend amount must be > total amount available");
             return null;
         }
@@ -491,7 +465,7 @@ public class SendFactory	{
         TransactionOutput txChangeOutput = null;
         Script outputScript = null;
         String changeAddress = null;
-        HashMap<String,MyTransactionOutPoint> seenOutpoints = new HashMap<String,MyTransactionOutPoint>();
+        HashMap<String, MyTransactionOutPoint> seenOutpoints = new HashMap<String, MyTransactionOutPoint>();
         List<MyTransactionOutPoint> recycleOutPoints = new ArrayList<MyTransactionOutPoint>();
         List<UTXO> recycleUTXOs = new ArrayList<UTXO>();
 
@@ -508,26 +482,23 @@ public class SendFactory	{
 
             recycleOutPoints.clear();
 
-            for(MyTransactionOutPoint op : utxo.getOutpoints())   {
+            for (MyTransactionOutPoint op : utxo.getOutpoints()) {
                 String hash = op.getTxHash().toString();
-                if(seenPreviousSetHash != null && seenPreviousSetHash.contains(hash))    {
+                if (seenPreviousSetHash != null && seenPreviousSetHash.contains(hash)) {
                     ;
-                }
-                else if(!seenOutpoints.containsKey(hash))    {
-                    seenOutpoints.put(hash,op);
+                } else if (!seenOutpoints.containsKey(hash)) {
+                    seenOutpoints.put(hash, op);
                     selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
                     Log.d("SendFactory", "selected:" + i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
                     utxoIsSelected = true;
-                }
-                else if(op.getValue().longValue() > seenOutpoints.get(hash).getValue().longValue()) {
+                } else if (op.getValue().longValue() > seenOutpoints.get(hash).getValue().longValue()) {
                     recycleOutPoints.add(seenOutpoints.get(hash));
-                    seenOutpoints.put(hash,op);
+                    seenOutpoints.put(hash, op);
                     selectedValue = selectedValue.subtract(BigInteger.valueOf(seenOutpoints.get(hash).getValue().longValue()));
                     selectedValue = selectedValue.add(BigInteger.valueOf(op.getValue().longValue()));
-                    Log.d("SendFactory", "selected (replace):"+ i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
+                    Log.d("SendFactory", "selected (replace):" + i + "," + op.getTxHash().toString() + "," + op.getValue().longValue());
                     utxoIsSelected = true;
-                }
-                else    {
+                } else {
                     ;
                 }
 
@@ -535,42 +506,42 @@ public class SendFactory	{
                 selectedOutpoints.addAll(seenOutpoints.values());
             }
 
-            if(recycleOutPoints.size() > 0)    {
+            if (recycleOutPoints.size() > 0) {
                 UTXO recycleUTXO = new UTXO();
                 recycleUTXO.setOutpoints(recycleOutPoints);
                 recycleUTXOs.add(recycleUTXO);
             }
 
-            if(utxoIsSelected)    {
+            if (utxoIsSelected) {
                 idx++;
             }
 
-            if(firstPassOutpoints != null)    {
-                Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
+            if (firstPassOutpoints != null) {
+                Triple<Integer, Integer, Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
                 biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
             }
 
-            if(selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) > 0)    {
+            if (selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) > 0) {
                 break;
             }
 
         }
 
-        if(selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) <= 0)    {
+        if (selectedValue.compareTo(spendAmount.add(biFee).add(bDust)) <= 0) {
             return null;
         }
 
         List<MyTransactionOutPoint> _selectedOutpoints = new ArrayList<MyTransactionOutPoint>();
         Collections.sort(selectedOutpoints, new UTXO.OutpointComparator());
         long _value = 0L;
-        for(MyTransactionOutPoint op : selectedOutpoints)   {
+        for (MyTransactionOutPoint op : selectedOutpoints) {
             _selectedOutpoints.add(op);
             _value += op.getValue().longValue();
-            if(firstPassOutpoints != null)    {
-                Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(_selectedOutpoints));
+            if (firstPassOutpoints != null) {
+                Triple<Integer, Integer, Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(_selectedOutpoints));
                 biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
             }
-            if(_value > spendAmount.add(biFee).add(bDust).longValue())    {
+            if (_value > spendAmount.add(biFee).add(bDust).longValue()) {
                 break;
             }
         }
@@ -586,54 +557,50 @@ public class SendFactory	{
         Log.d("SendFactory", "utxos after adding recycled:" + _utxos.size());
         BigInteger changeDue = selectedValue.subtract(spendAmount);
 
-        if(firstPassOutpoints != null)    {
-            Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
+        if (firstPassOutpoints != null) {
+            Triple<Integer, Integer, Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
             biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
         }
 
-        if(changeDue.subtract(biFee).compareTo(SamouraiWallet.bDust) > 0)    {
+        if (changeDue.subtract(biFee).compareTo(SamouraiWallet.bDust) > 0) {
             changeDue = changeDue.subtract(biFee);
         }
 
         try {
 
             String _address = null;
-            if(firstPassOutpoints == null)    {
+            if (firstPassOutpoints == null) {
                 _address = address;
-            }
-            else    {
+            } else {
                 _address = getChangeAddress(mixedType);
             }
-            if(FormatsUtil.getInstance().isValidBech32(_address))   {
+            if (FormatsUtil.getInstance().isValidBech32(_address)) {
                 txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());
-            }
-            else    {
+            } else {
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), _address));
                 txSpendOutput = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(spendAmount.longValue()), outputScript.getProgram());
             }
             txOutputs.add(txSpendOutput);
 
             changeAddress = getChangeAddress(changeType);
-            if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
+            if (FormatsUtil.getInstance().isValidBech32(changeAddress)) {
                 txChangeOutput = Bech32Util.getInstance().getTransactionOutput(changeAddress, changeDue.longValue());
-            }
-            else    {
+            } else {
                 outputScript = ScriptBuilder.createOutputScript(org.bitcoinj.core.Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), changeAddress));
                 txChangeOutput = new TransactionOutput(SamouraiWallet.getInstance().getCurrentNetworkParams(), null, Coin.valueOf(changeDue.longValue()), outputScript.getProgram());
             }
             txOutputs.add(txChangeOutput);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
 
         long inValue = 0L;
-        for(MyTransactionOutPoint outpoint : selectedOutpoints)   {
+        for (MyTransactionOutPoint outpoint : selectedOutpoints) {
             inValue += outpoint.getValue().longValue();
             Log.d("SendFactory", "input:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getValue().longValue());
         }
         long outValue = 0L;
-        for(TransactionOutput tOut : txOutputs)   {
+        for (TransactionOutput tOut : txOutputs) {
             outValue += tOut.getValue().longValue();
             Log.d("SendFactory", "output:" + tOut.toString() + "," + tOut.getValue().longValue());
         }
@@ -652,42 +619,37 @@ public class SendFactory	{
 
     }
 
-    private String getChangeAddress(int type)    {
+    private String getChangeAddress(int type) {
 
-        if(type != 44 || PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
+        if (type != 44 || PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             ;
-        }
-        else    {
+        } else {
             type = 44;
         }
 
-        if(type == 84)    {
+        if (type == 84) {
             String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
             BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
             return change_address;
-        }
-        else if(type == 49)    {
+        } else if (type == 49) {
             String change_address = BIP49Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
             return change_address;
-        }
-        else    {
+        } else {
             try {
                 String change_address = HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
                 HD_WalletFactory.getInstance(context).get().getAccount(0).getChange().incAddrIdx();
                 return change_address;
-            }
-            catch(IOException ioe) {
+            } catch (IOException ioe) {
                 return null;
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
+            } catch (MnemonicException.MnemonicLengthException mle) {
                 return null;
             }
         }
 
     }
 
-    public static ECKey getPrivKey(String address)    {
+    public static ECKey getPrivKey(String address) {
 
 //        Log.d("SendFactory", "get privkey for:" + address);
 
@@ -696,19 +658,17 @@ public class SendFactory	{
         try {
             String path = APIFactory.getInstance(context).getUnspentPaths().get(address);
             Log.d("SendFactory", "address path:" + path);
-            if(path != null)    {
+            if (path != null) {
                 String[] s = path.split("/");
-                if(FormatsUtil.getInstance().isValidBech32(address))    {
+                if (FormatsUtil.getInstance().isValidBech32(address)) {
                     Log.d("SendFactory", "address type:" + "bip84");
                     HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                     ecKey = addr.getECKey();
-                }
-                else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                     Log.d("SendFactory", "address type:" + "bip49");
                     HD_Address addr = BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
                     ecKey = addr.getECKey();
-                }
-                else    {
+                } else {
                     Log.d("SendFactory", "address type:" + "bip44");
                     int account_no = APIFactory.getInstance(context).getUnspentAccounts().get(address);
                     HD_Address hd_address = AddressFactory.getInstance(context).get(account_no, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
@@ -716,8 +676,7 @@ public class SendFactory	{
                     DumpedPrivateKey pk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), strPrivKey);
                     ecKey = pk.getKey();
                 }
-            }
-            else    {
+            } else {
                 Log.d("SendFactory", "address type:" + "bip47");
                 Log.d("SendFactory", "address:" + address);
                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);

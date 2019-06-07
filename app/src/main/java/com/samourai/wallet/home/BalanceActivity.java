@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
@@ -40,12 +41,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.BIP38PrivateKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.script.Script;
-
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.ExodusActivity;
@@ -63,19 +58,17 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
-import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
@@ -97,15 +90,20 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Hex;
-
+import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yanzhenjie.zbar.Symbol;
+
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.BIP38PrivateKey;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -146,6 +144,10 @@ public class BalanceActivity extends AppCompatActivity {
     private ProgressBar progressBarMenu;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
+
+    private boolean mConsumedIntent;
+    private final String SAVED_INSTANCE_STATE_CONSUMED_INTENT = "SAVED_INSTANCE_STATE_CONSUMED_INTENT";
+
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -308,9 +310,20 @@ public class BalanceActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_INSTANCE_STATE_CONSUMED_INTENT, mConsumedIntent);
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
+
+        if (savedInstanceState != null) {
+            mConsumedIntent = savedInstanceState.getBoolean(SAVED_INSTANCE_STATE_CONSUMED_INTENT);
+        }
+
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -392,7 +405,6 @@ public class BalanceActivity extends AppCompatActivity {
             doClipboardCheck();
         }
 
-
         final Handler delayedHandler = new Handler();
         delayedHandler.postDelayed(() -> {
 
@@ -423,19 +435,22 @@ public class BalanceActivity extends AppCompatActivity {
             return;
         }
         if (bundle.containsKey("pcode") || bundle.containsKey("uri") || bundle.containsKey("amount")) {
-            if (balanceViewModel.getBalance().getValue() != null)
+
+            if (balanceViewModel.getBalance().getValue() != null) {
                 bundle.putLong("balance", balanceViewModel.getBalance().getValue());
+            }
+
             Intent intent = new Intent(this, SendActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
         }
-
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        mConsumedIntent = false;
     }
 
     private void initViewModel() {
@@ -491,9 +506,7 @@ public class BalanceActivity extends AppCompatActivity {
 
         }
 
-
         Log.i(TAG, "setBalance: ".concat(getBTCDisplayAmount(balance)));
-
     }
 
     @Override
@@ -508,6 +521,57 @@ public class BalanceActivity extends AppCompatActivity {
         Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
         LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
+        checkForAnomRequest();
+    }
+
+    private void checkForAnomRequest() {
+
+        Intent intent2 = getIntent();
+        Bundle bundle = (intent2 != null) ? intent2.getExtras() : null;
+        boolean launchedFromHistory = (intent2 != null) &&
+                (intent2.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
+        if (!launchedFromHistory && !mConsumedIntent && bundle != null &&
+                (bundle.containsKey("get_address") || bundle.containsKey("send_address"))) {
+
+            mConsumedIntent = true;
+            Toast.makeText(this, "Checking new transactions...",
+                    Toast.LENGTH_SHORT).show();
+
+            if (bundle.containsKey("get_address")) {
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    try {
+                        HD_Wallet hdw = HD_WalletFactory.getInstance(BalanceActivity.this).get();
+                        if (hdw != null) {
+
+                            Intent intent1 = new Intent(BalanceActivity.this,
+                                    ReceiveActivity.class);
+                            intent1.putExtra("get_address", "");
+                            startActivity(intent1);
+                        }
+                    } catch (IOException | MnemonicException.MnemonicLengthException e) {
+                        e.printStackTrace();
+                    }
+                }, 5000);
+            } else if (bundle.containsKey("send_address")) {
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+                    Intent sendActivityIntent = new Intent(BalanceActivity.this,
+                            SendActivity.class);
+
+                    if (balanceViewModel.getBalance().getValue() != null) {
+                        sendActivityIntent.putExtra("balance",
+                                balanceViewModel.getBalance().getValue());
+                    }
+
+                    sendActivityIntent.putExtra("uri",
+                            bundle.getString("send_address"));
+                    startActivity(sendActivityIntent);
+                }, 5000);
+            }
+        }
     }
 
     @Override
@@ -559,7 +623,7 @@ public class BalanceActivity extends AppCompatActivity {
 
         super.onDestroy();
 
-        if(compositeDisposable != null && !compositeDisposable.isDisposed()) {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
             compositeDisposable.dispose();
         }
     }

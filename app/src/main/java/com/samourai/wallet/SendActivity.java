@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -68,6 +69,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.DebouncedOnClickListener;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -172,6 +174,7 @@ public class SendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
+
         setSupportActionBar(findViewById(R.id.toolbar_send));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
@@ -218,8 +221,19 @@ public class SendActivity extends AppCompatActivity {
         satEditText.addTextChangedListener(satWatcher);
         toAddressEditText.addTextChangedListener(AddressWatcher);
 
-        btnReview.setOnClickListener(v -> review());
-        btnSend.setOnClickListener(v -> initiateSpend());
+        btnReview.setOnClickListener(new DebouncedOnClickListener(2500) {
+            @Override
+            public void onDebouncedClick(View v) {
+                review();
+            }
+        });
+
+        btnSend.setOnClickListener(new DebouncedOnClickListener(2500) {
+            @Override
+            public void onDebouncedClick(View v) {
+                initiateSpend();
+            }
+        });
 
         View.OnClickListener clipboardCopy = view -> {
             ClipboardManager cm = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -268,7 +282,6 @@ public class SendActivity extends AppCompatActivity {
             }
             balance = getIntent().getExtras().getLong("balance");
         }
-
     }
 
     @Override
@@ -279,6 +292,15 @@ public class SendActivity extends AppCompatActivity {
 
         AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null && bundle.containsKey("send_address")) {
+            final String toAddress = bundle.getString("send_address");
+
+            if (!TextUtils.isEmpty(toAddress)) {
+                toAddressEditText.setText(toAddress.trim());
+            }
+        }
     }
 
     private void setUpBoltzman() {
@@ -589,7 +611,6 @@ public class SendActivity extends AppCompatActivity {
                 Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
                 shownWalletLoadingMessage = true;
             }
-
         }
     }
 
@@ -614,7 +635,6 @@ public class SendActivity extends AppCompatActivity {
             new Handler().postDelayed(this::validateSpend, 800);
         } else {
             validateSpend();
-
         }
     }
 
@@ -820,7 +840,6 @@ public class SendActivity extends AppCompatActivity {
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
         }
-
     }
 
     private void hideKeyboard() {
@@ -859,13 +878,11 @@ public class SendActivity extends AppCompatActivity {
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
-        if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        if (PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = 84;
-        }
-        else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+        } else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
-        }
-        else {
+        } else {
             changeType = 44;
         }
 
@@ -1374,7 +1391,6 @@ public class SendActivity extends AppCompatActivity {
                 );
                 Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
                 startActivity(_intent);
-
             }
         });
         builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -1549,7 +1565,7 @@ public class SendActivity extends AppCompatActivity {
             return;
         }
 
-        if(Cahoots.isCahoots(data.trim())) {
+        if (Cahoots.isCahoots(data.trim())) {
             CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim());
             return;
         }
@@ -1564,6 +1580,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
         if (FormatsUtil.getInstance().isBitcoinUri(data)) {
+            Log.d("SendActivity", "Scan result 1");
             String address = FormatsUtil.getInstance().getBitcoinAddress(data);
             String amount = FormatsUtil.getInstance().getBitcoinAmount(data);
 
@@ -1604,6 +1621,7 @@ public class SendActivity extends AppCompatActivity {
 
         } else if (FormatsUtil.getInstance().isValidBitcoinAddress(data)) {
 
+            Log.d("SendActivity", "Scan result 2");
             if (FormatsUtil.getInstance().isValidBech32(data)) {
                 setToAddress(data.toLowerCase());
             } else {
@@ -1612,6 +1630,7 @@ public class SendActivity extends AppCompatActivity {
 
         } else if (data.contains("?")) {
 
+            Log.d("SendActivity", "Scan result 3");
             String pcode = data.substring(0, data.indexOf("?"));
             // not valid BIP21 but seen often enough
             if (pcode.startsWith("bitcoin://")) {
@@ -1890,14 +1909,12 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue())    {
+                            if (amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue()) {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
-                            }
-                            else    {
+                            } else {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
-                        }
-                        catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
 
@@ -1907,7 +1924,7 @@ public class SendActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
@@ -1935,7 +1952,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue())    {
+                            if (amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue()) {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount);
 
                                 final EditText edAddress = new EditText(SendActivity.this);
@@ -1950,15 +1967,13 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
 
                                                 final String strAddress = edAddress.getText().toString().trim();
-                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
+                                                if (FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams())) {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress);
-                                                    }
-                                                    catch(NumberFormatException nfe) {
+                                                    } catch (NumberFormatException nfe) {
                                                         Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                                                     }
-                                                }
-                                                else    {
+                                                } else {
                                                     Toast.makeText(SendActivity.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -1967,16 +1982,14 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
                                             }
                                         });
-                                if(!isFinishing())    {
+                                if (!isFinishing()) {
                                     dlg.show();
                                 }
-                            }
-                            else    {
+                            } else {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
 
-                        }
-                        catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -2040,7 +2053,8 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
+    private void CalculateEntropy
+            (ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
 
         // for ricochet entropy will be 0 always
         if (SPEND_TYPE == SPEND_RICOCHET) {
