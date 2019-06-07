@@ -70,6 +70,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.subjects.BehaviorSubject;
 public class APIFactory	{
 
     private static String APP_TOKEN = null;         // API app token
@@ -89,7 +90,8 @@ public class APIFactory	{
     private static JSONObject utxoObj1 = null;
 
     private static HashMap<String, Long> bip47_amounts = null;
-
+    public boolean walletInit = false;
+    public BehaviorSubject<Long> walletBalanceObserver = BehaviorSubject.create();
     private static long latest_block_height = -1L;
     private static String latest_block_hash = null;
 
@@ -99,7 +101,9 @@ public class APIFactory	{
 
     private static AlertDialog alertDialog = null;
 
-    private APIFactory()	{ ; }
+    private APIFactory()	{
+        walletBalanceObserver.onNext(0L);
+    }
 
     public static APIFactory getInstance(Context ctx) {
 
@@ -115,7 +119,6 @@ public class APIFactory	{
             unspentBIP49 = new HashMap<String, Integer>();
             unspentBIP84 = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
-
             instance = new APIFactory();
         }
 
@@ -303,6 +306,7 @@ public class APIFactory	{
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
                 xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
+                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -1650,15 +1654,19 @@ public class APIFactory	{
                     BlockedUTXO.getInstance().remove(_s);
 //                    Log.d("APIFactory", "blocked removed:" + _s);
                 }
+
+
             }
 
         }
         catch (IndexOutOfBoundsException ioobe) {
             ioobe.printStackTrace();
+
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+        walletInit = true;
 
     }
 
@@ -1816,6 +1824,7 @@ public class APIFactory	{
 
     public void setXpubBalance(long value)  {
         xpub_balance = value;
+        walletBalanceObserver.onNext(value);
     }
 
     public HashMap<String,Long> getXpubAmounts()  {

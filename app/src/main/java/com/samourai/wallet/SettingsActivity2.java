@@ -222,6 +222,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference whirlpoolGUIPref = (Preference) findPreference("whirlpool_gui");
+                whirlpoolGUIPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doWhirlpoolGUIPairing();
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("stealth"))   {
                 addPreferencesFromResource(R.xml.settings_stealth);
@@ -1728,6 +1736,78 @@ public class SettingsActivity2 extends PreferenceActivity	{
         if(!isFinishing())    {
             dlg.show();
         }
+
+    }
+
+    private void doWhirlpoolGUIPairing()    {
+
+        JSONObject pairingObj = null;
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("type", "whirlpool.gui");
+            jsonObj.put("version", "1.0.0");
+            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
+
+            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
+            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+            jsonObj.put("mnemonic", encrypted);
+
+            pairingObj = new JSONObject();
+            pairingObj.put("pairing", jsonObj);
+        }
+        catch(Exception e) {
+            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(pairingObj == null)    {
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(pairingObj.toString());
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+        pairingLayout.setOrientation(LinearLayout.VERTICAL);
+        pairingLayout.addView(showQR);
+        pairingLayout.addView(showText);
+
+        final String _pairing = pairingObj.toString();
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(pairingLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                })
+                .show();
 
     }
 

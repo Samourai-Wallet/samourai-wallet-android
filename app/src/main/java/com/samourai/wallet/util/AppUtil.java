@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -133,8 +134,23 @@ public class AppUtil {
 		context.startActivity(intent);
 	}
 
-	public void restartApp(String name, boolean value) {
+	public void restartApp(Bundle extras) {
+
 		Intent intent = new Intent(context, MainActivity2.class);
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        }
+        else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        }
+        if(extras!=null){
+            intent.putExtras(extras);
+        }
+		context.startActivity(intent);
+	}
+
+	public void restartApp(String name, boolean value) {
+        Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }

@@ -47,6 +47,8 @@ public class MainActivity2 extends Activity {
     private ProgressDialog progress = null;
 
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
+    private AlertDialog.Builder dlg;
+    private boolean pinEntryActivityLaunched = false;
 
     private TextView loaderTxView;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
@@ -136,7 +138,7 @@ public class MainActivity2 extends Activity {
         }
 
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext()))  {
-            loaderTxView.setText("initializing Tor...");
+            loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
                     .torStatus
@@ -258,21 +260,26 @@ public class MainActivity2 extends Activity {
     }
 
     private void validatePIN(String strUri) {
+        if (!pinEntryActivityLaunched) {
 
-        if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
-            return;
+            if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
+                return;
+            }
+
+            AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
+            Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (strUri != null) {
+                intent.putExtra("uri", strUri);
+                PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
+            }
+            if(getBundleExtras()!=null){
+                intent.putExtras(getBundleExtras());
+            }
+            startActivity(intent);
+            pinEntryActivityLaunched = true;
+
         }
-
-        AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-
-        Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (strUri != null) {
-            intent.putExtra("uri", strUri);
-            PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
-        }
-        startActivity(intent);
-
     }
 
     private void launchFromDialer(final String pin) {
@@ -362,39 +369,33 @@ public class MainActivity2 extends Activity {
 
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    private Bundle getBundleExtras() {
+        Bundle bundle = getIntent().getExtras();
+        if(bundle==null){
+            return null;
+        }
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && getIntent().getScheme() != null && getIntent().getScheme().equals("bitcoin")) {
+            bundle.putString("uri",getIntent().getData().toString());
+        }else {
+            if(bundle.containsKey("uri")){
+                bundle.putString("uri",bundle.getString("uri"));
+            }
+        }
+
+        return bundle;
+
+    }
+
     private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
-        if ((strUri != null || strPCode != null) && AccessFactory.getInstance(MainActivity2.this).isLoggedIn()) {
-
-            progress = new ProgressDialog(MainActivity2.this);
-            progress.setCancelable(false);
-            progress.setTitle(R.string.app_name);
-            progress.setMessage(getText(R.string.please_wait));
-            progress.show();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    APIFactory.getInstance(MainActivity2.this).initWallet();
-
-                    if (progress != null && progress.isShowing()) {
-                        progress.dismiss();
-                        progress = null;
-                    }
-
-                    Intent intent = new Intent(MainActivity2.this, SendActivity.class);
-                    intent.putExtra("uri", strUri);
-                    intent.putExtra("pcode", strPCode);
-                    startActivity(intent);
-
-                    Looper.loop();
-
-                }
-            }).start();
-
-        } else if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
+          if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
                 doSelectNet();
@@ -414,6 +415,9 @@ public class MainActivity2 extends Activity {
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
             intent.putExtra("notifTx", true);
             intent.putExtra("fetch", true);
+            if(getBundleExtras()!=null){
+                intent.putExtras(getBundleExtras());
+            }
             startActivity(intent);
         } else {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
@@ -423,8 +427,10 @@ public class MainActivity2 extends Activity {
     }
 
     private void doSelectNet() {
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+        if(dlg!=null){
+            return;
+        }
+          dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.select_network)
                 .setCancelable(false)

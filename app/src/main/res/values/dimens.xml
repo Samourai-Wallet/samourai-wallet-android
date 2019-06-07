@@ -5,8 +5,19 @@
          https://developer.android.com/design/patterns/navigation-drawer.html -->
 
 
+    <dimen name="balance_toolbar_text_size">
+        46sp
+    </dimen>
+
+    <dimen name="pinentry_box_size">
+        68dp
+    </dimen>
+
     <dimen name="list_item_spacing">
         16dp
+    </dimen>
+    <dimen name="pin_entry_key_size">
+        86dp
     </dimen>
     <dimen name="list_item_spacing_half">
         8dp

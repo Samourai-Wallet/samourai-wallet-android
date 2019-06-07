@@ -814,8 +814,6 @@ public class CahootsUtil {
 
         String zpub = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsA = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
-//        inputsA.put(outpoint_A0, Triple.of(Hex.decode("0221b719bc26fb49971c7dd328a6c7e4d17dfbf4e2217bee33a65c53ed3daf041e"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/4"));
-//        inputsA.put(outpoint_A1, Triple.of(Hex.decode("020ab261e1a3cf986ecb3cd02299de36295e804fd799934dc5c99dde0d25e71b93"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/2"));
 
         for(UTXO utxo : selectedUTXO)  {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
@@ -830,23 +828,14 @@ public class CahootsUtil {
         // contributor mix output
         int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().getAddrIdx();
         SegwitAddress segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0, idx);
+        if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
+            segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0, idx + 1);
+        }
         HashMap<_TransactionOutput, Triple<byte[], byte[], String>> outputsA = new HashMap<_TransactionOutput, Triple<byte[], byte[], String>>();
         Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress0.getBech32AsString());
         byte[] scriptPubKey_A0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
         _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey_A0);
         outputsA.put(output_A0, Triple.of(segwitAddress0.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/0/" + idx));
-
-        // contributor is also receiver, check for address re-use here
-        if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
-            SegwitAddress segwitAddress1 = BIP84Util.getInstance(context).getAddressAt(0, idx + 1);
-            Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress1.getBech32AsString());
-            byte[] scriptPubKey1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
-            TransactionOutput output1 = new TransactionOutput(params, null, Coin.valueOf(stonewall0.getSpendAmount()), scriptPubKey1);
-            Transaction tx = stonewall0.getTransaction();
-            tx.clearOutputs();
-            tx.addOutput(output1);
-            stonewall0.getPSBT().setTransaction(tx);
-        }
 
         // contributor change output
         idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
@@ -945,14 +934,6 @@ public class CahootsUtil {
         byte[] scriptPubKey_B0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
         _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B0);
         outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
-
-        // destination mix output
-        /*
-        Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", stonewall1.getDestinationAddress());
-        byte[] scriptPubKey_B1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
-        _TransactionOutput output_B1 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B1);
-        outputsB.put(output_B1, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
-        */
 
         STONEWALLx2 stonewall2 = new STONEWALLx2(stonewall1);
         stonewall2.inc(inputsB, outputsB, null);

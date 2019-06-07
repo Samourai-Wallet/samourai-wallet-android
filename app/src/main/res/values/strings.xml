@@ -98,6 +98,8 @@
     <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
     <string name="options_indexes">Wallet indexes</string>
     <string name="options_indexes2">Current index values for this wallet.</string>
+    <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -684,5 +686,26 @@
     <string name="dojo_headline">Power Samourai with your  own personal DOJO full node</string>
     <string name="connect_to_existing_dojo">Connect to existing Dojo</string>
     <string name="preorder">preorder</string>
+    <string name="add_new">Add New</string>
+    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="follow">Follow</string>
+    <string name="wallet_locked">Wallet Locked</string>
+    <string name="address">Address</string>
+
+    <string name="is_offline">Samourai is offline</string>
+    <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
+    <string name="you_received_s">You received</string>
+    <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
+    <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
+    <string name="initializing_tor">initializing Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
+    <string name="message_copied">message copied</string>
+    <string name="scan_code">Scan Code</string>
+    <string name="follows_you">Follows you</string>
+    <string name="edit_paynym">Edit paynym</string>
+    <string name="sycing_pcodes">Syncing payment codes</string>
+    <string name="sync_complete">Payment code sync complete</string>
+    <string name="options_paynym_indexes">Show PayNym indexes</string>
 
 </resources>

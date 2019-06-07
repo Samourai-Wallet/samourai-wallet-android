@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number|textMultiLine"
                 android:fontFamily="@font/roboto_mono"
+                android:imeOptions="flagNoPersonalizedLearning"
                 android:hint="BTC" />
 
         </android.support.design.widget.TextInputLayout>
@@ -49,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number|textMultiLine"
                 android:fontFamily="@font/roboto_mono"
+                android:imeOptions="flagNoPersonalizedLearning"
                 android:hint="sat" />
 
         </android.support.design.widget.TextInputLayout>

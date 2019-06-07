@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/close_qr_modal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Close Button"
+            android:padding="12dp"
+            android:src="@drawable/ic_close_white_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/share_paynym_pcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Close Button"
+            android:padding="12dp"
+            android:src="@drawable/ic_share_white_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/paynym_qr_image_view"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.527"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/close_qr_modal"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/paynym_string_pcode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="60dp"
+            android:background="?selectableItemBackground"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/paynym_qr_image_view"
+            app:layout_constraintStart_toStartOf="@+id/paynym_qr_image_view"
+            app:layout_constraintTop_toBottomOf="@+id/paynym_qr_image_view"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/paynym_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/close_qr_modal"
+            app:layout_constraintEnd_toStartOf="@+id/share_paynym_pcode"
+            app:layout_constraintStart_toEndOf="@+id/close_qr_modal"
+            app:layout_constraintTop_toTopOf="@+id/close_qr_modal" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
