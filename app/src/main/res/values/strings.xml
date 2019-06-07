@@ -35,6 +35,10 @@
     <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
     <string name="options_xpub84">Show Segwit ZPUB</string>
     <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
+    <string name="options_xpub84_premix">Show Whirlpool pre-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
+    <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
@@ -100,6 +104,7 @@
     <string name="options_indexes2">Current index values for this wallet.</string>
     <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
+    <string name="options_postmix">Spend from post-mix Whirlpool</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -707,5 +712,15 @@
     <string name="sycing_pcodes">Syncing payment codes</string>
     <string name="sync_complete">Payment code sync complete</string>
     <string name="options_paynym_indexes">Show PayNym indexes</string>
+
+    <string name="create_password">Create password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="pairing_password">Define pairing password: (6-255 characters)</string>
+    <string name="password_error">Error creating password</string>
+    <string name="password_invalid">Invalid password</string>
+
+    <string name="review_whirlpool">Review Whirlpool Details</string>
+    <string name="total_selected">Total selected</string>
+    <string name="cycle">Cycle</string>
 
 </resources>

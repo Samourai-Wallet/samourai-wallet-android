@@ -66,7 +66,7 @@ public class AddressCalcActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 
-                if(position == 3 || position == 4)    {
+                if(position == 3)    {
                     tvChain.setVisibility(View.INVISIBLE);
                     rChain.setVisibility(View.INVISIBLE);
                 }
@@ -106,7 +106,7 @@ public class AddressCalcActivity extends Activity {
 
                     int chain = 0;
                     int selectedId = rChain.getCheckedRadioButtonId();
-                    if(spType.getSelectedItemPosition() == 3 || spType.getSelectedItemPosition() == 4)    {
+                    if(spType.getSelectedItemPosition() == 3)    {
                         chain = 0;
                     }
                     else if(selectedId == R.id.change)    {

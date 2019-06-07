@@ -16,22 +16,32 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewWhirlpoolCycle extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CoinsAdapter coinsAdapter;
-    private ArrayList<Coin> coins = new ArrayList<Coin>();
+    private List<Coin> coins = new ArrayList<Coin>();
+    private List<MyTransactionOutPoint> outPoints = new ArrayList<MyTransactionOutPoint>();
     private ViewGroup reviewButton;
+    private TextView tvTotalSelected = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +52,10 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tvTotalSelected = findViewById(R.id.totalSelected);
         reviewButton = findViewById(R.id.review_button);
-        coinsAdapter = new CoinsAdapter(this, coins);
-        loadDummyCoins();
+        coinsAdapter = new CoinsAdapter(this, coins, tvTotalSelected);
+        loadUTXOs();
         recyclerView.setAdapter(coinsAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new SeparatorDecoration(this, ContextCompat.getColor(this, R.color.item_separator_grey), 1));
@@ -52,18 +63,27 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         reviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(NewWhirlpoolCycle.this,"Selected--->   ".concat(getSelectedCoins().toString()),Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(NewWhirlpoolCycle.this,WhirlPoolActivity.class);
-                startActivity(intent);
 
+                long totalSelected = 0L;
+                for(Coin coin : coins)   {
+                    if(coin.getSelected())  {
+                        totalSelected += coin.getValue();
+                    }
+                }
+
+                Toast.makeText(NewWhirlpoolCycle.this,"Selected: ".concat(getSelectedCoins().toString() + "\n" + org.bitcoinj.core.Coin.valueOf(totalSelected).toPlainString().concat(" BTC")),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(NewWhirlpoolCycle.this, WhirlPoolActivity.class);
+                intent.putExtra("total", totalSelected);
+                startActivity(intent);
             }
         });
-    }
 
+        tvTotalSelected.setText(getText(R.string.total_selected) + ": " + "0 BTC");
+    }
 
     private ArrayList<Coin> getSelectedCoins() {
         ArrayList<Coin> coins = new ArrayList<Coin>();
-        ArrayList<Coin> adapterCoins = coinsAdapter.getCoins();
+        List<Coin> adapterCoins = coinsAdapter.getCoins();
         for (int i = 0; i < coinsAdapter.getCoins().size(); i++) {
             if (adapterCoins.get(i).getSelected()) {
                 coins.add(adapterCoins.get(i));
@@ -72,19 +92,20 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
         return coins;
     }
 
-    private void loadDummyCoins() {
-        for (int i = 0; i <= 100; i++) {
+    private void loadUTXOs() {
+
+        List<UTXO> utxos = APIFactory.getInstance(NewWhirlpoolCycle.this).getUtxos(true);
+        outPoints.clear();
+        for(UTXO utxo : utxos)  {
+            outPoints.addAll(utxo.getOutpoints());
+        }
+        for(MyTransactionOutPoint outPoint : outPoints)   {
             Coin coin = new Coin();
-            if(i/2==4){
-                // generating disabled coin
-                coin.setBlocked(true);
-            }
-            coin.setAddress("16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5");
-            coin.setValue(3.1F);
+            coin.setAddress(outPoint.getAddress());
+            coin.setValue(outPoint.getValue().longValue());
             coins.add(coin);
         }
     }
-
 
     // RV decorator that sets custom divider for the list
     private class SeparatorDecoration extends RecyclerView.ItemDecoration {
@@ -133,4 +154,5 @@ public class NewWhirlpoolCycle extends AppCompatActivity {
             }
         }
     }
+
 }

@@ -60,6 +60,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.CharSequenceX;
@@ -68,6 +69,7 @@ import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.yanzhenjie.zbar.Symbol;
 
 import java.io.BufferedReader;
@@ -488,7 +490,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference xpubPref = (Preference) findPreference("xpub");
                 xpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(44);
+                        getXPUB(44, 0);
                         return true;
                     }
                 });
@@ -496,7 +498,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference ypubPref = (Preference) findPreference("ypub");
                 ypubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(49);
+                        getXPUB(49, 0);
                         return true;
                     }
                 });
@@ -504,7 +506,23 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 Preference zpubPref = (Preference) findPreference("zpub");
                 zpubPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
-                        getXPUB(84);
+                        getXPUB(84, 0);
+                        return true;
+                    }
+                });
+
+                Preference zpubPrePref = (Preference) findPreference("zpub_pre");
+                zpubPrePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount());
+                        return true;
+                    }
+                });
+
+                Preference zpubPostPref = (Preference) findPreference("zpub_post");
+                zpubPostPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix());
                         return true;
                     }
                 });
@@ -983,20 +1001,20 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB(int purpose)	{
+    private void getXPUB(int purpose, int account)	{
 
         String xpub = "";
 
         switch(purpose)    {
             case 49:
-                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).ypubstr();
+                xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(account).ypubstr();
                 break;
             case 84:
-                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).zpubstr();
+                xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(account).zpubstr();
                 break;
             default:
                 try {
-                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).xpubstr();
+                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(account).xpubstr();
                 }
                 catch (IOException ioe) {
                     ioe.printStackTrace();
@@ -1461,11 +1479,23 @@ public class SettingsActivity2 extends PreferenceActivity	{
         int idxBIP49Internal = 0;
         int idxBIP44External = 0;
         int idxBIP44Internal = 0;
+        int idxPremixExternal = 0;
+        int idxPremixInternal = 0;
+        int idxPostmixExternal = 0;
+        int idxPostmixInternal = 0;
 
         idxBIP84External = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getReceive().getAddrIdx();
         idxBIP84Internal = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49External = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getReceive().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
+//        idxPremixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getReceive().getAddrIdx();
+//        idxPremixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getChange().getAddrIdx();
+//        idxPremixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreReceiveIdx();
+//        idxPremixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreChangeIdx();
+//        idxPostmixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getReceive().getAddrIdx();
+//        idxPostmixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
+        idxPostmixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostReceiveIdx();
+        idxPostmixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostChangeIdx();
 
         try {
             idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
@@ -1487,6 +1517,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
         builder.append("84 receive :" + idxBIP84External + "\n");
         builder.append("84 change :" + idxBIP84Internal + "\n");
         builder.append("Ricochet :" + RicochetMeta.getInstance(SettingsActivity2.this).getIndex() + "\n");
+//        builder.append("Premix receive :" + idxPremixExternal + "\n");
+//        builder.append("Premix change :" + idxPremixInternal + "\n");
+        builder.append("Postmix receive :" + idxPostmixExternal + "\n");
+        builder.append("Postmix change :" + idxPostmixInternal + "\n");
 
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
@@ -1661,7 +1695,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         final String strCahoots = edCahoots.getText().toString().trim();
 
-                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
+                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots, 0);
 
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1738,7 +1772,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
     }
-
+/*
     private void doWhirlpoolGUIPairing()    {
 
         JSONObject pairingObj = null;
@@ -1808,6 +1842,205 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 })
                 .show();
+
+    }
+*/
+    private void doWhirlpoolGUIPairing()    {
+
+        final JSONObject pairingObj = new JSONObject();
+        final JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("type", "whirlpool.gui");
+            jsonObj.put("version", "2.0.0");
+            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
+
+            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
+            if(SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this))    {
+                String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                jsonObj.put("mnemonic", encrypted);
+                jsonObj.put("passphrase", true);
+
+                pairingObj.put("pairing", jsonObj);
+
+                displayWhirlpoolGUIPairing(pairingObj);
+            }
+            else    {
+
+                final EditText password = new EditText(SettingsActivity2.this);
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                password.setHint(R.string.create_password);
+
+                new AlertDialog.Builder(SettingsActivity2.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.pairing_password)
+                        .setView(password)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                final String pw = password.getText().toString();
+                                if (pw != null && pw.length() >= AppUtil.MIN_BACKUP_PW_LENGTH && pw.length() <= AppUtil.MAX_BACKUP_PW_LENGTH) {
+
+                                    final EditText password2 = new EditText(SettingsActivity2.this);
+                                    password2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                                    password2.setHint(R.string.confirm_password);
+
+                                    new AlertDialog.Builder(SettingsActivity2.this)
+                                            .setTitle(R.string.app_name)
+                                            .setMessage(R.string.pairing_password)
+                                            .setView(password2)
+                                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+
+                                                    final String pw2 = password2.getText().toString();
+
+                                                    if (pw2 != null && pw2.equals(pw)) {
+
+                                                        try {
+                                                            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                            jsonObj.put("mnemonic", encrypted);
+                                                            jsonObj.put("passphrase", false);
+
+                                                            pairingObj.put("pairing", jsonObj);
+
+                                                            displayWhirlpoolGUIPairing(pairingObj);
+                                                        }
+                                                        catch(Exception e) {
+                                                            ;
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(SettingsActivity2.this, R.string.password_error, Toast.LENGTH_SHORT).show();
+                                                    }
+
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    ;
+                                                }
+                                            }).show();
+
+                                } else {
+                                    Toast.makeText(SettingsActivity2.this, R.string.password_invalid, Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ;
+                            }
+                        }).show();
+
+            }
+
+        }
+        catch(Exception e) {
+            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
+            return;
+        }
+/*
+        if(pairingObj == null || !pairingObj.has("pairing"))    {
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(pairingObj.toString());
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+        pairingLayout.setOrientation(LinearLayout.VERTICAL);
+        pairingLayout.addView(showQR);
+        pairingLayout.addView(showText);
+
+        final String _pairing = pairingObj.toString();
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(pairingLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                })
+                .show();
+*/
+    }
+
+    private void displayWhirlpoolGUIPairing(JSONObject pairingObj)    {
+
+        if(pairingObj == null || !pairingObj.has("pairing"))    {
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(pairingObj.toString());
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+        pairingLayout.setOrientation(LinearLayout.VERTICAL);
+        pairingLayout.addView(showQR);
+        pairingLayout.addView(showText);
+
+        final String _pairing = pairingObj.toString();
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(pairingLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                })
+                .show();
+
 
     }
 
