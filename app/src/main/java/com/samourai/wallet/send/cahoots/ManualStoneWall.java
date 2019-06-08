@@ -1,6 +1,5 @@
 package com.samourai.wallet.send.cahoots;
 
-import android.animation.Animator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,27 +8,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
 
 public class ManualStoneWall extends AppCompatActivity {
-    private ImageView qrCode;
+
     private ViewPager viewPager;
-    private EntropyBar entropyBar;
-    private Button broadCastBtn;
-    private TextView instructionsTxt;
     private HorizontalStepsViewIndicator stepsViewGroup;
     private ViewGroup broadCastReviewView;
-    private Animator pagerAnimation;
     private ArrayList<Fragment> steps = new ArrayList<>();
     private CahootReviewFragment cahootReviewFragment;
 
