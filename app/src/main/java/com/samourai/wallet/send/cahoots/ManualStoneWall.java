@@ -1,96 +1,81 @@
 package com.samourai.wallet.send.cahoots;
 
-import android.graphics.Bitmap;
-import android.graphics.Point;
+import android.animation.Animator;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.android.Contents;
-import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
-import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.widgets.EntropyBar;
-import com.samourai.wallet.widgets.StepCircleView;
+import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
+import com.samourai.wallet.widgets.ViewPager;
+
+import java.util.ArrayList;
 
 public class ManualStoneWall extends AppCompatActivity {
     private ImageView qrCode;
-    private ViewFlipper viewFlipper;
+    private ViewPager viewPager;
     private EntropyBar entropyBar;
     private Button broadCastBtn;
     private TextView instructionsTxt;
-    private StepCircleView.StepCircleViewGroup stepsViewGroup;
+    private HorizontalStepsViewIndicator stepsViewGroup;
+    private ViewGroup broadCastReviewView;
+    private Animator pagerAnimation;
+    private ArrayList<Fragment> steps = new ArrayList<>();
+    private CahootReviewFragment cahootReviewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_stone_wall);
         setSupportActionBar(findViewById(R.id.toolbar));
-
-        stepsViewGroup = findViewById(R.id.cahoot_step_group);
-        qrCode = findViewById(R.id.qr_code_imageview);
-        viewFlipper = findViewById(R.id.view_flipper);
-        broadCastBtn = findViewById(R.id.manual_stonewall_broadcast);
-        entropyBar = findViewById(R.id.manual_stonewall_entropy);
-        instructionsTxt = findViewById(R.id.stonewall_instruction);
-
-        qrCode.setImageBitmap(generateQRCode("PlaceHolder : A modern bitcoin wallet hand forged to keep your transactions private your identity masked and your funds secured."));
-        entropyBar.setMaxBars(4);
-        entropyBar.setRange(2);
-
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        cahootReviewFragment = CahootReviewFragment.newInstance();
+        stepsViewGroup = findViewById(R.id.step_view);
+        viewPager = findViewById(R.id.view_flipper);
 
-        new Handler().postDelayed(() -> {
-            stepsViewGroup.setStep(1);
-        }, 1000);
+        createSteps();
+        viewPager.enableSwipe(false);
+        stepsViewGroup.setTotalSteps(5);
+//        stepsViewGroup.moveToStep(1);
+        broadCastReviewView = (ViewGroup) getLayoutInflater().inflate(R.layout.stonewall_broadcast_details, (ViewGroup) stepsViewGroup.getRootView(), false);
+        viewPager.setAdapter(new StepAdapter(getSupportFragmentManager()));
+        viewPager.addOnPageChangeListener(new android.support.v4.view.ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        new Handler().postDelayed(() -> {
-            stepsViewGroup.setStep(2);
-        }, 3000);
+            }
 
-        new Handler().postDelayed(this::showReview, 4000);
+            @Override
+            public void onPageSelected(int position) {
+                stepsViewGroup.setStep(position + 1);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
-
-    private void showReview() {
-        stepsViewGroup.setStep(5);
-        viewFlipper.showNext();
-        broadCastBtn.setVisibility(View.VISIBLE);
-        instructionsTxt.setText(getString(R.string.review_tx_before_braodcast));
-    }
-
-    private Bitmap generateQRCode(String uri) {
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int imgWidth = size.x - 130;
-
-
-        Bitmap bitmap = null;
-
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(uri, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), imgWidth);
-
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
+    private void createSteps() {
+        for (int i = 0; i < 4; i++) {
+            CahootsStepFragment stepView = CahootsStepFragment.newInstance(i);
+            stepView.setCahootsScanListener(listener);
+            steps.add(stepView);
         }
-
-        return bitmap;
+        steps.add(cahootReviewFragment);
     }
 
 
@@ -106,22 +91,42 @@ public class ManualStoneWall extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
-        switch (item.getItemId()) {
-            case R.id.scan_qr_manual_stonewall: {
 
-                CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-                cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
-                cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
-                    cameraFragmentBottomSheet.dismissAllowingStateLoss();
-                    processScan(code);
-                });
-            }
-        }
         return true;
     }
 
+    private CahootsStepFragment.CahootsScanListener listener = new CahootsStepFragment.CahootsScanListener() {
+        @Override
+        public void onScan(int step, String qrData) {
+            Toast.makeText(getApplicationContext(), String.valueOf(step), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), qrData, Toast.LENGTH_LONG).show();
+            viewPager.setCurrentItem(step + 1, true);
+
+        }
+    };
+
+
     private void processScan(String code) {
-        Toast.makeText(getApplicationContext(), code, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), code, Toast.LENGTH_LONG).show();
     }
+
+    private class StepAdapter extends FragmentPagerAdapter {
+
+
+        StepAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return steps.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return steps.size();
+        }
+    }
+
 
 }

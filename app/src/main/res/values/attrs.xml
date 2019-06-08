@@ -9,11 +9,6 @@
         <attr name="civ_circle_background_color" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="StepCircleView">
-         <attr name="step_text" format="string"/>
-         <attr name="active" format="boolean"/>
-    </declare-styleable>
-
     <declare-styleable name="CodeScannerView">
         <attr format="color" name="maskColor"/>
         <attr format="color" name="frameColor"/>
