@@ -54,7 +54,7 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -105,7 +105,6 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.yanzhenjie.zbar.Symbol;
 
 import java.io.IOException;
 import java.text.DecimalFormat;

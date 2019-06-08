@@ -25,7 +25,7 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.boost.CPFPTask;
-import com.samourai.wallet.SendActivity;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.DateUtil;
 import com.samourai.wallet.widgets.CircleImageView;
 import com.squareup.picasso.Picasso;

@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
+import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
 public class SendParams	{
 

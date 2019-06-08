@@ -243,7 +243,7 @@
         </provider>
 
         <activity
-            android:name=".SendActivity"
+            android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@style/ui_2_theme"

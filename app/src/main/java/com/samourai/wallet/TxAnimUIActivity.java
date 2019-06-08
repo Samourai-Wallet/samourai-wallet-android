@@ -38,6 +38,7 @@ import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFSpend;
 import com.samourai.wallet.send.RBFUtil;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXOFactory;
