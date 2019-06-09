@@ -60,6 +60,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.send.cahoots.SelectCahootsType;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -123,7 +124,7 @@ public class SendActivity extends AppCompatActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
     private Button btnReview, btnSend;
-    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, stoneWallSwitch;
+    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, cahootsSwitch;
     private SeekBar feeSeekBar;
     private EntropyBar entropyBar;
     private Group ricochetStaggeredOptionGroup;
@@ -195,6 +196,7 @@ public class SendActivity extends AppCompatActivity {
         //methods which returns root viewGroup
         entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
+        cahootsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.cahoots_switch);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
         ricochetTitle = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_desc);
         ricochetDesc = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_title);
@@ -207,9 +209,9 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-        stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
+//        stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
         stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
-        stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
+//        stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
         entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
         entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
         entropyBar.setMaxBars(4);
@@ -246,6 +248,8 @@ public class SendActivity extends AppCompatActivity {
 
         setUpRicochet();
 
+        setUpCahoots();
+
         setUpFee();
 
         setBalance();
@@ -277,6 +281,31 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
+    private void setUpCahoots() {
+        cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            final boolean[] chosen = {false};
+            if (b) {
+                SelectCahootsType cahootsType = new SelectCahootsType();
+                cahootsType.show(getSupportFragmentManager(), cahootsType.getTag());
+                cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
+                    @Override
+                    public void onSelect(SelectCahootsType.type type) {
+                        chosen[0] = true;
+
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                        if (!chosen[0]) {
+                            compoundButton.setChecked(false);
+                        }
+                    }
+                });
+//                cahootsType.
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -289,15 +318,15 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpBoltzman() {
         stonewallOptionText.setAlpha(1f);
-        stoneWallSwitch.setAlpha(1f);
-        stoneWallDesc.setAlpha(1f);
-        stoneWallSwitch.setChecked(true);
-        stoneWallSwitch.setEnabled(true);
-        stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-            //small delay for storing prefs.
-            new Handler().postDelayed(() -> prepareSpend(), 100);
-        });
+//        stoneWallSwitch.setAlpha(1f);
+//        stoneWallDesc.setAlpha(1f);
+//        stoneWallSwitch.setChecked(true);
+//        stoneWallSwitch.setEnabled(true);
+//        stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+//            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+//            //small delay for storing prefs.
+//            new Handler().postDelayed(() -> prepareSpend(), 100);
+//        });
     }
 
     private void checkRicochetPossibility() {
@@ -529,7 +558,7 @@ public class SendActivity extends AppCompatActivity {
                 SPEND_TYPE = SPEND_RICOCHET;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true);
             } else {
-                SPEND_TYPE = stoneWallSwitch.isChecked() ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+//                SPEND_TYPE = stoneWallSwitch.isChecked() ? SPEND_BOLTZMANN : SPEND_SIMPLE;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, false);
             }
 
@@ -1282,10 +1311,10 @@ public class SendActivity extends AppCompatActivity {
             if (!canDoBoltzmann) {
                 restoreChangeIndexes();
                 stonewallOptionText.setAlpha(.6f);
-                stoneWallSwitch.setAlpha(.6f);
-                stoneWallDesc.setAlpha(.6f);
-                stoneWallSwitch.setChecked(false);
-                stoneWallSwitch.setEnabled(false);
+//                stoneWallSwitch.setAlpha(.6f);
+//                stoneWallDesc.setAlpha(.6f);
+//                stoneWallSwitch.setChecked(false);
+//                stoneWallSwitch.setEnabled(false);
 //                strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
             }
 
@@ -1769,7 +1798,7 @@ public class SendActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-          if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
+        if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
             ;
         } else if (resultCode == Activity.RESULT_OK && requestCode == RICOCHET) {
             ;
@@ -1997,7 +2026,7 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void doWhirlpool()  {
+    private void doWhirlpool() {
         Intent intent = new Intent(SendActivity.this, WhirlpoolMain.class);
         startActivity(intent);
     }

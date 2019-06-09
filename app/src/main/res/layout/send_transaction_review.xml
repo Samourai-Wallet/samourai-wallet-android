@@ -211,7 +211,7 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/stone_wall_review_layout"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp">
 
@@ -220,7 +220,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_begin="205dp" />
+                    app:layout_constraintGuide_percent="1.006329" />
 
                 <TextView
                     android:id="@+id/textView_stonewall"
@@ -230,7 +230,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="STONEWALL protection"
+                    android:text="STONEWALLx2"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -240,113 +240,120 @@
                     app:layout_constraintVertical_bias="0.0" />
 
 
-                <TextView
-                    android:id="@+id/textView14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Transaction Entropy"
-                    android:textColor="@color/txt_grey"
-                    android:textSize="13sp"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@+id/textView15"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/stonewall_desc"
-                    app:layout_constraintTop_toBottomOf="@+id/stonewall_desc" />
-
-                <TextView
-                    android:id="@+id/textView15"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/roboto_mono"
-                    android:text="0 bits"
-                    android:textColor="@color/white"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/textView14"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
-
                 <com.samourai.wallet.widgets.EntropyBar
                     android:id="@+id/entropyBar"
                     android:layout_width="24dp"
                     android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="4dp"
                     android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView15"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/textView15"
-                    app:layout_constraintTop_toTopOf="@+id/textView15" />
-
-                <TextView
-                    android:id="@+id/stonewall_desc"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="32dp"
-                    android:text="@string/stonewall_increases_deniability"
-                    android:textColor="@color/txt_grey"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toStartOf="@+id/stone_wall_radio_btn"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/textView_stonewall"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_stonewall" />
-
-                <Switch
-                    android:id="@+id/stone_wall_radio_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/stonewall_desc"
-                    app:layout_constraintEnd_toEndOf="@+id/textView_stonewall"
-                    app:layout_constraintTop_toTopOf="@+id/stonewall_desc" />
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Transaction Entropy"
-                    android:textSize="13sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView15"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/stonewall_desc"
-                    app:layout_constraintTop_toBottomOf="@+id/stonewall_desc"
-                    app:layout_constraintVertical_bias="0.0" />
+                    tools:layout_editor_absoluteX="363dp" />
 
                 <TextView
                     android:id="@+id/entropy_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:fontFamily="@font/roboto_mono"
                     android:text="0 bits"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/textView4"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/textView4"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                    app:layout_constraintBottom_toBottomOf="@+id/textView80"
+                    app:layout_constraintEnd_toStartOf="@+id/entropy_bar"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/textView80"
+                    app:layout_constraintTop_toTopOf="@+id/textView80" />
 
                 <com.samourai.wallet.widgets.EntropyBar
                     android:id="@+id/entropy_bar"
                     android:layout_width="24dp"
                     android:layout_height="0dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/entropy_value"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/entropy_value" />
+
+                <TextView
+                    android:id="@+id/textView78"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView15"
-                    app:layout_constraintStart_toEndOf="@+id/entropy_value"
-                    app:layout_constraintTop_toTopOf="@+id/textView15" />
+                    android:layout_marginTop="24dp"
+                    android:text="Mixing participant"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/textView_stonewall"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_stonewall" />
+
+                <TextView
+                    android:id="@+id/textView79"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Samourai Wallet"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView78"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/textView78"
+                    app:layout_constraintTop_toTopOf="@+id/textView78" />
+
+                <TextView
+                    android:id="@+id/textView80"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/estimated_entropy"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/textView78"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView78" />
+
+                <View
+                    android:id="@+id/divider5"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView80" />
+
+                <TextView
+                    android:id="@+id/textView82"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Extra Fee"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView80"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView80"
+                    app:layout_constraintTop_toBottomOf="@+id/divider5"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/textView83"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView82"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/textView82"
+                    app:layout_constraintTop_toTopOf="@+id/textView82" />
 
             </android.support.constraint.ConstraintLayout>
 
