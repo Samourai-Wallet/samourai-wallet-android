@@ -81,6 +81,8 @@ public class PayloadUtil	{
     private final static String strUTXOFilename = "samourai.utxo";
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
+    private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strUTXOPostFilename = "samourai.utxo.post";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -149,6 +151,12 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
+        }
+    }
+
     public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
         if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -171,6 +179,18 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeUTXOPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+            }
+        }
+    }
+
     public void serializeFees(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, null, strFeesFilename);
@@ -189,6 +209,14 @@ public class PayloadUtil	{
 
     public JSONObject deserializeUTXO()  throws IOException, JSONException  {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
+    }
+
+    public JSONObject deserializeMultiAddrPost()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
+    }
+
+    public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
     }
 
     public JSONObject deserializeFees()  throws IOException, JSONException  {
