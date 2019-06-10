@@ -722,5 +722,6 @@
     <string name="review_whirlpool">Review Whirlpool Details</string>
     <string name="total_selected">Total selected</string>
     <string name="cycle">Cycle</string>
+    <string name="postmix_without_boltzmann">Please note that spending from your post-mix account without using STONEWALL will result in a loss of the privacy gained through Whirlpool.</string>
 
 </resources>

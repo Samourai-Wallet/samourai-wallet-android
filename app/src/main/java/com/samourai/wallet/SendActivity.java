@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -301,6 +302,23 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch.setChecked(true);
         stoneWallSwitch.setEnabled(true);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+
+            if(account != 0 && (checked == false))    {
+//                Toast.makeText(SendActivity.this, R.string.postmix_without_boltzmann, Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.postmix_without_boltzmann)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        });
+                if (!isFinishing()) {
+                    dlg.show();
+                }
+            }
+
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
             //small delay for storing prefs.
             new Handler().postDelayed(() -> prepareSpend(), 100);
@@ -530,6 +548,15 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpRicochet() {
+
+        if(account != 0)    {
+            ricochetHopsSwitch.setChecked(false);
+            ricochetStaggeredDelivery.setChecked(false);
+            ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
+            layoutPremiums.setVisibility(View.GONE);
+            return;
+        }
+
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {

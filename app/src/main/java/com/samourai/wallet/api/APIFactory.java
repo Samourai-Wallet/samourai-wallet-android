@@ -2095,7 +2095,7 @@ public class APIFactory	{
             String response = null;
 
             if(AppUtil.getInstance(context).isOfflineMode())    {
-                response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
+                response = PayloadUtil.getInstance(context).deserializeMultiAddrPost().toString();
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 // use POST
@@ -2144,7 +2144,7 @@ public class APIFactory	{
         try {
 
             if(AppUtil.getInstance(context).isOfflineMode())    {
-                response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+                response = PayloadUtil.getInstance(context).deserializeUTXOPost().toString();
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 StringBuilder args = new StringBuilder();
@@ -2231,7 +2231,7 @@ public class APIFactory	{
             }
 
             try {
-                PayloadUtil.getInstance(context).serializeMultiAddr(jsonObject);
+                PayloadUtil.getInstance(context).serializeMultiAddrPost(jsonObject);
             }
             catch(IOException | DecryptionException e) {
                 ;
@@ -2310,10 +2310,12 @@ public class APIFactory	{
 
                 }
 
+                PayloadUtil.getInstance(context).serializeUTXOPost(jsonObj);
+
                 return true;
 
             }
-            catch(JSONException je) {
+            catch(Exception j) {
                 ;
             }
 
