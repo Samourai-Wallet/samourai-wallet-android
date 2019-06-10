@@ -302,6 +302,23 @@ public class SendActivity extends AppCompatActivity {
         stoneWallSwitch.setChecked(true);
         stoneWallSwitch.setEnabled(true);
         stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+
+            if(account != 0 && (checked == false))    {
+//                Toast.makeText(SendActivity.this, R.string.postmix_without_boltzmann, Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.postmix_without_boltzmann)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        });
+                if (!isFinishing()) {
+                    dlg.show();
+                }
+            }
+
             SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
             //small delay for storing prefs.
             new Handler().postDelayed(() -> prepareSpend(), 100);
