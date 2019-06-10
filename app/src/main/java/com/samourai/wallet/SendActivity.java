@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -530,6 +531,15 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpRicochet() {
+
+        if(account != 0)    {
+            ricochetHopsSwitch.setChecked(false);
+            ricochetStaggeredDelivery.setChecked(false);
+            ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
+            layoutPremiums.setVisibility(View.GONE);
+            return;
+        }
+
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
