@@ -13,10 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.yanzhenjie.zbar.Symbol;
 
 public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
@@ -45,12 +46,7 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Dialog dialog = getDialog();
 
-        if (dialog != null) {
-            View bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
-            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        }
         View view = getView();
         if (view != null) {
             view.post(() -> {
@@ -83,9 +79,11 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
 
         dialog.findViewById(R.id.dojo_scan_qr).setOnClickListener(view -> {
 
-            Intent intent = new Intent(this.getContext(), ZBarScannerActivity.class);
-            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-            this.startActivityForResult(intent, SCAN_QR);
+            CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+            cameraFragmentBottomSheet.show(getActivity().getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+                Toast.makeText(getContext(),"Code : ".concat(code),Toast.LENGTH_SHORT).show();
+            });
 
         });
 

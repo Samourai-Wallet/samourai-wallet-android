@@ -53,6 +53,15 @@
         <item name="android:navigationBarColor">@color/windowDark</item>
     </style>
 
+    <style name="whirlpoolTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:colorAccent">@color/whirlpoolBlue</item>
+        <item name="android:windowBackground">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/whirlpoolBlue</item>
+        <item name="android:colorControlActivated">@color/blue</item>
+        <item name="android:navigationBarColor">@color/windowDark</item>
+    </style>
+
     <style name="ui_2_theme_dark_status" parent="ui_2_theme">
         <item name="android:navigationBarColor">@color/windowDark</item>
         <item name="android:statusBarColor">@color/windowDark</item>
