@@ -628,6 +628,78 @@
     <string name="hide_log">СКРИЙ ЗАПИСА</string>
     <string name="copy">Копиране</string>
     <string name="show_log">Показване на записа</string>
+    <string name="unconfirmed">Непотвърдени</string>
+    <string name="confirmation">Потвърждение</string>
+    <string name="total_available_amount">Всички налични</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Все още нямате PayNym контакти</string>
+
+    <string name="experimental">Експериментални</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Направете всеки харч CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Частично подписана Биткойн транзакция.</string>
+    <string name="import_cahoots">Сканирайте или поставете #Cahoots.</string>
+    <string name="import_psbt">Scan or paste a PSBT.</string>
+    <string name="enter_cahoots">Enter #Cahoots text</string>
+    <string name="enter_psbt">Enter PSBT hex text</string>
+    <string name="create_cahoots">Create #Cahoots spend</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Low</string>
+
+    <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
+    <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
+    <string name="tag_utxo">Label UTXO</string>
+    <string name="boost_transaction_fee">Boost transaction fee</string>
+    <string name="refund">Refund</string>
+
+    <string name="not_cahoots">Invalid #Cahoots</string>
+    <string name="not_valid_json">JSON parsing error</string>
+    <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
+    <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
+    <string name="start_stowaway">Begin Stowaway as spender</string>
+    <string name="start_stonewall">Begin STONEWALL as spender</string>
+    <string name="amount_sats">Enter amount in sats</string>
+    <string name="zero_bits">0 bits</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Display transaction</string>
+    <string name="unrecognized_step">Unrecognized #Cahoots step</string>
+    <string name="cannot_process_stowaway">Cannot process Stowaway</string>
+    <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
+    <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
+    <string name="powering_samourai_wallet_">Powering Samourai Wallet with your own personal node offers the best level of privacy and independence when interacting with the bitcoin network. Dojo makes running a full node easy and simple.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play full bitcoin node\n\n -Automatically configured Tor hidden service\n\n -Independence from default Samourai servers</string>
+    <string name="dojo_connect_instruction">If you already have a Dojo Full Node or are \nrunning the free and open source Dojo Software\non your own hardware, scan the pairing QR code\nlocated on the Dojo Maintenance control panel</string>
+    <string name="dojo_headline">Power Samourai with your  own personal DOJO full node</string>
+    <string name="connect_to_existing_dojo">Connect to existing Dojo</string>
+    <string name="preorder">preorder</string>
+    <string name="add_new">Add New</string>
+    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="follow">Follow</string>
+    <string name="wallet_locked">Wallet Locked</string>
+    <string name="address">Address</string>
+
+    <string name="is_offline">Samourai is offline</string>
+    <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
+    <string name="you_received_s">You received</string>
+    <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
+    <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
+    <string name="initializing_tor">initializing Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
+    <string name="message_copied">message copied</string>
+    <string name="scan_code">Scan Code</string>
+    <string name="follows_you">Follows you</string>
+    <string name="edit_paynym">Edit paynym</string>
+    <string name="sycing_pcodes">Syncing payment codes</string>
+    <string name="sync_complete">Payment code sync complete</string>
+    <string name="options_paynym_indexes">Show PayNym indexes</string>
+
 
 
 </resources>
