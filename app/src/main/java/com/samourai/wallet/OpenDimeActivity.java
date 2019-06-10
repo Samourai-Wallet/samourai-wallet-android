@@ -69,6 +69,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 
+import org.bitcoinj.core.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -699,9 +700,7 @@ public class OpenDimeActivity extends Activity {
                                     if(walletObj != null && walletObj.has("final_balance"))    {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                double btc_balance = (((double)balance) / 1e8);
-
-                                                String strBalance = "" + btc_balance + " BTC";
+                                                String strBalance = "" + Coin.valueOf(balance).toPlainString() + " BTC";
                                                 if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
                                                     btSweep.setVisibility(View.VISIBLE);
                                                 }

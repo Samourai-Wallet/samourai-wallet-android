@@ -2,6 +2,7 @@ package com.samourai.wallet.cahoots;
 
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.util.Z85;
 
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
@@ -30,6 +31,8 @@ public class Cahoots {
     protected long spendAmount = 0L;
     protected HashMap<String,Long> outpoints = null;
     protected String strDestination = null;
+    protected String strPayNymCollab = null;
+    protected String strPayNymInit = null;
     protected NetworkParameters params = null;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
@@ -44,6 +47,8 @@ public class Cahoots {
         this.spendAmount = c.spendAmount;
         this.outpoints = c.outpoints;
         this.strDestination = c.strDestination;
+        this.strPayNymCollab = c.strPayNymCollab;
+        this.strPayNymInit = c.strPayNymInit;
         this.params = c.getParams();
     }
 
@@ -97,6 +102,14 @@ public class Cahoots {
         this.strDestination = strDestination;
     }
 
+    public String getPayNymCollab() {
+        return strPayNymCollab;
+    }
+
+    public String getPayNymInit() {
+        return strPayNymInit;
+    }
+
     public NetworkParameters getParams() {
         return params;
     }
@@ -132,7 +145,7 @@ public class Cahoots {
             obj.put("id", strID);
             obj.put("type", type);
             obj.put("step", step);
-            obj.put("psbt", psbt == null ? "" : psbt.toZ85String());
+            obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
             obj.put("spend_amount", spendAmount);
             JSONArray _outpoints = new JSONArray();
             for(String outpoint : outpoints.keySet())   {
@@ -143,7 +156,11 @@ public class Cahoots {
             }
             obj.put("outpoints", _outpoints);
             obj.put("dest", strDestination == null ? "" : strDestination);
-            obj.put("params", params instanceof TestNet3Params ? "testnet" : "mainnet");
+//            obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
+//            obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
+            if(params instanceof TestNet3Params)    {
+                obj.put("params","testnet");
+            }
 
             cObj.put("cahoots", obj);
         }
@@ -161,8 +178,13 @@ public class Cahoots {
             if(cObj.has("cahoots"))    {
                 obj = cObj.getJSONObject("cahoots");
             }
-            if(obj != null && obj.has("type") && obj.has("step") && obj.has("psbt") && obj.has("ts") && obj.has("id") && obj.has("version") && obj.has("spend_amount") && obj.has("params"))    {
-                this.params = obj.getString("params").equals("testnet") ? TestNet3Params.get() : MainNetParams.get();
+            if(obj != null && obj.has("type") && obj.has("step") && obj.has("psbt") && obj.has("ts") && obj.has("id") && obj.has("version") && obj.has("spend_amount"))    {
+                if(obj.has("params") && obj.getString("params").equals("testnet"))    {
+                    this.params = TestNet3Params.get();
+                }
+                else    {
+                    this.params = MainNetParams.get();
+                }
                 this.version = obj.getInt("version");
                 this.ts = obj.getLong("ts");
                 this.strID = obj.getString("id");
@@ -175,7 +197,9 @@ public class Cahoots {
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
                 this.strDestination = obj.getString("dest");
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(obj.getString("psbt"), params);
+//                this.strPayNymCollab = obj.getString("paynym_collab");
+//                this.strPayNymInit = obj.getString("paynym_init");
+                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
                     this.psbt.read();
                 }
@@ -210,7 +234,7 @@ public class Cahoots {
 
                 long value = outpoints.get(outpoint.getHash().toString() + "-" + outpoint.getIndex());
                 Log.d("Cahoots", "signTx value:" + value);
-//                TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, outpoint.getValue(), Transaction.SigHash.ALL, false);
+
                 TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, Coin.valueOf(value), Transaction.SigHash.ALL, false);
                 final TransactionWitness witness = new TransactionWitness(2);
                 witness.setPush(0, sig.encodeToBitcoin());

@@ -39,18 +39,20 @@ public class PushTx {
 
     public String samourai(String hexString) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? "test/v2/pushtx/" : "v2/pushtx/";
+        String _url = "pushtx/";
 
         try {
             String response = null;
 
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + _url, "tx=" + hexString);
+                String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                response = WebUtil.getInstance(context).postURL(_base + _url, "tx=" + hexString);
             }
             else    {
+                String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR : WebUtil.SAMOURAI_API2_TOR;
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("tx", hexString);
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API + _url, args);
+                response = WebUtil.getInstance(context).tor_postURL(_base + _url, args);
             }
 
             return response;

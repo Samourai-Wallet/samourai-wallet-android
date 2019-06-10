@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,8 +19,6 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -70,7 +67,6 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.TorUtil;
 
 import com.yanzhenjie.zbar.Symbol;
 
@@ -81,8 +77,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
-
-import info.guardianproject.netcipher.proxy.OrbotHelper;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
@@ -212,30 +206,29 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                if(SamouraiWallet.getInstance().isTestNet())    {
+                Preference cahootsPref = (Preference) findPreference("cahoots");
+                cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doCahoots();
+                        return true;
+                    }
+                });
 
-                    Preference cahootsPref = (Preference) findPreference("cahoots");
-                    cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doCahoots();
-                            return true;
-                        }
-                    });
+                Preference psbtPref = (Preference) findPreference("psbt");
+                psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doPSBT();
+                        return true;
+                    }
+                });
 
-                    Preference psbtPref = (Preference) findPreference("psbt");
-                    psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                        public boolean onPreferenceClick(Preference preference) {
-                            doPSBT();
-                            return true;
-                        }
-                    });
-
-                }
-                else    {
-                    PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("txPrefs");
-                    PreferenceGroup xcategory = (PreferenceGroup) findPreference(getResources().getString(R.string.experimental));
-                    preferenceScreen.removePreference(xcategory);
-                }
+                Preference whirlpoolGUIPref = (Preference) findPreference("whirlpool_gui");
+                whirlpoolGUIPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doWhirlpoolGUIPairing();
+                        return true;
+                    }
+                });
 
             }
             else if(strBranch.equals("stealth"))   {
@@ -763,53 +756,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         catch(PackageManager.NameNotFoundException nnfe)	{
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + AppUtil.OPENVPN_PACKAGE_ID));
                             startActivity(intent);
-                        }
-
-                        return true;
-                    }
-                });
-
-                final Preference torPref = (Preference) findPreference("Tor");
-                if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
-                    torPref.setSummary(R.string.tor_install);
-                }
-                else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
-                    torPref.setSummary(R.string.tor_routing_on);
-                }
-                else    {
-                    torPref.setSummary(R.string.tor_routing_off);
-                }
-                torPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-
-                        if(!OrbotHelper.isOrbotInstalled(SettingsActivity2.this))    {
-
-                            new AlertDialog.Builder(SettingsActivity2.this)
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(R.string.you_must_have_orbot)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                            Intent intent = OrbotHelper.getOrbotInstallIntent(SettingsActivity2.this);
-                                            startActivity(intent);
-
-                                        }
-                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    ;
-                                }
-                            }).show();
-
-                        }
-                        else if(TorUtil.getInstance(SettingsActivity2.this).statusFromBroadcast())    {
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(false);
-                            torPref.setSummary(R.string.tor_routing_off);
-                        }
-                        else    {
-                            OrbotHelper.requestStartTor(SettingsActivity2.this);
-                            TorUtil.getInstance(SettingsActivity2.this).setStatusFromBroadcast(true);
-                            torPref.setSummary(R.string.tor_routing_on);
                         }
 
                         return true;
@@ -1683,160 +1629,44 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doCahoots()    {
 
+        final EditText edCahoots = new EditText(SettingsActivity2.this);
+        edCahoots.setSingleLine(false);
+        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edCahoots.setLines(10);
+        edCahoots.setHint(R.string.cahoots);
+        edCahoots.setGravity(Gravity.START);
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                edCahoots.setSelection(0);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+        edCahoots.addTextChangedListener(textWatcher);
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.cahoots)
-                .setCancelable(true)
-                .setPositiveButton(R.string.enter_cahoots, new DialogInterface.OnClickListener() {
+                .setView(edCahoots)
+                .setMessage(R.string.enter_cahoots)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         dialog.dismiss();
 
-                        final EditText edCahoots = new EditText(SettingsActivity2.this);
-                        edCahoots.setSingleLine(false);
-                        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                        edCahoots.setLines(10);
-                        edCahoots.setHint(R.string.cahoots);
-                        edCahoots.setGravity(Gravity.START);
-                        TextWatcher textWatcher = new TextWatcher() {
+                        final String strCahoots = edCahoots.getText().toString().trim();
 
-                            public void afterTextChanged(Editable s) {
-                                edCahoots.setSelection(0);
-                            }
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                ;
-                            }
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                ;
-                            }
-                        };
-                        edCahoots.addTextChangedListener(textWatcher);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edCahoots)
-                                .setMessage(R.string.enter_cahoots)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strCahoots = edCahoots.getText().toString().trim();
-
-                                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
+                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots);
 
                     }
-
-                }).setNegativeButton(R.string.start_stowaway, new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                         dialog.dismiss();
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-                                            CahootsUtil.getInstance(SettingsActivity2.this).doStowaway0(amount);
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
-                    }
-                }).setNeutralButton(R.string.start_stonewall, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                        final EditText edAmount = new EditText(SettingsActivity2.this);
-                        edAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edAmount)
-                                .setMessage(R.string.amount_sats)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strAmount = edAmount.getText().toString().trim();
-                                        try {
-                                            long amount = Long.parseLong(strAmount);
-
-                                            final EditText edAddress = new EditText(SettingsActivity2.this);
-                                            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                                    .setTitle(R.string.app_name)
-                                                    .setView(edAddress)
-                                                    .setMessage(R.string.segwit_address)
-                                                    .setCancelable(false)
-                                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                                                            dialog.dismiss();
-
-                                                            final String strAddress = edAddress.getText().toString().trim();
-                                                            try {
-                                                                CahootsUtil.getInstance(SettingsActivity2.this).doSTONEWALLx2_0(amount, strAddress);
-                                                            }
-                                                            catch(NumberFormatException nfe) {
-                                                                Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                            if(!isFinishing())    {
-                                                dlg.show();
-                                            }
-
-                                        }
-                                        catch(NumberFormatException nfe) {
-                                            Toast.makeText(SettingsActivity2.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
-
                     }
                 });
         if(!isFinishing())    {
@@ -1906,6 +1736,78 @@ public class SettingsActivity2 extends PreferenceActivity	{
         if(!isFinishing())    {
             dlg.show();
         }
+
+    }
+
+    private void doWhirlpoolGUIPairing()    {
+
+        JSONObject pairingObj = null;
+        try {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("type", "whirlpool.gui");
+            jsonObj.put("version", "1.0.0");
+            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
+
+            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
+            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+            jsonObj.put("mnemonic", encrypted);
+
+            pairingObj = new JSONObject();
+            pairingObj.put("pairing", jsonObj);
+        }
+        catch(Exception e) {
+            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(pairingObj == null)    {
+            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ImageView showQR = new ImageView(SettingsActivity2.this);
+        Bitmap bitmap = null;
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+        try {
+            bitmap = qrCodeEncoder.encodeAsBitmap();
+        }
+        catch (WriterException e) {
+            e.printStackTrace();
+        }
+        showQR.setImageBitmap(bitmap);
+
+        TextView showText = new TextView(SettingsActivity2.this);
+        showText.setText(pairingObj.toString());
+        showText.setTextIsSelectable(true);
+        showText.setPadding(40, 10, 40, 10);
+        showText.setTextSize(18.0f);
+
+        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+        pairingLayout.setOrientation(LinearLayout.VERTICAL);
+        pairingLayout.addView(showQR);
+        pairingLayout.addView(showText);
+
+        final String _pairing = pairingObj.toString();
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setView(pairingLayout)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = null;
+                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        ;
+                    }
+                })
+                .show();
 
     }
 

@@ -272,7 +272,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="1.0" />
 
-                <com.samourai.wallet.spend.widgets.EntropyBar
+                <com.samourai.wallet.widgets.EntropyBar
                     android:id="@+id/entropyBar"
                     android:layout_width="24dp"
                     android:layout_height="0dp"
@@ -338,7 +338,7 @@
                     app:layout_constraintStart_toStartOf="@+id/textView4"
                     app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-                <com.samourai.wallet.spend.widgets.EntropyBar
+                <com.samourai.wallet.widgets.EntropyBar
                     android:id="@+id/entropy_bar"
                     android:layout_width="24dp"
                     android:layout_height="0dp"

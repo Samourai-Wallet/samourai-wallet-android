@@ -55,7 +55,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.core.TransactionOutput;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,7 +121,7 @@ public class CahootsUtil {
             }
         }
         catch(JSONException je) {
-            Toast.makeText(context, R.string.not_valid_json, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -145,11 +145,12 @@ public class CahootsUtil {
                         doStowaway4(stowaway);
                         break;
                     default:
-                        Toast.makeText(context, "unrecognized step", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
             catch(Exception e) {
+                Toast.makeText(context, R.string.cannot_process_stonewall, Toast.LENGTH_SHORT).show();
                 Log.d("CahootsUtil", e.getMessage());
                 e.printStackTrace();
             }
@@ -176,11 +177,12 @@ public class CahootsUtil {
                         doSTONEWALLx2_4(stonewall);
                         break;
                     default:
-                        Toast.makeText(context, "unrecognized step", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
             catch(Exception e) {
+                Toast.makeText(context, R.string.cannot_process_stowaway, Toast.LENGTH_SHORT).show();
                 Log.d("CahootsUtil", e.getMessage());
                 e.printStackTrace();
             }
@@ -203,14 +205,14 @@ public class CahootsUtil {
             JSONObject jsonObject = new JSONObject(strCahoots);
             if(jsonObject != null && jsonObject.has("cahoots") && jsonObject.getJSONObject("cahoots").has("step"))    {
                 step = jsonObject.getJSONObject("cahoots").getInt("step");
-                if(step == 4) {
+                if(step == 4 || step == 3) {
                     cahoots = new Stowaway(jsonObject);
                     transaction = cahoots.getPSBT().getTransaction();
                 }
             }
         }
         catch(JSONException je) {
-            ;
+            Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         final int _step = step;
@@ -228,8 +230,13 @@ public class CahootsUtil {
         hexLayout.setOrientation(LinearLayout.VERTICAL);
         hexLayout.addView(showTx);
 
+        String title = context.getString(R.string.cahoots);
+        title += ", ";
+        title += (_step + 1);
+        title += "/5";
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(context)
-                .setTitle(R.string.cahoots)
+                .setTitle(title)
                 .setView(hexLayout)
                 .setCancelable(true)
                 .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
@@ -363,6 +370,59 @@ public class CahootsUtil {
 
                 }
             });
+            dlg.setNeutralButton(R.string.show_tx, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    String tx = "";
+                    if(_transaction != null) {
+                        tx = _transaction.toString();
+                    }
+
+                    TextView showText = new TextView(context);
+                    showText.setText(tx);
+                    showText.setTextIsSelectable(true);
+                    showText.setPadding(40, 10, 40, 10);
+                    showText.setTextSize(18.0f);
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.app_name)
+                            .setView(showText)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
+            });
+        }
+        else if(_step == 3)   {
+            dlg.setNeutralButton(R.string.show_tx, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    String tx = "";
+                    if(_transaction != null) {
+                        tx = _transaction.toString();
+                    }
+
+                    TextView showText = new TextView(context);
+                    showText.setText(tx);
+                    showText.setTextIsSelectable(true);
+                    showText.setPadding(40, 10, 40, 10);
+                    showText.setTextSize(18.0f);
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.app_name)
+                            .setView(showText)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
+            });
+        }
+        else    {
+            ;
         }
 
         if(!((Activity)context).isFinishing())    {
@@ -425,7 +485,7 @@ public class CahootsUtil {
 
     public void doStowaway0(long spendAmount)    {
         // Bob -> Alice, spendAmount in sats
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         //
         //
@@ -440,14 +500,7 @@ public class CahootsUtil {
 
     private void doStowaway1(Stowaway stowaway0) throws Exception    {
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         // sort in descending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
 
@@ -517,14 +570,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         // sort in ascending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
         Collections.reverse(utxos);
@@ -707,7 +753,7 @@ public class CahootsUtil {
 
     public void doSTONEWALLx2_0(long spendAmount, String address)    {
         // Bob -> Alice, spendAmount in sats
-        NetworkParameters params = TestNet3Params.get();
+        NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
 
         //
         //
@@ -722,14 +768,7 @@ public class CahootsUtil {
 
     private void doSTONEWALLx2_1(STONEWALLx2 stonewall0) throws Exception    {
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -775,8 +814,6 @@ public class CahootsUtil {
 
         String zpub = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
         HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>> inputsA = new HashMap<_TransactionOutPoint, Triple<byte[], byte[], String>>();
-//        inputsA.put(outpoint_A0, Triple.of(Hex.decode("0221b719bc26fb49971c7dd328a6c7e4d17dfbf4e2217bee33a65c53ed3daf041e"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/4"));
-//        inputsA.put(outpoint_A1, Triple.of(Hex.decode("020ab261e1a3cf986ecb3cd02299de36295e804fd799934dc5c99dde0d25e71b93"), FormatsUtil.getInstance().getFingerprintFromXPUB("vpub5Z3hqXewnCbxnMsWygxN8AyjNVJbFeV2VCdDKpTFazdoC29qK4Y5DSQ1aaAPBrsBZ1TzN5va6xGy4eWa9uAqh2AwifuA1eofkedh3eUgF6b"), "M/0/2"));
 
         for(UTXO utxo : selectedUTXO)  {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
@@ -791,6 +828,9 @@ public class CahootsUtil {
         // contributor mix output
         int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().getAddrIdx();
         SegwitAddress segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0, idx);
+        if(segwitAddress0.getBech32AsString().equalsIgnoreCase(stonewall0.getDestination()))    {
+            segwitAddress0 = BIP84Util.getInstance(context).getAddressAt(0, idx + 1);
+        }
         HashMap<_TransactionOutput, Triple<byte[], byte[], String>> outputsA = new HashMap<_TransactionOutput, Triple<byte[], byte[], String>>();
         Pair<Byte, byte[]> pair0 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", segwitAddress0.getBech32AsString());
         byte[] scriptPubKey_A0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
@@ -818,14 +858,7 @@ public class CahootsUtil {
 //        Log.d("CahootsUtil", "input value:" + transaction.getInputs().get(0).getValue().longValue());
         int nbIncomingInputs = transaction.getInputs().size();
 
-        List<UTXO> utxos = new ArrayList<UTXO>();
-        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
-        for(UTXO utxo : _utxos)   {
-            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
-            if(script.startsWith("0014"))   {
-                utxos.add(utxo);
-            }
-        }
+        List<UTXO> utxos = getCahootsUTXO();
         Collections.shuffle(utxos);
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
@@ -893,8 +926,6 @@ public class CahootsUtil {
             }
         }
 
-        Log.d("CahootsUtil", "inputsB:" + inputsB.size());
-
         // spender change output
         int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx();
         SegwitAddress segwitAddress = BIP84Util.getInstance(context).getAddressAt(1, idx);
@@ -903,16 +934,6 @@ public class CahootsUtil {
         byte[] scriptPubKey_B0 = Bech32Segwit.getScriptPubkey(pair0.getLeft(), pair0.getRight());
         _TransactionOutput output_B0 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B0);
         outputsB.put(output_B0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
-
-        /*
-        // destination mix output
-        Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", stonewall1.getDestination());
-        byte[] scriptPubKey_B1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
-        _TransactionOutput output_B1 = new _TransactionOutput(params, null, Coin.valueOf((totalSelectedAmount - stonewall1.getSpendAmount()) - fee), scriptPubKey_B1);
-        outputsB.put(output_B1, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()), "M/1/" + idx));
-        */
-
-        Log.d("CahootsUtil", "outputsB:" + outputsB.size());
 
         STONEWALLx2 stonewall2 = new STONEWALLx2(stonewall1);
         stonewall2.inc(inputsB, outputsB, null);
@@ -928,7 +949,6 @@ public class CahootsUtil {
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
-                Log.d("CahootsUtil", "outpoint address:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getAddress());
             }
         }
 
@@ -970,7 +990,6 @@ public class CahootsUtil {
         for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 utxo2Address.put(outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN(), outpoint.getAddress());
-                Log.d("CahootsUtil", "outpoint address:" + outpoint.getTxHash().toString() + "-" + outpoint.getTxOutputN() + "," + outpoint.getAddress());
             }
         }
 
@@ -1011,6 +1030,29 @@ public class CahootsUtil {
 
         // broadcast ???
         doCahoots(stonewall4.toJSON().toString());
+    }
+
+    private List<UTXO> getCahootsUTXO() {
+        List<UTXO> ret = new ArrayList<UTXO>();
+        List<UTXO> _utxos = APIFactory.getInstance(context).getUtxos(true);
+        for(UTXO utxo : _utxos)   {
+            String script = Hex.toHexString(utxo.getOutpoints().get(0).getScriptBytes());
+            if(script.startsWith("0014") && APIFactory.getInstance(context).getUnspentPaths().get(utxo.getOutpoints().get(0).getAddress()) != null)   {
+                ret.add(utxo);
+            }
+        }
+
+        return ret;
+    }
+
+    public long getCahootsValue() {
+        long ret = 0L;
+        List<UTXO> _utxos = getCahootsUTXO();
+        for(UTXO utxo : _utxos)   {
+            ret += utxo.getValue();
+        }
+
+        return ret;
     }
 
 }
