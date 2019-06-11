@@ -122,16 +122,11 @@ public class ReceiveActivity extends AppCompatActivity {
                             public void run() {
 
                                 ReceiveActivity.this.finish();
-
                             }
                         });
-
                     }
-
                 }
-
             }
-
         }
     };
 
@@ -467,13 +462,6 @@ public class ReceiveActivity extends AppCompatActivity {
         AppUtil.getInstance(ReceiveActivity.this).checkTimeOut();
 
         checkForAnomBitcoinAddressRequest();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        mConsumedIntent = false;
     }
 
     private void checkForAnomBitcoinAddressRequest() {

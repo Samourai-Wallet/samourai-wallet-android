@@ -1,9 +1,12 @@
 package com.samourai.wallet.paynym;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -96,7 +99,7 @@ public class PayNymHome extends AppCompatActivity {
     private static final String TAG = "PayNymHome";
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private PayNymHomeViewModel payNymHomeViewModel;
-    private ProgressBar  paynymSync;
+    private ProgressBar paynymSync;
     private TextView paynym, paynymCode, paymentCodeSyncMessage;
     private ImageView userAvatar;
     private FloatingActionButton paynymFab;
@@ -107,11 +110,24 @@ public class PayNymHome extends AppCompatActivity {
     private ConstraintLayout pcodeSyncLayout;
     SwipeRefreshLayout swipeToRefreshPaynym;
 
+    private boolean mConsumedIntent;
+    private final String SAVED_INSTANCE_STATE_CONSUMED_INTENT = "SAVED_INSTANCE_STATE_CONSUMED_INTENT";
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_INSTANCE_STATE_CONSUMED_INTENT, mConsumedIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_nym_home);
         setSupportActionBar(findViewById(R.id.toolbar_paynym));
+
+        if (savedInstanceState != null) {
+            mConsumedIntent = savedInstanceState.getBoolean(SAVED_INSTANCE_STATE_CONSUMED_INTENT);
+        }
 
         paynymTabLayout = findViewById(R.id.paynym_tabs);
         payNymViewPager = findViewById(R.id.paynym_viewpager);
@@ -228,7 +244,7 @@ public class PayNymHome extends AppCompatActivity {
         }
         super.onDestroy();
 
-        if(compositeDisposable != null && !compositeDisposable.isDisposed()) {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
             compositeDisposable.dispose();
         }
     }
@@ -268,6 +284,32 @@ public class PayNymHome extends AppCompatActivity {
         }
         AppUtil.getInstance(getApplicationContext()).checkTimeOut();
 
+        checkForAnomPaynymCodeRequest();
+    }
+
+    private void checkForAnomPaynymCodeRequest() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey("get_paynym_code")) {
+
+            Intent intent1 = getIntent();
+            boolean launchedFromHistory = intent1 != null &&
+                    (intent1.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
+            if (!launchedFromHistory && !mConsumedIntent) {
+                mConsumedIntent = true;
+
+                //execute the code that should be executed if the activity was not launched from history
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    final String address = pcode;
+                    final Intent intent = new Intent();
+                    intent.setAction("one.anom.receive_address");
+                    intent.setComponent(new ComponentName("one.anom.ent",
+                            "one.anom.BitcoinAddressBroadcastReceiver"));
+                    intent.putExtra("get_paynym_code", address);
+                    sendBroadcast(intent);
+                }, 1000);
+            }
+        }
     }
 
     @Override

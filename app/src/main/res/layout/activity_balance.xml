@@ -53,8 +53,7 @@
         android:id="@+id/tx_swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_txes"
@@ -67,8 +66,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    <com.github.clans.fab.FloatingActionMenu
-        xmlns:fab="http://schemas.android.com/apk/res-auto"
+    <com.github.clans.fab.FloatingActionMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fab_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,10 +75,10 @@
         fab:layout_anchor="@+id/rv_txes"
         fab:layout_anchorGravity="right|bottom"
         fab:menu_animationDelayPerItem="32"
-        fab:menu_shadowColor="#444"
         fab:menu_colorNormal="@color/accent"
         fab:menu_colorPressed="#0AA1E9"
         fab:menu_colorRipple="#A8A8A8"
+        fab:menu_shadowColor="#444"
         tools:showIn="@layout/activity_balance">
 
         <com.github.clans.fab.FloatingActionButton
