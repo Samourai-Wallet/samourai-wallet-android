@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import com.samourai.wallet.R;
 public class SelectCahootsType extends BottomSheetDialogFragment {
 
 
-    public enum type {STONEWALLX2, STOWAWAY_SAMOURAI, STOWAWAY_MANUAL, NONE}
+    public enum type {STONEWALLX2_MANUAL,STONEWALLX2_SAMOURAI, STOWAWAY, NONE}
 
     private OnSelectListener onSelectListener;
     private ViewGroup stowaway, stonewallx2;
@@ -49,22 +50,25 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
         closeBtn = view.findViewById(R.id.cahoots_type_close_btn);
         title = view.findViewById(R.id.cahoots_sheet_title);
 
-        stowaway.setOnClickListener(view1 -> this.switchToStowaway());
-        stonewallx2.setOnClickListener(view1 -> {
+        stowaway.setOnClickListener(view1 ->{
             if (onSelectListener != null) {
-                onSelectListener.onSelect(type.STONEWALLX2);
+                Log.i("UTU", "onViewCreated: ");
+                onSelectListener.onSelect(type.STOWAWAY);
             }
             this.dismiss();
         });
+        stonewallx2.setOnClickListener(view1 -> {
+            this.switchToStoneWallx2();
+        });
         inPerson.setOnClickListener(view1 -> {
             if (onSelectListener != null) {
-                onSelectListener.onSelect(type.STOWAWAY_MANUAL);
+                onSelectListener.onSelect(type.STONEWALLX2_MANUAL);
             }
             this.dismiss();
         });
         samouraiAsParticipant.setOnClickListener(view1 -> {
             if (onSelectListener != null) {
-                onSelectListener.onSelect(type.STOWAWAY_SAMOURAI);
+                onSelectListener.onSelect(type.STONEWALLX2_SAMOURAI);
             }
             this.dismiss();
         });
@@ -92,7 +96,7 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
         super.onDismiss(dialog);
     }
 
-    private void switchToStowaway() {
+    private void switchToStoneWallx2() {
         typeChooserLayout.setVisibility(View.GONE);
         stowawayChooserLayout.setVisibility(View.VISIBLE);
         closeBtn.setImageResource(R.drawable.ic_navigate_before_white_24dp);

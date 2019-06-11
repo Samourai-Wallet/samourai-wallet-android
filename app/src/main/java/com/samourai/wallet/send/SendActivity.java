@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -122,7 +123,8 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, mixingPartner, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
+    private ViewGroup stowawayLayout, stoneWallLayout;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, cahootsSwitch;
     private SeekBar feeSeekBar;
@@ -166,7 +168,7 @@ public class SendActivity extends AppCompatActivity {
     //stub address for entropy calculation
     private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
-
+    private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
     private int account = 0;
 
     @Override
@@ -194,7 +196,7 @@ public class SendActivity extends AppCompatActivity {
 
         //view elements from review segment and transaction segment can be access through respective
         //methods which returns root viewGroup
-        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropyBar);
+        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
         cahootsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.cahoots_switch);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
@@ -214,7 +216,11 @@ public class SendActivity extends AppCompatActivity {
 //        stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
         entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
         entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
+        mixingPartner = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.mixing_partner_txtview);
+        stowawayLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stowaway_layout);
+        stoneWallLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_review_layout);
         entropyBar.setMaxBars(4);
+
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -283,6 +289,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpCahoots() {
         cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            // to check whether bottomsheet is closed or selected a value
             final boolean[] chosen = {false};
             if (b) {
                 SelectCahootsType cahootsType = new SelectCahootsType();
@@ -291,17 +298,17 @@ public class SendActivity extends AppCompatActivity {
                     @Override
                     public void onSelect(SelectCahootsType.type type) {
                         chosen[0] = true;
-
+                        selectedCahootsType = type;
                     }
 
                     @Override
                     public void onDismiss() {
                         if (!chosen[0]) {
                             compoundButton.setChecked(false);
+                            selectedCahootsType = SelectCahootsType.type.NONE;
                         }
                     }
                 });
-//                cahootsType.
             }
         });
     }
@@ -586,6 +593,14 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 
+    private void enableCahoots(boolean enable){
+        if(enable){
+
+        }else {
+
+        }
+    }
+
     private void setBalance() {
 
         try {
@@ -746,7 +761,6 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            Log.i(TAG, "afterTextChanged: ".concat(editable.toString()));
             if (editable.toString().equalsIgnoreCase("Stowaway")) {
                 doStowaway();
             } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
@@ -1003,7 +1017,6 @@ public class SendActivity extends AppCompatActivity {
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
-                    btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) totalAmount))).concat(" BTC"));
 
                     return true;
 
@@ -1337,6 +1350,48 @@ public class SendActivity extends AppCompatActivity {
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
             CalculateEntropy(selectedUTXO, receivers);
+            Log.i(TAG, "prepareSpend: prepareSpend ".concat(String.valueOf(stoneWallLayout.getVisibility())));
+
+
+            switch (selectedCahootsType) {
+
+                case STONEWALLX2_MANUAL: {
+                    stowawayLayout.getRootView().post(() -> {
+                        stowawayLayout.setVisibility(View.GONE);
+                        stoneWallLayout.setVisibility(View.VISIBLE);
+                    });
+                    btnSend.setBackgroundResource(R.drawable.button_blue);
+                    btnSend.setText("Begin STONEWALLx2");
+                    mixingPartner.setText("Manual");
+
+                    break;
+                }
+                case STONEWALLX2_SAMOURAI: {
+                    stowawayLayout.getRootView().post(() -> {
+                        stowawayLayout.setVisibility(View.GONE);
+                        stoneWallLayout.setVisibility(View.VISIBLE);
+                    });
+                    mixingPartner.setText("Samourai Wallet");
+                }
+                case STOWAWAY: {
+//                            mixingPartner.setText("Samourai Wallet");
+                    btnSend.setBackgroundResource(R.drawable.button_blue);
+                    btnSend.setText("Begin Stowaway");
+                    stowawayLayout.getRootView().post(() -> {
+                        stowawayLayout.setVisibility(View.VISIBLE);
+                        stoneWallLayout.setVisibility(View.GONE);
+                    });
+                    break;
+                }
+                case NONE:{
+                    break;
+                }
+                default: {
+                    btnSend.setBackgroundResource(R.drawable.button_green);
+                    btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) amount))).concat(" BTC"));
+                }
+            }
+
             return true;
         }
         return false;

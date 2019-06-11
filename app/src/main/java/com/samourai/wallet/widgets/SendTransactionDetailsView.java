@@ -45,7 +45,7 @@ public class SendTransactionDetailsView extends FrameLayout {
         transactionView = inflate(getContext(), R.layout.send_transaction_main_segment, null);
         transactionReview = inflate(getContext(), R.layout.send_transaction_review, null);
         ricochetHopsReview = transactionReview.findViewById(R.id.ricochet_hops_layout);
-        stoneWallReview = transactionReview.findViewById(R.id.stone_wall_review_layout);
+        stoneWallReview = transactionReview.findViewById(R.id.stonewall_review_layout);
         addView(transactionView);
     }
 
