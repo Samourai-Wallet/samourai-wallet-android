@@ -696,6 +696,9 @@
     <string name="options_whirlpool_gui2">Appairer avec Whirlpool GUI pour un mixage en continu.</string>
     <string name="cannot_pair_whirlpool_gui">Préparation à l\'appairage avec Whirlpool GUI impossible.</string>
     
-    
+    <string name="address">Adresse</string>
+    <string name="syncing_pcodes">Synchronisation des codes de paiement</string>
+    <string name="sync_complete">Synchronisation du code de paiement terminée</string>
+    <string name="options_paynym_indexes">Afficher répertoires PayNym</string>
     
 </resources>

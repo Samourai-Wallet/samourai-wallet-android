@@ -65,6 +65,8 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
@@ -726,7 +728,14 @@ public class BalanceActivity extends AppCompatActivity {
 
         } else if (id == R.id.action_scan_qr) {
             doScan();
+        } else if (id == R.id.action_postmix) {
+
+            Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+            startActivity(intent);
+
         } else {
+            ;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -786,7 +795,7 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim());
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim(), 0);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance().isValidPairingPayload(strResult.trim())) {
