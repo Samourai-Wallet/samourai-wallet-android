@@ -691,7 +691,7 @@
     <string name="paynym_follow_fee_message">Еднократна такса от   ще бъде приспадната,за да последвате контакта</string>
     <string name="initializing_tor">инициализация на Tor...</string>
 
-    <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
+    <string name="cannot_pair_whirlpool_gui">Не може да се подготви сдвояване с Whirlpool GUI.</string>
     <string name="message_copied">съобщението копирано</string>
     <string name="scan_code">Сканирай код</string>
     <string name="follows_you">Ви следва</string>
@@ -699,6 +699,16 @@
     <string name="sycing_pcodes">Синхронизиране на payment codes</string>
     <string name="sync_complete">Payment code синхронизация завършена</string>
     <string name="options_paynym_indexes">Покажи PayNym индекси</string>
+    <string name="create_password">Създай парола</string>
+    <string name="confirm_password">Потвърди паролата</string>
+    <string name="pairing_password">Дефиниране на парола за сдвояване: (6-255 знака)</string>
+    <string name="password_error">Грешка при създаването на парола</string>
+    <string name="password_invalid">Грешна парола</string>
+
+    <string name="review_whirlpool">Преглед на Whirlpool детайли</string>
+    <string name="total_selected">Общо избрани</string>
+    <string name="cycle">Цикъл</string>
+    <string name="postmix_without_boltzmann">Имайте предвид, че харченето от пост-микс акаунта Ви без STONEWALL ще доведе до загуба на потайността, спечелена чрез Whirlpool.</string>
 
 
 
