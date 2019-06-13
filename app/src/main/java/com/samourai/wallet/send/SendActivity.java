@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -61,6 +60,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.send.cahoots.ManualStoneWall;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -73,7 +73,6 @@ import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -107,7 +106,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -123,12 +121,10 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, stoneWallDesc, mixingPartner, stonewallOptionText, ricochetTitle, ricochetDesc, entropyValue;
-    private ViewGroup stowawayLayout, stoneWallLayout;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman , stonewallOptionText, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, cahootsSwitch;
     private SeekBar feeSeekBar;
-    private EntropyBar entropyBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
@@ -153,6 +149,7 @@ public class SendActivity extends AppCompatActivity {
     private long _change;
     private HashMap<String, BigInteger> receivers;
     private int changeType;
+    private Group cahootsGroup;
     private String address;
     private String message;
     private long amount;
@@ -196,7 +193,6 @@ public class SendActivity extends AppCompatActivity {
 
         //view elements from review segment and transaction segment can be access through respective
         //methods which returns root viewGroup
-        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
         cahootsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.cahoots_switch);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
@@ -211,15 +207,9 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-//        stoneWallSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stone_wall_radio_btn);
         stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
-//        stoneWallDesc = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_desc);
-        entropyValue = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_value);
-        entropyBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.entropy_bar);
-        mixingPartner = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.mixing_partner_txtview);
-        stowawayLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stowaway_layout);
-        stoneWallLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.stonewall_review_layout);
-        entropyBar.setMaxBars(4);
+
+        cahootsGroup = findViewById(R.id.cahoots_group);
 
 
         btcEditText.addTextChangedListener(BTCWatcher);
@@ -309,6 +299,9 @@ public class SendActivity extends AppCompatActivity {
                         }
                     }
                 });
+            } else {
+                Log.i(TAG, "setUpCahoots: ");
+                selectedCahootsType = SelectCahootsType.type.NONE;
             }
         });
     }
@@ -324,16 +317,12 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpBoltzman() {
-        stonewallOptionText.setAlpha(1f);
-//        stoneWallSwitch.setAlpha(1f);
-//        stoneWallDesc.setAlpha(1f);
-//        stoneWallSwitch.setChecked(true);
-//        stoneWallSwitch.setEnabled(true);
-//        stoneWallSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-//            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-//            //small delay for storing prefs.
-//            new Handler().postDelayed(() -> prepareSpend(), 100);
-//        });
+
+        sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener((compoundButton, checked) -> {
+            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+            //small delay for storing prefs.
+            new Handler().postDelayed(this::prepareSpend, 100);
+        });
     }
 
     private void checkRicochetPossibility() {
@@ -560,12 +549,13 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpRicochet() {
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            enableCahoots(!isChecked);
             ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
                 SPEND_TYPE = SPEND_RICOCHET;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, true);
             } else {
-//                SPEND_TYPE = stoneWallSwitch.isChecked() ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+                SPEND_TYPE = sendTransactionDetailsView.getStoneWallSwitch().isChecked() ? SPEND_BOLTZMANN : SPEND_SIMPLE;
                 PrefsUtil.getInstance(this).setValue(PrefsUtil.USE_RICOCHET, false);
             }
 
@@ -593,11 +583,12 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 
-    private void enableCahoots(boolean enable){
-        if(enable){
-
-        }else {
-
+    private void enableCahoots(boolean enable) {
+        if (enable) {
+            cahootsGroup.setVisibility(View.VISIBLE);
+        } else {
+            cahootsGroup.setVisibility(View.GONE);
+            selectedCahootsType = SelectCahootsType.type.NONE;
         }
     }
 
@@ -870,7 +861,6 @@ public class SendActivity extends AppCompatActivity {
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
             amountViewSwitcher.showNext();
-            entropyBar.setRange(3);
             hideKeyboard();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
@@ -1321,15 +1311,7 @@ public class SendActivity extends AppCompatActivity {
                 strPrivacyWarning = "";
             }
 
-            if (!canDoBoltzmann) {
-                restoreChangeIndexes();
-                stonewallOptionText.setAlpha(.6f);
-//                stoneWallSwitch.setAlpha(.6f);
-//                stoneWallDesc.setAlpha(.6f);
-//                stoneWallSwitch.setChecked(false);
-//                stoneWallSwitch.setEnabled(false);
-//                strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
-            }
+
 
             /*
                     String strNoLikedTypeBoltzmann = null;
@@ -1349,41 +1331,74 @@ public class SendActivity extends AppCompatActivity {
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
-            CalculateEntropy(selectedUTXO, receivers);
-            Log.i(TAG, "prepareSpend: prepareSpend ".concat(String.valueOf(stoneWallLayout.getVisibility())));
-
+            Log.i(TAG, "prepareSpend: TYPE ".concat(String.valueOf(selectedCahootsType)));
 
             switch (selectedCahootsType) {
-
                 case STONEWALLX2_MANUAL: {
-                    stowawayLayout.getRootView().post(() -> {
-                        stowawayLayout.setVisibility(View.GONE);
-                        stoneWallLayout.setVisibility(View.VISIBLE);
-                    });
+                    sendTransactionDetailsView.showStonewallX2Layout("Manual", 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
                     btnSend.setText("Begin STONEWALLx2");
-                    mixingPartner.setText("Manual");
-
                     break;
                 }
                 case STONEWALLX2_SAMOURAI: {
-                    stowawayLayout.getRootView().post(() -> {
-                        stowawayLayout.setVisibility(View.GONE);
-                        stoneWallLayout.setVisibility(View.VISIBLE);
-                    });
-                    mixingPartner.setText("Samourai Wallet");
+                    sendTransactionDetailsView.showStonewallX2Layout("Samourai Wallet", 1000);
+                    break;
                 }
                 case STOWAWAY: {
 //                            mixingPartner.setText("Samourai Wallet");
+                    sendTransactionDetailsView.showStowawayLayout("32jf5AMate5Pgu72aS7ScJtHaXHMobdHok", null, 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
                     btnSend.setText("Begin Stowaway");
-                    stowawayLayout.getRootView().post(() -> {
-                        stowawayLayout.setVisibility(View.VISIBLE);
-                        stoneWallLayout.setVisibility(View.GONE);
-                    });
+
                     break;
                 }
-                case NONE:{
+                case NONE: {
+                    sendTransactionDetailsView.showStonewallx1Layout(null);
+                    sendTransactionDetailsView.enableStoneWallX1Layout(canDoBoltzmann);
+
+                    // for ricochet entropy will be 0 always
+                    if (SPEND_TYPE == SPEND_RICOCHET) {
+                        break;
+                    }
+                    CalculateEntropy(selectedUTXO, receivers);
+
+                    if (receivers.size() <= 1) {
+                        sendTransactionDetailsView.setEntropyBarStoneWallX1(0);
+                        Log.i(TAG, "prepareSpend: hereeeee");
+                        break;
+
+                    }
+                    if (receivers.size() > 8) {
+                        sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
+                        break;
+                    }
+
+                    CalculateEntropy(selectedUTXO, receivers)
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<TxProcessorResult>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
+                                }
+
+                                @Override
+                                public void onNext(TxProcessorResult entropyResult) {
+                                    sendTransactionDetailsView.setEntropyBarStoneWallX1(entropyResult);
+                                    Log.i(TAG, "onNext: Tx resuley");
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                }
+                            });
+
+
                     break;
                 }
                 default: {
@@ -1399,6 +1414,10 @@ public class SendActivity extends AppCompatActivity {
 
     private void initiateSpend() {
 
+        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY){
+            startActivity(new Intent(this, ManualStoneWall.class));
+            return;
+        }
         if (SPEND_TYPE == SPEND_RICOCHET) {
             ricochetSpend(ricochetStaggeredDelivery.isChecked());
             return;
@@ -2137,68 +2156,27 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
+    private Observable<TxProcessorResult> CalculateEntropy(ArrayList<UTXO> selectedUTXO, HashMap<String, BigInteger> receivers) {
+        return Observable.create(emitter -> {
 
-        // for ricochet entropy will be 0 always
-        if (SPEND_TYPE == SPEND_RICOCHET) {
-            return;
-        }
+            Map<String, Long> inputs = new HashMap<>();
+            Map<String, Long> outputs = new HashMap<>();
 
-        Map<String, Long> inputs = new HashMap<>();
-        Map<String, Long> outputs = new HashMap<>();
+            for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
+                String toAddress = mapEntry.getKey();
+                BigInteger value = mapEntry.getValue();
+                outputs.put(toAddress, value.longValue());
+            }
 
-        if (receivers.size() <= 1) {
-            entropyValue.setText(R.string.zero_bits);
-            entropyBar.disable();
-            return;
-        }
-        if (receivers.size() > 8) {
-            entropyValue.setText(R.string.not_available);
-            entropyBar.disable();
-            return;
-        }
-
-        for (Map.Entry<String, BigInteger> mapEntry : receivers.entrySet()) {
-            String toAddress = mapEntry.getKey();
-            BigInteger value = mapEntry.getValue();
-            outputs.put(toAddress, value.longValue());
-        }
-
-        for (int i = 0; i < selectedUTXO.size(); i++) {
-            inputs.put(stubAddress[i], selectedUTXO.get(i).getValue());
-        }
-
-        Observable.create((ObservableOnSubscribe<TxProcessorResult>) emitter -> {
+            for (int i = 0; i < selectedUTXO.size(); i++) {
+                inputs.put(stubAddress[i], selectedUTXO.get(i).getValue());
+            }
 
             TxProcessor txProcessor = new TxProcessor(BoltzmannSettings.MAX_DURATION_DEFAULT, BoltzmannSettings.MAX_TXOS_DEFAULT);
             Txos txos = new Txos(inputs, outputs);
             TxProcessorResult result = txProcessor.processTx(txos, 0.005f, TxosLinkerOptionEnum.PRECHECK, TxosLinkerOptionEnum.LINKABILITY, TxosLinkerOptionEnum.MERGE_INPUTS);
             emitter.onNext(result);
-        }).subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TxProcessorResult>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(TxProcessorResult entropyResult) {
-
-                        DecimalFormat decimalFormat = new DecimalFormat("##.00");
-                        entropyValue.setText(decimalFormat.format(entropyResult.getEntropy()).concat(" bits"));
-                        entropyBar.setRange(entropyResult);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        entropyValue.setText(R.string.not_available);
-                        entropyBar.disable();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+        });
 
     }
 
