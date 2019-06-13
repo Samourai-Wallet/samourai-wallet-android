@@ -121,7 +121,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman , stonewallOptionText, ricochetTitle, ricochetDesc;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery, cahootsSwitch;
     private SeekBar feeSeekBar;
@@ -188,6 +188,7 @@ public class SendActivity extends AppCompatActivity {
         satEditText = findViewById(R.id.amountSat);
         tvToAddress = findViewById(R.id.to_address_review);
         tvReviewSpendAmount = findViewById(R.id.send_review_amount);
+        tvReviewSpendAmountInSats = findViewById(R.id.send_review_amount_in_sats);
         tvMaxAmount = findViewById(R.id.totalBTC);
 
 
@@ -207,8 +208,6 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-        stonewallOptionText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.textView_stonewall);
-
         cahootsGroup = findViewById(R.id.cahoots_group);
 
 
@@ -860,6 +859,13 @@ public class SendActivity extends AppCompatActivity {
         setUpBoltzman();
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
+            try {
+
+                tvReviewSpendAmountInSats.setText(formattedSatValue(getSatValue(Double.valueOf(btcEditText.getText().toString()))).concat(" sats"));
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             amountViewSwitcher.showNext();
             hideKeyboard();
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
@@ -1355,7 +1361,6 @@ public class SendActivity extends AppCompatActivity {
                 case NONE: {
                     sendTransactionDetailsView.showStonewallx1Layout(null);
                     sendTransactionDetailsView.enableStoneWallX1Layout(canDoBoltzmann);
-
                     // for ricochet entropy will be 0 always
                     if (SPEND_TYPE == SPEND_RICOCHET) {
                         break;
@@ -1364,7 +1369,6 @@ public class SendActivity extends AppCompatActivity {
 
                     if (receivers.size() <= 1) {
                         sendTransactionDetailsView.setEntropyBarStoneWallX1(0);
-                        Log.i(TAG, "prepareSpend: hereeeee");
                         break;
 
                     }
@@ -1384,7 +1388,6 @@ public class SendActivity extends AppCompatActivity {
                                 @Override
                                 public void onNext(TxProcessorResult entropyResult) {
                                     sendTransactionDetailsView.setEntropyBarStoneWallX1(entropyResult);
-                                    Log.i(TAG, "onNext: Tx resuley");
                                 }
 
                                 @Override
@@ -1414,7 +1417,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void initiateSpend() {
 
-        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY){
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
             startActivity(new Intent(this, ManualStoneWall.class));
             return;
         }
