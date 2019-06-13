@@ -174,15 +174,25 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         } else {
             showHistory();
         }
+//        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getIncomingIdx(pcode))));
+
+        if(BIP47Meta.getInstance().getIncomingIdx(pcode) == BIP47Meta.STATUS_NOT_SENT)
         if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
             showWaitingForConfirm();
         }
+
+        if(BIP47Meta.getInstance().getIncomingIdx(pcode) >= 0){
+            historyLayout.setVisibility(View.VISIBLE);
+        }
+//        if(BIP47Meta.getInstance().getIncomingIdx(pcode)) ){
+//
+//        }
 //        if (BIP47Meta.getInstance().incomingExists(pcode)) {
 //            followsYoutext.setVisibility(View.VISIBLE);
 //        } else {
 //            followsYoutext.setVisibility(View.GONE);
 //        }
-        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
+//        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getOutgoingStatus(pcode))));
         paynymCode.setText(BIP47Meta.getInstance().getAbbreviatedPcode(pcode));
         paynymLabel.setText(getLabel());
         paynymAvatarPorgress.setVisibility(View.VISIBLE);
@@ -366,7 +376,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
-                finish();
+                supportFinishAfterTransition();
                 break;
             }
 
@@ -718,7 +728,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
             }
 //            String address = inputScript.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-            ECKey ecKey = SendFactory.getPrivKey(address);
+            ECKey ecKey = SendFactory.getPrivKey(address, 0);
             if (ecKey == null || !ecKey.hasPrivKey()) {
                 Toast.makeText(PayNymDetailsActivity.this, R.string.bip47_cannot_compose_notif_tx, Toast.LENGTH_SHORT).show();
                 return;
@@ -804,7 +814,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                             return;
                         }
 
-                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx);
+                        tx = SendFactory.getInstance(PayNymDetailsActivity.this).signTransaction(tx, 0);
                         final String hexTx = new String(org.bouncycastle.util.encoders.Hex.encode(tx.bitcoinSerialize()));
                         Log.d("SendActivity", tx.getHashAsString());
                         Log.d("SendActivity", hexTx);

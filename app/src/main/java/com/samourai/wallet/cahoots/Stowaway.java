@@ -30,7 +30,7 @@ public class Stowaway extends Cahoots {
         this.fromJSON(obj);
     }
 
-    public Stowaway(long spendAmount, NetworkParameters params)    {
+    public Stowaway(long spendAmount, NetworkParameters params, int account)    {
         this.ts = System.currentTimeMillis() / 1000L;
         this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
         this.type = Cahoots.CAHOOTS_STOWAWAY;
@@ -38,9 +38,10 @@ public class Stowaway extends Cahoots {
         this.spendAmount = spendAmount;
         this.outpoints = new HashMap<String, Long>();
         this.params = params;
+        this.account = account;
     }
 
-    public Stowaway(long spendAmount, NetworkParameters params, String strPayNymInit, String strPayNymCollab)    {
+    public Stowaway(long spendAmount, NetworkParameters params, String strPayNymInit, String strPayNymCollab, int account)    {
         this.ts = System.currentTimeMillis() / 1000L;
         this.strID = Hex.toHexString(Sha256Hash.hash(BigInteger.valueOf(new SecureRandom().nextLong()).toByteArray()));
         this.type = Cahoots.CAHOOTS_STOWAWAY;
@@ -50,6 +51,7 @@ public class Stowaway extends Cahoots {
         this.strPayNymInit = strPayNymInit;
         this.strPayNymCollab = strPayNymCollab;
         this.params = params;
+        this.account = account;
     }
 
     public boolean inc(HashMap<_TransactionOutPoint, Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs, HashMap<String,ECKey> keyBag) throws Exception    {
@@ -69,6 +71,9 @@ public class Stowaway extends Cahoots {
         }
     }
 
+    //
+    // receiver
+    //
     public boolean doStep1(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         if(this.getStep() != 0 || this.getSpendAmount() == 0L)   {
@@ -97,13 +102,13 @@ public class Stowaway extends Cahoots {
             psbt.addInput(PSBT.PSBT_IN_WITNESS_UTXO, null, PSBT.writeSegwitInputUTXO(outpoint.getValue().longValue(), segwitAddress.segWitRedeemScript().getProgram()));
             // input type 6
             String[] s = ((String)triple.getRight()).split("/");
-            psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
+            psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
         for(_TransactionOutput output : outputs.keySet())   {
             Triple triple = outputs.get(output);
             // output type 2
             String[] s = ((String)triple.getRight()).split("/");
-            psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
+            psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
 
         this.psbt = psbt;
@@ -115,6 +120,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     public boolean doStep2(HashMap<_TransactionOutPoint,Triple<byte[],byte[],String>> inputs, HashMap<_TransactionOutput,Triple<byte[],byte[],String>> outputs) throws Exception    {
 
         Transaction transaction = psbt.getTransaction();
@@ -168,13 +176,13 @@ public class Stowaway extends Cahoots {
             psbt.addInput(PSBT.PSBT_IN_WITNESS_UTXO, null, PSBT.writeSegwitInputUTXO(outpoint.getValue().longValue(), segwitAddress.segWitRedeemScript().getProgram()));
             // input type 6
             String[] s = ((String)triple.getRight()).split("/");
-            psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
+            psbt.addInput(PSBT.PSBT_IN_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
         for(_TransactionOutput output : outputs.keySet())   {
             Triple triple = outputs.get(output);
             // output type 2
             String[] s = ((String)triple.getRight()).split("/");
-            psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, 0, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
+            psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
 
         psbt.setTransaction(transaction);
@@ -184,6 +192,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // receiver
+    //
     public boolean doStep3(HashMap<String,ECKey> keyBag)    {
 
         Transaction transaction = this.getTransaction();
@@ -211,6 +222,9 @@ public class Stowaway extends Cahoots {
         return true;
     }
 
+    //
+    // sender
+    //
     public boolean doStep4(HashMap<String,ECKey> keyBag)    {
 
         signTx(keyBag);

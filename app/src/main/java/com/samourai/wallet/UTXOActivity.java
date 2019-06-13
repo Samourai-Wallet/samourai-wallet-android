@@ -40,11 +40,10 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
-import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.UTXOUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
@@ -75,6 +74,8 @@ public class UTXOActivity extends Activity {
     private long totalP2WPKH = 0L;
     private long totalBlocked = 0L;
 
+    private int account = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +84,12 @@ public class UTXOActivity extends Activity {
 
         data = new ArrayList<DisplayData>();
         doNotSpend = new ArrayList<DisplayData>();
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(UTXOActivity.this).getWhirlpoolPostmix()) {
+                account = WhirlpoolMeta.getInstance(UTXOActivity.this).getWhirlpoolPostmix();
+            }
+        }
 
         listView = (ListView)findViewById(R.id.list);
 
@@ -234,7 +241,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_sign:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
                                 String msg = null;
 
                                 if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
@@ -276,7 +283,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_redeem:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
                                 SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 if(ecKey != null && segwitAddress != null) {
@@ -319,7 +326,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_privkey:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
                                 String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 ImageView showQR = new ImageView(UTXOActivity.this);
@@ -425,7 +432,15 @@ public class UTXOActivity extends Activity {
         data.clear();
         doNotSpend.clear();
 
-        for(UTXO utxo : APIFactory.getInstance(UTXOActivity.this).getUtxos(false))   {
+        List<UTXO> utxos = null;
+        if(account == WhirlpoolMeta.getInstance(UTXOActivity.this).getWhirlpoolPostmix())    {
+            utxos = APIFactory.getInstance(UTXOActivity.this).getUtxosPostMix();
+        }
+        else    {
+            utxos = APIFactory.getInstance(UTXOActivity.this).getUtxos(false);
+        }
+
+        for(UTXO utxo : utxos)   {
             for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
                 DisplayData displayData = new DisplayData();
                 displayData.addr = outpoint.getAddress();
