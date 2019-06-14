@@ -850,7 +850,7 @@ public class BatchSendActivity extends Activity {
         int change_idx = 0;
         if(changeAmount > 0L)    {
             change_idx = BIP84Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
+            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);
