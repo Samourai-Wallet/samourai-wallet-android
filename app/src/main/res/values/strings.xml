@@ -733,5 +733,10 @@
     <string name="total_selected">Total selected</string>
     <string name="cycle">Cycle</string>
     <string name="postmix_without_boltzmann">Please note that spending from your post-mix account without using STONEWALL will result in a loss of the privacy gained through Whirlpool.</string>
+    <string name="estimated_entropy">Estimated Entropy</string>
+    <string name="share_this_qr_code_with_your_participant">Share this QR code with your participant</string>
+    <string name="review_tx_before_braodcast">Review the transaction before broadcasting</string>
+    <string name="select_participant">Select participant</string>
+    <string name="select_cahoots_type">Select cahoots type</string>
 
 </resources>
