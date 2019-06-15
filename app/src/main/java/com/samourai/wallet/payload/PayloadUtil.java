@@ -404,7 +404,9 @@ public class PayloadUtil	{
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
-            meta.put("dojo", DojoUtil.getInstance(context).toJSON());
+            if(DojoUtil.getInstance(context).getDojoParams() != null)    {
+                meta.put("dojo", DojoUtil.getInstance(context).toJSON());
+            }
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);

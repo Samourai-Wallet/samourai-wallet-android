@@ -151,7 +151,12 @@ public class DojoUtil {
         JSONObject obj = null;
 
         try {
-            obj = new JSONObject(dojoParams);
+            if(dojoParams != null)    {
+                obj = new JSONObject(dojoParams);
+            }
+            else    {
+                obj = new JSONObject();
+            }
         }
         catch(JSONException je) {
             ;
