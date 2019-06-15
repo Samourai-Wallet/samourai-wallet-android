@@ -30,6 +30,8 @@
 
     <color name="cyan_ui_2">#58b9b8</color>
     <color name="green_ui_2">#0ecf96</color>
+    <color name="whirlpoolBlue">#00aaff</color>
+    <color name="whirlpoolGreen">#90ffee</color>
 
 
     <color name="teal" >#4caa9f</color>
@@ -39,6 +41,8 @@
     <color name="item_separator_grey">#333940</color>
 
     <color name="disabled_grey" >#797979</color>
+
+    <color name="disabled_white" >#41FFFFFF</color>
 
     <color name="whirlpool_window_dark">#262c33</color>
     <color name="warning_yellow">#B6B260</color>

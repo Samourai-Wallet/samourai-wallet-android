@@ -33,7 +33,6 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.common.base.Splitter;
 import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
@@ -48,6 +47,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -74,13 +74,10 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.whirlpool.EmptyWhirlPool;
-import com.samourai.wallet.whirlpool.NewWhirlpoolCycle;
-import com.samourai.wallet.whirlpool.WhirlPoolActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.EntropyBar;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
-import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
@@ -594,10 +591,9 @@ public class SendActivity extends AppCompatActivity {
     private void setBalance() {
 
         try {
-            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                 balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
-            }
-            else    {
+            } else {
                 Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
                 if (tempBalance != 0L) {
                     balance = tempBalance;
@@ -757,11 +753,9 @@ public class SendActivity extends AppCompatActivity {
                 doStowaway();
             } else if (editable.toString().equalsIgnoreCase("STONEWALLx2")) {
                 doSTONEWALLx2();
-            }
-            else if(editable.toString().equalsIgnoreCase("whirlpool"))    {
+            } else if (editable.toString().equalsIgnoreCase("whirlpool")) {
                 doWhirlpool();
-            }
-            else {
+            } else {
                 if (editable.toString().length() != 0)
                     validateSpend();
                 else
@@ -913,11 +907,9 @@ public class SendActivity extends AppCompatActivity {
         }
         else if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = 84;
-        }
-        else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+        } else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
-        }
-        else {
+        } else {
             changeType = 44;
         }
 
@@ -1830,19 +1822,7 @@ public class SendActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_QR) {
-
-            if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
-
-                strPCode = null;
-                strDestinationBTCAddress = null;
-
-                final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-
-                processScan(strResult);
-
-            }
-        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
+          if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
             ;
         } else if (resultCode == Activity.RESULT_OK && requestCode == RICOCHET) {
             ;
@@ -1858,7 +1838,7 @@ public class SendActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.send_menu, menu);
 
-        if(account != 0)    {
+        if (account != 0) {
             menu.findItem(R.id.action_batch).setVisible(false);
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
@@ -1928,9 +1908,14 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void doScan() {
-        Intent intent = new Intent(SendActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-        startActivityForResult(intent, SCAN_QR);
+
+        CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
+
+        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.dismissAllowingStateLoss();
+            processScan(code);
+        });
     }
 
     private void doSupport() {
@@ -1978,8 +1963,7 @@ public class SendActivity extends AppCompatActivity {
                             else    {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
-                        }
-                        catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
 
@@ -1989,7 +1973,7 @@ public class SendActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
@@ -2031,15 +2015,14 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
 
                                                 final String strAddress = edAddress.getText().toString().trim();
-                                                if(FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams()))    {
+                                                if (FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams())) {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress, account);
                                                     }
                                                     catch(NumberFormatException nfe) {
                                                         Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                                                     }
-                                                }
-                                                else    {
+                                                } else {
                                                     Toast.makeText(SendActivity.this, R.string.invalid_address, Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -2048,16 +2031,14 @@ public class SendActivity extends AppCompatActivity {
                                                 dialog.dismiss();
                                             }
                                         });
-                                if(!isFinishing())    {
+                                if (!isFinishing()) {
                                     dlg.show();
                                 }
-                            }
-                            else    {
+                            } else {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
 
-                        }
-                        catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -2073,7 +2054,7 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void doWhirlpool()  {
-        Intent intent = new Intent(SendActivity.this, EmptyWhirlPool.class);
+        Intent intent = new Intent(SendActivity.this, WhirlpoolMain.class);
         startActivity(intent);
     }
 
