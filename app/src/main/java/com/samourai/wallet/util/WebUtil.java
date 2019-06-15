@@ -50,8 +50,8 @@ public class WebUtil {
     public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
     public static final String SAMOURAI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
 
-    public static final String SAMOURAI_API2_TOR_DIST = "http://5fpla3ethnaqfjxu.onion/v2/";
-    public static final String SAMOURAI_API2_TESTNET_TOR_DIST = "http://5fpla3ethnaqfjxu.onion/test/v2/";
+    public static final String SAMOURAI_API2_TOR_DIST = "http://d2oagweysnavqgcfsfawqwql2rwxend7xxpriq676lzsmtfwbt75qbqd.onion/v2/";
+    public static final String SAMOURAI_API2_TESTNET_TOR_DIST = "http://d2oagweysnavqgcfsfawqwql2rwxend7xxpriq676lzsmtfwbt75qbqd.onion/test/v2/";
 
     public static String SAMOURAI_API2_TOR = SAMOURAI_API2_TOR_DIST;
     public static String SAMOURAI_API2_TESTNET_TOR = SAMOURAI_API2_TESTNET_TOR_DIST;
