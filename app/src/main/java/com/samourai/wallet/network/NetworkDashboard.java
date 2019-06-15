@@ -251,9 +251,14 @@ public class NetworkDashboard extends AppCompatActivity {
                 .subscribe( this::setTorConnectionState);
 
         disposables.add(disposable);
-        setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
-    }
 
+        new Handler().postDelayed(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
+                                      }
+                                  }, 1500);
+    }
 
     private void setDataConnectionState(CONNECTION_STATUS enabled) {
         if (enabled == CONNECTION_STATUS.ENABLED) {
