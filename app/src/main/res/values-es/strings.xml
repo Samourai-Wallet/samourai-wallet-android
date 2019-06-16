@@ -35,6 +35,10 @@
     <string name="options_xpub49_2">Mostrar clave pública extendida para la cuenta SegWit BIP49.</string>
     <string name="options_xpub84">Mostar ZPUB Segwit</string>
     <string name="options_xpub84_2">Mostrar clave pública extendida para la cuenta Segwit BIP84 (Bech32)</string>
+    <string name="options_xpub84_premix">Mostrar premezcla Whirlpool ZPUB</string>
+    <string name="options_xpub84_premix2">Mostrar clave pública extendida BIP84 Segwit (Bech32) para premezcla Whirlpool.</string>
+    <string name="options_xpub84_postmix">Mostrar ZPUB posmezcla Whirlpool</string>
+    <string name="options_xpub84_postmix2">Mostrar clave pública extendida BIP84 Segwit (Bech32) para posmezcla Whirlpool.</string>
     <string name="options_wipe">Borrar billetera de manera segura</string>
     <string name="options_wipe2">Borrar billetera de este dispositivo de manera segura.</string>
     <string name="options_stealth_display">Modo invisible</string>
@@ -100,6 +104,7 @@
     <string name="options_indexes2">Valores de índice actuales para esta billetera.</string>
     <string name="options_whirlpool_gui">Emparejar con la interfaz de Whirlpool</string>
     <string name="options_whirlpool_gui2">Emparejar con la interfaz de Whirlpool para un mezclado continuo.</string>
+    <string name="options_postmix">Gastar posmezclas de Whirlpool</string>
 
     <string name="prompt_send_backup_to_support">Enviar copia de seguridad de la billetera al soporte técnico? No incluye ninguna clave privada, semilla (seed) ni contraseñas..</string>
 
@@ -440,7 +445,7 @@
     <string name="options_display_redeem_script">Mostrar script de rescate</string>
     <string name="options_view_tx">Ver transacción</string>
     <string name="options_display_privkey">Mostrar clave privada</string>
-    <string name="options_batch">Envío en lote</string>
+    <string name="options_batch">Envíos simultáneos</string>
 
     <string name="do_not_repeat_sent_to">Tildar para evitar alertas sobre envios repetitivos a esta dirección.</string>
 
@@ -453,12 +458,12 @@
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
-    <string name="claim_paynym">Solicitá tu paynym</string>
-    <string name="claim_paynym_title1">Solicitá tu PayNymID gratuito</string>
+    <string name="claim_paynym">Solicita tu paynym</string>
+    <string name="claim_paynym_title1">Solicita tu PayNymID gratuito</string>
     <string name="claim_paynym_text1">Permite que tus amigos y contactos encuentren y se conecten con tu PayNym directamente mediante billeteras bitcoin compatibles.</string>
     <string name="claim_paynym_title2">Beneficios de un PayNymID</string>
     <string name="claim_paynym_text2a">Imagen y nombre único generados con un hash de tu código PayNym. Nunca habrá dos iguales!</string>
-    <string name="claim_paynym_text2b">Sin verificaciones de identidad! Tu nombre y tu imágen se basan en tu código PayNym y no en un ID de ciudadano.</string>
+    <string name="claim_paynym_text2b">Sin verificaciones de identidad! Tu nombre y tu imagen se basan en tu código PayNym y no en un ID de ciudadano.</string>
     <string name="claim_paynym_text2c">Se fácil de encontrar! Las billeteras compatibles pueden buscar nuevos contactos y enviar pagos seguros y privados sin dejar rastros.</string>
     <string name="claim_paynym_id">Solicitar mi PayNymID</string>
     <string name="claim_paynym_id_refused">No estoy interesado. No me preguntes nuevamente.</string>
@@ -534,7 +539,7 @@
     <string name="boltzmann_like_typed"> Ten en cuenta que \'Recibir cambio en un tipo similar de dirección\' está desasctivado y puede que la estructura de la transacción sea menos óptimo para tu envío STONEWALL.</string>
     <!-- <string name="title_activity_main3">Main3Activity</string>
     <string name="_0_00">0.00</string> -->
-    <string name="advanced">Avanzado</string>
+    <string name="advanced">Opciones avanzadas</string>
     <string name="broadcast_with_txtenna">Emitir con TxTenna</string>
     <string name="show_qr_code">Mostrar código QR</string>
     <string name="tx_connectivity_failure_msg"> No podemos emitir la transacción sin conexión. ¿Cómo quieres proceder?</string>
@@ -699,7 +704,7 @@
     <string name="paynym_follow_fee_message">Se cobrará una tarifa de conexión única para seguir al contacto</string>
     <string name="initializing_tor">iniciando Tor...</string>
 
-    <!-- <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string> -->
+    <string name="cannot_pair_whirlpool_gui">No se ha podido emparejar con la interfaz de Whirpool.</string>
     <string name="message_copied">mensaje copiado</string>
     <string name="scan_code">Escanear Código</string>
     <string name="follows_you">Seguirte</string>
@@ -707,5 +712,16 @@
     <string name="sycing_pcodes">Sincronizar códigos de pago</string>
     <string name="sync_complete">Sincronización de códigos de pago completada</string>
     <string name="options_paynym_indexes">Mostrar índices PayNym</string>
+
+    <string name="create_password">Crear contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="pairing_password">Definir contraseña de emparejamiento: (6-255 caracteres)</string>
+    <string name="password_error">Error creando contraseña</string>
+    <string name="password_invalid">Contraseña no válida</string>
+
+    <string name="review_whirlpool">Revisar Detalles Whirlpool</string>
+    <string name="total_selected">Total seleccionado</string>
+    <string name="cycle">Mezclar</string>
+    <string name="postmix_without_boltzmann">Tenga en cuenta que hacer un gasto de una posmezcla sin usar STONEWALL le llevará a una pérdida de parte de la privacidad ganada con Whirlpool.</string>
 
 </resources>
