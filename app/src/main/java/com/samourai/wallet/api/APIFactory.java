@@ -1694,19 +1694,19 @@ public class APIFactory	{
                 }
             }
 
-//            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
+            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
-            /*
             JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
             JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
             Log.d("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
             Log.d("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
-            */
+            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
+            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
             JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix });
             JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix });
             Log.d("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
             Log.d("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
-            boolean parsedPostMultiAddr = parsePostMixXPUB(postMultiAddrObj);
+            boolean parsedPostMultiAddr = parseMixXPUB(postMultiAddrObj);
             boolean parsedPostUnspent = parsePostMixUnspentOutputs(postUnspentObj.toString());
 //            Log.d("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
 //            Log.d("APIFactory", "post-mix unspent:" + parsedPostUnspent);
@@ -2200,7 +2200,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized boolean parsePostMixXPUB(JSONObject jsonObject) throws JSONException  {
+    private synchronized boolean parseMixXPUB(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
 
@@ -2240,6 +2240,13 @@ public class APIFactory	{
                                 AddressFactory.getInstance().setHighestPostChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                 BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                            }
+                            else if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                    addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr()))    {
+                                AddressFactory.getInstance().setHighestPreReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                AddressFactory.getInstance().setHighestPreChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
                             else    {
                                 ;
