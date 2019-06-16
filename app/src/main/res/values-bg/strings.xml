@@ -348,7 +348,7 @@
     <string name="cpfp_spent">CPFP транзакция изпратена.</string>
     <string name="rbf_spent">RBF транзакция изпратена.</string>
     <string name="cannot_output_dust">Не може да се направи транзакция с твърде малък output(dust)</string>
-    <string name="cannot_create_change_output">Cannot create change output.</string>
+    <string name="cannot_create_change_output">Не може да бъде създаден output за ресто</string>
     <string name="cannot_create_cpfp">CPFP транзакцията не може да се направи.</string>
 
     <string name="error_reading_payload">Грешка при четенето на payload. Моля опитайте отново.</string>
@@ -628,6 +628,88 @@
     <string name="hide_log">СКРИЙ ЗАПИСА</string>
     <string name="copy">Копиране</string>
     <string name="show_log">Показване на записа</string>
+    <string name="unconfirmed">Непотвърдени</string>
+    <string name="confirmation">Потвърждение</string>
+    <string name="total_available_amount">Всички налични</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Все още нямате PayNym контакти</string>
+
+    <string name="experimental">Експериментални</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Направете всеки харч CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Частично подписана Биткойн транзакция.</string>
+    <string name="import_cahoots">Сканирайте или поставете #Cahoots.</string>
+    <string name="import_psbt">Сканирайте или поставете PSBT.</string>
+    <string name="enter_cahoots">Въведете #Cahoots текст</string>
+    <string name="enter_psbt">Въведете PSBT hex текст</string>
+    <string name="create_cahoots">Създаване на #Cahoots харч</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Спешен</string>
+    <string name="normal">Нормален</string>
+    <string name="low">Нисък</string>
+
+    <string name="ricochet_nlocktime_ok">Вашият staggered Ricochet е маркиран за изпращане. Моля, изчакайте докато височината на блока позволи изпращането на всички транзакции в серията.</string>
+    <string name="ricochet_nlocktime_ko">Вашият staggered Ricochet не беше маркиран за изпращане. Моля опитайте отново.</string>
+    <string name="tag_utxo">надпишете UTXO</string>
+    <string name="boost_transaction_fee">Увеличаване на таксата</string>
+    <string name="refund">Refund</string>
+
+    <string name="not_cahoots">Невалидни #Cahoots</string>
+    <string name="not_valid_json">JSON parsing грешка</string>
+    <string name="unrecognized_cahoots">Неразпознати #Cahoots</string>
+    <string name="cannot_compose_cahoots">Не може да се композират #Cahoots</string>
+    <string name="start_stowaway">Начало на Stowaway като изпращач</string>
+    <string name="start_stonewall">Начало на STONEWALL като изпращач</string>
+    <string name="amount_sats">Въведете кол-во в сатоши</string>
+    <string name="zero_bits">0 bits</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Покажи транзакцията</string>
+    <string name="unrecognized_step">Неразпозната #Cahoots стъпка</string>
+    <string name="cannot_process_stowaway">Не може да се обработи Stowaway</string>
+    <string name="cannot_process_stonewall">Не може да се обработи STONEWALL</string>
+    <string name="cannot_process_cahoots">Не могат да се обработят #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Мрежа
+    </string>
+    <string name="powering_samourai_wallet_"> Използването на Samourai Wallet с ваш собствен node Ви предлага най-високо ниво на потайност и независимост при интеракция с Биткойн мрежата. Dojo прави използването на full node лесно и просто.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play full bitcoin node\n\n -Automatically configured Tor hidden service\n\n -Independence from default Samourai servers</string>
+    <string name="dojo_connect_instruction">Ако вече имате Dojo Full Node или използвате безплатния open source Dojo Софтуер на ваш собствен хардуер, сканирайте QR кода за сдвояване от Dojo Maintenance control panel</string>
+    <string name="dojo_headline">Използвайте Samourai с ваш собствен DOJO full node</string>
+    <string name="connect_to_existing_dojo">Свързване към съществуващо Dojo</string>
+    <string name="preorder">preorder</string>
+    <string name="add_new">Добави нов</string>
+    <string name="paynym_follow_message_2"> за автоматична генерация на лични адреси за пращане на биткойни до този контакт</string>
+    <string name="follow">Следване</string>
+    <string name="wallet_locked">Портфейлът е заключен</string>
+    <string name="address">Адрес</string>
+
+    <string name="is_offline">Samourai е офлайн</string>
+    <string name="history_will_be_updated">Балансът и историята на транзакциите няма да бъдат обновявани докато не се установи вързка с Интернет.</string>
+    <string name="you_received_s">Получихте</string>
+    <string name="paynym_follow_message">Тази такса включва разхода за създаването на специална транзакция на блокчейна. Това поддържа PayNym децентрализиран</string>
+    <string name="paynym_follow_fee_message">Еднократна такса от   ще бъде приспадната,за да последвате контакта</string>
+    <string name="initializing_tor">инициализация на Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">Не може да се подготви сдвояване с Whirlpool GUI.</string>
+    <string name="message_copied">съобщението копирано</string>
+    <string name="scan_code">Сканирай код</string>
+    <string name="follows_you">Ви следва</string>
+    <string name="edit_paynym">Редактиране на paynym</string>
+    <string name="sycing_pcodes">Синхронизиране на payment codes</string>
+    <string name="sync_complete">Payment code синхронизация завършена</string>
+    <string name="options_paynym_indexes">Покажи PayNym индекси</string>
+    <string name="create_password">Създай парола</string>
+    <string name="confirm_password">Потвърди паролата</string>
+    <string name="pairing_password">Дефиниране на парола за сдвояване: (6-255 знака)</string>
+    <string name="password_error">Грешка при създаването на парола</string>
+    <string name="password_invalid">Грешна парола</string>
+
+    <string name="review_whirlpool">Преглед на Whirlpool детайли</string>
+    <string name="total_selected">Общо избрани</string>
+    <string name="cycle">Цикъл</string>
+    <string name="postmix_without_boltzmann">Имайте предвид, че харченето от пост-микс акаунта Ви без STONEWALL ще доведе до загуба на потайността, спечелена чрез Whirlpool.</string>
+
 
 
 </resources>

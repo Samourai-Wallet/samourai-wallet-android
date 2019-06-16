@@ -22,6 +22,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -77,7 +78,7 @@ public class SendFactory	{
         Transaction tx = null;
 
         try {
-            int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
+//            int changeIdx = HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChange().getAddrIdx();
             tx = makeTransaction(accountIdx, receivers, unspent);
         }
         catch(Exception e) {
@@ -87,7 +88,7 @@ public class SendFactory	{
         return tx;
     }
 
-    public Transaction signTransaction(Transaction unsignedTx)    {
+    public Transaction signTransaction(Transaction unsignedTx, int account)    {
 
         HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
 
@@ -105,7 +106,7 @@ public class SendFactory	{
                 }
 //                Log.i("SendFactory", "address from script:" + address);
                 ECKey ecKey = null;
-                ecKey = getPrivKey(address);
+                ecKey = getPrivKey(address, account);
                 if(ecKey != null) {
                     keyBag.put(input.getOutpoint().toString(), ecKey);
                 }
@@ -365,9 +366,9 @@ public class SendFactory	{
 
     }
 
-    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address) {
+    public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address, int account) {
 
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null);
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null, account);
         if(set0 == null)    {
             return null;
         }
@@ -400,7 +401,7 @@ public class SendFactory	{
         else    {
             return null;
         }
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft());
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft(), account);
         if(set1 == null)    {
             return null;
         }
@@ -415,7 +416,7 @@ public class SendFactory	{
         return ret;
     }
 
-    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints) {
+    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints, int account) {
 
         if(utxos == null || utxos.size() == 0)    {
             return null;
@@ -602,7 +603,7 @@ public class SendFactory	{
                 _address = address;
             }
             else    {
-                _address = getChangeAddress(mixedType);
+                _address = getChangeAddress(mixedType, account);
             }
             if(FormatsUtil.getInstance().isValidBech32(_address))   {
                 txSpendOutput = Bech32Util.getInstance().getTransactionOutput(_address, spendAmount.longValue());
@@ -613,7 +614,7 @@ public class SendFactory	{
             }
             txOutputs.add(txSpendOutput);
 
-            changeAddress = getChangeAddress(changeType);
+            changeAddress = getChangeAddress(changeType, account);
             if(FormatsUtil.getInstance().isValidBech32(changeAddress))    {
                 txChangeOutput = Bech32Util.getInstance().getTransactionOutput(changeAddress, changeDue.longValue());
             }
@@ -652,7 +653,7 @@ public class SendFactory	{
 
     }
 
-    private String getChangeAddress(int type)    {
+    private String getChangeAddress(int type, int account)    {
 
         if(type != 44 || PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
             ;
@@ -661,9 +662,15 @@ public class SendFactory	{
             type = 44;
         }
 
-        if(type == 84)    {
-            String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
-            BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().incAddrIdx();
+        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+            String change_address = BIP84Util.getInstance(context).getAddressAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, idx).getBech32AsString();
+            AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+            return change_address;
+        }
+        else if(type == 84)    {
+            String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(account).getChange().getAddrIdx()).getBech32AsString();
+            BIP84Util.getInstance(context).getWallet().getAccount(account).getChange().incAddrIdx();
             return change_address;
         }
         else if(type == 49)    {
@@ -687,7 +694,7 @@ public class SendFactory	{
 
     }
 
-    public static ECKey getPrivKey(String address)    {
+    public static ECKey getPrivKey(String address, int account)    {
 
 //        Log.d("SendFactory", "get privkey for:" + address);
 
@@ -700,7 +707,13 @@ public class SendFactory	{
                 String[] s = path.split("/");
                 if(FormatsUtil.getInstance().isValidBech32(address))    {
                     Log.d("SendFactory", "address type:" + "bip84");
-                    HD_Address addr = BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    HD_Address addr = null;
+                    if(account == 0)    {
+                        addr = BIP84Util.getInstance(context).getWallet().getAccount(account).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    }
+                    else    {
+                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(account).getChain(Integer.parseInt(s[1])).getAddressAt(Integer.parseInt(s[2]));
+                    }
                     ecKey = addr.getECKey();
                 }
                 else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {

@@ -34,6 +34,8 @@ public class Cahoots {
     protected String strPayNymCollab = null;
     protected String strPayNymInit = null;
     protected NetworkParameters params = null;
+    protected int account = 0;
+    protected int cptyAccount = 0;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
 
@@ -50,6 +52,8 @@ public class Cahoots {
         this.strPayNymCollab = c.strPayNymCollab;
         this.strPayNymInit = c.strPayNymInit;
         this.params = c.getParams();
+        this.account = c.getAccount();
+        this.cptyAccount = c.getCounterpartyAccount();
     }
 
     public int getVersion() {
@@ -114,6 +118,18 @@ public class Cahoots {
         return params;
     }
 
+    public int getAccount() {
+        return account;
+    }
+
+    public void setCounterpartyAccount(int account) {
+        this.cptyAccount = account;
+    }
+
+    public int getCounterpartyAccount() {
+        return cptyAccount;
+    }
+
     public static boolean isCahoots(JSONObject obj)   {
         try {
             return obj.has("cahoots") && obj.getJSONObject("cahoots").has("type");
@@ -145,7 +161,6 @@ public class Cahoots {
             obj.put("id", strID);
             obj.put("type", type);
             obj.put("step", step);
-            obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
             obj.put("spend_amount", spendAmount);
             JSONArray _outpoints = new JSONArray();
             for(String outpoint : outpoints.keySet())   {
@@ -161,8 +176,14 @@ public class Cahoots {
             if(params instanceof TestNet3Params)    {
                 obj.put("params","testnet");
             }
+            obj.put("account", account);
+            obj.put("cpty_account", cptyAccount);
+            obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
 
             cObj.put("cahoots", obj);
+        }
+        catch(JSONException je) {
+            je.printStackTrace();
         }
         catch(Exception e) {
             throw new RuntimeException(e);
@@ -199,15 +220,29 @@ public class Cahoots {
                 this.strDestination = obj.getString("dest");
 //                this.strPayNymCollab = obj.getString("paynym_collab");
 //                this.strPayNymInit = obj.getString("paynym_init");
+                if(obj.has("account"))    {
+                    this.account = obj.getInt("account");
+                }
+                else    {
+                    this.account = 0;
+                }
+                if(obj.has("cpty_account"))    {
+                    this.cptyAccount = obj.getInt("cpty_account");
+                }
+                else    {
+                    this.cptyAccount = 0;
+                }
                 this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
                     this.psbt.read();
                 }
             }
         }
+        catch(JSONException je) {
+            je.printStackTrace();
+        }
         catch(Exception e) {
 //            throw new RuntimeException(e);
-            ;
         }
     }
 
@@ -227,7 +262,7 @@ public class Cahoots {
                 ECKey key = keyBag.get(outpoint.toString());
                 SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), params);
 
-                Log.d("CahootsCahoots", "signTx bech32:" + segwitAddress.getBech32AsString());
+                Log.d("Cahoots", "signTx bech32:" + segwitAddress.getBech32AsString());
 
                 final Script redeemScript = segwitAddress.segWitRedeemScript();
                 final Script scriptCode = redeemScript.scriptCode();

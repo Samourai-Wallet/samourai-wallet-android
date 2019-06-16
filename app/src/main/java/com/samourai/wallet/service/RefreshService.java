@@ -29,6 +29,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
@@ -186,6 +187,16 @@ public class RefreshService extends IntentService {
 
             if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
                 String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).zpubstr();
+                APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84);
+            }
+
+            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPRELOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(RefreshService.this).getWhirlpoolPremixAccount()).zpubstr();
+                APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84);
+            }
+
+            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPOSTLOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(RefreshService.this).getWhirlpoolPostmix()).zpubstr();
                 APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84);
             }
 
