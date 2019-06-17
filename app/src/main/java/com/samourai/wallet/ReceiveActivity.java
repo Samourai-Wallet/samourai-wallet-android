@@ -219,7 +219,7 @@ public class ReceiveActivity extends AppCompatActivity {
         });
 
         if (useSegwit) {
-            addressTypesSpinner.setSelection(0);
+            addressTypesSpinner.setSelection(1);
         } else {
             addressTypesSpinner.setSelection(2);
         }
