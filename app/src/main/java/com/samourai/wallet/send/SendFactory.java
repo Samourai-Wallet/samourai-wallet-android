@@ -368,7 +368,7 @@ public class SendFactory	{
 
     public Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> boltzmann(List<UTXO> utxos, List<UTXO> utxosBis, BigInteger spendAmount, String address, int account) {
 
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null, account);
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set0 = boltzmannSet(utxos, spendAmount, address, null, account, null);
         if(set0 == null)    {
             return null;
         }
@@ -401,7 +401,7 @@ public class SendFactory	{
         else    {
             return null;
         }
-        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft(), account);
+        Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> set1 = boltzmannSet(_utxo, spendAmount, address, set0.getLeft(), account, set0.getMiddle());
         if(set1 == null)    {
             return null;
         }
@@ -410,13 +410,13 @@ public class SendFactory	{
 
         ret.getLeft().addAll(set0.getLeft());
         ret.getLeft().addAll(set1.getLeft());
-        ret.getRight().addAll(set0.getMiddle());
+//        ret.getRight().addAll(set0.getMiddle());
         ret.getRight().addAll(set1.getMiddle());
 
         return ret;
     }
 
-    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints, int account) {
+    public Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> boltzmannSet(List<UTXO> utxos, BigInteger spendAmount, String address, List<MyTransactionOutPoint> firstPassOutpoints, int account, List<TransactionOutput> outputs0) {
 
         if(utxos == null || utxos.size() == 0)    {
             return null;
@@ -590,10 +590,33 @@ public class SendFactory	{
         if(firstPassOutpoints != null)    {
             Triple<Integer,Integer,Integer> outputTypes = FeeUtil.getInstance().getOutpointCount(new Vector<MyTransactionOutPoint>(selectedOutpoints));
             biFee = FeeUtil.getInstance().estimatedFeeSegwit(firstPassOutpointTypes.getLeft() + outputTypes.getLeft(), firstPassOutpointTypes.getMiddle() + outputTypes.getMiddle(), firstPassOutpointTypes.getRight() + outputTypes.getRight(), 4);
+            Log.d("SendFactory", "biFee:" + biFee.toString());
+            if(biFee.mod(BigInteger.valueOf(2L)).compareTo(BigInteger.ZERO) != 0)    {
+                biFee = biFee.add(BigInteger.ONE);
+            }
+            Log.d("SendFactory", "biFee pair:" + biFee.toString());
         }
 
-        if(changeDue.subtract(biFee).compareTo(SamouraiWallet.bDust) > 0)    {
-            changeDue = changeDue.subtract(biFee);
+        if(changeDue.subtract(biFee.divide(BigInteger.valueOf(2L))).compareTo(SamouraiWallet.bDust) > 0)    {
+            changeDue = changeDue.subtract(biFee.divide(BigInteger.valueOf(2L)));
+            Log.d("SendFactory", "fee set1:" + biFee.divide(BigInteger.valueOf(2L)).toString());
+        }
+        else    {
+            return null;
+        }
+
+        if(outputs0 != null && outputs0.size() == 2)    {
+            TransactionOutput changeOutput0 = outputs0.get(1);
+            BigInteger changeDue0 = BigInteger.valueOf(changeOutput0.getValue().longValue());
+            if(changeDue0.subtract(biFee.divide(BigInteger.valueOf(2L))).compareTo(SamouraiWallet.bDust) > 0)    {
+                changeDue0 = changeDue0.subtract(biFee.divide(BigInteger.valueOf(2L)));
+                Log.d("SendFactory", "fee set0:" + biFee.divide(BigInteger.valueOf(2L)).toString());
+            }
+            else    {
+                return null;
+            }
+            changeOutput0.setValue(Coin.valueOf(changeDue0.longValue()));
+            outputs0.set(1, changeOutput0);
         }
 
         try {
@@ -642,6 +665,9 @@ public class SendFactory	{
         Triple<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>, ArrayList<UTXO>> ret = Triple.of(new ArrayList<MyTransactionOutPoint>(), new ArrayList<TransactionOutput>(), new ArrayList<UTXO>());
         ret.getLeft().addAll(selectedOutpoints);
         ret.getMiddle().addAll(txOutputs);
+        if(outputs0 != null)    {
+            ret.getMiddle().addAll(outputs0);
+        }
         ret.getRight().addAll(_utxos);
 
         outValue += biFee.longValue();
