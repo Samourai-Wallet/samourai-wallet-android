@@ -29,6 +29,7 @@ public class Cahoots {
     protected int step = -1;
     protected PSBT psbt = null;
     protected long spendAmount = 0L;
+    protected long feeAmount = 0L;
     protected HashMap<String,Long> outpoints = null;
     protected String strDestination = null;
     protected String strPayNymCollab = null;
@@ -46,8 +47,9 @@ public class Cahoots {
         this.type = c.getType();
         this.step = c.getStep();
         this.psbt = c.getPSBT();
-        this.spendAmount = c.spendAmount;
-        this.outpoints = c.outpoints;
+        this.spendAmount = c.getSpendAmount();
+        this.feeAmount = c.getFeeAmount();
+        this.outpoints = c.getOutpoints();
         this.strDestination = c.strDestination;
         this.strPayNymCollab = c.strPayNymCollab;
         this.strPayNymInit = c.strPayNymInit;
@@ -88,6 +90,14 @@ public class Cahoots {
 
     public long getSpendAmount() {
         return spendAmount;
+    }
+
+    public long getFeeAmount() {
+        return feeAmount;
+    }
+
+    public void setFeeAmount(long fee)  {
+        feeAmount = fee;
     }
 
     public HashMap<String, Long> getOutpoints() {
@@ -162,6 +172,7 @@ public class Cahoots {
             obj.put("type", type);
             obj.put("step", step);
             obj.put("spend_amount", spendAmount);
+            obj.put("fee_amount", feeAmount);
             JSONArray _outpoints = new JSONArray();
             for(String outpoint : outpoints.keySet())   {
                 JSONObject entry = new JSONObject();
@@ -212,6 +223,7 @@ public class Cahoots {
                 this.type = obj.getInt("type");
                 this.step = obj.getInt("step");
                 this.spendAmount = obj.getLong("spend_amount");
+                this.feeAmount = obj.getLong("fee_amount");
                 JSONArray _outpoints = obj.getJSONArray("outpoints");
                 for(int i = 0; i < _outpoints.length(); i++)   {
                     JSONObject entry = _outpoints.getJSONObject(i);
