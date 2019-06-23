@@ -63,24 +63,25 @@ public class DojoUtil {
         return dojoParams;
     }
 
-    public void setDojoParams(String dojoParams) {
+    public synchronized void setDojoParams(String dojoParams) {
         DojoUtil.dojoParams = dojoParams;
 
         if(SamouraiWallet.getInstance().isTestNet())    {
             String url = getUrl(dojoParams);
-            WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/v2/", "/test/v2/");
+            WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/test/v2", "/test/v2/");
         }
         else    {
-            WebUtil.SAMOURAI_API2_TOR = getUrl(dojoParams);
+            String url = getUrl(dojoParams);
+            WebUtil.SAMOURAI_API2_TOR = url.replace("/v2", "/v2/");
         }
 
         String apiToken = getApiKey(dojoParams);
         APIFactory.getInstance(context).setAppToken(apiToken);
-        APIFactory.getInstance(context).getToken();
+        APIFactory.getInstance(context).getToken(true);
 
     }
 
-    public void removeDojoParams() {
+    public synchronized void removeDojoParams() {
         DojoUtil.dojoParams = null;
 
         if(SamouraiWallet.getInstance().isTestNet())    {
@@ -91,7 +92,7 @@ public class DojoUtil {
         }
 
         APIFactory.getInstance(context).setAppToken(null);
-        APIFactory.getInstance(context).getToken();
+        APIFactory.getInstance(context).getToken(false);
 
     }
 
