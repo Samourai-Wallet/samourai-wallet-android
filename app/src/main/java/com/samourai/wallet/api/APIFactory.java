@@ -149,6 +149,9 @@ public class APIFactory	{
     }
 
     public String getAccessToken() {
+        if(ACCESS_TOKEN == null)    {
+            getToken(false);
+        }
         return SamouraiWallet.getInstance().isTestNet() ? ACCESS_TOKEN : "";
     }
 
@@ -205,13 +208,13 @@ public class APIFactory	{
         if(!AppUtil.getInstance(context).isOfflineMode() && SamouraiWallet.getInstance().isTestNet())    {
 
             if(APIFactory.getInstance(context).getAccessToken() == null)    {
-                APIFactory.getInstance(context).getToken();
+                APIFactory.getInstance(context).getToken(false);
             }
 
             if(APIFactory.getInstance(context).getAccessToken() != null)    {
                 JWT jwt = new JWT(APIFactory.getInstance(context).getAccessToken());
                 if(jwt != null && jwt.isExpired(APIFactory.getInstance(context).getAccessTokenRefresh()))    {
-                    if(APIFactory.getInstance(context).getToken())  {
+                    if(APIFactory.getInstance(context).getToken(false))  {
                         return true;
                     }
                     else    {
@@ -229,14 +232,16 @@ public class APIFactory	{
 
     }
 
-    public synchronized boolean getToken() {
+    public synchronized boolean getToken(boolean setupDojo) {
 
 //        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
         String _url = WebUtil.SAMOURAI_API2_TESTNET;
 
-        if(DojoUtil.getInstance(context).getDojoParams() != null)    {
+        if(DojoUtil.getInstance(context).getDojoParams() != null || setupDojo)    {
             _url = WebUtil.SAMOURAI_API2_TESTNET_TOR;
         }
+
+        Log.d("APIFactory", "getToken() url:" + _url);
 
         JSONObject jsonObject  = null;
 
