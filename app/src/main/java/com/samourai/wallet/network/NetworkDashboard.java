@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
@@ -113,14 +114,20 @@ public class NetworkDashboard extends AppCompatActivity {
             DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
             dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
             */
+            /*
             if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
-                DojoUtil.getInstance(NetworkDashboard.this).clear();
-                APIFactory.getInstance(NetworkDashboard.this).getToken();
-                setDojoConnectionState(CONNECTION_STATUS.DISABLED);
+                resetAPI();
+                setDojoConnectionState(CONNECTION_STATUS.ENABLED);
             }
             else    {
-                doScan();
+                resetAPI();
+                setDojoConnectionState(CONNECTION_STATUS.DISABLED);
+//                doScan();
             }
+            */
+            stopTor();
+            resetAPI();
+            setDojoConnectionState(CONNECTION_STATUS.DISABLED);
         });
 
         torButton.setOnClickListener(view -> {
@@ -153,12 +160,14 @@ public class NetworkDashboard extends AppCompatActivity {
         disposables.add(onlineSubscription);
 
         dojoLayout = findViewById(R.id.network_dojo_layout);
+        dojoLayout.setVisibility(View.GONE);
 
         if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
-            setDojoConnectionState(CONNECTION_STATUS.DISABLED);
+            setDojoConnectionState(CONNECTION_STATUS.ENABLED);
         }
         else    {
-            setDojoConnectionState(CONNECTION_STATUS.ENABLED);
+            resetAPI();
+            setDojoConnectionState(CONNECTION_STATUS.DISABLED);
         }
 
         Bundle extras = getIntent().getExtras();
@@ -252,80 +261,100 @@ public class NetworkDashboard extends AppCompatActivity {
 
         disposables.add(disposable);
 
-        new Handler().postDelayed(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
-                                      }
-                                  }, 1500);
+        NetworkDashboard.this.runOnUiThread(new Runnable() {
+            public void run() {
+//                    setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
+            }
+        });
+
     }
 
     private void setDataConnectionState(CONNECTION_STATUS enabled) {
-        if (enabled == CONNECTION_STATUS.ENABLED) {
-            showOfflineMessage(false);
-            dataButton.setText("Disable");
-            dataConnectionIcon.setColorFilter(activeColor);
-            dataConnectionStatus.setText("Enabled");
-        } else {
-            dataButton.setText("Enable");
-            showOfflineMessage(true);
-            dataConnectionIcon.setColorFilter(disabledColor);
-            dataConnectionStatus.setText("Disabled");
-        }
+
+        NetworkDashboard.this.runOnUiThread(new Runnable() {
+            public void run() {
+                if (enabled == CONNECTION_STATUS.ENABLED) {
+                    showOfflineMessage(false);
+                    dataButton.setText("Disable");
+                    dataConnectionIcon.setColorFilter(activeColor);
+                    dataConnectionStatus.setText("Enabled");
+                } else {
+                    dataButton.setText("Enable");
+                    showOfflineMessage(true);
+                    dataConnectionIcon.setColorFilter(disabledColor);
+                    dataConnectionStatus.setText("Disabled");
+                }
+            }
+        });
+
     }
 
     private void setDojoConnectionState(CONNECTION_STATUS enabled) {
-        if (enabled == CONNECTION_STATUS.ENABLED) {
-            dojoBtn.setText("Disable");
-            dojoConnectionIcon.setColorFilter(activeColor);
-            dojoConnectionStatus.setText("Enabled");
-        } else if (enabled == CONNECTION_STATUS.CONFIGURE) {
-            dojoBtn.setText("configure");
-            dojoConnectionIcon.setColorFilter(waiting);
-            dojoConnectionStatus.setText("Not configured");
-        } else {
-            dojoBtn.setText("Enable");
-            dojoConnectionIcon.setColorFilter(disabledColor);
-            dojoConnectionStatus.setText("Disabled");
-        }
+
+        NetworkDashboard.this.runOnUiThread(new Runnable() {
+            public void run() {
+                if (enabled == CONNECTION_STATUS.ENABLED) {
+                    dojoBtn.setText("Disable");
+                    dojoConnectionIcon.setColorFilter(activeColor);
+                    dojoConnectionStatus.setText("Enabled");
+                } else if (enabled == CONNECTION_STATUS.CONFIGURE) {
+                    dojoBtn.setText("configure");
+                    dojoConnectionIcon.setColorFilter(waiting);
+                    dojoConnectionStatus.setText("Not configured");
+                } else {
+                    dojoBtn.setText("Enable");
+                    dojoConnectionIcon.setColorFilter(disabledColor);
+                    dojoConnectionStatus.setText("Disabled");
+                }
+            }
+        });
+
     }
 
     private void setTorConnectionState(TorManager.CONNECTION_STATES enabled) {
-        if (enabled == TorManager.CONNECTION_STATES.CONNECTED) {
-            torButton.setText("Disable");
-            torButton.setEnabled(true);
-            torConnectionIcon.setColorFilter(activeColor);
-            torConnectionStatus.setText("Enabled");
 
-            if(waitingForPairing)    {
-                waitingForPairing = false;
+        NetworkDashboard.this.runOnUiThread(new Runnable() {
+            public void run() {
+                if (enabled == TorManager.CONNECTION_STATES.CONNECTED) {
+                    torButton.setText("Disable");
+                    torButton.setEnabled(true);
+                    torConnectionIcon.setColorFilter(activeColor);
+                    torConnectionStatus.setText("Enabled");
 
-                if (strPairingParams != null) {
-                    DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
-                    Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
-                    initDojo();
+                    if(waitingForPairing)    {
+                        waitingForPairing = false;
+
+                        if (strPairingParams != null) {
+                            DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
+                            Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
+                            initDojo();
+                        }
+
+                    }
+
                 }
+                else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
+                    torButton.setText("loading...");
+                    torButton.setEnabled(false);
+                    torConnectionIcon.setColorFilter(waiting);
+                    torConnectionStatus.setText("Tor initializing");
+                }
+                else  {
+                    torButton.setText("Enable");
+                    torButton.setEnabled(true);
+                    torConnectionIcon.setColorFilter(disabledColor);
+                    torConnectionStatus.setText("Disabled");
 
+                    /*
+                    if (strPairingParams != null) {
+                        DojoUtil.getInstance(NetworkDashboard.this).removeDojoParams();
+                    }
+                    */
+
+                }
             }
+        });
 
-        }
-        else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
-            torButton.setText("loading...");
-            torButton.setEnabled(false);
-            torConnectionIcon.setColorFilter(waiting);
-            torConnectionStatus.setText("Tor initializing");
-        }
-        else  {
-            torButton.setText("Enable");
-            torButton.setEnabled(true);
-            torConnectionIcon.setColorFilter(disabledColor);
-            torConnectionStatus.setText("Disabled");
-
-            if (strPairingParams != null) {
-                DojoUtil.getInstance(NetworkDashboard.this).removeDojoParams();
-            }
-
-        }
     }
 
     private void showOfflineMessage(boolean show) {
@@ -374,31 +403,13 @@ public class NetworkDashboard extends AppCompatActivity {
 
         Log.d("NetworkDashboard", "initDojo()");
 
-//        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44REG, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49REG, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84REG, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPREREG, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTREG, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44LOCK, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49LOCK, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84LOCK, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPRELOCK, false);
-        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTLOCK, false);
+        if (registerTask == null || registerTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+            registerTask = new RegisterTask();
 
-        Handler handler = new Handler();
+            Log.d("NetworkDashboard", "registerTask launched");
 
-        handler.post(new Runnable() {
-            public void run() {
-                if (registerTask == null || registerTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                    registerTask = new RegisterTask();
-
-                    Log.d("NetworkDashboard", "registerTask launched");
-
-                    registerTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                }
-            }
-
-        });
+            registerTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
 
     }
 
@@ -410,9 +421,14 @@ public class NetworkDashboard extends AppCompatActivity {
             Log.d("NetworkDashboard", "registerTask: query Dojo");
             Log.d("NetworkDashboard", WebUtil.SAMOURAI_API2_TESTNET_TOR);
 
-            APIFactory.getInstance(NetworkDashboard.this).getToken();
+            resetAPI();
 
-            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
+            PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.IS_RESTORE, true);
+
+            APIFactory.getInstance(NetworkDashboard.this).initWallet();
+
+            /*
+             if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
 
                 try {
                     String[] s = HD_WalletFactory.getInstance(NetworkDashboard.this).get().getXPUBs();
@@ -423,8 +439,6 @@ public class NetworkDashboard extends AppCompatActivity {
                 }
 
             }
-
-            APIFactory.getInstance(NetworkDashboard.this).initWallet();
 
             if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
                 String ypub = BIP49Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).ypubstr();
@@ -445,6 +459,7 @@ public class NetworkDashboard extends AppCompatActivity {
                 String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(NetworkDashboard.this).getWhirlpoolPostmix()).zpubstr();
                 APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
             }
+            */
 
             setDojoConnectionState(CONNECTION_STATUS.ENABLED);
 
@@ -460,6 +475,36 @@ public class NetworkDashboard extends AppCompatActivity {
         protected void onPreExecute() {
             ;
         }
+
+    }
+
+    private void resetAPI() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+
+                //        PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44REG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49REG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84REG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPREREG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTREG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44LOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49LOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84LOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPRELOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTLOCK, false);
+
+                DojoUtil.getInstance(NetworkDashboard.this).clear();
+                APIFactory.getInstance(NetworkDashboard.this).setAccessToken(null);
+                APIFactory.getInstance(NetworkDashboard.this).setAppToken(null);
+                APIFactory.getInstance(NetworkDashboard.this).getToken(true);
+
+                Looper.loop();
+
+            }
+        }).start();
 
     }
 
