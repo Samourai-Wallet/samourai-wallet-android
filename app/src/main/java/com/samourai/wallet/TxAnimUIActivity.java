@@ -41,6 +41,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
 import com.samourai.wallet.util.MonetaryUtil;
@@ -335,6 +336,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                     if(SendParams.getInstance().getAccount() != 0)    {
                         BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccountAt(SendParams.getInstance().getAccount()).getChange().incAddrIdx();
+                        AddressFactory.getInstance(TxAnimUIActivity.this).setHighestPostChangeIdx(SendParams.getInstance().getChangeIdx() + 1);
                     }
                     else if (SendParams.getInstance().getChangeType() == 84) {
                         BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().incAddrIdx();
@@ -445,6 +447,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 // reset change index upon tx fail
                 if(SendParams.getInstance().getAccount() != 0)    {
                     BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccountAt(SendParams.getInstance().getAccount()).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
+                    AddressFactory.getInstance(TxAnimUIActivity.this).setHighestPostChangeIdx(SendParams.getInstance().getChangeIdx());
                 }
                 else if (SendParams.getInstance().getChangeType() == 84) {
                     BIP84Util.getInstance(TxAnimUIActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(SendParams.getInstance().getChangeIdx());
