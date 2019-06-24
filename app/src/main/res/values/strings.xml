@@ -690,6 +690,7 @@
     <string name="dojo_connect_instruction">If you already have a Dojo Full Node or are \nrunning the free and open source Dojo Software\non your own hardware, scan the pairing QR code\nlocated on the Dojo Maintenance control panel</string>
     <string name="dojo_headline">Power Samourai with your  own personal DOJO full node</string>
     <string name="connect_to_existing_dojo">Connect to existing Dojo</string>
+    <string name="create_to_existing_dojo">Create wallet and pair to Dojo</string>
     <string name="preorder">preorder</string>
     <string name="add_new">Add New</string>
     <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
