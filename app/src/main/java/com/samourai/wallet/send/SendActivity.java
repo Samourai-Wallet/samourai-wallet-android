@@ -2170,7 +2170,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void saveChangeIndexes() {
 
-        idxBIP84PostMixInternal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
+        idxBIP84PostMixInternal = AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx();
         idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         try {
@@ -2183,7 +2183,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void restoreChangeIndexes() {
 
-        BIP84Util.getInstance(SendActivity.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()).getChange().setAddrIdx(idxBIP84PostMixInternal);
+        AddressFactory.getInstance(SendActivity.this).setHighestPostChangeIdx(idxBIP84PostMixInternal);
         BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
         BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
         try {
