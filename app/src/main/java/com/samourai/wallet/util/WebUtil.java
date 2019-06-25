@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -296,7 +297,9 @@ public class WebUtil {
 
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+                .proxy(TorManager.getInstance(this.context).getProxy())
+                .connectTimeout(40, TimeUnit.SECONDS)
+                .readTimeout(40, TimeUnit.SECONDS);
 
         if(URL.contains("onion")){
             getHostNameVerifier(builder);

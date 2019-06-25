@@ -269,11 +269,21 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     private void doDojoPairing2(String params)    {
-        DojoUtil.getInstance(LandingActivity.this).setDojoParams(params);
-        waitingForPairing = false;
+      Disposable  disposable =   DojoUtil.getInstance(LandingActivity.this).setDojoParams(params)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(aBoolean -> {
+                    waitingForPairing = false;
+                    Toast.makeText(this,"Connected To Dojo node",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
+                    startActivity(intent);
+                },error->{
+                    error.printStackTrace();
+                    Toast.makeText(this,"Error Connecting node : ".concat(error.getMessage()),Toast.LENGTH_SHORT).show();
+                });
+      compositeDisposables.add(disposable);
 
-        Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
-        startActivity(intent);
+
     }
 
     private void doScan() {

@@ -1,6 +1,7 @@
 package com.samourai.wallet.network.dojo;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
@@ -9,11 +10,13 @@ import com.samourai.wallet.util.WebUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.reactivex.Observable;
+
 public class DojoUtil {
 
     private static String dojoParams = null;
     private static DojoUtil instance = null;
-
+    private static final String TAG = "DojoUtil";
     private static Context context = null;
 
     private DojoUtil()  { ; }
@@ -63,22 +66,24 @@ public class DojoUtil {
         return dojoParams;
     }
 
-    public synchronized void setDojoParams(String dojoParams) {
-        DojoUtil.dojoParams = dojoParams;
+    public synchronized Observable<Boolean> setDojoParams(String dojoParams) {
+       return Observable.fromCallable(() -> {
+           DojoUtil.dojoParams = dojoParams;
+           Log.i(TAG, "setDojoParams: ".concat(dojoParams));
+           if(SamouraiWallet.getInstance().isTestNet())    {
+               String url = getUrl(dojoParams);
+               WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/test/v2", "/test/v2/");
+           }
+           else    {
+               String url = getUrl(dojoParams);
+               WebUtil.SAMOURAI_API2_TOR = url.replace("/v2", "/v2/");
+           }
 
-        if(SamouraiWallet.getInstance().isTestNet())    {
-            String url = getUrl(dojoParams);
-            WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/test/v2", "/test/v2/");
-        }
-        else    {
-            String url = getUrl(dojoParams);
-            WebUtil.SAMOURAI_API2_TOR = url.replace("/v2", "/v2/");
-        }
-
-        String apiToken = getApiKey(dojoParams);
-        APIFactory.getInstance(context).setAppToken(apiToken);
-        APIFactory.getInstance(context).getToken(true);
-
+           String apiToken = getApiKey(dojoParams);
+           APIFactory.getInstance(context).setAppToken(apiToken);
+           APIFactory.getInstance(context).getToken(true);
+           return  true;
+       });
     }
 
     public synchronized void removeDojoParams() {
