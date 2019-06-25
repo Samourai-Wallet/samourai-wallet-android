@@ -261,7 +261,9 @@ public class WebUtil {
     private String tor_getURL(String URL) throws Exception {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+                .proxy(TorManager.getInstance(this.context).getProxy())
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS);
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
@@ -298,8 +300,8 @@ public class WebUtil {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .proxy(TorManager.getInstance(this.context).getProxy())
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS);
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS);
 
         if(URL.contains("onion")){
             getHostNameVerifier(builder);
