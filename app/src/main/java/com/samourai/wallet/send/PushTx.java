@@ -8,6 +8,7 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.WebUtil;
@@ -46,12 +47,13 @@ public class PushTx {
 
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
-                response = WebUtil.getInstance(context).postURL(_base + _url, "tx=" + hexString);
+                response = WebUtil.getInstance(context).postURL(_base + _url, "tx=" + hexString + "&at=" + APIFactory.getInstance(context).getAccessToken());
             }
             else    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR : WebUtil.SAMOURAI_API2_TOR;
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("tx", hexString);
+                args.put("at", APIFactory.getInstance(context).getAccessToken());
                 response = WebUtil.getInstance(context).tor_postURL(_base + _url, args);
             }
 
