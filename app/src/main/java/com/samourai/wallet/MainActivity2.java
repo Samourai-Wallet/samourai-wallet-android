@@ -21,6 +21,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
@@ -331,7 +332,7 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
-        if(!SamouraiWallet.getInstance().isTestNet())    {
+        if(!APIFactory.getInstance(MainActivity2.this).APITokenRequired())    {
             doAppInit1(isDial, strUri, strPCode);
             return;
         }
