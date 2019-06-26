@@ -110,28 +110,31 @@ public class NetworkDashboard extends AppCompatActivity {
         dataButton.setOnClickListener(view -> toggleNetwork());
 
         dojoBtn.setOnClickListener(view -> {
-            /*
-            DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
-            dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
-            */
-            /*
-            if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
-                resetAPI();
-                setDojoConnectionState(CONNECTION_STATUS.ENABLED);
-            }
-            else    {
-                resetAPI();
-                setDojoConnectionState(CONNECTION_STATUS.DISABLED);
-//                doScan();
-            }
-            */
-            stopTor();
-            resetAPI();
-            setDojoConnectionState(CONNECTION_STATUS.DISABLED);
+//            DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
+//            dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
+//
+//            if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
+//                resetAPI();
+//                setDojoConnectionState(CONNECTION_STATUS.ENABLED);
+//            }
+//            else    {
+//                resetAPI();
+//                setDojoConnectionState(CONNECTION_STATUS.DISABLED);
+////                doScan();
+//            }
+//            stopTor();
+//            resetAPI();
+//            setDojoConnectionState(CONNECTION_STATUS.DISABLED);
         });
 
         torButton.setOnClickListener(view -> {
+
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() !=null ){
+                    Toast.makeText(this,"Tor cannot be stopped since wallet is connected to a dojo node",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 stopTor();
                 PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, false);
             }
@@ -151,16 +154,13 @@ public class NetworkDashboard extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state->{
-                    new Handler().postDelayed(() -> {
-                        setDataState();
-                    },300);
+                    new Handler().postDelayed(this::setDataState,300);
                 }, error -> {
                     Log.i(TAG, "onCreate: ".concat(error.getMessage()));
                 });
         disposables.add(onlineSubscription);
 
         dojoLayout = findViewById(R.id.network_dojo_layout);
-        dojoLayout.setVisibility(View.GONE);
 
         if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
             setDojoConnectionState(CONNECTION_STATUS.ENABLED);
@@ -253,6 +253,7 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void listenToTorStatus() {
+
         Disposable disposable = TorManager.getInstance(getApplicationContext())
                 .torStatus
                 .subscribeOn(Schedulers.io())
@@ -263,7 +264,7 @@ public class NetworkDashboard extends AppCompatActivity {
 
         NetworkDashboard.this.runOnUiThread(new Runnable() {
             public void run() {
-//                    setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
+                    setTorConnectionState(TorManager.getInstance(getApplicationContext()).isConnected() ? TorManager.CONNECTION_STATES.CONNECTED : TorManager.CONNECTION_STATES.DISCONNECTED);
             }
         });
 
@@ -312,46 +313,44 @@ public class NetworkDashboard extends AppCompatActivity {
     }
 
     private void setTorConnectionState(TorManager.CONNECTION_STATES enabled) {
+        Log.i(TAG, "setTorConnectionState: ".concat(String.valueOf(enabled)));
+        NetworkDashboard.this.runOnUiThread(() -> {
+            if (enabled == TorManager.CONNECTION_STATES.CONNECTED) {
+                torButton.setText("Disable");
+                torButton.setEnabled(true);
+                torConnectionIcon.setColorFilter(activeColor);
+                torConnectionStatus.setText("Enabled");
 
-        NetworkDashboard.this.runOnUiThread(new Runnable() {
-            public void run() {
-                if (enabled == TorManager.CONNECTION_STATES.CONNECTED) {
-                    torButton.setText("Disable");
-                    torButton.setEnabled(true);
-                    torConnectionIcon.setColorFilter(activeColor);
-                    torConnectionStatus.setText("Enabled");
+                if(waitingForPairing)    {
+                    waitingForPairing = false;
 
-                    if(waitingForPairing)    {
-                        waitingForPairing = false;
-
-                        if (strPairingParams != null) {
-                            DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
-                            Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
-                            initDojo();
-                        }
-
-                    }
-
-                }
-                else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
-                    torButton.setText("loading...");
-                    torButton.setEnabled(false);
-                    torConnectionIcon.setColorFilter(waiting);
-                    torConnectionStatus.setText("Tor initializing");
-                }
-                else  {
-                    torButton.setText("Enable");
-                    torButton.setEnabled(true);
-                    torConnectionIcon.setColorFilter(disabledColor);
-                    torConnectionStatus.setText("Disabled");
-
-                    /*
                     if (strPairingParams != null) {
-                        DojoUtil.getInstance(NetworkDashboard.this).removeDojoParams();
+                        DojoUtil.getInstance(NetworkDashboard.this).setDojoParams(strPairingParams);
+                        Toast.makeText(NetworkDashboard.this, "Tor enabled for Dojo pairing:" + DojoUtil.getInstance(NetworkDashboard.this).getDojoParams(), Toast.LENGTH_SHORT).show();
+                        initDojo();
                     }
-                    */
 
                 }
+
+            }
+            else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
+                torButton.setText("loading...");
+                torButton.setEnabled(false);
+                torConnectionIcon.setColorFilter(waiting);
+                torConnectionStatus.setText("Tor initializing");
+            }
+            else  {
+                torButton.setText("Enable");
+                torButton.setEnabled(true);
+                torConnectionIcon.setColorFilter(disabledColor);
+                torConnectionStatus.setText("Disabled");
+
+                /*
+                if (strPairingParams != null) {
+                    DojoUtil.getInstance(NetworkDashboard.this).removeDojoParams();
+                }
+                */
+
             }
         });
 
