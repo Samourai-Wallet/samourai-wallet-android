@@ -149,10 +149,10 @@ public class APIFactory	{
     }
 
     public String getAccessToken() {
-        if(ACCESS_TOKEN == null && DojoUtil.getInstance(context).getDojoParams() != null)    {
-            getToken(false);
+        if(ACCESS_TOKEN == null && APIFactory.getInstance(context).APITokenRequired())    {
+            getToken(true);
         }
-        return SamouraiWallet.getInstance().isTestNet() ? "" : "";
+        return DojoUtil.getInstance(context).getDojoParams() == null ? "" : ACCESS_TOKEN;
     }
 
     public void setAccessToken(String accessToken) {
