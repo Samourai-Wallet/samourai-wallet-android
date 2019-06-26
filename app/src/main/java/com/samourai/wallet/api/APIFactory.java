@@ -149,10 +149,10 @@ public class APIFactory	{
     }
 
     public String getAccessToken() {
-        if(ACCESS_TOKEN == null)    {
+        if(ACCESS_TOKEN == null && DojoUtil.getInstance(context).getDojoParams() != null)    {
             getToken(false);
         }
-        return SamouraiWallet.getInstance().isTestNet() ? ACCESS_TOKEN : "";
+        return SamouraiWallet.getInstance().isTestNet() ? "" : "";
     }
 
     public void setAccessToken(String accessToken) {
@@ -180,11 +180,14 @@ public class APIFactory	{
             return APP_TOKEN.getBytes();
         }
 
-        byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
-        byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
-
-
-        return xor(xorSegments0, xorSegments1);
+        if(BuildConfig.XOR_1.length() > 0 && BuildConfig.XOR_2.length() > 0)    {
+            byte[] xorSegments0 = Base64.decode(BuildConfig.XOR_1);
+            byte[] xorSegments1 = Base64.decode(BuildConfig.XOR_2);
+            return xor(xorSegments0, xorSegments1);
+        }
+        else    {
+            return null;
+        }
     }
 
     private byte[] xor(byte[] b0, byte[] b1) {
@@ -205,7 +208,7 @@ public class APIFactory	{
 
     public boolean stayingAlive()   {
 
-        if(!AppUtil.getInstance(context).isOfflineMode() && SamouraiWallet.getInstance().isTestNet())    {
+        if(!AppUtil.getInstance(context).isOfflineMode() && APITokenRequired())    {
 
             if(APIFactory.getInstance(context).getAccessToken() == null)    {
                 APIFactory.getInstance(context).getToken(false);
@@ -232,10 +235,17 @@ public class APIFactory	{
 
     }
 
+    public synchronized boolean APITokenRequired()  {
+        return DojoUtil.getInstance(context).getDojoParams() == null ? false : true;
+    }
+
     public synchronized boolean getToken(boolean setupDojo) {
 
-//        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
-        String _url = WebUtil.SAMOURAI_API2_TESTNET;
+        if(!APITokenRequired())    {
+            return true;
+        }
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         if(DojoUtil.getInstance(context).getDojoParams() != null || setupDojo)    {
             _url = WebUtil.SAMOURAI_API2_TESTNET_TOR;
