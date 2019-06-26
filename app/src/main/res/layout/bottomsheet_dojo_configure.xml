@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/window"
     android:fillViewport="true"
     android:fitsSystemWindows="true">
@@ -104,27 +104,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/border_button_rounded_shape"
             android:text="@string/preorder"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/connect_dojo"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView43" />
 
         <Button
             android:id="@+id/connect_dojo"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/connect_to_existing_dojo"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/preorder_dojo" />
+            app:layout_constraintStart_toStartOf="@+id/preorder_dojo"
+            app:layout_constraintTop_toBottomOf="@+id/preorder_dojo" />
 
 
     </android.support.constraint.ConstraintLayout>
