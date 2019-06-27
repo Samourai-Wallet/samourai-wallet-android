@@ -349,7 +349,7 @@
     <string name="rbf_spent">RBF транзакция изпратена.</string>
     <string name="cannot_output_dust">Не може да се направи транзакция с твърде малък output(dust)</string>
     <string name="cannot_create_change_output">Не може да бъде създаден output за ресто</string>
-    <string name="cannot_create_cpfp">CPFP транзакцията не може да се направи.</string>
+    <string name="cannot_create_cpfp">CPFP транзакция не може да се направи.</string>
 
     <string name="error_reading_payload">Грешка при четенето на payload. Моля опитайте отново.</string>
 
@@ -577,7 +577,9 @@
         <item>BIP49 SegWit</item>
         <item>BIP84 SegWit</item>
         <item>BIP44 P2PKH</item>
-        <item>Ricochet SegWit</item>
+        <item>Рикошет SegWit</item>
+        <item>Whirlpool SegWit пре-микс</item>
+        <item>Whirlpool SegWit пост-микс</item>
     </string-array>
 
     <string name="chain_id">Верига на адресите</string>
@@ -709,7 +711,37 @@
     <string name="total_selected">Общо избрани</string>
     <string name="cycle">Цикъл</string>
     <string name="postmix_without_boltzmann">Имайте предвид, че харченето от пост-микс акаунта Ви без STONEWALL ще доведе до загуба на потайността, спечелена чрез Whirlpool.</string>
-
+    
+    <string name="send">Изпращане</string>
+    <string name="options_xpub84_postmix">Покажи Whirlpool пост-микс ZPUB</string>
+    <string name="options_xpub84_postmix2">Покажи разширен публичен ключ за BIP84 SegWit (Bech32) Whirlpool пост-микс акаунт.</string>
+    <string name="options_indexes">Индекси на портфейла</string>
+    <string name="options_indexes2">Сегашните индекс стойности за този портфейл</string>
+    <string name="options_whirlpool_gui">Сдвояване с Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Сдвоете се с Whirlpool GUI за продължително миксиране.</string>
+    <string name="options_postmix">Пращане от пост-микс Whirlpool</string>
+    <string name="wallet_erased">Портфейлът е изтрит от устройството.</string>
+    <string name="send_privacy_warning">Предупреждение за секретността Ви: И преди сте пращали биткойни до този адрес.</string>
+    <string name="securely_wiping_wait"> Безопасно изтриване на портфейла. Моля, изчакайте.</string>
+    <string name="api_key_error">Невалиден API ключ.</string>
+    <string name="api_token_error">Невалиден API токен.</string>
+    <string name="create_to_existing_dojo">Създаване на портфейл и сдвояване с Dojo</string>
+    <string name="begin_cycle">ЗАПОЧНИ ЦИКЪЛ</string>
+    <string name="pool_fee">POOL ТАКСА</string>
+    <string name="total_fees">ОБЩО ТАКСИ</string>
+    <string name="miner_fee">ТАКСА КЪМ КОПАЧИТЕ</string>
+    <string name="total_being_cycled">Общо се миксират:</string>
+    <string name="review_cycle_details">ПРЕГЛЕД НА ДЕТАЙЛИ ЗА ЦИКЪЛА</string>
+    <string name="cycled_transactions">Миксирани транзакции</string>
+    <string name="initial_transaction">Начална транзакция</string>
+    <string name="progress">Прогрес</string>
+    <string name="waiting_for_blockchain_confirmation">Изчакване за блокчейн потвърждение</string>
+    <string name="estimated_entropy">Очаквана Ентропия</string>
+    <string name="review_tx_before_braodcast">Преглед на транзакцията преди да бъде изпратена</string>
+    <string name="select_participant">Изберете участник</string>
+    <string name="select_cahoots_type">Изберете тип cahoots</string>
+    
+    
 
 
 </resources>
