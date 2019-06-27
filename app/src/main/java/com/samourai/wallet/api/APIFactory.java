@@ -1423,7 +1423,7 @@ public class APIFactory	{
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
                 String response = null;
                 if(!AppUtil.getInstance(context).isOfflineMode())    {
-                    response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at" + getAccessToken());
+                    response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
                 }
                 else    {
                     response = PayloadUtil.getInstance(context).deserializeFees().toString();
