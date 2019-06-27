@@ -140,7 +140,7 @@ public class EntropyBar extends View {
             if (disable) {
                 paint = mBarPaintRed;
             }
-            canvas.drawRect(left, getHeight(), right, bottom, paint);
+            canvas.drawRoundRect(left, getHeight(), right, bottom,9f,9f, paint);
 
         }
     }

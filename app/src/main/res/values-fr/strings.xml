@@ -701,4 +701,24 @@
     <string name="sync_complete">Synchronisation du code de paiement terminée</string>
     <string name="options_paynym_indexes">Afficher répertoires PayNym</string>
     
+    
+    <string name="options_xpub84_premix">Afficher Whirlpool pré-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Afficher clé publique étendue pour compte Segwit BIP84 (Bech32) Whirlpool pré-mix.</string>
+    <string name="options_xpub84_postmix">Afficher Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Afficher clé publique étendue pour compte Segwit BIP84 (Bech32) Whirlpool post-mix.</string>
+    <string name="create_password">Créer mot de passe</string>
+    <string name="confirm_password">Confirmer mot de passe</string>
+    <string name="pairing_password">Définir appairage mot de passe: (6-255 caractères)</string>
+    <string name="password_error">Erreur création mot de passe</string>
+    <string name="password_invalid">Mot de passe invalide</string>
+
+    <string name="review_whirlpool">Vérifier Détails Whirlpool</string>
+    <string name="total_selected">Total sélectionné</string>
+    <string name="cycle">Cycle</string>
+    
+    <string name="options_postmix">Dépenser à partir de Whirlpool post-mix</string>
+    
+    <string name="postmix_without_boltzmann">Veuillez noter qu\'une dépense à partir de votre compte post-mix sans l\'utilisation de STONEWALL aura pour conséquence la perte de la confidentialité acquise à travers Whirlpool.</string>
+    
+    
 </resources>

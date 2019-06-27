@@ -20,11 +20,12 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
-import com.samourai.wallet.SendActivity;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -68,7 +69,7 @@ import java.io.Writer;
 import java.security.SecureRandom;
 import java.util.List;
 
-import static com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
+import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
 public class PayloadUtil	{
 
@@ -403,6 +404,9 @@ public class PayloadUtil	{
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
+            if(DojoUtil.getInstance(context).getDojoParams() != null)    {
+                meta.put("dojo", DojoUtil.getInstance(context).toJSON());
+            }
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -704,6 +708,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
+                }
+                if(meta.has("dojo")) {
+                    DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
                 }
 
                 /*

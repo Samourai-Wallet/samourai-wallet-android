@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_coin_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:animateLayoutChanges="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/pool_item_fee"
+        android:layout_width="0dp"
+        android:layout_height="21dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="marquee"
+        android:fontFamily="@font/roboto_mono"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/text_ui2_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pool_item_amount"
+        app:layout_constraintStart_toStartOf="@+id/pool_item_amount"
+        app:layout_constraintTop_toBottomOf="@+id/pool_item_amount"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="TOTAL FEES" />
+
+    <TextView
+        android:id="@+id/pool_item_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/pool_item_checkbox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="3.12 BTC" />
+
+    <CheckBox
+        android:id="@+id/pool_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pool_item_miner_fee"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/miner_fee"
+        android:textAllCaps="true"
+        android:textColor="@color/text_ui2_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/pool_item_fee"
+        app:layout_constraintTop_toBottomOf="@+id/pool_item_fee" />
+
+    <TextView
+        android:id="@+id/pool_item_total_fee"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/total_fees"
+        android:textAllCaps="true"
+        android:textColor="@color/text_ui2_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/pool_item_miner_fee"
+        app:layout_constraintStart_toStartOf="@+id/pool_item_miner_fee"
+        app:layout_constraintTop_toBottomOf="@+id/pool_item_miner_fee" />
+
+    <android.support.constraint.Group
+        android:id="@+id/item_pool_fees_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="pool_item_fee,pool_item_miner_fee" />
+
+</android.support.constraint.ConstraintLayout>

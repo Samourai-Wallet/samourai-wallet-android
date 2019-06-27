@@ -47,7 +47,6 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
@@ -55,7 +54,7 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -63,6 +62,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.util.CahootsUtil;
@@ -70,7 +70,6 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -106,7 +105,6 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.yanzhenjie.zbar.Symbol;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -581,7 +579,6 @@ public class BalanceActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -707,8 +704,12 @@ public class BalanceActivity extends AppCompatActivity {
                         CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim(), 0);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
-                    } else if (DojoUtil.getInstance().isValidPairingPayload(strResult.trim())) {
-                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
+
+                        Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
+                        intent.putExtra("params", strResult.trim());
+                        startActivity(intent);
+
                     } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
@@ -837,15 +838,58 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void doScan() {
-        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-        startActivityForResult(intent, SCAN_QR);
+
+        CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+
+        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.dismissAllowingStateLoss();
+            PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
+            try {
+                if (privKeyReader.getFormat() != null) {
+                    doPrivKey(code.trim());
+                } else if (Cahoots.isCahoots(code.trim())) {
+                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+                } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                    CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
+                    Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
+                    intent.putExtra("params", code.trim());
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                    intent.putExtra("uri", code.trim());
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+            }
+        });
     }
 
     private void doSweepViaScan() {
-        Intent intent = new Intent(BalanceActivity.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-        startActivityForResult(intent, SCAN_COLD_STORAGE);
+
+        CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+            cameraFragmentBottomSheet.dismissAllowingStateLoss();
+            PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
+            try {
+                    if (privKeyReader.getFormat() != null) {
+                        doPrivKey(code.trim());
+                    } else if (Cahoots.isCahoots(code.trim())) {
+                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+                    } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
+                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                        intent.putExtra("uri", code.trim());
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+            }
+        });
     }
 
     private void doSweep() {
@@ -1113,7 +1157,6 @@ public class BalanceActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void refreshTx(final boolean notifTx, final boolean dragged, final boolean launch) {
 

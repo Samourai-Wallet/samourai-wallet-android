@@ -50,13 +50,13 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
-import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
@@ -850,7 +850,7 @@ public class BatchSendActivity extends Activity {
         int change_idx = 0;
         if(changeAmount > 0L)    {
             change_idx = BIP84Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
+            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);

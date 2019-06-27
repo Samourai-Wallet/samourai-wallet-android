@@ -1480,7 +1480,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         int idxBIP44External = 0;
         int idxBIP44Internal = 0;
         int idxPremixExternal = 0;
-        int idxPremixInternal = 0;
+//        int idxPremixInternal = 0;
         int idxPostmixExternal = 0;
         int idxPostmixInternal = 0;
 
@@ -1490,7 +1490,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         idxBIP49Internal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(0).getChange().getAddrIdx();
 //        idxPremixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getReceive().getAddrIdx();
 //        idxPremixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPremixAccount()).getChange().getAddrIdx();
-//        idxPremixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreReceiveIdx();
+        idxPremixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreReceiveIdx();
 //        idxPremixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPreChangeIdx();
 //        idxPostmixExternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getReceive().getAddrIdx();
 //        idxPostmixInternal = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix()).getChange().getAddrIdx();
@@ -1517,7 +1517,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         builder.append("84 receive :" + idxBIP84External + "\n");
         builder.append("84 change :" + idxBIP84Internal + "\n");
         builder.append("Ricochet :" + RicochetMeta.getInstance(SettingsActivity2.this).getIndex() + "\n");
-//        builder.append("Premix receive :" + idxPremixExternal + "\n");
+        builder.append("Premix receive :" + idxPremixExternal + "\n");
 //        builder.append("Premix change :" + idxPremixInternal + "\n");
         builder.append("Postmix receive :" + idxPostmixExternal + "\n");
         builder.append("Postmix change :" + idxPostmixInternal + "\n");

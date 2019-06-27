@@ -2,7 +2,7 @@ package com.samourai.wallet.whirlpool.models;
 
 public class Coin {
     private String address = "";
-    private long value = 0L;
+    private Float value = 0F;
     //States for recycler view
     private Boolean isSelected = false, blocked = false;
 
@@ -14,11 +14,11 @@ public class Coin {
         this.address = address;
     }
 
-    public long getValue() {
+    public Float getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(Float value) {
         this.value = value;
     }
 

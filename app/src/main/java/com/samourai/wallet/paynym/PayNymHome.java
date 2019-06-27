@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,10 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dm.zbar.android.scanner.ZBarConstants;
-import com.dm.zbar.android.scanner.ZBarScannerActivity;
 import com.google.common.base.Splitter;
-import com.google.gson.GsonBuilder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -36,6 +32,7 @@ import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.paynym.addPaynym.AddPaynymActivity;
 import com.samourai.wallet.paynym.fragments.PaynymListFragment;
@@ -48,7 +45,6 @@ import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.widgets.ViewPager;
 import com.squareup.picasso.Picasso;
-import com.yanzhenjie.zbar.Symbol;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
@@ -68,8 +64,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -285,9 +279,14 @@ public class PayNymHome extends AppCompatActivity {
                 break;
             }
             case R.id.action_scan_qr: {
-                Intent intent = new Intent(this, ZBarScannerActivity.class);
-                intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-                startActivityForResult(intent, SCAN_PCODE);
+
+                CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+                cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+                cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+                    cameraFragmentBottomSheet.dismissAllowingStateLoss();
+                     processScan(code);
+                });
+
                 break;
             }
             case R.id.action_unarchive: {
@@ -325,15 +324,7 @@ public class PayNymHome extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == SCAN_PCODE) {
-            if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
-                String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-                processScan(strResult);
-            }
-        }
-    }
+
 
     private void doSign() {
 
