@@ -70,13 +70,15 @@ public class DojoUtil {
        return Observable.fromCallable(() -> {
            DojoUtil.dojoParams = dojoParams;
            Log.i(TAG, "setDojoParams: ".concat(dojoParams));
+           String url = getUrl(dojoParams);
+           if(url.charAt(url.length() - 1) != '/') {
+               url = url + "/";
+           }
            if(SamouraiWallet.getInstance().isTestNet())    {
-               String url = getUrl(dojoParams);
-               WebUtil.SAMOURAI_API2_TESTNET_TOR = url.replace("/test/v2", "/test/v2/");
+               WebUtil.SAMOURAI_API2_TESTNET_TOR = url;
            }
            else    {
-               String url = getUrl(dojoParams);
-               WebUtil.SAMOURAI_API2_TOR = url.replace("/v2", "/v2/");
+               WebUtil.SAMOURAI_API2_TOR = url;
            }
 
            String apiToken = getApiKey(dojoParams);
