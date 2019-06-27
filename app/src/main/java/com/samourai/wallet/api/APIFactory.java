@@ -848,7 +848,7 @@ public class APIFactory	{
                         Log.i("APIFactory", "lock XPUB:" + _url);
                         Log.i("APIFactory", "lock XPUB:" + args.toString());
                         args.put("at", getAccessToken());
-                        response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
+                        response = WebUtil.getInstance(context).tor_postURL(_url + "xpub/" + xpub + "/lock/", args);
                         Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
