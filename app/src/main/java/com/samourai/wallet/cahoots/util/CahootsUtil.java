@@ -828,25 +828,52 @@ public class CahootsUtil {
 
         Log.d("CahootsUtil", "BIP84 utxos:" + utxos.size());
 
-        List<String> seenTxs = new ArrayList<String>();
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalContributedAmount = 0L;
-        for(UTXO utxo : utxos)   {
+        for(int step = 0; step < 3; step++)   {
 
-            UTXO _utxo = new UTXO();
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                if(!seenTxs.contains(outpoint.getTxHash().toString()))    {
-                    _utxo.getOutpoints().add(outpoint);
-                    seenTxs.add(outpoint.getTxHash().toString());
+            if(stonewall0.getCounterpartyAccount() == 0)    {
+                step = 2;
+            }
+
+            List<String> seenTxs = new ArrayList<String>();
+            selectedUTXO = new ArrayList<UTXO>();
+            totalContributedAmount = 0L;
+            for(UTXO utxo : utxos)   {
+
+                switch(step)    {
+                    case 0:
+                        if(utxo.getPath() != null && utxo.getPath().length() > 3 && utxo.getPath().charAt(2) != '0')    {
+                            continue;
+                        }
+                        break;
+                    case 1:
+                        if(utxo.getPath() != null && utxo.getPath().length() > 3 && utxo.getPath().charAt(2) != '1')    {
+                            continue;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                UTXO _utxo = new UTXO();
+                for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                    if(!seenTxs.contains(outpoint.getTxHash().toString()))    {
+                        _utxo.getOutpoints().add(outpoint);
+                        seenTxs.add(outpoint.getTxHash().toString());
+                    }
+                }
+
+                if(_utxo.getOutpoints().size() > 0)    {
+                    selectedUTXO.add(_utxo);
+                    totalContributedAmount += _utxo.getValue();
+                    Log.d("CahootsUtil", "BIP84 selected utxo:" + _utxo.getValue());
+                }
+
+                if(totalContributedAmount > stonewall0.getSpendAmount() + SamouraiWallet.bDust.longValue())    {
+                    break;
                 }
             }
-
-            if(_utxo.getOutpoints().size() > 0)    {
-                selectedUTXO.add(_utxo);
-                totalContributedAmount += _utxo.getValue();
-                Log.d("CahootsUtil", "BIP84 selected utxo:" + _utxo.getValue());
-            }
-
             if(totalContributedAmount > stonewall0.getSpendAmount() + SamouraiWallet.bDust.longValue())    {
                 break;
             }
@@ -948,25 +975,53 @@ public class CahootsUtil {
         }
 
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
-        int nbTotalSelectedOutPoints = 0;
         long totalSelectedAmount = 0L;
-        for(UTXO utxo : utxos)   {
+        int nbTotalSelectedOutPoints = 0;
+        for(int step = 0; step < 3; step++)   {
 
-            UTXO _utxo = new UTXO();
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                if(!seenTxs.contains(outpoint.getTxHash().toString()))    {
-                    _utxo.getOutpoints().add(outpoint);
-                    seenTxs.add(outpoint.getTxHash().toString());
+            if(stonewall1.getCounterpartyAccount() == 0)    {
+                step = 2;
+            }
+
+            List<String> _seenTxs = seenTxs;
+            selectedUTXO = new ArrayList<UTXO>();
+            nbTotalSelectedOutPoints = 0;
+            for(UTXO utxo : utxos)   {
+
+                switch(step)    {
+                    case 0:
+                        if(utxo.getPath() != null && utxo.getPath().length() > 3 && utxo.getPath().charAt(2) != '0')    {
+                            continue;
+                        }
+                        break;
+                    case 1:
+                        if(utxo.getPath() != null && utxo.getPath().length() > 3 && utxo.getPath().charAt(2) != '1')    {
+                            continue;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                UTXO _utxo = new UTXO();
+                for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
+                    if(!_seenTxs.contains(outpoint.getTxHash().toString()))    {
+                        _utxo.getOutpoints().add(outpoint);
+                        _seenTxs.add(outpoint.getTxHash().toString());
+                    }
+                }
+
+                if(_utxo.getOutpoints().size() > 0)    {
+                    selectedUTXO.add(_utxo);
+                    totalSelectedAmount += _utxo.getValue();
+                    nbTotalSelectedOutPoints += _utxo.getOutpoints().size();
+                    Log.d("CahootsUtil", "BIP84 selected utxo:" + _utxo.getValue());
+                }
+
+                if(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 4).longValue() + stonewall1.getSpendAmount() + SamouraiWallet.bDust.longValue())    {
+                    break;
                 }
             }
-
-            if(_utxo.getOutpoints().size() > 0)    {
-                selectedUTXO.add(_utxo);
-                totalSelectedAmount += _utxo.getValue();
-                nbTotalSelectedOutPoints += _utxo.getOutpoints().size();
-                Log.d("CahootsUtil", "BIP84 selected utxo:" + _utxo.getValue());
-            }
-
             if(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 4).longValue() + stonewall1.getSpendAmount() + SamouraiWallet.bDust.longValue())    {
                 break;
             }
