@@ -65,7 +65,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.util.CahootsUtil;
+import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;

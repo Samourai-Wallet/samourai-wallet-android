@@ -1,4 +1,4 @@
-package com.samourai.wallet.cahoots.util;
+package com.samourai.wallet.cahoots;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,11 +30,6 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.STONEWALLx2;
-import com.samourai.wallet.cahoots.Stowaway;
-import com.samourai.wallet.cahoots._TransactionOutPoint;
-import com.samourai.wallet.cahoots._TransactionOutput;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.segwit.BIP84Util;
@@ -59,7 +54,6 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
