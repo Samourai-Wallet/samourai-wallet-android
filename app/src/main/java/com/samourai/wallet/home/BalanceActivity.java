@@ -445,7 +445,9 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.setAdapter(adapter);
 
         balanceViewModel.getBalance().observe(this, balance -> {
-
+            if(balance<0){
+                return;
+            }
             if (balanceViewModel.getSatState().getValue() != null) {
                 setBalance(balance, balanceViewModel.getSatState().getValue());
             } else {
