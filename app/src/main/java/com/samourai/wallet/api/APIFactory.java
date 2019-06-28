@@ -781,7 +781,7 @@ public class APIFactory	{
             return jsonObject;
         }
     */
-    public synchronized JSONObject lockXPUB(String xpub, int purpose) {
+    public synchronized JSONObject lockXPUB(String xpub, int purpose, String tag) {
 
         String _url =  WebUtil.getAPIUrl(context);
 
@@ -792,7 +792,12 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) || xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()))    {
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null ||
+                    xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).zpubstr())
+            )    {
 
                 HD_Address addr = null;
                 switch(purpose)    {
@@ -800,7 +805,15 @@ public class APIFactory	{
                         addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
                         break;
                     case 84:
-                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        if(tag != null && tag.equals(PrefsUtil.XPUBPRELOCK))    {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChange().getAddressAt(0);
+                        }
+                        else if(tag != null && tag.equals(PrefsUtil.XPUBPOSTLOCK))   {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChange().getAddressAt(0);
+                        }
+                        else    {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        }
                         break;
                     default:
                         addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
@@ -843,11 +856,12 @@ public class APIFactory	{
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
                         args.put("address", address);
-                        args.put("signature", Uri.encode(sig));
+//                        args.put("signature", Uri.encode(sig));
+                        args.put("signature", sig);
                         args.put("message", "lock");
+                        args.put("at", getAccessToken());
                         Log.i("APIFactory", "lock XPUB:" + _url);
                         Log.i("APIFactory", "lock XPUB:" + args.toString());
-                        args.put("at", getAccessToken());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub/" + xpub + "/lock/", args);
                         Log.i("APIFactory", "lock XPUB response:" + response);
                     }
@@ -856,16 +870,22 @@ public class APIFactory	{
                         jsonObject = new JSONObject(response);
 
                         if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
-                            switch(purpose)    {
-                                case 49:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
-                                    break;
-                                case 84:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
-                                    break;
-                                default:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
-                                    break;
+
+                            if(tag != null)    {
+                                PrefsUtil.getInstance(context).setValue(tag, true);
+                            }
+                            else    {
+                                switch(purpose)    {
+                                    case 49:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                                        break;
+                                    case 84:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
+                                        break;
+                                    default:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
+                                        break;
+                                }
                             }
 
                         }
