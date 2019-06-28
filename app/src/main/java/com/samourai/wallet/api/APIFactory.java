@@ -1269,6 +1269,7 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    String path = null;
 
                     try {
                         String address = null;
@@ -1281,7 +1282,7 @@ public class APIFactory	{
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
-                            String path = (String)xpubObj.get("path");
+                            path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
@@ -1314,6 +1315,7 @@ public class APIFactory	{
                         else    {
                             UTXO utxo = new UTXO();
                             utxo.getOutpoints().add(outPoint);
+                            utxo.setPath(path);
                             utxos.put(script, utxo);
                         }
 
@@ -2332,13 +2334,14 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    String path = null;
 
                     try {
                         String address = Bech32Util.getInstance().getAddressFromScript(script);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
-                            String path = (String)xpubObj.get("path");
+                            path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
                             if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()))    {
@@ -2359,6 +2362,7 @@ public class APIFactory	{
                         else    {
                             UTXO utxo = new UTXO();
                             utxo.getOutpoints().add(outPoint);
+                            utxo.setPath(path);
                             utxosPostMix.put(script, utxo);
                         }
 
