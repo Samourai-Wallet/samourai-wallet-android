@@ -131,7 +131,7 @@ public class NetworkDashboard extends AppCompatActivity {
 
             if (TorManager.getInstance(getApplicationContext()).isConnected()) {
                 if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() !=null ){
-                    Toast.makeText(this,"Tor cannot be stopped since wallet is connected to a dojo node",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,R.string.cannot_disable_tor_dojo,Toast.LENGTH_LONG).show();
                     return;
                 }
 
