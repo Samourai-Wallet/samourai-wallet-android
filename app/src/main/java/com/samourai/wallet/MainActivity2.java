@@ -38,6 +38,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -337,36 +338,46 @@ public class MainActivity2 extends Activity {
             return;
         }
 
-        boolean needToken = false;
-        if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
-            needToken = true;
-        } else {
-            JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
-            if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
-                needToken = true;
-            }
-        }
 
-        if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    APIFactory.getInstance(MainActivity2.this).stayingAlive();
-
-                    doAppInit1(isDial, strUri, strPCode);
-
-                    Looper.loop();
-
+        Disposable disposable = Observable.fromCallable(() -> {
+            if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
+                return  true;
+            } else {
+                JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
+                if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
+                    return  true;
                 }
-            }).start();
+            }
+            return  false;
+        }) .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(needToken -> {
 
-            return;
-        } else {
-            doAppInit1(isDial, strUri, strPCode);
-        }
+                    if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
+
+                        new Thread(() -> {
+                            Looper.prepare();
+
+                            APIFactory.getInstance(MainActivity2.this).stayingAlive();
+
+                            doAppInit1(isDial, strUri, strPCode);
+
+                            Looper.loop();
+
+                        }).start();
+
+                        return;
+                    } else {
+                        doAppInit1(isDial, strUri, strPCode);
+                    }
+
+                },error->{
+                    error.printStackTrace();
+                });
+        compositeDisposables.add(disposable);
+
+
 
     }
 
