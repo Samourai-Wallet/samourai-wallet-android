@@ -110,6 +110,8 @@ public class NetworkDashboard extends AppCompatActivity {
         dataButton.setOnClickListener(view -> toggleNetwork());
 
         dojoBtn.setOnClickListener(view -> {
+
+            Toast.makeText(this, getString(R.string.temporary_dojo_disable),Toast.LENGTH_LONG).show();
 //            DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
 //            dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
 //
@@ -163,10 +165,12 @@ public class NetworkDashboard extends AppCompatActivity {
         dojoLayout = findViewById(R.id.network_dojo_layout);
 
         if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
+            dojoLayout.setVisibility(View.VISIBLE);
             setDojoConnectionState(CONNECTION_STATUS.ENABLED);
         }
         else    {
             resetAPI();
+            dojoLayout.setVisibility(View.GONE);
             setDojoConnectionState(CONNECTION_STATUS.DISABLED);
         }
 
