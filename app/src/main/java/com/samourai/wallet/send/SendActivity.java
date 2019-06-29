@@ -2024,6 +2024,7 @@ public class SendActivity extends AppCompatActivity {
     private void doStowaway() {
 
         long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account);
+
         String strCahootsAmount = SendActivity.this.getText(R.string.amount_sats).toString();
         strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
 
@@ -2042,7 +2043,7 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account))    {
+                            if(amount < amountCahoots)    {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount, account);
                             }
                             else    {
@@ -2086,7 +2087,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account))    {
+                            if(amount < amountCahoots)    {
 
                                 final EditText edAddress = new EditText(SendActivity.this);
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
