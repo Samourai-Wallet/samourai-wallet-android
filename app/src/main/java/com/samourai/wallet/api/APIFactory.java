@@ -34,12 +34,12 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.service.RefreshService;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -262,7 +262,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 return true;
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("apikey=");
@@ -318,7 +318,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -372,7 +372,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("xpub=");
@@ -839,7 +839,7 @@ public class APIFactory	{
                             break;
                     }
 
-                    if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                    if(!TorManager.getInstance(context).isRequired())    {
                         StringBuilder args = new StringBuilder();
                         args.append("address=");
                         args.append(address);
@@ -1206,7 +1206,7 @@ public class APIFactory	{
                 utxos.clear();
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
@@ -2015,7 +2015,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
@@ -2153,7 +2153,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddrPost().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -2202,7 +2202,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeUTXOPost().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));

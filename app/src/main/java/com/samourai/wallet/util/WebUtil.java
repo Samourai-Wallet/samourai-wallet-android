@@ -90,8 +90,8 @@ public class WebUtil {
         if (context == null) {
             return postURL(null, request, urlParameters);
         } else {
-            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
-            if (TorUtil.getInstance(context).statusFromBroadcast()) {
+            Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
+            if (TorManager.getInstance(context).isRequired()) {
                 if (urlParameters.startsWith("tx=")) {
                     HashMap<String, String> args = new HashMap<String, String>();
                     args.put("tx", urlParameters.substring(3));
@@ -211,8 +211,8 @@ public class WebUtil {
             return _getURL(URL);
         } else {
             //if(TorUtil.getInstance(context).orbotIsRunning())    {
-            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
-            if (TorUtil.getInstance(context).statusFromBroadcast()) {
+            Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
+            if (TorManager.getInstance(context).isRequired()) {
                 return tor_getURL(URL);
             } else {
                 return _getURL(URL);
@@ -440,8 +440,7 @@ public class WebUtil {
     }
 
     public static String getAPIUrl(Context context){
-        if(TorManager.getInstance(context).isConnected()){
-
+        if(TorManager.getInstance(context).isRequired()){
             return   SamouraiWallet.getInstance().isTestNet() ? SAMOURAI_API2_TESTNET_TOR : SAMOURAI_API2_TOR;
 
         }else {

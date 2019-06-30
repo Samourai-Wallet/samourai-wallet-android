@@ -1,11 +1,14 @@
 package com.samourai.wallet.tor;
 
-
 import android.content.Context;
 import android.util.Log;
 
 import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
+import com.samourai.wallet.util.PrefsUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -30,7 +33,6 @@ public class TorManager {
     static TorManager instance;
     private int currentPort = 0;
 
-
     private Proxy proxy = null;
     public CONNECTION_STATES state = CONNECTION_STATES.IDLE;
     public Subject<CONNECTION_STATES> torStatus = PublishSubject.create();
@@ -38,7 +40,12 @@ public class TorManager {
     public boolean isProcessRunning = false;
     String fileStorageLocation = "torfiles";
 
-    public static TorManager getInstance(Context context) {
+    private static Context context = null;
+
+    public static TorManager getInstance(Context ctx) {
+
+        context = ctx;
+
         if (instance == null) {
             instance = new TorManager(context);
         }
@@ -123,6 +130,11 @@ public class TorManager {
         this.proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", port));
     }
 
+    public boolean isRequired() {
+        Log.i(TAG, "isRequired: ");
+        return PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false);
+    }
+
     public boolean isConnected() {
         Log.i(TAG, "isConnected: ");
         return this.state == CONNECTION_STATES.CONNECTED;
@@ -186,6 +198,37 @@ public class TorManager {
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public JSONObject toJSON() {
+
+        JSONObject jsonPayload = new JSONObject();
+
+        try {
+
+            jsonPayload.put("active", PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false));
+
+        }
+        catch(JSONException je) {
+            ;
+        }
+
+        return jsonPayload;
+    }
+
+    public void fromJSON(JSONObject jsonPayload) {
+
+        try {
+
+            if(jsonPayload.has("active"))    {
+                PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, jsonPayload.getBoolean("active"));
+            }
+
+        }
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
 

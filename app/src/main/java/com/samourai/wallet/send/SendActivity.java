@@ -1594,7 +1594,7 @@ public class SendActivity extends AppCompatActivity {
                                                 url += "pushtx/schedule";
                                                 try {
                                                     String result = "";
-                                                    if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                                                    if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                                                         result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj);
 
                                                     } else {

@@ -4,24 +4,15 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.rtp.AudioStream;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.google.common.base.Verify;
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.TorUtil;
 
-import java.net.ConnectException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -103,17 +94,17 @@ public class TorService extends Service {
         } else if (intent.getAction().equals(TorService.RESTART_SERVICE)) {
             title = "Tor: Disconnected";
             if (TorManager
-                    .getInstance(getApplicationContext()).isConnected()) {
-                stopTOr();
+                    .getInstance(getApplicationContext()).isRequired()) {
+                stopTor();
             } else {
-                startTOR();
+                startTor();
             }
             return START_STICKY;
         } else if (Objects.requireNonNull(intent.getAction()).equals(TorService.START_SERVICE)) {
             if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
                 restartTorProcess();
             } else {
-                startTOR();
+                startTor();
             }
         }
 
@@ -121,7 +112,7 @@ public class TorService extends Service {
 
     }
 
-    private void startTOR() {
+    private void startTor() {
         title = "Tor: Waiting";
         updateNotification("Connecting....");
         if (torDisposable != null) {
@@ -147,12 +138,13 @@ public class TorService extends Service {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-
+/*
                     if (state == TorManager.CONNECTION_STATES.CONNECTED) {
                         TorUtil.getInstance(this).setStatusFromBroadcast(true);
                     } else {
                         TorUtil.getInstance(this).setStatusFromBroadcast(false);
                     }
+*/
                 });
         logger();
         compositeDisposable.add(statusDisposable);
@@ -233,20 +225,20 @@ public class TorService extends Service {
                         compositeDisposable.dispose();
                         TorManager.getInstance(this).setTorState(TorManager.CONNECTION_STATES.DISCONNECTED);
                         updateNotification("Restarting....");
-                        startTOR();
+                        startTor();
                     }, error -> {
                         error.printStackTrace();
                         compositeDisposable.dispose();
                         updateNotification("Restarting....");
-                        startTOR();
+                        startTor();
                     });
             compositeDisposable.add(disposable);
         } else {
-            startTOR();
+            startTor();
         }
     }
 
-    private void stopTOr() {
+    private void stopTor() {
         if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
 
             //
@@ -254,7 +246,7 @@ public class TorService extends Service {
                     .stopTor()
                     .subscribe(state -> {
 
-                        TorUtil.getInstance(this).setStatusFromBroadcast(false);
+//                        TorUtil.getInstance(this).setStatusFromBroadcast(false);
 
                     }, Throwable::printStackTrace);
             compositeDisposable.add(disposable);

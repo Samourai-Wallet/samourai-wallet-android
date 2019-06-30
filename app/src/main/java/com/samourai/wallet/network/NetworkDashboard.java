@@ -131,7 +131,7 @@ public class NetworkDashboard extends AppCompatActivity {
 
         torButton.setOnClickListener(view -> {
 
-            if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+            if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                 if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() !=null ){
                     Toast.makeText(this,R.string.cannot_disable_tor_dojo,Toast.LENGTH_LONG).show();
                     return;
@@ -234,10 +234,8 @@ public class NetworkDashboard extends AppCompatActivity {
     private void setDataState() {
         if (ConnectivityStatus.hasConnectivity(getApplicationContext())) {
             setDataConnectionState(CONNECTION_STATUS.ENABLED);
-            if (PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.ENABLE_TOR, false)) {
-                if (!TorManager.getInstance(getApplicationContext()).isConnected()) {
-                    startTor();
-                }
+            if (TorManager.getInstance(getApplicationContext()).isRequired() && !TorManager.getInstance(getApplicationContext()).isConnected()) {
+                startTor();
              }
         } else {
             setDataConnectionState(CONNECTION_STATUS.DISABLED);

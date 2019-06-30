@@ -748,7 +748,7 @@ public class BalanceActivity extends AppCompatActivity {
                 } catch (DecryptionException de) {
                 }
 
-                if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
                     startIntent.setAction(TorService.STOP_SERVICE);
                     startService(startIntent);
