@@ -63,6 +63,7 @@ public class NetworkDashboard extends AppCompatActivity {
     Button dataButton;
     Button dojoBtn;
     TextView dataConnectionStatus;
+    TextView torRenewBtn;
     TextView torConnectionStatus;
     TextView dojoConnectionStatus;
     ImageView dataConnectionIcon;
@@ -95,6 +96,7 @@ public class NetworkDashboard extends AppCompatActivity {
         dataButton = findViewById(R.id.networking_data_btn);
         torButton = findViewById(R.id.networking_tor_btn);
         dojoBtn = findViewById(R.id.networking_dojo_btn);
+        torRenewBtn = findViewById(R.id.networking_tor_renew);
 
         dataConnectionStatus = findViewById(R.id.network_data_status);
         torConnectionStatus = findViewById(R.id.network_tor_status);
@@ -109,6 +111,11 @@ public class NetworkDashboard extends AppCompatActivity {
 
         dataButton.setOnClickListener(view -> toggleNetwork());
 
+        torRenewBtn.setOnClickListener(view -> {
+            if(TorManager.getInstance(getApplicationContext()).isConnected()){
+                startService(new Intent(this,TorService.class).setAction(TorService.RENEW_IDENTITY));
+            }
+        });
         dojoBtn.setOnClickListener(view -> {
 
             Toast.makeText(this, getString(R.string.temporary_dojo_disable),Toast.LENGTH_LONG).show();
@@ -322,7 +329,7 @@ public class NetworkDashboard extends AppCompatActivity {
                 torButton.setEnabled(true);
                 torConnectionIcon.setColorFilter(activeColor);
                 torConnectionStatus.setText("Enabled");
-
+                torRenewBtn.setVisibility(View.VISIBLE);
                 if(waitingForPairing)    {
                     waitingForPairing = false;
 
@@ -336,6 +343,7 @@ public class NetworkDashboard extends AppCompatActivity {
 
             }
             else if (enabled == TorManager.CONNECTION_STATES.CONNECTING) {
+                torRenewBtn.setVisibility(View.INVISIBLE);
                 torButton.setText("loading...");
                 torButton.setEnabled(false);
                 torConnectionIcon.setColorFilter(waiting);
@@ -346,6 +354,7 @@ public class NetworkDashboard extends AppCompatActivity {
                 torButton.setEnabled(true);
                 torConnectionIcon.setColorFilter(disabledColor);
                 torConnectionStatus.setText("Disabled");
+                torRenewBtn.setVisibility(View.VISIBLE);
 
                 /*
                 if (strPairingParams != null) {

@@ -22,6 +22,10 @@ import io.reactivex.subjects.Subject;
 
 public class TorManager {
     private static final String TAG = "TorManager";
+    private boolean changingIdentity = false;
+    public boolean newIDentity() {
+        return this.onionProxyManager.newIdentity();
+    }
 
     public enum CONNECTION_STATES {
         IDLE,
