@@ -163,7 +163,7 @@ public class NetworkDashboard extends AppCompatActivity {
         disposables.add(onlineSubscription);
 
         dojoLayout = findViewById(R.id.network_dojo_layout);
-
+        dojoLayout.setVisibility(View.GONE);
         if(DojoUtil.getInstance(NetworkDashboard.this).getDojoParams() != null)    {
             dojoLayout.setVisibility(View.VISIBLE);
             setDojoConnectionState(CONNECTION_STATUS.ENABLED);

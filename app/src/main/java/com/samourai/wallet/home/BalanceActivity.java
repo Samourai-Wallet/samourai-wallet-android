@@ -51,6 +51,7 @@ import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.LandingActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
@@ -595,7 +596,18 @@ public class BalanceActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             doSettings();
         } else if (id == R.id.action_support) {
-            doSupport();
+//            doSupport();
+        Disposable disposable =    DojoUtil.getInstance( this).setDojoParams("{\"pairing\":{\"type\":\"dojo.api\",\"version\":\"1.0.0\",\"apikey\":\"myAdminKey\",\"url\":\"http://3neyv3i52avyt36x3jpclk4rfrckt6e3lxg6a6xayht7unqwu6qz3dyd.onion//test/v2/\"}}")
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(aBoolean -> {
+                        Toast.makeText(this,"Connected",Toast.LENGTH_SHORT).show();
+                    },error->{
+                        error.printStackTrace();
+                        Toast.makeText(this,"Error ".concat(error.getMessage()),Toast.LENGTH_SHORT).show();
+                    });
+
+compositeDisposable.add(disposable);
         } else if (id == R.id.action_sweep) {
             if (!AppUtil.getInstance(BalanceActivity.this).isOfflineMode()) {
                 doSweep();
