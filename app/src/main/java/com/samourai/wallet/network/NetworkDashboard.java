@@ -350,11 +350,11 @@ public class NetworkDashboard extends AppCompatActivity {
                 torConnectionStatus.setText("Tor initializing");
             }
             else  {
+                torRenewBtn.setVisibility(View.INVISIBLE);
                 torButton.setText("Enable");
                 torButton.setEnabled(true);
                 torConnectionIcon.setColorFilter(disabledColor);
                 torConnectionStatus.setText("Disabled");
-                torRenewBtn.setVisibility(View.VISIBLE);
 
                 /*
                 if (strPairingParams != null) {
