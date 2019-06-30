@@ -596,18 +596,7 @@ public class BalanceActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             doSettings();
         } else if (id == R.id.action_support) {
-//            doSupport();
-        Disposable disposable =    DojoUtil.getInstance( this).setDojoParams("{\"pairing\":{\"type\":\"dojo.api\",\"version\":\"1.0.0\",\"apikey\":\"myAdminKey\",\"url\":\"http://3neyv3i52avyt36x3jpclk4rfrckt6e3lxg6a6xayht7unqwu6qz3dyd.onion//test/v2/\"}}")
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(aBoolean -> {
-                        Toast.makeText(this,"Connected",Toast.LENGTH_SHORT).show();
-                    },error->{
-                        error.printStackTrace();
-                        Toast.makeText(this,"Error ".concat(error.getMessage()),Toast.LENGTH_SHORT).show();
-                    });
-
-compositeDisposable.add(disposable);
+            doSupport();
         } else if (id == R.id.action_sweep) {
             if (!AppUtil.getInstance(BalanceActivity.this).isOfflineMode()) {
                 doSweep();
