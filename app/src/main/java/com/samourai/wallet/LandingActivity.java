@@ -227,6 +227,9 @@ public class LandingActivity extends AppCompatActivity  {
     @Override
     protected void onDestroy() {
         compositeDisposables.dispose();
+        if( progressDialog !=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
         super.onDestroy();
     }
 
@@ -301,7 +304,6 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     private void toggleLoading() {
-
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
