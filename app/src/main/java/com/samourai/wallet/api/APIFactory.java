@@ -248,7 +248,7 @@ public class APIFactory	{
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         if(DojoUtil.getInstance(context).getDojoParams() != null || setupDojo)    {
-            _url = WebUtil.SAMOURAI_API2_TESTNET_TOR;
+            _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR :  WebUtil.SAMOURAI_API2_TOR;
         }
 
         Log.d("APIFactory", "getToken() url:" + _url);
