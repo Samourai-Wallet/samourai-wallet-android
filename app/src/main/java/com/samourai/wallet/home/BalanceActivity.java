@@ -752,6 +752,7 @@ public class BalanceActivity extends AppCompatActivity {
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
                     startIntent.setAction(TorService.STOP_SERVICE);
+                    startIntent.putExtra("KILL_TOR",true);
                     startService(startIntent);
                 }
                 Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);

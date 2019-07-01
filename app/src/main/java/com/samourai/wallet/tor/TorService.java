@@ -91,10 +91,12 @@ public class TorService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (Objects.requireNonNull(intent.getAction()).equals(TorService.STOP_SERVICE)) {
-            if (DojoUtil.getInstance(getApplicationContext()).getDojoParams() != null) {
+
+            if (DojoUtil.getInstance(getApplicationContext()).getDojoParams() != null && !intent.hasExtra("KILL_TOR")) {
                 Toast.makeText(getApplicationContext(), "You cannot stop Tor service when dojo is connected", Toast.LENGTH_SHORT).show();
                 return START_STICKY;
             }
+
             Disposable disposable = TorManager.getInstance(getApplicationContext())
                     .stopTor()
                     .subscribe(stat -> {
@@ -109,9 +111,7 @@ public class TorService extends Service {
             renewIdentity();
             return START_STICKY;
         } else if (Objects.requireNonNull(intent.getAction()).equals(TorService.START_SERVICE)) {
-            if (TorManager.getInstance(getApplicationContext()).isProcessRunning) {
-                restartTorProcess();
-            } else {
+            if (!TorManager.getInstance(getApplicationContext()).isProcessRunning) {
                 startTor();
             }
         }

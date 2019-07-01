@@ -89,10 +89,13 @@ public class TorManager {
                 return proxy;
             } catch (Exception e) {
                 e.printStackTrace();
-                state = CONNECTION_STATES.DISCONNECTED;
-                if (torStatus.hasObservers()) {
-                    torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
-                }
+//
+//                if(onionProxyManager.isRunning()){
+//                    state = CONNECTION_STATES.DISCONNECTED;
+//                if (torStatus.hasObservers()) {
+//                    torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
+//                }
+//                }
                 e.printStackTrace();
                 return proxy;
             }
@@ -135,7 +138,7 @@ public class TorManager {
     }
 
     public boolean isRequired() {
-        Log.i(TAG, "isRequired: ");
+        Log.i(TAG, "isRequired: ".concat(String.valueOf(PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false))));
         return PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false);
     }
 
