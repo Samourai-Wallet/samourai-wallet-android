@@ -89,13 +89,12 @@ public class TorManager {
                 return proxy;
             } catch (Exception e) {
                 e.printStackTrace();
-//
-//                if(onionProxyManager.isRunning()){
-//                    state = CONNECTION_STATES.DISCONNECTED;
-//                if (torStatus.hasObservers()) {
-//                    torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
-//                }
-//                }
+                if (onionProxyManager.isRunning()) {
+                    state = CONNECTION_STATES.DISCONNECTED;
+                    if (torStatus.hasObservers()) {
+                        torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
+                    }
+                }
                 e.printStackTrace();
                 return proxy;
             }
@@ -215,8 +214,7 @@ public class TorManager {
 
             jsonPayload.put("active", PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false));
 
-        }
-        catch(JSONException je) {
+        } catch (JSONException je) {
             ;
         }
 
@@ -227,12 +225,11 @@ public class TorManager {
 
         try {
 
-            if(jsonPayload.has("active"))    {
+            if (jsonPayload.has("active")) {
                 PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, jsonPayload.getBoolean("active"));
             }
 
-        }
-        catch(JSONException ex) {
+        } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
 
