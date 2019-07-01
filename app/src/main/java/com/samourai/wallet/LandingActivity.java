@@ -266,7 +266,6 @@ public class LandingActivity extends AppCompatActivity  {
 
     private void doDojoPairing0()    {
         waitingForPairing = true;
-//        startTor();
         DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
         dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
         dojoConfigureBottomSheet.setDojoConfigurationListener(new DojoConfigureBottomSheet.DojoConfigurationListener() {
@@ -293,49 +292,7 @@ public class LandingActivity extends AppCompatActivity  {
         });
     }
 
-    private void doDojoPairing1()    {
-        doScan();
-    }
 
-    private void doDojoPairing2(String params)    {
-      Disposable  disposable =   DojoUtil.getInstance(LandingActivity.this).setDojoParams(params)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(aBoolean -> {
-                    waitingForPairing = false;
-                    Toast.makeText(this,"Connected To Dojo node",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
-                    startActivity(intent);
-                },error->{
-                    error.printStackTrace();
-                    Toast.makeText(this,"Error Connecting node : ".concat(error.getMessage()),Toast.LENGTH_SHORT).show();
-                });
-      compositeDisposables.add(disposable);
-
-
-    }
-
-    private void doScan() {
-
-        CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
-
-        cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
-            cameraFragmentBottomSheet.dismissAllowingStateLoss();
-            try {
-                if (waitingForPairing && DojoUtil.getInstance(LandingActivity.this).isValidPairingPayload(code.trim())) {
-                    DojoUtil.getInstance(LandingActivity.this).clear();
-                    strPairingParams = code.trim();
-                    doDojoPairing2(strPairingParams);
-                }
-                else {
-                    ;
-                }
-            } catch (Exception e) {
-                ;
-            }
-        });
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
