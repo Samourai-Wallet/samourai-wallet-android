@@ -12,7 +12,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:minHeight="240dp">
 
         <ImageView
             android:id="@+id/close_dojo"
@@ -121,7 +122,7 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="24dp"
             android:background="@drawable/border_button_rounded_shape"
@@ -130,7 +131,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/preorder_dojo"
-            app:layout_constraintTop_toBottomOf="@+id/dojo_progress_status_text"
+            app:layout_constraintTop_toBottomOf="@+id/textView43"
             app:layout_constraintVertical_bias="0.0" />
 
         <android.support.constraint.Group
@@ -172,7 +173,7 @@
             android:id="@+id/dojo_progress_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:constraint_referenced_ids="dojo_progress_status_text,dojo_connect_progress" />
 
 

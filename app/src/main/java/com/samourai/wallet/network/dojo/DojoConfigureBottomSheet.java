@@ -1,9 +1,6 @@
 package com.samourai.wallet.network.dojo;
 
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +23,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.util.PrefsUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -132,7 +130,7 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
 
     private void connectToDojo(String dojoParams) {
         cameraFragmentBottomSheet.dismissAllowingStateLoss();
-        btnGroup.setVisibility(View.GONE);
+        btnGroup.setVisibility(View.INVISIBLE);
         progressGroup.setVisibility(View.VISIBLE);
         dojoConnectProgress.setProgress(30);
         if (TorManager.getInstance(getActivity().getApplicationContext()).isConnected()) {
@@ -142,7 +140,6 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
             doPairing(dojoParams);
         } else {
             progressStates.setText("Waiting for Tor...");
-
             Intent startIntent = new Intent(getActivity().getApplicationContext(), TorService.class);
             startIntent.setAction(TorService.START_SERVICE);
             getActivity().startService(startIntent);
@@ -153,12 +150,13 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
                     .subscribe(state -> {
                         if (state == TorManager.CONNECTION_STATES.CONNECTING) {
                             progressStates.setText("Waiting for Tor...");
-
                         } else if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                            PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.ENABLE_TOR, true);
                             dojoConnectProgress.setProgress(60);
                             progressStates.setText("Tor Connected, Connecting to Dojo Node...");
                             DojoUtil.getInstance(getActivity().getApplicationContext()).clear();
                             doPairing(dojoParams);
+
                         }
                     });
             compositeDisposables.add(disposable);
@@ -178,9 +176,7 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
                     dojoConnectProgress.setProgress(100);
                     new Handler().postDelayed(() -> {
                         Toast.makeText(getActivity(), "Successfully connected to Dojo", Toast.LENGTH_SHORT).show();
-
                         dismissAllowingStateLoss();
-
                     }, 800);
                 }, error -> {
                     error.printStackTrace();
