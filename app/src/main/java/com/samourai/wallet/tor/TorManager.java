@@ -23,6 +23,7 @@ import io.reactivex.subjects.Subject;
 public class TorManager {
     private static final String TAG = "TorManager";
     private boolean changingIdentity = false;
+
     public boolean newIDentity() {
         return this.onionProxyManager.newIdentity();
     }
@@ -89,13 +90,13 @@ public class TorManager {
                 return proxy;
             } catch (Exception e) {
                 e.printStackTrace();
-//
-//                if(onionProxyManager.isRunning()){
-//                    state = CONNECTION_STATES.DISCONNECTED;
-//                if (torStatus.hasObservers()) {
-//                    torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
-//                }
-//                }
+
+                if (!onionProxyManager.isRunning()) {
+                    state = CONNECTION_STATES.DISCONNECTED;
+                    if (torStatus.hasObservers()) {
+                        torStatus.onNext(CONNECTION_STATES.DISCONNECTED);
+                    }
+                }
                 e.printStackTrace();
                 return proxy;
             }
