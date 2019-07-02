@@ -1035,7 +1035,7 @@ public class SendActivity extends AppCompatActivity {
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
-
+                    btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) totalAmount)).concat(" BTC")));
                     return true;
 
                 } catch (JSONException je) {

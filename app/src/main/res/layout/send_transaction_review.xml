@@ -506,7 +506,7 @@
             android:layout_height="64dp"
             android:background="@drawable/button_green"
             android:paddingTop="12dp"
-            android:text="SEND 1.0 BTC"
+            tools:text="SEND 1.0 BTC"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
