@@ -210,7 +210,7 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-//        cahootsGroup = findViewById(R.id.cahoots_group);
+//        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         satEditText.addTextChangedListener(satWatcher);
@@ -593,12 +593,14 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void enableCahoots(boolean enable) {
+        /*
         if (enable) {
             cahootsGroup.setVisibility(View.VISIBLE);
         } else {
             cahootsGroup.setVisibility(View.GONE);
             selectedCahootsType = SelectCahootsType.type.NONE;
         }
+        */
     }
 
     private void setBalance() {
