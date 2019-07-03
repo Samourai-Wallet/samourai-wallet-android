@@ -234,7 +234,10 @@ public class PayloadUtil	{
         BIP47Meta.getInstance().clear();
         BIP49Util.getInstance(context).reset();
         BIP84Util.getInstance(context).reset();
+        DojoUtil.getInstance(context).clear();
         APIFactory.getInstance(context).reset();
+
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, false);
 
         try	{
             int nbAccounts = HD_WalletFactory.getInstance(context).get().getAccounts().size();
@@ -254,6 +257,10 @@ public class PayloadUtil	{
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
             BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
             BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+            AddressFactory.getInstance().setHighestPreReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPreChangeIdx(0);
+            AddressFactory.getInstance().setHighestPostReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPostChangeIdx(0);
 
             HD_WalletFactory.getInstance(context).set(null);
         }
