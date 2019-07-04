@@ -600,7 +600,8 @@ public class UTXOActivity extends Activity {
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //                Log.d("UTXOActivity", "list: dust");
             }
-            else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+            else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) ||
+                    BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
