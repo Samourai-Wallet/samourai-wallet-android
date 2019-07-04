@@ -15,6 +15,8 @@ public class BlockedUTXO {
     private static BlockedUTXO instance = null;
     private static ConcurrentHashMap<String,Long> blockedUTXO = null;
     private static CopyOnWriteArrayList<String> notDustedUTXO = null;
+    private static ConcurrentHashMap<String,Long> blockedUTXOPostMix = null;
+    private static CopyOnWriteArrayList<String> notDustedUTXOPostMix = null;
 
     public final static long BLOCKED_UTXO_THRESHOLD = 1001L;
 
@@ -29,6 +31,8 @@ public class BlockedUTXO {
             instance = new BlockedUTXO();
             blockedUTXO = new ConcurrentHashMap<>();
             notDustedUTXO = new CopyOnWriteArrayList<>();
+            blockedUTXOPostMix = new ConcurrentHashMap<>();
+            notDustedUTXOPostMix = new CopyOnWriteArrayList<>();
         }
 
         return instance;
@@ -66,7 +70,7 @@ public class BlockedUTXO {
         Log.d("BlockedUTXO", "clear");
     }
 
-    public long getTotalValueBlocked()  {
+    public long getTotalValueBlocked0()  {
         long ret = 0L;
         for(String id : blockedUTXO.keySet())   {
             ret += blockedUTXO.get(id);

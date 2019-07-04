@@ -346,8 +346,8 @@ public class APIFactory	{
                 }
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
-                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
-                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
+                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
+                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -1911,7 +1911,7 @@ public class APIFactory	{
     }
 
     public long getXpubBalance()  {
-        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked();
+        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0();
     }
 
     public void setXpubBalance(long value)  {
