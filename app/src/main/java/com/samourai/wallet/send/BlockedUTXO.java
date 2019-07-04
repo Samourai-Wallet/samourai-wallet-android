@@ -194,6 +194,7 @@ public class BlockedUTXO {
     public void fromJSON(JSONObject blockedObj) {
 
         blockedUTXO.clear();
+        blockedUTXOPostMix.clear();
         notDustedUTXO.clear();
 
         try {
