@@ -114,11 +114,52 @@ public class BlockedUTXO {
         return notDustedUTXO;
     }
 
+    public long getPostMix(String hash, int idx)    {
+        return blockedUTXOPostMix.get(hash + "-" + Integer.toString(idx));
+    }
+
+    public void addPostMix(String hash, int idx, long value)    {
+        blockedUTXOPostMix.put(hash + "-" + Integer.toString(idx), value);
+        Log.d("BlockedUTXO", "add:" + hash + "-" + Integer.toString(idx));
+    }
+
+    public void removePostMix(String hash, int idx)   {
+        if(blockedUTXOPostMix != null && blockedUTXOPostMix.containsKey(hash + "-" + Integer.toString(idx)))  {
+            blockedUTXOPostMix.remove(hash + "-" + Integer.toString(idx));
+            Log.d("BlockedUTXO", "remove:" + hash + "-" + Integer.toString(idx));
+        }
+    }
+
+    public void removePostMix(String id)   {
+        if(blockedUTXOPostMix != null && blockedUTXOPostMix.containsKey(id))  {
+            blockedUTXOPostMix.remove(id);
+            Log.d("BlockedUTXO", "remove:" + id);
+        }
+    }
+
+    public boolean containsPostMix(String hash, int idx)   {
+        return blockedUTXOPostMix.containsKey(hash + "-" + Integer.toString(idx));
+    }
+
+    public void clearPostMix()    {
+        blockedUTXOPostMix.clear();
+        Log.d("BlockedUTXO", "clear");
+    }
+
+    public long getTotalValueBlockedPostMix()  {
+        long ret = 0L;
+        for(String id : blockedUTXOPostMix.keySet())   {
+            ret += blockedUTXOPostMix.get(id);
+        }
+        return ret;
+    }
+
     public JSONObject toJSON() {
 
         JSONObject blockedObj = new JSONObject();
 
         JSONArray array = new JSONArray();
+        JSONArray arrayPostMix = new JSONArray();
         try {
             for(String id : blockedUTXO.keySet())   {
                 JSONObject obj = new JSONObject();
@@ -133,6 +174,14 @@ public class BlockedUTXO {
                 notDusted.put(s);
             }
             blockedObj.put("notDusted", notDusted);
+
+            for(String id : blockedUTXOPostMix.keySet())   {
+                JSONObject obj = new JSONObject();
+                obj.put("id", id);
+                obj.put("value", blockedUTXOPostMix.get(id));
+                array.put(obj);
+            }
+            blockedObj.put("blockedPostMix", array);
 
         }
         catch(JSONException je) {
@@ -163,6 +212,15 @@ public class BlockedUTXO {
 
                 for(int i = 0; i < array.length(); i++)   {
                     addNotDusted(array.getString(i));
+                }
+            }
+
+            if(blockedObj.has("blockedPostMix"))    {
+                JSONArray array = blockedObj.getJSONArray("blockedPostMix");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    JSONObject obj = array.getJSONObject(i);
+                    blockedUTXOPostMix.put(obj.getString("id"), obj.getLong("value"));
                 }
             }
 
