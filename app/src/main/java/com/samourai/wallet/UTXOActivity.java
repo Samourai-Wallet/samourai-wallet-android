@@ -467,7 +467,7 @@ public class UTXOActivity extends Activity {
 
         List<UTXO> utxos = null;
         if(account == WhirlpoolMeta.getInstance(UTXOActivity.this).getWhirlpoolPostmix())    {
-            utxos = APIFactory.getInstance(UTXOActivity.this).getUtxosPostMix();
+            utxos = APIFactory.getInstance(UTXOActivity.this).getUtxosPostMix(false);
         }
         else    {
             utxos = APIFactory.getInstance(UTXOActivity.this).getUtxos(false);

@@ -1975,11 +1975,26 @@ public class APIFactory	{
         return unspents;
     }
 
-    public List<UTXO> getUtxosPostMix() {
+    public List<UTXO> getUtxosPostMix(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
 
-        unspents.addAll(utxosPostMix.values());
+        if(filter)    {
+            for(String key : utxosPostMix.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxosPostMix.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxosPostMix.values());
+        }
 
         return unspents;
     }

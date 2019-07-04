@@ -744,7 +744,7 @@ public class CahootsUtil {
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
         List<UTXO> utxos = null;
         if(stowaway3.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
-            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+            utxos = APIFactory.getInstance(context).getUtxosPostMix(true);
         }
         else    {
             utxos = APIFactory.getInstance(context).getUtxos(true);
@@ -1117,7 +1117,7 @@ public class CahootsUtil {
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
         List<UTXO> utxos = null;
         if(stonewall2.getCounterpartyAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
-            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+            utxos = APIFactory.getInstance(context).getUtxosPostMix(true);
         }
         else    {
             utxos = APIFactory.getInstance(context).getUtxos(true);
@@ -1167,7 +1167,7 @@ public class CahootsUtil {
         HashMap<String,String> utxo2Address = new HashMap<String,String>();
         List<UTXO> utxos = null;
         if(stonewall3.getAccount() == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
-            utxos = APIFactory.getInstance(context).getUtxosPostMix();
+            utxos = APIFactory.getInstance(context).getUtxosPostMix(true);
         }
         else    {
             utxos = APIFactory.getInstance(context).getUtxos(true);
@@ -1221,7 +1221,7 @@ public class CahootsUtil {
         List<UTXO> ret = new ArrayList<UTXO>();
         List<UTXO> _utxos = null;
         if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
-            _utxos = APIFactory.getInstance(context).getUtxosPostMix();
+            _utxos = APIFactory.getInstance(context).getUtxosPostMix(true);
         }
         else    {
             _utxos = APIFactory.getInstance(context).getUtxos(true);
