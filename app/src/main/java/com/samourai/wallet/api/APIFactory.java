@@ -1920,7 +1920,7 @@ public class APIFactory	{
     }
 
     public long getXpubPostMixBalance()  {
-        return xpub_postmix_balance;
+        return xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
     }
 
     public void setXpubPostMixBalance(long value)  {

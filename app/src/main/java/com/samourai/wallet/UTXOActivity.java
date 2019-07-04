@@ -206,6 +206,33 @@ public class UTXOActivity extends Activity {
                                     alert.show();
 
                                 }
+                                else if(BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx))    {
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
+                                    builder.setTitle(R.string.mark_spend);
+                                    builder.setMessage(R.string.mark_utxo_spend);
+                                    builder.setCancelable(true);
+                                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                            BlockedUTXO.getInstance().removePostMix(data.get(position).hash, data.get(position).idx);
+
+                                            Log.d("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
+
+                                            update(true);
+
+                                        }
+                                    });
+                                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(final DialogInterface dialog, int whichButton) {
+                                            ;
+                                        }
+                                    });
+
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }
                                 else    {
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UTXOActivity.this);
@@ -215,7 +242,12 @@ public class UTXOActivity extends Activity {
                                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(final DialogInterface dialog, int whichButton) {
 
-                                            BlockedUTXO.getInstance().add(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+                                            if(account == 0)    {
+                                                BlockedUTXO.getInstance().add(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+                                            }
+                                            else    {
+                                                BlockedUTXO.getInstance().addPostMix(data.get(position).hash, data.get(position).idx, data.get(position).amount);
+                                            }
 
                                             Log.d("UTXOActivity", "added:" + data.get(position).hash + "-" + data.get(position).idx);
 
@@ -370,7 +402,8 @@ public class UTXOActivity extends Activity {
                 });
                 menu.inflate (R.menu.utxo_popup_menu);
 
-                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
+                if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) ||
+                        BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx))    {
                     menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
                 }
                 else    {
@@ -448,6 +481,11 @@ public class UTXOActivity extends Activity {
                 displayData.hash = outpoint.getTxHash().toString();
                 displayData.idx = outpoint.getTxOutputN();
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
+                    doNotSpend.add(displayData);
+//                    Log.d("UTXOActivity", "marked as do not spend");
+                    totalBlocked += displayData.amount;
+                }
+                else if(BlockedUTXO.getInstance().containsPostMix(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
 //                    Log.d("UTXOActivity", "marked as do not spend");
                     totalBlocked += displayData.amount;
