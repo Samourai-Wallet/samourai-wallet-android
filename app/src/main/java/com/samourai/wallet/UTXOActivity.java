@@ -241,7 +241,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_sign:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, account);
                                 String msg = null;
 
                                 if(FormatsUtil.getInstance().isValidBech32(addr) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress())    {
@@ -283,7 +283,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_redeem:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, account);
                                 SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 if(ecKey != null && segwitAddress != null) {
@@ -326,7 +326,7 @@ public class UTXOActivity extends Activity {
                             case R.id.item_privkey:
                             {
                                 String addr = data.get(position).addr;
-                                ECKey ecKey = SendFactory.getPrivKey(addr, 0);
+                                ECKey ecKey = SendFactory.getPrivKey(addr, account);
                                 String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
                                 ImageView showQR = new ImageView(UTXOActivity.this);
