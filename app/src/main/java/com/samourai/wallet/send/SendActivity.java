@@ -108,6 +108,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -266,6 +267,18 @@ public class SendActivity extends AppCompatActivity {
                     setBalance();
                 }, Throwable::printStackTrace);
         compositeDisposables.add(disposable);
+
+
+        // Update fee
+        Disposable feeDisposable = Observable.fromCallable(() -> APIFactory.getInstance(getApplicationContext()).getDynamicFees())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(t -> {
+                    Log.i(TAG, "Fees : ".concat(t.toString()));
+                    setUpFee();
+                }, Throwable::printStackTrace);
+
+        compositeDisposables.add(feeDisposable);
 
 
         if (getIntent().getExtras() != null) {
@@ -491,6 +504,7 @@ public class SendActivity extends AppCompatActivity {
                 FeeUtil.getInstance().sanitizeFee();
                 break;
         }
+
 
     }
 
