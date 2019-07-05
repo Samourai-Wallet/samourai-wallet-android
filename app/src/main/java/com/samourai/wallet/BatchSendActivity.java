@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
@@ -64,6 +65,7 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -267,7 +269,7 @@ public class BatchSendActivity extends Activity {
         });
 
         edAmountBTC = (EditText)findViewById(R.id.amountBTC);
-
+        edAmountBTC.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {

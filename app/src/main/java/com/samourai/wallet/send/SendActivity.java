@@ -16,6 +16,7 @@ import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -67,6 +68,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -214,6 +216,7 @@ public class SendActivity extends AppCompatActivity {
 //        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
 
         btcEditText.addTextChangedListener(BTCWatcher);
+        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
         satEditText.addTextChangedListener(satWatcher);
         toAddressEditText.addTextChangedListener(AddressWatcher);
 
