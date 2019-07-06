@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +101,6 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
         Tx tx = txes.get(position);
         if (tx.section == null) {
-
             long _amount = 0L;
             if (tx.getAmount() < 0.0) {
                 _amount = Math.abs((long) tx.getAmount());
@@ -236,6 +236,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 calendarDM.set(Calendar.MINUTE, 0);
                 calendarDM.set(Calendar.SECOND, 0);
                 calendarDM.set(Calendar.MILLISECOND, 0);
+
                 if (!sectionDates.contains(calendarDM.getTime().getTime())) {
                     if (DateUtils.isToday(calendarDM.getTime().getTime())) {
                         if (show_todays_tx)
@@ -273,12 +274,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                             sectioned.add(tx);
                         }
                     } else if (fmt.format(key).equals(fmt.format(date))) {
-                        if (DateUtils.isToday(tx.getTS() * 1000)) {
-                            if (tx.getConfirmations() >= MAX_CONFIRM_COUNT) {
-                                sectioned.add(tx);
-                            }
 
-                        } else {
+                        if(tx.getConfirmations() >= MAX_CONFIRM_COUNT){
                             sectioned.add(tx);
                         }
 
