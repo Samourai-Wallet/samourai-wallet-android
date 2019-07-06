@@ -418,11 +418,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="42dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto_mono"
-                    android:text="bits"
+                    android:text="0 bits"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView83"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/textView83"
                     app:layout_constraintTop_toBottomOf="@+id/textView83"
                     app:layout_constraintVertical_bias="1.0" />
@@ -468,7 +471,8 @@
                     app:layout_constraintEnd_toEndOf="@+id/textView83"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/entropy_value_stonewallx1"
-                    app:layout_constraintTop_toTopOf="@+id/entropy_value_stonewallx1" />
+                    app:layout_constraintTop_toTopOf="@+id/entropy_value_stonewallx1"
+                    app:layout_constraintVertical_bias="0.72" />
             </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>

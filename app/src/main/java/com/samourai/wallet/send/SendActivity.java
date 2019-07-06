@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -110,7 +111,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -267,6 +267,9 @@ public class SendActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aLong -> {
+                    if (balance == aLong) {
+                        return;
+                    }
                     setBalance();
                 }, Throwable::printStackTrace);
         compositeDisposables.add(disposable);
@@ -332,13 +335,17 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void setUpBoltzman() {
-        sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener((compoundButton, checked) -> {
-            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-            //small delay for storing prefs.
-            new Handler().postDelayed(this::prepareSpend, 100);
-        });
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
+        SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+        compoundButton.setChecked(checked);
+        new Handler().postDelayed(this::prepareSpend, 100);
+    };
 
+    private void setUpBoltzman() {
+        sendTransactionDetailsView.getStoneWallSwitch().setChecked(true);
+        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(true);
+        sendTransactionDetailsView.enableStonewall(true);
+        sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
     private void checkRicochetPossibility() {
@@ -575,6 +582,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sendTransactionDetailsView.enableForRicochet(isChecked);
             enableCahoots(!isChecked);
             ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
@@ -631,7 +639,6 @@ public class SendActivity extends AppCompatActivity {
                     balance = tempBalance;
                 }
             }
-            checkDeepLinks();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (MnemonicException.MnemonicLengthException mle) {
@@ -685,9 +692,6 @@ public class SendActivity extends AppCompatActivity {
                 processScan(strUri);
             }
             new Handler().postDelayed(this::validateSpend, 800);
-        } else {
-            validateSpend();
-
         }
     }
 
@@ -1363,18 +1367,15 @@ public class SendActivity extends AppCompatActivity {
             } else {
                 strPrivacyWarning = "";
             }
+            if (!canDoBoltzmann) {
+                restoreChangeIndexes();
+                sendTransactionDetailsView.getStoneWallSwitch().setOnClickListener(null);
+                sendTransactionDetailsView.getStoneWallSwitch().setEnabled(false);
+                sendTransactionDetailsView.enableStonewall(false);
+                sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
+                sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
+            }
 
-
-
-            /*
-                    String strNoLikedTypeBoltzmann = null;
-                    if(canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
-                        strNoLikedTypeBoltzmann = getString(R.string.boltzmann_like_typed) + "\n\n";
-                    }
-                    else    {
-                        strNoLikedTypeBoltzmann = "";
-                    }
-                    */
 
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
             message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
@@ -1384,7 +1385,6 @@ public class SendActivity extends AppCompatActivity {
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
-            Log.i(TAG, "prepareSpend: TYPE ".concat(String.valueOf(selectedCahootsType)));
 
             switch (selectedCahootsType) {
                 case STONEWALLX2_MANUAL: {
@@ -1407,17 +1407,14 @@ public class SendActivity extends AppCompatActivity {
                 }
                 case NONE: {
                     sendTransactionDetailsView.showStonewallx1Layout(null);
-                    sendTransactionDetailsView.enableStoneWallX1Layout(canDoBoltzmann);
                     // for ricochet entropy will be 0 always
                     if (SPEND_TYPE == SPEND_RICOCHET) {
                         break;
                     }
-                    CalculateEntropy(selectedUTXO, receivers);
 
                     if (receivers.size() <= 1) {
-                        sendTransactionDetailsView.setEntropyBarStoneWallX1(0);
+                        sendTransactionDetailsView.setEntropyBarStoneWallX1ZeroBits();
                         break;
-
                     }
                     if (receivers.size() > 8) {
                         sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
