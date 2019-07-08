@@ -346,6 +346,7 @@ public class MainActivity2 extends Activity {
             } else {
                 JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
                 if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
+                    APIFactory.getInstance(MainActivity2.this).getToken(true);
                     return  true;
                 }
             }
