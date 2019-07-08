@@ -356,18 +356,12 @@ public class MainActivity2 extends Activity {
 
                     if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
 
-                        new Thread(() -> {
-                            Looper.prepare();
+                        APIFactory.getInstance(MainActivity2.this).stayingAlive();
 
-                            APIFactory.getInstance(MainActivity2.this).stayingAlive();
-
-                            doAppInit1(isDial, strUri, strPCode);
-
-                            Looper.loop();
-
-                        }).start();
+                        doAppInit1(isDial, strUri, strPCode);
 
                         return;
+
                     } else {
                         doAppInit1(isDial, strUri, strPCode);
                     }
