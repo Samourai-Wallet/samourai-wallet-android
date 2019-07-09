@@ -37,7 +37,7 @@ public class PrefsUtil {
 	public static final String XPUB84LOCK = "xpub84lock";
 	public static final String XPUBPRELOCK = "xpubprelock";
 	public static final String XPUBPOSTLOCK = "xpubpostlock";
-//	public static final String XPUB44REG = "xpub44reg";
+	public static final String XPUB44REG = "xpub44reg";
 	public static final String XPUB49REG = "xpub49reg";
 	public static final String XPUB84REG = "xpub84reg";
 	public static final String XPUBPREREG = "xpubprereg";

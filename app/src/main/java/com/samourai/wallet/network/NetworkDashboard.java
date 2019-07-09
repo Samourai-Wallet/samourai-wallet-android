@@ -433,43 +433,9 @@ public class NetworkDashboard extends AppCompatActivity {
 
             resetAPI();
 
-            PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.IS_RESTORE, true);
+            PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.IS_RESTORE, false);
 
             APIFactory.getInstance(NetworkDashboard.this).initWallet();
-
-            /*
-             if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
-
-                try {
-                    String[] s = HD_WalletFactory.getInstance(NetworkDashboard.this).get().getXPUBs();
-                    APIFactory.getInstance(NetworkDashboard.this).lockXPUB(s[0], 44);
-                }
-                catch(IOException | MnemonicException.MnemonicLengthException e) {
-                    ;
-                }
-
-            }
-
-            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
-                String ypub = BIP49Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).ypubstr();
-                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(ypub, 49);
-            }
-
-            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
-                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).zpubstr();
-                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
-            }
-
-            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUBPREREG, false) == false)    {
-                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(NetworkDashboard.this).getWhirlpoolPremixAccount()).zpubstr();
-                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
-            }
-
-            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUBPOSTLOCK, false) == false)    {
-                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(NetworkDashboard.this).getWhirlpoolPostmix()).zpubstr();
-                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
-            }
-            */
 
             setDojoConnectionState(CONNECTION_STATUS.ENABLED);
 

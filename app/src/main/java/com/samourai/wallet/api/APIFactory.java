@@ -431,15 +431,18 @@ public class APIFactory	{
                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                     if(tag != null)    {
                         PrefsUtil.getInstance(context).setValue(tag, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                        if(tag.equals(PrefsUtil.XPUBPOSTREG))    {
+                            PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                        }
+                    }
+                    else if(purpose == 44)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, true);
                     }
                     else if(purpose == 49)    {
                         PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
                     }
                     else if(purpose == 84)    {
                         PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
                     }
                     else    {
                         ;
@@ -1619,11 +1622,9 @@ public class APIFactory	{
         String[] s = null;
 
         try {
-            /*
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false) == false)    {
-                registerXPUB(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), false);
+                registerXPUB(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), 44, null);
             }
-            */
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false) == false)    {
                 registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 49, null);
             }
