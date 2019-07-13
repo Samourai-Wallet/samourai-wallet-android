@@ -164,7 +164,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:text="To"
+            android:text="@string/to"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="@+id/to_address_review"
             app:layout_constraintEnd_toEndOf="parent"
