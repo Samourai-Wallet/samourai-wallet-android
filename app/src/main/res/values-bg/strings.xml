@@ -109,7 +109,6 @@
     <string name="tx_failed">Грешка при изпращането на транзакцията</string>
     <string name="you_received">Получени</string>
     <string name="you_sent">Изпратени</string>
-    <string name="send">Изпращане</string>
     <string name="receive">Получаване</string>
     <string name="cannot_select_utxo">Неизхарчените средства не могат да бъдат избрани</string>
     <string name="error_bip126_output">Грешка при определянето на output адрес</string>
@@ -174,11 +173,6 @@
     <string name="receive_address_to_clipboard">Копиране на този адрес за получаване в клипборда? Ако се копира, може да бъде видян от други приложения.</string>
     <string name="receive_address_to_share">Споделяне на този адрес за получаване? Ако се сподели, може да бъде прочетен от други приложения.</string>
     <string name="sure_to_erase">Сигурни ли сте, че искате да изтриете този портфейл?</string>
-    <string name="wallet_erased">Портфейлът беше изтрит от устройството.</string>
-
-    <string name="send_privacy_warning">Предупреждение за секретността Ви: Знайте, че вече сте изпращали средства до този адрес.</string>
-
-    <string name="securely_wiping_wait">Безопасно изтриване на портфейла. Моля изчакайте.</string>
 
     <string name="options_scramble_pin">Разбъркване на PIN код екрана</string>
     <string name="options_scramble_pin2">Използвайте разбъркани цифри за въеждане на PIN код и влизане в портфейла</string>
