@@ -741,6 +741,10 @@
     <string name="select_participant">Изберете участник</string>
     <string name="select_cahoots_type">Изберете тип cahoots</string>
     
+    <string name="cannot_disable_tor_dojo">Tor не може да бъде спрян понеже портфейлът е свързан със Samourai Dojo нод.</string>
+    <string name="temporary_dojo_disable">Деинсталирайте Samourai Wallet, за да се раздвоите от Вашия Dojo нод. \'DISABLE\' ще бъде напълно активиран в по-нататъшен ъпдейт.</string>
+    <string name="renew">СМЕНИ</string>
+    
     
 
 
