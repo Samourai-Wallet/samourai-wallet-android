@@ -51,6 +51,7 @@ import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.LandingActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
@@ -65,7 +66,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.util.CahootsUtil;
+import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
@@ -445,7 +446,9 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.setAdapter(adapter);
 
         balanceViewModel.getBalance().observe(this, balance -> {
-
+            if(balance<0){
+                return;
+            }
             if (balanceViewModel.getSatState().getValue() != null) {
                 setBalance(balance, balanceViewModel.getSatState().getValue());
             } else {
@@ -746,9 +749,10 @@ public class BalanceActivity extends AppCompatActivity {
                 } catch (DecryptionException de) {
                 }
 
-                if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
                     startIntent.setAction(TorService.STOP_SERVICE);
+                    startIntent.putExtra("KILL_TOR",true);
                     startService(startIntent);
                 }
                 Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);

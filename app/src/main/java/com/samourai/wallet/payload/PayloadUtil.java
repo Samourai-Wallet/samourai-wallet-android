@@ -26,6 +26,7 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.SendActivity;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -36,7 +37,6 @@ import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -234,7 +234,10 @@ public class PayloadUtil	{
         BIP47Meta.getInstance().clear();
         BIP49Util.getInstance(context).reset();
         BIP84Util.getInstance(context).reset();
+        DojoUtil.getInstance(context).clear();
         APIFactory.getInstance(context).reset();
+
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, false);
 
         try	{
             int nbAccounts = HD_WalletFactory.getInstance(context).get().getAccounts().size();
@@ -254,6 +257,10 @@ public class PayloadUtil	{
             BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
             BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
             BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+            AddressFactory.getInstance().setHighestPreReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPreChangeIdx(0);
+            AddressFactory.getInstance().setHighestPostReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPostChangeIdx(0);
 
             HD_WalletFactory.getInstance(context).set(null);
         }
@@ -378,7 +385,7 @@ public class PayloadUtil	{
             meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
-            meta.put("tor", TorUtil.getInstance(context).toJSON());
+            meta.put("tor", TorManager.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
             meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
 
@@ -392,7 +399,7 @@ public class PayloadUtil	{
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
             meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
-//            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
+            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
             meta.put("xpubreg84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false));
             meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
@@ -613,7 +620,7 @@ public class PayloadUtil	{
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
                 if(meta.has("tor")) {
-                    TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
+                    TorManager.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
                 if(meta.has("blocked_utxos")) {
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
@@ -665,17 +672,14 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
                 }
                 if(meta.has("fee_provider_sel")) {
-//                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel") > 0 ? 0 : meta.getInt("fee_provider_sel"));
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
                 }
-                /*
                 if(meta.has("xpubreg44")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, meta.getBoolean("xpubreg44"));
                 }
-                */
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
                 }

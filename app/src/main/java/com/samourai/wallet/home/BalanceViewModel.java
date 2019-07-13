@@ -74,7 +74,7 @@ public class BalanceViewModel extends AndroidViewModel {
                             Collections.sort(txes, new APIFactory.TxMostRecentDateComparator());
                             txs.postValue(txes);
                             toggleSat.setValue(false);
-                            balance.postValue(xpub_balance- BlockedUTXO.getInstance().getTotalValueBlocked());
+                            balance.postValue(xpub_balance- BlockedUTXO.getInstance().getTotalValueBlocked0());
 
                         }, error -> {
                             txs.postValue(new ArrayList<>());

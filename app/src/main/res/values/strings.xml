@@ -740,4 +740,9 @@
     <string name="select_participant">Select participant</string>
     <string name="select_cahoots_type">Select cahoots type</string>
 
+    <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
+    <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
+    <string name="renew">RENEW</string>
+
+
 </resources>

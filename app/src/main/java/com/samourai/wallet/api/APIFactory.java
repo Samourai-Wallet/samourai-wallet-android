@@ -34,12 +34,12 @@ import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.service.RefreshService;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.TorUtil;
 import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
@@ -248,7 +248,7 @@ public class APIFactory	{
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         if(DojoUtil.getInstance(context).getDojoParams() != null || setupDojo)    {
-            _url = WebUtil.SAMOURAI_API2_TESTNET_TOR;
+            _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR :  WebUtil.SAMOURAI_API2_TOR;
         }
 
         Log.d("APIFactory", "getToken() url:" + _url);
@@ -262,7 +262,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 return true;
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("apikey=");
@@ -318,7 +318,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddr().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -346,8 +346,8 @@ public class APIFactory	{
                 }
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
-                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
-                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked());
+                xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
+                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -372,7 +372,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("xpub=");
@@ -431,15 +431,18 @@ public class APIFactory	{
                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                     if(tag != null)    {
                         PrefsUtil.getInstance(context).setValue(tag, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                        if(tag.equals(PrefsUtil.XPUBPOSTREG))    {
+                            PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
+                        }
+                    }
+                    else if(purpose == 44)    {
+                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, true);
                     }
                     else if(purpose == 49)    {
                         PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
                     }
                     else if(purpose == 84)    {
                         PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, true);
-                        PrefsUtil.getInstance(context).removeValue(PrefsUtil.IS_RESTORE);
                     }
                     else    {
                         ;
@@ -781,7 +784,7 @@ public class APIFactory	{
             return jsonObject;
         }
     */
-    public synchronized JSONObject lockXPUB(String xpub, int purpose) {
+    public synchronized JSONObject lockXPUB(String xpub, int purpose, String tag) {
 
         String _url =  WebUtil.getAPIUrl(context);
 
@@ -792,7 +795,12 @@ public class APIFactory	{
             String response = null;
             ECKey ecKey = null;
 
-            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null || xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) || xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()))    {
+            if(AddressFactory.getInstance(context).xpub2account().get(xpub) != null ||
+                    xpub.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr()) ||
+                    xpub.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).zpubstr())
+            )    {
 
                 HD_Address addr = null;
                 switch(purpose)    {
@@ -800,7 +808,15 @@ public class APIFactory	{
                         addr = BIP49Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
                         break;
                     case 84:
-                        addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        if(tag != null && tag.equals(PrefsUtil.XPUBPRELOCK))    {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChange().getAddressAt(0);
+                        }
+                        else if(tag != null && tag.equals(PrefsUtil.XPUBPOSTLOCK))   {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChange().getAddressAt(0);
+                        }
+                        else    {
+                            addr = BIP84Util.getInstance(context).getWallet().getAccountAt(0).getChange().getAddressAt(0);
+                        }
                         break;
                     default:
                         addr = HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(AddressFactory.CHANGE_CHAIN).getAddressAt(0);
@@ -826,7 +842,7 @@ public class APIFactory	{
                             break;
                     }
 
-                    if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+                    if(!TorManager.getInstance(context).isRequired())    {
                         StringBuilder args = new StringBuilder();
                         args.append("address=");
                         args.append(address);
@@ -843,12 +859,13 @@ public class APIFactory	{
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
                         args.put("address", address);
-                        args.put("signature", Uri.encode(sig));
+//                        args.put("signature", Uri.encode(sig));
+                        args.put("signature", sig);
                         args.put("message", "lock");
+                        args.put("at", getAccessToken());
                         Log.i("APIFactory", "lock XPUB:" + _url);
                         Log.i("APIFactory", "lock XPUB:" + args.toString());
-                        args.put("at", getAccessToken());
-                        response = WebUtil.getInstance(context).tor_postURL(_url + "xpub" + xpub + "/lock/", args);
+                        response = WebUtil.getInstance(context).tor_postURL(_url + "xpub/" + xpub + "/lock/", args);
                         Log.i("APIFactory", "lock XPUB response:" + response);
                     }
 
@@ -856,16 +873,22 @@ public class APIFactory	{
                         jsonObject = new JSONObject(response);
 
                         if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
-                            switch(purpose)    {
-                                case 49:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
-                                    break;
-                                case 84:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
-                                    break;
-                                default:
-                                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
-                                    break;
+
+                            if(tag != null)    {
+                                PrefsUtil.getInstance(context).setValue(tag, true);
+                            }
+                            else    {
+                                switch(purpose)    {
+                                    case 49:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49LOCK, true);
+                                        break;
+                                    case 84:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, true);
+                                        break;
+                                    default:
+                                        PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, true);
+                                        break;
+                                }
                             }
 
                         }
@@ -1186,7 +1209,7 @@ public class APIFactory	{
                 utxos.clear();
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
@@ -1249,6 +1272,7 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    String path = null;
 
                     try {
                         String address = null;
@@ -1261,7 +1285,7 @@ public class APIFactory	{
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
-                            String path = (String)xpubObj.get("path");
+                            path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
                             if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
@@ -1294,6 +1318,7 @@ public class APIFactory	{
                         else    {
                             UTXO utxo = new UTXO();
                             utxo.getOutpoints().add(outPoint);
+                            utxo.setPath(path);
                             utxos.put(script, utxo);
                         }
 
@@ -1423,7 +1448,7 @@ public class APIFactory	{
 //            Log.i("APIFactory", "Dynamic fees:" + url.toString());
                 String response = null;
                 if(!AppUtil.getInstance(context).isOfflineMode())    {
-                    response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at" + getAccessToken());
+                    response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
                 }
                 else    {
                     response = PayloadUtil.getInstance(context).deserializeFees().toString();
@@ -1597,11 +1622,9 @@ public class APIFactory	{
         String[] s = null;
 
         try {
-            /*
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false) == false)    {
-                registerXPUB(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), false);
+                registerXPUB(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), 44, null);
             }
-            */
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false) == false)    {
                 registerXPUB(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr(), 49, null);
             }
@@ -1889,7 +1912,7 @@ public class APIFactory	{
     }
 
     public long getXpubBalance()  {
-        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked();
+        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0();
     }
 
     public void setXpubBalance(long value)  {
@@ -1898,7 +1921,7 @@ public class APIFactory	{
     }
 
     public long getXpubPostMixBalance()  {
-        return xpub_postmix_balance;
+        return xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
     }
 
     public void setXpubPostMixBalance(long value)  {
@@ -1953,11 +1976,26 @@ public class APIFactory	{
         return unspents;
     }
 
-    public List<UTXO> getUtxosPostMix() {
+    public List<UTXO> getUtxosPostMix(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
 
-        unspents.addAll(utxosPostMix.values());
+        if(filter)    {
+            for(String key : utxosPostMix.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxosPostMix.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxosPostMix.values());
+        }
 
         return unspents;
     }
@@ -1993,7 +2031,7 @@ public class APIFactory	{
 
             String response = null;
 
-            if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(address);
@@ -2131,7 +2169,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeMultiAddrPost().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 // use POST
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
@@ -2180,7 +2218,7 @@ public class APIFactory	{
             if(AppUtil.getInstance(context).isOfflineMode())    {
                 response = PayloadUtil.getInstance(context).deserializeUTXOPost().toString();
             }
-            else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
+            else if(!TorManager.getInstance(context).isRequired())    {
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
@@ -2312,13 +2350,14 @@ public class APIFactory	{
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
+                    String path = null;
 
                     try {
                         String address = Bech32Util.getInstance().getAddressFromScript(script);
 
                         if(outDict.has("xpub"))    {
                             JSONObject xpubObj = (JSONObject)outDict.get("xpub");
-                            String path = (String)xpubObj.get("path");
+                            path = (String)xpubObj.get("path");
                             String m = (String)xpubObj.get("m");
                             unspentPaths.put(address, path);
                             if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()))    {
@@ -2339,6 +2378,7 @@ public class APIFactory	{
                         else    {
                             UTXO utxo = new UTXO();
                             utxo.getOutpoints().add(outPoint);
+                            utxo.setPath(path);
                             utxosPostMix.put(script, utxo);
                         }
 

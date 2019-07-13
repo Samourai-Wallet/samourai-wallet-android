@@ -16,6 +16,7 @@ import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -50,7 +52,7 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.util.CahootsUtil;
+import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -67,6 +69,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -210,9 +213,10 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-//        cahootsGroup = findViewById(R.id.cahoots_group);
+//        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
 
         btcEditText.addTextChangedListener(BTCWatcher);
+        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
         satEditText.addTextChangedListener(satWatcher);
         toAddressEditText.addTextChangedListener(AddressWatcher);
 
@@ -263,9 +267,24 @@ public class SendActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aLong -> {
+                    if (balance == aLong) {
+                        return;
+                    }
                     setBalance();
                 }, Throwable::printStackTrace);
         compositeDisposables.add(disposable);
+
+
+        // Update fee
+        Disposable feeDisposable = Observable.fromCallable(() -> APIFactory.getInstance(getApplicationContext()).getDynamicFees())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(t -> {
+                    Log.i(TAG, "Fees : ".concat(t.toString()));
+                    setUpFee();
+                }, Throwable::printStackTrace);
+
+        compositeDisposables.add(feeDisposable);
 
 
         if (getIntent().getExtras() != null) {
@@ -316,13 +335,17 @@ public class SendActivity extends AppCompatActivity {
 
     }
 
-    private void setUpBoltzman() {
-        sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener((compoundButton, checked) -> {
-            SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
-            //small delay for storing prefs.
-            new Handler().postDelayed(this::prepareSpend, 100);
-        });
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
+        SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
+        compoundButton.setChecked(checked);
+        new Handler().postDelayed(this::prepareSpend, 100);
+    };
 
+    private void setUpBoltzman() {
+        sendTransactionDetailsView.getStoneWallSwitch().setChecked(true);
+        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(true);
+        sendTransactionDetailsView.enableStonewall(true);
+        sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
     private void checkRicochetPossibility() {
@@ -492,6 +515,7 @@ public class SendActivity extends AppCompatActivity {
                 break;
         }
 
+
     }
 
     private void setFeeLabels() {
@@ -558,6 +582,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sendTransactionDetailsView.enableForRicochet(isChecked);
             enableCahoots(!isChecked);
             ricochetStaggeredOptionGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (isChecked) {
@@ -593,12 +618,14 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void enableCahoots(boolean enable) {
+        /*
         if (enable) {
             cahootsGroup.setVisibility(View.VISIBLE);
         } else {
             cahootsGroup.setVisibility(View.GONE);
             selectedCahootsType = SelectCahootsType.type.NONE;
         }
+        */
     }
 
     private void setBalance() {
@@ -612,7 +639,6 @@ public class SendActivity extends AppCompatActivity {
                     balance = tempBalance;
                 }
             }
-            checkDeepLinks();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (MnemonicException.MnemonicLengthException mle) {
@@ -666,9 +692,6 @@ public class SendActivity extends AppCompatActivity {
                 processScan(strUri);
             }
             new Handler().postDelayed(this::validateSpend, 800);
-        } else {
-            validateSpend();
-
         }
     }
 
@@ -1033,7 +1056,7 @@ public class SendActivity extends AppCompatActivity {
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
-
+                    btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue((double) totalAmount)).concat(" BTC")));
                     return true;
 
                 } catch (JSONException je) {
@@ -1344,18 +1367,15 @@ public class SendActivity extends AppCompatActivity {
             } else {
                 strPrivacyWarning = "";
             }
+            if (!canDoBoltzmann) {
+                restoreChangeIndexes();
+                sendTransactionDetailsView.getStoneWallSwitch().setOnClickListener(null);
+                sendTransactionDetailsView.getStoneWallSwitch().setEnabled(false);
+                sendTransactionDetailsView.enableStonewall(false);
+                sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
+                sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
+            }
 
-
-
-            /*
-                    String strNoLikedTypeBoltzmann = null;
-                    if(canDoBoltzmann && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_BOLTZMANN, true) == true && PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false)    {
-                        strNoLikedTypeBoltzmann = getString(R.string.boltzmann_like_typed) + "\n\n";
-                    }
-                    else    {
-                        strNoLikedTypeBoltzmann = "";
-                    }
-                    */
 
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
             message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
@@ -1365,7 +1385,6 @@ public class SendActivity extends AppCompatActivity {
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
             btnSend.setText("send ".concat(String.format(Locale.ENGLISH, "%.8f", getBtcValue(value))).concat(" BTC"));
-            Log.i(TAG, "prepareSpend: TYPE ".concat(String.valueOf(selectedCahootsType)));
 
             switch (selectedCahootsType) {
                 case STONEWALLX2_MANUAL: {
@@ -1388,17 +1407,14 @@ public class SendActivity extends AppCompatActivity {
                 }
                 case NONE: {
                     sendTransactionDetailsView.showStonewallx1Layout(null);
-                    sendTransactionDetailsView.enableStoneWallX1Layout(canDoBoltzmann);
                     // for ricochet entropy will be 0 always
                     if (SPEND_TYPE == SPEND_RICOCHET) {
                         break;
                     }
-                    CalculateEntropy(selectedUTXO, receivers);
 
                     if (receivers.size() <= 1) {
-                        sendTransactionDetailsView.setEntropyBarStoneWallX1(0);
+                        sendTransactionDetailsView.setEntropyBarStoneWallX1ZeroBits();
                         break;
-
                     }
                     if (receivers.size() > 8) {
                         sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
@@ -1594,7 +1610,7 @@ public class SendActivity extends AppCompatActivity {
                                                 url += "pushtx/schedule";
                                                 try {
                                                     String result = "";
-                                                    if (TorManager.getInstance(getApplicationContext()).isConnected()) {
+                                                    if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                                                         result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj);
 
                                                     } else {
@@ -2024,6 +2040,7 @@ public class SendActivity extends AppCompatActivity {
     private void doStowaway() {
 
         long amountCahoots = CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account);
+
         String strCahootsAmount = SendActivity.this.getText(R.string.amount_sats).toString();
         strCahootsAmount += "\n(" + Coin.valueOf(amountCahoots).toPlainString() + " BTC available)";
 
@@ -2042,7 +2059,7 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account))    {
+                            if(amount < amountCahoots)    {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount, account);
                             }
                             else    {
@@ -2086,7 +2103,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < CahootsUtil.getInstance(SendActivity.this).getCahootsValue(account))    {
+                            if(amount < amountCahoots)    {
 
                                 final EditText edAddress = new EditText(SendActivity.this);
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)

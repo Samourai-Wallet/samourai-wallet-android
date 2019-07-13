@@ -8,6 +8,7 @@ import android.support.transition.Slide;
 import android.support.transition.TransitionManager;
 import android.support.transition.TransitionSet;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
 
 import java.text.DecimalFormat;
+
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * A CustomView for showing and hiding transaction and transactionReview
@@ -68,7 +71,7 @@ public class SendTransactionDetailsView extends FrameLayout {
         entropyValueX1 = transactionReview.findViewById(R.id.entropy_value_stonewallx1);
         entropyValueX2 = transactionReview.findViewById(R.id.entropy_value_stonewallx2);
 
-        entropyBarStoneWallX1.setMaxBars(3);
+        entropyBarStoneWallX1.setMaxBars(4);
         entropyBarStoneWallX2.setMaxBars(3);
 
         addView(transactionView);
@@ -81,6 +84,9 @@ public class SendTransactionDetailsView extends FrameLayout {
 
     public View getTransactionView() {
         return transactionView;
+    }
+    public void enableForRicochet(boolean enable){
+        stoneWallLayout.setVisibility(enable ? INVISIBLE : VISIBLE);
     }
 
     public void showStonewallX2Layout(String participant, long fee) {
@@ -112,6 +118,12 @@ public class SendTransactionDetailsView extends FrameLayout {
             stoneWallX2Layout.setVisibility(GONE);
         });
 
+    }
+
+    public void enableStonewall(boolean enable) {
+        for (int i = 0; i < stoneWallLayout.getChildCount(); i++) {
+            stoneWallLayout.getChildAt(i).setAlpha(enable ? 1f : 0.6f);
+        }
     }
 
 
@@ -153,15 +165,19 @@ public class SendTransactionDetailsView extends FrameLayout {
         if(entropy == null){
             entropyBarStoneWallX1.disable();
             entropyValueX1.setText(R.string.not_available);
-
         }else {
             entropyBarStoneWallX1.setRange(entropy);
             DecimalFormat decimalFormat = new DecimalFormat("##.00");
             entropyValueX1.setText(decimalFormat.format(entropy.getEntropy()).concat(" bits"));
         }
     }
-    public void setEntropyBarStoneWallX1(int entropy) {
-        entropyBarStoneWallX1.setRange(entropy);
+
+    public EntropyBar getEntropyBarStoneWallX1() {
+        return entropyBarStoneWallX1;
+    }
+
+    public void setEntropyBarStoneWallX1ZeroBits() {
+        entropyBarStoneWallX1.setRange(0);
         entropyValueX1.setText(R.string.zero_bits);
     }
 
@@ -182,22 +198,6 @@ public class SendTransactionDetailsView extends FrameLayout {
     }
 
 
-    public void enableStoneWallX1Layout(boolean enable) {
-        for (int i = 0; i < stoneWallLayout.getChildCount(); i++) {
-            if (enable) {
-                stoneWallLayout.getChildAt(i).setAlpha(1f);
-                if (stoneWallLayout.getChildAt(i) instanceof Switch) {
-                    stoneWallLayout.getChildAt(i).setEnabled(true);
-                }
-            } else {
-                stoneWallLayout.getChildAt(i).setAlpha(0.6f);
-                if (stoneWallLayout.getChildAt(i) instanceof Switch) {
-                    stoneWallLayout.getChildAt(i).setEnabled(false);
-                    ((Switch) stoneWallLayout.getChildAt(i)).setChecked(false);
-                }
-            }
-        }
-    }
 
     public void showTransaction() {
         TransitionSet set = new TransitionSet();

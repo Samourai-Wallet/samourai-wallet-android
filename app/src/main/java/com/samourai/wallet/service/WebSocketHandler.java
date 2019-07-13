@@ -18,11 +18,11 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.NotificationsFactory;
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.TorUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -142,7 +142,7 @@ public class WebSocketHandler {
 
         protected Void doInBackground(Void... args) {
 
-            if(AppUtil.getInstance(context).isOfflineMode() || TorUtil.getInstance(context).statusFromBroadcast())    {
+            if(AppUtil.getInstance(context).isOfflineMode() || TorManager.getInstance(context).isRequired())    {
                 return null;
             }
 
