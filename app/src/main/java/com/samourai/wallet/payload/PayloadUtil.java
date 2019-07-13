@@ -238,6 +238,10 @@ public class PayloadUtil	{
         APIFactory.getInstance(context).reset();
 
         PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, false);
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_RESTORE, false);
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+
+        PrefsUtil.getInstance(context).clear();
 
         try	{
             int nbAccounts = HD_WalletFactory.getInstance(context).get().getAccounts().size();
