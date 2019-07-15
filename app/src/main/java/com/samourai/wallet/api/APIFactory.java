@@ -1732,14 +1732,14 @@ public class APIFactory	{
                 }
             }
 
-            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
+//            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
-            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
-            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
-            Log.d("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
-            Log.d("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
-            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
-            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
+//            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
+//            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
+//            Log.d("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
+//            Log.d("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
+//            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
+//            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
             JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix });
             JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix });
             Log.d("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
