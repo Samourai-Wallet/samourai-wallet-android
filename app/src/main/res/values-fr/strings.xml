@@ -721,4 +721,36 @@
     <string name="postmix_without_boltzmann">Veuillez noter qu\'une dépense à partir de votre compte post-mix sans l\'utilisation de STONEWALL aura pour conséquence la perte de la confidentialité acquise à travers Whirlpool.</string>
     
     
+    
+    
+    <string name="begin_cycle">DÉMARRER CYCLE</string>
+    <string name="pool_fee">FRAIS POOL</string>
+    <string name="total_fees">TOTAL FRAIS</string>
+    <string name="miner_fee">FRAIS MINEUR</string>
+    <string name="total_being_cycled">Total post-cycle(s):</string>
+    <string name="review_cycle_details">VÉRIFIER DÉTAILS CYCLE</string>
+    <string name="cycled_transactions">Transactions post-cycle(s)</string>
+    <string name="initial_transaction">Transaction Initiale</string>
+    <string name="progress">Progression</string>
+    <string name="waiting_for_blockchain_confirmation">En attente d\'une confirmation blockchain</string>
+    
+    <string name="estimated_entropy">Entropie Estimée</string>
+    <string name="share_this_qr_code_with_your_participant">Partager ce code QR avec votre participant</string>
+    <string name="review_tx_before_braodcast">Vérifier la transaction avant émission</string>
+    <string name="select_participant">Sélectionner participant</string>
+    <string name="select_cahoots_type">Sélectionner type de cahoots</string>
+
+    <string name="create_to_existing_dojo">Créer portefeuille et appairer avec Dojo</string>
+
+    <string name="cannot_disable_tor_dojo">Tor ne peut être arrêté car le portefeuille est connecté à un noeud Dojo Samourai.</string>
+
+    <string name="temporary_dojo_disable">Désinstaller le Portefeuille Samourai pour désappairage de votre noeud Dojo. \'DÉSACTIVER\' sera entièrement activé lors d\'une prochaine mise à jour.</string>
+
+
+    <string name="renew">ACTUALISER</string>
+    
+    
+    
+    
+    
 </resources>
