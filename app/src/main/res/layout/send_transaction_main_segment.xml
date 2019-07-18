@@ -16,10 +16,11 @@
         app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/premium_addons"
             android:layout_width="match_parent"
+            android:id="@+id/premium_addons"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true">
+
 
             <TextView
                 android:id="@+id/textView6"
@@ -57,7 +58,7 @@
                 app:layout_constraintHorizontal_bias="0.08"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline" />
-<!--
+
             <TextView
                 android:id="@+id/ricochet_title2"
                 android:layout_width="wrap_content"
@@ -71,7 +72,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/ricochet_desc"
                 app:layout_constraintTop_toBottomOf="@+id/divider4" />
--->
+
             <TextView
                 android:id="@+id/ricochet_desc"
                 android:layout_width="0dp"
@@ -132,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible"
                 app:constraint_referenced_ids="tx_staggered_delivery_desc,ricochet_staggered_option,tx_staggered_delivery" />
-<!--
+
             <View
                 android:id="@+id/divider4"
                 android:layout_width="0dp"
@@ -171,7 +172,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:constraint_referenced_ids="cahoots_switch,ricochet_title2,textView74" />
--->
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
