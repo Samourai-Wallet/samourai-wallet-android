@@ -128,7 +128,7 @@ public class SendActivity extends AppCompatActivity {
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
-//    private Switch cahootsSwitch;
+    private Switch cahootsSwitch;
     private SeekBar feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
@@ -168,7 +168,7 @@ public class SendActivity extends AppCompatActivity {
     private int idxBIP84PostMixInternal = 0;
 
     //stub address for entropy calculation
-    private String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
+    public static String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
     private int account = 0;
@@ -200,7 +200,7 @@ public class SendActivity extends AppCompatActivity {
         //view elements from review segment and transaction segment can be access through respective
         //methods which returns root viewGroup
         btnReview = sendTransactionDetailsView.getTransactionView().findViewById(R.id.review_button);
-//        cahootsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.cahoots_switch);
+        cahootsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.cahoots_switch);
         ricochetHopsSwitch = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_hops_switch);
         ricochetTitle = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_desc);
         ricochetDesc = sendTransactionDetailsView.getTransactionView().findViewById(R.id.ricochet_title);
@@ -213,10 +213,10 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-//        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
+        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
 
         btcEditText.addTextChangedListener(BTCWatcher);
-        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
+        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 8)});
         satEditText.addTextChangedListener(satWatcher);
         toAddressEditText.addTextChangedListener(AddressWatcher);
 
@@ -248,7 +248,7 @@ public class SendActivity extends AppCompatActivity {
 
         setUpRicochet();
 
-//        setUpCahoots();
+        setUpCahoots();
 
         setUpFee();
 
@@ -295,7 +295,7 @@ public class SendActivity extends AppCompatActivity {
         }
 
     }
-/*
+
     private void setUpCahoots() {
         cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             // to check whether bottomsheet is closed or selected a value
@@ -324,7 +324,7 @@ public class SendActivity extends AppCompatActivity {
             }
         });
     }
-*/
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -573,7 +573,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpRicochet() {
 
-        if(account != 0)    {
+        if (account != 0) {
             ricochetHopsSwitch.setChecked(false);
             ricochetStaggeredDelivery.setChecked(false);
             ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
@@ -618,14 +618,14 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void enableCahoots(boolean enable) {
-        /*
+
         if (enable) {
             cahootsGroup.setVisibility(View.VISIBLE);
         } else {
             cahootsGroup.setVisibility(View.GONE);
             selectedCahootsType = SelectCahootsType.type.NONE;
         }
-        */
+
     }
 
     private void setBalance() {
@@ -943,10 +943,9 @@ public class SendActivity extends AppCompatActivity {
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             changeType = 84;
-        }
-        else if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        } else if (PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = 84;
         } else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
@@ -957,10 +956,9 @@ public class SendActivity extends AppCompatActivity {
         receivers = new HashMap<String, BigInteger>();
         receivers.put(address, BigInteger.valueOf(amount));
 
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             change_index = idxBIP84PostMixInternal;
-        }
-        else if (changeType == 84) {
+        } else if (changeType == 84) {
             change_index = idxBIP84Internal;
         } else if (changeType == 49) {
             change_index = idxBIP49Internal;
@@ -989,7 +987,7 @@ public class SendActivity extends AppCompatActivity {
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
         List<UTXO> utxosP2PKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
             utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
         }
@@ -1074,7 +1072,7 @@ public class SendActivity extends AppCompatActivity {
             List<UTXO> _utxos2 = null;
 
             long valueP2WPKH = UTXOFactory.getInstance().getTotalP2WPKH();
-            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                 valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
             }
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
@@ -1088,12 +1086,11 @@ public class SendActivity extends AppCompatActivity {
             boolean selectedP2SH_P2WPKH = false;
             boolean selectedP2PKH = false;
 
-            if((valueP2WPKH > (neededAmount * 2)) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            if ((valueP2WPKH > (neededAmount * 2)) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            }
-            else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
+            } else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
@@ -1399,7 +1396,7 @@ public class SendActivity extends AppCompatActivity {
                 }
                 case STOWAWAY: {
 //                            mixingPartner.setText("Samourai Wallet");
-                    sendTransactionDetailsView.showStowawayLayout("32jf5AMate5Pgu72aS7ScJtHaXHMobdHok", null, 1000);
+                    sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
                     btnSend.setText("Begin Stowaway");
 
@@ -1461,8 +1458,13 @@ public class SendActivity extends AppCompatActivity {
 
     private void initiateSpend() {
 
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
-            startActivity(new Intent(this, ManualStoneWall.class));
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL ) {
+            Intent intent = new Intent(this, ManualStoneWall.class);
+            intent.putExtra("amount", amount);
+            intent.putExtra("account", account);
+            intent.putExtra("address", address);
+            intent.putExtra("type", selectedCahootsType == SelectCahootsType.type.STOWAWAY ?  Cahoots.CAHOOTS_STOWAWAY :  Cahoots.CAHOOTS_STONEWALLx2);
+            startActivity(intent);
             return;
         }
         if (SPEND_TYPE == SPEND_RICOCHET) {
@@ -1493,11 +1495,10 @@ public class SendActivity extends AppCompatActivity {
                 // add change
                 if (_change > 0L) {
                     if (SPEND_TYPE == SPEND_SIMPLE) {
-                        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
-                        }
-                        else if (changeType == 84) {
+                        } else if (changeType == 84) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else if (changeType == 49) {
@@ -1714,7 +1715,7 @@ public class SendActivity extends AppCompatActivity {
             return;
         }
 
-        if(Cahoots.isCahoots(data.trim())) {
+        if (Cahoots.isCahoots(data.trim())) {
             CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
             return;
         }
@@ -2026,7 +2027,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void doUTXO() {
         Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
-        if(account != 0)    {
+        if (account != 0) {
             intent.putExtra("_account", account);
         }
         startActivity(intent);
@@ -2059,10 +2060,9 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            if(amount < amountCahoots)    {
+                            if (amount < amountCahoots) {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount, account);
-                            }
-                            else    {
+                            } else {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
                         } catch (NumberFormatException nfe) {
@@ -2103,7 +2103,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < amountCahoots)    {
+                            if (amount < amountCahoots) {
 
                                 final EditText edAddress = new EditText(SendActivity.this);
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
@@ -2120,8 +2120,7 @@ public class SendActivity extends AppCompatActivity {
                                                 if (FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams())) {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress, account);
-                                                    }
-                                                    catch(NumberFormatException nfe) {
+                                                    } catch (NumberFormatException nfe) {
                                                         Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                                                     }
                                                 } else {
