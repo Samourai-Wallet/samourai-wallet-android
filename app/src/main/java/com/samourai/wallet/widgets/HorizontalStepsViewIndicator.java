@@ -62,7 +62,7 @@ public class HorizontalStepsViewIndicator extends View {
     private void init() {
 
         paintCircle = new Paint();
-        paintCircle.setColor(ContextCompat.getColor(getContext(), R.color.success_green));
+        paintCircle.setColor(ContextCompat.getColor(getContext(), R.color.green_ui_2));
         paintCircle.setStrokeWidth(circleRadius);
         paintCircle.setStyle(Paint.Style.FILL);
         paintCircle.setAntiAlias(true);
@@ -74,7 +74,7 @@ public class HorizontalStepsViewIndicator extends View {
         paintCircleTrack.setStyle(Paint.Style.FILL);
         paintCircleTrack.setAntiAlias(true);
 
-        paintLine.setColor(ContextCompat.getColor(getContext(), R.color.success_green));
+        paintLine.setColor(ContextCompat.getColor(getContext(), R.color.green_ui_2));
         paintLine.setStrokeWidth(pathStrokeSize);
         paintLine.setAntiAlias(true);
         paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
