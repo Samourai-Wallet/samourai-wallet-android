@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.samourai.wallet.R;
+
 
 public class HorizontalStepsViewIndicator extends View {
 
@@ -32,7 +35,7 @@ public class HorizontalStepsViewIndicator extends View {
     private float center = 0f;
     private float pathStrokeSize = 12f;
     private float animatedPoint = circleRadius - 5;
-
+    private static final String TAG = "HorizontalStepsViewIndi";
     private ValueAnimator animator;
 
     public HorizontalStepsViewIndicator(Context context) {
@@ -59,7 +62,7 @@ public class HorizontalStepsViewIndicator extends View {
     private void init() {
 
         paintCircle = new Paint();
-        paintCircle.setColor(ContextCompat.getColor(getContext(), R.color.green_ui_2));
+        paintCircle.setColor(ContextCompat.getColor(getContext(), R.color.success_green));
         paintCircle.setStrokeWidth(circleRadius);
         paintCircle.setStyle(Paint.Style.FILL);
         paintCircle.setAntiAlias(true);
@@ -71,7 +74,7 @@ public class HorizontalStepsViewIndicator extends View {
         paintCircleTrack.setStyle(Paint.Style.FILL);
         paintCircleTrack.setAntiAlias(true);
 
-        paintLine.setColor(ContextCompat.getColor(getContext(), R.color.green_ui_2));
+        paintLine.setColor(ContextCompat.getColor(getContext(), R.color.success_green));
         paintLine.setStrokeWidth(pathStrokeSize);
         paintLine.setAntiAlias(true);
         paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -85,9 +88,30 @@ public class HorizontalStepsViewIndicator extends View {
         this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             screenW = getWidth();
             distance = (screenW / points);
-            animatedPoint = circleRadius*2;
+//            animatedPoint = circleRadius*2;
             invalidate();
         });
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putFloat("animatedvalue", this.animatedPoint);
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state)
+    {
+        if (state instanceof Bundle)
+        {
+            Bundle bundle = (Bundle) state;
+            this.animatedPoint = bundle.getInt("animatedvalue");
+            state = bundle.getParcelable("superState");
+        }
+        super.onRestoreInstanceState(state);
     }
 
 
@@ -113,6 +137,7 @@ public class HorizontalStepsViewIndicator extends View {
         animator.start();
     }
 
+
     public void setPathStrokeSize(float pathStrokeSize) {
         this.pathStrokeSize = pathStrokeSize;
         invalidate();
@@ -134,7 +159,8 @@ public class HorizontalStepsViewIndicator extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        Log.i(TAG, "onDraw: draw".concat(String.valueOf(distance)));
+        Log.i(TAG, "onDraw: animatedPoint".concat(String.valueOf(animatedPoint)));
         path.moveTo(0, center);
         path.lineTo(animatedPoint, center);
 
