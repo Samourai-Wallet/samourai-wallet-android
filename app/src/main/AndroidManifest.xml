@@ -273,7 +273,7 @@
         <activity
             android:name=".send.cahoots.ManualStoneWall"
             android:exported="true"
-            android:label="Manual Stonewall"
+            android:label="Manual Cahoots"
             android:theme="@style/ui_2_theme" />
 
         <receiver
