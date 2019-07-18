@@ -1217,7 +1217,7 @@ public class CahootsUtil {
         doCahoots(stonewall4.toJSON().toString());
     }
 
-    private List<UTXO> getCahootsUTXO(int account) {
+    public static List<UTXO> getCahootsUTXO(int account) {
         List<UTXO> ret = new ArrayList<UTXO>();
         List<UTXO> _utxos = null;
         if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
