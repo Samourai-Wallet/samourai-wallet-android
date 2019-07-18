@@ -10,33 +10,45 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/border_button_rounded_transparentt_shape"
         android:text="LAUNCH QR Scanner"
         android:textAllCaps="false"
         android:textColor="#2FC4D1"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textView65"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/textView65"
-        app:layout_constraintTop_toBottomOf="@+id/textView71"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textView71" />
 
     <Button
         android:id="@+id/cahoots_step_show_qr_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/border_button_rounded_transparentt_shape"
         android:text="@string/show_qr_code"
         android:textAllCaps="true"
         android:textColor="@color/green_ui_2"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="@+id/textView65"
         app:layout_constraintStart_toStartOf="@+id/textView65"
-        app:layout_constraintTop_toBottomOf="@+id/textView65"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textView65" />
+
+    <Button
+        android:id="@+id/cahoots_step_paste_payload"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/border_button_rounded_transparentt_shape"
+        android:text="paste cahoots payload"
+        android:textAllCaps="true"
+        android:textColor="@color/green_ui_2"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/cahoots_step_scan_qr_btn"
+        app:layout_constraintStart_toStartOf="@+id/cahoots_step_scan_qr_btn"
+        app:layout_constraintTop_toBottomOf="@+id/cahoots_step_scan_qr_btn"
+        app:layout_constraintVertical_bias="0.050000012" />
 
     <TextView
         android:id="@+id/cahoots_step_text"
@@ -81,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.37" />
+        app:layout_constraintGuide_percent="0.3" />
 
     <TextView
         android:id="@+id/textView71"

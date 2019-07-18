@@ -743,6 +743,8 @@
     <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
     <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
     <string name="renew">RENEW</string>
+    <string name="continue_exchanging_qr_codes">Continue exchanging QR codes\n until the transaction is broadcast!</string>
+    <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirm that you wish to broadcast this transaction.</string>
 
 
 </resources>
