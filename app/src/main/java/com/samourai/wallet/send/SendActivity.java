@@ -63,7 +63,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.send.cahoots.ManualStoneWall;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.send.cahoots.SelectCahootsType;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
@@ -1459,7 +1459,7 @@ public class SendActivity extends AppCompatActivity {
     private void initiateSpend() {
 
         if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL ) {
-            Intent intent = new Intent(this, ManualStoneWall.class);
+            Intent intent = new Intent(this, ManualCahootsActivity.class);
             intent.putExtra("amount", amount);
             intent.putExtra("account", account);
             intent.putExtra("address", address);

@@ -76,7 +76,7 @@ import java.util.List;
 
 import static com.samourai.wallet.cahoots.CahootsUtil.getCahootsUTXO;
 
-public class ManualStoneWall extends AppCompatActivity {
+public class ManualCahootsActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private HorizontalStepsViewIndicator stepsViewGroup;
@@ -88,7 +88,7 @@ public class ManualStoneWall extends AppCompatActivity {
     private int account = 0;
     private long amount = 0L;
     private String address = "";
-    private static final String TAG = "ManualStoneWall";
+    private static final String TAG = "ManualCahootsActivity";
     private Cahoots payload;
     private int type;
 

@@ -70,7 +70,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.send.cahoots.ManualStoneWall;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -704,7 +704,7 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualStoneWall.class);
+                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                         cahootIntent.putExtra("payload",strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
@@ -855,7 +855,7 @@ public class BalanceActivity extends AppCompatActivity {
                 if (privKeyReader.getFormat() != null) {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
-                    Intent cahootIntent = new Intent(this, ManualStoneWall.class);
+                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                     cahootIntent.putExtra("payload",code.trim());
                     startActivity(cahootIntent);
 //                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
@@ -887,7 +887,7 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
-                        Intent cahootIntent = new Intent(this, ManualStoneWall.class);
+                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                         cahootIntent.putExtra("payload",code.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
