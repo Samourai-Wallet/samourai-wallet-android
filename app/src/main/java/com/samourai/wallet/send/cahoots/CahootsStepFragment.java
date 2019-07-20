@@ -21,7 +21,6 @@ import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 public class CahootsStepFragment extends Fragment {
 
     private Button showQRBtn, scanQRbtn, pasteBtn;
-    private String payload = "{}";
     private int step = 0;
     private static final String TAG = "CahootsStepView";
 
@@ -55,7 +54,7 @@ public class CahootsStepFragment extends Fragment {
         });
         showQRBtn.setOnClickListener(view1 -> {
             if (cahootsFragmentListener != null) {
-                cahootsFragmentListener.onShare(step, payload);
+                cahootsFragmentListener.onShare(step);
             }
         });
         pasteBtn.setOnClickListener(view1 -> {
@@ -85,7 +84,7 @@ public class CahootsStepFragment extends Fragment {
     interface CahootsFragmentListener {
         void onScan(int step, String qrData);
 
-        void onShare(int step, String qrData);
+        void onShare(int step );
     }
 
 

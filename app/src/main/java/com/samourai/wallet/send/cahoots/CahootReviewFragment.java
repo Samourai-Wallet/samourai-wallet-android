@@ -1,17 +1,21 @@
 package com.samourai.wallet.send.cahoots;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.Group;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.boltzmann.beans.BoltzmannSettings;
 import com.samourai.boltzmann.beans.Txos;
@@ -21,6 +25,7 @@ import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.Stowaway;
+import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.widgets.EntropyBar;
 
@@ -49,7 +54,7 @@ public class CahootReviewFragment extends Fragment {
     TextView toAddress, amountInBtc, amountInSats, feeInBtc, feeInSats, entropyBits;
     EntropyBar entropyBar;
     Button sendBtn;
-    Group cahootsEntropyGroup;
+    Group cahootsEntropyGroup, cahootsProgressGroup;
     private Cahoots payload;
     private CompositeDisposable disposables = new CompositeDisposable();
 
@@ -64,21 +69,25 @@ public class CahootReviewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         if (payload != null) {
+            Log.i(TAG, "onViewCreated: ".concat(payload.getDestination()));
             toAddress.setText(payload.getDestination());
-
             sendBtn.setText("Send ".concat(formatForBtc(payload.getSpendAmount())));
             amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
             amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
+            if ((payload.getFeeAmount() == 0)) {
+                feeInBtc.setText("__");
+                feeInSats.setText("__");
+            } else {
+                feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
+                feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
 
-            feeInBtc.setText(formatForBtc(payload.getFeeAmount()));
-            feeInSats.setText(String.valueOf(payload.getFeeAmount()).concat(" sat"));
-
+            }
             if (payload instanceof Stowaway) {
                 cahootsEntropyGroup.setVisibility(View.GONE);
-                calculateEntropy();
             } else {
                 calculateEntropy();
             }
+
         }
 
         sendBtn.setOnClickListener(view1 -> {
@@ -87,23 +96,35 @@ public class CahootReviewFragment extends Fragment {
             if (payload != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(R.string.app_name);
-                builder.setMessage(R.string.confirm);
+                builder.setMessage("Are you sure want to broadcast this transaction ?");
                 builder.setCancelable(false);
+                sendBtn.setEnabled(false);
                 builder.setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
-
+                    cahootsProgressGroup.setVisibility(View.VISIBLE);
                     new Thread(() -> {
                         Looper.prepare();
 
-                        PushTx.getInstance(getActivity()).pushTx(Hex.toHexString(payload.getTransaction().bitcoinSerialize()));
+                        boolean success = PushTx.getInstance(getActivity()).pushTx(Hex.toHexString(payload.getTransaction().bitcoinSerialize()));
+
+                        if (success) {
+                            getActivity().runOnUiThread(() -> {
+                                Toast.makeText(getActivity(), R.string.tx_sent, Toast.LENGTH_SHORT).show();
+                                notifyWalletAndFinish();
+                            });
+                        } else {
+                            Toast.makeText(this.getActivity(), "Error broadcasting tx", Toast.LENGTH_SHORT).show();
+                            getActivity().runOnUiThread(() -> {
+                                cahootsProgressGroup.setVisibility(View.GONE);
+                            });
+                        }
 
                         Looper.loop();
-                        getActivity().finish();
+
                     }).start();
                 });
                 builder.setNegativeButton(R.string.no, (dialogInterface, i) -> {
                     sendBtn.setEnabled(true);
-
                 });
 
                 builder.create().show();
@@ -155,6 +176,7 @@ public class CahootReviewFragment extends Fragment {
         entropyBar = view.findViewById(R.id.cahoots_entropy_bar);
         feeInSats = view.findViewById(R.id.cahoots_review_fee_sats);
         cahootsEntropyGroup = view.findViewById(R.id.cahoots_entropy_group);
+        cahootsProgressGroup = view.findViewById(R.id.cahoots_progress_group);
         return view;
     }
 
@@ -182,6 +204,18 @@ public class CahootReviewFragment extends Fragment {
         return decimalFormat.format(number).replace(",", " ");
     }
 
+    private void notifyWalletAndFinish() {
+        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+        intent.putExtra("notifTx", false);
+        intent.putExtra("fetch", true);
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
+        cahootsProgressGroup.setVisibility(View.GONE);
+        Intent i = new Intent(this.getActivity(), BalanceActivity.class);
+        this.getActivity().finish();  
+        startActivity(i);
+        getActivity().finish();
+
+    }
 
     private Observable<TxProcessorResult> CalculateEntropy(Cahoots payload) {
 
@@ -209,7 +243,6 @@ public class CahootReviewFragment extends Fragment {
         });
 
     }
-
 
     @Override
     public void onDestroy() {
