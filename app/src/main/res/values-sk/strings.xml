@@ -35,6 +35,10 @@
     <string name="options_xpub49_2">Ukáž rošírený verejný klúč pre BIP49 Segwit účet (P2SH-wrapped).</string>
     <string name="options_xpub84">Ukáž Segwit ZPUB</string>
     <string name="options_xpub84_2">Ukáž rošírený verejný klúč prer BIP84 Segwit účet (Bech32).</string>
+    <string name="options_xpub84_premix">Ukáž Whirlpool pre-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Ukáž rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool pre-mix.</string>
+    <string name="options_xpub84_postmix">Ukáž Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Ukáž rozšírený verejný klúč pre BIP84 Segwit účet (Bech32) Whirlpool post-mix.</string>
     <string name="options_wipe">Bezpečne odstráň peňaženku</string>
     <string name="options_wipe2">Bezpečne odstráň túto peňaženku z tohoto zariadenia.</string>
     <string name="options_stealth_display">Utajni aplikáciu</string>
@@ -98,6 +102,11 @@
     <string name="options_address_calc2">Vypočítaj adresu odvodenú zo seedu peňaženky.</string>
     <string name="options_paynym_calc">PayNym kalkulačka</string>
     <string name="options_paynym_calc2">Vypočítaj adresy zdielané s ostatnými PayNyms.</string>
+    <string name="options_indexes">Indexy peňaženky</string>
+    <string name="options_indexes2">Súčasné hodnoty indexov pre túto peňaženku.</string>
+    <string name="options_whirlpool_gui">Spáruj s Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Spáruj s Whirlpool GUI pre pokračujúci mix.</string>
+    <string name="options_postmix">Utrať z post-mix Whirlpool</string>
 
     <string name="prompt_send_backup_to_support">Pošli zálohu peňaženky technickej podpore? Neobsahujú žiaden privátnu klúč, seed, alebo heslo k peňaženke.</string>
 
@@ -168,9 +177,11 @@
     <string name="insufficient_funds">Nedostatočné prostriedky</string>
     <string name="tx_length_error">Samourai nezabezpečuje transakcie vačšie ako 100KB. Skúste prosím rozdeliť vašu transakciu.</string>
     <string name="invalid_amount">Nesprávna suma</string>
+    <string name="invalid_address">Nesprávna adresa</string>
     <string name="amount">Suma</string>
 
     <string name="receive_address_to_clipboard">Skopírovať túto adresu pre prijatie do schránky? Ak sa skopíruje, môže byť viditelná pre ostatné aplikácie.</string>
+    <string name="txid_to_clipboard">Skopírovať ID tejto transakcie do poznámkového bloku? Ak áno môže byť viditelná pre íné aplikácie.</string>
     <string name="receive_address_to_share">Zdielať túto adresu pre prijatie? Ak sa zdiela, môže byť viditelná pre ostatné aplikácies.</string>
     <string name="sure_to_erase">Ste si istý že chcete vymazať túto peňaženku?</string>
     <string name="wallet_erased">Peňaženka vymazaná zo zariadenia.</string>
@@ -632,5 +643,108 @@
     <string name="hide_log">Skryť LOG</string>
     <string name="copy">Kopíruj</string>
     <string name="show_log">Ukáž Log</string>
+    <string name="unconfirmed">Nepotvrdené</string>
+    <string name="confirmation">Potvrdené</string>
+    <string name="total_available_amount">Všetky dostupné prostriedky</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Nemáš žiadne PayNym kontakty</string>
+    
+    <string name="experimental">Experimentálne</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Vytvor transakciu cez CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Čiastočne podpísaná BTC transakcia.</string>
+    <string name="import_cahoots">Skenuj alebo vlož #Cahoots.</string>
+    <string name="import_psbt">Skenuj alebo vlož PSBT.</string>
+    <string name="enter_cahoots">Vlož #Cahoots text</string>
+    <string name="enter_psbt">Vlož PSBT hex text</string>
+    <string name="create_cahoots">Vytvor #Cahoots</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Nízko</string>
+
+    <string name="ricochet_nlocktime_ok">Tvoja staggered Ricochet bol preposlany na vyslanie. Prosím počkajte pokial budú všetky transakcie v bloku poslané.</string>
+    <string name="ricochet_nlocktime_ko">Tvoja staggered Ricochet nemôže byť odoslana. Prosím skús znova.</string>
+    <string name="tag_utxo">Štítok UTXO</string>
+    <string name="boost_transaction_fee">Navýš transakčný poplatok</string>
+    <string name="refund">Vrátenie</string>
+
+    <string name="not_cahoots">Nesprávny #Cahoots</string>
+    <string name="not_valid_json">JSON chybný rozbor</string>
+    <string name="unrecognized_cahoots">Nerozpoznaný #Cahoots</string>
+    <string name="cannot_compose_cahoots">Nemožno vytvoriť #Cahoots</string>
+    <string name="start_stowaway">Začni Stowaway ako spender</string>
+    <string name="start_stonewall">Začni STONEWALL ako spender</string>
+    <string name="amount_sats">Zadaj hodnotu v Satoshi</string>
+    <string name="zero_bits">0 bitov</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Zobraz transakciu</string>
+    <string name="unrecognized_step">Nerozpoznaný #Cahoots krok</string>
+    <string name="cannot_process_stowaway">Nemožno vykonať Stowaway</string>
+    <string name="cannot_process_stonewall">Nemožno vykonať STONEWALL</string>
+    <string name="cannot_process_cahoots">Nemožno vykonať #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
+    <string name="powering_samourai_wallet_">Pripoj Samourai Wallet s vašim vlastným uzlom ponúka najlepšiu úroveň súkromia a nezávislosti pri interakcii s Bitcoin sieťou. Dojo umožňuje jednoduché a jednoduché spustenie celého uzla.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play plný BTC uzol\n\n -Automaticky nakonfigurovaná skrytá služba Tor\n\n -Nezávislosť od predvolených serverov Samourai</string>
+    <string name="dojo_connect_instruction">Ak už máš Dojo Full Node alebo \n beží bezplatný open source Dojo Software\alebo tvoj vlastný hardware, oskenuj párovací QR kód\n nachádzajúci sa na Dojo kontrolnom panely</string>
+    <string name="dojo_headline">Pripoj Samourai s tvojím súkromným DOJO plným uzlom</string>
+    <string name="connect_to_existing_dojo">Pripoj k existujúcemu Dojo</string>
+    <string name="create_to_existing_dojo">Vytvor peňaženku a spáruj s Dojo</string>
+    <string name="preorder">predobjednaj</string>
+    <string name="add_new">Pridaj nové</string>
+    <string name="paynym_follow_message_2">pre automatické vygenerovanie unikátnej privátnej adresy pre poslanie bitcoin-u na tento kontakt</string>
+    <string name="follow">Nasleduj</string>
+    <string name="wallet_locked">Peňaženka uzamknutá</string>
+    <string name="address">Addresa</string>
+
+    <string name="is_offline">Samourai je offline</string>
+    <string name="history_will_be_updated">Zostatok a história transakcii nebude aktualizovaná pokial nebude obnovené pripojenie k sieti</string>
+    <string name="you_received_s">Dostal si</string>
+    <string name="paynym_follow_message">Tento poplatok zahŕňa cenu za vytvorenie špecialneho typu transakcie na blockchaine. Toto udržuje PayNym decentralizovaným</string>
+    <string name="paynym_follow_fee_message">Jednorázový poplatok za pripojenie bude zúčtovaný za pridanie kontaktu</string>
+    <string name="initializing_tor">inicializujem Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">Nemôžem pripraviť spárovanie do Whirlpool GUI.</string>
+    <string name="message_copied">správa skopírovaná</string>
+    <string name="scan_code">Skenuj kód</string>
+    <string name="follows_you">Sleduje ťa</string>
+    <string name="edit_paynym">Edituj paynym</string>
+    <string name="sycing_pcodes">Synchronizujem platobné kódy</string>
+    <string name="sync_complete">Synchronizácia kódov dokončená</string>
+    <string name="options_paynym_indexes">Ukáž PayNym indexy</string>
+    <string name="begin_cycle">ZAČNI CYKLUS</string>
+    <string name="pool_fee">POOL POPLATOK</string>
+    <string name="total_fees">CELKOVÉ POPLATKY</string>
+    <string name="miner_fee">POPLATOK ZA ŤAŽENIE</string>
+    <string name="total_being_cycled">Celkový počet cyklov:</string>
+    <string name="review_cycle_details">PREHĽAD DETAILOV CYKLU</string>
+    <string name="cycled_transactions">Cyklické transakcie</string>
+    <string name="initial_transaction">ˇUvodná Transakcia</string>
+    <string name="progress">Progres</string>
+    <string name="waiting_for_blockchain_confirmation">Čakám na konfirmáciu blockchainu</string>
+
+    <string name="create_password">Vytvor heslo</string>
+    <string name="confirm_password">Potvrď heslo</string>
+    <string name="pairing_password">Definuj párovacie heslo: (6-255 znakov)</string>
+    <string name="password_error">Chyba pri vytváraní hesla</string>
+    <string name="password_invalid">Nesprávne heslo</string>
+
+    <string name="review_whirlpool">Preskúmaj Whirlpool Detaily</string>
+    <string name="total_selected">Celkovo vybraté</string>
+    <string name="cycle">Cyklus</string>
+    <string name="postmix_without_boltzmann">Vezmite prosím na vedomie, že výdavky z vášho post-mix účtu bez použitia STONEWALL budú mať za následok stratu súkromia získaného prostredníctvom Whirlpool.</string>
+    <string name="estimated_entropy">Predpokladaná Entropia</string>
+    <string name="share_this_qr_code_with_your_participant">Zdieľajte tento kód QR so svojím účastníkom</string>
+    <string name="review_tx_before_braodcast">Pred odoslaním skontrolujte transakciu</string>
+    <string name="select_participant">Zvoľ účastníka</string>
+    <string name="select_cahoots_type">Zvoľ cahoots typ</string>
+
+    <string name="cannot_disable_tor_dojo">Tor sa nedá zastaviť, pretože peňaženka je pripojená k uzlu Samourai Dojo.</string>
+    <string name="temporary_dojo_disable">Odinštaluj Samourai Wallet na rozpárovanie tvojho Dojo uzla. \'ZAKÁZAŤ\' bude plne aktivovaná v neskoršej aktualizácii.</string>
+    <string name="renew">OBNOV</string>
+    
 
 </resources>
