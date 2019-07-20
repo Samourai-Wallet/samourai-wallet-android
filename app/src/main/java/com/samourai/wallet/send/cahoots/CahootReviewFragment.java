@@ -211,7 +211,7 @@ public class CahootReviewFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
         cahootsProgressGroup.setVisibility(View.GONE);
         Intent i = new Intent(this.getActivity(), BalanceActivity.class);
-        this.getActivity().finish();  
+        this.getActivity().finish();
         startActivity(i);
         getActivity().finish();
 

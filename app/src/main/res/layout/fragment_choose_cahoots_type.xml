@@ -220,13 +220,15 @@ blockchain including amount spent."
         app:layout_constraintEnd_toEndOf="@+id/toolbar2"
         app:layout_constraintStart_toStartOf="@+id/toolbar2"
         app:layout_constraintTop_toBottomOf="@+id/cahoots_type_chooser_layout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.0"
+        tools:visibility="visible">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/samourai_as_participant_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:alpha="0.6"
             android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:clickable="true"
