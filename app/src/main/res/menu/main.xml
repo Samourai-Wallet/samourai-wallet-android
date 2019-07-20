@@ -68,6 +68,11 @@
         android:orderInCategory="100"
         android:title="@string/options_sign"
         app:showAsAction="never" />
+    <item android:id="@+id/action_postmix"
+        android:title="@string/options_postmix"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
     <item
         android:id="@+id/action_support"
         android:orderInCategory="100"

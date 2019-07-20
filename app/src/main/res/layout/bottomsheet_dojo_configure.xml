@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +11,9 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:minHeight="240dp">
 
         <ImageView
             android:id="@+id/close_dojo"
@@ -44,10 +46,11 @@
 
         <ImageView
             android:id="@+id/imageView12"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="180dp"
+            android:layout_height="0dp"
             android:contentDescription="Dojo"
             android:src="@drawable/dojobox"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/close_dojo" />
@@ -102,31 +105,78 @@
         <Button
             android:id="@+id/preorder_dojo"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/border_button_rounded_shape"
             android:text="@string/preorder"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/connect_dojo"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dojo_progress_status_text" />
 
         <Button
             android:id="@+id/connect_dojo"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/border_button_rounded_shape"
             android:text="@string/connect_to_existing_dojo"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/preorder_dojo" />
+            app:layout_constraintStart_toStartOf="@+id/preorder_dojo"
+            app:layout_constraintTop_toBottomOf="@+id/textView43"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <android.support.constraint.Group
+            android:id="@+id/dojo_btn_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="connect_dojo,preorder_dojo" />
+
+        <ProgressBar
+            android:id="@+id/dojo_connect_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="10"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView43" />
+
+        <TextView
+            android:id="@+id/dojo_progress_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="Wating for tor"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/dojo_connect_progress"
+            app:layout_constraintStart_toStartOf="@+id/dojo_connect_progress"
+            app:layout_constraintTop_toBottomOf="@+id/dojo_connect_progress"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <android.support.constraint.Group
+            android:id="@+id/dojo_progress_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="dojo_progress_status_text,dojo_connect_progress" />
 
 
     </android.support.constraint.ConstraintLayout>
 
-</ScrollView>
+</FrameLayout>

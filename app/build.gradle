@@ -9,8 +9,8 @@ android {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 147
-        versionName "0.99.60"
+        versionCode 151
+        versionName "0.99.82"
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -51,19 +51,19 @@ android {
             applicationId 'com.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 147
-            versionName "0.99.60"
+            versionCode 151
+            versionName "0.99.82"
             resValue "string", "app_name", "Samourai"
-            resValue "string", "version_name", "0.99.60"
+            resValue "string", "version_name", "0.99.82"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 147
-            versionName "0.99.60"
+            versionCode 151
+            versionName "0.99.82"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.60"
+            resValue "string", "version_name", "0.99.82"
         }
     }
     testOptions {
@@ -119,7 +119,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('com.github.Samourai-Wallet:extlibj:0.0.3') {
+    implementation ('com.github.Samourai-Wallet:extlibj:0.0.4') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'

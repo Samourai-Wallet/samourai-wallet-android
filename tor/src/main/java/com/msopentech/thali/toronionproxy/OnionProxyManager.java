@@ -436,6 +436,17 @@ public abstract class OnionProxyManager {
         return onionProxyContext.getWorkingDirectory();
     }
 
+    public boolean newIdentity(){
+        try {
+
+            controlConnection.signal("NEWNYM");
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+
+        }
+    }
     protected void eatStream(final InputStream inputStream, final boolean stdError, final CountDownLatch countDownLatch) {
         new Thread() {
             @Override

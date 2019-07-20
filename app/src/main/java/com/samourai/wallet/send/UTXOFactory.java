@@ -20,6 +20,7 @@ public class UTXOFactory {
     private static HashMap<String,UTXO> p2pkh = null;
     private static HashMap<String,UTXO> p2sh_p2wpkh = null;
     private static HashMap<String,UTXO> p2wpkh = null;
+    private static HashMap<String,UTXO> postMix = null;
 
     private UTXOFactory() { ; }
 
@@ -31,6 +32,7 @@ public class UTXOFactory {
             p2pkh = new HashMap<String,UTXO>();
             p2sh_p2wpkh = new HashMap<String,UTXO>();
             p2wpkh = new HashMap<String,UTXO>();
+            postMix = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -46,6 +48,7 @@ public class UTXOFactory {
             p2pkh = new HashMap<String,UTXO>();
             p2sh_p2wpkh = new HashMap<String,UTXO>();
             p2wpkh = new HashMap<String,UTXO>();
+            postMix = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -55,6 +58,7 @@ public class UTXOFactory {
         p2pkh.clear();
         p2sh_p2wpkh.clear();
         p2wpkh.clear();
+        postMix.clear();
     }
 
     public HashMap<String,UTXO> getP2PKH() {
@@ -81,6 +85,14 @@ public class UTXOFactory {
         UTXOFactory.p2wpkh = p2wpkh;
     }
 
+    public HashMap<String,UTXO> getPostMix() {
+        return postMix;
+    }
+
+    public void setPostMix(HashMap<String,UTXO> postMix) {
+        UTXOFactory.postMix = postMix;
+    }
+
     public void addP2PKH(String script, UTXO utxo)  {
         p2pkh.put(script, utxo);
     }
@@ -91,6 +103,10 @@ public class UTXOFactory {
 
     public void addP2WPKH(String script, UTXO utxo)  {
         p2wpkh.put(script, utxo);
+    }
+
+    public void addPostMix(String script, UTXO utxo)  {
+        postMix.put(script, utxo);
     }
 
     public long getTotalP2PKH() {
@@ -126,6 +142,17 @@ public class UTXOFactory {
         return ret;
     }
 
+    public long getTotalPostMix() {
+
+        long ret = 0L;
+
+        for(UTXO utxo : postMix.values())   {
+            ret += utxo.getValue();
+        }
+
+        return ret;
+    }
+
     public int getCountP2PKH() {
 
         int ret = 0;
@@ -153,6 +180,17 @@ public class UTXOFactory {
         int ret = 0;
 
         for(UTXO utxo : p2wpkh.values())   {
+            ret += utxo.getOutpoints().size();
+        }
+
+        return ret;
+    }
+
+    public int getCountPostMix() {
+
+        int ret = 0;
+
+        for(UTXO utxo : postMix.values())   {
             ret += utxo.getOutpoints().size();
         }
 

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -32,15 +33,11 @@ import javax.net.ssl.X509TrustManager;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
-import ch.boye.httpclientandroidlib.client.methods.HttpGet;
-import ch.boye.httpclientandroidlib.client.methods.HttpPost;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import info.guardianproject.netcipher.client.StrongHttpsClient;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -53,12 +50,13 @@ public class WebUtil {
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";
     public static final String SAMOURAI_API2 = "https://api.samouraiwallet.com/v2/";
     public static final String SAMOURAI_API2_TESTNET = "https://api.samouraiwallet.com/test/v2/";
-    public static final String SAMOURAI_API2_TOR = "http://5fpla3ethnaqfjxu.onion/v2/";
-    public static final String SAMOURAI_API2_TESTNET_TOR = "http://5fpla3ethnaqfjxu.onion/test/v2/";
 
-    public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
-    public static final String BTCe_EXCHANGE_URL = "https://wex.nz/api/3/ticker/";
-    public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
+    public static final String SAMOURAI_API2_TOR_DIST = "http://d2oagweysnavqgcfsfawqwql2rwxend7xxpriq676lzsmtfwbt75qbqd.onion/v2/";
+    public static final String SAMOURAI_API2_TESTNET_TOR_DIST = "http://d2oagweysnavqgcfsfawqwql2rwxend7xxpriq676lzsmtfwbt75qbqd.onion/test/v2/";
+
+    public static String SAMOURAI_API2_TOR = SAMOURAI_API2_TOR_DIST;
+    public static String SAMOURAI_API2_TESTNET_TOR = SAMOURAI_API2_TESTNET_TOR_DIST;
+
     public static final String VALIDATE_SSL_URL = SAMOURAI_API;
 
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
@@ -69,12 +67,6 @@ public class WebUtil {
     private static final String strProxyType = StrongHttpsClient.TYPE_SOCKS;
     private static final String strProxyIP = "127.0.0.1";
     private static final int proxyPort = 9050;
-
-    /*
-    private static final String strProxyType = StrongHttpsClient.TYPE_HTTP;
-    private static final String strProxyIP = "127.0.0.1";
-    private static final int proxyPort = 8118;
-    */
 
     private static WebUtil instance = null;
     private Context context = null;
@@ -98,8 +90,8 @@ public class WebUtil {
         if (context == null) {
             return postURL(null, request, urlParameters);
         } else {
-            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
-            if (TorUtil.getInstance(context).statusFromBroadcast()) {
+            Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
+            if (TorManager.getInstance(context).isRequired()) {
                 if (urlParameters.startsWith("tx=")) {
                     HashMap<String, String> args = new HashMap<String, String>();
                     args.put("tx", urlParameters.substring(3));
@@ -219,8 +211,8 @@ public class WebUtil {
             return _getURL(URL);
         } else {
             //if(TorUtil.getInstance(context).orbotIsRunning())    {
-            Log.i("WebUtil", "Tor enabled status:" + TorUtil.getInstance(context).statusFromBroadcast());
-            if (TorUtil.getInstance(context).statusFromBroadcast()) {
+            Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
+            if (TorManager.getInstance(context).isRequired()) {
                 return tor_getURL(URL);
             } else {
                 return _getURL(URL);
@@ -269,7 +261,9 @@ public class WebUtil {
     private String tor_getURL(String URL) throws Exception {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+                .proxy(TorManager.getInstance(this.context).getProxy())
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS);
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
@@ -305,7 +299,9 @@ public class WebUtil {
 
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .proxy(TorManager.getInstance(this.context).getProxy());
+                .proxy(TorManager.getInstance(this.context).getProxy())
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS);
 
         if(URL.contains("onion")){
             getHostNameVerifier(builder);
@@ -444,8 +440,7 @@ public class WebUtil {
     }
 
     public static String getAPIUrl(Context context){
-        if(TorManager.getInstance(context).isConnected()){
-
+        if(TorManager.getInstance(context).isRequired()){
             return   SamouraiWallet.getInstance().isTestNet() ? SAMOURAI_API2_TESTNET_TOR : SAMOURAI_API2_TOR;
 
         }else {

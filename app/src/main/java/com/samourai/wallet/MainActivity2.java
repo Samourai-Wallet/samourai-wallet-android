@@ -21,6 +21,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
@@ -37,6 +38,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -137,7 +139,7 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false) && !TorManager.getInstance(getApplicationContext()).isConnected() && ConnectivityStatus.hasConnectivity(getApplicationContext()))  {
+        if (TorManager.getInstance(getApplicationContext()).isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.getInstance(getApplicationContext()).isConnected())  {
             loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
@@ -331,41 +333,46 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
-        if(!SamouraiWallet.getInstance().isTestNet())    {
+        if(!APIFactory.getInstance(MainActivity2.this).APITokenRequired())    {
             doAppInit1(isDial, strUri, strPCode);
             return;
         }
 
-        boolean needToken = false;
-        if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
-            needToken = true;
-        } else {
-            JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
-            if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
-                needToken = true;
-            }
-        }
 
-        if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    APIFactory.getInstance(MainActivity2.this).stayingAlive();
-
-                    doAppInit1(isDial, strUri, strPCode);
-
-                    Looper.loop();
-
+        Disposable disposable = Observable.fromCallable(() -> {
+            if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
+                return  true;
+            } else {
+                JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
+                if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
+                    APIFactory.getInstance(MainActivity2.this).getToken(true);
+                    return  true;
                 }
-            }).start();
+            }
+            return  false;
+        }) .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(needToken -> {
 
-            return;
-        } else {
-            doAppInit1(isDial, strUri, strPCode);
-        }
+                    if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
+
+                        APIFactory.getInstance(MainActivity2.this).stayingAlive();
+
+                        doAppInit1(isDial, strUri, strPCode);
+
+                        return;
+
+                    } else {
+                        doAppInit1(isDial, strUri, strPCode);
+                    }
+
+                },error->{
+                    error.printStackTrace();
+                });
+        compositeDisposables.add(disposable);
+
+
 
     }
 

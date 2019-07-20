@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.samourai.wallet.SendActivity.SPEND_BOLTZMANN;
+import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
 public class SendParams	{
 
@@ -16,6 +16,7 @@ public class SendParams	{
     private int SPEND_TYPE =  SPEND_BOLTZMANN;
     private long changeAmount = 0L;
     private int changeType = 49;
+    private int account = 0;
     private String strDestAddress = null;
     private boolean hasPrivacyWarning = false;
     private boolean hasPrivacyChecked = false;
@@ -43,6 +44,7 @@ public class SendParams	{
         this.SPEND_TYPE = SPEND_BOLTZMANN;
         this.changeAmount = 0L;
         this.changeType = 49;
+        this.account = 0;
         this.strDestAddress = null;
         this.hasPrivacyWarning = false;
         this.hasPrivacyChecked = false;
@@ -51,13 +53,14 @@ public class SendParams	{
         this.batchSend = null;
     }
 
-    public void setParams(List<MyTransactionOutPoint> outpoints, HashMap<String, BigInteger> receivers, String strPCode, int SPEND_TYPE, long changeAmount, int changeType, String strDestAddress, boolean hasPrivacyWarning, boolean hasPrivacyChecked, long spendAmount, int changeIdx) {
+    public void setParams(List<MyTransactionOutPoint> outpoints, HashMap<String, BigInteger> receivers, String strPCode, int SPEND_TYPE, long changeAmount, int changeType, int account, String strDestAddress, boolean hasPrivacyWarning, boolean hasPrivacyChecked, long spendAmount, int changeIdx) {
         this.outpoints = outpoints;
         this.receivers = receivers;
         this.strPCode = strPCode;
         this.SPEND_TYPE = SPEND_TYPE;
         this.changeAmount = changeAmount;
         this.changeType = changeType;
+        this.account = account;
         this.strDestAddress = strDestAddress;
         this.hasPrivacyWarning = hasPrivacyWarning;
         this.hasPrivacyChecked = hasPrivacyChecked;
@@ -65,13 +68,14 @@ public class SendParams	{
         this.changeIdx = changeIdx;
     }
 
-    public void setParams(List<MyTransactionOutPoint> outpoints, HashMap<String, BigInteger> receivers, List<BatchSendUtil.BatchSend> batchSend, int SPEND_TYPE, long changeAmount, int changeType, String strDestAddress, boolean hasPrivacyWarning, boolean hasPrivacyChecked, long spendAmount, int changeIdx) {
+    public void setParams(List<MyTransactionOutPoint> outpoints, HashMap<String, BigInteger> receivers, List<BatchSendUtil.BatchSend> batchSend, int SPEND_TYPE, long changeAmount, int changeType, int account, String strDestAddress, boolean hasPrivacyWarning, boolean hasPrivacyChecked, long spendAmount, int changeIdx) {
         this.outpoints = outpoints;
         this.receivers = receivers;
         this.batchSend = batchSend;
         this.SPEND_TYPE = SPEND_TYPE;
         this.changeAmount = changeAmount;
         this.changeType = changeType;
+        this.account = account;
         this.strDestAddress = strDestAddress;
         this.hasPrivacyWarning = hasPrivacyWarning;
         this.hasPrivacyChecked = hasPrivacyChecked;
@@ -104,7 +108,11 @@ public class SendParams	{
     }
 
     public int getChangeType()  {
-        return  changeType;
+        return changeType;
+    }
+
+    public int getAccount()  {
+        return account;
     }
 
     public String getDestAddress() {

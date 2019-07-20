@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -45,7 +46,14 @@ public class WebSocketService extends Service {
         //
         context = this.getApplicationContext();
 
-        APIFactory.getInstance(context).stayingAlive();
+        new Thread(() -> {
+            Looper.prepare();
+
+            APIFactory.getInstance(context).stayingAlive();
+
+            Looper.loop();
+
+        }).start();
 
         try {
             if(HD_WalletFactory.getInstance(context).get() == null)    {

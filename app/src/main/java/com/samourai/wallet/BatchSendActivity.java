@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
@@ -50,12 +51,13 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
-import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
@@ -63,6 +65,7 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -266,7 +269,7 @@ public class BatchSendActivity extends Activity {
         });
 
         edAmountBTC = (EditText)findViewById(R.id.amountBTC);
-
+        edAmountBTC.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -848,8 +851,8 @@ public class BatchSendActivity extends Activity {
         String change_address = null;
         int change_idx = 0;
         if(changeAmount > 0L)    {
-            change_idx = BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-            change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
+            change_idx = BIP84Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);
@@ -925,7 +928,7 @@ public class BatchSendActivity extends Activity {
 
             final long _amount = amount;
 
-            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx, 0);
             final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
             final String strTxHash = tx.getHashAsString();
 
@@ -954,7 +957,8 @@ public class BatchSendActivity extends Activity {
                                     data,
                                     SendActivity.SPEND_SIMPLE,
                                     _change,
-                                    49,
+                                    84,
+                                    0,
                                     "",
                                     false,
                                     false,

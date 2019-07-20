@@ -1,0 +1,79 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/pool_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pool_fee_txt" />
+
+
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Cycle Priority"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/pool_fee_low_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/whirlpool_btn_inactive"
+        android:text="LOW"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/pool_fee_normal_btn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView22" />
+
+    <Button
+        android:id="@+id/pool_fee_normal_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:background="@drawable/whirlpool_btn_blue"
+        android:text="NORMAL"
+        app:layout_constraintBottom_toBottomOf="@+id/pool_fee_low_btn"
+        app:layout_constraintEnd_toStartOf="@+id/pool_fee_high_btn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pool_fee_low_btn"
+        app:layout_constraintTop_toTopOf="@+id/pool_fee_low_btn" />
+
+    <Button
+        android:id="@+id/pool_fee_high_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:background="@drawable/whirlpool_btn_inactive"
+        android:text="High"
+        app:layout_constraintBottom_toBottomOf="@+id/pool_fee_normal_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pool_fee_normal_btn"
+        app:layout_constraintTop_toTopOf="@+id/pool_fee_normal_btn" />
+
+    <TextView
+        android:id="@+id/pool_fee_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/pool_fee_low_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/pool_fee_low_btn"
+        app:layout_constraintTop_toBottomOf="@+id/pool_fee_low_btn"
+        tools:text="20 b" />
+
+
+</android.support.constraint.ConstraintLayout>

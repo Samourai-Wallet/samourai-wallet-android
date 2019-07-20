@@ -21,6 +21,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.Display;
 import android.view.Menu;
@@ -47,6 +48,7 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
@@ -151,6 +153,7 @@ public class ReceiveActivity extends AppCompatActivity {
         edAmountBTC = findViewById(R.id.amountBTC);
         edAmountSAT = findViewById(R.id.amountSAT);
         populateSpinner();
+        edAmountBTC.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
 
         edAmountBTC.addTextChangedListener(BTCWatcher);
         edAmountSAT.addTextChangedListener(satWatcher);
@@ -219,7 +222,7 @@ public class ReceiveActivity extends AppCompatActivity {
         });
 
         if (useSegwit) {
-            addressTypesSpinner.setSelection(0);
+            addressTypesSpinner.setSelection(1);
         } else {
             addressTypesSpinner.setSelection(2);
         }

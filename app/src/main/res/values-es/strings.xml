@@ -9,8 +9,8 @@
     <string name="decrypting_bip38">Descifrando la contraseña BIP38. Espere...</string>
     
 	<string name="action_settings">Configuración</string>
+    <string name="action_support">Soporte</string>
     <string name="action_sweep">Barrido de clave privada</string>
-
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activar todos los códigos de pago archivados.</string>
     <string name="action_sync_all">Sincronizar todos los códigos de pago.</string>
@@ -33,14 +33,18 @@
     <string name="options_xpub2">Mostrar clave pública extendida para la cuenta BIP44.</string>
     <string name="options_xpub49">Mostrar YPUB Segwit</string>
     <string name="options_xpub49_2">Mostrar clave pública extendida para la cuenta SegWit BIP49.</string>
+    <string name="options_xpub84">Mostar ZPUB Segwit</string>
+    <string name="options_xpub84_2">Mostrar clave pública extendida para la cuenta Segwit BIP84 (Bech32)</string>
+    <string name="options_xpub84_premix">Mostrar premezcla Whirlpool ZPUB</string>
+    <string name="options_xpub84_premix2">Mostrar clave pública extendida BIP84 Segwit (Bech32) para premezcla Whirlpool.</string>
+    <string name="options_xpub84_postmix">Mostrar ZPUB posmezcla Whirlpool</string>
+    <string name="options_xpub84_postmix2">Mostrar clave pública extendida BIP84 Segwit (Bech32) para posmezcla Whirlpool.</string>
     <string name="options_wipe">Borrar billetera de manera segura</string>
     <string name="options_wipe2">Borrar billetera de este dispositivo de manera segura.</string>
     <string name="options_stealth_display">Modo invisible</string>
     <string name="options_stealth_display2">Quitar accesos a Samourai de la pantalla principal y menú de aplicaciones. Deberás marcar  **TU_CODIGO_PIN# desde la aplicación teléfono para iniciar Samourai.</string>
     <string name="options_remote_commands">Habilitar comandos remotos.</string>
     <string name="options_remote_commands2">Permitir comandos remotos mediante SMS.</string>
-    <string name="options_currency">Precio de mercado</string>
-    <string name="options_currency2">Elije tu exchange y moneda local.</string>
     <string name="options_blockexplorer">Explorador de bloques</string>
     <string name="options_blockexplorer2">Elije el explorador de bloques usado para ver los detalles de las transacciones.</string>
     <string name="options_sim_switch">Protección al cambio de SIM</string>
@@ -64,8 +68,8 @@
     <string name="options_autosave_backup2">Guardar de manera periódica en el almacenamiento del dispositivo una copia de seguridad cifrada.</string>
     <string name="options_version">Versión</string>
     <string name="options_txs">Transacciones</string>
-    <string name="options_bip126">Enviar usando BIP126</string>
-    <string name="options_bip126_2">Envíos usarán BIP126 para mayor ofuscación.</string>
+    <string name="options_boltzmann">Envío STONEWALL</string>
+    <string name="options_boltzmann_2">Los envíos usarán el algoritmo STONEWALL para incrementar la ofuscación</string>
     <string name="options_utxo">Mostrar salidas no utilizadas (UTXOs)</string>
     <string name="options_trusted_node">Definir modo de confianza</string>
     <string name="options_trusted_node2">Especificar tu propio nodo bitcoin al cual enviar las transacciones.</string>
@@ -86,10 +90,21 @@
     <string name="options_segwit_2">Generar direcciones SegWit diferentes para cada transacción entrante.</string>
     <string name="options_broadcast_hex">Envío de transacciones hexadecimal</string>
     <string name="options_broadcast_hex2">Enviar una transacción firmada ingresada en formato hexadecimal.</string>
-    <string name="options_like_typed_change">Direcciones de vuelto</string>
-    <string name="options_like_typed_change2">Recibir vuelto en direcciones del mismo tipo que las del envío. Desactivar para recibir el vuelto únicamente en direcciones SegWit.</string>
+    <string name="options_like_typed_change">Recibir cambio en un tipo similar de dirección</string>
+    <string name="options_like_typed_change2">Recibir el cambio en direcciones del mismo tipo que las del envío. Desactivar para recibir el vuelto únicamente en direcciones SegWit.</string>
     <string name="options_haptic">Ingreso PIN táctil</string>
     <string name="options_haptic_2">Vibrar al tipear cada dígito del código PIN.</string>
+    <string name="options_prune">Comprimir copia de seguridad</string>
+    <string name="options_prune2">Comprimir la carga útil de la billetera y los archivos encriptados.</string>
+    <string name="options_address_calc">Calculadora de direcciones</string>
+    <string name="options_address_calc2">Calcular direcciones derivadas de la semilla de tu billetera.</string>
+    <string name="options_paynym_calc">Calculadora PayNym</string>
+    <string name="options_paynym_calc2">Calcular direcciones compartidas con otros PayNyms.</string>
+    <string name="options_indexes">Índice de la billetera</string>
+    <string name="options_indexes2">Valores de índice actuales para esta billetera.</string>
+    <string name="options_whirlpool_gui">Emparejar con la interfaz de Whirlpool</string>
+    <string name="options_whirlpool_gui2">Emparejar con la interfaz de Whirlpool para un mezclado continuo.</string>
+    <string name="options_postmix">Gastar posmezclas de Whirlpool</string>
 
     <string name="prompt_send_backup_to_support">Enviar copia de seguridad de la billetera al soporte técnico? No incluye ninguna clave privada, semilla (seed) ni contraseñas..</string>
 
@@ -128,6 +143,7 @@
     <string name="bip39_must">Tu billetera debe utilizar una contraseña. Inténtalo nuevamente.</string>
     <string name="bip39_unmatch">Las contraseñas no coinciden. Inténtalo nuevamente.</string>
     <string name="bip39_invalid">No utilices espacios en tu contraseña. Inténtalo nuevamente.</string>
+    <string name="bip39_empty">Debes establecer una contraseña.</string>
     <string name="please_select">Por favor elije...</string>
     <string name="create_wallet">Crear billetera</string>
     <string name="restore_wallet">Restablecer billetera</string>
@@ -158,10 +174,12 @@
 
     <string name="insufficient_funds">Fondos insuficientes</string>
     <string name="tx_length_error">Samourai no soporta transacciones de más de 100KB de tamaño. Por favor intenta dividiendo tu transacción.</string>
-    <string name="invalid_amount">Monto no válido</string>
-    <string name="amount">Monto</string>
+    <string name="invalid_amount">Cantidad no válida</string>
+    <string name="invalid_address">Dirección no válida</string>
+    <string name="amount">Cantidad</string>
 
     <string name="receive_address_to_clipboard">Copiar esta dirección de recepción al portapapeles? Una vez copiada puede ser visible por otras aplicaciones.</string>
+    <string name="txid_to_clipboard">¿Quieres copiar este id de transacción al portapapeles? Si lo copia, puede ser visible por otras aplicaciones.</string>
     <string name="receive_address_to_share">Compartir esta dirección de recepción al portapapeles? Una vez copiada puede ser visible por otras aplicaciones.</string>
     <string name="sure_to_erase">Confirmas que quieres borrar esta billetera del dispositivo?</string>
     <string name="wallet_erased">Billetera correctamente borrada del dispositivo</string>
@@ -258,6 +276,8 @@
 
     <string name="cannot_reach_api">No se pueden contactar las APIs de Samourai. Por favor verifica tu conexión e inténtalo nuevamente luego.</string>
     <string name="api_error">Las APIs de Samourai estan retornando errores. Por favor reintenta más tarde.</string>
+    <string name="api_key_error">API key no válida.</string>
+    <string name="api_token_error">Token del API no válido</string>
 
     <string name="cannot_recognize_privkey">No se puede reconocer la clave privada</string>
     <string name="cannot_sweep_privkey">Ocurrió un error barriendo la clave privada</string>
@@ -275,7 +295,7 @@
     <string name="ricochet_hop">Salto Ricochet</string>
     <string name="ricochet_hopping">Ricochet para</string>
     <string name="ricochet_spend1">Ricochet enviado para</string>
-    <string name="ricochet_spend2">por un monto total de</string>
+    <string name="ricochet_spend2">por una cantidad total de</string>
     <string name="ricochet_spend3">(incluye 0.001 BTC de comisión a Samourai y mineros)?</string>
 
     <string name="action_ricochet">Repetir Ricochet</string>
@@ -425,7 +445,7 @@
     <string name="options_display_redeem_script">Mostrar script de rescate</string>
     <string name="options_view_tx">Ver transacción</string>
     <string name="options_display_privkey">Mostrar clave privada</string>
-    <string name="options_batch">Envío en lote</string>
+    <string name="options_batch">Envíos simultáneos</string>
 
     <string name="do_not_repeat_sent_to">Tildar para evitar alertas sobre envios repetitivos a esta dirección.</string>
 
@@ -438,12 +458,12 @@
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
-    <string name="claim_paynym">Solicitá tu paynym</string>
-    <string name="claim_paynym_title1">Solicitá tu PayNymID gratuito</string>
+    <string name="claim_paynym">Solicita tu paynym</string>
+    <string name="claim_paynym_title1">Solicita tu PayNymID gratuito</string>
     <string name="claim_paynym_text1">Permite que tus amigos y contactos encuentren y se conecten con tu PayNym directamente mediante billeteras bitcoin compatibles.</string>
     <string name="claim_paynym_title2">Beneficios de un PayNymID</string>
     <string name="claim_paynym_text2a">Imagen y nombre único generados con un hash de tu código PayNym. Nunca habrá dos iguales!</string>
-    <string name="claim_paynym_text2b">Sin verificaciones de identidad! Tu nombre y tu imágen se basan en tu código PayNym y no en un ID de ciudadano.</string>
+    <string name="claim_paynym_text2b">Sin verificaciones de identidad! Tu nombre y tu imagen se basan en tu código PayNym y no en un ID de ciudadano.</string>
     <string name="claim_paynym_text2c">Se fácil de encontrar! Las billeteras compatibles pueden buscar nuevos contactos y enviar pagos seguros y privados sin dejar rastros.</string>
     <string name="claim_paynym_id">Solicitar mi PayNymID</string>
     <string name="claim_paynym_id_refused">No estoy interesado. No me preguntes nuevamente.</string>
@@ -452,7 +472,38 @@
 
     <string name="bip47_notif_tx_insufficient_funds_1">Agregar un PayNym a tus contactos requiere una comisión por única vez para crear el registro en la blockchain. Depositar</string>
     <string name="bip47_notif_tx_insufficient_funds_2">BTC en tu billetera e inténtalo nuevamente.</string>
-    <string name="help">Ayuda</string>
+    <string name="help">Ayuda</string> 
+
+    <string name="passphrase_disclaimer">Entiendo que Samourai no puede darme soporte en caso de perder las contraseñas. Samourai nunca tiene conocimiento de tus contraseñas.</string>
+    <string name="confirm_pin_code">Confirmar código PIN</string>
+    <string name="re_enter_your_pin_code">Reinserta tu código PIN</string>
+    <string name="re_enter_a_passphrase">Reinserta tu contraseña</string>
+    <string name="create_a_passphrase">Crea una contraseña</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Crea una contraseña segura para tu billetera</string>
+    <string name="set_pin_code">Establecer código PIN</string>
+    <string name="accept_disclaimer_error">Es necesario que aceptes el aviso legal</string>
+    <string name="import_external_wallet">Importar billetera externa</string>
+    <string name="import_samourai_wallet">Importar copia de seguridad Samourai</string>
+    <string name="backup_file">Hacer copia de seguridad del fichero</string>
+    <string name="import_an_encrypted_samourai_wallet">importa una copia de seguridad Samourai para recuperar una billetera con todos los metadatos intactos</string>
+    <string name="back">ATRÁS</string>
+    <string name="finish">terminar</string>
+    <string name="choose_file">escoger fichero</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <!-- <string name="hello_blank_fragment">Hello blank fragment</string> -->
+    <string name="add_bip39_password">Añadir contraseña BIP39</string>
+    <string name="close_bip39_password">Cerrar contraseña BIP39</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet"> Introduzca su semilla mnemotécnica para importar una billetera de otro proveedor.</string>
+    <string name="last_updated">Última actualización</string>
+    <string name="get_help">Obtener ayuda</string>
+    <string name="offline_mode">Modo sin conexión</string>
+    <string name="import_samourai_backup">Importar copia de seguridad Samourai</string>
+    <!-- <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string> -->
+    <string name="enter_your_wallet_passphrase">Introduce la contraseña de tu billetera</string>
+    <string name="start_new_wallet">Crear billetera nueva</string>
+    <string name="get_help_create">Crear billetera nueva: Obtener ayuda</string>
+    <string name="get_help_restore">Restaurar billetera: Obtener ayuda</string>
 
     <string name="fee">Comisión de mineros</string>
     <string name="fee_low_priority">Prioridad Baja: se estiman 24</string>
@@ -460,5 +511,217 @@
     <string name="fee_high_priority">Prioridad Alta: se estiman 2</string>
     <string name="fee_custom_priority">Personalizada: se estiman </string>
     <string name="blocks_to_cf">bloques antes de la confirmación.</string>
+
+
+    <string name="invalid_mnemonic_word">Palabra mnemotécnica BIP39 no válida</string>
+    <string name="invalid_mnemonic">Mnemotécnica BIP39 no válida</string>
+    <string name="enter_your_code_here">Introduce tu código aquí</string>
+
+    <string name="declaimer_recovery_words"> Confirmo que he escrito las palabras y las he guardado en un lugar seguro. Entiendo que cualquiera que pueda acceder a mi contraseña y mis palabra de recuperación será capaz de acceder a mi billetera y a todos mis fondos.</string>
+    <string name="return_to_wallet">Volver a la billetera</string>
+    <string name="caution_message_recovery_words"> No es seguro mantener una copia de seguridad de estas palabras ni en tu ordenador ni en la nube. Escribe estas palabras en un papel y mantenlo secreto y seguro.</string>
+    <string name="these_words_are">Estas palabras son la copia de seguridad de todas las claves secretas de tu billeta.</string>
+    <string name="recovery_words">RECUPERAR PALABRAS</string>
+
+    <string name="permission_alert_dialog_title_sms">Permiso para acceder a los SMS y el estado del teléfono</string>
+    <string name="permission_dialog_message_sms"> Tu billetera necesita acceso al envío y recepción de SMS para que pueda usar las funciones de alerta remota.</string>
+    <string name="permission_alert_dialog_title_outgoing">Permiso para acceder a llamadas salientes</string>
+    <string name="permission_dialog_message_outgoing">Tu billetera necesita acceso a las llamadas salientes para que pueda usar la función de inicio oculto.</string>
+
+    <string name="permission_alert_dialog_title_external">Permiso de lectura y escritura</string>
+    <string name="permission_dialog_message_external">Tu billetera necesita acceso al almacenamiento de archivos para que pueda guardar automáticamente una copia de seguridad cifrada en tu dispositivo.</string>
+    <string name="permission_alert_dialog_title_camera">Permiso de acceso a la cámara</string>
+    <string name="permission_dialog_message_camera">Tu billetera necesita acceder a la cámara para poder leer códigos QR.</string>
+
+    <string name="use_bech32">Usar direcciones bech32</string>
+
+    <string name="boltzmann_cannot"> No se puede realizar una transacción STONEWALL con sus UTXOS actuales. Si deseas hacer el envío con STONEWALL toca en el \'NO\' e intentalo de nuevo modificándolos.</string>
+    <string name="boltzmann_like_typed"> Ten en cuenta que \'Recibir cambio en un tipo similar de dirección\' está desasctivado y puede que la estructura de la transacción sea menos óptimo para tu envío STONEWALL.</string>
+    <!-- <string name="title_activity_main3">Main3Activity</string>
+    <string name="_0_00">0.00</string> -->
+    <string name="advanced">Opciones avanzadas</string>
+    <string name="broadcast_with_txtenna">Emitir con TxTenna</string>
+    <string name="show_qr_code">Mostrar código QR</string>
+    <string name="tx_connectivity_failure_msg"> No podemos emitir la transacción sin conexión. ¿Cómo quieres proceder?</string>
+
+    <string name="insufficient_fee">Comisión insuficiente</string>
+    <string name="action_utxo_amounts">Ver cantidades por tipo de dirección</string>
+
+    <!-- <string name="total_p2pkh">Total legacy (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+    <string name="total_p2wpkh">Total segwit (bech32):</string>
+    <string name="total_blocked">Total blocked:</string> -->
+
+    <string name="tx_creating_ok">Creando transacción...</string>
+    <string name="tx_creating_ko">No se ha podido crear la transacción</string>
+    <string name="tx_signing_ok">Firmando transacción...</string>
+    <string name="tx_signing_ko">No se ha podido firmar la transacción</string>
+    <string name="tx_broadcast_ok">Emitiendo transacción...</string>
+    <string name="tx_broadcast_ko">No se ha podido emitir la transacción</string>
+    <string name="tx_sent_ok">Transacción enviada</string>
+    <string name="tx_sent_ko">Transacción no enviada</string>
+
+    <string name="prune_backup">¿Comprimir carga útil y ficheros encriptados?</string>
+
+    <!-- <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array> -->
+
+    <string name="in_offline_mode">Samourai está en modo sin conexión.</string>
+    <string name="broadcast_off">La emisión de Samourai está apagada.</string>
+    <string name="tx_standby">Transacción en stand-by</string>
+    <string name="show_hex">Mostrar código Hex</string>
+    <string name="tx_tenna_coming_soon">txTenna en Android próximamente</string>
+    <string name="enter_paynym">PayNym</string>
+    <string name="enter_index">Índice</string>
+
+    <string name="receive_addresses">Direcciones de recibo</string>
+    <string name="send_addresses">Mandar dirección</string>
+    <!-- <string name="display_receive_redeem">Receive redeem script</string> -->
+    <string name="display_receive_privkey">Recibir clave privada</string>
+    <string name="invalid_index">Índice no válido</string>
+    <string name="type_address">Tipo de dirección</string>
+
+    <!-- <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+    </string-array> -->
+
+    <string name="chain_id">Cadena de direccines</string>
+    <string name="receive_chain">Recibir dirección</string>
+    <string name="change_chain">Cambiar dirección</string>
+    <!-- <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string> -->
+    <string name="encrypted_backup_detected">Copia de seguridad encriptada detectada</string>
+    <string name="restore">RESTAURAR</string>
+    <string name="request_amount">Solicitar cantidad</string>
+    <string name="address_type">Tipo de dirección</string>
+    <string name="path">Ruta</string>
+
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="ricochet_hops_msg"> Añade saltos adicionales entre tu billetera y el destinatario para incrementar la fungibilidad</string>
+    <string name="review_transaction">REVISAR TRANSACCIÓN</string>
+    <string name="stonewall_increases_deniability">STONEWALL reduce la vinculación de esta transacción.</string>
+    <string name="title_activity_empty_whirl_pool">" "</string>
+    <string name="cycling_bitcoin">Mezclar bitcoins a través de \n whirlpool reducirá el rastro que tus \n transacciones dejan detrás</string>
+    <!-- <string name="metadata_cleaner">metadata cleaner</string> -->
+    <!-- <string name="end_to_end_trustless">end-to-end trustlessness</string> -->
+    <string name="your_private_keys"> Tus claves privadas no abandonan\n tu dispositivo en ninún punto\n de la mezcla Whirlpool</string>
+    <string name="different_cycles_for">mezclas diferentes para distintas necesidades</string>
+    <string name="complete_a_slow_cycle">Paga una pequeña comisión para un mezclado rápido o \n gana una pequeña recompensa en BTC\n cuando completes una mezcla lenta</string>
+    <string name="supercharge_whirlpool_desc">Tus monedas se agregarán a la parte superior de la cola para su procesamiento inmediato</string>
+    <!-- <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
+    <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
+    <string name="title_activity_cycle">CycleActivity</string> -->
+    <string name="standard_whirlpool_desc">Tus monedas se agregarán al final de la cola, pero obtendrán una pequeña recompensa de BTC cuando se complete el ciclo</string>
+    <string name="standard">Estándar</string>
+    <string name="_48_hours">48 horas +</string>
+    <string name="free">GRATIS</string>
+    <string name="_1_50">1.50%</string>
+    <string name="_0_5_mins">0-5 mins</string>
+    <string name="select_a_cycle_type">Selecciona tipo de mezcla</string>
+    <!-- <string name="supercharge">SuperCharge</string> -->
+    <string name="transaction_broadcast">Emitir Transacción</string>
+    <string name="pending">pendiente</string>
+    <string name="transaction_id">ID Transacción</string>
+    <string name="completed">Completado</string>
+    <!-- <string name="title_activity_received_tx">" "</string> -->
+    <string name="pay_again">Pagar de nuevo</string>
+    <string name="miner_fee_rate">Comisión de mineria</string>
+    <string name="status">Estado</string>
+    <!-- <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string> -->
+    <string name="number_of_deterministic_combinations">Número de combinaciones \determinísticas</string>
+    <string name="transaction_entropy">Entropía de la transacción</string>
+    <string name="efficiency_score">Puntuación eficiencia</string>
+    <string name="hide_log">OCULTAR LOG</string>
+    <string name="copy">Copiar</string>
+    <string name="show_log">Mostrar Log</string>
+    <string name="unconfirmed">No confirmado</string>
+    <string name="confirmation">Confirmación</string>
+    <string name="total_available_amount">Cantidad total disponible</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Aún no tienes ningún contacto PayNym</string>
+
+    <!-- <string name="experimental">Experimental</string>
+    <string name="cahoots">#Cahoots</string> -->
+    <string name="options_cahoots2">Marcar cada envío como CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Firma parcial de transacción Bitcoin.</string>
+    <string name="import_cahoots">Escanear o copiar #Cahoots.</string>
+    <string name="import_psbt">Escanear o copiar PSBT.</string>
+    <string name="enter_cahoots">Introducir texto #Cahoots</string>
+    <string name="enter_psbt">Introducir texto hex PSBT</string>
+    <string name="create_cahoots">Crear envío #Cahoots</string>
+    <!-- <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string> -->
+    <string name="urgent">Urgente</string>
+    <!-- <string name="normal">Normal</string> -->
+    <string name="low">Baja</string>
+
+    <string name="ricochet_nlocktime_ok">Tu Ricochet escalonado ha sido enviado para su transmisión. Espera hasta que la altura del bloque permita la transmisión de todas las transacciones de la serie.</string>
+    <string name="ricochet_nlocktime_ko">Tu Ricochet escalonado no se pudo reenviar para su transmisión. Por favor, inténtalo de nuevo.</string>
+    <!-- <string name="tag_utxo">Label UTXO</string> -->
+    <string name="boost_transaction_fee">Aumentar la tarifa de transacción</string>
+    <string name="refund">Reembolso</string>
+
+    <string name="not_cahoots">#Cahoots no válido</string>
+    <string name="not_valid_json">Error parseando el JSON</string>
+    <string name="unrecognized_cahoots">#Cahoots no reconocido</string>
+    <string name="cannot_compose_cahoots">No se puede crear #Cahoots</string>
+    <string name="start_stowaway">Comenzar envío Stowaway</string>
+    <string name="start_stonewall">Comenzar envío STONEWALL</string>
+    <string name="amount_sats">Introduce la cantidad en satoshis</string>
+    <!-- <string name="zero_bits">0 bits</string> -->
+    <string name="not_available">N/D</string>
+    <string name="show_tx">Mostrar transacción</string>
+    <string name="unrecognized_step">Salto #Cahoots no reconocido</string>
+    <string name="cannot_process_stowaway">No se ha podido procesar Stowaway</string>
+    <string name="cannot_process_stonewall">No se ha podido procesar STONEWALL</string>
+    <string name="cannot_process_cahoots">No se ha podido procesar #Cahoots</string>
+    <!-- <string name="title_activity_network_dashboard">
+        Networking
+    </string> -->
+    <string name="powering_samourai_wallet_">Complementar tu billetera Samourai con tu propio nodo personal ofrece el mejor nivel de privacidad e independencia al interactuar con la red Bitcoin. Dojo hace que la ejecución de un nodo completo sea fácil y simple.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Enchufar, conectar y usar un nodo completo\n\n - Configurar servicios Tor automáticamente\n\n- Independencia de los servidores de Samourai</string>
+    <string name="dojo_connect_instruction">Si ya tienes un nodo completo Dojo o \nestás usando el Software libre y open source de Dojo\nen tu propio hardware, escanea el código QR\nlocalizado en el panel de control de Mantenimiento de Dojo</string>
+    <string name="dojo_headline">Conecta Samourai con tu propio nodo DOJO completo</string>
+    <string name="connect_to_existing_dojo">Conectar con Dojo existente</string>
+    <string name="preorder">pedido</string>
+    <string name="add_new">Añadir Nuevo</string>
+    <string name="paynym_follow_message_2">para generar automáticamente direcciones privadas únicas para enviar bitcoins a este contacto</string>
+    <string name="follow">Seguir</string>
+    <string name="wallet_locked">Billetera Bloqueada</string>
+    <string name="address">Dirección</string>
+
+    <string name="is_offline">Samourai sin conexión</string>
+    <string name="history_will_be_updated">El saldo y el historial de transacciones no se actualizarán hasta que se establezca una conexión de datos.</string>
+    <string name="you_received_s">Recibes</string>
+    <string name="paynym_follow_message"> Esta comisión cubre los costes de crear una transacción especial en la blockchain. Sirve para mantener PayNym descentralizado</string>
+    <string name="paynym_follow_fee_message">Se cobrará una tarifa de conexión única para seguir al contacto</string>
+    <string name="initializing_tor">iniciando Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">No se ha podido emparejar con la interfaz de Whirpool.</string>
+    <string name="message_copied">mensaje copiado</string>
+    <string name="scan_code">Escanear Código</string>
+    <string name="follows_you">Seguirte</string>
+    <string name="edit_paynym">Editar paynym</string>
+    <string name="sycing_pcodes">Sincronizar códigos de pago</string>
+    <string name="sync_complete">Sincronización de códigos de pago completada</string>
+    <string name="options_paynym_indexes">Mostrar índices PayNym</string>
+
+    <string name="create_password">Crear contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="pairing_password">Definir contraseña de emparejamiento: (6-255 caracteres)</string>
+    <string name="password_error">Error creando contraseña</string>
+    <string name="password_invalid">Contraseña no válida</string>
+
+    <string name="review_whirlpool">Revisar Detalles Whirlpool</string>
+    <string name="total_selected">Total seleccionado</string>
+    <string name="cycle">Mezclar</string>
+    <string name="postmix_without_boltzmann">Tenga en cuenta que hacer un gasto de una posmezcla sin usar STONEWALL le llevará a una pérdida de parte de la privacidad ganada con Whirlpool.</string>
 
 </resources>

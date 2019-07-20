@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,16 +23,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.tor.TorManager;
@@ -37,6 +45,7 @@ import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.util.WebUtil;
 
 import org.apache.commons.codec.DecoderException;
 import org.bitcoinj.crypto.MnemonicException;
@@ -62,8 +71,12 @@ public class LandingActivity extends AppCompatActivity  {
     private Switch torSwitch;
     private TextView torStatus;
     private ImageView torStatusCheck;
+    private LinearLayout dojoConnectedStatus;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
+    private boolean waitingForPairing = false;
+    private String strPairingParams = null;
+    private static final String TAG = "LandingActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +88,7 @@ public class LandingActivity extends AppCompatActivity  {
         torSwitch = findViewById(R.id.landing_tor_switch);
         torStatusCheck = findViewById(R.id.landing_tor_check);
         torStatus = findViewById(R.id.landing_tor_logs);
+        dojoConnectedStatus = findViewById(R.id.dojo_connected_status_layout);
         setSupportActionBar(findViewById(R.id.landing_toolbar));
         textView.setOnClickListener(view -> RestoreWalletFromBackup());
         createAccount.setOnClickListener(view -> {
@@ -101,6 +115,7 @@ public class LandingActivity extends AppCompatActivity  {
         */
 
         torSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+
             if (b) {
                 startTor();
                 progressBarTor.setVisibility(View.VISIBLE);
@@ -113,6 +128,7 @@ public class LandingActivity extends AppCompatActivity  {
             torSwitch.setChecked(true);
         }
 
+
     }
 
     private void stopTor() {
@@ -124,15 +140,11 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     private void startTor() {
-        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-        startIntent.setAction(TorService.START_SERVICE);
-        startService(startIntent);
         Disposable disposable = TorManager.getInstance(this)
                 .torStatus
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-
                     if (state == TorManager.CONNECTION_STATES.CONNECTING) {
                         progressBarTor.setVisibility(View.VISIBLE);
                         torStatus.setVisibility(View.VISIBLE);
@@ -143,6 +155,10 @@ public class LandingActivity extends AppCompatActivity  {
                         torStatusCheck.setVisibility(View.VISIBLE);
                         torStatus.setText("Tor Connected");
                         progressBarTor.setVisibility(View.INVISIBLE);
+                        torSwitch.setChecked(true);
+//                        if(waitingForPairing)    {
+//                            doDojoPairing1();
+//                        }
 
                     } else {
                         torStatus.setVisibility(View.INVISIBLE);
@@ -153,7 +169,9 @@ public class LandingActivity extends AppCompatActivity  {
                     }
                 });
         compositeDisposables.add(disposable);
-
+        Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+        startIntent.setAction(TorService.START_SERVICE);
+        startService(startIntent);
     }
 
     private void setAppVersion() {
@@ -209,6 +227,9 @@ public class LandingActivity extends AppCompatActivity  {
     @Override
     protected void onDestroy() {
         compositeDisposables.dispose();
+        if( progressDialog !=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
         super.onDestroy();
     }
 
@@ -236,11 +257,45 @@ public class LandingActivity extends AppCompatActivity  {
                 doSupportRestore();
                 return false;
             }
+            case R.id.dojo: {
+                doDojoPairing0();
+                return false;
+            }
             default: {
                 return false;
             }
         }
     }
+
+    private void doDojoPairing0()    {
+        waitingForPairing = true;
+        DojoConfigureBottomSheet dojoConfigureBottomSheet = new DojoConfigureBottomSheet();
+        dojoConfigureBottomSheet.show(getSupportFragmentManager(), dojoConfigureBottomSheet.getTag());
+        dojoConfigureBottomSheet.setDojoConfigurationListener(new DojoConfigureBottomSheet.DojoConfigurationListener() {
+            @Override
+            public void onConnect() {
+                PrefsUtil.getInstance(getApplicationContext()).setValue(PrefsUtil.ENABLE_TOR, true);
+                torStatus.setVisibility(View.VISIBLE);
+                torStatusCheck.setVisibility(View.VISIBLE);
+                torStatus.setText("Tor Connected");
+                progressBarTor.setVisibility(View.INVISIBLE);
+                dojoConnectedStatus.setVisibility(View.VISIBLE);
+                torSwitch.setChecked(true);
+                torSwitch.setVisibility(View.GONE);
+                new Handler().postDelayed(() -> {
+                    Intent intent = new Intent(LandingActivity.this, CreateWalletActivity.class);
+                    startActivity(intent);
+                },400);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -249,7 +304,6 @@ public class LandingActivity extends AppCompatActivity  {
     }
 
     private void toggleLoading() {
-
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(false);
@@ -315,6 +369,99 @@ public class LandingActivity extends AppCompatActivity  {
     private void doSupportRestore() {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/category/3-restore-recovery"));
         startActivity(intent);
+    }
+
+    private class RegisterTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Log.d("LandingActivity", "registerTask: query Dojo");
+            Log.d("LandingActivity", WebUtil.SAMOURAI_API2_TESTNET_TOR);
+
+            resetAPI();
+
+            PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.IS_RESTORE, false);
+
+            APIFactory.getInstance(LandingActivity.this).initWallet();
+
+            /*
+             if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
+
+                try {
+                    String[] s = HD_WalletFactory.getInstance(NetworkDashboard.this).get().getXPUBs();
+                    APIFactory.getInstance(NetworkDashboard.this).lockXPUB(s[0], 44);
+                }
+                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                    ;
+                }
+
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
+                String ypub = BIP49Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).ypubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(ypub, 49);
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccount(0).zpubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUBPREREG, false) == false)    {
+                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(NetworkDashboard.this).getWhirlpoolPremixAccount()).zpubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
+            }
+
+            if(PrefsUtil.getInstance(NetworkDashboard.this).getValue(PrefsUtil.XPUBPOSTLOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(NetworkDashboard.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(NetworkDashboard.this).getWhirlpoolPostmix()).zpubstr();
+                APIFactory.getInstance(NetworkDashboard.this).lockXPUB(zpub, 84);
+            }
+            */
+
+            return "OK";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            ;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ;
+        }
+
+    }
+
+    private void resetAPI() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+
+                //        PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB44REG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB49REG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB84REG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPREREG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPOSTREG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB44LOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB49LOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB84LOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPRELOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPOSTLOCK, false);
+
+                DojoUtil.getInstance(LandingActivity.this).clear();
+                APIFactory.getInstance(LandingActivity.this).setAccessToken(null);
+                APIFactory.getInstance(LandingActivity.this).setAppToken(null);
+                APIFactory.getInstance(LandingActivity.this).getToken(true);
+
+                Looper.loop();
+
+            }
+        }).start();
+
     }
 
 }

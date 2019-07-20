@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samourai.wallet.send.cahoots.ManualStoneWall">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+        </android.support.v7.widget.Toolbar>
+
+
+        <com.samourai.wallet.widgets.HorizontalStepsViewIndicator
+            android:id="@+id/step_view"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="22dp"
+            android:layout_marginEnd="22dp">
+
+        </com.samourai.wallet.widgets.HorizontalStepsViewIndicator>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <com.samourai.wallet.widgets.ViewPager
+        android:id="@+id/view_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:inAnimation="@anim/fab_slide_in_from_right"
+        android:outAnimation="@anim/fab_slide_out_to_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
+
+
+
+    </com.samourai.wallet.widgets.ViewPager>
+
+    <Button
+        android:id="@+id/manual_stonewall_broadcast"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_green"
+        android:text="Broadcast Transaction"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+</android.support.constraint.ConstraintLayout>
