@@ -190,14 +190,13 @@ public class ManualCahootsActivity extends AppCompatActivity {
 
     private CahootsStepFragment.CahootsFragmentListener listener = new CahootsStepFragment.CahootsFragmentListener() {
         @Override
-        public void onScan(int d, String qrData) {
+        public void onScan(int step, String qrData) {
             onScanCahootsPayload(qrData);
-
         }
 
         @Override
-        public void onShare(int step, String qrData) {
-            shareCahootsPayload(payload.toJSON().toString());
+        public void onShare(int step) {
+            shareCahootsPayload();
         }
     };
 
@@ -234,7 +233,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
         if (stowaway != null) {
             int step = stowaway.getStep();
             viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
-            Log.i(TAG, "onScanCahootsPayload: Step".concat(String.valueOf(step)));
             stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
             try {
@@ -316,10 +314,9 @@ public class ManualCahootsActivity extends AppCompatActivity {
         }
     }
 
-    private void shareCahootsPayload(final String strCahoots) {
-        Log.i(TAG, "shareCahootsPayload: ".concat(strCahoots));
+    private void shareCahootsPayload() {
 
-
+        String strCahoots = this.payload.toJSON().toString();
         final int QR_ALPHANUM_CHAR_LIMIT = 4296;    // tx max size in bytes == 2148
         dialog = new AppCompatDialog(this, R.style.stowaway_dialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -492,6 +489,8 @@ public class ManualCahootsActivity extends AppCompatActivity {
         byte[] scriptPubKey_A = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
         _TransactionOutput output_A0 = new _TransactionOutput(params, null, Coin.valueOf(stowaway0.getSpendAmount()), scriptPubKey_A);
         outputsA.put(output_A0, Triple.of(segwitAddress.getECKey().getPubKey(), FormatsUtil.getInstance().getFingerprintFromXPUB(BIP84Util.getInstance(getApplicationContext()).getWallet().getAccount(0).zpubstr()), "M/0/" + idx));
+
+        stowaway0.setDestination(segwitAddress.getBech32AsString());
 
         Stowaway stowaway1 = new Stowaway(stowaway0);
         stowaway1.inc(inputsA, outputsA, null);
