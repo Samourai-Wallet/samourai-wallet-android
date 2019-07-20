@@ -10,9 +10,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -27,15 +25,15 @@ public class HorizontalStepsViewIndicator extends View {
     private Paint paintLine = new Paint();
     private int screenW;
     private int distance = 0;
-    Path pathTrack = new Path();       // your path
-    Path path = new Path();       // your path
+    private Path pathTrack = new Path();
+    private Path path = new Path();
     private int points = 3;
     private int animationDuration = 1000;
     private float circleRadius = 32f;
     private float center = 0f;
     private float pathStrokeSize = 12f;
     private float animatedPoint = circleRadius - 5;
-    private static final String TAG = "HorizontalStepsViewIndi";
+    private static final String TAG = "HorizontalStepsViewIndicator";
     private ValueAnimator animator;
 
     public HorizontalStepsViewIndicator(Context context) {
@@ -86,16 +84,20 @@ public class HorizontalStepsViewIndicator extends View {
         paintLineTrack.setStyle(Paint.Style.FILL_AND_STROKE);
 
         this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            screenW = getWidth();
-            distance = (screenW / points);
-//            animatedPoint = circleRadius*2;
-            invalidate();
+            int newscreenW = getWidth();
+            int newdistance = (screenW / points);
+            float NewanimatedPoint = circleRadius * 2;
+            if (newscreenW != screenW || newdistance != distance) {
+                screenW = newscreenW;
+                distance = newdistance;
+                animatedPoint = NewanimatedPoint;
+                invalidate();
+            }
         });
     }
 
     @Override
-    public Parcelable onSaveInstanceState()
-    {
+    public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
         bundle.putFloat("animatedvalue", this.animatedPoint);
@@ -103,10 +105,8 @@ public class HorizontalStepsViewIndicator extends View {
     }
 
     @Override
-    public void onRestoreInstanceState(Parcelable state)
-    {
-        if (state instanceof Bundle)
-        {
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
             this.animatedPoint = bundle.getInt("animatedvalue");
             state = bundle.getParcelable("superState");
@@ -149,7 +149,7 @@ public class HorizontalStepsViewIndicator extends View {
     }
 
     public void setStep(int i) {
-        if(i==1){
+        if (i == 1) {
             animateItem((int) circleRadius);
             return;
         }
@@ -159,8 +159,11 @@ public class HorizontalStepsViewIndicator extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.i(TAG, "onDraw: draw".concat(String.valueOf(distance)));
-        Log.i(TAG, "onDraw: animatedPoint".concat(String.valueOf(animatedPoint)));
+
+
+        path.reset();
+        pathTrack.reset();
+
         path.moveTo(0, center);
         path.lineTo(animatedPoint, center);
 
