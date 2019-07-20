@@ -308,6 +308,7 @@ public class SendActivity extends AppCompatActivity {
                     public void onSelect(SelectCahootsType.type type) {
                         chosen[0] = true;
                         selectedCahootsType = type;
+                        validateSpend();
                     }
 
                     @Override
@@ -316,6 +317,7 @@ public class SendActivity extends AppCompatActivity {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
                         }
+                        validateSpend();
                     }
                 });
             } else {
@@ -940,6 +942,16 @@ public class SendActivity extends AppCompatActivity {
 
         amount = (long) (Math.round(dAmount * 1e8));
         //                Log.i("SendActivity", "amount:" + amount);
+
+
+        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY){
+            sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
+            btnSend.setBackgroundResource(R.drawable.button_blue);
+            btnSend.setText(getString(R.string.begin_stowaway));
+            return true;
+        }
+
+
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
@@ -1899,6 +1911,11 @@ public class SendActivity extends AppCompatActivity {
         Log.i("SendFragment", "balance:" + balance);
         if (amount > balance) {
             insufficientFunds = true;
+        }
+
+        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds ){
+            enableReviewButton(true);
+            return true;
         }
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);

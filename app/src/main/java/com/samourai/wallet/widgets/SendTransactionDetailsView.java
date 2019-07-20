@@ -104,7 +104,7 @@ public class SendTransactionDetailsView extends FrameLayout {
             stoneWallX2Layout.setVisibility(GONE);
         });
 
-        stowawayMixingParticipant.setText(participant);
+        stowawayMixingParticipant.setText("____");
 
     }
 
