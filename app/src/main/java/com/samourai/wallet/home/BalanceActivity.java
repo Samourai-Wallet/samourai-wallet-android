@@ -8,6 +8,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -592,6 +593,19 @@ public class BalanceActivity extends AppCompatActivity {
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));
+        }    // noinspection SimplifiableIfStatement
+        if (id == R.id.action_copy_cahoots) {
+            ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+
+            if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
+                Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                startActivity(cahootIntent);
+            }else {
+                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+            }
+
         }
         if (id == R.id.action_settings) {
             doSettings();
