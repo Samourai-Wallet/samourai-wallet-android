@@ -1399,7 +1399,7 @@ public class SendActivity extends AppCompatActivity {
                 case STONEWALLX2_MANUAL: {
                     sendTransactionDetailsView.showStonewallX2Layout("Manual", 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
-                    btnSend.setText("Begin STONEWALLx2");
+                    btnSend.setText(getString(R.string.begin_stonewallx2));
                     break;
                 }
                 case STONEWALLX2_SAMOURAI: {
@@ -1410,7 +1410,7 @@ public class SendActivity extends AppCompatActivity {
 //                            mixingPartner.setText("Samourai Wallet");
                     sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
                     btnSend.setBackgroundResource(R.drawable.button_blue);
-                    btnSend.setText("Begin Stowaway");
+                    btnSend.setText(getString(R.string.begin_stowaway));
 
                     break;
                 }

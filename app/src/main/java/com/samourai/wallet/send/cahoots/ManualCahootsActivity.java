@@ -80,7 +80,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private HorizontalStepsViewIndicator stepsViewGroup;
-    private ViewGroup broadCastReviewView;
     private ArrayList<Fragment> steps = new ArrayList<>();
     private CahootReviewFragment cahootReviewFragment;
     private TextView stepCounts;
@@ -107,7 +106,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
         viewPager.enableSwipe(false);
         stepsViewGroup.setTotalSteps(5);
         steps.add(cahootReviewFragment);
-        broadCastReviewView = (ViewGroup) getLayoutInflater().inflate(R.layout.cahoots_broadcast_details, (ViewGroup) stepsViewGroup.getRootView(), false);
         viewPager.setAdapter(new StepAdapter(getSupportFragmentManager()));
 
         if (getIntent().hasExtra("account")) {

@@ -746,6 +746,7 @@
     <string name="continue_exchanging_qr_codes">Continue exchanging QR codes\n until the transaction is broadcast!</string>
     <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirm that you wish to broadcast this transaction.</string>
     <string name="begin_stowaway">Begin Stowaway</string>
+    <string name="begin_stonewallx2">Begin STONEWALLx2</string>
 
 
 </resources>
