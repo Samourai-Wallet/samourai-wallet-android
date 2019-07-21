@@ -42,7 +42,7 @@
     <string name="options_wipe">Bezpečne odstráň peňaženku</string>
     <string name="options_wipe2">Bezpečne odstráň túto peňaženku z tohoto zariadenia.</string>
     <string name="options_stealth_display">Utajni aplikáciu</string>
-    <string name="options_stealth_display2">Vymaž Samourai z domovskej obtazovky a zo zoznamu aplikácii. Musíš vytočiť **TVOJ_PIN_KÓD# z aplikacie pre volanie pre spustenie Samourai.</string>
+    <string name="options_stealth_display2">Vymaž Samourai z domovskej obrazovky a zo zoznamu aplikácii. Musíš vytočiť **TVOJ_PIN_KÓD# z aplikacie pre volanie pre spustenie Samourai.</string>
     <string name="options_remote_commands">Povoľ vzdialané príkazy</string>
     <string name="options_remote_commands2">Povoľ vzdialané príkazy cez SMS.</string>
     <string name="options_blockexplorer">Prieskumník bloku</string>
