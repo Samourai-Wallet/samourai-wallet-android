@@ -45,8 +45,6 @@
     <string name="options_stealth_display2">Vymaž Samourai z domovskej obtazovky a zo zoznamu aplikácii. Musíš vytočiť **TVOJ_PIN_KÓD# z aplikacie pre volanie pre spustenie Samourai.</string>
     <string name="options_remote_commands">Povoľ vzdialané príkazy</string>
     <string name="options_remote_commands2">Povoľ vzdialané príkazy cez SMS.</string>
-    <string name="options_currency">Street cena</string>
-    <string name="options_currency2">Vyber si výmenný kurz a lokálnu menu.</string>
     <string name="options_blockexplorer">Prieskumník bloku</string>
     <string name="options_blockexplorer2">Prieskumník bloku použitý na zobrazenie detailov transakcii.</string>
     <string name="options_sim_switch">Ochrana proti výmene SIM karty</string>
