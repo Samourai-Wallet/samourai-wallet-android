@@ -25,7 +25,7 @@
     <string name="options_cat_remote">Diaľkový</string>
     <string name="options_cat_wallet">Peňaženka</string>
     <string name="options_cat_networking">Sieťový</string>
-    <string name="options_cat_other">O</string>
+    <string name="options_cat_other">O peňaženke</string>
 
     <string name="options_mnemonic">Ukáž frázu</string>
     <string name="options_mnemonic2">Ukáž 12-slovnú frázu pre túto peňaženku.</string>
@@ -139,13 +139,13 @@
     <string name="bip38_pw_error">BIP38 chyba hesla</string>
     <string name="bip39_safe">Prosím vytvorte si heslo k peňaženke a nikomu ho neposkytujte. Budete ho potrebovať ak stratíte prístup k vašej peňaženke.</string>
     <string name="bip39_safe2">Prosím potvrdte Vaše heslo. Nikomu ho neposkytujte. Budete ho potrebovať ak stratíte prístup k vašej peňženke.</string>
-    <string name="bip39_restore">Zadaj tvoju frázu pre prístup (alebo hex entropy) a, ak je to potrebné, tvoje BIP39 prístupové heslo. Pokiaľ nepoužívate BIP39 prístupové heslo, nechajte prázdne.</string>
+    <string name="bip39_restore">Zadaj tvoju frázu pre prístup (alebo hex entropiu) a, ak je to potrebné, tvoje BIP39 prístupové heslo. Pokiaľ nepoužívate BIP39 prístupové heslo, nechajte prázdne.</string>
     <string name="bip39_must">Tvoja peňaženka musí mať prístupové heslo. Prosím skúste znova.</string>
     <string name="bip39_unmatch">Prístupové heslo sa nezhoduje. Prosím skúste znova.</string>
     <string name="bip39_invalid">Nepoužívajte žiadne medzery v prístupovom hesle. Prosím skúste znova.</string>
     <string name="bip39_empty">Musíte si zvoliť prístupové heslo.</string>
     <string name="please_select">Prosím zvoľte...</string>
-    <string name="create_wallet">Vytvor pe%naženku</string>
+    <string name="create_wallet">Vytvor peňaženku</string>
     <string name="restore_wallet">Obnov peňaženku</string>
     <string name="wallet_passphrase">Zadaj prístupové heslo k peňaženke</string>
     <string name="bip39_passphrase">BIP39 prístupové heslo</string>
@@ -153,7 +153,7 @@
     <string name="bip39_decrypt_test">Prístupové heslo k peňaženke verifikované OK. Chcete otestovať dešifrovanie najnovšej automatickej zálohy?</string>
     <string name="backup_read_ok">Súbor zálohy OK.</string>
     <string name="backup_read_error">Chyba pri čítaní súboru zálohy.</string>
-    <string name="mnemonic_hex">Mnemonic or hex entropy</string>
+    <string name="mnemonic_hex">Mnemonic alebo hex entropia</string>
     <string name="pin_enter">Zadaj PIN kód</string>
     <string name="please_wait">Prosím čakajte...</string>
     <string name="random_key_error">Chyba náhodného tlačidla</string>
@@ -634,7 +634,7 @@
     <string name="pay_again">Zaplať znova</string>
     <string name="miner_fee_rate">Sadzba poplatku za ťaženie</string>
     <string name="status">Status</string>
-    <string name="title_activity_tx_privacy_details">TxPrivacyDetails</string>
+    <string name="title_activity_tx_privacy_details">TxSúkromia Detaily</string>
     <string name="number_of_deterministic_combinations">Počet deterministických \ nkombinácií</string>
     <string name="transaction_entropy">Entropia transakcie</string>
     <string name="efficiency_score">Skóre účinnosti</string>
@@ -660,10 +660,10 @@
     <string name="stonewall">Stonewall</string>
     <string name="urgent">Urgent</string>
     <string name="normal">Normal</string>
-    <string name="low">Nízko</string>
+    <string name="low">Nízke</string>
 
-    <string name="ricochet_nlocktime_ok">Tvoja staggered Ricochet bol preposlany na vyslanie. Prosím počkajte pokial budú všetky transakcie v bloku poslané.</string>
-    <string name="ricochet_nlocktime_ko">Tvoja staggered Ricochet nemôže byť odoslana. Prosím skús znova.</string>
+    <string name="ricochet_nlocktime_ok">Tvoja staggered Ricochet transakcia bola preposlana na vyslanie. Prosím počkajte pokial budú všetky transakcie v bloku poslané.</string>
+    <string name="ricochet_nlocktime_ko">Tvoja staggered Ricochet transakcia nemôže byť odoslana. Prosím skús znova.</string>
     <string name="tag_utxo">Štítok UTXO</string>
     <string name="boost_transaction_fee">Navýš transakčný poplatok</string>
     <string name="refund">Vrátenie</string>
@@ -687,12 +687,12 @@
     </string>
     <string name="powering_samourai_wallet_">Pripoj Samourai Wallet s vašim vlastným uzlom ponúka najlepšiu úroveň súkromia a nezávislosti pri interakcii s Bitcoin sieťou. Dojo umožňuje jednoduché a jednoduché spustenie celého uzla.</string>
     <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play plný BTC uzol\n\n -Automaticky nakonfigurovaná skrytá služba Tor\n\n -Nezávislosť od predvolených serverov Samourai</string>
-    <string name="dojo_connect_instruction">Ak už máš Dojo Full Node alebo \n beží bezplatný open source Dojo Software\alebo tvoj vlastný hardware, oskenuj párovací QR kód\n nachádzajúci sa na Dojo kontrolnom panely</string>
+    <string name="dojo_connect_instruction">Ak už máš Dojo Full Node alebo \nbeží bezplatný open source Dojo Software\alebo tvoj vlastný hardware, oskenuj párovací QR kód\n nachádzajúci sa na Dojo kontrolnom panely</string>
     <string name="dojo_headline">Pripoj Samourai s tvojím súkromným DOJO plným uzlom</string>
     <string name="connect_to_existing_dojo">Pripoj k existujúcemu Dojo</string>
     <string name="create_to_existing_dojo">Vytvor peňaženku a spáruj s Dojo</string>
     <string name="preorder">predobjednaj</string>
-    <string name="add_new">Pridaj nové</string>
+    <string name="add_new">Pridaj Nové</string>
     <string name="paynym_follow_message_2">pre automatické vygenerovanie unikátnej privátnej adresy pre poslanie bitcoin-u na tento kontakt</string>
     <string name="follow">Nasleduj</string>
     <string name="wallet_locked">Peňaženka uzamknutá</string>
@@ -722,7 +722,7 @@
     <string name="cycled_transactions">Cyklické transakcie</string>
     <string name="initial_transaction">ˇUvodná Transakcia</string>
     <string name="progress">Progres</string>
-    <string name="waiting_for_blockchain_confirmation">Čakám na konfirmáciu blockchainu</string>
+    <string name="waiting_for_blockchain_confirmation">Čakám na konfirmáciu z blockchainu</string>
 
     <string name="create_password">Vytvor heslo</string>
     <string name="confirm_password">Potvrď heslo</string>
@@ -735,7 +735,7 @@
     <string name="cycle">Cyklus</string>
     <string name="postmix_without_boltzmann">Vezmite prosím na vedomie, že výdavky z vášho post-mix účtu bez použitia STONEWALL budú mať za následok stratu súkromia získaného prostredníctvom Whirlpool.</string>
     <string name="estimated_entropy">Predpokladaná Entropia</string>
-    <string name="share_this_qr_code_with_your_participant">Zdieľajte tento kód QR so svojím účastníkom</string>
+    <string name="share_this_qr_code_with_your_participant">Zdieľajte tento QR kód so svojím účastníkom</string>
     <string name="review_tx_before_braodcast">Pred odoslaním skontrolujte transakciu</string>
     <string name="select_participant">Zvoľ účastníka</string>
     <string name="select_cahoots_type">Zvoľ cahoots typ</string>
