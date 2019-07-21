@@ -179,9 +179,9 @@ public class BlockedUTXO {
                 JSONObject obj = new JSONObject();
                 obj.put("id", id);
                 obj.put("value", blockedUTXOPostMix.get(id));
-                array.put(obj);
+                arrayPostMix.put(obj);
             }
-            blockedObj.put("blockedPostMix", array);
+            blockedObj.put("blockedPostMix", arrayPostMix);
 
         }
         catch(JSONException je) {
