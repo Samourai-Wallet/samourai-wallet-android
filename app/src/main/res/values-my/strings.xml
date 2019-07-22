@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="alpha_create_wallet">Tulis dan simpan kata-kata ini dengan aman. Kata-kata tersebut jangan sampai hilang atau lupa kata sandi anda.</string>
+  <string name="alpha_create_wallet">Tulis perkataan-perkataan ini simpan di tempat yang selamat. Jangan lupa atau hilangkan perkataan ini.</string>
     <string name="alpha_create_confirm_backup">Saya telah menuliskan kata-kata saya</string>
 
     <string name="creating_wallet">Membuat wallet. Harap tunggu...</string>
