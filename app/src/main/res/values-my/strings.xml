@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="alpha_create_wallet">Tulis dan simpan kata-kata ini dengan aman. Kata-kata tersebut jangan sampai hilang atau lupa kata sandi anda.</string>
+    <string name="alpha_create_confirm_backup">Saya telah menuliskan kata-kata saya</string>
+
+    <string name="creating_wallet">Membuat wallet. Harap tunggu...</string>
+    <string name="restoring_wallet">Pulihkan wallet. Harap tunggu...</string>
+    <string name="decrypting_bip38">Mendecrypt kata sandi BIP38. Harap tunggu...</string>
+
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_support">Dukungan Pelanggan</string>
+    <string name="action_sweep">Impor &amp; hapus private key</string>
+    <string name="action_bip47">PayNyms</string>
+    <string name="action_unarchive">Aktifkan seluruh kode pembayaran tersimpan</string>
+    <string name="action_sync_all">Singkronisasi seluruh kode pembayayan</string>
+
+    <string name="about_us">Tentang Wallet Samourai</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Batal</string>
+
+    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_stealth">Mode Sembunyi</string>
+    <string name="options_cat_remote">Remote</string>
+    <string name="options_cat_wallet">Wallet</string>
+    <string name="options_cat_networking">Jaringan</string>
+    <string name="options_cat_other">Tentang</string>
+
+    <string name="options_mnemonic">Tunjukkan mnemonic</string>
+    <string name="options_mnemonic2">Tunjukkan 12-kata seed wallet ini.</string>
+    <string name="options_xpub">Tunjukkan XPUB BIP44</string>
+    <string name="options_xpub2">Tunjukkan public key tambahan untuk akun BIP44.</string>
+    <string name="options_xpub49">Tunjukkan YPUB Segwit</string>
+    <string name="options_xpub49_2">Tunjukkan public key tambahan akun Segwit BIP49 (P2SH-wrapped).</string>
+    <string name="options_xpub84">Tunjukkan ZPUB Segwit</string>
+    <string name="options_xpub84_2">Tunjukkan public key tambahan untuk akun Segwit BIP84 (Bech32).</string>
+    <string name="options_wipe">Hapus wallet dengan aman</string>
+    <string name="options_wipe2">Hapus wallet dari perangkat ini secara aman.</string>
+    <string name="options_stealth_display">Launcher Mode Sembunyi</string>
+    <string name="options_stealth_display2">Hapus Samourai dari launcher dan home screen. Anda harus menelepon **KODE_PIN_ANDA# dari aplikasi panggilan telepon anda untuk menjalankan Samourai.</string>
+    <string name="options_remote_commands">Ijinkan perintah remote</string>
+    <string name="options_remote_commands2">Bolehkan perintah remote melalui SMS.</string>
+    <string name="options_currency">Harga bursa</string>
+    <string name="options_currency2">Pilih bursa dan mata uang lokal anda.</string>
+    <string name="options_blockexplorer">Block explorer</string>
+    <string name="options_blockexplorer2">Block explorer digunakan untuk melihat detail transaksi.</string>
+    <string name="options_sim_switch">Perlindungan perubahan SIM</string>
+    <string name="options_sim_switch2">Kirim SMS pada nomor telepon terpercaya jika kartu SIM telah diganti.</string>
+    <string name="options_use_telno">Gunakan nomor telepon terpercaya untuk remote</string>
+    <string name="options_use_telno2">Hanya perbolehkan pengiriman perintah remote melalui nomor telepon terpercaya anda.</string>
+    <string name="options_alert_telno">Nomor terpercaya</string>
+    <string name="options_alert_telno2">Nomor telepon tepercaya yang dapat anda batasi akses jarak jauh ke (menggunakan format internasional tanpa spasi contoh .: +447385555555).</string>
+    <string name="options_hash">Hash APK</string>
+    <string name="options_hash2">Ambil hash SHA-256 file APK yang telah diinstal ini (dapat disalin pada clipboard).</string>
+    <string name="options_VPN">VPN</string>
+    <string name="options_VPN2">Jalankan OpenVPN untuk Android.</string>
+    <string name="options_Tor">Route melalui Tor?</string>
+    <string name="options_Tor2">Jalankan Orbot (Tor).</string>
+    <string name="options_export">Expor cadangan wallet</string>
+    <string name="options_change_pin">Ubah PIN</string>
+    <string name="options_change_pin2">Tentukan kode PIN baru; digunakan untuk membuka kunci wallet anda.</string>
+    <string name="options_remote_pin">Jalankan mode sembunyi dan PIN remote</string>
+    <string name="options_remote_pin2">Menentukan PIN alternatif untuk menjalankan mode sembunyi dan fungsi remote.</string>
+    <string name="options_autosave_backup">Simpan otomatis cadangan ke ruang penyimpanan perangkat</string>
+    <string name="options_autosave_backup2">Simpan cadangan kata sandi terenkripsi secara berkala ke ruang penyimpanan perangkat.</string>
+    <string name="options_version">Versi</string>
+    <string name="options_txs">Transaksi</string>
+    <string name="options_boltzmann">Pengeluaran via STONEWALL</string>
+    <string name="options_boltzmann_2">Pengeluaran ini menggunakan algoritma STONEWALL untuk menaikkan tingkat kerumitan agar tidak mudah terbaca.</string>
+    <string name="options_utxo">Tunjukkan output yang belum terpakai</string>
+    <string name="options_trusted_node">Atur node terpercaya</string>
+    <string name="options_trusted_node2">Tentukan node bitcoin anda sendiri untuk menyiarkan transaksi.</string>
+    <string name="options_use_trusted_node">Gunakan node terpercaya</string>
+    <string name="options_use_trusted_node2">Siarkan transaksi dari node anda sendiri.</string>
+    <string name="options_rbf0">Pegeluaran menggunakan RBF</string>
+    <string name="options_rbf0_2">Pengeluaran akan menggunakan fitur replace-by-fee untuk mengaktifkan perubahan biaya transaksi.</string>
+    <string name="options_troubleshoot">Troubleshooting</string>
+    <string name="options_passphrase_test">Test kata sandi/cadangan</string>
+    <string name="options_passphrase_test2">Verifikasi akses wallet dan dukungan cadangan pelanggan.</string>
+    <string name="options_send_backup_to_support">Kirim cadangan pada dukungan teknis pelanggan</string>
+    <string name="options_send_backup_to_support2">Kirim cadangan wallet pada dukungan teknis pelanggan. Tidak akan menyertakan info private key.</string>
+    <string name="options_fee_provider">Sumber estimasi biaya</string>
+    <string name="options_fee_provider2">Pilih provider estimasi biaya transaksi yang anda kehendaki.</string>
+    <string name="options_broadcast_on">Siarkan transaksi</string>
+    <string name="options_broadcast_on2">Hapus centang (broadcasting OFF) untuk manyalin transaksi raw tertandatangani pada clipboard.</string>
+    <string name="options_segwit">Terima ke address segwit</string>
+    <string name="options_segwit_2">Generate address segwit untuk transaksi masuk.</string>
+    <string name="options_broadcast_hex">Siarkan hex transaksi</string>
+    <string name="options_broadcast_hex2">Siarkan transaksi tertandatangani dalam format hex.</string>
+    <string name="options_like_typed_change">Terima perubahan dengan output yang dikehendaki</string>
+    <string name="options_like_typed_change2">Terima perubahan address address yang sama sebagai output pengeluaran. Matikan untuk menerima hanya menerima perubahan address segwit.</string>
+    <string name="options_haptic">Entri PIN terputus</string>
+    <string name="options_haptic_2">Getar saat setiap entri digit kode PIN.</string>
+
+    <string name="prompt_send_backup_to_support">Kirim cadangan wallet pada dukungan teknis pelanggan? Tidak termasuk untuk private key, seed, atau info kata sandi.</string>
+
+    <string name="timeline_today">Hari ini</string>
+    <string name="timeline_older">Yang lalu</string>
+
+    <string name="tx_sent">Transaksi terkirim</string>
+    <string name="tx_failed">Kesalahan saat mengirim transaksi</string>
+    <string name="you_received">Diterima</string>
+    <string name="you_sent">Terkirim</string>
+    <string name="send">Kirim</string>
+    <string name="receive">Menerima</string>
+    <string name="cannot_select_utxo">Tidak dapat memilih ouput yang tidak terpakai</string>
+    <string name="error_bip126_output">Kesalahan menentukan address output</string>
+    <string name="error_change_output">Kesalahan menentukan perubahan address</string>
+
+    <string name="copied_to_clipboard">Salin ke clipboard</string>
+    <string name="send_payment_code">Kirim kode pembayaran</string>
+
+    <string name="ask_you_sure_exit">Apa anda yakin ingin keluar dari Samourai?</string>
+    <string name="yes">Yes</string>
+    <string name="no">Tidak</string>
+    <string name="close">Tutup</string>
+
+    <string name="sim_warning">Perangkat Wallet Samourai anda saat ini mempunyai kartu SIM berbeda sesuai dengan pesan teks masuk ini.</string>
+
+    <string name="pin_5_8">Buat kode PIN antara 5 dan 8 karakter.</string>
+    <string name="pin_5_8_confirm">Konfirmasi kode PIN</string>
+    <string name="pin_error">Kesalahan kode PIN</string>
+    <string name="no_internet">Tidak terkoneksi internet. Silahkan coba lagi.</string>
+    <string name="bip38_pw">Kata sandi BIP38</string>
+    <string name="bip38_pw_error">Kesalahan kata sandi BIP38</string>
+    <string name="bip39_safe">Silahkan buat frase kata sandi dan jaga kerahasiaannya. Anda akan memerlukan kata sandi ini jika kehilangan akses wallet anda.</string>
+    <string name="bip39_safe2">Silahkan konfirmasi frase kata sandi dan jaga kerahasiaannya. Anda akan memerlukan kata sandi ini jika kehilangan akses wallet anda.</string>
+    <string name="bip39_restore">Masukkan mnemonic anda (atau entropy hex) dan jika perlu, frase kata sandi BIP39 anda. Jika anda tidak menggunakan frase kata sandi BIP39, biarkan tetap kosong.</string>
+    <string name="bip39_must">Wallet anda harus menggunakan frase kata sandi. Silahkan coba lagi.</string>
+    <string name="bip39_unmatch">Frase kata sandi tidak cocok. Silahkan coba lagi.</string>
+    <string name="bip39_invalid">Jangan gunakan karakter spasi apapun di dalam frase kata sandi anda. Silahkan coba lagi.</string>
+    <string name="bip39_empty">Anda harus menentukan frase kata sandi.</string>
+    <string name="please_select">Harap pilih...</string>
+    <string name="create_wallet">Buat wallet</string>
+    <string name="restore_wallet">Pulihkan wallet</string>
+    <string name="wallet_passphrase">Masukkan frase kata sandi anda</string>
+    <string name="bip39_passphrase">Frase kata sandi BIP39</string>
+    <string name="bip39_match">Frase kata sandi BIP39 terverifikasi OK.</string>
+    <string name="bip39_decrypt_test">Frase kata sandi terverifikasi OK. Apa anda ingin menguji decrypt cadangan otomatis terbaru?</string>
+    <string name="backup_read_ok">File cadangan OK.</string>
+    <string name="backup_read_error">Kesalahan membaca file cadangan.</string>
+    <string name="mnemonic_hex">Mnemonic atau entropy hex</string>
+    <string name="pin_enter">Masukkan kode PIN</string>
+    <string name="please_wait">Harap tunggu...</string>
+    <string name="random_key_error">Kesalahan key acak</string>
+    <string name="login_error">Gagal masuk</string>
+    <string name="wallet_created_ok">Pembuatan wallet OK.</string>
+    <string name="wallet_created_ko">Kesalahan membuat wallet.</string>
+    <string name="wallet_restored_ok">Pemulihan wallet OK.</string>
+    <string name="wallet_restored_ko">Kesalahan pemulihan wallet.</string>
+
+    <string name="address_used_previously">Anda telah menggunakan Address ini sebelumny! Menggunakan address yang sama dapat menghilangkan privasi anda.</string>
+
+    <string name="scan">Scan</string>
+    <string name="scan_error">Kesalahan Scan</string>
+    <string name="enter_privkey">Masukkan private key</string>
+
+    <string name="to">untuk</string>
+    <string name="destination">Address atau channel pembayaran</string>
+
+    <string name="insufficient_funds">Dana tidak mencukupi</string>
+    <string name="tx_length_error">Samourai tidak menangani transaksi dengan ukuran yang melebihi 100KB. Silahkan mencoba untuk memecah transaksi menjadi beberapa bagian.</string>
+    <string name="invalid_amount">Jumlah tidak valid</string>
+    <string name="amount">Jumlah</string>
+
+    <string name="receive_address_to_clipboard">Salin address yang diterima ini ke clipboard? Jika disalin, mungkin akan terlihat di aplikasi lainnya.</string>
+    <string name="receive_address_to_share">Bagikan address yang diterima ini? Jika dibagikan, mungkin akan terbaca di aplikasi lainnya.</string>
+    <string name="sure_to_erase">Anda yakin ingin menghapus wallet ini?</string>
+    <string name="wallet_erased">Hapus wallet dari perangkat</string>
+
+    <string name="send_privacy_warning">Peringatan privasi: Perhatikan bahwa anda telah mengirim dana ke address ini.</string>
+
+    <string name="securely_wiping_wait">Menghapus wallet secara aman. Harap tunggu.</string>
+
+    <string name="options_scramble_pin">Acak tampilan tombol PIN</string>
+    <string name="options_scramble_pin2">Gunakan layar angka secara acak untuk masuk ke wallet anda. </string>
+
+    <string name="you_must_have_orbot">Anda harus instal Orbot dan mengaktifkan lalulintas trafic melalui itu. Apakah anda ingin menginstal Orbot dari Google Play? </string>
+
+    <string name="ssl_pinning_invalid">Penetapan sertifikat SSL gagal. Mungkin karena ada aktifitas yang berbahaya. Silahkan verifikasi koneksi jaringan dan perangkat anda sebelum melanjutkan.</string>
+    <string name="ssl_no_connection">Kami tidak dapat terhubung pada host untuk memverifikasi sertifikat SSL. Harap verifikasi koneksi jaringan dan perangkat anda sebelum melanjutkan.</string>
+    <string name="retry">Coba lagi</string>
+    <string name="exit">Keluar</string>
+
+    <string name="create_pin">Buat kode PIN</string>
+    <string name="confirm_pin">Konfirmasi kode PIN</string>
+
+    <string name="auto_fee">BIAYA NORMAL</string>
+    <string name="priority_fee">BIAYA DENGAN PRIORITAS</string>
+    <string name="low_fee">BIAYA RENDAH</string>
+    <string name="custom_fee">Tentukan sendiri</string>
+    <string name="sat_b">sat/b</string>
+
+    <string name="account_Samourai">Wallet</string>
+    <string name="account_shuffling">Pindahkan</string>
+
+    <string name="max_available">Max. tersedia:</string>
+
+    <string name="select_account">Pilih akun</string>
+    <string name="received_bitcoin">Menerima Bitcoin</string>
+    <string name="received">Diterima</string>
+    <string name="sent">Transaksi terkirim</string>
+    <string name="total">Total</string>
+    <string name="export_to_clipboard">Expor ke clipboard</string>
+    <string name="export_to_email">Expor ke email</string>
+    <string name="encryption_error">Ada kesalahan saat mengenkripsi cadangan wallet anda. Silahkan coba lagi.</string>
+    <string name="import_backup">Dari cadangan</string>
+    <string name="import_mnemonic">Mnemonic/seed</string>
+    <string name="encrypted_backup">Enkripsi data wallet</string>
+    <string name="decryption_error">Ada kesalahan saat decrypt cadangan wallet anda. Silahkan coba lagi.</string>
+    <string name="restore_wallet_from_backup">Pulihkan wallet dari cadangan</string>
+    <string name="restore_wallet_from_existing_backup">Cadangan ditemukan di perangkat ini. Untuk memulihkan dari cadangan saat ini, tekan \'OK\', jika tidak salin/paste cadangan yang berbeda dan tekan \'OK\'.</string>
+
+    <string name="choose_email_client">Pilih sebuah klien Email:</string>
+
+    <string name="cannot_launch_app">Wallet Samourai tidak dapat berjalan di perangkat ini</string>
+    <string name="confirm_change_pin">Apa anda yakin ingin mengganti PIN?</string>
+    <string name="success_change_pin">PIN berubah</string>
+    <string name="alternative_pin_create">Anda yakin ingin membuat alternatif PIN untuk launcher dan perintah remote?</string>
+    <string name="alternative_pin_deleted">Anda tidak menggunakan kode PIN alternatif untuk fitur sembunyi dan remote.</string>
+    <string name="alternative_pin_wait">Tunggu mode sembunyi diluncurkan untuk aktif sepenuhnya sebelum menentukan kode PIN alternatif.</string>
+
+    <string name="invalid_payment_code">Kode pembayaran tidak valid</string>
+    <string name="error_payment_code">Kesalahan saat generate kode pembayaran</string>
+
+    <string name="bip47_setup1_title">PayNym anda</string>
+    <string name="bip47_setup4_title">Tambah kontak PayNym</string>
+    <string name="bip47_setup4_text1">Tambahkan ini pada kontak PayNym anda akan membutuhkan setu kali biaya transaksi agar dapat direkam ke dalam blockchain.</string>
+    <string name="bip47_setup4_text2">akan dikurangkan dari saldo wallet anda</string>
+
+    <string name="bip47_add1_title">Kontak baru</string>
+    <string name="bip47_add1_text">Pindai dan paste kode pembayaran untuk membuat satu channel pembayaran.</string>
+
+    <string name="paste">Paste</string>
+    <string name="label">Label</string>
+    <string name="next">Berikutnya</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="payment_code">Kode pembayaran</string>
+    <string name="payment_channel_init">Notifikasi transaksi terkirim. Channel pembayaran anda sedang dibuat.</string>
+
+    <string name="bip47_no_label_error">Anda harus memberi sebuah label untuk kode pembayaran ini</string>
+
+    <string name="bip47_status_tbe">Belum dibuat</string>
+    <string name="bip47_status_pending">Tertunda - 0/1 Konfirmasi</string>
+    <string name="bip47_status_active">Siap untuk dikirim</string>
+    <string name="bip47_status_incoming">Siap untuk diterima</string>
+    <string name="bip47_cannot_scan_own_pcode">Tidak dapat memindai kode pembayaran anda</string>
+    <string name="bip47_spend_to_pcode">Kirim melalui channel pembayaran ini?</string>
+    <string name="bip47_sign">Tanda tangani pesan</string>
+    <string name="bip47_sign_text1">Tanda tangani pesan menggunakan notifikasi private key address BIP47?</string>
+    <string name="bip47_sign_text2">Tanda tangani menggunakan notifikasi address BIP47 saya.</string>
+    <string name="bip47_wait_for_confirmation_or_retry">Channel pembayaran ini masih menunggu 1 konfirmasi sebelum pengiriman diaktifkan. Apakah anda ingin mengabaikan yang sebelumnya dan mengirim notifikasi kembali?></string>
+
+    <string name="rbf_incoming">Transaksi yang masuk adalah replace-by-fee. Lihat di block explorer?</string>
+
+    <string name="invalid_passphrase">Frase kata sandi tidak valid</string>
+    <string name="passphrase">Frase kata sandi</string>
+    <string name="passphrase_needed_for_backup">Wallet anda tidak dilindungi dengan frase kata sandi. Cadangan wallet dienkripsi menggunakan frase kata sandi anda. Jika ingin menggunakan cadangan wallet terenkripsi dan fitur wallet Samourai lainnya, buat wallet anda menggunakan Samourai dan transfer dana anda.</string>
+    <string name="passphrase_required">Sebuah frase kata sandi dibutuhkan untuk fitur ini. Harap pertimbangkan untuk membuat wallet baru yang secara otomatis termasuk membuat frase kata sandi.</string>
+
+    <string name="cannot_reach_api">API Samourai tidak dapat dijangkau. Silahkan verifikasi koneksi dan coba kembali nanti.</string>
+    <string name="api_error">API Samourai terjadi kesalahan. Silahkan coba kembali nanti.</string>
+
+    <string name="cannot_recognize_privkey">Tidak dapat mengenali private key</string>
+    <string name="cannot_sweep_privkey">Kesalahan saat impor dan menghapus private key</string>
+    <string name="please_wait_sending">Mengirim transaksi, harap tunggu.</string>
+    <string name="please_wait_ricochet">Memproses antrian Ricochet queue, harap tunggu.</string>
+
+    <string name="change_is_dust">Perubahan transaksi ini masih bernilai terlalu kecil. Coba kembali dan rubah nilai pengeluaran atau gunakan seluruh saldo.</string>
+
+    <string name="tor_routing_on">Samourai menggunakan routing melalui Tor.</string>
+    <string name="tor_routing_off">Samourai tidak routing melalui Tor. Tekan tombol untuk mengaktifkan.</string>
+    <string name="tor_install">Tekan untuk instal Orbot dan route Samourai melalui Tor.</string>
+
+    <string name="premium_addons">Addons Premium</string>
+
+    <string name="ricochet_hop">Ricochet Hop</string>
+    <string name="ricochet_hopping">Ricocheted untuk</string>
+    <string name="ricochet_spend1">Pengeluaran Ricochet untuk</string>
+    <string name="ricochet_spend2">total jumlah untuk</string>
+    <string name="ricochet_spend3">(termasuk biaya 0.002 BTC untuk Samourai dan penambang\' biaya)?</string>
+
+    <string name="action_ricochet">Ulangi Ricochet</string>
+    <string name="action_empty_ricochet">Antrian Ricochet kosong</string>
+    <string name="ricochet">Ricochet - kirim dengan 4 hop tambahan</string>
+    <string name="action_ricochet_script">Tampilkan scipt Ricochet</string>
+    <string name="action_ricochet_replay">Kirim ulang Ricochet</string>
+    <string name="ricochet_replay">Apakah anda ingin menyiarkan ulang pengeluaran Ricochet ini?</string>
+    <string name="ricochet_not_broadcast_replay">Ada masalah saat menyiarkan Ricochet anda. Apakah anda ingin menyiarkan ulang pengeluaran Ricochet ini?</string>
+    <string name="no_ricochet_replay">Tidak ada Ricochet untuk dikirim ulang.</string>
+    <string name="no_ricochet_display">Tidak ada script Ricochet script untuk ditampilkan.</string>
+    <string name="ricochet_broadcast">Ricochet anda telah disiarkan.</string>
+
+    <string name="bip47_cannot_identify_outpoint">Tidak dapat menutupi kode pembayaran keluar</string>
+    <string name="bip47_cannot_compose_notif_tx">Tidak dapat menulis notifikasi tx</string>
+
+    <string name="pushtx_returns_null">Pengeluaran gagal. Server menghasilkan nilai nol</string>
+
+    <string name="trusted_node">Node terpercaya</string>
+    <string name="trusted_node_user_hint">nama user rpc</string>
+    <string name="trusted_node_ip_hint">IP address</string>
+    <string name="trusted_node_port_hint">Port (standar 8332)</string>
+    <string name="trusted_node_password_hint">kata sandi user rpc</string>
+    <string name="trusted_node_not_valid">Harap berikan info valid untuk node terpercaya anda.</string>
+    <string name="trusted_node_ko">Node terpercaya tidak dapat dikenali. Silahkan periksa instalasi.</string>
+    <string name="trusted_node_error">Kesalahan saat mencapai node terpercaya yang dikehendaki.</string>
+    <string name="trusted_node_tx_error">Transaksi gagal pada node terpercaya.</string>
+    <string name="trusted_node_not_core_131">Node terpercaya telah ditetapkan. Perlu dicatat bahwa Wallet Samourai telah mendukung Bitcoin Core 0.13.1 dan versi diatasnya.</string>
+    <string name="trusted_node_tx_sent">Transaksi dikirimkan melalui node terpercaya.</string>
+    <string name="trusted_node_not_responding">Node terpercaya tidak merespon. Harap periksa instalasi.</string>
+    <string name="trusted_node_breaks_consensus">Node terpercaya tidak dapat digunakan pada klien bitcoin yang dapat merusak konsensus.</string>
+
+    <string name="refresh_tx_pre">Mengambil informasi transaksi dan saldo.</string>
+    <string name="refresh_tx">Transaksi dan saldo yang telah diperoleh.</string>
+    <string name="refresh_incoming_notif_tx">Mengambil notifikasi transaksi BIP47 yang diperoleh.</string>
+    <string name="refresh_outgoing_notif_tx">Pembaruan notifikasi transaksi BIP47 keluar.</string>
+
+    <string name="options_unconfirmed_tx">Transaksi ini masih menunggu konfirmasi. Silahkan pilih salah satu opsi:</string>
+    <string name="options_block_explorer">Lihat transaksi</string>
+    <string name="options_bump_fee">Tambahkan biaya tx</string>
+
+    <string name="cpfp_cannot_retrieve_tx">Tidak dapat mengambil informasi transaksi. Silahkan coba lagi.</string>
+    <string name="fee_bump_not_necessary">Perlu diketahui bahwa menambah biaya transaksi lebih besar tidak diperlukan untuk transaksi ini.</string>
+    <string name="bump_fee">Apakah anda ingin menambah biaya penambang agar transaksi ini mendapat konfirmasi lebih cepat?\n\nBiaya tambahan penambang:</string>
+
+    <string name="options_sign">Tanda tangani pesan</string>
+
+    <string name="trusted_node_pow_failed">Node terpercaya anda melaporkan bahwa proof-of-work tidak dapat diverifikasi. Silahkan periksa instalasi.</string>
+
+    <string name="options_fees">Tunjukkan miner saat ini\' biaya</string>
+    <string name="current_fee_selection">Pilihan biaya anda saat ini diatur untuk:</string>
+    <string name="current_hi_fee_value">Biaya tinggi saat ini:</string>
+    <string name="current_mid_fee_value">Biaya normal saat ini:</string>
+    <string name="current_lo_fee_value">Biaya rendah saat ini:</string>
+    <string name="slash_sat">sat/b</string>
+    <string name="set_sat">Tetapkan biaya khusus anda sendiri di sat/b.</string>
+    <string name="custom_fee_too_low">Biaya khusus yang anda tetapkan terlalu rendah.</string>
+    <string name="custom_fee_too_high">Biaya khusus yang anda tetapkan terlalu tinggi.</string>
+
+    <string name="cpfp_spent">Transaksi CPFP transaction terkirim.</string>
+    <string name="rbf_spent">Transaction RBF terkirim.</string>
+    <string name="cannot_output_dust">Tidak dapat membuat perubahan transaksi dengan output terlalu rendah.</string>
+    <string name="cannot_create_change_output">Tidak dapat membuat perubahan output.</string>
+    <string name="cannot_create_cpfp">Tidak dapat membuat transaksi CPFP.</string>
+
+    <string name="error_reading_payload">Kesalahan saat membaca muatan pembayaran. Silahkan coba lagi.</string>
+
+    <string name="utxo_sign">Tandatangani pesan</string>
+    <string name="utxo_sign_text1">Tandatangani pesan menggunakan private key ini?</string>
+    <string name="utxo_sign_text2">Tertandatangani menggunakan utxo.</string>
+    <string name="utxo_sign_text3">Tertandatangani menggunakan utxo.</string>
+
+    <string name="recovery_checkup">Pemeriksaan Pemulihan</string>
+    <string name="recovery_checkup_message">Kata-kata pemulihan wallet anda dan frase kata sandi akan ditampilkan. Jangan ijinkan siapapun melihat layar anda. TIDAK akan ditampilkan lagi.</string>
+    <string name="mnemonic">Mnemonic</string>
+    <string name="recovery_checkup_finish">Saya telah MENGAMANKAN INFO PEMULIHAN SAYA</string>
+    <string name="pin_reminder">Sebagai pengingat, kode PIN anda adalah:</string>
+
+    <string name="opendime_confirmed_balance">Saldo Terkonfirmasi</string>
+    <string name="opendime_privkey">Private Key</string>
+    <string name="opendime_verified">TERFERIFIKASI</string>
+    <string name="opendime_valid_key">Private key valid di perangkat</string>
+    <string name="opendime_not_verified">TIDAK BISA VERIFIKASI</string>
+    <string name="opendime_no_valid_key">Tidak dapat validasi private key pada perangkat</string>
+    <string name="opendime_view">LIHAT</string>
+    <string name="opendime_sweep">SWEEP</string>
+    <string name="opendime_topup">TOP UP</string>
+
+    <string name="select_app">Pilih aplikasi</string>
+    <string name="samourai_opendime">Samourai: OpenDime</string>
+
+    <string name="replay_protection">Replay protection</string>
+    <string name="replay_unprotected">Tidak terproteksi</string>
+    <string name="replay_in_progress">Dalam proses</string>
+    <string name="replay_protected">Terproteksi</string>
+    <string name="replay_disclaimer">Chain split terdeteksi</string>
+    <string name="replay_text">Seluruh addresses akan digabungkan menjadi satu transaksi dan dikirim ke address pada wallet anda. Ini disebut dengan penggabungan input dan dapat menurunkan privasi anda.</string>
+    <string name="replay_ENABLE">AKTIFKAN REPLAY PROTECTION</string>
+
+    <string name="replay_broadcast_to_network">disiarkan ke jaringan...</string>
+    <string name="replay_seen_on_network">terlihat di jaringan...</string>
+    <string name="replay_split_tx_broadcast">menyiarkan split tx...</string>
+    <string name="replay_description">Wallet anda akan mengirim sebuah transaksi khusus untuk dirinya sendiri yang secara permanen akan membagi koin anda dari rantai block lain. Ini akan melindungi anda dari replay attacks.</string>
+    <string name="replay_waiting_for_confirmations">menunggu konfirmasi</string>
+    <string name="replay_confirmed">terkonfirmasi</string>
+    <string name="replay_confirmations">konfirmasi:</string>
+    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+
+    <string name="replay_awaiting_confirmation">Menunggu konfirmasi Replay protection</string>
+    <string name="replay_dismiss">ABAIKAN PERINGATAN</string>
+
+    <string name="show_qr">Tunjukkan QR</string>
+    <string name="share_qr">Bagikan QR</string>
+    <string name="send_tx">Kirim transaction raw</string>
+    <string name="tx_too_large_qr">Transaksi raw terlalu besar untuk ditunjukkan dalam QR code.</string>
+
+    <string name="select_network">Pilih jaringan...</string>
+    <string name="MainNet">MainNet</string>
+    <string name="TestNet">TestNet</string>
+
+    <string name="segwit_address">Address Segwit</string>
+    <string name="segwit_switch_prompt">Dana yang tersimpan di address Segwit lebih efisien untuk bertransaksi. Menawarkan biaya penambang lebih murah saat mengirim bitcoin dari wallet anda.</string>
+
+    <string name="privkey_clipboard">Private key telah diidentifikasi di clipboard anda. Hapus isi clipboard?</string>
+
+    <string name="tx_hex">Hex Transaction</string>
+    <string name="enter_tx_hex">Masukkan transaksi dalam format hex</string>
+    <string name="broadcast">Siarkan transaksi</string>
+
+    <string name="dusting_tx">TRANSAKSI KECIL</string>
+    <string name="dusting_attempt">Adanya transaksi bernilai cukup kecil pada wallet anda menunjukkan adanya upaya untuk melacak address dan pengeluaran wallet anda. \n\nTrandai transaksi bernilai cukup kecil ini sebagai tidak terpakai untuk meminimalisik upaya pelacakan oleh pihak-pihak ketiga.</string>
+    <string name="dusting_attempt_amount">Jumlah:</string>
+    <string name="dusting_attempt_id">Index-Hash:</string>
+    <string name="dusting_attempt_ignore">Abaikan</string>
+    <string name="dusting_attempt_mark_unspendable">Tandai tidak terpakai</string>
+    <string name="paycode">PAYNYM</string>
+    <string name="dust">KECIL</string>
+    <string name="do_not_spend">Jangan Di Belanjakan</string>
+    <string name="dusting_tx_unblock">Transaksi bernilai cukup kecil ini diblokir dari perngeluaran. Buka entri blokir yang tidak terpakai ini untuk memungkinkan digunakan?</string>
+    <string name="mark_spend">Tandai terpakai</string>
+    <string name="mark_do_not_spend">Tandai jangan dibelanjakan</string>
+    <string name="mark_utxo_spend">Jadikan output yang tidak terpakai ini telah digunakan?</string>
+    <string name="mark_utxo_do_not_spend">Jadikan output yang tidak terpakai ini menjadi tidak digunakan?</string>
+
+    <string name="options_sign_a_message">Tandatangani sebuah pesan</string>
+    <string name="options_display_redeem_script">Tampilkan script penarikan</string>
+    <string name="options_view_tx">Lihat transaksi</string>
+    <string name="options_display_privkey">Tampilkan private key</string>
+    <string name="options_batch">Pengeluaran batch</string>
+
+    <string name="do_not_repeat_sent_to">Centang kotak untuk tidak membuat peringatan tentang pengiriman ulang ke address ini.</string>
+
+    <string name="mark_inputs_as_unspendable">Tandai output tidak terpakai yang menyusun input transaksi ini sebagai tidak terpakai?</string>
+
+    <string name="copy_to_clipboard">Salin pada clipboard</string>
+
+    <string name="no_bitpay">Kesalahan: Ini bukanlah permintaan bitcoin yang valid. Samourai hanya mendukung pengiriman address bitcoin yang valid.</string>
+    <string name="learn_more">Pelajari lagi</string>
+
+    <string name="paynym">PayNym</string>
+    <string name="paynyms">PayNyms</string>
+    <string name="claim_paynym">Klaim paynym anda</string>
+    <string name="claim_paynym_title1">Klaim PayNymID gratis anda</string>
+    <string name="claim_paynym_text1">Ijinkan teman anda &amp; mengontak untuk menemukan dan terhubung dengan PayNym anda secara langsung melalui wallet bitcoin yang kompatibel.</string>
+    <string name="claim_paynym_title2">Manfaat PayNymID</string>
+    <string name="claim_paynym_text2a">Nama dan gambar unik yang dihasilkan dengan hash kode paynym anda. Tidak akan pernah sama!</string>
+    <string name="claim_paynym_text2b">Tidak butuh pemeriksaan identitas! Nama dan gambar anda didasarkan pada kode paynym anda, bukan kartu ID nasional.</string>
+    <string name="claim_paynym_text2c">Mudah ditemukan! Wallet yang kompatibel dapa mencari kontak baru dan mengirim pembayaran pribadi lebih aman tanpa meninggalkan jejak.</string>
+    <string name="claim_paynym_id">Klaim PayNymID saya</string>
+    <string name="claim_paynym_id_refused">Tidak tertari. Jangan tanyakan kembali.</string>
+
+    <string name="claim_paynym_prompt">Klaim PayNymID saya dan tambahkan kode PayNym publik saya ke PayNym.is?</string>
+
+    <string name="bip47_notif_tx_insufficient_funds_1">Tambahkan PayNym ke kontak anda akan membutuhkan satu kali transaksi untuk dapat tercatat di blockchain. Deposit</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">BTC ke dalam wallet anda dan coba lagi.</string>
+    <string name="help">Bantuan</string>
+
+    <string name="passphrase_disclaimer">Saya mengerti bahwa Samourai tidak dapat membantu kasus kehilangan atau lupa frase kata sandi.</string>
+    <string name="confirm_pin_code">Konfirmasi kode pin</string>
+    <string name="re_enter_your_pin_code">Masukkan kembali kode PIN anda</string>
+    <string name="re_enter_a_passphrase">Masukkan kembali frase kata sandi</string>
+    <string name="create_a_passphrase">Buat sebuah frase kata sandi</string>
+    <string name="create_a_secure_passphrase_for_your_wallet">Buat sebuah frase kata sandi untuk keamanan wallet anda</string>
+    <string name="set_pin_code">Tentukan kode Pin</string>
+    <string name="accept_disclaimer_error">Anda harus menyetujui disclaimer</string>
+    <string name="import_external_wallet">Impor wallet luar</string>
+    <string name="import_samourai_wallet">Impor cadangan samourai</string>
+    <string name="backup_file">File cadangan</string>
+    <string name="import_an_encrypted_samourai_wallet">import cadangan samourai yang terenkripsi untuk memulihkan wallet dengan semua meta-data secara utuh</string>
+    <string name="back">KEMBALI</string>
+    <string name="finish">selesai</string>
+    <string name="choose_file">pilih file</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Fragmen Halo kosong</string>
+    <string name="add_bip39_password">Tambahkan kata sandi bip39</string>
+    <string name="close_bip39_password">Tutup kata sandi bip39</string>
+    <string name="enter_your_mnemonic_seed_to_import_a_wallet">Masukkan seed mnemonic anda untuk impor wallet dari provider lain.</string>
+    <string name="last_updated">Pembaruan terakhir</string>
+    <string name="get_help">Dapatkan bantuan</string>
+    <string name="offline_mode">Mode Offline</string>
+    <string name="import_samourai_backup">Impor cadangan Samourai</string>
+    <string name="samourai_bitcoin_wallet">Wallet Bitcoin Samourai</string>
+    <string name="enter_your_wallet_passphrase">Masukkan frase kata sandi wallet anda</string>
+    <string name="start_new_wallet">Mulai wallet baru</string>
+  <string name="get_help_create">Buat wallet: Dapatkan bantuan</string>
+  <string name="get_help_restore">Pulihkan wallet: Dapatkan bantuan</string>
+
+  <string name="fee">Biaya Penambang</string>
+    <string name="fee_low_priority">Prioritas rentah: diperkirakan 24</string>
+    <string name="fee_mid_priority">Prioritas normal: diperkirakan 6</string>
+    <string name="fee_high_priority">Prioritas tinggi: diperkirakan 2</string>
+    <string name="fee_custom_priority">Biaya ditentukan sendiri: diperkirakan</string>
+    <string name="blocks_to_cf">block sebelum konfirmasi</string>
+
+  <string name="invalid_mnemonic_word">Kata mnmonic BIP39 tidak valid</string>
+  <string name="invalid_mnemonic">Mnmonic BIP39 tidak valid</string>
+    <string name="enter_your_code_here">Masukkan kode anda disini</string>
+    <string name="declaimer_recovery_words">Saya mengkonfirmasi bahwa saya telah menuliskan kata-kata diatas dan menyimpan di lokasi yang aman dan terlindungi. Saya memahami bahwa siapapun yang memiliki akses kedua frase kata sandi dan cadangan kata-kata saya tersebut akan dapat mengakses wallet dan seluruh dana saya.</string>
+  <string name="return_to_wallet">Kembali ke wallet</string>
+  <string name="caution_message_recovery_words">Tidaklah aman untuk menyimpan kata-kata ini di komputer ataupun cloud. Tuliskan kata-kata ini di selembar kertas, lalu jaga dan amankan kerahasiaannya.</string>
+    <string name="these_words_are">Kata-kata ini adalah cadangan semua kunci rahasia yang di wallet anda.</string>
+  <string name="recovery_words">KATA-KATA PEMULIHAN</string>
+
+  <string name="permission_alert_dialog_title_sms">Meminta ijin akses SMS dan Telepon</string>
+  <string name="permission_dialog_message_sms">Wallet anda membutuhkan akses untuk dapat mengirim dan menerima SMS agar dapat menggunakan fitur peringatan remote.</string>
+  <string name="permission_alert_dialog_title_outgoing">Meminta ijin panggilan keluar</string>
+  <string name="permission_dialog_message_outgoing">Wallet anda membutuhkan akses panggilan keluar sehingga dapat menggunakan fitur mode sembunyi.</string>
+
+  <string name="permission_alert_dialog_title_external">Meminta ijin read/write</string>
+  <string name="permission_dialog_message_external">Wallet anda membutuhkan akses penyimpanan file sehingga dapat menyimpan cadangan wallet secara otomatis yang terenkripsi di perangkat anda.</string>
+  <string name="permission_alert_dialog_title_camera">Meminta ijin kamera</string>
+  <string name="permission_dialog_message_camera">Wallet anda membutuhkan akses kamera sehingga dapat memindai QR Code.</string>
+
+  <string name="use_bech32">Gunakan address bech32</string>
+
+  <string name="boltzmann_cannot">Pengeluaran STONEWALL tidak dapat dikomposisikan dengan sekumpulan transaksi tidak terpakai. Jika anda membutuhkan pengeluaran STONEWALL tekan \'TIDAK\' dan coba lagi dengan pengeluaran tidak terpakai yang telah dimodifikasi.</string>
+  <string name="boltzmann_like_typed">Perlu diperhatikan bahwa \'Menerima perubahan output yang dikehendaki\' di posisi OFF dapat menghasilkan struktur transaksi yang tidak optimal pada pengeluaran STONEWALL anda.</string>
+
+  <string name="insufficient_fee">Biaya tidak mencukupi</string>
+  <string name="action_utxo_amounts">Lihat jumlah berdasarkan tipe address</string>
+
+  <string name="total_p2pkh">Total (p2pkh):</string>
+  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+  <string name="total_p2wpkh">Total segwit (bech32):</string>
+  <string name="total_blocked">Total diblokir:</string>
+
+</resources>
