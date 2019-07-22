@@ -2,39 +2,39 @@
 <resources>
 
   <string name="alpha_create_wallet">Tulis perkataan-perkataan ini simpan di tempat yang selamat. Jangan lupa atau hilangkan perkataan ini.</string>
-    <string name="alpha_create_confirm_backup">Saya telah menuliskan kata-kata saya</string>
+    <string name="alpha_create_confirm_backup">Saya sudah tulis perkataan-perkataan ini</string>
 
-    <string name="creating_wallet">Membuat wallet. Harap tunggu...</string>
-    <string name="restoring_wallet">Pulihkan wallet. Harap tunggu...</string>
-    <string name="decrypting_bip38">Mendecrypt kata sandi BIP38. Harap tunggu...</string>
+    <string name="creating_wallet">Mencipta Dompet. Sila tunggu...</string>
+    <string name="restoring_wallet">Kembalikan Dompet. Sila tunggu...</string>
+    <string name="decrypting_bip38">Menyahsulit katalaluan BIP38. Sila tunggu...</string>
 
-    <string name="action_settings">Pengaturan</string>
-    <string name="action_support">Dukungan Pelanggan</string>
-    <string name="action_sweep">Impor &amp; hapus private key</string>
+    <string name="action_settings">Aturan</string>
+    <string name="action_support">Sokongan</string>
+    <string name="action_sweep">Periksa Katakunci Rahsia</string>
     <string name="action_bip47">PayNyms</string>
-    <string name="action_unarchive">Aktifkan seluruh kode pembayaran tersimpan</string>
-    <string name="action_sync_all">Singkronisasi seluruh kode pembayayan</string>
+    <string name="action_unarchive">Aktifkan seluruh kod pembayaran tersimpan</string>
+    <string name="action_sync_all">Selarikan seluruh kod pembayaran</string>
 
-    <string name="about_us">Tentang Wallet Samourai</string>
+    <string name="about_us">Tentang Dompet Samourai</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Batal</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
-    <string name="options_cat_stealth">Mode Sembunyi</string>
-    <string name="options_cat_remote">Remote</string>
-    <string name="options_cat_wallet">Wallet</string>
+    <string name="options_cat_prefs">Penjelajah Blok</string>
+    <string name="options_cat_stealth">Mod Tesembunyi</string>
+    <string name="options_cat_remote">Kawalan Jauh</string>
+    <string name="options_cat_wallet">Dompet</string>
     <string name="options_cat_networking">Jaringan</string>
     <string name="options_cat_other">Tentang</string>
 
-    <string name="options_mnemonic">Tunjukkan mnemonic</string>
-    <string name="options_mnemonic2">Tunjukkan 12-kata seed wallet ini.</string>
-    <string name="options_xpub">Tunjukkan XPUB BIP44</string>
-    <string name="options_xpub2">Tunjukkan public key tambahan untuk akun BIP44.</string>
-    <string name="options_xpub49">Tunjukkan YPUB Segwit</string>
-    <string name="options_xpub49_2">Tunjukkan public key tambahan akun Segwit BIP49 (P2SH-wrapped).</string>
-    <string name="options_xpub84">Tunjukkan ZPUB Segwit</string>
-    <string name="options_xpub84_2">Tunjukkan public key tambahan untuk akun Segwit BIP84 (Bech32).</string>
+    <string name="options_mnemonic">Pamirkan mnemonic</string>
+    <string name="options_mnemonic2">Pamirkan 12-kata seed dompet ini.</string>
+    <string name="options_xpub">Pamirkan XPUB BIP44</string>
+    <string name="options_xpub2">Pamirkan public key tambahan untuk akaun BIP44.</string>
+    <string name="options_xpub49">Pamirkan YPUB Segwit</string>
+    <string name="options_xpub49_2">Pamirkan public key tambahan akaun Segwit BIP49 (P2SH-wrapped).</string>
+    <string name="options_xpub84">Pamirkan ZPUB Segwit</string>
+    <string name="options_xpub84_2">Pamirkan public key tambahan untuk akaun Segwit BIP84 (Bech32).</string>
     <string name="options_wipe">Hapus wallet dengan aman</string>
     <string name="options_wipe2">Hapus wallet dari perangkat ini secara aman.</string>
     <string name="options_stealth_display">Launcher Mode Sembunyi</string>
