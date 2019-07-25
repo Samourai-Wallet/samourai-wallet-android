@@ -69,9 +69,8 @@ public class CahootReviewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         if (payload != null) {
-            Log.i(TAG, "onViewCreated: ".concat(payload.getDestination()));
             toAddress.setText(payload.getDestination());
-            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount())));
+            sendBtn.setText(getString(R.string.send).concat(" ").concat(formatForBtc(payload.getSpendAmount()+payload.getFeeAmount())));
             amountInBtc.setText(formatForBtc(payload.getSpendAmount()));
             amountInSats.setText(String.valueOf(payload.getSpendAmount()).concat(" sat"));
             if ((payload.getFeeAmount() == 0)) {

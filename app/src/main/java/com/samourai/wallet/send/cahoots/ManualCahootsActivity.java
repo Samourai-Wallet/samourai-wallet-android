@@ -608,6 +608,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
         System.out.println("step 2:" + stowaway2.toJSON().toString(2));
 //        steps.get(2).setCahootsPayload(stowaway2.toJSON().toString());
         stowaway2.setStep(2);
+        stowaway2.setFeeAmount(fee);
 
         payload = stowaway2;
 
