@@ -483,7 +483,7 @@ public class SendActivity extends AppCompatActivity {
                     pct = ((double) feeMed / value);
                     nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
                 }
-                tvEstimatedBlockWait.setText(nbBlocks + " blocks");
+                tvEstimatedBlockWait.setText(nbBlocks +" blocks");
                 setFee(value);
                 setFeeLabels();
 
@@ -948,6 +948,7 @@ public class SendActivity extends AppCompatActivity {
             sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
+
             return true;
         }
 
@@ -1062,7 +1063,11 @@ public class SendActivity extends AppCompatActivity {
 
                     long ricochetFee = hop0Fee + (RicochetMeta.defaultNbHops * perHopFee);
 
-                    tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
+                    if(selectedCahootsType == SelectCahootsType.type.NONE){
+                        tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
+                    }else {
+                        tvTotalFee.setText("__");
+                    }
 
                     ricochetMessage = getText(R.string.ricochet_spend1) + " " + address + " " + getText(R.string.ricochet_spend2) + " " + Coin.valueOf(totalAmount).toPlainString() + " " + getText(R.string.ricochet_spend3);
 
@@ -1389,7 +1394,12 @@ public class SendActivity extends AppCompatActivity {
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
             message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
-            tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
+            if(selectedCahootsType == SelectCahootsType.type.NONE){
+                tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
+            }else {
+                tvTotalFee.setText("__");
+            }
+
 
             double value = Double.parseDouble(String.valueOf(_fee.add(BigInteger.valueOf(amount))));
 
