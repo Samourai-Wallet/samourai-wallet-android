@@ -162,6 +162,15 @@ public class ManualCahootsActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        AppUtil.getInstance(this).setIsInForeground(true);
+
+        AppUtil.getInstance(this).checkTimeOut();
+
+    }
 
     private void createSteps() {
         for (int i = 0; i < 4; i++) {
@@ -233,6 +242,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
             viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
             stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
+
             try {
                 switch (step) {
                     case 0:
@@ -260,8 +270,12 @@ public class ManualCahootsActivity extends AppCompatActivity {
         if (stonewall != null) {
             int step = stonewall.getStep();
             viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
-            stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 1));
+            stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
+            if(step == 2){
+                Log.i(TAG, "onScanCahootsPayload: ____ ______ ");
+                ( (CahootsStepFragment) steps.get(step + 1) ).setStowaway(stonewall);
+            }
             try {
                 switch (step) {
                     case 0:
@@ -412,7 +426,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
 
     }
 
-    public String doStowaway0(long spendAmount, int account) {
+    public void doStowaway0(long spendAmount, int account) {
         // Bob -> Alice, spendAmount in sats
         stepsViewGroup.post(() -> stepsViewGroup.setStep(1));
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
@@ -426,7 +440,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
         Stowaway stowaway0 = new Stowaway(spendAmount, params, account);
         stowaway0.setStep(0);
         payload = stowaway0;
-        return stowaway0.toJSON().toString();
     }
 
     private void doStowaway1(Stowaway stowaway0) throws Exception {
