@@ -25,7 +25,7 @@ import java.util.Locale;
 public class CahootsStepFragment extends Fragment {
 
     private Button showQRBtn, scanQRbtn, pasteBtn;
-    private TextView stoneWallx2TotalFee,stoneWallx2SplitFee;
+    private TextView stoneWallx2TotalFee, stoneWallx2SplitFee;
     private ViewGroup feeSplitUpContainer;
     private int step = 0;
     private static final String TAG = "CahootsStepView";
@@ -50,12 +50,11 @@ public class CahootsStepFragment extends Fragment {
         stoneWallx2TotalFee = view.findViewById(R.id.stonewall_splitup_total_fee);
         stoneWallx2SplitFee = view.findViewById(R.id.stonewall_collab_fee);
         feeSplitUpContainer = view.findViewById(R.id.stonewall_fee_splitup_container);
-//        feeSplitUpContainer.setVisibility(View.GONE);
         step = getArguments().getInt("step");
         stepText.setText("Step ".concat(String.valueOf(step + 1)));
         scanQRbtn.setOnClickListener(view1 -> {
             CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-            cameraFragmentBottomSheet.show(((AppCompatActivity) getActivity()).getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
+            cameraFragmentBottomSheet.show(getActivity().getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
             cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
                 cameraFragmentBottomSheet.dismissAllowingStateLoss();
                 if (cahootsFragmentListener != null) {
@@ -82,13 +81,11 @@ public class CahootsStepFragment extends Fragment {
             }
         });
         if (this.stowaway != null) {
-            Log.i(TAG, "onViewCreated: ".concat("CAHOOTS CALL"));
             if (stowaway.getStep() == 2) {
                 feeSplitUpContainer.post(() -> {
                     feeSplitUpContainer.setVisibility(View.VISIBLE);
                 });
 
-                Log.i(TAG, "setStowaway: ".concat("dsd"));
                 stoneWallx2TotalFee.setText(formatForBtc(this.stowaway.getFeeAmount()));
                 stoneWallx2SplitFee.setText(formatForBtc(this.stowaway.getFeeAmount() / 2));
             }
@@ -107,7 +104,6 @@ public class CahootsStepFragment extends Fragment {
 
     public void setStowaway(STONEWALLx2 stonewalLx2) {
         this.stowaway = stonewalLx2;
-        Log.i(TAG, "setStowaway: ");
     }
 
     interface CahootsFragmentListener {

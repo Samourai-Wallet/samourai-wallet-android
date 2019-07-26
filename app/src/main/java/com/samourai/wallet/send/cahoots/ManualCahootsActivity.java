@@ -273,7 +273,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
             stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
             if(step == 2){
-                Log.i(TAG, "onScanCahootsPayload: ____ ______ ");
                 ( (CahootsStepFragment) steps.get(step + 1) ).setStowaway(stonewall);
             }
             try {
@@ -1114,6 +1113,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
     // sender
     //
     private void doSTONEWALLx2_4(STONEWALLx2 stonewall3) throws Exception {
+        
 
         HashMap<String, String> utxo2Address = new HashMap<String, String>();
         List<UTXO> utxos = null;
