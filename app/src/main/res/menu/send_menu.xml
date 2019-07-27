@@ -6,6 +6,44 @@
         android:visible="true"
         android:title=""
         app:showAsAction="always" />
-    <item android:id="@+id/item" app:showAsAction="never"
-        android:title="item" />
+
+    <item android:id="@+id/select_paynym"
+        android:icon="@drawable/ic_action_account_circle"
+        android:visible="true"
+        android:title=""
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_batch"
+        android:title="@string/options_batch"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+
+    <item android:id="@+id/action_utxo"
+        android:title="@string/options_utxo"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/action_fees"
+        android:title="@string/options_fees"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/action_ricochet"
+        android:title="@string/action_ricochet"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/action_empty_ricochet"
+        android:title="@string/action_empty_ricochet"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+
+    <item android:id="@+id/action_support"
+        android:title="@string/action_support"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+
 </menu>

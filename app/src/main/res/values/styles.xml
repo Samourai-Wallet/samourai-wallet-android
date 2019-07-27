@@ -32,6 +32,10 @@
         <item name="android:colorButtonNormal">@color/accent</item>
     </style>
 
+    <style name="LandingToolbar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="actionMenuTextColor">@color/white</item>
+    </style>
+
     <style name="popMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:textColor">@android:color/black</item>
     </style>
@@ -41,18 +45,38 @@
     </style>
 
     <style name="ui_2_theme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="android:colorAccent">@android:color/white</item>
         <item name="android:windowBackground">@color/windowDark</item>
-        <item name="android:statusBarColor">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/grey_accent</item>
         <item name="android:colorControlActivated">@color/blue</item>
+        <item name="android:navigationBarColor">@color/windowDark</item>
     </style>
 
-    <style name="whirlpool_theme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:colorAccent">@android:color/white</item>
+    <style name="whirlpoolTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:colorAccent">@color/whirlpoolBlue</item>
         <item name="android:windowBackground">@color/windowDark</item>
-        <item name="android:statusBarColor">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/whirlpoolBlue</item>
         <item name="android:colorControlActivated">@color/blue</item>
+        <item name="android:navigationBarColor">@color/windowDark</item>
     </style>
+
+    <style name="ui_2_theme_dark_status" parent="ui_2_theme">
+        <item name="android:navigationBarColor">@color/windowDark</item>
+        <item name="android:statusBarColor">@color/windowDark</item>
+
+    </style>
+    
+    <style name="AppTheme.Launcher" parent="ui_2_theme_dark_status">
+        <item name="android:statusBarColor">
+            @color/window
+        </item>
+        <item name="android:windowBackground">
+            @drawable/launch_screen
+        </item>
+    </style>
+
 
 
     <style name="WhirlPoolHorizontalProgress" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
@@ -60,6 +84,23 @@
         <item name="android:progressTint">@color/green_ui_2</item>
         <!--<item name="android:minHeight">8dip</item>-->
         <!--<item name="android:maxHeight">22dip</item>-->
+    </style>
+
+    <style name="BalanceToolbarExpandedTitleStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">42sp</item>
+        <item name="android:textColor">@color/primary_light</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@font/roboto_mono</item>
+    </style>
+
+    <style name="FloatingLabelStylePaynym" parent="TextAppearance.AppCompat">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
 </resources>

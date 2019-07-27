@@ -20,6 +20,12 @@
         />
 
     <Preference
+        android:title="@string/options_indexes"
+        android:summary="@string/options_indexes2"
+        android:key="idx"
+        />
+
+    <Preference
         android:title="@string/options_address_calc"
         android:summary="@string/options_address_calc2"
         android:key="acalc"

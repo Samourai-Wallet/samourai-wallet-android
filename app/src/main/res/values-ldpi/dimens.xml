@@ -1,0 +1,11 @@
+<resources>
+
+    <dimen name="balance_toolbar_text_size">
+        24sp
+    </dimen>
+
+    <dimen name="pinentry_box_size">
+        48dp
+    </dimen>
+
+</resources>

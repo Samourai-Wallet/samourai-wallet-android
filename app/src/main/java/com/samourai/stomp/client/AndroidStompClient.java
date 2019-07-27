@@ -1,6 +1,7 @@
 package com.samourai.stomp.client;
 
 import com.google.gson.Gson;
+import com.samourai.whirlpool.client.utils.MessageErrorListener;
 import com.samourai.whirlpool.protocol.WhirlpoolProtocol;
 
 import org.slf4j.Logger;
@@ -9,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.websocket.MessageHandler;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
@@ -37,7 +36,7 @@ public class AndroidStompClient implements IStompClient {
     }
 
     @Override
-    public void connect(String url, Map<String, String> stompHeaders, final MessageHandler.Whole<IStompMessage> onConnect, final MessageHandler.Whole<Throwable> onDisconnect) {
+    public void connect(String url, Map<String, String> stompHeaders, final MessageErrorListener<IStompMessage, Throwable> onConnectOnDisconnectListener) {
         try {
             log.info("connecting to " + url);
             stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
@@ -52,7 +51,7 @@ public class AndroidStompClient implements IStompClient {
                             case OPENED:
                                 log.info("connected");
                                 // send back headers: no way to get connected headers on Android?
-                                onConnect.onMessage(null);
+                                onConnectOnDisconnectListener.onMessage(null);
                                 break;
                             case ERROR:
                                 log.error("Stomp connection error", lifecycleEvent.getException());
@@ -60,7 +59,7 @@ public class AndroidStompClient implements IStompClient {
                             case CLOSED:
                                 log.info("disconnected");
                                 disconnect();
-                                onDisconnect.onMessage(new Exception("disconnected"));
+                                onConnectOnDisconnectListener.onError(new Exception("disconnected"));
                         }
                     }
                 });
@@ -68,7 +67,7 @@ public class AndroidStompClient implements IStompClient {
             stompClient.connect(myHeaders);
         }catch(Exception e) {
             log.error("connect error", e);
-            onDisconnect.onMessage(new Exception("connect error"));
+            onConnectOnDisconnectListener.onError(new Exception("connect error"));
             throw e;
         }
     }
@@ -79,7 +78,7 @@ public class AndroidStompClient implements IStompClient {
     }
 
     @Override
-    public void subscribe(Map<String, String> stompHeaders, final MessageHandler.Whole<IStompMessage> onMessage, MessageHandler.Whole<String> onError) {
+    public void subscribe(Map<String, String> stompHeaders, final MessageErrorListener<IStompMessage, String> onMessageOnErrorListener) {
         try {
             String destination = getDestination(stompHeaders);
             List<StompHeader> myHeaders = computeHeaders(stompHeaders);
@@ -95,17 +94,17 @@ public class AndroidStompClient implements IStompClient {
                                 String jsonPayload = stompMessage.getPayload();
                                 Object objectPayload = gson.fromJson(jsonPayload, Class.forName(messageType));
                                 AndroidStompMessage androidStompMessage = new AndroidStompMessage(stompMessage, objectPayload);
-                                onMessage.onMessage(androidStompMessage);
+                                onMessageOnErrorListener.onMessage(androidStompMessage);
                             } catch(Exception e) {
                                 log.error("stompClient.accept error", e);
-                                onError.onMessage(e.getMessage());
+                                onMessageOnErrorListener.onError(e.getMessage());
                             }
                         }
                     });
         }
         catch (Exception e) {
             log.error("subscribe error", e);
-            onError.onMessage(e.getMessage());
+            onMessageOnErrorListener.onError(e.getMessage());
         }
         log.info("subscribed");
     }
@@ -144,6 +143,11 @@ public class AndroidStompClient implements IStompClient {
                 stompClient.disconnect();
             } catch(Exception e) {}
         }
+    }
+
+    @Override
+    public IStompClient copyForNewClient() {
+        return new AndroidStompClient();
     }
 
     private String getDestination(Map<String, String> stompHeaders) {

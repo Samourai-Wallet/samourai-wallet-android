@@ -1,23 +1,27 @@
 package com.samourai.wallet;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Vibrator;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.transition.ChangeBounds;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.samourai.wallet.access.AccessFactory;
@@ -32,6 +36,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.widgets.PinEntryView;
 
 import org.apache.commons.codec.DecoderException;
 import org.bitcoinj.core.AddressFormatException;
@@ -46,7 +51,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class PinEntryActivity extends Activity {
+public class PinEntryActivity extends AppCompatActivity {
 
     private Button ta = null;
     private Button tb = null;
@@ -62,8 +67,8 @@ public class PinEntryActivity extends Activity {
     private ImageButton tback = null;
     private Vibrator vibrator;
 
-    private TextView tvPrompt = null;
-    private TextView tvUserInput = null;
+//    private TextView tvPrompt = null;
+//    private TextView tvUserInput = null;
 
     private ScrambledPin keypad = null;
 
@@ -73,30 +78,63 @@ public class PinEntryActivity extends Activity {
     private boolean confirm = false;            // confirm PIN
     private String strConfirm = null;
     private String strSeed = null;
-    private String strPassphrase = null;
+    private String strPassphrase = "";
     private boolean isOpenDime = false;
 
-    private ProgressDialog progress = null;
 
     private String strUri = null;
 
     private static int failures = 0;
+    private PinEntryView pinEntryView;
+    LinearLayout pinEntryMaskLayout;
+    private ProgressBar progressBar;
+    private static final String TAG = "PinEntryActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.grid);
+        setContentView(R.layout.activity_pinentry);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         userInput = new StringBuilder();
         keypad = new ScrambledPin();
-
-        tvUserInput = (TextView) findViewById(R.id.userInput);
-        tvUserInput.setText("");
+        pinEntryView = findViewById(R.id.pinentry_view);
+        setSupportActionBar(findViewById(R.id.toolbar_pinEntry));
+        pinEntryMaskLayout = findViewById(R.id.pin_entry_mask_layout);
+        progressBar = findViewById(R.id.progress_pin_entry);
+//        tvUserInput = (TextView) findViewById(R.id.userInput);
+//        tvUserInput.setText("");
 
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-        tvPrompt = (TextView) findViewById(R.id.prompt2);
+        pinEntryView.setEntryListener((key, view) -> {
+            if (userInput.length() <= AccessFactory.MAX_PIN_LENGTH) {
+                userInput = userInput.append(key);
+                if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
+                    pinEntryView.showCheckButton();
+                } else {
+                    pinEntryView.hideCheckButton();
+                }
+                setPinMaskView();
+            }
+        });
+        pinEntryView.setClearListener(clearType -> {
+            if (clearType == PinEntryView.KeyClearTypes.CLEAR) {
+                if (userInput.length() != 0)
+                    userInput = new StringBuilder(userInput.substring(0, (userInput.length() - 1)));
+            } else {
+                strPassphrase = "";
+                userInput = new StringBuilder();
+                pinEntryMaskLayout.removeAllViews();
+            }
+            setPinMaskView();
+            if (strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH) {
+                pinEntryView.showCheckButton();
+            } else {
+                pinEntryView.hideCheckButton();
+            }
+        });
+
 
         boolean scramble = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.SCRAMBLE_PIN, false);
 
@@ -106,11 +144,15 @@ public class PinEntryActivity extends Activity {
         } else {
             strUri = null;
         }
+        if (scramble) {
+            pinEntryView.setScramble(true);
+        }
+
 
         Bundle extras = getIntent().getExtras();
 
         if (extras != null && extras.containsKey("create") && extras.getBoolean("create") == true) {
-            tvPrompt.setText(R.string.create_pin);
+//            tvPrompt.setText(R.string.create_pin);
             scramble = false;
             create = true;
             confirm = false;
@@ -118,7 +160,7 @@ public class PinEntryActivity extends Activity {
             strPassphrase = extras.getString("passphrase");
             Toast.makeText(PinEntryActivity.this, R.string.pin_5_8, Toast.LENGTH_LONG).show();
         } else if (extras != null && extras.containsKey("confirm") && extras.getBoolean("confirm") == true) {
-            tvPrompt.setText(R.string.confirm_pin);
+//            tvPrompt.setText(R.string.confirm_pin);
             scramble = false;
             create = false;
             confirm = true;
@@ -139,107 +181,78 @@ public class PinEntryActivity extends Activity {
         if (strPassphrase == null) {
             strPassphrase = "";
         }
+        if (!PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true)) {
+            pinEntryView.disableHapticFeedBack();
+        }
+        pinEntryView.setConfirmClickListner(view -> {
 
-        ta = (Button) findViewById(R.id.ta);
-        ta.setText(scramble ? Integer.toString(keypad.getMatrix().get(0).getValue()) : "1");
-        tb = (Button) findViewById(R.id.tb);
-        tb.setText(scramble ? Integer.toString(keypad.getMatrix().get(1).getValue()) : "2");
-        tc = (Button) findViewById(R.id.tc);
-        tc.setText(scramble ? Integer.toString(keypad.getMatrix().get(2).getValue()) : "3");
-        td = (Button) findViewById(R.id.td);
-        td.setText(scramble ? Integer.toString(keypad.getMatrix().get(3).getValue()) : "4");
-        te = (Button) findViewById(R.id.te);
-        te.setText(scramble ? Integer.toString(keypad.getMatrix().get(4).getValue()) : "5");
-        tf = (Button) findViewById(R.id.tf);
-        tf.setText(scramble ? Integer.toString(keypad.getMatrix().get(5).getValue()) : "6");
-        tg = (Button) findViewById(R.id.tg);
-        tg.setText(scramble ? Integer.toString(keypad.getMatrix().get(6).getValue()) : "7");
-        th = (Button) findViewById(R.id.th);
-        th.setText(scramble ? Integer.toString(keypad.getMatrix().get(7).getValue()) : "8");
-        ti = (Button) findViewById(R.id.ti);
-        ti.setText(scramble ? Integer.toString(keypad.getMatrix().get(8).getValue()) : "9");
-        tj = (Button) findViewById(R.id.tj);
-        tj.setText(scramble ? Integer.toString(keypad.getMatrix().get(9).getValue()) : "0");
-        tsend = (ImageButton) findViewById(R.id.tsend);
-        tback = (ImageButton) findViewById(R.id.tback);
+            if (create && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
+                Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("confirm", true);
+                intent.putExtra("create", false);
+                intent.putExtra("first", userInput.toString());
+                intent.putExtra("seed", strSeed);
+                intent.putExtra("passphrase", strPassphrase);
+                startActivity(intent);
+            } else if (confirm && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
 
-        tsend.setVisibility(View.INVISIBLE);
-        tsend.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                if (userInput.toString().equals(strConfirm)) {
 
-                if (create && userInput.toString().length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    initThread(strSeed == null, userInput.toString(), strPassphrase, strSeed == null ? null : strSeed);
+
+                } else {
                     Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("confirm", true);
-                    intent.putExtra("create", false);
-                    intent.putExtra("first", userInput.toString());
+                    intent.putExtra("create", true);
                     intent.putExtra("seed", strSeed);
                     intent.putExtra("passphrase", strPassphrase);
                     startActivity(intent);
-                } else if (confirm && userInput.toString().length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
-
-                    if (userInput.toString().equals(strConfirm)) {
-
-                        progress = new ProgressDialog(PinEntryActivity.this);
-                        progress.setCancelable(false);
-                        progress.setTitle(R.string.app_name);
-                        progress.setMessage(strSeed == null ? getString(R.string.creating_wallet) : getString(R.string.restoring_wallet));
-                        progress.show();
-
-                        initThread(strSeed == null ? true : false, userInput.toString(), strPassphrase, strSeed == null ? null : strSeed);
-
-                    } else {
-                        Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("create", true);
-                        intent.putExtra("seed", strSeed);
-                        intent.putExtra("passphrase", strPassphrase);
-                        startActivity(intent);
-                    }
-
-                } else {
-                    if (userInput.toString().length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
-                        validateThread(userInput.toString(), strUri);
-                    }
                 }
 
+            } else {
+                if (userInput.toString().length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
+                    validateThread(userInput.toString(), strUri);
+                }
             }
         });
 
-        tback.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
+//
 
-                if (userInput.toString().length() > 0) {
-                    userInput.deleteCharAt(userInput.length() - 1);
-                    if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
-                        vibrator.vibrate(55);
-                    }
-                }
-                displayUserInput();
+    }
 
+    private void setPinMaskView() {
+
+        pinEntryMaskLayout.post(() -> {
+            if (userInput.length() == 0) {
+                pinEntryMaskLayout.removeAllViews();
+                return;
             }
-        });
-
-        tback.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (userInput.toString().length() > 0) {
-                    userInput.setLength(0);
-                    if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
-                        vibrator.vibrate(55);
-                    }
+            if (userInput.length() > pinEntryMaskLayout.getChildCount() && userInput.length() != 0) {
+                ImageView image = new ImageView(getApplicationContext());
+                image.setImageDrawable(getResources().getDrawable(R.drawable.circle_dot_white));
+                image.getDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.ADD);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(8, 0, 8, 0);
+                TransitionManager.beginDelayedTransition(pinEntryMaskLayout, new ChangeBounds().setDuration(50));
+                pinEntryMaskLayout.addView(image, params);
+            } else {
+                if (pinEntryMaskLayout.getChildCount() != 0) {
+                    TransitionManager.beginDelayedTransition(pinEntryMaskLayout, new ChangeBounds().setDuration(200));
+                    pinEntryMaskLayout.removeViewAt(pinEntryMaskLayout.getChildCount() - 1);
                 }
-                displayUserInput();
-                return false;
             }
         });
 
     }
 
     public void OnNumberPadClick(View view) {
-        if(PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true)    {
+        if (PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true) == true) {
             vibrator.vibrate(55);
         }
         userInput.append(((Button) view).getText().toString());
@@ -248,10 +261,10 @@ public class PinEntryActivity extends Activity {
 
     private void displayUserInput() {
 
-        tvUserInput.setText("");
+//        tvUserInput.setText("");
 
         for (int i = 0; i < userInput.toString().length(); i++) {
-            tvUserInput.append("*");
+//            tvUserInput.append("*");
         }
 
         if (userInput.toString().length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
@@ -264,53 +277,46 @@ public class PinEntryActivity extends Activity {
 
     private void validateThread(final String pin, final String uri) {
 
-        final ProgressDialog progress = new ProgressDialog(PinEntryActivity.this);
+        progressBar.setVisibility(View.VISIBLE);
 
-        if (progress != null && progress.isShowing()) {
-            progress.dismiss();
-        }
+        new Thread(() -> {
+            Looper.prepare();
 
-        progress.setCancelable(false);
-        progress.setTitle(R.string.app_name);
-        progress.setMessage(getString(R.string.please_wait));
-        progress.show();
+            if (pin.length() < AccessFactory.MIN_PIN_LENGTH || pin.length() > AccessFactory.MAX_PIN_LENGTH) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.INVISIBLE);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
+                });
+                Toast.makeText(PinEntryActivity.this, R.string.pin_error, Toast.LENGTH_SHORT).show();
+                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+            }
 
-                if (pin.length() < AccessFactory.MIN_PIN_LENGTH || pin.length() > AccessFactory.MAX_PIN_LENGTH) {
-                    if (progress != null && progress.isShowing()) {
-                        progress.dismiss();
-                    }
-                    Toast.makeText(PinEntryActivity.this, R.string.pin_error, Toast.LENGTH_SHORT).show();
-                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
-                }
+            String randomKey = AccessFactory.getInstance(PinEntryActivity.this).getGUID();
+            if (randomKey.length() < 1) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.INVISIBLE);
 
-                String randomKey = AccessFactory.getInstance(PinEntryActivity.this).getGUID();
-                if (randomKey.length() < 1) {
-                    if (progress != null && progress.isShowing()) {
-                        progress.dismiss();
-                    }
-                    Toast.makeText(PinEntryActivity.this, R.string.random_key_error, Toast.LENGTH_SHORT).show();
-                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
-                }
+                });
+                Toast.makeText(PinEntryActivity.this, R.string.random_key_error, Toast.LENGTH_SHORT).show();
+                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+            }
 
-                String hash = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.ACCESS_HASH, "");
-                if (AccessFactory.getInstance(PinEntryActivity.this).validateHash(hash, randomKey, new CharSequenceX(pin), AESUtil.DefaultPBKDF2Iterations)) {
+            String hash = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.ACCESS_HASH, "");
+            if (AccessFactory.getInstance(PinEntryActivity.this).validateHash(hash, randomKey, new CharSequenceX(pin), AESUtil.DefaultPBKDF2Iterations)) {
 
-                    AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
+                AccessFactory.getInstance(PinEntryActivity.this).setPIN(pin);
 
-                    try {
-                        HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
+                try {
+                    HD_Wallet hdw = PayloadUtil.getInstance(PinEntryActivity.this).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(PinEntryActivity.this).getGUID() + pin));
 
-                        if (progress != null && progress.isShowing()) {
-                            progress.dismiss();
-                        }
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.INVISIBLE);
 
-                        if (hdw == null) {
+                    });
 
+                    if (hdw == null) {
+
+                        runOnUiThread(() -> {
                             failures++;
                             Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
 
@@ -322,39 +328,41 @@ public class PinEntryActivity extends Activity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }
+                        });
 
-                        }
 
-                        AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
-                        TimeOutUtil.getInstance().updatePin();
-                        if (isOpenDime) {
+                    }
+
+                    AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
+                    TimeOutUtil.getInstance().updatePin();
+                    if (isOpenDime) {
+                        runOnUiThread(() -> {
                             Intent intent = new Intent(PinEntryActivity.this, OpenDimeActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        } else if (uri != null) {
-                            Log.i("PinEntryActivity", "uri to restartApp()");
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp("uri", uri);
-                        } else {
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
-                        }
+                        });
 
-                    } catch (MnemonicException.MnemonicLengthException mle) {
-                        mle.printStackTrace();
-                    } catch (DecoderException de) {
-                        de.printStackTrace();
-                    } finally {
-                        if (progress != null && progress.isShowing()) {
-                            progress.dismiss();
-                        }
+                    }  else {
+                        AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                     }
 
-                } else {
-                    if (progress != null && progress.isShowing()) {
-                        progress.dismiss();
-                    }
+                } catch (MnemonicException.MnemonicLengthException mle) {
+                    mle.printStackTrace();
+                } catch (DecoderException de) {
+                    de.printStackTrace();
+                } finally {
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.INVISIBLE);
 
+                    });
+                }
+
+            } else {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.INVISIBLE);
                     failures++;
                     Toast.makeText(PinEntryActivity.this, PinEntryActivity.this.getText(R.string.login_error) + ":" + failures + "/3", Toast.LENGTH_SHORT).show();
+
 
                     if (failures == 3) {
                         failures = 0;
@@ -362,18 +370,20 @@ public class PinEntryActivity extends Activity {
                     } else {
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (getIntent().getExtras() != null)
+                            intent.putExtras(getIntent().getExtras());
                         startActivity(intent);
                     }
-
-                }
-
-                if (progress != null && progress.isShowing()) {
-                    progress.dismiss();
-                }
-
-                Looper.loop();
+                });
 
             }
+
+            runOnUiThread(() -> {
+                progressBar.setVisibility(View.INVISIBLE);
+
+            });
+
+
         }).start();
 
     }
@@ -482,15 +492,15 @@ public class PinEntryActivity extends Activity {
                                 mle.printStackTrace();
                             }
 
-                            Intent intent = new Intent(PinEntryActivity.this,  RecoveryWordsActivity.class);
-                            intent.putExtra("BIP39_WORD_LIST",seed);
+                            Intent intent = new Intent(PinEntryActivity.this, RecoveryWordsActivity.class);
+                            intent.putExtra("BIP39_WORD_LIST", seed);
                             startActivity(intent);
                             finish();
 
                         } else {
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                             TimeOutUtil.getInstance().updatePin();
-                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                            AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                         }
 
                     } else {
@@ -511,10 +521,7 @@ public class PinEntryActivity extends Activity {
                     ;
                 }
 
-                if (progress != null && progress.isShowing()) {
-                    progress.dismiss();
-                    progress = null;
-                }
+                progressBar.setVisibility(View.INVISIBLE);
 
                 Looper.loop();
 
@@ -559,20 +566,17 @@ public class PinEntryActivity extends Activity {
                                 final String pw = passphrase.getText().toString();
                                 if (pw == null || pw.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                                 }
 
                                 final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
                                 if (decrypted == null || decrypted.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
-                                    AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                    AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
                                 }
 
-                                progress = new ProgressDialog(PinEntryActivity.this);
-                                progress.setCancelable(false);
-                                progress.setTitle(R.string.app_name);
-                                progress.setMessage(getString(R.string.please_wait));
-                                progress.show();
+
+                                progressBar.setVisibility(View.VISIBLE);
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -609,10 +613,9 @@ public class PinEntryActivity extends Activity {
                                             de.printStackTrace();
                                             Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                                         } finally {
-                                            if (progress != null && progress.isShowing()) {
-                                                progress.dismiss();
-                                                progress = null;
-                                            }
+                                            runOnUiThread(() -> {
+                                                progressBar.setVisibility(View.INVISIBLE);
+                                            });
 
                                             new AlertDialog.Builder(PinEntryActivity.this)
                                                     .setTitle(R.string.app_name)
@@ -622,7 +625,7 @@ public class PinEntryActivity extends Activity {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
 
                                                             dialog.dismiss();
-                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                                            AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
 
                                                         }
                                                     }).show();
@@ -638,7 +641,7 @@ public class PinEntryActivity extends Activity {
                         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                AppUtil.getInstance(PinEntryActivity.this).restartApp();
+                                AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
 
                             }
                         });
@@ -651,6 +654,8 @@ public class PinEntryActivity extends Activity {
         } else {
             Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (getIntent().getExtras() != null)
+                intent.putExtras(getIntent().getExtras());
             startActivity(intent);
         }
 

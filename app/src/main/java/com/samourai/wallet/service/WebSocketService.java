@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -16,7 +17,6 @@ import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.PrefsUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,19 +43,17 @@ public class WebSocketService extends Service {
 
         super.onCreate();
 
-        if(AppUtil.getInstance(WebSocketService.this).isOfflineMode())    {
-            return;
-        }
-
         //
         context = this.getApplicationContext();
 
-        JWT jwt = new JWT(APIFactory.getInstance(WebSocketService.this).getAccessToken());
-        if(jwt.isExpired(APIFactory.getInstance(WebSocketService.this).getAccessTokenRefresh()))    {
-            if(!APIFactory.getInstance(WebSocketService.this).getToken())  {
-                return;
-            }
-        }
+        new Thread(() -> {
+            Looper.prepare();
+
+            APIFactory.getInstance(context).stayingAlive();
+
+            Looper.loop();
+
+        }).start();
 
         try {
             if(HD_WalletFactory.getInstance(context).get() == null)    {

@@ -69,6 +69,8 @@
                         android:layout_height="230dp"
                         android:horizontalSpacing="8dp"
                         android:numColumns="3"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
                         android:paddingBottom="5dp"
                         android:verticalSpacing="18dp" />
 

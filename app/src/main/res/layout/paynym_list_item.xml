@@ -1,0 +1,52 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/TransactionsToday"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tx_ripples"
+    android:clickable="true"
+    android:orientation="vertical">
+
+
+    <com.samourai.wallet.widgets.CircleImageView
+        android:id="@+id/paynym_avatar"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:transitionName="profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/paynym" />
+
+    <TextView
+        android:id="@+id/paynym_code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/paynym_avatar"
+        app:layout_constraintEnd_toStartOf="@+id/arrow"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toEndOf="@+id/paynym_avatar"
+        app:layout_constraintTop_toTopOf="@+id/paynym_avatar"
+        tools:text="+whiteflower" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_chevron_right_white_24dp"
+        android:tint="#7E7E7E"
+        app:layout_constraintBottom_toBottomOf="@+id/paynym_code"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/paynym_code" />
+
+
+</android.support.constraint.ConstraintLayout>

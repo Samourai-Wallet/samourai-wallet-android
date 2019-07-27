@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
@@ -38,23 +39,25 @@ import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import com.google.common.base.Splitter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Activity;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.RBFSpend;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SendParams;
 import com.samourai.wallet.send.UTXO;
@@ -62,26 +65,10 @@ import com.samourai.wallet.send.UTXOFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
+import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
 import com.yanzhenjie.zbar.Symbol;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -91,6 +78,25 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 public class BatchSendActivity extends Activity {
 
@@ -118,8 +124,6 @@ public class BatchSendActivity extends Activity {
 
     private String defaultSeparator = null;
 
-    private int selectedAccount = 0;
-
     private String strPCode = null;
 
     @Override
@@ -143,22 +147,10 @@ public class BatchSendActivity extends Activity {
             }
         };
 
-        if(SamouraiWallet.getInstance().getShowTotalBalance())    {
-            if(SamouraiWallet.getInstance().getCurrentSelectedAccount() == 2)    {
-                selectedAccount = 1;
-            }
-            else    {
-                selectedAccount = 0;
-            }
-        }
-        else    {
-            selectedAccount = 0;
-        }
-
         tvMaxPrompt = (TextView)findViewById(R.id.max_prompt);
         tvMax = (TextView)findViewById(R.id.max);
         try    {
-            balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(selectedAccount).xpubstr());
+            balance = APIFactory.getInstance(BatchSendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BatchSendActivity.this).get().getAccount(0).xpubstr());
         }
         catch(IOException ioe)    {
             balance = 0L;
@@ -277,7 +269,7 @@ public class BatchSendActivity extends Activity {
         });
 
         edAmountBTC = (EditText)findViewById(R.id.amountBTC);
-
+        edAmountBTC.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
         textWatcherBTC = new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -689,10 +681,25 @@ public class BatchSendActivity extends Activity {
                     meta = meta.substring(1);
                 }
 
-                Intent intent = new Intent(BatchSendActivity.this, BIP47Activity.class);
+                Intent intent = new Intent(BatchSendActivity.this, PayNymDetailsActivity.class);
                 intent.putExtra("pcode", pcode);
                 if(meta != null && meta.length() > 0)    {
-                    intent.putExtra("meta", meta);
+                    if (meta.startsWith("?") && meta.length() > 1) {
+                        meta = meta.substring(1);
+
+                        if (meta.length() > 0) {
+                            String _meta = null;
+                            Map<String, String> map = new HashMap<String, String>();
+                            meta.length();
+                            try {
+                                _meta = URLDecoder.decode(meta, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            map = Splitter.on('&').trimResults().withKeyValueSeparator("=").split(_meta);
+                            intent.putExtra("label", map.containsKey("title") ? map.get("title").trim() : "");
+                        }
+                    }
                 }
                 startActivity(intent);
             }
@@ -740,10 +747,10 @@ public class BatchSendActivity extends Activity {
 
 //        Log.i("SendFragment", "insufficient funds:" + insufficientFunds);
 
-        if(btc_amount > 0.00 && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
+        if(amount >= SamouraiWallet.bDust.longValue() && FormatsUtil.getInstance().isValidBitcoinAddress(edAddress.getText().toString().trim())) {
             isValid = true;
         }
-        else if(btc_amount > 0.00 && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
+        else if(amount >= SamouraiWallet.bDust.longValue() && strDestinationBTCAddress != null && FormatsUtil.getInstance().isValidBitcoinAddress(strDestinationBTCAddress)) {
             isValid = true;
         }
         else    {
@@ -842,10 +849,10 @@ public class BatchSendActivity extends Activity {
 
         long changeAmount = totalValueSelected - (amount + fee.longValue());
         String change_address = null;
-        int change_idx = -1;
+        int change_idx = 0;
         if(changeAmount > 0L)    {
-            change_idx = BIP49Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-            change_address = BIP49Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getAddressAsString();
+            change_idx = BIP84Util.getInstance(BatchSendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
+            change_address = BIP84Util.getInstance(BatchSendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, change_idx).getBech32AsString();
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
             Log.d("BatchSendActivity", "change output:" + changeAmount);
             Log.d("BatchSendActivity", "change output:" + change_address);
@@ -921,7 +928,7 @@ public class BatchSendActivity extends Activity {
 
             final long _amount = amount;
 
-            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx);
+            tx = SendFactory.getInstance(BatchSendActivity.this).signTransaction(tx, 0);
             final String hexTx = new String(Hex.encode(tx.bitcoinSerialize()));
             final String strTxHash = tx.getHashAsString();
 
@@ -950,7 +957,8 @@ public class BatchSendActivity extends Activity {
                                     data,
                                     SendActivity.SPEND_SIMPLE,
                                     _change,
-                                    49,
+                                    84,
+                                    0,
                                     "",
                                     false,
                                     false,

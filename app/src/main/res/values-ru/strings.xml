@@ -523,6 +523,8 @@
 
     <string name="use_bech32">Использовать bech32-адрес</string>
 
+    
+    
     <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущими выходами транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
     <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL-выходов транзакций.</string>
     <string name="title_activity_main3">Main3Activity</string>
@@ -531,7 +533,6 @@
     <string name="broadcast_with_txtenna">Отправить с помощью TxTenna</string>
     <string name="show_qr_code">Показать QR-код</string>
     <string name="tx_connectivity_failure_msg">Не удаётся отправить транзакцию в отсутствие подключения к интернету. Что следует сделать?</string>
-
     <string name="insufficient_fee">Недостаточная комиссия</string>
     <string name="action_utxo_amounts">Показать средства по типу адреса</string>
 
@@ -539,6 +540,7 @@
     <string name="total_p2sh_p2wpkh">Всего segwit (p2sh):</string>
     <string name="total_p2wpkh">Всего segwit (bech32):</string>
     <string name="total_blocked">Всего заблокированных:</string>
+
 
 
     <string name="tx_creating_ok">Создаём транзакцию...</string>
@@ -592,7 +594,7 @@
     <string name="address_type">Тип адреса</string>
     <string name="path">Путь</string>
 
-    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
+<string name="title_activity_send_new_ui">SendNewUIActivity</string>
     <string name="ricochet_hops_msg">Дополнительные шаги между вашим кошельком и конечной точкой для улучшения взаимозаменяемости монет</string>
     <string name="review_transaction">ПРОСМОТР ТРАНЗАКЦИИ</string>
     <string name="stonewall_increases_deniability">STONEWALL позволяет правдоподобнее отрицать причастность и уменьшает количество возможных связей этой транзакции.</string>
@@ -630,5 +632,6 @@
     <string name="hide_log">СКРЫТЬ ЖУРНАЛ</string>
     <string name="copy">Копировать</string>
     <string name="show_log">Показать журнал</string>
+
 
 </resources>

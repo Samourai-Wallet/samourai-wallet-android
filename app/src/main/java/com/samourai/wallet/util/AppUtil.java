@@ -5,9 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -16,6 +18,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 
@@ -102,14 +105,24 @@ public class AppUtil {
         deleteQR();
 
         final ComponentName component = new ComponentName(context.getApplicationContext().getPackageName(), "com.samourai.wallet.MainActivity");
-        context.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-        PrefsUtil.getInstance(context).setValue(PrefsUtil.ICON_HIDDEN, false);
+        try {
+            context.getPackageManager().setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            PrefsUtil.getInstance(context).setValue(PrefsUtil.ICON_HIDDEN, false);
+        }
+        catch(IllegalArgumentException iae) {
+            ;
+        }
 
         APIFactory.getInstance(context).setXpubBalance(0L);
         APIFactory.getInstance(context).reset();
 		PrefsUtil.getInstance(context).clear();
         BlockedUTXO.getInstance().clear();
+        RicochetMeta.getInstance(context).empty();
+        SendAddressUtil.getInstance().reset();
+        SentToFromBIP47Util.getInstance().reset();
+        BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
+        TrustedNodeUtil.getInstance().reset();
 	}
 
 	public void restartApp() {
@@ -123,8 +136,23 @@ public class AppUtil {
 		context.startActivity(intent);
 	}
 
-	public void restartApp(String name, boolean value) {
+	public void restartApp(Bundle extras) {
+
 		Intent intent = new Intent(context, MainActivity2.class);
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        }
+        else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        }
+        if(extras!=null){
+            intent.putExtras(extras);
+        }
+		context.startActivity(intent);
+	}
+
+	public void restartApp(String name, boolean value) {
+        Intent intent = new Intent(context, MainActivity2.class);
         if(PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false) == true) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }

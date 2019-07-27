@@ -35,14 +35,16 @@
     <string name="options_xpub49_2">Show extended public key for BIP49 Segwit account (P2SH-wrapped).</string>
     <string name="options_xpub84">Show Segwit ZPUB</string>
     <string name="options_xpub84_2">Show extended public key for BIP84 Segwit account (Bech32).</string>
+    <string name="options_xpub84_premix">Show Whirlpool pre-mix ZPUB</string>
+    <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
+    <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
+    <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
     <string name="options_stealth_display2">Remove Samourai from the launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Samourai.</string>
     <string name="options_remote_commands">Enable remote commands</string>
     <string name="options_remote_commands2">Allow remote commands via SMS.</string>
-    <string name="options_currency">Street price</string>
-    <string name="options_currency2">Choose your exchange and local fiat currency.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">The block explorer used to view transaction details.</string>
     <string name="options_sim_switch">SIM switch defense</string>
@@ -98,6 +100,11 @@
     <string name="options_address_calc2">Calculate addresses derived from your wallet seed.</string>
     <string name="options_paynym_calc">PayNym calculator</string>
     <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
+    <string name="options_indexes">Wallet indexes</string>
+    <string name="options_indexes2">Current index values for this wallet.</string>
+    <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
+    <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
+    <string name="options_postmix">Spend from post-mix Whirlpool</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 
@@ -168,9 +175,11 @@
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
+    <string name="invalid_address">Invalid address</string>
     <string name="amount">Amount</string>
 
     <string name="receive_address_to_clipboard">Copy this receive address to the clipboard? If copied, it may be visible to other applications.</string>
+    <string name="txid_to_clipboard">Copy this transaction id  to the clipboard? If copied, it may be visible to other applications.</string>
     <string name="receive_address_to_share">Share this receive address? If shared, it may be read to other applications.</string>
     <string name="sure_to_erase">Are you sure you want to erase this wallet?</string>
     <string name="wallet_erased">Wallet erased from device.</string>
@@ -604,7 +613,7 @@
     <string name="end_to_end_trustless">end-to-end trustlessness</string>
     <string name="your_private_keys">Your private keys never leave the\n device at any point during the\n Whirlpool cycle</string>
     <string name="different_cycles_for">different cycles for different needs</string>
-    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or a\n earn a small BTC reward when you\n complete a slow cycle</string>
+    <string name="complete_a_slow_cycle">Pay a small fee for a fast cycle or \n earn a small BTC reward when you\n complete a slow cycle</string>
     <string name="supercharge_whirlpool_desc">Your coins will be added to the top of the queue for immediate processing</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
@@ -632,5 +641,108 @@
     <string name="hide_log">HIDE LOG</string>
     <string name="copy">Copy</string>
     <string name="show_log">Show Log</string>
+    <string name="unconfirmed">Unconfirmed</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="total_available_amount">Total available amount</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
+
+    <string name="experimental">Experimental</string>
+    <string name="cahoots">#Cahoots</string>
+    <string name="options_cahoots2">Make every spend a CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Partially Signed Bitcoin Transaction.</string>
+    <string name="import_cahoots">Scan or paste a #Cahoots.</string>
+    <string name="import_psbt">Scan or paste a PSBT.</string>
+    <string name="enter_cahoots">Enter #Cahoots text</string>
+    <string name="enter_psbt">Enter PSBT hex text</string>
+    <string name="create_cahoots">Create #Cahoots spend</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgent</string>
+    <string name="normal">Normal</string>
+    <string name="low">Low</string>
+
+    <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
+    <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
+    <string name="tag_utxo">Label UTXO</string>
+    <string name="boost_transaction_fee">Boost transaction fee</string>
+    <string name="refund">Refund</string>
+
+    <string name="not_cahoots">Invalid #Cahoots</string>
+    <string name="not_valid_json">JSON parsing error</string>
+    <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
+    <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
+    <string name="start_stowaway">Begin Stowaway as spender</string>
+    <string name="start_stonewall">Begin STONEWALL as spender</string>
+    <string name="amount_sats">Enter amount in sats</string>
+    <string name="zero_bits">0 bits</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Display transaction</string>
+    <string name="unrecognized_step">Unrecognized #Cahoots step</string>
+    <string name="cannot_process_stowaway">Cannot process Stowaway</string>
+    <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
+    <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
+    <string name="powering_samourai_wallet_">Powering Samourai Wallet with your own personal node offers the best level of privacy and independence when interacting with the bitcoin network. Dojo makes running a full node easy and simple.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play full bitcoin node\n\n -Automatically configured Tor hidden service\n\n -Independence from default Samourai servers</string>
+    <string name="dojo_connect_instruction">If you already have a Dojo Full Node or are \nrunning the free and open source Dojo Software\non your own hardware, scan the pairing QR code\nlocated on the Dojo Maintenance control panel</string>
+    <string name="dojo_headline">Power Samourai with your  own personal DOJO full node</string>
+    <string name="connect_to_existing_dojo">Connect to existing Dojo</string>
+    <string name="create_to_existing_dojo">Create wallet and pair to Dojo</string>
+    <string name="preorder">preorder</string>
+    <string name="add_new">Add New</string>
+    <string name="paynym_follow_message_2">to automatically generate unique private addresses for sending bitcoin to this contact</string>
+    <string name="follow">Follow</string>
+    <string name="wallet_locked">Wallet Locked</string>
+    <string name="address">Address</string>
+
+    <string name="is_offline">Samourai is offline</string>
+    <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is establishede</string>
+    <string name="you_received_s">You received</string>
+    <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
+    <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
+    <string name="initializing_tor">initializing Tor...</string>
+
+    <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
+    <string name="message_copied">message copied</string>
+    <string name="scan_code">Scan Code</string>
+    <string name="follows_you">Follows you</string>
+    <string name="edit_paynym">Edit paynym</string>
+    <string name="sycing_pcodes">Syncing payment codes</string>
+    <string name="sync_complete">Payment code sync complete</string>
+    <string name="options_paynym_indexes">Show PayNym indexes</string>
+    <string name="begin_cycle">BEGIN CYCLE</string>
+    <string name="pool_fee">POOL FEE</string>
+    <string name="total_fees">TOTAL FEES</string>
+    <string name="miner_fee">MINER FEE</string>
+    <string name="total_being_cycled">Total being cycled:</string>
+    <string name="review_cycle_details">REVIEW CYCLE DETAILS</string>
+    <string name="cycled_transactions">Cycled Transactions</string>
+    <string name="initial_transaction">Initial Transaction</string>
+    <string name="progress">Progress</string>
+    <string name="waiting_for_blockchain_confirmation">Waiting for blockchain confirmation</string>
+
+    <string name="create_password">Create password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="pairing_password">Define pairing password: (6-255 characters)</string>
+    <string name="password_error">Error creating password</string>
+    <string name="password_invalid">Invalid password</string>
+
+    <string name="review_whirlpool">Review Whirlpool Details</string>
+    <string name="total_selected">Total selected</string>
+    <string name="cycle">Cycle</string>
+    <string name="postmix_without_boltzmann">Please note that spending from your post-mix account without using STONEWALL will result in a loss of the privacy gained through Whirlpool.</string>
+    <string name="estimated_entropy">Estimated Entropy</string>
+    <string name="share_this_qr_code_with_your_participant">Share this QR code with your participant</string>
+    <string name="review_tx_before_braodcast">Review the transaction before broadcasting</string>
+    <string name="select_participant">Select participant</string>
+    <string name="select_cahoots_type">Select cahoots type</string>
+
+    <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
+    <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
+    <string name="renew">RENEW</string>
+
 
 </resources>

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.util.Log;
 
-import com.samourai.wallet.BalanceActivity;
+import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;

@@ -8,6 +8,8 @@ import java.util.List;
 
 public class UTXO {
 
+    private String path = null;
+
     private List<MyTransactionOutPoint> outpoints = null;
 
     public UTXO() {
@@ -24,6 +26,14 @@ public class UTXO {
 
     public void setOutpoints(List<MyTransactionOutPoint> outpoints) {
         this.outpoints = outpoints;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public long getValue() {

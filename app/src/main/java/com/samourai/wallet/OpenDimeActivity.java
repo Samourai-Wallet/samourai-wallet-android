@@ -69,6 +69,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 
+import org.bitcoinj.core.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,7 +80,7 @@ public class OpenDimeActivity extends Activity {
     }
 
     private static final String ACTION_USB_PERMISSION = "com.samourai.wallet.USB_PERMISSION";
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = OpenDimeActivity.class.getSimpleName();
 
     private List<UsbFile> files = new ArrayList<UsbFile>();
     private UsbFile currentDir = null;
@@ -197,10 +198,12 @@ public class OpenDimeActivity extends Activity {
             public void onClick(View v) {
 
                 if(strAddress != null)    {
-                    int sel = PrefsUtil.getInstance(OpenDimeActivity.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
-                    CharSequence url = BlockExplorerUtil.getInstance().getBlockExplorerAddressUrls()[sel];
+                    String blockExplorer = "https://m.oxt.me/transaction/";
+                    if (SamouraiWallet.getInstance().isTestNet()) {
+                        blockExplorer = "https://blockstream.info/testnet/";
+                    }
 
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url + strAddress));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + strAddress));
                     startActivity(browserIntent);
                 }
 
@@ -697,9 +700,7 @@ public class OpenDimeActivity extends Activity {
                                     if(walletObj != null && walletObj.has("final_balance"))    {
                                         handler.post(new Runnable() {
                                             public void run() {
-                                                double btc_balance = (((double)balance) / 1e8);
-
-                                                String strBalance = "" + btc_balance + " BTC";
+                                                String strBalance = "" + Coin.valueOf(balance).toPlainString() + " BTC";
                                                 if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
                                                     btSweep.setVisibility(View.VISIBLE);
                                                 }

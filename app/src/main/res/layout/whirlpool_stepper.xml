@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/stepper_point_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:tint="@color/disabled_white"
+        app:layout_constraintBottom_toTopOf="@+id/stepper_2_message"
+        app:layout_constraintEnd_toStartOf="@+id/stepper_point_3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/stepper_point_1"
+        app:layout_constraintTop_toBottomOf="@+id/cycle_total_amount"
+        app:srcCompat="@drawable/circle_shape" />
+
+    <ImageView
+        android:id="@+id/stepper_point_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:tint="@color/disabled_white"
+        app:layout_constraintBottom_toTopOf="@+id/stepper_3_message"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintTop_toBottomOf="@+id/cycle_total_amount"
+        app:srcCompat="@drawable/circle_shape" />
+
+    <ImageView
+        android:id="@+id/stepper_point_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:tint="@color/whirlpoolGreen"
+        app:layout_constraintBottom_toTopOf="@+id/stepper_1_message"
+        app:layout_constraintStart_toStartOf="@+id/guideline9"
+        app:layout_constraintTop_toBottomOf="@+id/cycle_total_amount"
+        app:srcCompat="@drawable/circle_shape" />
+
+    <View
+        android:id="@+id/step_line_1"
+        android:layout_width="0dp"
+        android:layout_height="5dp"
+        android:background="@color/disabled_white"
+        app:layout_constraintBottom_toBottomOf="@+id/stepper_point_1"
+        app:layout_constraintEnd_toStartOf="@+id/stepper_point_2"
+        app:layout_constraintStart_toEndOf="@+id/stepper_point_1"
+        app:layout_constraintTop_toTopOf="@+id/stepper_point_1" />
+
+    <View
+        android:id="@+id/step_line_2"
+        android:layout_width="0dp"
+        android:layout_height="5dp"
+        android:background="@color/disabled_white"
+        app:layout_constraintBottom_toBottomOf="@+id/stepper_point_2"
+        app:layout_constraintEnd_toStartOf="@+id/stepper_point_3"
+        app:layout_constraintStart_toEndOf="@+id/stepper_point_2"
+        app:layout_constraintTop_toTopOf="@+id/stepper_point_2" />
+
+    <TextView
+        android:id="@+id/stepper_1_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="SELECT UTXOS"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/step_line_1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline9"
+        app:layout_constraintTop_toBottomOf="@+id/stepper_point_1" />
+
+    <TextView
+        android:id="@+id/stepper_2_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="SELECT POOL"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/step_line_2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/step_line_1"
+        app:layout_constraintTop_toBottomOf="@+id/stepper_point_2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/stepper_3_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="BEGIN CYCLE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline10"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/step_line_2"
+        app:layout_constraintTop_toBottomOf="@+id/stepper_point_3" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <android.support.constraint.Group
+        android:id="@+id/step1_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="stepper_point_1,step_line_1,stepper_1_message"
+        />
+
+    <TextView
+        android:id="@+id/cycle_total_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="0.0 BTC"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

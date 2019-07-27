@@ -5,26 +5,28 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.cahoots.CahootsFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
+import com.samourai.wallet.send.SendActivity;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
@@ -34,8 +36,8 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.util.TorUtil;
-import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
@@ -65,8 +67,9 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.samourai.wallet.send.SendActivity.SPEND_BOLTZMANN;
 
 public class PayloadUtil	{
 
@@ -79,6 +82,8 @@ public class PayloadUtil	{
     private final static String strUTXOFilename = "samourai.utxo";
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
+    private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strUTXOPostFilename = "samourai.utxo.post";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -147,6 +152,12 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
+        }
+    }
+
     public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
         if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -166,6 +177,18 @@ public class PayloadUtil	{
             JSONObject utxoObj = new JSONObject();
             utxoObj.put("unspent_outputs", utxos);
             serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
+        }
+    }
+
+    public void serializeUTXOPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+            }
         }
     }
 
@@ -189,6 +212,14 @@ public class PayloadUtil	{
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
     }
 
+    public JSONObject deserializeMultiAddrPost()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
+    }
+
+    public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+    }
+
     public JSONObject deserializeFees()  throws IOException, JSONException  {
         return deserializeAux(null, strFeesFilename);
     }
@@ -203,7 +234,14 @@ public class PayloadUtil	{
         BIP47Meta.getInstance().clear();
         BIP49Util.getInstance(context).reset();
         BIP84Util.getInstance(context).reset();
+        DojoUtil.getInstance(context).clear();
         APIFactory.getInstance(context).reset();
+
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, false);
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_RESTORE, false);
+        PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
+
+        PrefsUtil.getInstance(context).clear();
 
         try	{
             int nbAccounts = HD_WalletFactory.getInstance(context).get().getAccounts().size();
@@ -214,6 +252,20 @@ public class PayloadUtil	{
                 AddressFactory.getInstance().setHighestTxReceiveIdx(i, 0);
                 AddressFactory.getInstance().setHighestTxChangeIdx(i, 0);
             }
+
+            AddressFactory.getInstance().setHighestBIP49ReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBIP49ChangeIdx(0);
+            AddressFactory.getInstance().setHighestBIP84ReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBIP84ChangeIdx(0);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().setAddrIdx(0);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().setAddrIdx(0);
+            AddressFactory.getInstance().setHighestPreReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPreChangeIdx(0);
+            AddressFactory.getInstance().setHighestPostReceiveIdx(0);
+            AddressFactory.getInstance().setHighestPostChangeIdx(0);
+
             HD_WalletFactory.getInstance(context).set(null);
         }
         catch(MnemonicException.MnemonicLengthException mle)	{
@@ -291,6 +343,20 @@ public class PayloadUtil	{
             wallet.put("bip84_accounts", bip84_account);
 
             //
+            // export Whirlpool accounts for debug payload
+            //
+            JSONArray whirlpool_account = new JSONArray();
+            JSONObject preObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).toJSON(84);
+            preObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPreReceiveIdx());
+            preObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPreChangeIdx());
+            whirlpool_account.put(preObj);
+            JSONObject postObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).toJSON(84);
+            postObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPostReceiveIdx());
+            postObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPostChangeIdx());
+            whirlpool_account.put(postObj);
+            wallet.put("whirlpool_account", whirlpool_account);
+
+            //
             // can remove ???
             //
             /*
@@ -307,24 +373,26 @@ public class PayloadUtil	{
 
             meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
+            meta.put("sent_tos_from_bip47", SentToFromBIP47Util.getInstance().toJSON());
             meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
             meta.put("use_segwit", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_SEGWIT, true));
             meta.put("use_like_typed_change", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true));
-            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SendActivity.SPEND_BOLTZMANN));
-            meta.put("use_boltzmann", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_BOLTZMANN, true));
+            meta.put("spend_type", PrefsUtil.getInstance(context).getValue(PrefsUtil.SPEND_TYPE, SPEND_BOLTZMANN));
             meta.put("rbf_opt_in", PrefsUtil.getInstance(context).getValue(PrefsUtil.RBF_OPT_IN, false));
             meta.put("use_ricochet", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_RICOCHET, false));
+            meta.put("ricochet_staggered_delivery", PrefsUtil.getInstance(context).getValue(PrefsUtil.RICOCHET_STAGGERED, false));
             meta.put("bip47", BIP47Meta.getInstance().toJSON());
             meta.put("pin", AccessFactory.getInstance().getPIN());
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
+            meta.put("cahoots", CahootsFactory.getInstance().toJSON());
             meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
-            meta.put("tor", TorUtil.getInstance(context).toJSON());
+            meta.put("tor", TorManager.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
+            meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
 
-            meta.put("explorer", PrefsUtil.getInstance(context).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
             meta.put("haptic_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.HAPTIC_PIN, true));
@@ -335,16 +403,21 @@ public class PayloadUtil	{
             meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
             meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
-//            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
+            meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
             meta.put("xpubreg84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false));
             meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
             meta.put("xpublock49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49LOCK, false));
             meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
+            meta.put("xpubprelock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPRELOCK, false));
+            meta.put("xpubpostlock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTLOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
             meta.put("user_offline", AppUtil.getInstance(context).isUserOfflineMode());
+            if(DojoUtil.getInstance(context).getDojoParams() != null)    {
+                meta.put("dojo", DojoUtil.getInstance(context).toJSON());
+            }
 
             JSONObject obj = new JSONObject();
             obj.put("wallet", wallet);
@@ -498,16 +571,6 @@ public class PayloadUtil	{
                 //
                 // move BIP126 over to boltzmann spend setting
                 //
-                if(meta.has("use_bip126")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_bip126"));
-                    editor.putBoolean("boltzmann", meta.getBoolean("use_bip126"));
-                    editor.commit();
-                }
-                if(meta.has("use_boltzmann")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_BOLTZMANN, meta.getBoolean("use_boltzmann"));
-                    editor.putBoolean("boltzmann", meta.getBoolean("use_boltzmann"));
-                    editor.commit();
-                }
                 if(meta.has("rbf_opt_in")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.RBF_OPT_IN, meta.getBoolean("rbf_opt_in"));
                     editor.putBoolean("rbf", meta.getBoolean("rbf_opt_in") ? true : false);
@@ -516,8 +579,14 @@ public class PayloadUtil	{
                 if(meta.has("use_ricochet")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_RICOCHET, meta.getBoolean("use_ricochet"));
                 }
+                if(meta.has("ricochet_staggered_delivery")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.RICOCHET_STAGGERED, meta.getBoolean("ricochet_staggered_delivery"));
+                }
                 if(meta.has("sent_tos")) {
                     SendAddressUtil.getInstance().fromJSON((JSONArray) meta.get("sent_tos"));
+                }
+                if(meta.has("sent_tos_from_bip47")) {
+                    SentToFromBIP47Util.getInstance().fromJSON((JSONArray) meta.get("sent_tos_from_bip47"));
                 }
                 if(meta.has("batch_send")) {
                     BatchSendUtil.getInstance().fromJSON((JSONArray) meta.get("batch_send"));
@@ -542,6 +611,9 @@ public class PayloadUtil	{
                 if(meta.has("ricochet")) {
                     RicochetMeta.getInstance(context).fromJSON((JSONObject) meta.get("ricochet"));
                 }
+                if(meta.has("cahoots")) {
+                    CahootsFactory.getInstance().fromJSON((JSONArray) meta.get("cahoots"));
+                }
                 if(meta.has("whirlpool")) {
                     WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
                 }
@@ -552,15 +624,15 @@ public class PayloadUtil	{
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
                 if(meta.has("tor")) {
-                    TorUtil.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
+                    TorManager.getInstance(context).fromJSON((JSONObject) meta.get("tor"));
                 }
                 if(meta.has("blocked_utxos")) {
                     BlockedUTXO.getInstance().fromJSON((JSONObject) meta.get("blocked_utxos"));
                 }
-
-                if(meta.has("explorer")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.BLOCK_EXPLORER, meta.getInt("explorer"));
+                if(meta.has("utxo_tags")) {
+                    UTXOUtil.getInstance().fromJSON((JSONArray) meta.get("utxo_tags"));
                 }
+
                 if(meta.has("trusted_no")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.ALERT_MOBILE_NO, (String) meta.get("trusted_no"));
                     editor.putString("alertSMSNo", meta.getString("trusted_no"));
@@ -604,17 +676,14 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
                 }
                 if(meta.has("fee_provider_sel")) {
-//                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, meta.getInt("fee_provider_sel") > 0 ? 0 : meta.getInt("fee_provider_sel"));
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
                 }
-                /*
                 if(meta.has("xpubreg44")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, meta.getBoolean("xpubreg44"));
                 }
-                */
                 if(meta.has("xpubreg49")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB49REG, meta.getBoolean("xpubreg49"));
                 }
@@ -630,6 +699,12 @@ public class PayloadUtil	{
                 if(meta.has("xpublock84")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84LOCK, meta.getBoolean("xpublock84"));
                 }
+                if(meta.has("xpubprelock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPRELOCK, meta.getBoolean("xpubprelock"));
+                }
+                if(meta.has("xpubpostlock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTLOCK, meta.getBoolean("xpubpostlock"));
+                }
                 if(meta.has("paynym_claimed")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));
                 }
@@ -641,6 +716,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("user_offline")) {
                     AppUtil.getInstance(context).setUserOfflineMode(meta.getBoolean("user_offline"));
+                }
+                if(meta.has("dojo")) {
+                    DojoUtil.getInstance(context).fromJSON(meta.getJSONObject("dojo"));
                 }
 
                 /*

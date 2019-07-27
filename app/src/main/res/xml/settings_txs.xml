@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="txPrefs">
 
     <CheckBoxPreference
         android:title="@string/options_segwit"
@@ -13,13 +13,6 @@
         android:summary="@string/options_like_typed_change2"
         android:defaultValue="true"
         android:key="likeTypedChange"
-        />
-
-    <CheckBoxPreference
-        android:title="@string/options_boltzmann"
-        android:summary="@string/options_boltzmann_2"
-        android:defaultValue="true"
-        android:key="boltzmann"
         />
 
     <CheckBoxPreference
@@ -60,5 +53,29 @@
         android:summary="@string/options_broadcast_hex2"
         android:key="broadcastHex"
         />
+
+    <PreferenceCategory
+        android:key="@string/experimental"
+        android:title="@string/experimental">
+
+        <Preference
+            android:title="@string/cahoots"
+            android:summary="@string/options_cahoots2"
+            android:key="cahoots"
+            />
+
+        <Preference
+            android:title="@string/PSBT"
+            android:summary="@string/options_psbt2"
+            android:key="psbt"
+            />
+
+        <Preference
+            android:title="@string/options_whirlpool_gui"
+            android:summary="@string/options_whirlpool_gui2"
+            android:key="whirlpool_gui"
+            />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

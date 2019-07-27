@@ -16,8 +16,8 @@ import com.samourai.wallet.R;
 public class PermissionsUtil {
 
     public final static int READ_WRITE_EXTERNAL_PERMISSION_CODE = 0;
-    public static final int SMS_PERMISSION_CODE = 1;
-    public static final int OUTGOING_CALL_PERMISSION_CODE = 2;
+//    public static final int SMS_PERMISSION_CODE = 1;
+//    public static final int OUTGOING_CALL_PERMISSION_CODE = 2;
     public static final int CAMERA_PERMISSION_CODE = 3;
 
     private static PermissionsUtil instance = null;
@@ -50,6 +50,7 @@ public class PermissionsUtil {
                 title = context.getString(R.string.permission_alert_dialog_title_external);
                 message = context.getString(R.string.permission_dialog_message_external);
                 break;
+/*
             case SMS_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_sms);
                 message = context.getString(R.string.permission_dialog_message_sms);
@@ -58,6 +59,7 @@ public class PermissionsUtil {
                 title = context.getString(R.string.permission_alert_dialog_title_outgoing);
                 message = context.getString(R.string.permission_dialog_message_outgoing);
                 break;
+*/
             case CAMERA_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_camera);
                 message = context.getString(R.string.permission_dialog_message_camera);
@@ -78,12 +80,14 @@ public class PermissionsUtil {
                     case READ_WRITE_EXTERNAL_PERMISSION_CODE:
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_WRITE_EXTERNAL_PERMISSION_CODE);
                         break;
+/*
                     case SMS_PERMISSION_CODE:
                         requestPermissions(new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_PHONE_STATE}, SMS_PERMISSION_CODE);
                         break;
                     case OUTGOING_CALL_PERMISSION_CODE:
                         requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, OUTGOING_CALL_PERMISSION_CODE);
                         break;
+*/
                     case CAMERA_PERMISSION_CODE:
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
                         break;

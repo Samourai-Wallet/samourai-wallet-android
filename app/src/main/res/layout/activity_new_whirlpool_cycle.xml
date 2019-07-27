@@ -10,7 +10,7 @@
         android:id="@+id/whirlpool.appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_accent"
+        android:background="@color/whirlpoolBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,72 +19,121 @@
             android:id="@+id/toolbar_new_whirlpool"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
+
+        <include layout="@layout/whirlpool_stepper" />
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/review_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_blue"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:orientation="vertical"
-        android:text="@string/review_transaction"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+    <!--<LinearLayout-->
+    <!--android:id="@+id/review_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@drawable/button_blue"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:clickable="true"-->
+    <!--android:focusable="true"-->
+    <!--android:orientation="vertical"-->
+    <!--android:paddingTop="12dp"-->
+    <!--android:paddingBottom="12dp"-->
+    <!--android:text="@string/review_transaction"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintVertical_bias="1.0">-->
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Review whirlpool Details"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:gravity="center_horizontal"-->
+    <!--android:text="Review whirlpool Details"-->
+    <!--android:textAlignment="center"-->
+    <!--android:textAllCaps="true"-->
+    <!--android:textStyle="bold" />-->
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:gravity="center_horizontal"
-            android:text="Total selected: 3.2121234 BTC"
-            android:textAlignment="center"
-            android:textSize="12sp" />
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="6dp"-->
+    <!--android:gravity="center_horizontal"-->
+    <!--android:text="Total selected: 3.2121234 BTC"-->
+    <!--android:textAlignment="center"-->
+    <!--android:textSize="12sp" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
-    <TextView
-        android:id="@+id/textView17"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Choose the coins you wish to cycle"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/whirlpool.appbar"
-        app:layout_constraintVertical_bias="0.0" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/coins_recyclerview"
+    <com.samourai.wallet.widgets.ViewPager
+        android:id="@+id/new_pool_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/review_button"
+        app:layout_constraintBottom_toTopOf="@+id/guideline11"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool.appbar" />
+
+
+    <Button
+        android:id="@+id/utxo_selection_confirm_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_blue"
+        android:text="@string/next"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <!--<android.support.constraint.ConstraintLayout-->
+    <!--android:id="@+id/pool_selection_review_btn"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:background="@drawable/whirlpool_btn_blue"-->
+    <!--android:clickable="true"-->
+    <!--android:focusable="true"-->
+    <!--android:visibility="gone"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager">-->
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView49"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:text="REVIEW CYCLE DETAILS"-->
+    <!--android:textColor="@color/white"-->
+    <!--android:textSize="16sp"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView51"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginTop="4dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginBottom="5dp"-->
+    <!--android:text="Total being cylced : "-->
+    <!--android:textColor="@color/white"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/textView49" />-->
+    <!--</android.support.constraint.ConstraintLayout>-->
+
 
 </android.support.constraint.ConstraintLayout>

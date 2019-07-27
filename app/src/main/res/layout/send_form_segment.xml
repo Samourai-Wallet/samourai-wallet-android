@@ -3,147 +3,155 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_view_switcher"
-    android:inAnimation="@android:anim/fade_in"
-    android:outAnimation="@android:anim/fade_out"
     android:layout_width="match_parent"
-    android:layout_height="160dp">
+    android:layout_height="wrap_content"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
 
-
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="81dp">
+        android:layout_height="match_parent"
+        android:fadeScrollbars="false"
+        android:fillViewport="true"
+      >
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/to_edt_layout"
-            android:layout_width="0dp"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingTop="4dp"
+            tools:layout_editor_absoluteY="81dp">
 
-            <EditText
-                android:id="@+id/edt_send_to"
-                android:layout_width="match_parent"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/to_edt_layout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:ems="10"
-                android:hint="To"
-                android:inputType="text"
-                android:maxLines="0" />
-        </android.support.design.widget.TextInputLayout>
+                android:inputType="textNoSuggestions"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
+                <EditText
+                    android:id="@+id/edt_send_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="To"
+                    android:imeOptions="flagNoPersonalizedLearning"
+                    android:inputType="textNoSuggestions|textMultiLine"
+                    android:maxLines="2"
+                    android:paddingRight="22dp"
+                    android:scrollbars="vertical"
+                    android:textSize="16sp" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="50">
+            </android.support.design.widget.TextInputLayout>
+
+
+            <FrameLayout
+                android:id="@+id/textInputLayout3"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout"
+
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName">
+
+                    <EditText
+                        android:id="@+id/amountSat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="0,1,2,3,4,5,6,7,8,9,."
+                        android:fontFamily="@font/roboto_mono"
+                        android:gravity="start"
+                        android:hint="sat"
+                        android:imeOptions="flagNoPersonalizedLearning"
+                        android:inputType="textMultiLine|phone"
+                        android:maxLines="2"
+                        android:scrollbars="vertical"
+                        android:textSize="16sp" />
+
+
+                </android.support.design.widget.TextInputLayout>
+            </FrameLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayout2"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toStartOf="@+id/textInputLayout3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
 
                 <EditText
                     android:id="@+id/amountBTC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:fontFamily="@font/roboto_mono"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
+                    android:gravity="start"
+                    android:hint="BTC"
+                    android:imeOptions="flagNoPersonalizedLearning"
+                    android:inputType="number|textMultiLine"
+                    android:maxHeight="12dp"
+                    android:maxLines="2"
+                    android:textSize="16sp" />
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="6dp"
-                    android:fontFamily="@font/roboto_mono"
-                    android:text="BTC"
-                    android:typeface="monospace" />
-            </RelativeLayout>
+            </android.support.design.widget.TextInputLayout>
 
-            <RelativeLayout
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/total_available_amount"
+                android:textColor="@color/txt_grey"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+
+            <TextView
+                android:id="@+id/totalBTC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_weight="50">
-
-                <TextView
-                    android:id="@+id/tvFiatSymbol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="6dp"
-                    android:fontFamily="@font/roboto_mono"
-                    android:text="USD"
-                    android:typeface="monospace" />
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12"
+                tools:text="0.0 BTC" />
 
 
-                <EditText
-                    android:id="@+id/amountFiat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono"
-                    android:gravity="right"
-                    android:hint="@string/_0_00"
-                    android:inputType="numberDecimal" />
+        </android.support.constraint.ConstraintLayout>
 
+    </ScrollView>
 
-            </RelativeLayout>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/txt_grey"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="6dp"
-            android:text="Total available amount"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="0.0 BTC"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-
-    </android.support.constraint.ConstraintLayout>
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="1dp"
@@ -151,72 +159,93 @@
 
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/text_to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:text="To..."
-            android:textColor="@color/txt_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/to"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintBottom_toBottomOf="@+id/to_address_review"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/to_address_review" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/to_address_review"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="@font/roboto_mono"
+            android:gravity="end"
             android:maxLines="2"
-            tools:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textAlignment="gravity"
+            android:textColor="@color/white"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toStartOf="@+id/guideline14"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="17ywThjjgaKXEUoyJAXcX8w4xKjkaJh55d" />
 
         <TextView
             android:id="@+id/textView121"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/amount"
-            android:textColor="@color/txt_grey"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/to_address_review"
+            app:layout_constraintVertical_bias="0.37" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/send_review_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="@font/roboto_mono"
-            android:text="1.00 BTC"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="end"
+            android:textAlignment="gravity"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView121"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView121"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toStartOf="@+id/guideline14"
+            app:layout_constraintTop_toTopOf="@+id/textView121"
+            tools:text="1.00 BTC" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.36" />
+
+        <TextView
+            android:id="@+id/send_review_amount_in_sats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/send_review_amount"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline14"
+            app:layout_constraintTop_toBottomOf="@+id/send_review_amount"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="0 sats" />
 
     </android.support.constraint.ConstraintLayout>
 

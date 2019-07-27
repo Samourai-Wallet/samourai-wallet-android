@@ -1,10 +1,13 @@
 package com.samourai.wallet.util;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -73,17 +76,23 @@ public class MessageSignUtil {
                         showText.setTextIsSelectable(true);
                         showText.setPadding(40, 10, 40, 10);
                         showText.setTextSize(18.0f);
+
+                        String finalStrSignedMessage = strSignedMessage;
                         new AlertDialog.Builder(context)
                                 .setTitle(R.string.app_name)
                                 .setView(showText)
                                 .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                .setPositiveButton(R.string.ok, (dialog12, whichButton12) -> dialog12.dismiss())
+                                .setNegativeButton(context.getString(R.string.copy),
+                                        (dialog1, whichButton1) -> {
+                                            ClipboardManager clipboard = (ClipboardManager)
+                                                    context.getSystemService(Context.CLIPBOARD_SERVICE);
+                                            ClipData clip = ClipData.newPlainText("", finalStrSignedMessage);
+                                            clipboard.setPrimaryClip(clip);
+                                            Toast.makeText(context, context.getString(R.string.message_copied), Toast.LENGTH_SHORT).show();
+                                        }
+                                ).show();
 
-                                        dialog.dismiss();
-
-                                    }
-                                }).show();
 
                     }
 
