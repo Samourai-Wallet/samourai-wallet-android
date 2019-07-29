@@ -154,7 +154,7 @@ public class SendActivity extends AppCompatActivity {
     private long _change;
     private HashMap<String, BigInteger> receivers;
     private int changeType;
-    private Group cahootsGroup;
+    private ConstraintLayout cahootsGroup;
     private String address;
     private String message;
     private long amount;
@@ -213,7 +213,7 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
-        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
+        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 8)});
@@ -297,6 +297,10 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void setUpCahoots() {
+        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+            cahootsSwitch.setChecked(true);
+            selectedCahootsType = SelectCahootsType.type.STONEWALLX2_MANUAL;
+        }
         cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             // to check whether bottomsheet is closed or selected a value
             final boolean[] chosen = {false};
@@ -483,7 +487,7 @@ public class SendActivity extends AppCompatActivity {
                     pct = ((double) feeMed / value);
                     nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
                 }
-                tvEstimatedBlockWait.setText(nbBlocks +" blocks");
+                tvEstimatedBlockWait.setText(nbBlocks + " blocks");
                 setFee(value);
                 setFeeLabels();
 
@@ -944,14 +948,13 @@ public class SendActivity extends AppCompatActivity {
         //                Log.i("SendActivity", "amount:" + amount);
 
 
-        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY){
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
             sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
 
             return true;
         }
-
 
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
@@ -1063,9 +1066,9 @@ public class SendActivity extends AppCompatActivity {
 
                     long ricochetFee = hop0Fee + (RicochetMeta.defaultNbHops * perHopFee);
 
-                    if(selectedCahootsType == SelectCahootsType.type.NONE){
+                    if (selectedCahootsType == SelectCahootsType.type.NONE) {
                         tvTotalFee.setText(Coin.valueOf(ricochetFee).toPlainString().concat(" BTC"));
-                    }else {
+                    } else {
                         tvTotalFee.setText("__");
                     }
 
@@ -1394,9 +1397,9 @@ public class SendActivity extends AppCompatActivity {
 //                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
             message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
-            if(selectedCahootsType == SelectCahootsType.type.NONE){
+            if (selectedCahootsType == SelectCahootsType.type.NONE) {
                 tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
-            }else {
+            } else {
                 tvTotalFee.setText("__");
             }
 
@@ -1480,12 +1483,12 @@ public class SendActivity extends AppCompatActivity {
 
     private void initiateSpend() {
 
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL ) {
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL) {
             Intent intent = new Intent(this, ManualCahootsActivity.class);
             intent.putExtra("amount", amount);
             intent.putExtra("account", account);
             intent.putExtra("address", address);
-            intent.putExtra("type", selectedCahootsType == SelectCahootsType.type.STOWAWAY ?  Cahoots.CAHOOTS_STOWAWAY :  Cahoots.CAHOOTS_STONEWALLx2);
+            intent.putExtra("type", selectedCahootsType == SelectCahootsType.type.STOWAWAY ? Cahoots.CAHOOTS_STOWAWAY : Cahoots.CAHOOTS_STONEWALLx2);
             startActivity(intent);
             return;
         }
@@ -1923,7 +1926,7 @@ public class SendActivity extends AppCompatActivity {
             insufficientFunds = true;
         }
 
-        if(selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds ){
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds) {
             enableReviewButton(true);
             return true;
         }
