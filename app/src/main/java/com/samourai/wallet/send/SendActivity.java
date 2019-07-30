@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -125,7 +126,7 @@ public class SendActivity extends AppCompatActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc,cahootsStatusText,cahootsNotice;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
     private Switch cahootsSwitch;
@@ -214,6 +215,8 @@ public class SendActivity extends AppCompatActivity {
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
+        cahootsStatusText = sendTransactionDetailsView.findViewById(R.id.cahoot_status_text);
+        cahootsNotice = sendTransactionDetailsView.findViewById(R.id.cahoots_not_enabled_notice);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 8)});
@@ -298,8 +301,12 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpCahoots() {
         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-            cahootsSwitch.setChecked(true);
-            selectedCahootsType = SelectCahootsType.type.STONEWALLX2_MANUAL;
+            cahootsNotice.setVisibility(View.VISIBLE);
+//             cahootsSwitch.setChecked(true);
+//            selectedCahootsType = SelectCahootsType.type.STONEWALLX2_MANUAL;
+//            cahootsStatusText.setText("StonewallX2 Manual");
+//            cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
+
         }
         cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             // to check whether bottomsheet is closed or selected a value
@@ -312,6 +319,31 @@ public class SendActivity extends AppCompatActivity {
                     public void onSelect(SelectCahootsType.type type) {
                         chosen[0] = true;
                         selectedCahootsType = type;
+                       switch (selectedCahootsType){
+                           case NONE:{
+                               cahootsStatusText.setText("Off");
+                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.warning_yellow));
+                             break;
+                           }
+                           case STOWAWAY:{
+                               cahootsStatusText.setText("Stowawy");
+                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
+
+                               break;
+                           }
+                           case STONEWALLX2_MANUAL:{
+                               cahootsStatusText.setText("StonewallX2 Manual");
+                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
+
+                               break;
+                           }
+                           case STONEWALLX2_SAMOURAI:{
+                               cahootsStatusText.setText("Stonewallx2 Samourai");
+                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
+                               break;
+                           }
+
+                       }
                         validateSpend();
                     }
 
@@ -327,6 +359,8 @@ public class SendActivity extends AppCompatActivity {
             } else {
                 Log.i(TAG, "setUpCahoots: ");
                 selectedCahootsType = SelectCahootsType.type.NONE;
+                cahootsStatusText.setText("Off");
+                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.warning_yellow));
             }
         });
     }
@@ -349,7 +383,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpBoltzman() {
         sendTransactionDetailsView.getStoneWallSwitch().setChecked(true);
-        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(true);
+        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() != account  );
         sendTransactionDetailsView.enableStonewall(true);
         sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
     }

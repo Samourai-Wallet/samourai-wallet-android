@@ -188,11 +188,38 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Create an on demand CoinJoin transaction for enhanced privacy and surveillance protection"
+                    android:text="@string/create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toStartOf="@+id/cahoots_switch"
                     app:layout_constraintStart_toStartOf="@+id/ricochet_title2"
                     app:layout_constraintTop_toBottomOf="@+id/ricochet_title2" />
+
+                <TextView
+                    android:id="@+id/cahoot_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Off"
+                    android:textColor="@color/warning_yellow"
+                    app:layout_constraintEnd_toEndOf="@+id/textView74"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView74"
+                    app:layout_constraintTop_toBottomOf="@+id/textView74" />
+
+                <TextView
+                    android:id="@+id/cahoots_not_enabled_notice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="NOTE: You are making a post-mix spend. If #Cahoots\nis not selected Samourai will attempt to make a STONEWALL spend."
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/cahoots_switch"
+                    app:layout_constraintStart_toStartOf="@+id/textView74"
+                    app:layout_constraintTop_toBottomOf="@+id/cahoot_status_text"
+                    tools:visibility="visible" />
             </android.support.constraint.ConstraintLayout>
 
 
