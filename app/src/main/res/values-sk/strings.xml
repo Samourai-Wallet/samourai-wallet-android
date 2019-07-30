@@ -645,46 +645,6 @@
     <string name="show_log">Ukáž Log</string>
     <string name="unconfirmed">Nepotvrdené</string>
 
-    <string name="confirmation">Potvrdené</string>
-    <string name="total_available_amount">Všetky dostupné prostriedky</string>
-    <string name="you_do_not_yet_have_any_paynym_contacts">Nemáš žiadne PayNym kontakty</string>
-    
-    <string name="experimental">Experimentálne</string>
-    <string name="cahoots">#Cahoots</string>
-    <string name="options_cahoots2">Vytvor transakciu cez CoinJoin.</string>
-    <string name="PSBT">PSBT</string>
-    <string name="options_psbt2">Čiastočne podpísaná BTC transakcia.</string>
-    <string name="import_cahoots">Skenuj alebo vlož #Cahoots.</string>
-    <string name="import_psbt">Skenuj alebo vlož PSBT.</string>
-    <string name="enter_cahoots">Vlož #Cahoots text</string>
-    <string name="enter_psbt">Vlož PSBT hex text</string>
-    <string name="create_cahoots">Vytvor #Cahoots</string>
-    <string name="stowaway">Stowaway</string>
-    <string name="stonewall">Stonewall</string>
-    <string name="urgent">Urgent</string>
-    <string name="normal">Normal</string>
-    <string name="low">Nízke</string>
-
-    <string name="ricochet_nlocktime_ok">Tvoja staggered Ricochet transakcia bola preposlana na vyslanie. Prosím počkajte pokial budú všetky transakcie v bloku poslané.</string>
-    <string name="ricochet_nlocktime_ko">Tvoja staggered Ricochet transakcia nemôže byť odoslana. Prosím skús znova.</string>
-    <string name="tag_utxo">Štítok UTXO</string>
-    <string name="boost_transaction_fee">Navýš transakčný poplatok</string>
-    <string name="refund">Vrátenie</string>
-
-    <string name="not_cahoots">Nesprávny #Cahoots</string>
-    <string name="not_valid_json">JSON chybný rozbor</string>
-    <string name="unrecognized_cahoots">Nerozpoznaný #Cahoots</string>
-    <string name="cannot_compose_cahoots">Nemožno vytvoriť #Cahoots</string>
-    <string name="start_stowaway">Začni Stowaway ako spender</string>
-    <string name="start_stonewall">Začni STONEWALL ako spender</string>
-    <string name="amount_sats">Zadaj hodnotu v Satoshi</string>
-    <string name="zero_bits">0 bitov</string>
-    <string name="not_available">N/A</string>
-    <string name="show_tx">Zobraz transakciu</string>
-    <string name="unrecognized_step">Nerozpoznaný #Cahoots krok</string>
-    <string name="cannot_process_stowaway">Nemožno vykonať Stowaway</string>
-    <string name="cannot_process_stonewall">Nemožno vykonať STONEWALL</string>
-    <string name="cannot_process_cahoots">Nemožno vykonať #Cahoots</string>
     <string name="title_activity_network_dashboard">
         Networking
     </string>
@@ -787,5 +747,5 @@
     <string name="cannot_process_stowaway">Cannot process Stowaway</string>
     <string name="cannot_process_stonewall">Cannot process STONEWALL</string>
     <string name="cannot_process_cahoots">Cannot process #Cahoots</string>
-    
+
 </resources>
