@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 
@@ -52,7 +53,6 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
 
         stowaway.setOnClickListener(view1 ->{
             if (onSelectListener != null) {
-                Log.i("UTU", "onViewCreated: ");
                 onSelectListener.onSelect(type.STOWAWAY);
             }
             this.dismiss();
@@ -67,10 +67,11 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
             this.dismiss();
         });
         samouraiAsParticipant.setOnClickListener(view1 -> {
-            if (onSelectListener != null) {
-                onSelectListener.onSelect(type.STONEWALLX2_SAMOURAI);
-            }
-            this.dismiss();
+            Toast.makeText(getContext(),"Coming soon",Toast.LENGTH_SHORT).show();
+//            if (onSelectListener != null) {
+//                onSelectListener.onSelect(type.STONEWALLX2_SAMOURAI);
+//            }
+//            this.dismiss();
         });
         closeBtn.setOnClickListener(view1 -> {
             if (stowawayChooserLayout.getVisibility() == View.VISIBLE) {
