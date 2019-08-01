@@ -108,7 +108,7 @@ public class PinEntryActivity extends AppCompatActivity {
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
         pinEntryView.setEntryListener((key, view) -> {
-            if (userInput.length() <= AccessFactory.MAX_PIN_LENGTH) {
+            if (userInput.length() <= (AccessFactory.MAX_PIN_LENGTH - 1)){
                 userInput = userInput.append(key);
                 if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
                     pinEntryView.showCheckButton();
@@ -184,7 +184,7 @@ public class PinEntryActivity extends AppCompatActivity {
         if (!PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true)) {
             pinEntryView.disableHapticFeedBack();
         }
-        pinEntryView.setConfirmClickListner(view -> {
+        pinEntryView.setConfirmClickListener(view -> {
 
             if (create && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
