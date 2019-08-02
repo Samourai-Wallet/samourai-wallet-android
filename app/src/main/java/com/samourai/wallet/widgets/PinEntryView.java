@@ -121,7 +121,7 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         hapticFeedBack();
-        if (pinLen <= AccessFactory.MAX_PIN_LENGTH) {
+        if (pinLen <= (AccessFactory.MAX_PIN_LENGTH -1 )) {
             if (this.entryListener != null) {
                 if (((Button) view).getText().toString().length() < AccessFactory.MAX_PIN_LENGTH)
                     entryListener.onPinEntered(((Button) view).getText().toString(), view);
@@ -146,8 +146,8 @@ public class PinEntryView extends FrameLayout implements View.OnClickListener {
 
     }
 
-    public void setConfirmClickListner(OnClickListener clickListner){
-        tconfirm.setOnClickListener(clickListner);
+    public void setConfirmClickListener(OnClickListener clickListener){
+        tconfirm.setOnClickListener(clickListener);
     }
 
     public void setSize(int size,int margin) {
