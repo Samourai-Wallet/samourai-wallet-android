@@ -45,7 +45,6 @@ import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.TxAnimUIActivity;
-import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -76,6 +75,7 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
@@ -2090,7 +2090,7 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void doUTXO() {
-        Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
+        Intent intent = new Intent(SendActivity.this, UTXOSActivity.class);
         if (account != 0) {
             intent.putExtra("_account", account);
         }

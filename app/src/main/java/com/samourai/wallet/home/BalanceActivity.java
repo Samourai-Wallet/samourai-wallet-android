@@ -57,7 +57,6 @@ import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
-import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -72,6 +71,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -853,7 +853,7 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void doUTXO() {
-        Intent intent = new Intent(BalanceActivity.this, UTXOActivity.class);
+        Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
         startActivity(intent);
     }
 

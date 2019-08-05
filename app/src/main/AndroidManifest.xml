@@ -55,6 +55,12 @@
 
         </activity>
         <activity
+            android:name=".utxos.UTXOSActivity"
+            android:exported="true"
+            android:label="Utxos"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/ui_2_theme" />
+        <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:theme="@style/ui_2_theme"
             android:label=""

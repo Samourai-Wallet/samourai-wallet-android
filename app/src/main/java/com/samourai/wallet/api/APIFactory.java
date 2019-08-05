@@ -1206,7 +1206,6 @@ public class APIFactory	{
         try {
 
             if(AppUtil.getInstance(context).isOfflineMode())    {
-                utxos.clear();
                 response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
             }
             else if(!TorManager.getInstance(context).isRequired())    {
@@ -1260,7 +1259,7 @@ public class APIFactory	{
                 if(utxoArray == null || utxoArray.length() == 0) {
                     return false;
                 }
-
+                utxos.clear();
                 for (int i = 0; i < utxoArray.length(); i++) {
 
                     JSONObject outDict = utxoArray.getJSONObject(i);
@@ -1955,6 +1954,40 @@ public class APIFactory	{
     public List<UTXO> getUtxos(boolean filter) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
+
+        if(filter)    {
+            for(String key : utxos.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxos.values());
+        }
+
+        return unspents;
+    }
+    public List<UTXO> getUtxosWithLocalCache(boolean filter,boolean useLocalCache) {
+
+        List<UTXO> unspents = new ArrayList<UTXO>();
+        if(utxos.isEmpty() && useLocalCache){
+            try {
+                String response  = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+                parseUnspentOutputsForSweep(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         if(filter)    {
             for(String key : utxos.keySet())   {
