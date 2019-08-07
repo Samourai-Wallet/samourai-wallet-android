@@ -122,17 +122,18 @@ public class PinEntryActivity extends AppCompatActivity {
             if (clearType == PinEntryView.KeyClearTypes.CLEAR) {
                 if (userInput.length() != 0)
                     userInput = new StringBuilder(userInput.substring(0, (userInput.length() - 1)));
+                if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
+                    pinEntryView.showCheckButton();
+                } else {
+                    pinEntryView.hideCheckButton();
+                }
             } else {
                 strPassphrase = "";
                 userInput = new StringBuilder();
                 pinEntryMaskLayout.removeAllViews();
-            }
-            setPinMaskView();
-            if (strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH) {
-                pinEntryView.showCheckButton();
-            } else {
                 pinEntryView.hideCheckButton();
             }
+            setPinMaskView();
         });
 
 
