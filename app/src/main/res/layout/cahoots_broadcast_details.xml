@@ -220,6 +220,7 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="18sp"
+        android:paddingTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -253,4 +254,17 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:constraint_referenced_ids="progressBar4,textView30" />
+
+    <ImageView
+        android:id="@+id/transaction_push_icon_cahoots"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/circle_shape"
+        android:padding="2dp"
+        android:src="@drawable/ic_send_final"
+        android:translationZ="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/cahoot_send_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/cahoot_send_btn"
+        app:layout_constraintTop_toTopOf="@+id/cahoot_send_btn" />
 </android.support.constraint.ConstraintLayout>

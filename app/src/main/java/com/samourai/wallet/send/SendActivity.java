@@ -1000,11 +1000,11 @@ public class SendActivity extends AppCompatActivity {
 
 
         if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
-            sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
-            btnSend.setBackgroundResource(R.drawable.button_blue);
-            btnSend.setText(getString(R.string.begin_stowaway));
-
+            setButtonForStowaway(true);
             return true;
+        }else {
+            setButtonForStowaway(false);
+
         }
 
 
@@ -1530,6 +1530,27 @@ public class SendActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void setButtonForStowaway(boolean prepare) {
+        if(prepare){
+            // Sets view with stowaway message
+            // also hides overlay push icon from button
+            sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
+            btnSend.setBackgroundResource(R.drawable.button_blue);
+            btnSend.setText(getString(R.string.begin_stowaway));
+            sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.INVISIBLE);
+            btnSend.setPadding(0,0,0,0);
+        }else {
+            // resets the changes made for stowaway
+            int paddingDp = 12;
+            float density =  getResources().getDisplayMetrics().density;
+            int paddingPixel = (int)(paddingDp * density);
+            btnSend.setBackgroundResource(R.drawable.button_green);
+            sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.VISIBLE);
+            btnSend.setPadding(0,paddingPixel,0,0);
+        }
+
     }
 
     private void initiateSpend() {
