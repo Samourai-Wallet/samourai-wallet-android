@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -129,6 +130,7 @@ public class SendActivity extends AppCompatActivity {
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc,cahootsStatusText,cahootsNotice;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
+    private ViewGroup totalMinerFeeLayout;
     private Switch cahootsSwitch;
     private SeekBar feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
@@ -192,7 +194,7 @@ public class SendActivity extends AppCompatActivity {
         toAddressEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
         satEditText = findViewById(R.id.amountSat);
-        tvToAddress = findViewById(R.id.to_address_review);
+         tvToAddress = findViewById(R.id.to_address_review);
         tvReviewSpendAmount = findViewById(R.id.send_review_amount);
         tvReviewSpendAmountInSats = findViewById(R.id.send_review_amount_in_sats);
         tvMaxAmount = findViewById(R.id.totalBTC);
@@ -216,6 +218,7 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
         cahootsStatusText = sendTransactionDetailsView.findViewById(R.id.cahoot_status_text);
+        totalMinerFeeLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_miner_fee_group);
         cahootsNotice = sendTransactionDetailsView.findViewById(R.id.cahoots_not_enabled_notice);
 
         btcEditText.addTextChangedListener(BTCWatcher);
@@ -302,11 +305,6 @@ public class SendActivity extends AppCompatActivity {
     private void setUpCahoots() {
         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
             cahootsNotice.setVisibility(View.VISIBLE);
-//             cahootsSwitch.setChecked(true);
-//            selectedCahootsType = SelectCahootsType.type.STONEWALLX2_MANUAL;
-//            cahootsStatusText.setText("StonewallX2 Manual");
-//            cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
-
         }
         cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             // to check whether bottomsheet is closed or selected a value
@@ -319,31 +317,35 @@ public class SendActivity extends AppCompatActivity {
                     public void onSelect(SelectCahootsType.type type) {
                         chosen[0] = true;
                         selectedCahootsType = type;
-                       switch (selectedCahootsType){
-                           case NONE:{
-                               cahootsStatusText.setText("Off");
-                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.warning_yellow));
-                             break;
-                           }
-                           case STOWAWAY:{
-                               cahootsStatusText.setText("Stowawy");
-                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
 
-                               break;
-                           }
-                           case STONEWALLX2_MANUAL:{
-                               cahootsStatusText.setText("StonewallX2 Manual");
-                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
+                        hideToAddressForStowaway(false);
 
-                               break;
-                           }
-                           case STONEWALLX2_SAMOURAI:{
-                               cahootsStatusText.setText("Stonewallx2 Samourai");
-                               cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_ui_2));
-                               break;
-                           }
 
-                       }
+                        switch (selectedCahootsType) {
+                            case NONE: {
+                                cahootsStatusText.setText("Off");
+                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
+                                break;
+                            }
+                            case STOWAWAY: {
+                                cahootsStatusText.setText("Stowaway");
+                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
+                                hideToAddressForStowaway(true);
+                                break;
+                            }
+                            case STONEWALLX2_MANUAL: {
+                                cahootsStatusText.setText("StonewallX2 Manual");
+                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
+
+                                break;
+                            }
+                            case STONEWALLX2_SAMOURAI: {
+                                cahootsStatusText.setText("Stonewallx2 Samourai");
+                                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
+                                break;
+                            }
+
+                        }
                         validateSpend();
                     }
 
@@ -352,17 +354,32 @@ public class SendActivity extends AppCompatActivity {
                         if (!chosen[0]) {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
+                            hideToAddressForStowaway(false);
                         }
                         validateSpend();
                     }
                 });
             } else {
-                Log.i(TAG, "setUpCahoots: ");
                 selectedCahootsType = SelectCahootsType.type.NONE;
                 cahootsStatusText.setText("Off");
-                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.warning_yellow));
+                cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
+                hideToAddressForStowaway(false);
+                validateSpend();
+                enableReviewButton(false);
             }
         });
+    }
+
+    private void hideToAddressForStowaway(boolean hide){
+        if(hide){
+            toAddressEditText.setText("Stowaway Collaborator");
+            toAddressEditText.setEnabled(false);
+            address = "";
+        }else {
+            toAddressEditText.setEnabled(true);
+            toAddressEditText.setText("");
+            address = "";
+        }
     }
 
     @Override
@@ -383,7 +400,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpBoltzman() {
         sendTransactionDetailsView.getStoneWallSwitch().setChecked(true);
-        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() != account  );
+        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() != account);
         sendTransactionDetailsView.enableStonewall(true);
         sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
     }
@@ -1960,7 +1977,12 @@ public class SendActivity extends AppCompatActivity {
             insufficientFunds = true;
         }
 
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds) {
+        if(selectedCahootsType != SelectCahootsType.type.NONE){
+            totalMinerFeeLayout.setVisibility(View.INVISIBLE);
+        }else {
+            totalMinerFeeLayout.setVisibility(View.VISIBLE);
+        }
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds && amount!=0) {
             enableReviewButton(true);
             return true;
         }
