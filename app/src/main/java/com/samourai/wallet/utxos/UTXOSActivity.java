@@ -105,6 +105,7 @@ public class UTXOSActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
             if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                 account = WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix();
+                getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
             }
         }
 

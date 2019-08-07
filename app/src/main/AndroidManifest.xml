@@ -57,7 +57,7 @@
         <activity
             android:name=".utxos.UTXOSActivity"
             android:exported="true"
-            android:label="Utxos"
+            android:label="@string/unspent_outputs"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/ui_2_theme" />
         <activity
