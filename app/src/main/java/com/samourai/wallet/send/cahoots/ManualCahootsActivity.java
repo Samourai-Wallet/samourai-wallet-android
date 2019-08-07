@@ -1,5 +1,8 @@
 package com.samourai.wallet.send.cahoots;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -187,9 +190,20 @@ public class ManualCahootsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
             finish();
+        }
+
+        if(menuItem.getItemId() == R.id.action_menu_paste_cahoots){
+            try {
+                ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+                onScanCahootsPayload(item.getText().toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Invalid data", Toast.LENGTH_SHORT).show();
+            }
         }
 
         return true;

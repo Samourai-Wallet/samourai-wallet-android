@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Placeholder"
+        android:title="@string/paste_cahoots_payload"
+        android:id="@+id/action_menu_paste_cahoots"
         app:showAsAction="never" />
 </menu>

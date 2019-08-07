@@ -24,7 +24,7 @@ import java.util.Locale;
 
 public class CahootsStepFragment extends Fragment {
 
-    private Button showQRBtn, scanQRbtn, pasteBtn;
+    private Button showQRBtn, scanQRbtn;
     private TextView stoneWallx2TotalFee, stoneWallx2SplitFee;
     private ViewGroup feeSplitUpContainer;
     private int step = 0;
@@ -46,12 +46,12 @@ public class CahootsStepFragment extends Fragment {
         TextView stepText = view.findViewById(R.id.cahoots_step_text);
         showQRBtn = view.findViewById(R.id.cahoots_step_show_qr_btn);
         scanQRbtn = view.findViewById(R.id.cahoots_step_scan_qr_btn);
-        pasteBtn = view.findViewById(R.id.cahoots_step_paste_payload);
         stoneWallx2TotalFee = view.findViewById(R.id.stonewall_splitup_total_fee);
         stoneWallx2SplitFee = view.findViewById(R.id.stonewall_collab_fee);
         feeSplitUpContainer = view.findViewById(R.id.stonewall_fee_splitup_container);
         step = getArguments().getInt("step");
         stepText.setText("Step ".concat(String.valueOf(step + 1)));
+
         scanQRbtn.setOnClickListener(view1 -> {
             CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
             cameraFragmentBottomSheet.show(getActivity().getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
@@ -68,18 +68,7 @@ public class CahootsStepFragment extends Fragment {
             }
         });
         feeSplitUpContainer.setVisibility(View.GONE);
-        pasteBtn.setOnClickListener(view1 -> {
-            try {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-                if (cahootsFragmentListener != null) {
-                    cahootsFragmentListener.onScan(step, item.getText().toString());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getContext(), "Invalid data", Toast.LENGTH_SHORT).show();
-            }
-        });
+
         if (this.stowaway != null) {
             if (stowaway.getStep() == 2) {
                 feeSplitUpContainer.post(() -> {
