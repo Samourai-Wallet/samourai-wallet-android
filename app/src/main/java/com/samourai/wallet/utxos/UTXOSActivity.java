@@ -162,6 +162,9 @@ public class UTXOSActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_utxo_amounts) {
             doDisplayAmounts();
         }
+        if (item.getItemId() == R.id.action_refresh) {
+           loadUTXOs(false);
+        }
         return super.onOptionsItemSelected(item);
     }
 

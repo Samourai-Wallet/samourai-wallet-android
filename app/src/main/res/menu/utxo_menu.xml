@@ -7,4 +7,10 @@
         android:showAsAction="never"
         />
 
+     <item android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        />
+
 </menu>
