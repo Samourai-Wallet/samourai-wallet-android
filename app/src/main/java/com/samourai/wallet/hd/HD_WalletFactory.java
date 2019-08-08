@@ -5,6 +5,8 @@ import android.content.Context;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 
@@ -21,6 +23,8 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -225,6 +229,24 @@ public class HD_WalletFactory	{
     // for tests
     public void __setMnemonicCode(MnemonicCode mc) {
         this.mc = mc;
+    }
+
+    public byte[] getFingerprint() throws IOException, MnemonicException.MnemonicLengthException {
+
+        List<String> wordList = Arrays.asList(get().getMnemonic().split("\\s+"));
+        String passphrase = get().getPassphrase();
+
+        byte[] hd_seed = MnemonicCode.toSeed(wordList, passphrase.toString());
+        DeterministicKey mKey = HDKeyDerivation.createMasterPrivateKey(hd_seed);
+        int fp = mKey.getFingerprint();
+
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.putInt(fp);
+        byte[] buf = bb.array();
+
+        return buf;
+
     }
 
 }
