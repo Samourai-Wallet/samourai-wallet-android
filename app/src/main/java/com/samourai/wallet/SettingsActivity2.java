@@ -53,6 +53,7 @@ import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -1849,9 +1850,23 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         final JSONObject pairingObj = new JSONObject();
         final JSONObject jsonObj = new JSONObject();
+        final JSONObject dojoObj = new JSONObject();
+
         try {
+
+            if(DojoUtil.getInstance(SettingsActivity2.this).getDojoParams() != null)    {
+                String params = DojoUtil.getInstance(SettingsActivity2.this).getDojoParams();
+                String url = DojoUtil.getInstance(SettingsActivity2.this).getUrl(params);
+                String apiKey = DojoUtil.getInstance(SettingsActivity2.this).getApiKey(params);
+
+                if(url != null && apiKey != null && url.length() > 0 && apiKey.length() > 0)    {
+                    dojoObj.put("apikey", apiKey);
+                    dojoObj.put("url", url);
+                }
+            }
+
             jsonObj.put("type", "whirlpool.gui");
-            jsonObj.put("version", "2.0.0");
+            jsonObj.put("version", "3.0.0");
             jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
 
             String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
@@ -1861,6 +1876,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 jsonObj.put("passphrase", true);
 
                 pairingObj.put("pairing", jsonObj);
+                if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                    pairingObj.put("dojo", dojoObj);
+                }
 
                 displayWhirlpoolGUIPairing(pairingObj);
             }
@@ -1901,6 +1919,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                             jsonObj.put("passphrase", false);
 
                                                             pairingObj.put("pairing", jsonObj);
+                                                            if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                                                                pairingObj.put("dojo", dojoObj);
+                                                            }
 
                                                             displayWhirlpoolGUIPairing(pairingObj);
                                                         }
