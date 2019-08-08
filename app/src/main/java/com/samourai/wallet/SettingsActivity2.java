@@ -1805,6 +1805,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                 pairingObj.put("pairing", jsonObj);
                 if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                    String apiKey = dojoObj.getString("apikey");
+                    String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                    dojoObj.put("apikey", encryptedApiKey);
                     pairingObj.put("dojo", dojoObj);
                 }
 
@@ -1848,6 +1851,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                                             pairingObj.put("pairing", jsonObj);
                                                             if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                                                                String apiKey = dojoObj.getString("apikey");
+                                                                String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                                dojoObj.put("apikey", encryptedApiKey);
                                                                 pairingObj.put("dojo", dojoObj);
                                                             }
 
