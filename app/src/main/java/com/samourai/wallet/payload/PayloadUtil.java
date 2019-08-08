@@ -49,6 +49,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
 import org.bitcoinj.params.TestNet3Params;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -309,6 +310,7 @@ public class PayloadUtil	{
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
                 wallet.put("passphrase", HD_WalletFactory.getInstance(context).get().getPassphrase());
 //                obj.put("mnemonic", getMnemonic());
+                wallet.put("fingerprint", Hex.toHexString(HD_WalletFactory.getInstance(context).getFingerprint()));
             }
 
             JSONArray accts = new JSONArray();
