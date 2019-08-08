@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Mégse</string>
 
-    <string name="options_cat_prefs">Blokk felfedező</string>
+    <string name="options_cat_prefs">Pénznem, Blokk felfedező</string>
     <string name="options_cat_stealth">Rejtőzködő mód</string>
     <string name="options_cat_remote">Távoli</string>
     <string name="options_cat_wallet">Pénztárca</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">A Samourai alkalmazás el lesz rejtve a kezdőképernyőről és az alkalmazások közül. Az alábbi szám tárcsázásával indítható a Samourai alkalmazás: **SAJÁT_PIN_KÓD#</string>
     <string name="options_remote_commands">Távoli utasítások engedélyezése</string>
     <string name="options_remote_commands2">Távoli utasítások engedélyezése SMS-en keresztül</string>
-    <string name="options_currency">Utcai árfolyam</string>
-    <string name="options_currency2">Válaszd ki az exchange-det és a pénznemedet.</string>
+    <string name="options_currency">Utcai ár</string>
+    <string name="options_currency2">Válassza ki a csere és a helyi fiat pénznemet.</string>
     <string name="options_blockexplorer">Blokk felfedező</string>
     <string name="options_blockexplorer2">A tranzakciók részleteinek megtekintéséhez használt blokk felfedező.</string>
     <string name="options_sim_switch">SIM csere elleni védelem</string>

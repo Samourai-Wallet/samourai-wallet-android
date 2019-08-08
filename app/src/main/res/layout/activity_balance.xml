@@ -9,7 +9,6 @@
     android:orientation="vertical"
     tools:context="com.samourai.wallet.whirlpool.EmptyWhirlPool">
 
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -28,14 +27,19 @@
             app:expandedTitleTextAppearance="@style/BalanceToolbarExpandedTitleStyle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
 
-
+            <TextView
+                android:id="@+id/tv_fiat_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="8dp"
+                android:visibility="invisible" />
         </android.support.design.widget.CollapsingToolbarLayout>
 
         <ProgressBar

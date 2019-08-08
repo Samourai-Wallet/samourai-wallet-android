@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_prefs">Currency, Block explorer</string>
     <string name="options_cat_stealth">Stealth</string>
     <string name="options_cat_remote">Remote</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -43,6 +43,8 @@
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
     <string name="options_stealth_display2">Remove Samourai from the launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Samourai.</string>
+    <string name="options_currency">Street price</string>
+    <string name="options_currency2">Choose your exchange and local fiat currency.</string>
     <string name="options_remote_commands">Enable remote commands</string>
     <string name="options_remote_commands2">Allow remote commands via SMS.</string>
     <string name="options_blockexplorer">Block explorer</string>
@@ -743,6 +745,5 @@
     <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
     <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
     <string name="renew">RENEW</string>
-
 
 </resources>

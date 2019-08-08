@@ -20,7 +20,7 @@
   <string name="ok">Tamam</string>
   <string name="cancel">İptal</string>
 
-  <string name="options_cat_prefs">Blok gezgini</string>
+  <string name="options_cat_prefs">Para birimi, Blok gezgini</string>
   <string name="options_cat_stealth">Gizlilik</string>
   <string name="options_cat_remote">Uzaktan Erişim</string>
   <string name="options_cat_wallet">Cüzdan</string>
@@ -42,7 +42,7 @@
   <string name="options_remote_commands">Uzaktan erişim komutlarını etkinleştir</string>
   <string name="options_remote_commands2">SMS ile uzaktan erişim komutlarına izin verin.</string>
   <string name="options_currency">Sokak fiyatı</string>
-  <string name="options_currency2">Fiyatı hesaplamak için yeğlediğiniz borsayı ve para biriminizi seçin.</string>
+  <string name="options_currency2">Değişiminizi ve yerel fiat para biriminizi seçin.</string>
   <string name="options_blockexplorer">Blok gezgini</string>
   <string name="options_blockexplorer2">İşlem ayrıntılarını göstermek için kullanacağınız blok gezginini seçin.</string>
   <string name="options_sim_switch">SIM değiştirme koruması</string>

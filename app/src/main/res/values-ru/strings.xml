@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
 
-    <string name="options_cat_prefs">Проводник блоков</string>
+    <string name="options_cat_prefs">Проводник блоков, валюты</string>
     <string name="options_cat_stealth">Маскировка</string>
     <string name="options_cat_remote">Удалённое управление</string>
     <string name="options_cat_wallet">Кошелёк</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">Удалить иконку Samourai с домашнего экрана и из лаунчера. Для запуска Samourai нужно будет набрать **ВАШ_PIN# в приложении телефона.</string>
     <string name="options_remote_commands">Включить удалённое управление (УУ)</string>
     <string name="options_remote_commands2">Разрешить принимать удалённые команды через SMS.</string>
-    <string name="options_currency">Местный курс</string>
-    <string name="options_currency2">Выберите биржу и местную фиатную валюту для отображения сумм в ней.</string>
+    <string name="options_currency">Уличная цена</string>
+    <string name="options_currency2">Выберите ваш обмен и местную валюту.</string>
     <string name="options_blockexplorer">Проводник блоков</string>
     <string name="options_blockexplorer2">Проводник, который будет использоваться для просмотра подробностей о транзакциях.</string>
     <string name="options_sim_switch">Защита от замены SIM</string>
@@ -523,8 +523,7 @@
 
     <string name="use_bech32">Использовать bech32-адрес</string>
 
-    
-    
+
     <string name="boltzmann_cannot">Выход STONEWALL не может быть совмещён с вашим текущими выходами транзакций. Если вам требуется STONEWALL выход, выберите \'НЕТ\' и попробуйте ещё раз с другим набором непотраченных выходов.</string>
     <string name="boltzmann_like_typed">Внимание! Опция \'Получить сдачу на похожий выход\' ВЫКЛЮЧЕНА и может сказаться на менее оптимальной структуре трат для ваших STONEWALL-выходов транзакций.</string>
     <string name="title_activity_main3">Main3Activity</string>
@@ -540,7 +539,6 @@
     <string name="total_p2sh_p2wpkh">Всего segwit (p2sh):</string>
     <string name="total_p2wpkh">Всего segwit (bech32):</string>
     <string name="total_blocked">Всего заблокированных:</string>
-
 
 
     <string name="tx_creating_ok">Создаём транзакцию...</string>
@@ -594,7 +592,7 @@
     <string name="address_type">Тип адреса</string>
     <string name="path">Путь</string>
 
-<string name="title_activity_send_new_ui">SendNewUIActivity</string>
+    <string name="title_activity_send_new_ui">SendNewUIActivity</string>
     <string name="ricochet_hops_msg">Дополнительные шаги между вашим кошельком и конечной точкой для улучшения взаимозаменяемости монет</string>
     <string name="review_transaction">ПРОСМОТР ТРАНЗАКЦИИ</string>
     <string name="stonewall_increases_deniability">STONEWALL позволяет правдоподобнее отрицать причастность и уменьшает количество возможных связей этой транзакции.</string>

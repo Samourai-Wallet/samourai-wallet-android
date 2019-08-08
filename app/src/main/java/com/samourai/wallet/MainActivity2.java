@@ -30,6 +30,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
@@ -167,6 +168,8 @@ public class MainActivity2 extends Activity {
         } else {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
+
+            ExchangeRateFactory.getInstance(MainActivity2.this).exchangeRateThread();
 
             String action = getIntent().getAction();
             String scheme = getIntent().getScheme();

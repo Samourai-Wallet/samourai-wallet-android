@@ -20,7 +20,7 @@
     <string name="ok">باشه</string>
     <string name="Cancel">لغو</string>
 
-    <string name="options_cat_prefs">جستجوگرِ بلاک</string>
+    <string name="options_cat_prefs">ارز ، اکسپلورر بلوک</string>
     <string name="options_cat_stealth">حالت مخفی</string>
     <string name="options_cat_remote">از راه دور</string>
     <string name="options_cat_wallet">کیف پول</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">#حذف سامورائی از لانچر و صفحه‌ی خانه. باید به این صورت از طریق تلفن تماس بگیرید تا سامورایی اجرا شود: **پین کدِ شما</string>
     <string name="options_remote_commands">فعال‌سازیِ دستورات از را دور</string>
     <string name="options_remote_commands2">اجازه دادن برای اجرای دستورات از راه دور توسط پیامک</string>
-    <string name="options_currency">قیمت کفِ بازار</string>
-    <string name="options_currency2">صرافی و پولِ محلی خود را انتخاب کنید</string>
+    <string name="options_currency">قیمت خیابان</string>
+    <string name="options_currency2">ارز و فیات محلی خود را انتخاب کنید.</string>
     <string name="options_blockexplorer">جستجوگرِ بلاک</string>
     <string name="options_blockexplorer2">استفاده از جستجوگرِ بلاک برای دیدن جزئیات تراکنش‌ها</string>
     <string name="options_sim_switch">محافظت از تغییر سیم‌کارت</string>

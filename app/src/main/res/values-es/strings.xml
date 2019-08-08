@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="alpha_create_wallet">Anote las siguientes 12 palabras y guárdelas en un lugar seguro. Mientras tenga estas 12 palabras y la contraseña que acaba de crear, nunca perderá acceso a sus fondos.</string>
+    <string name="alpha_create_wallet">Anote las siguientes 12 palabras y guárdelas en un lugar seguro. Mientras tenga estas 12 palabras y la contraseña que acaba de crear, nunca perderá acceso a sus fondos.</string>
     <string name="alpha_create_confirm_backup">He escrito mis palabras de recuperación.</string>
-    
-	<string name="creating_wallet">Creando billetera. Espere...</string>
+
+    <string name="creating_wallet">Creando billetera. Espere...</string>
     <string name="restoring_wallet">Restaurando billetera. Espere...</string>
     <string name="decrypting_bip38">Descifrando la contraseña BIP38. Espere...</string>
-    
-	<string name="action_settings">Configuración</string>
+
+    <string name="action_settings">Configuración</string>
     <string name="action_support">Soporte</string>
     <string name="action_sweep">Barrido de clave privada</string>
     <string name="action_bip47">PayNyms</string>
@@ -20,7 +20,7 @@
     <string name="ok">Aceptar</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="options_cat_prefs">Explorador de bloques</string>
+    <string name="options_cat_prefs">Moneda, Explorador de bloques</string>
     <string name="options_cat_stealth">Invisibilidad</string>
     <string name="options_cat_remote">Control remoto</string>
     <string name="options_cat_wallet">Billetera</string>
@@ -472,7 +472,7 @@
 
     <string name="bip47_notif_tx_insufficient_funds_1">Agregar un PayNym a tus contactos requiere una comisión por única vez para crear el registro en la blockchain. Depositar</string>
     <string name="bip47_notif_tx_insufficient_funds_2">BTC en tu billetera e inténtalo nuevamente.</string>
-    <string name="help">Ayuda</string> 
+    <string name="help">Ayuda</string>
 
     <string name="passphrase_disclaimer">Entiendo que Samourai no puede darme soporte en caso de perder las contraseñas. Samourai nunca tiene conocimiento de tus contraseñas.</string>
     <string name="confirm_pin_code">Confirmar código PIN</string>
@@ -723,5 +723,7 @@
     <string name="total_selected">Total seleccionado</string>
     <string name="cycle">Mezclar</string>
     <string name="postmix_without_boltzmann">Tenga en cuenta que hacer un gasto de una posmezcla sin usar STONEWALL le llevará a una pérdida de parte de la privacidad ganada con Whirlpool.</string>
+    <string name="options_currency">Precio de calle</string>
+    <string name="options_currency2">Elija su cambio y moneda fiduciaria local.</string>
 
 </resources>

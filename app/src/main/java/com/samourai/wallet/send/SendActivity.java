@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -70,6 +71,7 @@ import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
+import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -124,16 +126,19 @@ public class SendActivity extends AppCompatActivity {
 
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
-    private EditText toAddressEditText, btcEditText, satEditText;
+    private EditText toAddressEditText, btcEditText, satEditText, mFiatEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc;
+    private TextInputLayout mFiatTextInputLayout;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
-//    private Switch cahootsSwitch;
+    //    private Switch cahootsSwitch;
     private SeekBar feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
+
+    private String defaultSeparator = null;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
@@ -173,6 +178,23 @@ public class SendActivity extends AppCompatActivity {
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
     private int account = 0;
 
+    private String strFiat = null;
+    private double btc_fx = 286.0;
+
+    private String getFiatDisplayUnits() {
+
+        return PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+    }
+
+    private String getFiatDisplayAmount(long value) {
+
+        String strFiat = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+        double btc_fx = ExchangeRateFactory.getInstance(SendActivity.this).getAvgPrice(strFiat);
+        String strAmount = MonetaryUtil.getInstance().getFiatFormat(strFiat).format(btc_fx * (((double) value) / 1e8));
+
+        return strAmount;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +213,8 @@ public class SendActivity extends AppCompatActivity {
         toAddressEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
         satEditText = findViewById(R.id.amountSat);
+        mFiatEditText = findViewById(R.id.et_amount_fiat);
+        mFiatTextInputLayout = findViewById(R.id.textInputLayout4);
         tvToAddress = findViewById(R.id.to_address_review);
         tvReviewSpendAmount = findViewById(R.id.send_review_amount);
         tvReviewSpendAmountInSats = findViewById(R.id.send_review_amount_in_sats);
@@ -215,10 +239,20 @@ public class SendActivity extends AppCompatActivity {
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
 //        cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cahoots_group);
 
+        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+        DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+        defaultSeparator = Character.toString(symbols.getDecimalSeparator());
+
+        strFiat = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+        btc_fx = ExchangeRateFactory.getInstance(SendActivity.this).getAvgPrice(strFiat);
+
         btcEditText.addTextChangedListener(BTCWatcher);
-        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8,8)});
+        btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 8)});
         satEditText.addTextChangedListener(satWatcher);
+        mFiatEditText.addTextChangedListener(mFiatWatcher);
         toAddressEditText.addTextChangedListener(AddressWatcher);
+
+        mFiatTextInputLayout.setHint(strFiat);
 
         btnReview.setOnClickListener(v -> review());
         btnSend.setOnClickListener(v -> initiateSpend());
@@ -295,36 +329,37 @@ public class SendActivity extends AppCompatActivity {
         }
 
     }
-/*
-    private void setUpCahoots() {
-        cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
-            // to check whether bottomsheet is closed or selected a value
-            final boolean[] chosen = {false};
-            if (b) {
-                SelectCahootsType cahootsType = new SelectCahootsType();
-                cahootsType.show(getSupportFragmentManager(), cahootsType.getTag());
-                cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
-                    @Override
-                    public void onSelect(SelectCahootsType.type type) {
-                        chosen[0] = true;
-                        selectedCahootsType = type;
-                    }
 
-                    @Override
-                    public void onDismiss() {
-                        if (!chosen[0]) {
-                            compoundButton.setChecked(false);
-                            selectedCahootsType = SelectCahootsType.type.NONE;
+    /*
+        private void setUpCahoots() {
+            cahootsSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+                // to check whether bottomsheet is closed or selected a value
+                final boolean[] chosen = {false};
+                if (b) {
+                    SelectCahootsType cahootsType = new SelectCahootsType();
+                    cahootsType.show(getSupportFragmentManager(), cahootsType.getTag());
+                    cahootsType.setOnSelectListener(new SelectCahootsType.OnSelectListener() {
+                        @Override
+                        public void onSelect(SelectCahootsType.type type) {
+                            chosen[0] = true;
+                            selectedCahootsType = type;
                         }
-                    }
-                });
-            } else {
-                Log.i(TAG, "setUpCahoots: ");
-                selectedCahootsType = SelectCahootsType.type.NONE;
-            }
-        });
-    }
-*/
+
+                        @Override
+                        public void onDismiss() {
+                            if (!chosen[0]) {
+                                compoundButton.setChecked(false);
+                                selectedCahootsType = SelectCahootsType.type.NONE;
+                            }
+                        }
+                    });
+                } else {
+                    Log.i(TAG, "setUpCahoots: ");
+                    selectedCahootsType = SelectCahootsType.type.NONE;
+                }
+            });
+        }
+    */
     @Override
     protected void onResume() {
         super.onResume();
@@ -573,7 +608,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpRicochet() {
 
-        if(account != 0)    {
+        if (account != 0) {
             ricochetHopsSwitch.setChecked(false);
             ricochetStaggeredDelivery.setChecked(false);
             ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
@@ -707,25 +742,32 @@ public class SendActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable editable) {
             satEditText.removeTextChangedListener(satWatcher);
+            mFiatEditText.removeTextChangedListener(mFiatWatcher);
             btcEditText.removeTextChangedListener(this);
 
             try {
                 if (editable.toString().length() == 0) {
                     satEditText.setText("0");
                     btcEditText.setText("");
+                    mFiatEditText.setText("0");
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
                     satEditText.setSelection(satEditText.getText().length());
                     satEditText.addTextChangedListener(satWatcher);
+                    mFiatEditText.addTextChangedListener(mFiatWatcher);
                     btcEditText.addTextChangedListener(this);
                     return;
                 }
 
-                Double btc = Double.parseDouble(String.valueOf(editable));
+                double btc = Double.parseDouble(String.valueOf(editable));
 
                 if (btc > 21000000.0) {
                     btcEditText.setText("0.00");
                     btcEditText.setSelection(btcEditText.getText().length());
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
+                    mFiatEditText.setText("0");
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
+
                     Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 } else {
                     DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
@@ -756,8 +798,11 @@ public class SendActivity extends AppCompatActivity {
                         ;
                     }
 
-                    Double sats = getSatValue(Double.valueOf(btc));
+                    Double sats = getSatValue(btc);
                     satEditText.setText(formattedSatValue(sats));
+                    mFiatEditText.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(
+                            btc * btc_fx));
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
                     checkRicochetPossibility();
                 }
 
@@ -766,10 +811,9 @@ public class SendActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             satEditText.addTextChangedListener(satWatcher);
+            mFiatEditText.addTextChangedListener(mFiatWatcher);
             btcEditText.addTextChangedListener(this);
             validateSpend();
-
-
         }
     };
 
@@ -796,7 +840,6 @@ public class SendActivity extends AppCompatActivity {
                 else
                     setToAddress("");
             }
-
         }
     };
 
@@ -820,11 +863,18 @@ public class SendActivity extends AppCompatActivity {
         public void afterTextChanged(Editable editable) {
             satEditText.removeTextChangedListener(this);
             btcEditText.removeTextChangedListener(BTCWatcher);
+            mFiatEditText.removeTextChangedListener(mFiatWatcher);
 
             try {
                 if (editable.toString().length() == 0) {
                     btcEditText.setText("0.00");
                     satEditText.setText("");
+                    mFiatEditText.setText("0.00");
+
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
+                    btcEditText.setSelection(btcEditText.getText().length());
+
+                    mFiatEditText.addTextChangedListener(mFiatWatcher);
                     satEditText.addTextChangedListener(this);
                     btcEditText.addTextChangedListener(BTCWatcher);
                     return;
@@ -835,15 +885,19 @@ public class SendActivity extends AppCompatActivity {
                 Double btc = getBtcValue(sats);
                 String formatted = formattedSatValue(sats);
 
-
                 satEditText.setText(formatted);
                 satEditText.setSelection(formatted.length());
+                mFiatEditText.setText(MonetaryUtil.getInstance().getFiatFormat(strFiat).format(
+                        btc * btc_fx));
+                mFiatEditText.setSelection(mFiatEditText.getText().length());
                 btcEditText.setText(String.format(Locale.ENGLISH, "%.8f", btc));
                 if (btc > 21000000.0) {
                     btcEditText.setText("0.00");
                     btcEditText.setSelection(btcEditText.getText().length());
                     satEditText.setText("0");
                     satEditText.setSelection(satEditText.getText().length());
+                    mFiatEditText.setText("0.00");
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
                     Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
@@ -852,9 +906,117 @@ public class SendActivity extends AppCompatActivity {
             }
             satEditText.addTextChangedListener(this);
             btcEditText.addTextChangedListener(BTCWatcher);
+            mFiatEditText.addTextChangedListener(mFiatWatcher);
+
             checkRicochetPossibility();
             validateSpend();
+        }
+    };
 
+    private TextWatcher mFiatWatcher = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+            mFiatEditText.removeTextChangedListener(this);
+            btcEditText.removeTextChangedListener(BTCWatcher);
+            satEditText.removeTextChangedListener(satWatcher);
+
+            try {
+                if (editable.toString().length() == 0) {
+                    satEditText.setText("0.00");
+                    satEditText.setSelection(satEditText.getText().length());
+
+                    btcEditText.setText("0.00");
+                    btcEditText.setSelection(btcEditText.getText().length());
+
+                    mFiatEditText.setText("");
+
+                    btcEditText.addTextChangedListener(BTCWatcher);
+                    satEditText.addTextChangedListener(satWatcher);
+                    mFiatEditText.addTextChangedListener(this);
+
+                    return;
+                }
+
+                double d = 0.0;
+
+                DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+                DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+                String defaultSeparator = Character.toString(symbols.getDecimalSeparator());
+
+                int max_len = 2;
+                NumberFormat fiatFormat = NumberFormat.getInstance(Locale.US);
+                fiatFormat.setMaximumFractionDigits(max_len + 1);
+                fiatFormat.setMinimumFractionDigits(0);
+
+                try {
+                    d = NumberFormat.getInstance(Locale.US).parse(editable.toString()).doubleValue();
+                    String s1 = fiatFormat.format(d);
+                    if (s1.indexOf(defaultSeparator) != -1) {
+                        String dec = s1.substring(s1.indexOf(defaultSeparator));
+                        if (dec.length() > 0) {
+                            dec = dec.substring(1);
+                            if (dec.length() > max_len) {
+
+                                mFiatEditText.setText(s1.substring(0, s1.length() - 1));
+                                mFiatEditText.setSelection(mFiatEditText.getText().length());
+                            }
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if ((d / btc_fx) > 21000000.0) {
+
+                    btcEditText.setText("0.0");
+                    btcEditText.setSelection(btcEditText.getText().length());
+
+                    satEditText.setText("0.0");
+                    satEditText.setSelection(satEditText.getText().length());
+
+                    mFiatEditText.setText("0");
+                    mFiatEditText.setSelection(mFiatEditText.getText().length());
+
+                    Toast.makeText(SendActivity.this, R.string.invalid_amount,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+
+                    final String btc = MonetaryUtil.getInstance().getBTCFormat().format(
+                            d / btc_fx).replace(",", "");
+
+                    Double sats = getSatValue(Double.parseDouble(btc));
+                    satEditText.setText(formattedSatValue(sats));
+                    satEditText.setSelection(satEditText.getText().length());
+
+                    btcEditText.setText(btc);
+                    btcEditText.setSelection(btcEditText.getText().length());
+
+                    checkRicochetPossibility();
+                }
+            } catch (NumberFormatException e) {
+
+                e.printStackTrace();
+            }
+
+            mFiatEditText.addTextChangedListener(this);
+            satEditText.addTextChangedListener(satWatcher);
+            btcEditText.addTextChangedListener(BTCWatcher);
+
+            validateSpend();
         }
     };
 
@@ -943,10 +1105,9 @@ public class SendActivity extends AppCompatActivity {
 
         address = strDestinationBTCAddress == null ? toAddressEditText.getText().toString().trim() : strDestinationBTCAddress;
 
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             changeType = 84;
-        }
-        else if(PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
+        } else if (PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true) == false) {
             changeType = 84;
         } else if (FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
             changeType = FormatsUtil.getInstance().isValidBech32(address) ? 84 : 49;
@@ -957,10 +1118,9 @@ public class SendActivity extends AppCompatActivity {
         receivers = new HashMap<String, BigInteger>();
         receivers.put(address, BigInteger.valueOf(amount));
 
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             change_index = idxBIP84PostMixInternal;
-        }
-        else if (changeType == 84) {
+        } else if (changeType == 84) {
             change_index = idxBIP84Internal;
         } else if (changeType == 49) {
             change_index = idxBIP49Internal;
@@ -989,7 +1149,7 @@ public class SendActivity extends AppCompatActivity {
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2SH_P2WPKH().values());
         List<UTXO> utxosP2PKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2PKH().values());
-        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
             utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
         }
@@ -1074,7 +1234,7 @@ public class SendActivity extends AppCompatActivity {
             List<UTXO> _utxos2 = null;
 
             long valueP2WPKH = UTXOFactory.getInstance().getTotalP2WPKH();
-            if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                 valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
             }
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
@@ -1088,12 +1248,11 @@ public class SendActivity extends AppCompatActivity {
             boolean selectedP2SH_P2WPKH = false;
             boolean selectedP2PKH = false;
 
-            if((valueP2WPKH > (neededAmount * 2)) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+            if ((valueP2WPKH > (neededAmount * 2)) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            }
-            else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
+            } else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
@@ -1493,11 +1652,10 @@ public class SendActivity extends AppCompatActivity {
                 // add change
                 if (_change > 0L) {
                     if (SPEND_TYPE == SPEND_SIMPLE) {
-                        if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix())    {
+                        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
-                        }
-                        else if (changeType == 84) {
+                        } else if (changeType == 84) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else if (changeType == 49) {
@@ -1714,7 +1872,7 @@ public class SendActivity extends AppCompatActivity {
             return;
         }
 
-        if(Cahoots.isCahoots(data.trim())) {
+        if (Cahoots.isCahoots(data.trim())) {
             CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
             return;
         }
@@ -2026,7 +2184,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void doUTXO() {
         Intent intent = new Intent(SendActivity.this, UTXOActivity.class);
-        if(account != 0)    {
+        if (account != 0) {
             intent.putExtra("_account", account);
         }
         startActivity(intent);
@@ -2059,10 +2217,9 @@ public class SendActivity extends AppCompatActivity {
                         final String strAmount = edAmount.getText().toString().trim();
                         try {
                             long amount = Long.parseLong(strAmount);
-                            if(amount < amountCahoots)    {
+                            if (amount < amountCahoots) {
                                 CahootsUtil.getInstance(SendActivity.this).doStowaway0(amount, account);
-                            }
-                            else    {
+                            } else {
                                 Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
                             }
                         } catch (NumberFormatException nfe) {
@@ -2103,7 +2260,7 @@ public class SendActivity extends AppCompatActivity {
                         try {
                             long amount = Long.parseLong(strAmount);
 
-                            if(amount < amountCahoots)    {
+                            if (amount < amountCahoots) {
 
                                 final EditText edAddress = new EditText(SendActivity.this);
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
@@ -2120,8 +2277,7 @@ public class SendActivity extends AppCompatActivity {
                                                 if (FormatsUtil.getInstance().isValidBitcoinAddress(strAddress, SamouraiWallet.getInstance().getCurrentNetworkParams())) {
                                                     try {
                                                         CahootsUtil.getInstance(SendActivity.this).doSTONEWALLx2_0(amount, strAddress, account);
-                                                    }
-                                                    catch(NumberFormatException nfe) {
+                                                    } catch (NumberFormatException nfe) {
                                                         Toast.makeText(SendActivity.this, R.string.invalid_amount, Toast.LENGTH_SHORT).show();
                                                     }
                                                 } else {

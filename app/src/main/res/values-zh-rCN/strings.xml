@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">把武士钱包从启动栏和主屏幕删除。你必须用手机拨打**PIN码# 启动武士钱包</string>
     <string name="options_remote_commands">开通远程命令</string>
     <string name="options_remote_commands2">开通SMS远程命令</string>
-    <string name="options_currency">场外价</string>
-    <string name="options_currency2">选择交易所和法币</string>
+    <string name="options_currency">街价</string>
+    <string name="options_currency2">选择您的兑换和当地法定货币。</string>
     <string name="options_blockexplorer">区块浏览器</string>
     <string name="options_blockexplorer2">用来查交易明细的区块浏览器</string>
     <string name="options_sim_switch">SIM卡变更防御</string>

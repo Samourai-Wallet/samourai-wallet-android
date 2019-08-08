@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fadeScrollbars="false"
-        android:fillViewport="true"
-      >
+        android:fillViewport="true">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -48,7 +47,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-
             <FrameLayout
                 android:id="@+id/textInputLayout3"
                 android:layout_width="0dp"
@@ -58,9 +56,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/textInputLayout2"
-                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout"
-
-                >
+                app:layout_constraintTop_toBottomOf="@+id/to_edt_layout">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -80,8 +76,6 @@
                         android:maxLines="2"
                         android:scrollbars="vertical"
                         android:textSize="16sp" />
-
-
                 </android.support.design.widget.TextInputLayout>
             </FrameLayout>
 
@@ -111,10 +105,35 @@
                     android:maxHeight="12dp"
                     android:maxLines="2"
                     android:textSize="16sp" />
-
-
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLayout4"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:ems="10"
+                android:hint="USD"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
+
+                <EditText
+                    android:id="@+id/et_amount_fiat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_mono"
+                    android:gravity="start"
+                    android:imeOptions="flagNoPersonalizedLearning"
+                    android:inputType="number|textMultiLine"
+                    android:maxHeight="12dp"
+                    android:maxLines="2"
+                    android:textSize="16sp" />
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:id="@+id/textView12"
@@ -130,7 +149,7 @@
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
 
             <TextView
                 android:id="@+id/totalBTC"
@@ -248,7 +267,5 @@
             tools:text="0 sats" />
 
     </android.support.constraint.ConstraintLayout>
-
-
 </ViewSwitcher>
 

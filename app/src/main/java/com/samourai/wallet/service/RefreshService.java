@@ -28,6 +28,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -74,45 +75,43 @@ public class RefreshService extends IntentService {
         try {
             int acc = 0;
 
-            if(AddressFactory.getInstance().getHighestTxReceiveIdx(acc) > HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getReceive().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestTxReceiveIdx(acc) > HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getReceive().getAddrIdx()) {
                 HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestTxReceiveIdx(acc));
             }
-            if(AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getChange().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestTxChangeIdx(acc) > HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getChange().getAddrIdx()) {
                 HD_WalletFactory.getInstance(RefreshService.this).get().getAccount(acc).getChange().setAddrIdx(AddressFactory.getInstance().getHighestTxChangeIdx(acc));
             }
 
-            if(AddressFactory.getInstance().getHighestBIP49ReceiveIdx() > BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestBIP49ReceiveIdx() > BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
                 BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ReceiveIdx());
             }
-            if(AddressFactory.getInstance().getHighestBIP49ChangeIdx() > BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestBIP49ChangeIdx() > BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
                 BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP49ChangeIdx());
             }
 
-            if(AddressFactory.getInstance().getHighestBIP84ReceiveIdx() > BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestBIP84ReceiveIdx() > BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().getAddrIdx()) {
                 BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getReceive().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ReceiveIdx());
             }
-            if(AddressFactory.getInstance().getHighestBIP84ChangeIdx() > BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
+            if (AddressFactory.getInstance().getHighestBIP84ChangeIdx() > BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().getAddrIdx()) {
                 BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ChangeIdx());
             }
 
-        }
-        catch(IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
-        }
-        catch(MnemonicException.MnemonicLengthException mle) {
+        } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
-        }
-        catch(NullPointerException npe) {
+        } catch (NullPointerException npe) {
             npe.printStackTrace();
-        }
-        finally {
+        } finally {
             Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
             LocalBroadcastManager.getInstance(RefreshService.this).sendBroadcast(_intent);
+
+            ExchangeRateFactory.getInstance(RefreshService.this).exchangeRateThread();
         }
 
         PrefsUtil.getInstance(RefreshService.this).setValue(PrefsUtil.FIRST_RUN, false);
 
-        if(notifTx && !AppUtil.getInstance(RefreshService.this).isOfflineMode())    {
+        if (notifTx && !AppUtil.getInstance(RefreshService.this).isOfflineMode()) {
             //
             // check for incoming payment code notification tx
             //
@@ -121,8 +120,7 @@ public class RefreshService extends IntentService {
 //                    Log.i("BalanceFragment", "payment code:" + pcode.toString());
 //                    Log.i("BalanceFragment", "notification address:" + pcode.notificationAddress().getAddressString());
                 APIFactory.getInstance(RefreshService.this).getNotifAddress(pcode.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString());
-            }
-            catch (AddressFormatException afe) {
+            } catch (AddressFormatException afe) {
                 afe.printStackTrace();
                 Toast.makeText(RefreshService.this, "HD wallet error", Toast.LENGTH_SHORT).show();
             }
@@ -130,16 +128,16 @@ public class RefreshService extends IntentService {
             //
             // check on outgoing payment code notification tx
             //
-            List<Pair<String,String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
+            List<Pair<String, String>> outgoingUnconfirmed = BIP47Meta.getInstance().getOutgoingUnconfirmed();
 //                Log.i("BalanceFragment", "outgoingUnconfirmed:" + outgoingUnconfirmed.size());
-            for(Pair<String,String> pair : outgoingUnconfirmed)   {
+            for (Pair<String, String> pair : outgoingUnconfirmed) {
 //                    Log.i("BalanceFragment", "outgoing payment code:" + pair.getLeft());
 //                    Log.i("BalanceFragment", "outgoing payment code tx:" + pair.getRight());
                 int confirmations = APIFactory.getInstance(RefreshService.this).getNotifTxConfirmations(pair.getRight());
-                if(confirmations > 0)    {
+                if (confirmations > 0) {
                     BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_SENT_CFM);
                 }
-                if(confirmations == -1)    {
+                if (confirmations == -1) {
                     BIP47Meta.getInstance().setOutgoingStatus(pair.getLeft(), BIP47Meta.STATUS_NOT_SENT);
                 }
             }
@@ -148,9 +146,9 @@ public class RefreshService extends IntentService {
             LocalBroadcastManager.getInstance(RefreshService.this).sendBroadcast(_intent);
         }
 
-        if(launch)    {
+        if (launch) {
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.GUID_V, 0) < 4)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.GUID_V, 0) < 4) {
                 Log.i("RefreshService", "guid_v < 4");
                 try {
                     String _guid = AccessFactory.getInstance(RefreshService.this).createGUID();
@@ -162,51 +160,47 @@ public class RefreshService extends IntentService {
                     PrefsUtil.getInstance(RefreshService.this).setValue(PrefsUtil.ACCESS_HASH2, _hash);
 
                     Log.i("RefreshService", "guid_v == 4");
-                }
-                catch(MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
+                } catch (MnemonicException.MnemonicLengthException | IOException | JSONException | DecryptionException e) {
                     ;
                 }
             }
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB44LOCK, false) == false)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB44LOCK, false) == false) {
 
                 try {
                     String[] s = HD_WalletFactory.getInstance(RefreshService.this).get().getXPUBs();
                     APIFactory.getInstance(RefreshService.this).lockXPUB(s[0], 44, null);
-                }
-                catch(IOException | MnemonicException.MnemonicLengthException e) {
+                } catch (IOException | MnemonicException.MnemonicLengthException e) {
                     ;
                 }
 
             }
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB49LOCK, false) == false)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB49LOCK, false) == false) {
                 String ypub = BIP49Util.getInstance(RefreshService.this).getWallet().getAccount(0).ypubstr();
                 APIFactory.getInstance(RefreshService.this).lockXPUB(ypub, 49, null);
             }
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB84LOCK, false) == false)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUB84LOCK, false) == false) {
                 String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccount(0).zpubstr();
                 APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84, null);
             }
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPRELOCK, false) == false)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPRELOCK, false) == false) {
                 String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(RefreshService.this).getWhirlpoolPremixAccount()).zpubstr();
                 APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
             }
 
-            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPOSTLOCK, false) == false)    {
+            if (PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBPOSTLOCK, false) == false) {
                 String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(RefreshService.this).getWhirlpoolPostmix()).zpubstr();
                 APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
             }
 
-        }
-        else    {
+        } else {
 
             try {
                 PayloadUtil.getInstance(RefreshService.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(RefreshService.this).getGUID() + AccessFactory.getInstance(RefreshService.this).getPIN()));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 ;
             }
 

@@ -20,7 +20,7 @@
     <string name="ok">Добре</string>
     <string name="cancel">Отказ</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_prefs">Валута, Block explorer</string>
     <string name="options_cat_stealth">Прикритост</string>
     <string name="options_cat_remote">Дистанционно управление</string>
     <string name="options_cat_wallet">Портфейл</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">Премахване на Самурай от менюто и началния екран. Трябва да наберете **ВАШИЯ_ПИН_КОД# от телефона си, за да стартирате Самурай.</string>
     <string name="options_remote_commands">Разреши дистанционните команди</string>
     <string name="options_remote_commands2">Позволи дистанционни команди чрез SMS.</string>
-    <string name="options_currency">Цена</string>
-    <string name="options_currency2">Изберете борса и местна валута.</string>
+    <string name="options_currency">Цена на улицата</string>
+    <string name="options_currency2">Изберете вашата обмяна и местна валута на фиат.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">Block explorer, използван за преглед на детайли, свързани с транзакциите.</string>
     <string name="options_sim_switch">Защита срещу смяна на СИМ картата</string>

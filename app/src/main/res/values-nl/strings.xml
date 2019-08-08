@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annuleren</string>
 
-    <string name="options_cat_prefs">Blokverkenner</string>
+    <string name="options_cat_prefs">Valuta, blokverkenner</string>
     <string name="options_cat_stealth">Onzichtbaar starten</string>
     <string name="options_cat_remote">Toegang op afstand</string>
     <string name="options_cat_wallet">Portemonnee</string>
@@ -42,7 +42,7 @@
     <string name="options_remote_commands">Commando\'s op afstand toestaan</string>
     <string name="options_remote_commands2">Commando\'s via sms toestaan.</string>
     <string name="options_currency">Straatprijs</string>
-    <string name="options_currency2">Kies je beurs en lokale fiat-valuta.</string>
+    <string name="options_currency2">Kies uw valuta en lokale fiatvaluta.</string>
     <string name="options_blockexplorer">Blokverkenner</string>
     <string name="options_blockexplorer2">De gebruikte blokverkenner om transactiedetails te bekijken.</string>
     <string name="options_sim_switch">Melding bij wisselen SIM</string>

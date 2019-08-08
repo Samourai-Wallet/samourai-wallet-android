@@ -63,7 +63,9 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BatchSendUtil;
+import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
@@ -80,7 +82,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 
-public class SettingsActivity2 extends PreferenceActivity	{
+public class SettingsActivity2 extends PreferenceActivity {
 
     private ProgressDialog progress = null;
     private boolean steathActivating = false;
@@ -93,9 +95,29 @@ public class SettingsActivity2 extends PreferenceActivity	{
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.containsKey("branch"))	{
+        if (extras != null && extras.containsKey("branch")) {
             String strBranch = extras.getString("branch");
-            if(strBranch.equals("txs"))   {
+
+            if (strBranch.equals("prefs")) {
+                addPreferencesFromResource(R.xml.settings_prefs);
+
+                Preference fiatPref = (Preference) findPreference("fiat");
+                fiatPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getExchange();
+                        return true;
+                    }
+                });
+
+                Preference explorersPref = (Preference) findPreference("explorer");
+                explorersPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getBlockExplorer();
+                        return true;
+                    }
+                });
+
+            } else if (strBranch.equals("txs")) {
                 addPreferencesFromResource(R.xml.settings_txs);
 
                 final CheckBoxPreference cbPref0 = (CheckBoxPreference) findPreference("segwit");
@@ -104,8 +126,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref0.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, false);
-                        }
-                        else    {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_SEGWIT, true);
                         }
 
@@ -119,8 +140,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref15.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, false);
-                        }
-                        else    {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_LIKE_TYPED_CHANGE, true);
                         }
 
@@ -134,8 +154,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref9.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.RBF_OPT_IN, false);
-                        }
-                        else    {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.RBF_OPT_IN, true);
                         }
 
@@ -152,10 +171,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
-                if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
+                if (TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated()) {
                     cbPref8.setEnabled(true);
-                }
-                else    {
+                } else {
                     cbPref8.setEnabled(false);
                 }
                 cbPref8.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -163,11 +181,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref8.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
-                        }
-                        else if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
+                        } else if (TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
-                        }
-                        else    {
+                        } else {
                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
                             cbPref8.setEnabled(false);
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
@@ -191,8 +207,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref10.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, false);
-                        }
-                        else    {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BROADCAST_TX, true);
                         }
 
@@ -232,8 +247,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else if(strBranch.equals("stealth"))   {
+            } else if (strBranch.equals("stealth")) {
                 addPreferencesFromResource(R.xml.settings_stealth);
 
                 final CheckBoxPreference cbPref1 = (CheckBoxPreference) findPreference("stealthDisplay");
@@ -251,8 +265,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
 
                                 AppUtil.getInstance(SettingsActivity2.this).restartApp();
-                            }
-                            else {
+                            } else {
 
                                 String strMsg = SettingsActivity2.this.getString(R.string.options_stealth_display2);
 
@@ -297,10 +310,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 remotePinPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
 
-                        if(steathActivating)    {
+                        if (steathActivating) {
                             Toast.makeText(SettingsActivity2.this, R.string.alternative_pin_wait, Toast.LENGTH_SHORT).show();
-                        }
-                        else    {
+                        } else {
 
                             new AlertDialog.Builder(SettingsActivity2.this)
                                     .setTitle(R.string.app_name)
@@ -343,20 +355,15 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                                                                     try {
                                                                                         PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
-                                                                                    }
-                                                                                    catch (JSONException je) {
+                                                                                    } catch (JSONException je) {
                                                                                         je.printStackTrace();
-                                                                                    }
-                                                                                    catch (IOException ioe) {
+                                                                                    } catch (IOException ioe) {
                                                                                         ioe.printStackTrace();
-                                                                                    }
-                                                                                    catch (MnemonicException.MnemonicLengthException mle) {
+                                                                                    } catch (MnemonicException.MnemonicLengthException mle) {
                                                                                         mle.printStackTrace();
-                                                                                    }
-                                                                                    catch (DecryptionException de) {
+                                                                                    } catch (DecryptionException de) {
                                                                                         de.printStackTrace();
-                                                                                    }
-                                                                                    finally {
+                                                                                    } finally {
                                                                                         Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
                                                                                     }
 
@@ -395,8 +402,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else if(strBranch.equals("remote"))   {
+            } else if (strBranch.equals("remote")) {
                 addPreferencesFromResource(R.xml.settings_remote);
 
                 final CheckBoxPreference cbPref2 = (CheckBoxPreference) findPreference("stealthRemote");
@@ -410,8 +416,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         if (cbPref2.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, false);
                             ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
-                        }
-                        else {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCEPT_REMOTE, true);
                             ReceiversUtil.getInstance(SettingsActivity2.this).initReceivers();
                         }
@@ -425,8 +430,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref3.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.TRUSTED_LOCK, false);
-                        }
-                        else {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.TRUSTED_LOCK, true);
                         }
 
@@ -439,8 +443,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref4.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CHECK_SIM, false);
-                        }
-                        else {
+                        } else {
                             SIMUtil.getInstance(SettingsActivity2.this).setStoredSIM();
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CHECK_SIM, true);
                         }
@@ -459,12 +462,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ALERT_MOBILE_NO, s);
                                 cbPref3.setEnabled(true);
                                 cbPref4.setEnabled(true);
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(SettingsActivity2.this, "Use international dialing format. Ex.:'+447385555555'", Toast.LENGTH_SHORT).show();
                             }
-                        }
-                        else {
+                        } else {
                             cbPref3.setEnabled(false);
                             cbPref3.setChecked(false);
                             cbPref4.setEnabled(false);
@@ -475,8 +476,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else if(strBranch.equals("wallet"))   {
+            } else if (strBranch.equals("wallet")) {
                 addPreferencesFromResource(R.xml.settings_wallet);
 
                 Preference mnemonicPref = (Preference) findPreference("mnemonic");
@@ -582,8 +582,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref5.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SCRAMBLE_PIN, false);
-                        }
-                        else {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.SCRAMBLE_PIN, true);
                         }
 
@@ -597,8 +596,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         if (cbPref11.isChecked()) {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.HAPTIC_PIN, false);
-                        }
-                        else {
+                        } else {
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.HAPTIC_PIN, true);
                         }
 
@@ -629,10 +627,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                                         String _pin = pin.getText().toString();
-                                                        if(_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH)    {
+                                                        if (_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH) {
 
                                                             String hash = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.ACCESS_HASH, "");
-                                                            if(AccessFactory.getInstance(SettingsActivity2.this).validateHash(hash, AccessFactory.getInstance(SettingsActivity2.this).getGUID(), new CharSequenceX(_pin), AESUtil.DefaultPBKDF2Iterations)) {
+                                                            if (AccessFactory.getInstance(SettingsActivity2.this).validateHash(hash, AccessFactory.getInstance(SettingsActivity2.this).getGUID(), new CharSequenceX(_pin), AESUtil.DefaultPBKDF2Iterations)) {
 
                                                                 final EditText pin = new EditText(SettingsActivity2.this);
                                                                 pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -646,7 +644,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                             public void onClick(DialogInterface dialog, int whichButton) {
 
                                                                                 final String _pin = pin.getText().toString();
-                                                                                if(_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH)    {
+                                                                                if (_pin != null && _pin.length() >= AccessFactory.MIN_PIN_LENGTH && _pin.length() <= AccessFactory.MAX_PIN_LENGTH) {
 
                                                                                     final EditText pin2 = new EditText(SettingsActivity2.this);
                                                                                     pin2.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -660,34 +658,29 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                                                 public void onClick(DialogInterface dialog, int whichButton) {
 
                                                                                                     String _pin2 = pin2.getText().toString();
-                                                                                                    if(_pin2 != null && _pin2.equals(_pin))    {
+                                                                                                    if (_pin2 != null && _pin2.equals(_pin)) {
 
                                                                                                         String accessHash = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.ACCESS_HASH, "");
                                                                                                         String accessHash2 = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.ACCESS_HASH2, "");
 
                                                                                                         String hash = AccessFactory.getInstance(SettingsActivity2.this).getHash(AccessFactory.getInstance(SettingsActivity2.this).getGUID(), new CharSequenceX(_pin), AESUtil.DefaultPBKDF2Iterations);
                                                                                                         PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH, hash);
-                                                                                                        if(accessHash.equals(accessHash2))    {
+                                                                                                        if (accessHash.equals(accessHash2)) {
                                                                                                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.ACCESS_HASH2, hash);
                                                                                                         }
                                                                                                         AccessFactory.getInstance(SettingsActivity2.this).setPIN(_pin2);
 
                                                                                                         try {
                                                                                                             PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + _pin));
-                                                                                                        }
-                                                                                                        catch(JSONException je) {
+                                                                                                        } catch (JSONException je) {
                                                                                                             je.printStackTrace();
-                                                                                                        }
-                                                                                                        catch (IOException ioe) {
+                                                                                                        } catch (IOException ioe) {
                                                                                                             ioe.printStackTrace();
-                                                                                                        }
-                                                                                                        catch (MnemonicException.MnemonicLengthException mle) {
+                                                                                                        } catch (MnemonicException.MnemonicLengthException mle) {
                                                                                                             mle.printStackTrace();
-                                                                                                        }
-                                                                                                        catch (DecryptionException de) {
+                                                                                                        } catch (DecryptionException de) {
                                                                                                             de.printStackTrace();
-                                                                                                        }
-                                                                                                        finally {
+                                                                                                        } finally {
                                                                                                             Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.success_change_pin, Toast.LENGTH_SHORT).show();
                                                                                                         }
 
@@ -709,13 +702,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                                     }
                                                                 }).show();
 
-                                                            }
-                                                            else    {
+                                                            } else {
                                                                 Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.pin_error, Toast.LENGTH_SHORT).show();
                                                             }
 
-                                                        }
-                                                        else    {
+                                                        } else {
                                                             Toast.makeText(SettingsActivity2.this.getApplicationContext(), R.string.pin_error, Toast.LENGTH_SHORT).show();
                                                         }
 
@@ -738,18 +729,16 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 final CheckBoxPreference cbPref6 = (CheckBoxPreference) findPreference("autoBackup");
-                if(!SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this)) {
+                if (!SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this)) {
                     cbPref6.setChecked(false);
                     cbPref6.setEnabled(false);
-                }
-                else    {
+                } else {
                     cbPref6.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                         public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                             if (cbPref6.isChecked()) {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, false);
-                            }
-                            else {
+                            } else {
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.AUTO_BACKUP, true);
                             }
 
@@ -758,20 +747,18 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     });
                 }
 
-            }
-            else if(strBranch.equals("networking"))   {
+            } else if (strBranch.equals("networking")) {
                 addPreferencesFromResource(R.xml.settings_networking);
 
                 Preference vpnPref = (Preference) findPreference("VPN");
                 vpnPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         PackageManager pm = SettingsActivity2.this.getPackageManager();
-                        try	{
+                        try {
                             pm.getPackageInfo(AppUtil.OPENVPN_PACKAGE_ID, 0);
                             Intent intent = getPackageManager().getLaunchIntentForPackage(AppUtil.OPENVPN_PACKAGE_ID);
                             startActivity(intent);
-                        }
-                        catch(PackageManager.NameNotFoundException nnfe)	{
+                        } catch (PackageManager.NameNotFoundException nnfe) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + AppUtil.OPENVPN_PACKAGE_ID));
                             startActivity(intent);
                         }
@@ -780,8 +767,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else if(strBranch.equals("troubleshoot"))   {
+            } else if (strBranch.equals("troubleshoot")) {
                 addPreferencesFromResource(R.xml.settings_troubleshoot);
 
                 Preference troubleshootPref = (Preference) findPreference("troubleshoot");
@@ -848,8 +834,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else if(strBranch.equals("other"))   {
+            } else if (strBranch.equals("other")) {
                 addPreferencesFromResource(R.xml.settings_other);
 
                 Preference hashPref = (Preference) findPreference("hash");
@@ -901,13 +886,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-            }
-            else    {
+            } else {
                 finish();
             }
 
-        }
-        else    {
+        } else {
             finish();
         }
 
@@ -915,7 +898,83 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
+    private void getExchange() {
+
+        final String[] exchanges = ExchangeRateFactory.getInstance(this).getExchangeLabels();
+        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.options_currency)
+                .setSingleChoiceItems(exchanges, sel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE, exchanges[which].substring(exchanges[which].length() - 3));
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_EXCHANGE_SEL, which);
+                                if (which == 2) {
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, "USD");
+                                    PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, 0);
+                                    dialog.dismiss();
+                                } else {
+                                    dialog.dismiss();
+                                    getFiat();
+                                }
+                            }
+                        }
+                ).show();
+    }
+
+    private void getFiat() {
+
+        final int fxSel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
+
+        final String[] currencies;
+        if (fxSel == 1) {
+            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsBTCe();
+        } else {
+            currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabels();
+        }
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.options_currency)
+                .setSingleChoiceItems(currencies, 0, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                String selectedCurrency = null;
+                                if (currencies[which].substring(currencies[which].length() - 3).equals("RUR")) {
+                                    selectedCurrency = "RUB";
+                                } else {
+                                    selectedCurrency = currencies[which].substring(currencies[which].length() - 3);
+                                }
+
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT, selectedCurrency);
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.CURRENT_FIAT_SEL, which);
+                                dialog.dismiss();
+                            }
+                        }
+                ).show();
+    }
+
+    private void getBlockExplorer() {
+
+        final CharSequence[] explorers = BlockExplorerUtil.getInstance().getBlockExplorers();
+        final int sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.BLOCK_EXPLORER, 0);
+        final int _sel;
+        if (sel >= explorers.length) {
+            _sel = 0;
+        } else {
+            _sel = sel;
+        }
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.options_blockexplorer)
+                .setSingleChoiceItems(explorers, _sel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.BLOCK_EXPLORER, which);
+                                dialog.dismiss();
+                            }
+                        }
+                ).show();
     }
 
     @Override
@@ -933,10 +992,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
         int id = item.getItemId();
 
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish();
-        }
-        else {
+        } else {
             ;
         }
 
@@ -946,40 +1004,35 @@ public class SettingsActivity2 extends PreferenceActivity	{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_HEX_TX)	{
+        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_HEX_TX) {
 
-            if(data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null)	{
+            if (data != null && data.getStringExtra(ZBarConstants.SCAN_RESULT) != null) {
 
                 final String strResult = data.getStringExtra(ZBarConstants.SCAN_RESULT);
 
                 doBroadcastHex(strResult);
 
             }
-        }
-        else if(resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_HEX_TX)	{
+        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_HEX_TX) {
             ;
-        }
-        else {
+        } else {
             ;
         }
 
     }
 
-    private void getHDSeed(boolean mnemonic)	{
+    private void getHDSeed(boolean mnemonic) {
         String seed = null;
         try {
-            if(mnemonic)	{
+            if (mnemonic) {
                 seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
-            }
-            else	{
+            } else {
                 seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getSeedHex();
             }
-        }
-        catch(IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle) {
+        } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
@@ -1001,11 +1054,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getXPUB(int purpose, int account)	{
+    private void getXPUB(int purpose, int account) {
 
         String xpub = "";
 
-        switch(purpose)    {
+        switch (purpose) {
             case 49:
                 xpub = BIP49Util.getInstance(SettingsActivity2.this).getWallet().getAccount(account).ypubstr();
                 break;
@@ -1015,12 +1068,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
             default:
                 try {
                     xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(account).xpubstr();
-                }
-                catch (IOException ioe) {
+                } catch (IOException ioe) {
                     ioe.printStackTrace();
                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                }
-                catch (MnemonicException.MnemonicLengthException mle) {
+                } catch (MnemonicException.MnemonicLengthException mle) {
                     mle.printStackTrace();
                     Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
                 }
@@ -1032,8 +1083,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(xpub, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
-        }
-        catch (WriterException e) {
+        } catch (WriterException e) {
             e.printStackTrace();
         }
         showQR.setImageBitmap(bitmap);
@@ -1057,7 +1107,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 .setCancelable(false)
                 .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
                         clip = android.content.ClipData.newPlainText("XPUB", _xpub);
                         clipboard.setPrimaryClip(clip);
@@ -1073,24 +1123,22 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getFeeProvider()	{
+    private void getFeeProvider() {
 
         final String[] providers;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
+        if (PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true) {
             providers = new String[FeeUtil.getInstance().getProviders().length + 1];
             System.arraycopy(FeeUtil.getInstance().getProviders(), 0, providers, 0, FeeUtil.getInstance().getProviders().length);
-            String[] trusted = new String[] { "Trusted node" };
+            String[] trusted = new String[]{"Trusted node"};
             System.arraycopy(trusted, 0, providers, FeeUtil.getInstance().getProviders().length, 1);
-        }
-        else    {
+        } else {
             providers = FeeUtil.getInstance().getProviders();
         }
 
         final int sel;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length)    {
+        if (PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length) {
             sel = 0;
-        }
-        else    {
+        } else {
             sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
         }
 
@@ -1101,7 +1149,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, which);
 
-                                if(which != sel)    {
+                                if (which != sel) {
 
                                     new Thread(new Runnable() {
                                         @Override
@@ -1122,7 +1170,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void getTrustedNode()	{
+    private void getTrustedNode() {
 
         final EditText edNode = new EditText(SettingsActivity2.this);
         edNode.setHint(R.string.trusted_node_ip_hint);
@@ -1162,11 +1210,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         final String user = edUser.getText().toString();
                         final String password = edPassword.getText().toString();
 
-                        if(node != null && node.length() > 0 &&
+                        if (node != null && node.length() > 0 &&
                                 port != null && port.length() > 0 &&
                                 user != null && user.length() > 0 &&
                                 password != null && password.length() > 0
-                        )    {
+                        ) {
 
                             TrustedNodeUtil.getInstance().setParams(user, new CharSequenceX(password), node, Integer.parseInt(port));
 
@@ -1178,43 +1226,38 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                     Looper.prepare();
 
-                                    final CheckBoxPreference cbPref8 = (CheckBoxPreference)SettingsActivity2.this.findPreference("useTrustedNode");
+                                    final CheckBoxPreference cbPref8 = (CheckBoxPreference) SettingsActivity2.this.findPreference("useTrustedNode");
                                     boolean isOK = false;
 
                                     JSONRPC jsonrpc = new JSONRPC(user, new CharSequenceX(password), node, Integer.parseInt(port));
                                     String result = jsonrpc.getNetworkInfoAsString();
                                     Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
 
-                                    if(result != null)    {
+                                    if (result != null) {
                                         try {
                                             JSONObject obj = new JSONObject(result);
-                                            if(obj != null && obj.has("version") && obj.has("subversion"))   {
+                                            if (obj != null && obj.has("version") && obj.has("subversion")) {
 
-                                                if(obj.getString("subversion").contains("Bitcoin XT") || obj.getString("subversion").contains("Classic") || obj.getString("subversion").contains("BitcoinUnlimited") ||
+                                                if (obj.getString("subversion").contains("Bitcoin XT") || obj.getString("subversion").contains("Classic") || obj.getString("subversion").contains("BitcoinUnlimited") ||
                                                         obj.getString("subversion").contains("SegWit2x") || obj.getString("subversion").contains("Segwit2x") ||
                                                         obj.getString("subversion").contains("Bitcoin ABC") ||
-                                                        obj.getString("subversion").contains("Satoshi:1.14"))    {
+                                                        obj.getString("subversion").contains("Satoshi:1.14")) {
                                                     Toast.makeText(SettingsActivity2.this, R.string.trusted_node_breaks_consensus, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))   {
+                                                } else if (obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi")) {
                                                     isOK = true;
                                                     Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else    {
+                                                } else {
                                                     isOK = true;
                                                     Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
                                                 }
 
-                                            }
-                                            else    {
+                                            } else {
                                                 Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
                                             }
-                                        }
-                                        catch(Exception e) {
+                                        } catch (Exception e) {
                                             Toast.makeText(SettingsActivity2.this, e.getMessage() + "\n" + R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
                                         }
-                                    }
-                                    else    {
+                                    } else {
                                         Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
                                     }
 
@@ -1224,11 +1267,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         @Override
                                         public void run() {
 
-                                            if(_isOK)    {
+                                            if (_isOK) {
                                                 cbPref8.setEnabled(true);
                                                 TrustedNodeUtil.getInstance().setValidated(true);
-                                            }
-                                            else    {
+                                            } else {
                                                 cbPref8.setChecked(false);
                                                 cbPref8.setEnabled(false);
                                                 PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
@@ -1249,16 +1291,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             dialog.dismiss();
 
-                        }
-                        else if((node == null || node.length() == 0) &&
+                        } else if ((node == null || node.length() == 0) &&
                                 (port == null || port.length() == 0) &&
                                 (user == null || user.length() == 0) &&
-                                (password == null || password.length() == 0))   {
+                                (password == null || password.length() == 0)) {
 
                             TrustedNodeUtil.getInstance().reset();
 
-                        }
-                        else    {
+                        } else {
                             Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
                         }
 
@@ -1268,12 +1308,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         dialog.dismiss();
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
     }
 
-    private void doTroubleshoot()   {
+    private void doTroubleshoot() {
 
         try {
             final String strExpected = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase();
@@ -1292,12 +1332,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             final String _passphrase39 = passphrase.getText().toString();
 
-                            if(_passphrase39.equals(strExpected))    {
+                            if (_passphrase39.equals(strExpected)) {
 
                                 Toast.makeText(SettingsActivity2.this, R.string.bip39_match, Toast.LENGTH_SHORT).show();
 
                                 final File file = PayloadUtil.getInstance(SettingsActivity2.this).getBackupFile();
-                                if(file != null && file.exists())    {
+                                if (file != null && file.exists()) {
 
                                     new AlertDialog.Builder(SettingsActivity2.this)
                                             .setTitle(R.string.app_name)
@@ -1316,25 +1356,22 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                             try {
                                                                 BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
                                                                 String str = null;
-                                                                while((str = in.readLine()) != null) {
+                                                                while ((str = in.readLine()) != null) {
                                                                     sb.append(str);
                                                                 }
                                                                 in.close();
                                                                 String data = sb.toString();
 
                                                                 String decrypted = PayloadUtil.getInstance(SettingsActivity2.this).getDecryptedBackupPayload(data, new CharSequenceX(_passphrase39));
-                                                                if(decrypted == null || decrypted.length() < 1)    {
+                                                                if (decrypted == null || decrypted.length() < 1) {
                                                                     Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                                else    {
+                                                                } else {
                                                                     Toast.makeText(SettingsActivity2.this, R.string.backup_read_ok, Toast.LENGTH_SHORT).show();
                                                                 }
 
-                                                            }
-                                                            catch(FileNotFoundException fnfe) {
+                                                            } catch (FileNotFoundException fnfe) {
                                                                 Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                            catch(IOException ioe) {
+                                                            } catch (IOException ioe) {
                                                                 Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
                                                             }
 
@@ -1352,8 +1389,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                                 }
 
-                            }
-                            else {
+                            } else {
 
                                 Toast.makeText(SettingsActivity2.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
 
@@ -1368,23 +1404,21 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         }
                     });
-            if(!isFinishing())    {
+            if (!isFinishing()) {
                 dlg.show();
             }
 
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch (MnemonicException.MnemonicLengthException mle) {
+        } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private void doPrune()   {
+    private void doPrune() {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
@@ -1403,18 +1437,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                             PayloadUtil.getInstance(SettingsActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(SettingsActivity2.this).getGUID() + AccessFactory.getInstance(SettingsActivity2.this).getPIN()));
 
-                        }
-                        catch(JSONException je) {
+                        } catch (JSONException je) {
                             je.printStackTrace();
                             Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
-                        }
-                        catch(MnemonicException.MnemonicLengthException mle) {
+                        } catch (MnemonicException.MnemonicLengthException mle) {
                             ;
-                        }
-                        catch(IOException ioe) {
+                        } catch (IOException ioe) {
                             ;
-                        }
-                        catch(DecryptionException de) {
+                        } catch (DecryptionException de) {
                             ;
                         }
 
@@ -1427,7 +1457,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
@@ -1441,7 +1471,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             jsonObject.getJSONObject("wallet").remove("seed");
             jsonObject.getJSONObject("wallet").remove("passphrase");
 
-            if(jsonObject.has("meta") && jsonObject.getJSONObject("meta").has("trusted_node"))    {
+            if (jsonObject.has("meta") && jsonObject.getJSONObject("meta").has("trusted_node")) {
                 jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("password");
                 jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("node");
                 jsonObject.getJSONObject("meta").getJSONObject("trusted_node").remove("port");
@@ -1449,27 +1479,26 @@ public class SettingsActivity2 extends PreferenceActivity	{
             }
 
             Intent email = new Intent(Intent.ACTION_SEND);
-            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@samouraiwallet.com" } );
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@samouraiwallet.com"});
             email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet support backup");
             email.putExtra(Intent.EXTRA_TEXT, jsonObject.toString());
             email.setType("message/rfc822");
             startActivity(Intent.createChooser(email, SettingsActivity2.this.getText(R.string.choose_email_client)));
 
-        }
-        catch(JSONException je) {
+        } catch (JSONException je) {
             je.printStackTrace();
             Toast.makeText(SettingsActivity2.this, R.string.error_reading_payload, Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private void doScanHexTx()   {
+    private void doScanHexTx() {
         Intent intent = new Intent(SettingsActivity2.this, ZBarScannerActivity.class);
-        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{ Symbol.QRCODE } );
+        intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
         startActivityForResult(intent, SCAN_HEX_TX);
     }
 
-    private void doIndexes()	{
+    private void doIndexes() {
 
         final StringBuilder builder = new StringBuilder();
 
@@ -1500,12 +1529,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
         try {
             idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
             idxBIP44Internal = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getChange().getAddrIdx();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch (MnemonicException.MnemonicLengthException mle) {
+        } catch (MnemonicException.MnemonicLengthException mle) {
             mle.printStackTrace();
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
@@ -1535,17 +1562,17 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     }
 
-    private void doAddressCalc()    {
+    private void doAddressCalc() {
         Intent intent = new Intent(SettingsActivity2.this, AddressCalcActivity.class);
         startActivity(intent);
     }
 
-    private void doPayNymCalc()    {
+    private void doPayNymCalc() {
         Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
         startActivity(intent);
     }
 
-    private void doBroadcastHex()    {
+    private void doBroadcastHex() {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
@@ -1565,9 +1592,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void afterTextChanged(Editable s) {
                                 edHexTx.setSelection(0);
                             }
+
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                                 ;
                             }
+
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 ;
                             }
@@ -1592,7 +1621,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         ;
                                     }
                                 });
-                        if(!isFinishing())    {
+                        if (!isFinishing()) {
                             dlg.show();
                         }
 
@@ -1605,13 +1634,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
     }
 
-    private void doBroadcastHex(final String strHexTx)    {
+    private void doBroadcastHex(final String strHexTx) {
 
         Transaction tx = new Transaction(SamouraiWallet.getInstance().getCurrentNetworkParams(), Hex.decode(strHexTx));
 
@@ -1655,13 +1684,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         ;
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
     }
 
-    private void doCahoots()    {
+    private void doCahoots() {
 
         final EditText edCahoots = new EditText(SettingsActivity2.this);
         edCahoots.setSingleLine(false);
@@ -1674,9 +1703,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
             public void afterTextChanged(Editable s) {
                 edCahoots.setSelection(0);
             }
+
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 ;
             }
+
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 ;
             }
@@ -1703,13 +1734,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
                         dialog.dismiss();
                     }
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
     }
 
-    private void doPSBT()    {
+    private void doPSBT() {
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
@@ -1731,9 +1762,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             public void afterTextChanged(Editable s) {
                                 edPSBT.setSelection(0);
                             }
+
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                                 ;
                             }
+
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 ;
                             }
@@ -1760,92 +1793,93 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                         dialog.dismiss();
                                     }
                                 });
-                        if(!isFinishing())    {
+                        if (!isFinishing()) {
                             dlg.show();
                         }
 
                     }
 
                 });
-        if(!isFinishing())    {
+        if (!isFinishing()) {
             dlg.show();
         }
 
     }
-/*
-    private void doWhirlpoolGUIPairing()    {
 
-        JSONObject pairingObj = null;
-        try {
-            JSONObject jsonObj = new JSONObject();
-            jsonObj.put("type", "whirlpool.gui");
-            jsonObj.put("version", "1.0.0");
-            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
+    /*
+        private void doWhirlpoolGUIPairing()    {
 
-            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
-            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
-            jsonObj.put("mnemonic", encrypted);
+            JSONObject pairingObj = null;
+            try {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("type", "whirlpool.gui");
+                jsonObj.put("version", "1.0.0");
+                jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
 
-            pairingObj = new JSONObject();
-            pairingObj.put("pairing", jsonObj);
+                String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
+                String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                jsonObj.put("mnemonic", encrypted);
+
+                pairingObj = new JSONObject();
+                pairingObj.put("pairing", jsonObj);
+            }
+            catch(Exception e) {
+                Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(pairingObj == null)    {
+                Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ImageView showQR = new ImageView(SettingsActivity2.this);
+            Bitmap bitmap = null;
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+            try {
+                bitmap = qrCodeEncoder.encodeAsBitmap();
+            }
+            catch (WriterException e) {
+                e.printStackTrace();
+            }
+            showQR.setImageBitmap(bitmap);
+
+            TextView showText = new TextView(SettingsActivity2.this);
+            showText.setText(pairingObj.toString());
+            showText.setTextIsSelectable(true);
+            showText.setPadding(40, 10, 40, 10);
+            showText.setTextSize(18.0f);
+
+            LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
+            pairingLayout.setOrientation(LinearLayout.VERTICAL);
+            pairingLayout.addView(showQR);
+            pairingLayout.addView(showText);
+
+            final String _pairing = pairingObj.toString();
+
+            new AlertDialog.Builder(SettingsActivity2.this)
+                    .setTitle(R.string.app_name)
+                    .setView(pairingLayout)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                            android.content.ClipData clip = null;
+                            clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ;
+                        }
+                    })
+                    .show();
+
         }
-        catch(Exception e) {
-            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(pairingObj == null)    {
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        ImageView showQR = new ImageView(SettingsActivity2.this);
-        Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        }
-        catch (WriterException e) {
-            e.printStackTrace();
-        }
-        showQR.setImageBitmap(bitmap);
-
-        TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(pairingObj.toString());
-        showText.setTextIsSelectable(true);
-        showText.setPadding(40, 10, 40, 10);
-        showText.setTextSize(18.0f);
-
-        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
-        pairingLayout.setOrientation(LinearLayout.VERTICAL);
-        pairingLayout.addView(showQR);
-        pairingLayout.addView(showText);
-
-        final String _pairing = pairingObj.toString();
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.app_name)
-                .setView(pairingLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        ;
-                    }
-                })
-                .show();
-
-    }
-*/
-    private void doWhirlpoolGUIPairing()    {
+    */
+    private void doWhirlpoolGUIPairing() {
 
         final JSONObject pairingObj = new JSONObject();
         final JSONObject jsonObj = new JSONObject();
@@ -1855,7 +1889,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
 
             String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
-            if(SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this))    {
+            if (SamouraiWallet.getInstance().hasPassphrase(SettingsActivity2.this)) {
                 String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
                 jsonObj.put("mnemonic", encrypted);
                 jsonObj.put("passphrase", true);
@@ -1863,8 +1897,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 pairingObj.put("pairing", jsonObj);
 
                 displayWhirlpoolGUIPairing(pairingObj);
-            }
-            else    {
+            } else {
 
                 final EditText password = new EditText(SettingsActivity2.this);
                 password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -1903,8 +1936,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                             pairingObj.put("pairing", jsonObj);
 
                                                             displayWhirlpoolGUIPairing(pairingObj);
-                                                        }
-                                                        catch(Exception e) {
+                                                        } catch (Exception e) {
                                                             ;
                                                         }
                                                     } else {
@@ -1933,8 +1965,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
             }
 
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1990,9 +2021,9 @@ public class SettingsActivity2 extends PreferenceActivity	{
 */
     }
 
-    private void displayWhirlpoolGUIPairing(JSONObject pairingObj)    {
+    private void displayWhirlpoolGUIPairing(JSONObject pairingObj) {
 
-        if(pairingObj == null || !pairingObj.has("pairing"))    {
+        if (pairingObj == null || !pairingObj.has("pairing")) {
             Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -2002,8 +2033,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
-        }
-        catch (WriterException e) {
+        } catch (WriterException e) {
             e.printStackTrace();
         }
         showQR.setImageBitmap(bitmap);
@@ -2027,7 +2057,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 .setCancelable(false)
                 .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
                         clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
                         clipboard.setPrimaryClip(clip);

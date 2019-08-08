@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.bitcoinj.core.ECKey;
@@ -71,6 +73,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.util.ExchangeRateFactory;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -138,12 +141,14 @@ public class BalanceActivity extends AppCompatActivity {
     private RicochetQueueTask ricochetQueueTask = null;
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
+    private AppBarLayout mAppBarLayout;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Toolbar toolbar;
     private Menu menu;
     private ImageView menuTorIcon;
     private ProgressBar progressBarMenu;
+    private TextView mFiatAmount;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -185,7 +190,6 @@ public class BalanceActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int whichButton) {
 
                                             doExplorerView(rbfHash);
-
                                         }
                                     })
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -317,15 +321,28 @@ public class BalanceActivity extends AppCompatActivity {
 
         TxRecyclerView = findViewById(R.id.rv_txes);
         progressBar = findViewById(R.id.progressBar);
+        mAppBarLayout = findViewById(R.id.app_bar);
         toolbar = findViewById(R.id.toolbar);
         mCollapsingToolbar = findViewById(R.id.toolbar_layout);
         txSwipeLayout = findViewById(R.id.tx_swipe_container);
+        mFiatAmount = findViewById(R.id.tv_fiat_amount);
 
         setSupportActionBar(toolbar);
         TxRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
+
+        mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+
+            if (verticalOffset == 0) {
+
+                mFiatAmount.setVisibility(View.VISIBLE);
+            } else {
+
+                mFiatAmount.setVisibility(View.INVISIBLE);
+            }
+        });
 
         findViewById(R.id.send_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
@@ -446,7 +463,7 @@ public class BalanceActivity extends AppCompatActivity {
         TxRecyclerView.setAdapter(adapter);
 
         balanceViewModel.getBalance().observe(this, balance -> {
-            if(balance<0){
+            if (balance < 0) {
                 return;
             }
             if (balanceViewModel.getSatState().getValue() != null) {
@@ -491,11 +508,11 @@ public class BalanceActivity extends AppCompatActivity {
             setTitle(displayAmount);
             mCollapsingToolbar.setTitle(displayAmount);
 
+            mFiatAmount.setText(String.format("%s %s", getFiatDisplayAmount(balance),
+                    getFiatDisplayUnits()));
         }
 
-
         Log.i(TAG, "setBalance: ".concat(getBTCDisplayAmount(balance)));
-
     }
 
     @Override
@@ -510,6 +527,7 @@ public class BalanceActivity extends AppCompatActivity {
         Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
         LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
+        updateDisplay(false);
     }
 
     @Override
@@ -561,7 +579,7 @@ public class BalanceActivity extends AppCompatActivity {
 
         super.onDestroy();
 
-        if(compositeDisposable != null && !compositeDisposable.isDisposed()) {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
             compositeDisposable.dispose();
         }
     }
@@ -752,7 +770,7 @@ public class BalanceActivity extends AppCompatActivity {
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
                     startIntent.setAction(TorService.STOP_SERVICE);
-                    startIntent.putExtra("KILL_TOR",true);
+                    startIntent.putExtra("KILL_TOR", true);
                     startService(startIntent);
                 }
                 Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
@@ -844,7 +862,7 @@ public class BalanceActivity extends AppCompatActivity {
     private void doScan() {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
         cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
@@ -873,25 +891,25 @@ public class BalanceActivity extends AppCompatActivity {
     private void doSweepViaScan() {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
         cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
-                    if (privKeyReader.getFormat() != null) {
-                        doPrivKey(code.trim());
-                    } else if (Cahoots.isCahoots(code.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
-                    } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
-                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
-                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-                        intent.putExtra("uri", code.trim());
-                        startActivity(intent);
-                    }
-                } catch (Exception e) {
+                if (privKeyReader.getFormat() != null) {
+                    doPrivKey(code.trim());
+                } else if (Cahoots.isCahoots(code.trim())) {
+                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+                } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                    CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
+                    Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                    intent.putExtra("uri", code.trim());
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
             }
         });
     }
@@ -1203,15 +1221,25 @@ public class BalanceActivity extends AppCompatActivity {
     private String getBTCDisplayUnits() {
 
         return MonetaryUtil.getInstance().getBTCUnits();
-
     }
 
     private String getSatoshiDisplayUnits() {
 
         return MonetaryUtil.getInstance().getSatoshiUnits();
-
     }
 
+    private String getFiatDisplayAmount(long value) {
+
+        String strFiat = PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+        double btc_fx = ExchangeRateFactory.getInstance(BalanceActivity.this).getAvgPrice(strFiat);
+
+        return MonetaryUtil.getInstance().getFiatFormat(strFiat).format(btc_fx * (((double) value) / 1e8));
+    }
+
+    private String getFiatDisplayUnits() {
+
+        return PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.CURRENT_FIAT, "USD");
+    }
 
     private void doExplorerView(String strHash) {
 

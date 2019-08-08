@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="alpha_create_wallet">Tulis dan simpan kata-kata ini dengan aman. Kata-kata tersebut jangan sampai hilang atau lupa kata sandi anda.</string>
+    <string name="alpha_create_wallet">Tulis dan simpan kata-kata ini dengan aman. Kata-kata tersebut jangan sampai hilang atau lupa kata sandi anda.</string>
     <string name="alpha_create_confirm_backup">Saya telah menuliskan kata-kata saya</string>
 
     <string name="creating_wallet">Membuat wallet. Harap tunggu...</string>
@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Batal</string>
 
-    <string name="options_cat_prefs">Block explorer</string>
+    <string name="options_cat_prefs">Mata uang, Block explorer</string>
     <string name="options_cat_stealth">Mode Sembunyi</string>
     <string name="options_cat_remote">Remote</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">Hapus Samourai dari launcher dan home screen. Anda harus menelepon **KODE_PIN_ANDA# dari aplikasi panggilan telepon anda untuk menjalankan Samourai.</string>
     <string name="options_remote_commands">Ijinkan perintah remote</string>
     <string name="options_remote_commands2">Bolehkan perintah remote melalui SMS.</string>
-    <string name="options_currency">Harga bursa</string>
-    <string name="options_currency2">Pilih bursa dan mata uang lokal anda.</string>
+    <string name="options_currency">Harga jalanan</string>
+    <string name="options_currency2">Pilih pertukaran Anda dan mata uang fiat lokal Anda.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">Block explorer digunakan untuk melihat detail transaksi.</string>
     <string name="options_sim_switch">Perlindungan perubahan SIM</string>
@@ -485,46 +485,46 @@
     <string name="samourai_bitcoin_wallet">Wallet Bitcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Masukkan frase kata sandi wallet anda</string>
     <string name="start_new_wallet">Mulai wallet baru</string>
-  <string name="get_help_create">Buat wallet: Dapatkan bantuan</string>
-  <string name="get_help_restore">Pulihkan wallet: Dapatkan bantuan</string>
+    <string name="get_help_create">Buat wallet: Dapatkan bantuan</string>
+    <string name="get_help_restore">Pulihkan wallet: Dapatkan bantuan</string>
 
-  <string name="fee">Biaya Penambang</string>
+    <string name="fee">Biaya Penambang</string>
     <string name="fee_low_priority">Prioritas rentah: diperkirakan 24</string>
     <string name="fee_mid_priority">Prioritas normal: diperkirakan 6</string>
     <string name="fee_high_priority">Prioritas tinggi: diperkirakan 2</string>
     <string name="fee_custom_priority">Biaya ditentukan sendiri: diperkirakan</string>
     <string name="blocks_to_cf">block sebelum konfirmasi</string>
 
-  <string name="invalid_mnemonic_word">Kata mnmonic BIP39 tidak valid</string>
-  <string name="invalid_mnemonic">Mnmonic BIP39 tidak valid</string>
+    <string name="invalid_mnemonic_word">Kata mnmonic BIP39 tidak valid</string>
+    <string name="invalid_mnemonic">Mnmonic BIP39 tidak valid</string>
     <string name="enter_your_code_here">Masukkan kode anda disini</string>
     <string name="declaimer_recovery_words">Saya mengkonfirmasi bahwa saya telah menuliskan kata-kata diatas dan menyimpan di lokasi yang aman dan terlindungi. Saya memahami bahwa siapapun yang memiliki akses kedua frase kata sandi dan cadangan kata-kata saya tersebut akan dapat mengakses wallet dan seluruh dana saya.</string>
-  <string name="return_to_wallet">Kembali ke wallet</string>
-  <string name="caution_message_recovery_words">Tidaklah aman untuk menyimpan kata-kata ini di komputer ataupun cloud. Tuliskan kata-kata ini di selembar kertas, lalu jaga dan amankan kerahasiaannya.</string>
+    <string name="return_to_wallet">Kembali ke wallet</string>
+    <string name="caution_message_recovery_words">Tidaklah aman untuk menyimpan kata-kata ini di komputer ataupun cloud. Tuliskan kata-kata ini di selembar kertas, lalu jaga dan amankan kerahasiaannya.</string>
     <string name="these_words_are">Kata-kata ini adalah cadangan semua kunci rahasia yang di wallet anda.</string>
-  <string name="recovery_words">KATA-KATA PEMULIHAN</string>
+    <string name="recovery_words">KATA-KATA PEMULIHAN</string>
 
-  <string name="permission_alert_dialog_title_sms">Meminta ijin akses SMS dan Telepon</string>
-  <string name="permission_dialog_message_sms">Wallet anda membutuhkan akses untuk dapat mengirim dan menerima SMS agar dapat menggunakan fitur peringatan remote.</string>
-  <string name="permission_alert_dialog_title_outgoing">Meminta ijin panggilan keluar</string>
-  <string name="permission_dialog_message_outgoing">Wallet anda membutuhkan akses panggilan keluar sehingga dapat menggunakan fitur mode sembunyi.</string>
+    <string name="permission_alert_dialog_title_sms">Meminta ijin akses SMS dan Telepon</string>
+    <string name="permission_dialog_message_sms">Wallet anda membutuhkan akses untuk dapat mengirim dan menerima SMS agar dapat menggunakan fitur peringatan remote.</string>
+    <string name="permission_alert_dialog_title_outgoing">Meminta ijin panggilan keluar</string>
+    <string name="permission_dialog_message_outgoing">Wallet anda membutuhkan akses panggilan keluar sehingga dapat menggunakan fitur mode sembunyi.</string>
 
-  <string name="permission_alert_dialog_title_external">Meminta ijin read/write</string>
-  <string name="permission_dialog_message_external">Wallet anda membutuhkan akses penyimpanan file sehingga dapat menyimpan cadangan wallet secara otomatis yang terenkripsi di perangkat anda.</string>
-  <string name="permission_alert_dialog_title_camera">Meminta ijin kamera</string>
-  <string name="permission_dialog_message_camera">Wallet anda membutuhkan akses kamera sehingga dapat memindai QR Code.</string>
+    <string name="permission_alert_dialog_title_external">Meminta ijin read/write</string>
+    <string name="permission_dialog_message_external">Wallet anda membutuhkan akses penyimpanan file sehingga dapat menyimpan cadangan wallet secara otomatis yang terenkripsi di perangkat anda.</string>
+    <string name="permission_alert_dialog_title_camera">Meminta ijin kamera</string>
+    <string name="permission_dialog_message_camera">Wallet anda membutuhkan akses kamera sehingga dapat memindai QR Code.</string>
 
-  <string name="use_bech32">Gunakan address bech32</string>
+    <string name="use_bech32">Gunakan address bech32</string>
 
-  <string name="boltzmann_cannot">Pengeluaran STONEWALL tidak dapat dikomposisikan dengan sekumpulan transaksi tidak terpakai. Jika anda membutuhkan pengeluaran STONEWALL tekan \'TIDAK\' dan coba lagi dengan pengeluaran tidak terpakai yang telah dimodifikasi.</string>
-  <string name="boltzmann_like_typed">Perlu diperhatikan bahwa \'Menerima perubahan output yang dikehendaki\' di posisi OFF dapat menghasilkan struktur transaksi yang tidak optimal pada pengeluaran STONEWALL anda.</string>
+    <string name="boltzmann_cannot">Pengeluaran STONEWALL tidak dapat dikomposisikan dengan sekumpulan transaksi tidak terpakai. Jika anda membutuhkan pengeluaran STONEWALL tekan \'TIDAK\' dan coba lagi dengan pengeluaran tidak terpakai yang telah dimodifikasi.</string>
+    <string name="boltzmann_like_typed">Perlu diperhatikan bahwa \'Menerima perubahan output yang dikehendaki\' di posisi OFF dapat menghasilkan struktur transaksi yang tidak optimal pada pengeluaran STONEWALL anda.</string>
 
-  <string name="insufficient_fee">Biaya tidak mencukupi</string>
-  <string name="action_utxo_amounts">Lihat jumlah berdasarkan tipe address</string>
+    <string name="insufficient_fee">Biaya tidak mencukupi</string>
+    <string name="action_utxo_amounts">Lihat jumlah berdasarkan tipe address</string>
 
-  <string name="total_p2pkh">Total (p2pkh):</string>
-  <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-  <string name="total_p2wpkh">Total segwit (bech32):</string>
-  <string name="total_blocked">Total diblokir:</string>
+    <string name="total_p2pkh">Total (p2pkh):</string>
+    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
+    <string name="total_p2wpkh">Total segwit (bech32):</string>
+    <string name="total_blocked">Total diblokir:</string>
 
 </resources>

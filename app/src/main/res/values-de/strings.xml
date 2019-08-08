@@ -21,7 +21,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
 
-    <string name="options_cat_prefs">Block-Explorer</string>
+    <string name="options_cat_prefs">Währung, Block-Explorer</string>
     <string name="options_cat_stealth">Unsichtbar-Modus</string>
     <string name="options_cat_remote">Fernzugriff</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -42,8 +42,8 @@
     <string name="options_stealth_display2">Entfernt Samourai aus der App-Übersicht und vom Startbildschirm. Du musst danach **DEIN_PIN_CODE# anrufen, um Samourai zu starten.</string>
     <string name="options_remote_commands">Fernzugriff ermöglichen</string>
     <string name="options_remote_commands2">Erlaubt den Fernzugriff per SMS.</string>
-    <string name="options_currency">Lokale Währung</string>
-    <string name="options_currency2">Wähle deine Exchange und deine lokale Fiat-Währung.</string>
+    <string name="options_currency">Straßenpreis</string>
+    <string name="options_currency2">Wählen Sie Ihren Umtausch und die lokale Fiat-Währung.</string>
     <string name="options_blockexplorer">Block-Explorer</string>
     <string name="options_blockexplorer2">Externer Block-Explorer, der für die Anzeige von Transaktionsdetails verwendet wird.</string>
     <string name="options_sim_switch">Gegen SIM-Wechsel schützen</string>

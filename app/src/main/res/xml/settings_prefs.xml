@@ -2,9 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
-        android:title="@string/options_blockexplorer"
-        android:summary="@string/options_blockexplorer2"
-        android:key="explorer"
-        />
+        android:key="fiat"
+        android:summary="@string/options_currency2"
+        android:title="@string/options_currency" />
 
+    <Preference
+        android:key="explorer"
+        android:summary="@string/options_blockexplorer2"
+        android:title="@string/options_blockexplorer" />
 </PreferenceScreen>

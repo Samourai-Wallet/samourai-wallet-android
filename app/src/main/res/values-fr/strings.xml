@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">Retirer Samourai du lanceur d\'application et de l\'écran d\'accueil. Vous devez saisir **VOTRE_CODE_PIN# sur votre téléphone pour lancer Samourai.</string>
     <string name="options_remote_commands">Permettre les commandes à distance</string>
     <string name="options_remote_commands2">Permettre les commandes à distance via SMS.</string>
-    <string name="options_currency">Taux en cours</string>
-    <string name="options_currency2">Choisissez votre plateforme d\'échanges et votre monnaie fiat locale.</string>
+    <string name="options_currency">Prix de la rue</string>
+    <string name="options_currency2">Choisissez votre monnaie d\'échange et votre monnaie locale.</string>
     <string name="options_blockexplorer">Explorateur de blocs</string>
     <string name="options_blockexplorer2">L\'explorateur de blocs utilisé pour un aperçu des détails de la transaction.</string>
     <string name="options_sim_switch">Bouclier interversion carte SIM</string>

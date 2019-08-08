@@ -20,7 +20,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Annulla</string>
 
-    <string name="options_cat_prefs">Explorer di blocchi</string>
+    <string name="options_cat_prefs">Valuta, explorer di blocchi</string>
     <string name="options_cat_stealth">Modalità segreta</string>
     <string name="options_cat_remote">Controllo Remoto</string>
     <string name="options_cat_wallet">Wallet</string>
@@ -41,8 +41,8 @@
     <string name="options_stealth_display2">Rimuove Samourai dal launcher e dalla schermata di home. Dovrai comporre **CODICE_PIN# dal tastierino per lanciare Samourai.</string>
     <string name="options_remote_commands">Abilita comandi remoti</string>
     <string name="options_remote_commands2">Abilita comandi remoti via SMS.</string>
-    <string name="options_currency">Tasso di scambio</string>
-    <string name="options_currency2">Scegli il tuo exchange e la tua valuta locale.</string>
+    <string name="options_currency">Prezzo di strada</string>
+    <string name="options_currency2">Scegli il tuo cambio e la valuta locale fiat.</string>
     <string name="options_blockexplorer">Block explorer</string>
     <string name="options_blockexplorer2">Il block explorer usato per visualizzare i dettagli delle transazioni.</string>
     <string name="options_sim_switch">Protezione scambio SIM</string>

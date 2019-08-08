@@ -19,7 +19,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="options_cat_prefs">Explorador de blocos</string>
+    <string name="options_cat_prefs">Moeda, Explorador de blocos</string>
     <string name="options_cat_stealth">Furtividade</string>
     <string name="options_cat_remote">Controlo Remoto</string>
     <string name="options_cat_wallet">Carteira</string>
@@ -39,7 +39,7 @@
     <string name="options_remote_commands">Activa controles remotos</string>
     <string name="options_remote_commands2">Permite comandos remotos por SMS.</string>
     <string name="options_currency">Preço de rua</string>
-    <string name="options_currency2">Escolha a sua exchange e a sua moeda local.</string>
+    <string name="options_currency2">Escolha o seu câmbio e moeda fiduciária local.</string>
     <string name="options_blockexplorer">Explorador de blocos</string>
     <string name="options_blockexplorer2">O explorador de blocos utilizado para ver detalhes da transação.</string>
     <string name="options_sim_switch">Defesa contra troca de chip SIM</string>
