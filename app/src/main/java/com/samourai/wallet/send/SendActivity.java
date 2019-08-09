@@ -1813,7 +1813,12 @@ public class SendActivity extends AppCompatActivity {
         }
 
         if (Cahoots.isCahoots(data.trim())) {
-            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
+//            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
+            Intent cahootsIntent = new Intent(this, ManualCahootsActivity.class);
+            cahootsIntent.putExtra("account", account);
+            cahootsIntent.putExtra("payload",data.trim());
+            startActivity(cahootsIntent);
+
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
