@@ -1734,7 +1734,40 @@ public class APIFactory	{
                 }
             }
 
-//            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
+            //
+            //
+            //
+            List<String> seenOutputsPostMix = new ArrayList<String>();
+            List<UTXO> _utxosPostMix = getUtxosPostMix(false);
+            for(UTXO _u : _utxosPostMix)   {
+                for(MyTransactionOutPoint _o : _u.getOutpoints())   {
+                    seenOutputsPostMix.add(_o.getTxHash().toString() + "-" + _o.getTxOutputN());
+                }
+            }
+
+            for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
+                if(!seenOutputsPostMix.contains(_s))    {
+                    UTXOUtil.getInstance().remove(_s);
+                }
+            }
+            /*
+            for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
+//                debug("APIFactory", "not dusted:" + _s);
+                if(!seenOutputsPostMix.contains(_s))    {
+                    BlockedUTXO.getInstance().removeNotDusted(_s);
+//                    debug("APIFactory", "not dusted removed:" + _s);
+                }
+            }
+            */
+            for(String _s : BlockedUTXO.getInstance().getBlockedUTXOPostMix().keySet())   {
+                debug("APIFactory", "blocked post-mix:" + _s);
+                if(!seenOutputsPostMix.contains(_s))    {
+                    BlockedUTXO.getInstance().removePostMix(_s);
+                    debug("APIFactory", "blocked removed:" + _s);
+                }
+            }
+
+            //            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
 //            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
 //            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
