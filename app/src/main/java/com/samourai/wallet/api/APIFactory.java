@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
@@ -33,7 +32,6 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
-import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
@@ -45,6 +43,7 @@ import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.util.LogUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.Address;
@@ -73,6 +72,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.subjects.BehaviorSubject;
+
+import static com.samourai.wallet.util.LogUtil.debug;
+import static com.samourai.wallet.util.LogUtil.info;
+
 public class APIFactory	{
 
     private static String APP_TOKEN = null;         // API app token
@@ -251,7 +254,7 @@ public class APIFactory	{
             _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET_TOR :  WebUtil.SAMOURAI_API2_TOR;
         }
 
-        Log.d("APIFactory", "getToken() url:" + _url);
+        debug("APIFactory", "getToken() url:" + _url);
 
         JSONObject jsonObject  = null;
 
@@ -268,15 +271,15 @@ public class APIFactory	{
                 args.append("apikey=");
                 args.append(new String(getXORKey()));
                 response = WebUtil.getInstance(context).postURL(_url + "auth/login?", args.toString());
-                Log.i("APIFactory", "API token response:" + response);
+                info("APIFactory", "API token response:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("apikey", new String(getXORKey()));
-                Log.i("APIFactory", "API key (XOR):" + new String(getXORKey()));
-                Log.i("APIFactory", "API key url:" + _url);
+                info("APIFactory", "API key (XOR):" + new String(getXORKey()));
+                info("APIFactory", "API key url:" + _url);
                 response = WebUtil.getInstance(context).tor_postURL(_url + "auth/login", args);
-                Log.i("APIFactory", "API token response:" + response);
+                info("APIFactory", "API token response:" + response);
             }
 
             try {
@@ -284,7 +287,7 @@ public class APIFactory	{
                 if(jsonObject != null && jsonObject.has("authorizations"))    {
                     JSONObject authObj = jsonObject.getJSONObject("authorizations");
                     if(authObj.has("access_token"))    {
-                        Log.i("APIFactory", "setting access token:" + authObj.getString("access_token"));
+                        info("APIFactory", "setting access token:" + authObj.getString("access_token"));
                         setAccessToken(authObj.getString("access_token"));
                         return true;
                     }
@@ -323,20 +326,20 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.append("&at=");
                 args.append(getAccessToken());
                 response = WebUtil.getInstance(context).postURL(_url + "multiaddr?", args.toString());
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", StringUtils.join(xpubs, "|"));
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.put("at", getAccessToken());
-                Log.i("APIFactory", "XPUB access token:" + getAccessToken());
+                info("APIFactory", "XPUB access token:" + getAccessToken());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "multiaddr", args);
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
 
             try {
@@ -395,11 +398,11 @@ public class APIFactory	{
                 else    {
                     ;
                 }
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.append("&at=");
                 args.append(getAccessToken());
                 response = WebUtil.getInstance(context).postURL(_url + "xpub?", args.toString());
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
@@ -419,15 +422,15 @@ public class APIFactory	{
                 else    {
                     ;
                 }
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.put("at", getAccessToken());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "xpub", args);
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
 
             try {
                 jsonObject = new JSONObject(response);
-                Log.i("APIFactory", "XPUB response:" + jsonObject.toString());
+                info("APIFactory", "XPUB response:" + jsonObject.toString());
                 if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
                     if(tag != null)    {
                         PrefsUtil.getInstance(context).setValue(tag, true);
@@ -473,7 +476,7 @@ public class APIFactory	{
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
                 if(walletObj.has("final_balance"))  {
                     xpub_balance = walletObj.getLong("final_balance");
-                    Log.d("APIFactory", "xpub_balance:" + xpub_balance);
+                    debug("APIFactory", "xpub_balance:" + xpub_balance);
                 }
             }
 
@@ -745,18 +748,18 @@ public class APIFactory	{
                             args.append(address);
                             args.append("&signature=");
                             args.append(Uri.encode(sig));
-                            Log.i("APIFactory", "delete XPUB:" + args.toString());
+                            info("APIFactory", "delete XPUB:" + args.toString());
                             response = WebUtil.getInstance(context).deleteURL(_url + "delete/" + xpub, args.toString());
-                            Log.i("APIFactory", "delete XPUB response:" + response);
+                            info("APIFactory", "delete XPUB response:" + response);
                         }
                         else    {
                             HashMap<String,String> args = new HashMap<String,String>();
                             args.put("message", xpub);
                             args.put("address", address);
                             args.put("signature", Uri.encode(sig));
-                            Log.i("APIFactory", "delete XPUB:" + args.toString());
+                            info("APIFactory", "delete XPUB:" + args.toString());
                             response = WebUtil.getInstance(context).tor_deleteURL(_url + "delete", args);
-                            Log.i("APIFactory", "delete XPUB response:" + response);
+                            info("APIFactory", "delete XPUB response:" + response);
                         }
 
                         try {
@@ -850,11 +853,11 @@ public class APIFactory	{
                         args.append(Uri.encode(sig));
                         args.append("&message=");
                         args.append("lock");
-//                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+//                        info("APIFactory", "lock XPUB:" + args.toString());
                         args.append("&at=");
                         args.append(getAccessToken());
                         response = WebUtil.getInstance(context).postURL(_url + "xpub/" + xpub + "/lock/", args.toString());
-//                        Log.i("APIFactory", "lock XPUB response:" + response);
+//                        info("APIFactory", "lock XPUB response:" + response);
                     }
                     else    {
                         HashMap<String,String> args = new HashMap<String,String>();
@@ -863,10 +866,10 @@ public class APIFactory	{
                         args.put("signature", sig);
                         args.put("message", "lock");
                         args.put("at", getAccessToken());
-                        Log.i("APIFactory", "lock XPUB:" + _url);
-                        Log.i("APIFactory", "lock XPUB:" + args.toString());
+                        info("APIFactory", "lock XPUB:" + _url);
+                        info("APIFactory", "lock XPUB:" + args.toString());
                         response = WebUtil.getInstance(context).tor_postURL(_url + "xpub/" + xpub + "/lock/", args);
-                        Log.i("APIFactory", "lock XPUB response:" + response);
+                        info("APIFactory", "lock XPUB response:" + response);
                     }
 
                     try {
@@ -930,11 +933,11 @@ public class APIFactory	{
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
-//            Log.i("APIFactory", "Notif tx:" + url.toString());
+//            info("APIFactory", "Notif tx:" + url.toString());
             url.append("&at=");
             url.append(getAccessToken());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif tx:" + response);
+//            info("APIFactory", "Notif tx:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifTx(jsonObject, addr, hash);
@@ -962,11 +965,11 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(_url);
             url.append("multiaddr?active=");
             url.append(addr);
-//            Log.i("APIFactory", "Notif address:" + url.toString());
+//            info("APIFactory", "Notif address:" + url.toString());
             url.append("&at=");
             url.append(getAccessToken());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
+//            info("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
@@ -1014,8 +1017,8 @@ public class APIFactory	{
 
     public void parseNotifTx(JSONObject jsonObject, String addr, String hash) throws JSONException  {
 
-        Log.i("APIFactory", "notif address:" + addr);
-        Log.i("APIFactory", "hash:" + hash);
+        info("APIFactory", "notif address:" + addr);
+        info("APIFactory", "hash:" + hash);
 
         if(jsonObject != null)  {
 
@@ -1031,7 +1034,7 @@ public class APIFactory	{
                     JSONObject objInput = (JSONObject)inArray.get(0);
                     byte[] pubkey = null;
                     String strScript = objInput.getString("sig");
-                    Log.i("APIFactory", "scriptsig:" + strScript);
+                    info("APIFactory", "scriptsig:" + strScript);
                     if((strScript == null || strScript.length() == 0 || strScript.startsWith("160014")) && objInput.has("witness"))    {
                         JSONArray witnessArray = (JSONArray)objInput.get("witness");
                         if(witnessArray.length() == 2)    {
@@ -1040,12 +1043,12 @@ public class APIFactory	{
                     }
                     else    {
                         Script script = new Script(Hex.decode(strScript));
-                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
+                        info("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
                         pubkey = script.getPubKey();
                     }
                     ECKey pKey = new ECKey(null, pubkey, true);
-                    Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-//                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
+                    info("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+//                        info("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
                     if(((JSONObject)inArray.get(0)).has("outpoint"))    {
                         JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("outpoint");
@@ -1057,11 +1060,11 @@ public class APIFactory	{
                         Sha256Hash txHash = new Sha256Hash(hashBytes);
                         TransactionOutPoint outPoint = new TransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), idx, txHash);
                         byte[] outpoint = outPoint.bitcoinSerialize();
-                        Log.i("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
+                        info("APIFactory", "outpoint:" + Hex.toHexString(outpoint));
 
                         try {
                             mask = BIP47Util.getInstance(context).getIncomingMask(pubkey, outpoint);
-                            Log.i("APIFactory", "mask:" + Hex.toHexString(mask));
+                            info("APIFactory", "mask:" + Hex.toHexString(mask));
                         }
                         catch(Exception e) {
                             e.printStackTrace();
@@ -1104,10 +1107,10 @@ public class APIFactory	{
             if(mask != null && payload != null)    {
                 try {
                     byte[] xlat_payload = PaymentCode.blind(payload, mask);
-                    Log.i("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
+                    info("APIFactory", "xlat_payload:" + Hex.toHexString(xlat_payload));
 
                     pcode = new PaymentCode(xlat_payload);
-                    Log.i("APIFactory", "incoming payment code:" + pcode.toString());
+                    info("APIFactory", "incoming payment code:" + pcode.toString());
 
                     if(!pcode.toString().equals(BIP47Util.getInstance(context).getPaymentCode().toString()) && pcode.isValid() && !BIP47Meta.getInstance().incomingExists(pcode.toString()))    {
                         BIP47Meta.getInstance().setLabel(pcode.toString(), "");
@@ -1131,7 +1134,7 @@ public class APIFactory	{
                     // initial lookup
                     //
                     for(int i = 0; i < BIP47Meta.INCOMING_LOOKAHEAD; i++)   {
-                        Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
+                        info("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(pcode, i));
                         BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), i);
                         BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(pcode, i), pcode.toString());
                     }
@@ -1149,7 +1152,7 @@ public class APIFactory	{
 
         String _url =  WebUtil.getAPIUrl(context);
 
-//        Log.i("APIFactory", "Notif tx:" + hash);
+//        info("APIFactory", "Notif tx:" + hash);
 
         JSONObject jsonObject  = null;
 
@@ -1158,13 +1161,13 @@ public class APIFactory	{
             url.append("tx/");
             url.append(hash);
             url.append("?fees=1");
-//            Log.i("APIFactory", "Notif tx:" + url.toString());
+//            info("APIFactory", "Notif tx:" + url.toString());
             url.append("&at=");
             url.append(getAccessToken());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif tx:" + response);
+//            info("APIFactory", "Notif tx:" + response);
             jsonObject = new JSONObject(response);
-//            Log.i("APIFactory", "Notif tx json:" + jsonObject.toString());
+//            info("APIFactory", "Notif tx json:" + jsonObject.toString());
 
             return parseNotifTx(jsonObject);
         }
@@ -1212,11 +1215,11 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                Log.d("APIFactory", "UTXO args:" + args.toString());
+                debug("APIFactory", "UTXO args:" + args.toString());
                 args.append("&at=");
                 args.append(getAccessToken());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
-                Log.d("APIFactory", "UTXO:" + response);
+                debug("APIFactory", "UTXO:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
@@ -1444,7 +1447,7 @@ public class APIFactory	{
             }
             else    {
                 String _url =  WebUtil.getAPIUrl(context);
-//            Log.i("APIFactory", "Dynamic fees:" + url.toString());
+//            info("APIFactory", "Dynamic fees:" + url.toString());
                 String response = null;
                 if(!AppUtil.getInstance(context).isOfflineMode())    {
                     response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
@@ -1452,7 +1455,7 @@ public class APIFactory	{
                 else    {
                     response = PayloadUtil.getInstance(context).deserializeFees().toString();
                 }
-//            Log.i("APIFactory", "Dynamic fees response:" + response);
+//            info("APIFactory", "Dynamic fees response:" + response);
                 try {
                     jsonObject = new JSONObject(response);
                     parseDynamicFees_bitcoind(jsonObject);
@@ -1510,9 +1513,9 @@ public class APIFactory	{
             if(suggestedFees.size() > 0)    {
                 FeeUtil.getInstance().setEstimatedFees(suggestedFees);
 
-//                Log.d("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
-//                Log.d("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
+//                debug("APIFactory", "high fee:" + FeeUtil.getInstance().getHighFee().getDefaultPerKB().toString());
+//                debug("APIFactory", "suggested fee:" + FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().toString());
+//                debug("APIFactory", "low fee:" + FeeUtil.getInstance().getLowFee().getDefaultPerKB().toString());
             }
 
             try {
@@ -1607,7 +1610,7 @@ public class APIFactory	{
 
     public synchronized void initWallet()    {
 
-        Log.i("APIFactory", "initWallet()");
+        info("APIFactory", "initWallet()");
 
         initWalletAmounts();
 
@@ -1654,11 +1657,11 @@ public class APIFactory	{
             }
             if(addressStrings.size() > 0)    {
                 s = addressStrings.toArray(new String[0]);
-//                Log.i("APIFactory", addressStrings.toString());
+//                info("APIFactory", addressStrings.toString());
                 utxoObj0 = getUnspentOutputs(s);
             }
 
-            Log.d("APIFactory", "addresses:" + addressStrings.toString());
+            debug("APIFactory", "addresses:" + addressStrings.toString());
 
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             if(hdw != null && hdw.getXPUBs() != null)    {
@@ -1717,17 +1720,17 @@ public class APIFactory	{
                 }
             }
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
-//                Log.d("APIFactory", "not dusted:" + _s);
+//                debug("APIFactory", "not dusted:" + _s);
                 if(!seenOutputs.contains(_s))    {
                     BlockedUTXO.getInstance().removeNotDusted(_s);
-//                    Log.d("APIFactory", "not dusted removed:" + _s);
+//                    debug("APIFactory", "not dusted removed:" + _s);
                 }
             }
             for(String _s : BlockedUTXO.getInstance().getBlockedUTXO().keySet())   {
-//                Log.d("APIFactory", "blocked:" + _s);
+//                debug("APIFactory", "blocked:" + _s);
                 if(!seenOutputs.contains(_s))    {
                     BlockedUTXO.getInstance().remove(_s);
-//                    Log.d("APIFactory", "blocked removed:" + _s);
+//                    debug("APIFactory", "blocked removed:" + _s);
                 }
             }
 
@@ -1735,20 +1738,20 @@ public class APIFactory	{
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
 //            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
 //            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
-//            Log.d("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
-//            Log.d("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
+//            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
+//            debug("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
 //            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
 //            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
             JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix });
             JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix });
-            Log.d("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
-            Log.d("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
+            debug("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
+            debug("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
             boolean parsedPostMultiAddr = parseMixXPUB(postMultiAddrObj);
             boolean parsedPostUnspent = parsePostMixUnspentOutputs(postUnspentObj.toString());
-//            Log.d("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
-//            Log.d("APIFactory", "post-mix unspent:" + parsedPostUnspent);
-//            Log.d("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
-//            Log.d("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
+//            debug("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
+//            debug("APIFactory", "post-mix unspent:" + parsedPostUnspent);
+//            debug("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
+//            debug("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
 
         }
         catch (IndexOutOfBoundsException ioobe) {
@@ -1765,7 +1768,7 @@ public class APIFactory	{
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
         JSONObject jsonObject = getXPUB(addresses, false);
-        Log.d("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
+        debug("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
         int ret = 0;
 
         try {
@@ -1803,7 +1806,7 @@ public class APIFactory	{
                             amount = addrObj.getLong("final_balance");
                             if(amount > 0L)    {
                                 BIP47Meta.getInstance().addUnspent(pcode, idx);
-                                Log.i("APIFactory", "BIP47 incoming amount:" + idx + ", " + addr + ", " + amount);
+                                info("APIFactory", "BIP47 incoming amount:" + idx + ", " + addr + ", " + amount);
                             }
                             else    {
                                 if(addrObj.has("pubkey"))    {
@@ -1833,7 +1836,7 @@ public class APIFactory	{
                                 if(idx > BIP47Meta.getInstance().getIncomingIdx(pcode))    {
                                     BIP47Meta.getInstance().setIncomingIdx(pcode, idx);
                                 }
-                                Log.i("APIFactory", "sync receive idx:" + idx + ", " + addr);
+                                info("APIFactory", "sync receive idx:" + idx + ", " + addr);
                                 ret++;
                             }
                         }
@@ -1869,7 +1872,7 @@ public class APIFactory	{
                     String addr = null;
                     String pcode = null;
                     int idx = -1;
-                    Log.i("APIFactory", "address object:" + addrObj.toString());
+                    info("APIFactory", "address object:" + addrObj.toString());
 
                     if(addrObj.has("pubkey"))    {
                         addr = (String)addrObj.get("pubkey");
@@ -1889,7 +1892,7 @@ public class APIFactory	{
                         nbTx = addrObj.getInt("n_tx");
                         if(nbTx > 0)    {
                             if(idx >= BIP47Meta.getInstance().getOutgoingIdx(pcode))    {
-                                Log.i("APIFactory", "sync send idx:" + idx + ", " + addr);
+                                info("APIFactory", "sync send idx:" + idx + ", " + addr);
                                 BIP47Meta.getInstance().setOutgoingIdx(pcode, idx + 1);
                             }
                             ret++;
@@ -2070,17 +2073,17 @@ public class APIFactory	{
                 args.append(address);
                 args.append("&at=");
                 args.append(getAccessToken());
-//                Log.d("APIFactory", args.toString());
+//                debug("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
-//                Log.d("APIFactory", response);
+//                debug("APIFactory", response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", address);
                 args.put("at", getAccessToken());
-//                Log.d("APIFactory", args.toString());
+//                debug("APIFactory", args.toString());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "unspent", args);
-//                Log.d("APIFactory", response);
+//                debug("APIFactory", response);
             }
 
             return parseUnspentOutputsForSweep(response);
@@ -2110,7 +2113,7 @@ public class APIFactory	{
                     return null;
                 }
 
-//            Log.d("APIFactory", "unspents found:" + outputsRoot.size());
+//            debug("APIFactory", "unspents found:" + outputsRoot.size());
 
                 for (int i = 0; i < utxoArray.length(); i++) {
 
@@ -2129,7 +2132,7 @@ public class APIFactory	{
 
                         if(Bech32Util.getInstance().isBech32Script(script))    {
                             address = Bech32Util.getInstance().getAddressFromScript(script);
-                            Log.d("address parsed:", address);
+                            debug("address parsed:", address);
                         }
                         else    {
                             address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
@@ -2207,19 +2210,19 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.append("&at=");
                 args.append(getAccessToken());
                 response = WebUtil.getInstance(context).postURL(_url + "multiaddr?", args.toString());
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", StringUtils.join(xpubs, "|"));
-                Log.i("APIFactory", "XPUB:" + args.toString());
+                info("APIFactory", "XPUB:" + args.toString());
                 args.put("at", getAccessToken());
                 response = WebUtil.getInstance(context).tor_postURL(_url + "multiaddr", args);
-                Log.i("APIFactory", "XPUB response:" + response);
+                info("APIFactory", "XPUB response:" + response);
             }
 
             try {
@@ -2255,11 +2258,11 @@ public class APIFactory	{
                 StringBuilder args = new StringBuilder();
                 args.append("active=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
-                Log.d("APIFactory", "UTXO args:" + args.toString());
+                debug("APIFactory", "UTXO args:" + args.toString());
                 args.append("&at=");
                 args.append(getAccessToken());
                 response = WebUtil.getInstance(context).postURL(_url + "unspent?", args.toString());
-                Log.d("APIFactory", "UTXO:" + response);
+                debug("APIFactory", "UTXO:" + response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
@@ -2294,7 +2297,7 @@ public class APIFactory	{
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
                 if(walletObj.has("final_balance"))  {
                     xpub_postmix_balance = walletObj.getLong("final_balance");
-                    Log.d("APIFactory", "xpub_postmix_balance:" + xpub_postmix_balance);
+                    debug("APIFactory", "xpub_postmix_balance:" + xpub_postmix_balance);
                 }
             }
 
