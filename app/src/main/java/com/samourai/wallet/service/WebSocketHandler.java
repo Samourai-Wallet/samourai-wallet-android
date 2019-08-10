@@ -34,6 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.samourai.wallet.util.LogUtil.debug;
+import static com.samourai.wallet.util.LogUtil.info;
+
 public class WebSocketHandler {
 
     private WebSocket mConnection = null;
@@ -53,7 +56,7 @@ public class WebSocketHandler {
 
         try {
             if (mConnection != null && mConnection.isOpen()) {
-                Log.i("WebSocketHandler", "Websocket subscribe:" + message);
+                info("WebSocketHandler", "Websocket subscribe:" + message);
                 mConnection.sendText(message);
             }
         } catch (Exception e) {
@@ -69,7 +72,7 @@ public class WebSocketHandler {
         for(int i = 0; i < addrs.length; i++) {
             if(addrs[i] != null && addrs[i].length() > 0) {
                 send("{\"op\":\"addr_sub\", \"addr\":\""+ addrs[i] + "\"}");
-//                    Log.i("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
+//                    info("WebSocketHandler", "{\"op\":\"addr_sub\",\"addr\":\"" + addrs[i] + "\"}");
             }
         }
 
@@ -153,22 +156,22 @@ public class WebSocketHandler {
                         .addListener(new WebSocketAdapter() {
 
                             public void onTextMessage(WebSocket websocket, String message) {
-                                Log.d("WebSocket", message);
+                                debug("WebSocket", message);
                                 try {
                                     JSONObject jsonObject = null;
                                     try {
                                         jsonObject = new JSONObject(message);
                                     } catch (JSONException je) {
-//                                            Log.i("WebSocketHandler", "JSONException:" + je.getMessage());
+//                                            info("WebSocketHandler", "JSONException:" + je.getMessage());
                                         jsonObject = null;
                                     }
 
                                     if (jsonObject == null) {
-//                                            Log.i("WebSocketHandler", "jsonObject is null");
+//                                            info("WebSocketHandler", "jsonObject is null");
                                         return;
                                     }
 
-//                                        Log.i("WebSocketHandler", jsonObject.toString());
+//                                        info("WebSocketHandler", jsonObject.toString());
 
                                     String op = (String) jsonObject.get("op");
 
@@ -255,7 +258,7 @@ public class WebSocketHandler {
                                                         (outObj.has("pubkey") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("pubkey")) != null))   {
                                                     total_value += value;
                                                     out_addr = outObj.getString("addr");
-                                                    Log.i("WebSocketHandler", "received from " + out_addr);
+                                                    info("WebSocketHandler", "received from " + out_addr);
 
                                                     String pcode = BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr"));
                                                     int idx = BIP47Meta.getInstance().getIdx4Addr(outObj.getString("addr"));
@@ -273,7 +276,7 @@ public class WebSocketHandler {
 
                                                         idx++;
                                                         for(int i = idx; i < (idx + BIP47Meta.INCOMING_LOOKAHEAD); i++)   {
-                                                            Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                            info("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                             BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
                                                             BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
@@ -283,7 +286,7 @@ public class WebSocketHandler {
                                                         idx--;
                                                         if(idx >= 2)    {
                                                             for(int i = idx; i >= (idx - (BIP47Meta.INCOMING_LOOKAHEAD - 1)); i--)   {
-                                                                Log.i("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
+                                                                info("WebSocketHandler", "receive from " + i + ":" + BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i));
                                                                 BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), i);
                                                                 BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(context).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
 
@@ -298,7 +301,7 @@ public class WebSocketHandler {
                                                     }
                                                 }
                                                 else if(outObj.has("addr"))   {
-                                                    Log.i("WebSocketHandler", "addr:" + outObj.getString("addr"));
+                                                    info("WebSocketHandler", "addr:" + outObj.getString("addr"));
                                                     if(outObj.has("xpub") && outObj.getJSONObject("xpub").has("path") && outObj.getJSONObject("xpub").getString("path").startsWith("M/1/"))    {
                                                         return;
                                                     }
@@ -372,7 +375,7 @@ public class WebSocketHandler {
                         long sequence = inputObj.getLong("seq");
                         if(BigInteger.valueOf(sequence).compareTo(SamouraiWallet.RBF_SEQUENCE_VAL) <= 0)    {
                             ret = true;
-                            Log.d("WebSocketHandler", "return value:" + ret);
+                            debug("WebSocketHandler", "return value:" + ret);
                             break;
                         }
                     }

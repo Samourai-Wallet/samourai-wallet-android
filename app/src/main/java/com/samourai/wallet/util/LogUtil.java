@@ -16,4 +16,10 @@ public class LogUtil {
         }
     }
 
+    public static void error(final String tag, String message) {
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(tag, message);
+        }
+    }
+
 }

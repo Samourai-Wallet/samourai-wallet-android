@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 import android.util.Log;
 
+import static com.samourai.wallet.util.LogUtil.debug;
+
 public class Cahoots {
 
     public static final int CAHOOTS_STONEWALLx2 = 0;
@@ -261,7 +263,7 @@ public class Cahoots {
     protected void signTx(HashMap<String,ECKey> keyBag) {
 
         Transaction transaction = psbt.getTransaction();
-        Log.d("Cahoots", "signTx:" + transaction.toString());
+        debug("Cahoots", "signTx:" + transaction.toString());
 
         for(int i = 0; i < transaction.getInputs().size(); i++)   {
 
@@ -269,18 +271,18 @@ public class Cahoots {
             TransactionOutPoint outpoint = input.getOutpoint();
             if(keyBag.containsKey(outpoint.toString())) {
 
-                Log.d("Cahoots", "signTx outpoint:" + outpoint.toString());
+                debug("Cahoots", "signTx outpoint:" + outpoint.toString());
 
                 ECKey key = keyBag.get(outpoint.toString());
                 SegwitAddress segwitAddress = new SegwitAddress(key.getPubKey(), params);
 
-                Log.d("Cahoots", "signTx bech32:" + segwitAddress.getBech32AsString());
+                debug("Cahoots", "signTx bech32:" + segwitAddress.getBech32AsString());
 
                 final Script redeemScript = segwitAddress.segWitRedeemScript();
                 final Script scriptCode = redeemScript.scriptCode();
 
                 long value = outpoints.get(outpoint.getHash().toString() + "-" + outpoint.getIndex());
-                Log.d("Cahoots", "signTx value:" + value);
+                debug("Cahoots", "signTx value:" + value);
 
                 TransactionSignature sig = transaction.calculateWitnessSignature(i, key, scriptCode, Coin.valueOf(value), Transaction.SigHash.ALL, false);
                 final TransactionWitness witness = new TransactionWitness(2);
