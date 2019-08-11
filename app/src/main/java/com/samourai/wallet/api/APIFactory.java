@@ -1713,12 +1713,6 @@ public class APIFactory	{
                     seenOutputs.add(_o.getTxHash().toString() + "-" + _o.getTxOutputN());
                 }
             }
-
-            for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
-                if(!seenOutputs.contains(_s))    {
-                    UTXOUtil.getInstance().remove(_s);
-                }
-            }
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
 //                debug("APIFactory", "not dusted:" + _s);
                 if(!seenOutputs.contains(_s))    {
@@ -1765,10 +1759,11 @@ public class APIFactory	{
             }
 
             for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
-                if(!seenOutputsPostMix.contains(_s))    {
+                if(!seenOutputsPostMix.contains(_s) && !seenOutputs.contains(_s))    {
                     UTXOUtil.getInstance().remove(_s);
                 }
             }
+
             /*
             for(String _s : BlockedUTXO.getInstance().getNotDustedUTXO())   {
 //                debug("APIFactory", "not dusted:" + _s);
