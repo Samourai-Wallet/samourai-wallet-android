@@ -2011,7 +2011,7 @@ public class APIFactory	{
         if(utxos.isEmpty() && useLocalCache){
             try {
                 String response  = PayloadUtil.getInstance(context).deserializeUTXO().toString();
-                parseUnspentOutputsForSweep(response);
+                parseUnspentOutputs(response);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
