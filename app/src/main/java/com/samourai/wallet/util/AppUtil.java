@@ -117,6 +117,7 @@ public class AppUtil {
         APIFactory.getInstance(context).reset();
 		PrefsUtil.getInstance(context).clear();
         BlockedUTXO.getInstance().clear();
+        BlockedUTXO.getInstance().clearPostMix();
         RicochetMeta.getInstance(context).empty();
         SendAddressUtil.getInstance().reset();
         SentToFromBIP47Util.getInstance().reset();
