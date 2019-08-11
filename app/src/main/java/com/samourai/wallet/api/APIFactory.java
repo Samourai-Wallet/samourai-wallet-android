@@ -1734,6 +1734,25 @@ public class APIFactory	{
                 }
             }
 
+            //            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
+            String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
+//            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
+//            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
+//            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
+//            debug("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
+//            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
+//            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
+            JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix });
+            JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix });
+            debug("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
+            debug("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
+            boolean parsedPostMultiAddr = parseMixXPUB(postMultiAddrObj);
+            boolean parsedPostUnspent = parsePostMixUnspentOutputs(postUnspentObj.toString());
+//            debug("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
+//            debug("APIFactory", "post-mix unspent:" + parsedPostUnspent);
+//            debug("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
+//            debug("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
+
             //
             //
             //
@@ -1766,25 +1785,6 @@ public class APIFactory	{
                     debug("APIFactory", "blocked removed:" + _s);
                 }
             }
-
-            //            String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
-            String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
-//            JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
-//            JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
-//            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
-//            debug("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
-//            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
-//            boolean parsedPreUnspent = parsePostMixUnspentOutputs(preUnspentObj.toString());
-            JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix });
-            JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix });
-            debug("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
-            debug("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
-            boolean parsedPostMultiAddr = parseMixXPUB(postMultiAddrObj);
-            boolean parsedPostUnspent = parsePostMixUnspentOutputs(postUnspentObj.toString());
-//            debug("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
-//            debug("APIFactory", "post-mix unspent:" + parsedPostUnspent);
-//            debug("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
-//            debug("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
 
         }
         catch (IndexOutOfBoundsException ioobe) {
