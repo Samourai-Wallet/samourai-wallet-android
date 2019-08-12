@@ -1,18 +1,14 @@
 package com.samourai.wallet;
 
 import android.app.Application;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.multidex.MultiDex;
-import android.util.Log;
-import android.widget.Toast;
+import android.support.v4.app.NotificationCompat;
 
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
@@ -21,6 +17,7 @@ import com.samourai.wallet.util.PrefsUtil;
 public class SamouraiApplication extends Application {
 
     public static String TOR_CHANNEL_ID = "TOR_CHANNEL";
+    public static String FOREGROUND_SERVICE_CHANNEL_ID = "FOREGROUND_SERVICE_CHANNEL_ID";
 
     @Override
     public void onCreate() {
@@ -49,8 +46,19 @@ public class SamouraiApplication extends Application {
             );
             serviceChannel.setSound(null, null);
             NotificationManager manager = getSystemService(NotificationManager.class);
+
+            NotificationChannel refreshService = new NotificationChannel(
+                    FOREGROUND_SERVICE_CHANNEL_ID,
+                    "Samourai Service",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            refreshService.setSound(null, null);
+            refreshService.setImportance(NotificationManager.IMPORTANCE_LOW);
+            refreshService.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);
+                manager.createNotificationChannel(refreshService);
             }
         }
     }
