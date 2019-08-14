@@ -597,16 +597,20 @@ public class BalanceActivity extends AppCompatActivity {
         }    // noinspection SimplifiableIfStatement
         if (id == R.id.action_copy_cahoots) {
             ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+            if(clipboard.hasPrimaryClip())    {
+                ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
-            if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                startActivity(cahootIntent);
-            }else {
-                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
+                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                    startActivity(cahootIntent);
+                }else {
+                    Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                }
             }
-
+            else    {
+                Toast.makeText(this,R.string.clipboard_empty,Toast.LENGTH_SHORT).show();
+            }
         }
         if (id == R.id.action_settings) {
             doSettings();
