@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -116,11 +117,13 @@ public class AppUtil {
         APIFactory.getInstance(context).reset();
 		PrefsUtil.getInstance(context).clear();
         BlockedUTXO.getInstance().clear();
+        BlockedUTXO.getInstance().clearPostMix();
         RicochetMeta.getInstance(context).empty();
         SendAddressUtil.getInstance().reset();
         SentToFromBIP47Util.getInstance().reset();
         BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
+        TrustedNodeUtil.getInstance().reset();
 	}
 
 	public void restartApp() {

@@ -1,16 +1,10 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
-import android.util.Log;
-//import android.util.Log;
 
-import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.bitcoinj.params.MainNetParams;
-import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.samourai.wallet.util.LogUtil.info;
 
 public class BIP47Meta {
 
@@ -301,11 +297,11 @@ public class BIP47Meta {
             }
             int idx = getIncomingIdx(pcode);
 
-//            Log.i("APIFactory", "idx:" + idx + " , " + pcode);
+//            info("APIFactory", "idx:" + idx + " , " + pcode);
 
             for(int i = idx; i < (idx + INCOMING_LOOKAHEAD); i++)   {
                 try {
-                    Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
+                    info("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
                     BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), i);
                     BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
                     addrs.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
@@ -381,11 +377,11 @@ public class BIP47Meta {
     public ArrayList<Pair<String,String>> getOutgoingUnconfirmed()   {
 
         ArrayList<Pair<String,String>> ret = new ArrayList<Pair<String,String>>();
-//        Log.i("BIP47Meta", "key set:" + pcodeOutgoingStatus.keySet().size());
+//        info("BIP47Meta", "key set:" + pcodeOutgoingStatus.keySet().size());
         for(String pcode : pcodeOutgoingStatus.keySet())   {
-//            Log.i("BIP47Meta", "pcode:" + pcode.toString());
-//            Log.i("BIP47Meta", "tx:" + pcodeOutgoingStatus.get(pcode).getLeft());
-//            Log.i("BIP47Meta", "status:" + pcodeOutgoingStatus.get(pcode).getRight());
+//            info("BIP47Meta", "pcode:" + pcode.toString());
+//            info("BIP47Meta", "tx:" + pcodeOutgoingStatus.get(pcode).getLeft());
+//            info("BIP47Meta", "status:" + pcodeOutgoingStatus.get(pcode).getRight());
             if(pcodeOutgoingStatus.get(pcode).getRight() != STATUS_SENT_CFM && pcodeOutgoingStatus.get(pcode).getLeft() != null && pcodeOutgoingStatus.get(pcode).getLeft().length() > 0)    {
                 ret.add(Pair.of(pcode, pcodeOutgoingStatus.get(pcode).getLeft()));
             }
@@ -439,7 +435,7 @@ public class BIP47Meta {
 
             if(idxs != null)    {
                 for(int i = 0; i < idxs.size(); i++)   {
-                    Log.i("BIP47Meta", "address has unspents:" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), idxs.get(i)));
+                    info("BIP47Meta", "address has unspents:" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), idxs.get(i)));
                     ret.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), idxs.get(i)));
                 }
             }
@@ -514,14 +510,14 @@ public class BIP47Meta {
             int highestUnspentIdx = getUnspentIdx(pcode);
             boolean changed = false;
 
-//            Log.i("BIP47Meta", "highest idx:" + highestUnspentIdx + "," + pcode);
+//            info("BIP47Meta", "highest idx:" + highestUnspentIdx + "," + pcode);
 
             if(incomingIdxs != null && incomingIdxs.size() > 0)    {
                 for(String addr : incomingIdxs.keySet())   {
                     if(unspentIdxs != null && incomingIdxs != null &&
                             incomingIdxs.get(addr) != null &&
                             !unspentIdxs.contains(incomingIdxs.get(addr)) && (incomingIdxs.get(addr) < (highestUnspentIdx - 5)))    {
-//                        Log.i("BIP47Meta", "pruning:" + addr + "," + incomingIdxs.get(addr) + ","  + pcode);
+//                        info("BIP47Meta", "pruning:" + addr + "," + incomingIdxs.get(addr) + ","  + pcode);
                         incomingIdxs.remove(addr);
                         changed = true;
                     }
@@ -619,14 +615,14 @@ public class BIP47Meta {
             ;
         }
 
-//        Log.i("BIP47Meta", jsonPayload.toString());
+//        info("BIP47Meta", jsonPayload.toString());
 
         return jsonPayload;
     }
 
     public void fromJSON(JSONObject jsonPayload) {
 
-//        Log.i("BIP47Meta", jsonPayload.toString());
+//        info("BIP47Meta", jsonPayload.toString());
 
         try {
 
@@ -651,9 +647,9 @@ public class BIP47Meta {
                         String addr = o.getString("addr");
                         int idx = o.getInt("idx");
                         incoming.put(addr, idx);
-//                        Log.i("BIP47Meta", addr);
-//                        Log.i("BIP47Meta", obj.getString("payment_code"));
-//                        Log.i("BIP47Meta", "" + idx);
+//                        info("BIP47Meta", addr);
+//                        info("BIP47Meta", obj.getString("payment_code"));
+//                        info("BIP47Meta", "" + idx);
                         addr2pcode.put(addr, obj.getString("payment_code"));
                         addr2idx.put(addr, idx);
                     }

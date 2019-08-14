@@ -743,6 +743,20 @@
     <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
     <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
     <string name="renew">RENEW</string>
+    <string name="continue_exchanging_qr_codes">Continue exchanging QR codes\n until the transaction is broadcast!</string>
+    <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirm that you wish to broadcast this transaction.</string>
+    <string name="begin_stowaway">Begin Stowaway</string>
+    <string name="begin_stonewallx2">Begin STONEWALLx2</string>
+    <string name="total_miner_fee">Total Miner Fee :</string>
+    <string name="launch_qr_scanner">LAUNCH QR Scanner</string>
+    <string name="next_step">Next Step...</string>
+    <string name="scan_the_qr_code_that_your_collaborator_provides_you">Scan the QR CODE that your collaborator provides you.</string>
+    <string name="you_will_contribute">You will contribute</string>
+    <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Create an on demand CoinJoin transaction for enhanced privacy and surveillance protection</string>
+    <string name="refresh">Refresh</string>
+    <string name="unspent_outputs">Unspent Outputs</string>
+    <string name="unspent_outputs_post_mix">Unspent Outputs - Post mix</string>
+    <string name="paste_cahoots_payload">Paste cahoots payload</string>
 
 
 </resources>

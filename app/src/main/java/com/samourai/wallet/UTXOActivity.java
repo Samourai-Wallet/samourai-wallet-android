@@ -12,7 +12,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +53,8 @@ import org.spongycastle.util.encoders.Hex;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.samourai.wallet.util.LogUtil.debug;
 
 public class UTXOActivity extends Activity {
 
@@ -99,8 +100,8 @@ public class UTXOActivity extends Activity {
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                Log.d("UTXOActivity", "menu:" + data.get(position).addr);
-                Log.d("UTXOActivity", "menu:" + data.get(position).hash + "-" + data.get(position).idx);
+                debug("UTXOActivity", "menu:" + data.get(position).addr);
+                debug("UTXOActivity", "menu:" + data.get(position).hash + "-" + data.get(position).idx);
 
                 PopupMenu menu = new PopupMenu (UTXOActivity.this, view, Gravity.RIGHT);
                 menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()   {
@@ -190,7 +191,7 @@ public class UTXOActivity extends Activity {
 
                                             BlockedUTXO.getInstance().remove(data.get(position).hash, data.get(position).idx);
 
-                                            Log.d("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
+                                            debug("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
 
                                             update(true);
 
@@ -217,7 +218,7 @@ public class UTXOActivity extends Activity {
 
                                             BlockedUTXO.getInstance().removePostMix(data.get(position).hash, data.get(position).idx);
 
-                                            Log.d("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
+                                            debug("UTXOActivity", "removed:" + data.get(position).hash + "-" + data.get(position).idx);
 
                                             update(true);
 
@@ -249,7 +250,7 @@ public class UTXOActivity extends Activity {
                                                 BlockedUTXO.getInstance().addPostMix(data.get(position).hash, data.get(position).idx, data.get(position).amount);
                                             }
 
-                                            Log.d("UTXOActivity", "added:" + data.get(position).hash + "-" + data.get(position).idx);
+                                            debug("UTXOActivity", "added:" + data.get(position).hash + "-" + data.get(position).idx);
 
                                             update(true);
 
@@ -482,17 +483,17 @@ public class UTXOActivity extends Activity {
                 displayData.idx = outpoint.getTxOutputN();
                 if(BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
-//                    Log.d("UTXOActivity", "marked as do not spend");
+//                    debug("UTXOActivity", "marked as do not spend");
                     totalBlocked += displayData.amount;
                 }
                 else if(BlockedUTXO.getInstance().containsPostMix(outpoint.getTxHash().toString(), outpoint.getTxOutputN()))    {
                     doNotSpend.add(displayData);
-//                    Log.d("UTXOActivity", "marked as do not spend");
+//                    debug("UTXOActivity", "marked as do not spend");
                     totalBlocked += displayData.amount;
                 }
                 else    {
                     data.add(displayData);
-//                    Log.d("UTXOActivity", "unmarked");
+//                    debug("UTXOActivity", "unmarked");
                     if(FormatsUtil.getInstance().isValidBech32(displayData.addr))    {
                         totalP2WPKH += displayData.amount;
                     }
@@ -510,7 +511,7 @@ public class UTXOActivity extends Activity {
 
         if(adapter != null)    {
             adapter.notifyDataSetInvalidated();
-//            Log.d("UTXOActivity", "nb:" + data.size());
+//            debug("UTXOActivity", "nb:" + data.size());
         }
 
         if(broadcast)    {
@@ -566,7 +567,7 @@ public class UTXOActivity extends Activity {
             String addr = data.get(position).addr;
             text2.setText(addr);
 
-//            Log.d("UTXOActivity", "list:" + data.get(position).addr);
+//            debug("UTXOActivity", "list:" + data.get(position).addr);
 
             String descr = "";
             Spannable word = null;
@@ -574,7 +575,7 @@ public class UTXOActivity extends Activity {
                 descr += " " + UTXOUtil.getInstance().get(data.get(position).hash + "-" + data.get(position).idx);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF33ff00), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                Log.d("UTXOActivity", "list: tag");
+//                debug("UTXOActivity", "list: tag");
             }
             if(isBIP47(addr))    {
                 String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(addr);
@@ -586,26 +587,26 @@ public class UTXOActivity extends Activity {
                 }
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFd07de5), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                Log.d("UTXOActivity", "list: bip47");
+//                debug("UTXOActivity", "list: bip47");
             }
             if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.dust) + " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                Log.d("UTXOActivity", "list: dust/do not spend");
+//                debug("UTXOActivity", "list: dust/do not spend");
             }
             else if(data.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(data.get(position).hash, data.get(position).idx))   {
                 descr += " " + UTXOActivity.this.getText(R.string.dust);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFF8c8c8c), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                Log.d("UTXOActivity", "list: dust");
+//                debug("UTXOActivity", "list: dust");
             }
             else if(BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) ||
                     BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx))    {
                 descr += " " + UTXOActivity.this.getText(R.string.do_not_spend);
                 word = new SpannableString(descr);
                 word.setSpan(new ForegroundColorSpan(0xFFe75454), 1, descr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                Log.d("UTXOActivity", "list: do not spend");
+//                debug("UTXOActivity", "list: do not spend");
             }
             else    {
                 ;

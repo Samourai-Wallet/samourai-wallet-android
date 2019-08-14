@@ -8,7 +8,6 @@ import android.support.transition.Slide;
 import android.support.transition.TransitionManager;
 import android.support.transition.TransitionSet;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,6 @@ import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.R;
 
 import java.text.DecimalFormat;
-
-import static android.support.constraint.Constraints.TAG;
 
 /**
  * A CustomView for showing and hiding transaction and transactionReview
@@ -61,7 +58,7 @@ public class SendTransactionDetailsView extends FrameLayout {
         stowawayLayout = transactionReview.findViewById(R.id.stowaway_layout);
         stoneWallX2Layout = transactionReview.findViewById(R.id.stonewallx2_review_layout);
         stoneWallLayout = transactionReview.findViewById(R.id.stonewallx1_layout);
-        entropyBarStoneWallX2 = transactionReview.findViewById(R.id.entropy_bar);
+//        entropyBarStoneWallX2 = transactionReview.findViewById(R.id.cahoots_entropy_bar);
         entropyBarStoneWallX1 = transactionReview.findViewById(R.id.entropy_bar_stonewallx1);
         stoneWallx1Switch = transactionReview.findViewById(R.id.stonewallx1_switch);
         stowawayMixingParticipant = transactionReview.findViewById(R.id.stowaway_mixing_participant);
@@ -69,10 +66,10 @@ public class SendTransactionDetailsView extends FrameLayout {
         stoneWallx2Fee = transactionReview.findViewById(R.id.extra_stonewall_fee);
         stoneWallx2mixingParticipant = transactionReview.findViewById(R.id.mixing_partner_txtview);
         entropyValueX1 = transactionReview.findViewById(R.id.entropy_value_stonewallx1);
-        entropyValueX2 = transactionReview.findViewById(R.id.entropy_value_stonewallx2);
+//        entropyValueX2 = transactionReview.findViewById(R.id.entropy_value_stonewallx2);
 
         entropyBarStoneWallX1.setMaxBars(4);
-        entropyBarStoneWallX2.setMaxBars(3);
+//        entropyBarStoneWallX2.setMaxBars(3);
 
         addView(transactionView);
 
@@ -107,7 +104,7 @@ public class SendTransactionDetailsView extends FrameLayout {
             stoneWallX2Layout.setVisibility(GONE);
         });
 
-        stowawayMixingParticipant.setText(participant);
+        stowawayMixingParticipant.setText("____");
 
     }
 

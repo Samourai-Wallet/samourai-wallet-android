@@ -43,6 +43,7 @@
         android:name=".SamouraiApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher_round"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
@@ -53,6 +54,12 @@
             android:label="@string/title_activity_network_dashboard">
 
         </activity>
+        <activity
+            android:name=".utxos.UTXOSActivity"
+            android:exported="true"
+            android:label="@string/unspent_outputs"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/ui_2_theme" />
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:theme="@style/ui_2_theme"
@@ -271,9 +278,9 @@
             android:theme="@style/ui_2_theme" />
 
         <activity
-            android:name=".send.cahoots.ManualStoneWall"
+            android:name=".send.cahoots.ManualCahootsActivity"
             android:exported="true"
-            android:label="Manual Stonewall"
+            android:label="Manual Cahoots"
             android:theme="@style/ui_2_theme" />
 
         <receiver

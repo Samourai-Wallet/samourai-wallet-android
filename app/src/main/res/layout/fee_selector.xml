@@ -39,7 +39,7 @@
         android:progressDrawable="@drawable/seekbar_green_bg"
         android:splitTrack="false"
         android:thumb="@drawable/seekbar_green_thumb"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintBottom_toTopOf="@+id/total_miner_fee_group"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -75,7 +75,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/total_miner_fee_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -115,7 +115,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout4"
+        app:layout_constraintStart_toEndOf="@+id/total_miner_fee_group"
         app:layout_constraintTop_toBottomOf="@+id/textView6">
 
         <TextView

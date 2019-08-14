@@ -108,7 +108,7 @@ public class PinEntryActivity extends AppCompatActivity {
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
         pinEntryView.setEntryListener((key, view) -> {
-            if (userInput.length() <= AccessFactory.MAX_PIN_LENGTH) {
+            if (userInput.length() <= (AccessFactory.MAX_PIN_LENGTH - 1)){
                 userInput = userInput.append(key);
                 if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
                     pinEntryView.showCheckButton();
@@ -122,17 +122,18 @@ public class PinEntryActivity extends AppCompatActivity {
             if (clearType == PinEntryView.KeyClearTypes.CLEAR) {
                 if (userInput.length() != 0)
                     userInput = new StringBuilder(userInput.substring(0, (userInput.length() - 1)));
+                if (userInput.length() >= AccessFactory.MIN_PIN_LENGTH) {
+                    pinEntryView.showCheckButton();
+                } else {
+                    pinEntryView.hideCheckButton();
+                }
             } else {
                 strPassphrase = "";
                 userInput = new StringBuilder();
                 pinEntryMaskLayout.removeAllViews();
-            }
-            setPinMaskView();
-            if (strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH) {
-                pinEntryView.showCheckButton();
-            } else {
                 pinEntryView.hideCheckButton();
             }
+            setPinMaskView();
         });
 
 
@@ -184,7 +185,7 @@ public class PinEntryActivity extends AppCompatActivity {
         if (!PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.HAPTIC_PIN, true)) {
             pinEntryView.disableHapticFeedBack();
         }
-        pinEntryView.setConfirmClickListner(view -> {
+        pinEntryView.setConfirmClickListener(view -> {
 
             if (create && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
