@@ -64,6 +64,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.samourai.wallet.util.LogUtil.debug;
+
 public class UTXOSActivity extends AppCompatActivity {
 
 
@@ -256,8 +258,20 @@ public class UTXOSActivity extends AppCompatActivity {
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                 utxos = APIFactory.getInstance(getApplicationContext()).getUtxosPostMix(false);
             } else {
-                utxos = APIFactory.getInstance(getApplicationContext()).getUtxosWithLocalCache(false, true);
+//                utxos = APIFactory.getInstance(getApplicationContext()).getUtxosWithLocalCache(false, true);
+                utxos = APIFactory.getInstance(getApplicationContext()).getUtxos(false);
             }
+
+            long amount = 0L;
+            for(UTXO utxo : utxos)   {
+                for(MyTransactionOutPoint out : utxo.getOutpoints())    {
+                    debug("UTXOSActivity", "utxo:" + out.getAddress() + "," + out.getValue());
+                    debug("UTXOSActivity", "utxo:" + utxo.getPath());
+                    amount += out.getValue().longValue();
+                }
+            }
+            debug("UTXOSActivity", "utxos by value:" + amount);
+
             ArrayList<UTXOModel> items = new ArrayList<>();
             for (UTXO utxo : utxos) {
                 for (MyTransactionOutPoint outpoint : utxo.getOutpoints()) {
