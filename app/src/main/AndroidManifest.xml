@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!--
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -107,10 +108,6 @@
             android:theme="@style/ui_2_theme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".UTXOActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" />
-        <activity
             android:name=".BatchSendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
@@ -188,12 +185,10 @@
             android:name=".service.WebSocketService"
             android:enabled="true" />
         <service
-            android:name=".service.RefreshService"
-            android:enabled="true" />
-        <service
             android:name=".tor.TorService"
             android:enabled="true"
             android:stopWithTask="true" />
+        <service android:name=".service.JobRefreshService" android:permission="android.permission.BIND_JOB_SERVICE" />
         <!--
                 <receiver
                     android:name=".receivers.BootIntentReceiver"

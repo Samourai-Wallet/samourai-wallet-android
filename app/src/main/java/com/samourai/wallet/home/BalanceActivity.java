@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.JobIntentService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -71,6 +72,7 @@ import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
@@ -86,7 +88,6 @@ import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.service.RefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
@@ -596,16 +597,20 @@ public class BalanceActivity extends AppCompatActivity {
         }    // noinspection SimplifiableIfStatement
         if (id == R.id.action_copy_cahoots) {
             ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+            if(clipboard.hasPrimaryClip())    {
+                ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
-            if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                startActivity(cahootIntent);
-            }else {
-                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
+                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                    startActivity(cahootIntent);
+                }else {
+                    Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                }
             }
-
+            else    {
+                Toast.makeText(this,R.string.clipboard_empty,Toast.LENGTH_SHORT).show();
+            }
         }
         if (id == R.id.action_settings) {
             doSettings();
@@ -1195,15 +1200,19 @@ public class BalanceActivity extends AppCompatActivity {
             */
         }
 
-        Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
+
+        Intent intent = new Intent(this, JobRefreshService.class);
         intent.putExtra("notifTx", notifTx);
         intent.putExtra("dragged", dragged);
         intent.putExtra("launch", launch);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
+        JobRefreshService.enqueueWork(getApplicationContext(), intent);
+//
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(intent);
+//        } else {
+//            startService(intent);
+//        }
 
     }
 

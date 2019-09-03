@@ -757,6 +757,7 @@
     <string name="unspent_outputs">Unspent Outputs</string>
     <string name="unspent_outputs_post_mix">Unspent Outputs - Post mix</string>
     <string name="paste_cahoots_payload">Paste cahoots payload</string>
+    <string name="clipboard_empty">Clipboard empty</string>
 
 
 </resources>

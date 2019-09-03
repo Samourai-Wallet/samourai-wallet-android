@@ -9,6 +9,7 @@ import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +25,7 @@ public class Cahoots {
     public static final int CAHOOTS_STONEWALLx2 = 0;
     public static final int CAHOOTS_STOWAWAY = 1;
 
-    protected int version = 1;
+    protected int version = 2;
     protected long ts = -1L;
     protected String strID = null;
     protected int type = -1;
@@ -39,6 +40,8 @@ public class Cahoots {
     protected NetworkParameters params = null;
     protected int account = 0;
     protected int cptyAccount = 0;
+    protected byte[] fingerprint = null;
+    protected byte[] fingerprintCollab = null;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
 
@@ -58,6 +61,8 @@ public class Cahoots {
         this.params = c.getParams();
         this.account = c.getAccount();
         this.cptyAccount = c.getCounterpartyAccount();
+        this.fingerprint = c.getFingerprint();
+        this.fingerprintCollab = c.getFingerprintCollab();
     }
 
     public int getVersion() {
@@ -142,6 +147,22 @@ public class Cahoots {
         return cptyAccount;
     }
 
+    public byte[] getFingerprint() {
+        return fingerprint;
+    }
+
+    public void setFingerprint(byte[] fingerprint) {
+        this.fingerprint = fingerprint;
+    }
+
+    public byte[] getFingerprintCollab() {
+        return fingerprintCollab;
+    }
+
+    public void setFingerprintCollab(byte[] fingerprint) {
+        this.fingerprintCollab = fingerprint;
+    }
+
     public static boolean isCahoots(JSONObject obj)   {
         try {
             return obj.has("cahoots") && obj.getJSONObject("cahoots").has("type");
@@ -191,6 +212,12 @@ public class Cahoots {
             }
             obj.put("account", account);
             obj.put("cpty_account", cptyAccount);
+            if(fingerprint != null)    {
+                obj.put("fingerprint", Hex.toHexString(fingerprint));
+            }
+            if(fingerprintCollab != null)    {
+                obj.put("fingerprint_collab", Hex.toHexString(fingerprintCollab));
+            }
             obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
 
             cObj.put("cahoots", obj);
@@ -245,6 +272,12 @@ public class Cahoots {
                 }
                 else    {
                     this.cptyAccount = 0;
+                }
+                if(obj.has("fingerprint"))    {
+                    fingerprint = Hex.decode(obj.getString("fingerprint"));
+                }
+                if(obj.has("fingerprint_collab"))    {
+                    fingerprintCollab = Hex.decode(obj.getString("fingerprint_collab"));
                 }
                 this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
                 if(this.psbt != null)    {
