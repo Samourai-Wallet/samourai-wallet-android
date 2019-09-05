@@ -59,12 +59,6 @@
         android:title="@string/experimental">
 
         <Preference
-            android:title="@string/cahoots"
-            android:summary="@string/options_cahoots2"
-            android:key="cahoots"
-            />
-
-        <Preference
             android:title="@string/PSBT"
             android:summary="@string/options_psbt2"
             android:key="psbt"
