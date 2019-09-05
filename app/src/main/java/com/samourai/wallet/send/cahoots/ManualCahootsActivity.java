@@ -35,6 +35,7 @@ import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.cahoots.STONEWALLx2;
 import com.samourai.wallet.cahoots.Stowaway;
+import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
@@ -229,6 +230,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
             try {
                 switch (step) {
                     case 0:
+                        stowaway.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway1(stowaway);
                         if(payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
@@ -277,6 +279,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
                 switch (step) {
                     case 0:
                         stonewall.setCounterpartyAccount(account);  // set counterparty account
+                        stonewall.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_1(stonewall);
                         if(payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
