@@ -22,11 +22,9 @@ import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
-import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -67,115 +65,6 @@ public class CahootsUtil {
         }
 
         return instance;
-    }
-
-    public void processCahoots(String strCahoots, int ctpyAccount)    {
-
-        Stowaway stowaway = null;
-        STONEWALLx2 stonewall = null;
-
-        try {
-            JSONObject obj = new JSONObject(strCahoots);
-            debug("CahootsUtil", "incoming st:" + strCahoots);
-            debug("CahootsUtil", "object json:" + obj.toString());
-            if(obj.has("cahoots") && obj.getJSONObject("cahoots").has("type"))    {
-
-                int type = obj.getJSONObject("cahoots").getInt("type");
-                switch(type)    {
-                    case Cahoots.CAHOOTS_STOWAWAY:
-                        stowaway = new Stowaway(obj);
-                        debug("CahootsUtil", "stowaway st:" + stowaway.toJSON().toString());
-                        break;
-                    case Cahoots.CAHOOTS_STONEWALLx2:
-                        stonewall = new STONEWALLx2(obj);
-                        debug("CahootsUtil", "stonewall st:" + stonewall.toJSON().toString());
-                        break;
-                    default:
-                        Toast.makeText(context, R.string.unrecognized_cahoots, Toast.LENGTH_SHORT).show();
-                        return;
-                }
-
-            }
-            else    {
-                Toast.makeText(context, R.string.not_cahoots, Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        catch(JSONException je) {
-            Toast.makeText(context, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(stowaway != null)    {
-
-            int step = stowaway.getStep();
-
-            try {
-                switch(step)    {
-                    case 0:
-                        debug("CahootsUtil", "calling doStowaway1");
-                        doStowaway1(stowaway);
-                        break;
-                    case 1:
-                        doStowaway2(stowaway);
-                        break;
-                    case 2:
-                        doStowaway3(stowaway);
-                        break;
-                    case 3:
-                        doStowaway4(stowaway);
-                        break;
-                    default:
-                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-            catch(Exception e) {
-                Toast.makeText(context, R.string.cannot_process_stonewall, Toast.LENGTH_SHORT).show();
-                debug("CahootsUtil", e.getMessage());
-                e.printStackTrace();
-            }
-
-            return;
-
-        }
-        else if(stonewall != null)    {
-
-            int step = stonewall.getStep();
-
-            try {
-                switch(step)    {
-                    case 0:
-                        stonewall.setCounterpartyAccount(ctpyAccount);  // set counterparty account
-                        doSTONEWALLx2_1(stonewall);
-                        break;
-                    case 1:
-                        doSTONEWALLx2_2(stonewall);
-                        break;
-                    case 2:
-                        doSTONEWALLx2_3(stonewall);
-                        break;
-                    case 3:
-                        doSTONEWALLx2_4(stonewall);
-                        break;
-                    default:
-                        Toast.makeText(context, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            }
-            catch(Exception e) {
-                Toast.makeText(context, R.string.cannot_process_stowaway, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                debug("CahootsUtil", e.getMessage());
-            }
-
-            return;
-
-        }
-        else    {
-            Toast.makeText(context, "error processing #Cahoots", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     public void doPSBT(final String strPSBT)    {
