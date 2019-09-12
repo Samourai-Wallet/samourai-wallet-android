@@ -1369,18 +1369,14 @@ public class APIFactory	{
                             utxos.put(script, utxo);
                         }
 
-                        if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
-
-                            if(Bech32Util.getInstance().isBech32Script(script))    {
-                                UTXOFactory.getInstance().addP2WPKH(script, utxos.get(script));
-                            }
-                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                                UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
-                            }
-                            else    {
-                                UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
-                            }
-
+                        if(Bech32Util.getInstance().isBech32Script(script))    {
+                            UTXOFactory.getInstance().addP2WPKH(txHash.toString(), txOutputN, script, utxos.get(script));
+                        }
+                        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            UTXOFactory.getInstance().addP2SH_P2WPKH(txHash.toString(), txOutputN, script, utxos.get(script));
+                        }
+                        else    {
+                            UTXOFactory.getInstance().addP2PKH(txHash.toString(), txOutputN, script, utxos.get(script));
                         }
 
                     }
@@ -2521,11 +2517,7 @@ public class APIFactory	{
                             utxosPostMix.put(script, utxo);
                         }
 
-                        if(!BlockedUTXO.getInstance().containsPostMix(txHash.toString(), txOutputN))    {
-
-                            UTXOFactory.getInstance().addPostMix(script, utxosPostMix.get(script));
-
-                        }
+                        UTXOFactory.getInstance().addPostMix(txHash.toString(), txOutputN, script, utxosPostMix.get(script));
 
                     }
                     catch(Exception e) {

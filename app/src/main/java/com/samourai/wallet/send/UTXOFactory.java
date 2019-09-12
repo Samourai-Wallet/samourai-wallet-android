@@ -77,20 +77,28 @@ public class UTXOFactory {
         return postMix;
     }
 
-    public void addP2PKH(String script, UTXO utxo)  {
-        p2pkh.put(script, utxo);
+    public void addP2PKH(String hash, int id, String script, UTXO utxo)  {
+        if(!BlockedUTXO.getInstance().contains(hash, id))    {
+            p2pkh.put(script, utxo);
+        }
     }
 
-    public void addP2SH_P2WPKH(String script, UTXO utxo)  {
-        p2sh_p2wpkh.put(script, utxo);
+    public void addP2SH_P2WPKH(String hash, int id, String script, UTXO utxo)  {
+        if(!BlockedUTXO.getInstance().contains(hash, id))    {
+            p2sh_p2wpkh.put(script, utxo);
+        }
     }
 
-    public void addP2WPKH(String script, UTXO utxo)  {
-        p2wpkh.put(script, utxo);
+    public void addP2WPKH(String hash, int id, String script, UTXO utxo)  {
+        if(!BlockedUTXO.getInstance().contains(hash, id))    {
+            p2wpkh.put(script, utxo);
+        }
     }
 
-    public void addPostMix(String script, UTXO utxo)  {
-        postMix.put(script, utxo);
+    public void addPostMix(String hash, int id, String script, UTXO utxo)  {
+        if(!BlockedUTXO.getInstance().containsPostMix(hash, id))    {
+            postMix.put(script, utxo);
+        }
     }
 
     public long getTotalP2PKH() {
