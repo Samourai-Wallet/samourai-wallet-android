@@ -65,32 +65,16 @@ public class UTXOFactory {
         return p2pkh;
     }
 
-    public void setP2PKH(HashMap<String,UTXO> p2pkh) {
-        UTXOFactory.p2pkh = p2pkh;
-    }
-
     public HashMap<String,UTXO> getP2SH_P2WPKH() {
         return p2sh_p2wpkh;
-    }
-
-    public void setP2SH_P2WPKH(HashMap<String,UTXO> p2sh_p2wpkh) {
-        UTXOFactory.p2sh_p2wpkh = p2sh_p2wpkh;
     }
 
     public HashMap<String,UTXO> getP2WPKH() {
         return p2wpkh;
     }
 
-    public void setP2WPKH(HashMap<String,UTXO> p2wpkh) {
-        UTXOFactory.p2wpkh = p2wpkh;
-    }
-
     public HashMap<String,UTXO> getPostMix() {
         return postMix;
-    }
-
-    public void setPostMix(HashMap<String,UTXO> postMix) {
-        UTXOFactory.postMix = postMix;
     }
 
     public void addP2PKH(String script, UTXO utxo)  {
