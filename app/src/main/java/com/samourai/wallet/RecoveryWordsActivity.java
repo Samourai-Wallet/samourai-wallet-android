@@ -89,13 +89,14 @@ public class RecoveryWordsActivity extends Activity {
             if (convertview == null) {
                 convertview = inflater.inflate(R.layout.word_grid_item_view, null);
                 holder = new ViewHolder();
-                holder.number = (TextView) convertview.findViewById(R.id.index_grid_item);
-                holder.word = (TextView) convertview.findViewById(R.id.word_grid_item);
+                holder.number = convertview.findViewById(R.id.index_grid_item);
+                holder.word = convertview.findViewById(R.id.word_grid_item);
                 convertview.setTag(holder);
             } else {
                 holder = (ViewHolder) convertview.getTag();
             }
             holder.word.setText(this.mWords[position].trim());
+            holder.word.setSelected(true);
             holder.number.setText(String.valueOf(position + 1));
             return convertview;
         }

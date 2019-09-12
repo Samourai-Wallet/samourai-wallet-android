@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.samourai.wallet.send.cahoots.ManualStoneWall">
+    tools:context="com.samourai.wallet.send.cahoots.StowawayActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout2"
@@ -26,12 +26,23 @@
         <com.samourai.wallet.widgets.HorizontalStepsViewIndicator
             android:id="@+id/step_view"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:layout_centerInParent="true"
             android:layout_marginStart="22dp"
             android:layout_marginEnd="22dp">
 
         </com.samourai.wallet.widgets.HorizontalStepsViewIndicator>
+
+        <TextView
+            android:id="@+id/step_numbers"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:text="1/5"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </android.support.design.widget.AppBarLayout>
 
 

@@ -73,6 +73,12 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         />
+
+    <item android:id="@+id/action_copy_cahoots"
+        android:title="Paste cahoots payload"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
     <item
         android:id="@+id/action_support"
         android:orderInCategory="100"

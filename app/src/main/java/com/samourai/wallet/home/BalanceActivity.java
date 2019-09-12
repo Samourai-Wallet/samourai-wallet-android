@@ -8,6 +8,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,13 +52,11 @@ import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
-import com.samourai.wallet.LandingActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
-import com.samourai.wallet.UTXOActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
@@ -71,6 +70,8 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -592,6 +593,19 @@ public class BalanceActivity extends AppCompatActivity {
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));
+        }    // noinspection SimplifiableIfStatement
+        if (id == R.id.action_copy_cahoots) {
+            ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+
+            if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
+                Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                startActivity(cahootIntent);
+            }else {
+                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+            }
+
         }
         if (id == R.id.action_settings) {
             doSettings();
@@ -704,7 +718,9 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(strResult.trim(), 0);
+                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                        cahootIntent.putExtra("payload",strResult.trim());
+                        startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
@@ -837,7 +853,7 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void doUTXO() {
-        Intent intent = new Intent(BalanceActivity.this, UTXOActivity.class);
+        Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
         startActivity(intent);
     }
 
@@ -853,7 +869,11 @@ public class BalanceActivity extends AppCompatActivity {
                 if (privKeyReader.getFormat() != null) {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
-                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                    cahootIntent.putExtra("payload",code.trim());
+                    startActivity(cahootIntent);
+//                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                     CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
@@ -881,7 +901,9 @@ public class BalanceActivity extends AppCompatActivity {
                     if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
+                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                        cahootIntent.putExtra("payload",code.trim());
+                        startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                     } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {

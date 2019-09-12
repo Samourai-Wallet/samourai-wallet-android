@@ -18,8 +18,13 @@ public class SpendUtil {
 
     public static List<UTXO> getUTXOS(Context context, String address, long neededAmount, int account) {
         List<UTXO> utxos = null;
-        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix() && UTXOFactory.getInstance().getTotalPostMix() > neededAmount)    {
-            utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
+        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            if(UTXOFactory.getInstance().getTotalPostMix() > neededAmount)    {
+                utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getPostMix().values());
+            }
+            else if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+                return null;
+            }
         }
         else if (FormatsUtil.getInstance().isValidBech32(address) && (UTXOFactory.getInstance().getP2WPKH().size() > 0 && UTXOFactory.getInstance().getTotalP2WPKH() > neededAmount)) {
             utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getP2WPKH().values());

@@ -55,6 +55,12 @@
 
         </activity>
         <activity
+            android:name=".utxos.UTXOSActivity"
+            android:exported="true"
+            android:label="@string/unspent_outputs"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/ui_2_theme" />
+        <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:theme="@style/ui_2_theme"
             android:label=""
@@ -272,9 +278,9 @@
             android:theme="@style/ui_2_theme" />
 
         <activity
-            android:name=".send.cahoots.ManualStoneWall"
+            android:name=".send.cahoots.ManualCahootsActivity"
             android:exported="true"
-            android:label="Manual Stonewall"
+            android:label="Manual Cahoots"
             android:theme="@style/ui_2_theme" />
 
         <receiver

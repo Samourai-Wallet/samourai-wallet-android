@@ -53,6 +53,7 @@ import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
@@ -1772,86 +1773,28 @@ public class SettingsActivity2 extends PreferenceActivity	{
         }
 
     }
-/*
-    private void doWhirlpoolGUIPairing()    {
 
-        JSONObject pairingObj = null;
-        try {
-            JSONObject jsonObj = new JSONObject();
-            jsonObj.put("type", "whirlpool.gui");
-            jsonObj.put("version", "1.0.0");
-            jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
-
-            String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
-            String encrypted = AESUtil.encrypt(mnemonic, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
-            jsonObj.put("mnemonic", encrypted);
-
-            pairingObj = new JSONObject();
-            pairingObj.put("pairing", jsonObj);
-        }
-        catch(Exception e) {
-            Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(pairingObj == null)    {
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        ImageView showQR = new ImageView(SettingsActivity2.this);
-        Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        }
-        catch (WriterException e) {
-            e.printStackTrace();
-        }
-        showQR.setImageBitmap(bitmap);
-
-        TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(pairingObj.toString());
-        showText.setTextIsSelectable(true);
-        showText.setPadding(40, 10, 40, 10);
-        showText.setTextSize(18.0f);
-
-        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
-        pairingLayout.setOrientation(LinearLayout.VERTICAL);
-        pairingLayout.addView(showQR);
-        pairingLayout.addView(showText);
-
-        final String _pairing = pairingObj.toString();
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.app_name)
-                .setView(pairingLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        ;
-                    }
-                })
-                .show();
-
-    }
-*/
     private void doWhirlpoolGUIPairing()    {
 
         final JSONObject pairingObj = new JSONObject();
         final JSONObject jsonObj = new JSONObject();
+        final JSONObject dojoObj = new JSONObject();
+
         try {
+
+            if(DojoUtil.getInstance(SettingsActivity2.this).getDojoParams() != null)    {
+                String params = DojoUtil.getInstance(SettingsActivity2.this).getDojoParams();
+                String url = DojoUtil.getInstance(SettingsActivity2.this).getUrl(params);
+                String apiKey = DojoUtil.getInstance(SettingsActivity2.this).getApiKey(params);
+
+                if(url != null && apiKey != null && url.length() > 0 && apiKey.length() > 0)    {
+                    dojoObj.put("apikey", apiKey);
+                    dojoObj.put("url", url);
+                }
+            }
+
             jsonObj.put("type", "whirlpool.gui");
-            jsonObj.put("version", "2.0.0");
+            jsonObj.put("version", "3.0.0");
             jsonObj.put("network", SamouraiWallet.getInstance().isTestNet() ? "testnet" : "mainnet");
 
             String mnemonic = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
@@ -1861,6 +1804,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 jsonObj.put("passphrase", true);
 
                 pairingObj.put("pairing", jsonObj);
+                if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                    String apiKey = dojoObj.getString("apikey");
+                    String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase()), AESUtil.DefaultPBKDF2Iterations);
+                    dojoObj.put("apikey", encryptedApiKey);
+                    pairingObj.put("dojo", dojoObj);
+                }
 
                 displayWhirlpoolGUIPairing(pairingObj);
             }
@@ -1901,6 +1850,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
                                                             jsonObj.put("passphrase", false);
 
                                                             pairingObj.put("pairing", jsonObj);
+                                                            if(dojoObj.has("url") && dojoObj.has("apikey"))    {
+                                                                String apiKey = dojoObj.getString("apikey");
+                                                                String encryptedApiKey = AESUtil.encrypt(apiKey, new CharSequenceX(pw2), AESUtil.DefaultPBKDF2Iterations);
+                                                                dojoObj.put("apikey", encryptedApiKey);
+                                                                pairingObj.put("dojo", dojoObj);
+                                                            }
 
                                                             displayWhirlpoolGUIPairing(pairingObj);
                                                         }
@@ -1938,56 +1893,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             Toast.makeText(SettingsActivity2.this, R.string.cannot_pair_whirlpool_gui, Toast.LENGTH_SHORT).show();
             return;
         }
-/*
-        if(pairingObj == null || !pairingObj.has("pairing"))    {
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        ImageView showQR = new ImageView(SettingsActivity2.this);
-        Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(pairingObj.toString(), null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        }
-        catch (WriterException e) {
-            e.printStackTrace();
-        }
-        showQR.setImageBitmap(bitmap);
-
-        TextView showText = new TextView(SettingsActivity2.this);
-        showText.setText(pairingObj.toString());
-        showText.setTextIsSelectable(true);
-        showText.setPadding(40, 10, 40, 10);
-        showText.setTextSize(18.0f);
-
-        LinearLayout pairingLayout = new LinearLayout(SettingsActivity2.this);
-        pairingLayout.setOrientation(LinearLayout.VERTICAL);
-        pairingLayout.addView(showQR);
-        pairingLayout.addView(showText);
-
-        final String _pairing = pairingObj.toString();
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.app_name)
-                .setView(pairingLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)SettingsActivity2.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                        android.content.ClipData clip = null;
-                        clip = android.content.ClipData.newPlainText("GUI pairing", _pairing);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(SettingsActivity2.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        ;
-                    }
-                })
-                .show();
-*/
     }
 
     private void displayWhirlpoolGUIPairing(JSONObject pairingObj)    {

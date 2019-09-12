@@ -10,7 +10,7 @@
 
     <string name="action_settings">Настройки</string>
     <string name="action_support">Помощ и поддръжка</string>
-    <string name="action_sweep">Прехвърли целия баланс на частен ключ към портфейла</string>
+    <string name="action_sweep">Sweep-ване на частен ключ</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Активирай всички архивирани кодове</string>
     <string name="action_sync_all">Синхронизирай всички кодове</string>
@@ -57,18 +57,18 @@
     <string name="options_VPN2">Стартиране на OpenVPN за Андроид.</string>
     <string name="options_Tor">Прекарване през Tor?</string>
     <string name="options_Tor2">Стартиране на Orbot (Tor).</string>
-    <string name="options_export">Експортиране на резервно копие на портфейла</string>
+    <string name="options_export">Експортиране на резервно копие</string>
     <string name="options_change_pin">Смяна на PIN код</string>
     <string name="options_change_pin2">Дефиниране на нов PIN код; използван за отключване на Вашия портфейл.</string>
     <string name="options_remote_pin">PIN код за скрито стартиране и дистанционни функции</string>
     <string name="options_remote_pin2">Дефиниране на алтернативен PIN код за скрито стартиране и дистанционни функции.</string>
-    <string name="options_autosave_backup">Автоматично запазване на резервно копие в паметта на устройството.</string>
-    <string name="options_autosave_backup2">Переодично запазвай резервно копие, криптирано с тайната фраза, в паметта на устройството.</string>
+    <string name="options_autosave_backup">Авто запазване на рез. копие</string>
+    <string name="options_autosave_backup2">Переодично запазва резервно копие, криптирано с тайната фраза, в паметта на устройството.</string>
     <string name="options_version">Версия</string>
     <string name="options_txs">Транзакции</string>
     <string name="options_boltzmann">STONEWALL Харч</string>
     <string name="options_boltzmann_2">Харчовете ще използват STONEWALL алгоритъм за повишено замаскиране.</string>
-    <string name="options_utxo">Покажи неизхарчени средства UTXO</string>
+    <string name="options_utxo">Покажи неизхарчени средства</string>
     <string name="options_trusted_node">Задаване на доверен node</string>
     <string name="options_trusted_node2">Посочете свой собствен Биткойн node, чрез който да изпращате транзакции.</string>
     <string name="options_use_trusted_node">Използване на доверения node</string>
@@ -76,11 +76,11 @@
     <string name="options_rbf0">Изпращайте, използвайки RBF</string>
     <string name="options_rbf0_2">Харчовете ще използват replace-by-fee за евентуално увеличаване на таксата.</string>
     <string name="options_troubleshoot">Откриване на проблеми</string>
-    <string name="options_passphrase_test">Тест на тайната фраза/резервното копие</string>
+    <string name="options_passphrase_test">Тест на тайна фраза/резервно копие</string>
     <string name="options_passphrase_test2">Потвърждаване на достъпа до портфейла и резервното копие.</string>
     <string name="options_send_backup_to_support">Изпрати резервното копие до отдел техническа поддръжка</string>
     <string name="options_send_backup_to_support2">Изпращане на резервното копие до отдел техническа поддръжка. Не съдържа частни ключове.</string>
-    <string name="options_fee_provider">Източник за преценка на подходящи такси</string>
+    <string name="options_fee_provider">Източник за преценка на такси</string>
     <string name="options_fee_provider2">Изберете предпочитаният Ви източник за преценка на таксите.</string>
     <string name="options_broadcast_on">Изпращане на транзакции</string>
     <string name="options_broadcast_on2">Махнете тикчето (изпращането ИЗКЛЮЧЕНО), за да копирате подписана транзакция в клипборда.</string>
@@ -90,7 +90,7 @@
     <string name="options_broadcast_hex2">Изпращане на подписана транзакция, предоставена в hex формат.</string>
     <string name="options_like_typed_change">Получаване на ресто чрез същия тип адрес</string>
     <string name="options_like_typed_change2">Получавайте рестото чрез същия тип адрес като изхарчения output. ИЗКЛЮЧЕТЕ, за да получавате само чрез SegWit адреси за ресто.</string>
-    <string name="options_haptic">Осезателна обратна връзка при въвеждането на PIN код</string>
+    <string name="options_haptic">PIN Осезaема обратна връзка</string>
     <string name="options_haptic_2">Вибриране при въвеждането на всяка цифра от PIN кода.</string>
     <string name="options_prune">Премахване на резервното копие</string>
     <string name="options_prune2">Премахване на файловете, съдържащи резервното копие на портфейла.</string>
@@ -625,7 +625,7 @@
     <string name="copy">Копиране</string>
     <string name="show_log">Показване на записа</string>
     <string name="unconfirmed">Непотвърдени</string>
-    <string name="confirmation">Потвърждение</string>
+    <string name="confirmation">Потвърждения</string>
     <string name="total_available_amount">Всички налични</string>
     <string name="you_do_not_yet_have_any_paynym_contacts">Все още нямате PayNym контакти</string>
 
@@ -738,6 +738,22 @@
     <string name="cannot_disable_tor_dojo">Tor не може да бъде спрян понеже портфейлът е свързан със Samourai Dojo нод.</string>
     <string name="temporary_dojo_disable">Деинсталирайте Samourai Wallet, за да се раздвоите от Вашия Dojo нод. \'DISABLE\' ще бъде напълно активиран в по-нататъшен ъпдейт.</string>
     <string name="renew">СМЕНИ</string>
+    
+    <string name="continue_exchanging_qr_codes">Продължавайте да обменяте QR кодове\n докато транзакцията се изпрати!</string>
+    <string name="confirm_that_you_wish_to_broadcast_this_transaction">Потвърдете, че искате да изпратите тази транзакция.</string>
+    <string name="begin_stowaway">Започни Stowaway</string>
+    <string name="begin_stonewallx2">Започни STONEWALLx2</string>
+    <string name="total_miner_fee">Общо такси към копачите:</string>
+    <string name="launch_qr_scanner">СТАРТИРАЙ QR Скенер</string>
+    <string name="next_step">Следваща стъпка...</string>
+    <string name="scan_the_qr_code_that_your_collaborator_provides_you">Сканирайте QR кода, който партньорът Ви предоставя.</string>
+    <string name="you_will_contribute">Вие ще допренесете</string>
+    <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Създайте CoinJoin транзакция на момента за повишена секретност и защита от наблюдение</string>
+    <string name="refresh">Обнови</string>
+    <string name="unspent_outputs">Неизхарчени Средства</string>
+    <string name="unspent_outputs_post_mix">Неизхарчени Средства - Пост-микс</string>
+    <string name="paste_cahoots_payload">Постави cahoots payload</string>
+
     
     
 
