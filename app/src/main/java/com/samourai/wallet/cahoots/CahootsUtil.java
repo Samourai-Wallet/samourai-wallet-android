@@ -42,6 +42,7 @@ import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -149,19 +150,43 @@ public class CahootsUtil {
     public Cahoots doStowaway1(Stowaway stowaway0) throws Exception {
 
         List<UTXO> utxos = getCahootsUTXO(0);
-        // sort in descending order by value
+
+        // sort in ascending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
+        Collections.reverse(utxos);
 
         debug("CahootsUtil", "BIP84 utxos:" + utxos.size());
 
+        List<UTXO> randomUTXO = new ArrayList<UTXO>();
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalContributedAmount = 0L;
+        // if single value covers total cost, select it
         for (UTXO utxo : utxos) {
-            selectedUTXO.add(utxo);
-            totalContributedAmount += utxo.getValue();
-            debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
-            if (totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
-                break;
+            if (utxo.getValue() > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
+                randomUTXO.add(utxo);
+            }
+        }
+        int size = randomUTXO.size();
+        if(size > 0)    {
+            SecureRandom random = new SecureRandom();
+            UTXO selected = randomUTXO.get(random.nextInt(size));
+            selectedUTXO.add(selected);
+            totalContributedAmount = selected.getValue();
+        }
+        // if smallest single cannot cover total cost, select highest
+        if (!(totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
+            // sort in descending order by value
+            Collections.sort(utxos, new UTXO.UTXOComparator());
+            selectedUTXO.clear();
+            totalContributedAmount = 0L;
+            for (UTXO utxo : utxos) {
+                selectedUTXO.add(utxo);
+                totalContributedAmount += utxo.getValue();
+                debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
+                if (totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                    break;
+                }
             }
         }
         if (!(totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
