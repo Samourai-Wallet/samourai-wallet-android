@@ -853,7 +853,7 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void doSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/"));
         startActivity(intent);
     }
 
