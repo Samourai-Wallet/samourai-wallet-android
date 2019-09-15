@@ -75,7 +75,7 @@
         />
 
     <item android:id="@+id/action_copy_cahoots"
-        android:title="Paste cahoots payload"
+        android:title="@string/paste_cahoots_payload"
         android:orderInCategory="100"
         app:showAsAction="never"
         />

@@ -136,7 +136,7 @@ public class ClaimPayNymActivity extends Activity {
                 final String strNymName = responseObj.getString("nymName");
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(ClaimPayNymActivity.this)
-                        .setTitle("Your PayNym has been claimed")
+                        .setTitle(R.string.paynym_claimed)
                         .setMessage(strNymName)
 //                                    .setView(imgLayout)
                         .setCancelable(false)

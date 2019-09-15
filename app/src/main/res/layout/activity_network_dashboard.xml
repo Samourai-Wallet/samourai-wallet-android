@@ -37,7 +37,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:text="Connections"
+            android:text="@string/connections"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
                         android:id="@+id/network_data_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disabled" />
+                        android:text="@string/disabled" />
                 </LinearLayout>
 
                 <Button
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight=".5"
-                    android:text="Disable"
+                    android:text="@string/disable"
                     android:textColor="#6eb8c5" />
             </LinearLayout>
 
@@ -196,7 +196,7 @@
                         android:id="@+id/network_tor_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disabled" />
+                        android:text="@string/disabled" />
                 </LinearLayout>
 
 
@@ -219,7 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.2"
-                    android:text="Disable"
+                    android:text="@string/disable"
                     android:textColor="#6eb8c5" />
 
             </LinearLayout>
@@ -265,7 +265,7 @@
                         android:id="@+id/network_dojo_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disabled" />
+                        android:text="@string/disabled" />
                 </LinearLayout>
 
                 <Button
@@ -275,7 +275,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight=".5"
-                    android:text="Disable"
+                    android:text="@string/disable"
                     android:textColor="#6eb8c5" />
             </LinearLayout>
 

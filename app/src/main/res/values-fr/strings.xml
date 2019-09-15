@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="alpha_create_wallet">Notez ces mots et gardez-les en lieu sûr. Veillez à ne pa perdre ces mots et mémorisez votre passphrase.</string>
+    <string name="alpha_create_wallet">Notez ces mots et gardez-les en lieu sûr. Veillez à ne pas perdre ces mots et mémorisez votre passphrase.</string>
     <string name="alpha_create_confirm_backup">J\'ai noté mes mots</string>
 
     <string name="creating_wallet">Création du portefeuille en cours. Veuillez patienter...</string>
@@ -10,7 +10,7 @@
 
     <string name="action_settings">Paramètres</string>
     <string name="action_support">Aide</string>
-    <string name="action_sweep">Balayer la clé privée</string>
+    <string name="action_sweep">Scanner une clé privée</string>
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activer tous les codes de paiement archivés</string>
     <string name="action_sync_all">Synchroniser tous les codes de paiement</string>
@@ -52,48 +52,48 @@
     <string name="options_alert_telno">Numéro fiable</string>
     <string name="options_alert_telno2">Un numéro fiable avec accès à distance restreint (utiliser le format int\'l sans espace ex.: +447385555555).</string>
     <string name="options_hash">APK hash</string>
-    <string name="options_hash2">Obtenir SHA-256 hash à partir de l\'installation de ce fichier APK (peut-être copié dans le presse-papiers).</string>
+    <string name="options_hash2">Obtenir le hash SHA-256 de l\'APK installé (peut-être copié dans le presse-papiers).</string>
     <string name="options_VPN">VPN</string>
-    <string name="options_VPN2">Lancer OuvrirVPN pour Android.</string>
+    <string name="options_VPN2">Lancer OpenVPN pour Android.</string>
     <string name="options_Tor">Accès via Tor?</string>
     <string name="options_Tor2">Lancer Orbot (Tor).</string>
-    <string name="options_export">Exporter sauvegarde portefeuille</string>
+    <string name="options_export">Exporter une sauvegarde du portefeuille</string>
     <string name="options_change_pin">Changer PIN</string>
     <string name="options_change_pin2">Définir un nouveau code PIN; utilisé pour déverrouiller votre portefeuille.</string>
     <string name="options_remote_pin">Lancement mode furtif et PIN à distance</string>
-    <string name="options_remote_pin2">Définir autre option PIN pour lancement mode furtif et fonctions commandes à distance.</string>
+    <string name="options_remote_pin2">Définir un autre PIN pour le lancement du mode furtif et les fonctions de commandes à distance.</string>
     <string name="options_autosave_backup">Sauvegarde automatique dans la mémoire de l\'appareil</string>
     <string name="options_autosave_backup2">Procéder à une sauvegarde régulière de la passphrase chiffrée dans la mémoire de l\'appareil.</string>
     <string name="options_version">Version</string>
     <string name="options_txs">Transactions</string>
     <string name="options_boltzmann">Dépense STONEWALL</string>
-    <string name="options_boltzmann_2">Les Dépenses vont utiliser l\'algorithme STONEWALL pour maximiser l\'obfuscation.</string>
-    <string name="options_utxo">Montrer les sorties de transaction non dépensées ("UTXO")</string>
+    <string name="options_boltzmann_2">Les dépenses vont utiliser l\'algorithme STONEWALL pour maximiser l\'obfuscation.</string>
+    <string name="options_utxo">Afficher les sorties de transaction non dépensées ("UTXO")</string>
     <string name="options_trusted_node">Définir un noeud ("node") sécurisé</string>
     <string name="options_trusted_node2">Indiquer votre propre noeud bitcoin pour émettre les transactions.</string>
     <string name="options_use_trusted_node">Utiliser un noeud sécurisé</string>
     <string name="options_use_trusted_node2">Émettre les transactions à partir de votre propre noeud.</string>
     <string name="options_rbf0">Envoyer en utilisant RBF</string>
-    <string name="options_rbf0_2">Les Dépenses vont utiliser replace-by-fee pour permettre l\'envolée des frais de transaction.</string>
+    <string name="options_rbf0_2">Les dépenses vont utiliser replace-by-fee pour permettre l\'envolée des frais de transaction.</string>
     <string name="options_troubleshoot">Dépannage</string>
-    <string name="options_passphrase_test">Passphrase/test sauvegarde</string>
+    <string name="options_passphrase_test">Passphrase/test de la sauvegarde</string>
     <string name="options_passphrase_test2">Vérifier l\'accès au portefeuille et à l\'assistance sauvegarde.</string>
     <string name="options_send_backup_to_support">Envoyer une sauvegarde à l\'assistance technique</string>
     <string name="options_send_backup_to_support2">Envoyer une sauvegarde du portefeuille à l\'assistance technique. Ne contient pas d\'informations relatives à la clé privée.</string>
     <string name="options_fee_provider">Source d\'Estimation de Frais de Transaction</string>
-    <string name="options_fee_provider2">Sélectionnez votre fournisseur d\'estimation de taux de transaction favori.</string>
+    <string name="options_fee_provider2">Sélectionnez votre fournisseur d\'estimation de taux de transaction préféré.</string>
     <string name="options_broadcast_on">Émettre les transactions</string>
-    <string name="options_broadcast_on2">Décocher la case (Émission OFF) pour copier une transaction brute et signée dans le presse-papiers.</string>
+    <string name="options_broadcast_on2">Décocher (Émission OFF) pour copier les transactions brutes signées dans le presse-papiers.</string>
     <string name="options_segwit">Recevoir à des adresses segwit</string>
     <string name="options_segwit_2">Générer des adresses segwit pour les transactions entrantes.</string>
-    <string name="options_broadcast_hex">Émettre la transaction hex</string>
-    <string name="options_broadcast_hex2">Émettre la transaction signée établie sous format hexadécimal.</string>
+    <string name="options_broadcast_hex">Émettre une transaction hex</string>
+    <string name="options_broadcast_hex2">Émettre une transaction signée fournie au format hexadécimal.</string>
     <string name="options_like_typed_change">Recevoir la monnaie à une adresse de même type que l\'adresse expéditrice</string>
-    <string name="options_like_typed_change2">Recevoir la monnaie à une adresse de même type que l\'adresse expéditrice. Appuyez sur OFF pour l\'envoi de la monnaie à des adresses segwit uniquement.</string>
+    <string name="options_like_typed_change2">Recevoir la monnaie à une adresse de même type que l\'adresse expéditrice. Décochez pour recevoir la monnaie à des adresses segwit uniquement.</string>
     <string name="options_haptic">Déverrouillage de l\'écran par saisie de code PIN avec retour tactile</string>
     <string name="options_haptic_2">Émettre une vibration à chaque pression de touche lors de la saisie du code.</string>
 
-    <string name="prompt_send_backup_to_support">Envoyer une sauvegarde du portefeuille à l\'assistance technique? Ne comporte aucune information relative à la clé privée, la phrase de récupération ou la passphrase.</string>
+    <string name="prompt_send_backup_to_support">Envoyer une sauvegarde du portefeuille à l\'assistance technique? Elle ne comporte aucune information relative à la clé privée, la phrase de récupération ou la passphrase.</string>
 
     <string name="timeline_today">Aujourd\'hui</string>
     <string name="timeline_older">Plus ancienne</string>
@@ -156,7 +156,6 @@
     <string name="scan_error">Erreur: impossible de scanner</string>
     <string name="enter_privkey">Entrez votre clé privée</string>
 
-    <string name="to">À</string>
     <string name="destination">Adresse ou canal de paiement</string>
 
     <string name="insufficient_funds">Fonds insuffisants</string>
@@ -173,7 +172,7 @@
 
     <string name="securely_wiping_wait">Suppression du portefeuille en toute sécurité. Veuillez patienter.</string>
 
-    <string name="options_scramble_pin">Affichage aléatoire touches code PIN</string>
+    <string name="options_scramble_pin">Affichage aléatoire des touches du code PIN</string>
     <string name="options_scramble_pin2">Utilisez l\'affichage aléatoire de vote clavier numérique pour accéder à votre portefeuille. </string>
 
     <string name="you_must_have_orbot">Vous devez installer et activer Orbot comme proxy pour votre trafic internet. Voulez-vous le télécharger à partir de Google Play?</string>
@@ -247,8 +246,8 @@
     <string name="bip47_status_incoming">Prêt pour recevoir</string>
     <string name="bip47_cannot_scan_own_pcode">Impossible de scanner vote code de paiement</string>
     <string name="bip47_spend_to_pcode">Emprunter ce canal de paiement?</string>
-    <string name="bip47_sign">Signer le message</string>
-    <string name="bip47_sign_text1">Signer le message avec la clé privée de l\'adresse de notification BIP47?</string>
+    <string name="bip47_sign">Signer un message</string>
+    <string name="bip47_sign_text1">Signer un message avec la clé privée de l\'adresse de notification BIP47?</string>
     <string name="bip47_sign_text2">Signée avec mon adresse de notification BIP47.</string>
     <string name="bip47_wait_for_confirmation_or_retry">Ce canal de paiement est en attente d\'1 confirmation avant de procéder à l\'envoi. Voulez-vous annuler la requête précédente et envoyer une nouvelle notification?</string>
 
@@ -406,7 +405,7 @@
     <string name="privkey_clipboard">Une clé privée a été identifiée dans votre presse-papiers. Effacer contenu presse-papiers?</string>
 
     <string name="tx_hex">Transaction hex</string>
-    <string name="enter_tx_hex">Entrer la transaction sous format hex</string>
+    <string name="enter_tx_hex">Entrer la transaction au format hex</string>
     <string name="broadcast">Émettre la transaction sur le réseau</string>
 
     <string name="dusting_tx">TRANSACTION POUSSIÈRE</string>
@@ -445,9 +444,9 @@
     <string name="claim_paynym_title1">Demander votre identifiant PayNym gratuit</string>
     <string name="claim_paynym_text1">Permettre à vos amis &amp; contacts de vous trouver en accédant directement à votre PayNym à partir de portefeuilles bitcoin compatibles.</string>
     <string name="claim_paynym_title2">Avantages d\'un identifiant PayNym</string>
-    <string name="claim_paynym_text2a">Un nom unique et une image générés avec un hachage de votre code Paynym. Une empreinte unique!</string>
-    <string name="claim_paynym_text2b">Pas de vérification d\'identité! Votre nom et votre image sont établis à partir de votre code Paynym et non d\'une carte d\'identité nationale.</string>
-    <string name="claim_paynym_text2c">Soyez facile à trouver! Les portefeuilles compatibles sont en mesure de rechercher de nouveaux contacts et d\'envoyer des paiements privés sécurisés et non traçables.</string>
+    <string name="claim_paynym_text2a">Un nom unique et une image générés avec un hachage de votre code Paynym. Une empreinte unique !</string>
+    <string name="claim_paynym_text2b">Pas de vérification d\'identité ! Votre nom et votre image sont établis à partir de votre code Paynym et non d\'une carte d\'identité nationale.</string>
+    <string name="claim_paynym_text2c">Soyez facile à trouver ! Les portefeuilles compatibles sont en mesure de rechercher de nouveaux contacts et d\'envoyer des paiements privés sécurisés et non traçables.</string>
     <string name="claim_paynym_id">Demander mon identifiant PayNym</string>
     <string name="claim_paynym_id_refused">Pas intéressé(e). Ne me posez plus la question.</string>
 
@@ -457,7 +456,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">BTC dans votre portefeuille et réessayer.</string>
     <string name="help">Aide</string>
 
-    <string name="passphrase_disclaimer">Je suis conscient qu\'en cas de perte ou de vol de ma passphrase, Samourai ne peut la récupérer. Samourai n\'en a jamais connaissance.</string>
+    <string name="passphrase_disclaimer">Je suis conscient qu\'en cas de perte ou de vol de ma passphrase, Samourai ne peut pas la récupérer. Samourai n\'en a jamais connaissance.</string>
     <string name="confirm_pin_code">Confirmer votre code PIN</string>
     <string name="re_enter_your_pin_code">Saisir de nouveau votre code PIN</string>
     <string name="re_enter_a_passphrase">Saisir de nouveau une passphrase</string>
@@ -484,7 +483,7 @@
     <string name="import_samourai_backup">Importer sauvegarde Samourai</string>
     <string name="samourai_bitcoin_wallet">Portefeuille Bitcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
-    <string name="start_new_wallet">Lancer nouveau portefeuille</string>
+    <string name="start_new_wallet">Démarrer un nouveau portefeuille</string>
     <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>
     <string name="get_help_restore">Restaurer un portefeuille: obtenir de l\'aide</string>
 
@@ -536,16 +535,16 @@
     <string name="tx_sent_ok">Transaction envoyée</string>
     <string name="tx_sent_ko">Transaction non envoyée</string>
 
-    <string name="options_prune">Réduire taille sauvegarde</string>
-    <string name="options_prune2">Réduire taille charge utile portefeuille et fichiers de sauvegarde.</string>
-    <string name="prune_backup">Réduire taille charge utile et fichiers de sauvegarde?</string>
-    
-    
+    <string name="options_prune">Réduire la taille de la sauvegarde</string>
+    <string name="options_prune2">Réduire la taille du portefeuille et des fichiers de sauvegarde.</string>
+    <string name="prune_backup">Réduire la taille du portefeuille et des fichiers de sauvegarde?</string>
+
+
     <string name="options_address_calc">Calculateur d\'adresses</string>
     <string name="options_address_calc2">Calculer les adresses dérivées de la phrase de récupération de votre portefeuille.</string>
     <string name="options_paynym_calc">Calculateur PayNym</string>
     <string name="options_paynym_calc2">Calculer les adresses partagées avec d\'autres PayNyms.</string>
-    
+
     <string name="enter_paynym">PayNym</string>
     <string name="enter_index">Index</string>
     <string name="receive_addresses">Recevoir les adresses</string>
@@ -553,7 +552,7 @@
     <string name="display_receive_redeem">Recevoir le script de règlement</string>
     <string name="display_receive_privkey">Recevoir la clé privée</string>
     <string name="invalid_index">Index invalide</string>
-    
+
     <string name="type_address">Type d\'adresse</string>
     <string-array name="account_types">
     <item>BIP49 Segwit</item>
@@ -565,26 +564,26 @@
     <string name="chain_id">Chaîne d\'adresses</string>
     <string name="receive_chain">Recevoir l\'adresse</string>
     <string name="change_chain">Changer l\'adresse</string>
-    
+
     <string name="in_offline_mode">Le portefeuille Samourai est en mode hors-ligne.</string>
-    
+
     <string name="tx_standby">Transaction en attente</string>
     <string name="show_hex">Afficher Code Hex</string>
     <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
-    
+
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
-      
+
     <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
     <string name="restore">RESTAURER</string>
-    <string name="request_amount">Demande Montant</string>
+    <string name="request_amount">Montant demandé</string>
     <string name="address_type">Type d\'Adresse</string>
-    <string name="path">Chemin d\'accès</string>  
-  
-    <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>  
-  
+    <string name="path">Chemin d\'accès</string>
+
+    <string name="broadcast_off">La fonction Émission de votre portefeuille Samourai est désactivée.</string>
+
     <string name="title_activity_send_new_ui">EnvoyerNouvelleUIActivité</string>
     <string name="ricochet_hops_msg">Sauts additionnels entre votre portefeuille et la destination finale pour une fongibilité accrue</string>
-    <string name="review_transaction">VÉRIFIER TRANSACTION</string>
+    <string name="review_transaction">VÉRIFIER LA TRANSACTION</string>
     <string name="stonewall_increases_deniability">STONEWALL augmente la déniabilité et réduit la traçabilité de cette transaction.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
     <string name="cycling_bitcoin">Soumettre vos bitcoin à un cycle \n whirlpool effacera les traces laissées par vos \n transactions</string>
@@ -592,7 +591,7 @@
     <string name="end_to_end_trustless">procédé sans tiers de confiance de bout-en-bout</string>
     <string name="your_private_keys">Vos clés privées demeurent constamment sur votre \n appareil tout au long du\n cycle Whirlpool</string>
     <string name="different_cycles_for">différents cycles pour différents besoins</string>
-    <string name="complete_a_slow_cycle">Payez des frais minimes pour un cycle rapide ou \n obtenez une petite récompense en BTC quand vous\n accomplissez un cycle lent</string>
+    <string name="complete_a_slow_cycle">Payez des frais minimes avec un cycle rapide ou \n obtenez une petite récompense en BTC quand vous\n complétez un cycle lent</string>
     <string name="supercharge_whirlpool_desc">Vos coins seront placés en début de file d\'attente pour traitement immédiat</string>
     <string name="title_activity_whirl_pool_main">WhirlPoolMain</string>
     <string name="title_activity_whirlpool_main">WhirlpoolMain</string>
@@ -607,11 +606,11 @@
     <string name="supercharge">SuperCharge</string>
     <string name="transaction_broadcast">Émission Transaction</string>
     <string name="pending">en attente</string>
-    <string name="transaction_id">Identifiant Transaction</string>
+    <string name="transaction_id">Identifiant de la Transaction</string>
     <string name="completed">Terminée</string>
     <string name="title_activity_received_tx">" "</string>
     <string name="pay_again">Payer de nouveau</string>
-    <string name="miner_fee_rate">Taux frais mineur</string>
+    <string name="miner_fee_rate">Taux des frais de mineur</string>
     <string name="status">Statut</string>
     <string name="title_activity_tx_privacy_details">DétailsConfidentialitéTx</string>
     <string name="number_of_deterministic_combinations">Nombre de \ncombinaisons déterministes</string>
@@ -620,17 +619,17 @@
     <string name="hide_log">DISSIMULER JOURNAL</string>
     <string name="copy">Copier</string>
     <string name="show_log">AFFICHER JOURNAL</string>
-    
+
     <string name="api_key_error">Clé API invalide.</string>
     <string name="api_token_error">Token API invalide.</string>
-   
-   
-   
+
+
+
     <string name="options_indexes">Indices Portefeuille</string>
     <string name="options_indexes2">Valeurs de l\'indice actuel pour ce portefeuille.</string>
-    
-    
-    
+
+
+
     <string name="unconfirmed">Non confirmée</string>
     <string name="confirmation">Confirmation</string>
     <string name="total_available_amount">Montant total disponible</string>
@@ -667,41 +666,41 @@
 
     <string name="zero_bits">0 octets</string>
     <string name="not_available">N/D (non disponible)</string>
-    
+
     <string name="start_stonewall">Lancer STONEWALL pour dépenser</string>
-    
+
     <string name="invalid_address">Adresse invalide</string>
     <string name="show_tx">Afficher transaction</string>
     <string name="unrecognized_step">Étape #Cahoots non reconnue</string>
     <string name="cannot_process_stowaway">Traitement Stowaway impossible</string>
     <string name="cannot_process_stonewall">Traitement STONEWALL impossible</string>
     <string name="cannot_process_cahoots">Traitement #Cahoots impossible</string>
-    
-    
-    
-    
+
+
+
+
     <string name="title_activity_network_dashboard">Mise en réseau</string>
-    
+
     <string name="powering_samourai_wallet_">En faisant fonctionner votre portefeuille Samourai avec votre propre noeud (node) personnel, vous optimisez votre niveau de confidentialité et d\'indépendance  pendant vos activités sur le réseau Bitcoin. Dojo simplifie et facilite l\'utilisation d\'un noeud complet.</string>
     <string name="plug_and_play_full_bitcoin_node_automatically">- Installation Plug and Play du noeud\n\n Bitcoin complet -Service\n\n caché Tor automatiquement configuré -Indépendance par défaut des serveurs Samourai</string>
     <string name="dojo_connect_instruction">Si vous disposez déjà d\'un noeud Dojo complet ou si vous\nutilisez le logiciel Dojo open source et gratuit\nsur votre propre hardware, scannez le code QR d\'appairage\nsitué  sur la Maintenance du panneau de configuration du Dojo</string>
     <string name="dojo_headline">Faîtes fonctionner Samourai avec votre propre noeud complet DOJO personnel</string>
     <string name="connect_to_existing_dojo">Connectez-vous au Dojo existant</string>
     <string name="preorder">pré-commande</string>
-    
+
     <string name="is_offline">Samourai est hors-ligne</string>
-    <string name="history_will_be_updated">Solde et Historique des transactions ne sont mis à jour qu\'une fois établie une connection de données active</string>
-    
+    <string name="history_will_be_updated">Le Solde et l\'Historique des transactions ne seront mis à jour qu\'une fois qu\'une connexion de données active sera établie </string>
+
     <string name="options_whirlpool_gui">Appairer avec Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Appairer avec Whirlpool GUI pour un mixage en continu.</string>
     <string name="cannot_pair_whirlpool_gui">Préparation à l\'appairage avec Whirlpool GUI impossible.</string>
-    
+
     <string name="address">Adresse</string>
     <string name="syncing_pcodes">Synchronisation des codes de paiement</string>
     <string name="sync_complete">Synchronisation du code de paiement terminée</string>
     <string name="options_paynym_indexes">Afficher répertoires PayNym</string>
-    
-    
+
+
     <string name="options_xpub84_premix">Afficher Whirlpool pré-mix ZPUB</string>
     <string name="options_xpub84_premix2">Afficher clé publique étendue pour compte Segwit BIP84 (Bech32) Whirlpool pré-mix.</string>
     <string name="options_xpub84_postmix">Afficher Whirlpool post-mix ZPUB</string>
@@ -715,14 +714,14 @@
     <string name="review_whirlpool">Vérifier Détails Whirlpool</string>
     <string name="total_selected">Total sélectionné</string>
     <string name="cycle">Cycle</string>
-    
+
     <string name="options_postmix">Dépenser à partir de Whirlpool post-mix</string>
-    
+
     <string name="postmix_without_boltzmann">Veuillez noter qu\'une dépense à partir de votre compte post-mix sans l\'utilisation de STONEWALL aura pour conséquence la perte de la confidentialité acquise à travers Whirlpool.</string>
-    
-    
-    
-    
+
+
+
+
     <string name="begin_cycle">DÉMARRER CYCLE</string>
     <string name="pool_fee">FRAIS POOL</string>
     <string name="total_fees">TOTAL FRAIS</string>
@@ -733,7 +732,7 @@
     <string name="initial_transaction">Transaction Initiale</string>
     <string name="progress">Progression</string>
     <string name="waiting_for_blockchain_confirmation">En attente d\'une confirmation blockchain</string>
-    
+
     <string name="estimated_entropy">Entropie Estimée</string>
     <string name="share_this_qr_code_with_your_participant">Partager ce code QR avec votre participant</string>
     <string name="review_tx_before_braodcast">Vérifier la transaction avant émission</string>
@@ -748,31 +747,46 @@
 
 
     <string name="renew">ACTUALISER</string>
-    
-    
+
+
     <string name="continue_exchanging_qr_codes">Poursuivez l\'échange de codes\n QR jusqu\'à l\'émission de la transaction!</string>
     <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirmez votre souhait d\'émettre cette transaction.</string>
-    
-    
+
+
     <string name="begin_stowaway">Démarrer Stowaway</string>
     <string name="begin_stonewallx2">Démarrer STONEWALLx2</string>
-
+    <string name="to">À</string>
     <string name="you_will_pay">Vous règlerez :</string>
     <string name="total_miner_fee">Total Frais Mineur:</string>
     <string name="launch_qr_scanner">LANCER Scanner QR</string>
     <string name="next_step">Prochaine Étape...</string>
     <string name="scan_the_qr_code_that_your_collaborator_provides_you">Scannez le CODE QR que votre collaborateur vous fournit.</string>
-    
+
     <string name="you_will_contribute">Votre contribution</string>
 
     <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Créer une transaction CoinJoin à la demande pour une confidentialité et une surveillance renforcées</string>
 
     <string name="refresh">Actualiser</string>
     <string name="unspent_outputs">Sorties non dépensées</string>
-    <string name="unspent_outputs_post_mix">Sorties non dépensées - Post mix</string>
-    
-    <string name="paste_cahoots_payload">Copier/Coller charge utile cahoots</string>
-
-    
-    
+    <string name="unspent_outputs_post_mix">Sorties non dépensées - Après mélange</string>
+    <string name="wallet_locked">Portefeuille Verrouillé</string>
+    <string name="paste_cahoots_payload">Coller un contenu cahoots</string>
+    <string name="connections">Connexions</string>
+    <string name="disabled">Désactivé</string>
+    <string name="disable">Désactiver</string>
+    <string name="enabled">Activé</string>
+    <string name="enable">Activer</string>
+    <string name="miner_fee_paid">Frais de mineur payés</string>
+    <string name="txid_to_clipboard">Copier l\'id de cette transaction dans le presse-papier ? Si copié,il pourra être visible pour les autres applications.</string>
+    <string name="paynym_claimed">Votre PayNym a été réclamé</string>
+    <string name="follow">Suivre</string>
+    <string name="paynym_follow_message_2">pour générer automatiquement des adresses privées uniques pour envoyer des bitcoin à ce contact</string>
+    <string name="following">Abonnements</string>
+    <string name="followers">Abonnés</string>
+    <string name="enable_tor">Activer Tor  </string>
+    <string name="tor_service_connecting">Connexion au service Tor...</string>
+    <string name="tor_connected">Tor Connecté</string>
+    <string name="initializing_tor">initialisation de Tor...</string>
+    <string name="new_identity">Nouvelle identité</string>
+    <string name="advanced">Avancé</string>
 </resources>

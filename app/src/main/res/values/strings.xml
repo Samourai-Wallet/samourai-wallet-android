@@ -170,6 +170,7 @@
     <string name="enter_privkey">Enter private key</string>
 
     <string name="to">To</string>
+    <string name="connections">Connections</string>
     <string name="destination">Address or payment channel</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
@@ -754,9 +755,19 @@
     <string name="you_will_contribute">You will contribute</string>
     <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Create an on demand CoinJoin transaction for enhanced privacy and surveillance protection</string>
     <string name="refresh">Refresh</string>
+    <string name="disabled">Disabled</string>
+    <string name="disable">Disable</string>
+    <string name="enabled">Enabled</string>
+    <string name="enable">Enable</string>
+    <string name="enable_tor">Enable Tor  </string>
+    <string name="tor_connected">Tor Connected</string>
+    <string name="tor_service_connecting">Tor service connecting...</string>
     <string name="unspent_outputs">Unspent Outputs</string>
     <string name="unspent_outputs_post_mix">Unspent Outputs - Post mix</string>
     <string name="paste_cahoots_payload">Paste cahoots payload</string>
-
-
+    <string name="miner_fee_paid">Miner fee paid</string>
+    <string name="paynym_claimed">Your PayNym has been claimed</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="new_identity">New identity</string>
 </resources>
