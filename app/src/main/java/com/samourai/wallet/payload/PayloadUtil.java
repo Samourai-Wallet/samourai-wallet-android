@@ -83,7 +83,9 @@ public class PayloadUtil	{
     private final static String strUTXOFilename = "samourai.utxo";
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
+    private final static String strMultiAddrPreFilename = "samourai.multi.pre";
     private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strUTXOPreFilename = "samourai.utxo.pre";
     private final static String strUTXOPostFilename = "samourai.utxo.post";
 
     private final static String strOptionalBackupDir = "/samourai";
@@ -153,6 +155,12 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrPre(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPreFilename);
+        }
+    }
+
     public void serializeMultiAddrPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
@@ -178,6 +186,18 @@ public class PayloadUtil	{
             JSONObject utxoObj = new JSONObject();
             utxoObj.put("unspent_outputs", utxos);
             serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
+        }
+    }
+
+    public void serializeUTXOPre(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPreFilename);
+            }
         }
     }
 

@@ -25,6 +25,7 @@ public class UTXOFactory {
     private static HashMap<String,UTXO> p2sh_p2wpkh_toxic = null;
     private static HashMap<String,UTXO> p2wpkh_toxic = null;
     private static HashMap<String,UTXO> postMix_toxic = null;
+    private static HashMap<String,UTXO> preMix = null;
 
     private UTXOFactory() { ; }
 
@@ -41,6 +42,7 @@ public class UTXOFactory {
             p2sh_p2wpkh_toxic = new HashMap<String,UTXO>();
             p2wpkh_toxic = new HashMap<String,UTXO>();
             postMix_toxic = new HashMap<String,UTXO>();
+            preMix = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -61,6 +63,7 @@ public class UTXOFactory {
             p2sh_p2wpkh_toxic = new HashMap<String,UTXO>();
             p2wpkh_toxic = new HashMap<String,UTXO>();
             postMix_toxic = new HashMap<String,UTXO>();
+            preMix = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -75,6 +78,7 @@ public class UTXOFactory {
         p2sh_p2wpkh_toxic.clear();
         p2wpkh_toxic.clear();
         postMix_toxic.clear();
+        preMix.clear();
     }
 
     public HashMap<String,UTXO> getP2PKHClean() {
@@ -107,6 +111,10 @@ public class UTXOFactory {
 
     public HashMap<String,UTXO> getPostMixToxic() {
         return postMix_toxic;
+    }
+
+    public HashMap<String,UTXO> getPreMix() {
+        return preMix;
     }
 
     public HashMap<String,UTXO> getAllP2PKH() {
@@ -179,6 +187,10 @@ public class UTXOFactory {
                 postMix_clean.put(script, utxo);
             }
         }
+    }
+
+    public void addPreMix(String hash, int id, String script, UTXO utxo)  {
+        preMix.put(script, utxo);
     }
 
     public long getTotalP2PKHClean() {
@@ -313,6 +325,17 @@ public class UTXOFactory {
         return ret;
     }
 
+    public long getTotalPreMix() {
+        HashMap<String,UTXO> utxos = getPreMix();
+        long ret = 0L;
+
+        for(UTXO utxo : utxos.values())   {
+            ret += utxo.getValue();
+        }
+
+        return ret;
+    }
+
     public int getCountP2PKHToxic() {
         HashMap<String,UTXO> utxos = getP2PKHToxic();
         int ret = 0;
@@ -348,6 +371,17 @@ public class UTXOFactory {
 
     public int getCountPostMixToxic() {
         HashMap<String,UTXO> utxos = getPostMixToxic();
+        int ret = 0;
+
+        for(UTXO utxo : utxos.values())   {
+            ret += utxo.getOutpoints().size();
+        }
+
+        return ret;
+    }
+
+    public int getCountPreMix() {
+        HashMap<String,UTXO> utxos = getPreMix();
         int ret = 0;
 
         for(UTXO utxo : utxos.values())   {
