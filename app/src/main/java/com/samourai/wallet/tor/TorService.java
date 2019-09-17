@@ -84,7 +84,7 @@ public class TorService extends Service {
         PendingIntent actionIntent = PendingIntent.getBroadcast(this,
                 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return new NotificationCompat.Action(R.drawable.tor_on, "New identity", actionIntent);
+        return new NotificationCompat.Action(R.drawable.tor_on, getString(R.string.new_identity), actionIntent);
     }
 
     @Override

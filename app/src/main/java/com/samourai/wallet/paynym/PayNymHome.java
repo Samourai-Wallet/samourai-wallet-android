@@ -96,7 +96,7 @@ public class PayNymHome extends AppCompatActivity {
     private FloatingActionButton paynymFab;
     private PaynymListFragment followersFragment, followingFragment;
     private String pcode;
-    private String tabTitle[] = {"Following", "Followers"};
+    private String tabTitle[] = {"", ""};
     private ArrayList<String> followers = new ArrayList<>();
     private ConstraintLayout pcodeSyncLayout;
     SwipeRefreshLayout swipeToRefreshPaynym;
@@ -106,6 +106,8 @@ public class PayNymHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_nym_home);
         setSupportActionBar(findViewById(R.id.toolbar_paynym));
+	tabTitle[0] = getString(R.string.following);
+	tabTitle[1] = getString(R.string.followers);
 
         paynymTabLayout = findViewById(R.id.paynym_tabs);
         payNymViewPager = findViewById(R.id.paynym_viewpager);
@@ -148,7 +150,7 @@ public class PayNymHome extends AppCompatActivity {
                 return;
             }
             ArrayList<String> filtered = filterArchived(followersList);
-            tabTitle[1] = "Followers ".concat(" (").concat(String.valueOf(filtered.size())).concat(")");
+            tabTitle[1] = getString(R.string.followers).concat("  (").concat(String.valueOf(filtered.size())).concat(")");
             followersFragment.addPcodes(followersList);
             adapter.notifyDataSetChanged();
             followers = followersList;
@@ -160,7 +162,7 @@ public class PayNymHome extends AppCompatActivity {
             }
             ArrayList<String> filtered = filterArchived(followingList);
             followingFragment.addPcodes(filtered);
-            tabTitle[0] = "Following ".concat(" (").concat(String.valueOf(filtered.size())).concat(")");
+            tabTitle[0] = getString(R.string.following).concat("  (").concat(String.valueOf(filtered.size())).concat(")");
             adapter.notifyDataSetChanged();
 
         });

@@ -285,14 +285,14 @@ public class NetworkDashboard extends AppCompatActivity {
             public void run() {
                 if (enabled == CONNECTION_STATUS.ENABLED) {
                     showOfflineMessage(false);
-                    dataButton.setText("Disable");
+                    dataButton.setText(R.string.disable);
                     dataConnectionIcon.setColorFilter(activeColor);
-                    dataConnectionStatus.setText("Enabled");
+                    dataConnectionStatus.setText(R.string.enabled);
                 } else {
-                    dataButton.setText("Enable");
+                    dataButton.setText(R.string.enable);
                     showOfflineMessage(true);
                     dataConnectionIcon.setColorFilter(disabledColor);
-                    dataConnectionStatus.setText("Disabled");
+                    dataConnectionStatus.setText(R.string.disabled);
                 }
             }
         });
@@ -304,17 +304,17 @@ public class NetworkDashboard extends AppCompatActivity {
         NetworkDashboard.this.runOnUiThread(new Runnable() {
             public void run() {
                 if (enabled == CONNECTION_STATUS.ENABLED) {
-                    dojoBtn.setText("Disable");
+                    dojoBtn.setText(R.string.disable);
                     dojoConnectionIcon.setColorFilter(activeColor);
-                    dojoConnectionStatus.setText("Enabled");
+                    dojoConnectionStatus.setText(R.string.enabled);
                 } else if (enabled == CONNECTION_STATUS.CONFIGURE) {
                     dojoBtn.setText("configure");
                     dojoConnectionIcon.setColorFilter(waiting);
                     dojoConnectionStatus.setText("Not configured");
                 } else {
-                    dojoBtn.setText("Enable");
+                    dojoBtn.setText(R.string.enable);
                     dojoConnectionIcon.setColorFilter(disabledColor);
-                    dojoConnectionStatus.setText("Disabled");
+                    dojoConnectionStatus.setText(R.string.disabled);
                 }
             }
         });
@@ -325,10 +325,10 @@ public class NetworkDashboard extends AppCompatActivity {
         Log.i(TAG, "setTorConnectionState: ".concat(String.valueOf(enabled)));
         NetworkDashboard.this.runOnUiThread(() -> {
             if (enabled == TorManager.CONNECTION_STATES.CONNECTED) {
-                torButton.setText("Disable");
+                torButton.setText(R.string.disable);
                 torButton.setEnabled(true);
                 torConnectionIcon.setColorFilter(activeColor);
-                torConnectionStatus.setText("Enabled");
+                torConnectionStatus.setText(R.string.enabled);
                 torRenewBtn.setVisibility(View.VISIBLE);
                 if(waitingForPairing)    {
                     waitingForPairing = false;
@@ -351,10 +351,10 @@ public class NetworkDashboard extends AppCompatActivity {
             }
             else  {
                 torRenewBtn.setVisibility(View.INVISIBLE);
-                torButton.setText("Enable");
+                torButton.setText(R.string.enable);
                 torButton.setEnabled(true);
                 torConnectionIcon.setColorFilter(disabledColor);
-                torConnectionStatus.setText("Disabled");
+                torConnectionStatus.setText(R.string.disabled);
 
                 /*
                 if (strPairingParams != null) {
