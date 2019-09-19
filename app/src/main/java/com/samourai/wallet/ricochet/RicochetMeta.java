@@ -174,6 +174,9 @@ public class RicochetMeta {
         JSONObject jsonPayload = new JSONObject();
         try {
 
+            String zpub = BIP84Util.getInstance(context).getWallet().getAccountAt(RICOCHET_ACCOUNT).zpubstr();
+            jsonPayload.put("xpub", zpub);
+
             jsonPayload.put("index", index);
 
             if(lastRicochet != null)    {
