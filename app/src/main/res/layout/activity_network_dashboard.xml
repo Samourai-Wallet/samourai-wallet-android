@@ -175,14 +175,14 @@
                     android:id="@+id/network_tor_status_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="4"
                     android:src="@drawable/circle_shape"
                     android:tint="@color/disabledRed" />
 
                 <LinearLayout
-                    android:layout_width="84dp"
+                    android:layout_width="86dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="1.9"
                     android:orientation="vertical">
 
                     <TextView
@@ -200,8 +200,9 @@
                 </LinearLayout>
 
 
-                <TextView
+                <Button
                     android:id="@+id/networking_tor_renew"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
