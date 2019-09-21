@@ -84,6 +84,16 @@
         tools:showIn="@layout/activity_balance">
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/whirlpool_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_whirlpool"
+            fab:fab_colorNormal="#e91e63"
+            fab:fab_colorPressed="#c2185b"
+            fab:fab_label="@string/action_whirlpool"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/paynym_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
