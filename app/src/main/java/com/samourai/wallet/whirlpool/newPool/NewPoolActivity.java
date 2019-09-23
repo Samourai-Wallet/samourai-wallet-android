@@ -46,7 +46,8 @@ public class NewPoolActivity extends AppCompatActivity {
     private ViewPager newPoolViewPager;
     private Button confirmButton;
 
-    private ArrayList<Long> fees = new ArrayList<>();
+    private List<Coin> selectedCoins = new ArrayList<Coin>();
+    private ArrayList<Long> fees = new ArrayList<Long>();
     private Pool selectedPool = null;
     private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
 
@@ -62,7 +63,7 @@ public class NewPoolActivity extends AppCompatActivity {
         }
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
-        displayCycleTotalAmount(new ArrayList<Coin>());
+        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(new ArrayList<Coin>())) / 1e8) + " BTC");
 
         fees.add(20L);
         fees.add(30L);
@@ -88,7 +89,9 @@ public class NewPoolActivity extends AppCompatActivity {
 
         chooseUTXOsFragment.setOnUTXOSelectionListener(coins -> {
 
-            displayCycleTotalAmount(coins);
+            selectedCoins = coins;
+
+            cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC");
 
             if (coins.size() == 0) {
                 enableConfirmButton(false);
@@ -107,7 +110,7 @@ public class NewPoolActivity extends AppCompatActivity {
             switch (newPoolViewPager.getCurrentItem()) {
                 case 0: {
                     newPoolViewPager.setCurrentItem(1);
-                    initUTXOReviewButton();
+                    initUTXOReviewButton(selectedCoins);
                     enableConfirmButton(selectedPool != null);
                     break;
                 }
@@ -150,7 +153,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         break;
                     }
                     case 1: {
-                        initUTXOReviewButton();
+                        initUTXOReviewButton(selectedCoins);
                         enableStep2(true);
                         enableConfirmButton(selectedPool != null);
                         break;
@@ -170,11 +173,11 @@ public class NewPoolActivity extends AppCompatActivity {
         });
     }
 
-    private void initUTXOReviewButton() {
+    private void initUTXOReviewButton(List<Coin> coins) {
 
         String reviewMessage = getString(R.string.review_cycle_details).concat("\n");
         String reviewAmountMessage = getString(R.string.total_being_cycled).concat(" ");
-        String amount = "1.1".concat(" BTC");
+        String amount = MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC";
 
         SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));
         spannable.setSpan(
@@ -319,16 +322,22 @@ public class NewPoolActivity extends AppCompatActivity {
         }
     }
 
-    private void displayCycleTotalAmount(List<Coin> coins)   {
+    private long getCycleTotalAmount(List<Coin> coins)   {
 
-        long totalValue = 0L;
+        long ret = 0L;
 
         for(Coin coin : coins)   {
-            totalValue += coin.getValue();
+            ret += coin.getValue();
         }
 
-        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)totalValue) / 1e8) + " BTC");
+        return ret;
 
     }
+/*
+    private void displayCycleTotalAmount(List<Coin> coins)   {
 
+        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC");
+
+    }
+*/
 }
