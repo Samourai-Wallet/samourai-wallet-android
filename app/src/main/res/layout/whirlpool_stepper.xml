@@ -138,7 +138,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="0.0 BTC"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
