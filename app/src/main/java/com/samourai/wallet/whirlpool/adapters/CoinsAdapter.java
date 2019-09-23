@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         final Coin coin = mCoins.get(position);
 
         holder.addressTxView.setText(coin.getAddress());
-        holder.btcTxView.setText(String.valueOf(coin.getValue()).concat(" BTC"));
+        holder.btcTxView.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) coin.getValue()) / 1e8) + " BTC");
+
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
 
