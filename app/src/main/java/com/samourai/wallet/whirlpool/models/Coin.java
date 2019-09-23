@@ -12,6 +12,10 @@ public class Coin {
         this.outpoint = outpoint;
     }
 
+    public MyTransactionOutPoint getOutpoint() {
+        return outpoint;
+    }
+
     //States for recycler view
     private Boolean isSelected = false, blocked = false;
 
