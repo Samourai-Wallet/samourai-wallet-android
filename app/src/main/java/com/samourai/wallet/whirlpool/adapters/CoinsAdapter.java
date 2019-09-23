@@ -10,7 +10,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
@@ -44,12 +46,13 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
         holder.checkBox.setChecked(coin.getSelected());
         holder.checkBox.setTag(mCoins.get(position));
 
-        // Placeholder for showing tx with coinbase tag
-        if(position==2){
-            holder.coinbaseGroup.setVisibility(View.VISIBLE);
-        }else {
-            holder.coinbaseGroup.setVisibility(View.GONE);
-
+        String tag = UTXOUtil.getInstance().get(coin.getOutpoint().getTxHash() + "-" + coin.getOutpoint().getTxOutputN());
+        if(tag != null)    {
+            holder.labelGroup.setVisibility(View.VISIBLE);
+            holder.labelTxView.setText(tag);
+        }
+        else    {
+            holder.labelGroup.setVisibility(View.GONE);
         }
 
         if (coin.getBlocked()) {
@@ -86,16 +89,17 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView btcTxView, addressTxView;
+        private TextView btcTxView, addressTxView, labelTxView;
         private CheckBox checkBox;
-        private Group coinbaseGroup;
+        private Group labelGroup;
 
         ViewHolder(View itemView) {
             super(itemView);
             btcTxView = itemView.findViewById(R.id.coin_item_amount);
             addressTxView = itemView.findViewById(R.id.coin_utxo_address);
             checkBox = itemView.findViewById(R.id.coin_item_checkbox);
-            coinbaseGroup = itemView.findViewById(R.id.coinbase_tx_group);
+            labelGroup = itemView.findViewById(R.id.label_group);
+            labelTxView = itemView.findViewById(R.id.coin_utxo_label);
         }
     }
 
