@@ -27,6 +27,7 @@ import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -60,12 +61,18 @@ public class ChooseUTXOsFragment extends Fragment {
     private void loadCoins() {
 
         List<UTXO> utxos = APIFactory.getInstance(getContext()).getUtxos(true);
+        List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
         for(UTXO utxo : utxos)  {
-            for(MyTransactionOutPoint outpoint : utxo.getOutpoints())   {
-                Coin coin = new Coin(outpoint);
-                coins.add(coin);
-            }
+            outpoints.addAll(utxo.getOutpoints());
         }
+
+        Collections.sort(outpoints, new UTXO.OutpointComparator());
+
+        for(MyTransactionOutPoint outpoint : outpoints)   {
+            Coin coin = new Coin(outpoint);
+            coins.add(coin);
+        }
+
     }
 
     @Override
