@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Pool;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
@@ -60,6 +61,7 @@ public class NewPoolActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
+        displayCycleTotalAmount();
 
         fees.add(20L);
         fees.add(30L);
@@ -310,6 +312,18 @@ public class NewPoolActivity extends AppCompatActivity {
             stepperPoint3.setAlpha(0.6f);
             stepperLine2.setBackgroundResource(R.color.disabled_white);
         }
+    }
+
+    private void displayCycleTotalAmount()   {
+
+        long totalValue = 0L;
+
+        for(Coin coin : selectedCoins)   {
+            totalValue += coin.getValue();
+        }
+
+        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)totalValue) / 1e8) + " BTC");
+
     }
 
 }
