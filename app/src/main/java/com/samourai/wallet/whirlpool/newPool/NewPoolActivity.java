@@ -28,6 +28,7 @@ import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -45,7 +46,6 @@ public class NewPoolActivity extends AppCompatActivity {
     private ViewPager newPoolViewPager;
     private Button confirmButton;
 
-    private ArrayList<Coin> selectedCoins = new ArrayList<>();
     private ArrayList<Long> fees = new ArrayList<>();
     private Pool selectedPool = null;
     private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
@@ -57,11 +57,12 @@ public class NewPoolActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_new_whirlpool);
 
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
-        displayCycleTotalAmount();
+        displayCycleTotalAmount(new ArrayList<Coin>());
 
         fees.add(20L);
         fees.add(30L);
@@ -86,9 +87,13 @@ public class NewPoolActivity extends AppCompatActivity {
         enableConfirmButton(false);
 
         chooseUTXOsFragment.setOnUTXOSelectionListener(coins -> {
+
+            displayCycleTotalAmount(coins);
+
             if (coins.size() == 0) {
                 enableConfirmButton(false);
-            } else {
+            }
+            else {
                 enableConfirmButton(true);
             }
         });
@@ -314,11 +319,11 @@ public class NewPoolActivity extends AppCompatActivity {
         }
     }
 
-    private void displayCycleTotalAmount()   {
+    private void displayCycleTotalAmount(List<Coin> coins)   {
 
         long totalValue = 0L;
 
-        for(Coin coin : selectedCoins)   {
+        for(Coin coin : coins)   {
             totalValue += coin.getValue();
         }
 
