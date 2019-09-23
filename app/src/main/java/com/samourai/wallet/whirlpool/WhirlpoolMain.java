@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.whirlpool.fragments.WhirlpoolCyclesFragment;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
@@ -62,7 +63,12 @@ public class WhirlpoolMain extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        AppUtil.getInstance(WhirlpoolMain.this).checkTimeOut();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
