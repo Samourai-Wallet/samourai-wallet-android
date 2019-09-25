@@ -1,10 +1,11 @@
 package com.samourai.wallet.whirlpool.models;
 
-
 public class Pool {
 
-    boolean isSelected = false;
-    long poolAmount = 0L, poolFee = 0L, minerFee = 0L, totalFee = 0L;
+    private boolean isSelected = false;
+    private long poolAmount = 0L;
+    private long poolFee = 0L;
+    private long minerFee = 0L;
 
     public long getPoolAmount() {
         return poolAmount;
@@ -15,7 +16,7 @@ public class Pool {
     }
 
     public long getPoolFee() {
-        return poolFee;
+        return (long)(poolAmount * 0.05);
     }
 
     public void setPoolFee(long poolFee) {
@@ -31,11 +32,7 @@ public class Pool {
     }
 
     public long getTotalFee() {
-        return totalFee;
-    }
-
-    public void setTotalFee(long totalFee) {
-        this.totalFee = totalFee;
+        return minerFee + poolFee;
     }
 
     public boolean isSelected() {
