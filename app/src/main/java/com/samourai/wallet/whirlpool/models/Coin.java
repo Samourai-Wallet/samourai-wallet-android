@@ -6,6 +6,9 @@ public class Coin {
 
     private MyTransactionOutPoint outpoint = null;
 
+    //States for recycler view
+    private Boolean isSelected = false;
+
     private Coin()  { ; }
 
     public Coin(MyTransactionOutPoint outpoint)  {
@@ -15,9 +18,6 @@ public class Coin {
     public MyTransactionOutPoint getOutpoint() {
         return outpoint;
     }
-
-    //States for recycler view
-    private Boolean isSelected = false, blocked = false;
 
     public String getAddress() {
         return outpoint.getAddress();
@@ -31,22 +31,13 @@ public class Coin {
         return isSelected;
     }
 
-    public Coin setSelected(Boolean selected) {
+    public void setSelected(Boolean selected) {
         isSelected = selected;
-        return this;
-    }
-
-    public Boolean getBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(Boolean blocked) {
-        this.blocked = blocked;
     }
 
     @Override
     public String toString() {
-        return this.getAddress().concat("\t");
+        return "selected:" + isSelected + ", " + this.outpoint.toString();
     }
 
 }
