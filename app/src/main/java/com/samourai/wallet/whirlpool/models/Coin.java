@@ -1,47 +1,43 @@
 package com.samourai.wallet.whirlpool.models;
 
+import com.samourai.wallet.send.MyTransactionOutPoint;
+
 public class Coin {
-    private String address = "";
-    private Float value = 0F;
+
+    private MyTransactionOutPoint outpoint = null;
+
     //States for recycler view
-    private Boolean isSelected = false, blocked = false;
+    private Boolean isSelected = false;
+
+    private Coin()  { ; }
+
+    public Coin(MyTransactionOutPoint outpoint)  {
+        this.outpoint = outpoint;
+    }
+
+    public MyTransactionOutPoint getOutpoint() {
+        return outpoint;
+    }
 
     public String getAddress() {
-        return address;
+        return outpoint.getAddress();
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
+    public long getValue() {
+        return outpoint.getValue().longValue();
     }
 
     public Boolean getSelected() {
         return isSelected;
     }
 
-    public Coin setSelected(Boolean selected) {
+    public void setSelected(Boolean selected) {
         isSelected = selected;
-        return this;
     }
 
     @Override
     public String toString() {
-        return this.getAddress().concat("\t");
-    }
-
-    public Boolean getBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(Boolean blocked) {
-        this.blocked = blocked;
+        return "selected:" + isSelected + ", " + this.outpoint.toString();
     }
 
 }

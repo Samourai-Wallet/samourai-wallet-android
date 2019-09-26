@@ -841,18 +841,12 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (editable.toString().equalsIgnoreCase("whirlpool")) {
-                doWhirlpool();
+            if (editable.toString().length() != 0)  {
+                validateSpend();
             }
-            else {
-                if (editable.toString().length() != 0)  {
-                    validateSpend();
-                }
-                else    {
-                    setToAddress("");
-                }
+            else    {
+                setToAddress("");
             }
-
         }
     };
 
@@ -2146,11 +2140,6 @@ public class SendActivity extends AppCompatActivity {
 
     private void doBatchSpend() {
         Intent intent = new Intent(SendActivity.this, BatchSendActivity.class);
-        startActivity(intent);
-    }
-
-    private void doWhirlpool() {
-        Intent intent = new Intent(SendActivity.this, WhirlpoolMain.class);
         startActivity(intent);
     }
 

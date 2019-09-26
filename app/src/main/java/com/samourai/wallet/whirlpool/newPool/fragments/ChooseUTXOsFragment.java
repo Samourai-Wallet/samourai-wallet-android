@@ -20,16 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.whirlpool.adapters.CoinsAdapter;
 import com.samourai.wallet.whirlpool.models.Coin;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class ChooseUTXOsFragment extends Fragment {
 
     private static final String TAG = "ChooseUTXOsFragment";
-
 
     private OnUTXOSelectionListener onUTXOSelectionListener;
     private ArrayList<Coin> coins = new ArrayList<Coin>();
@@ -43,7 +47,7 @@ public class ChooseUTXOsFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.coins_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         CoinsAdapter coinsAdapter = new CoinsAdapter(getContext(), coins);
-        loadDummyCoins();
+        loadCoins();
         recyclerView.setAdapter(coinsAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new SeparatorDecoration(getContext(), ContextCompat.getColor(getContext(), R.color.item_separator_grey), 1));
@@ -54,13 +58,21 @@ public class ChooseUTXOsFragment extends Fragment {
         });
     }
 
-    private void loadDummyCoins() {
-        for (int i = 0; i <= 100; i++) {
-            Coin coin = new Coin();
-            coin.setAddress("16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5");
-            coin.setValue(3.1F);
+    private void loadCoins() {
+
+        List<UTXO> utxos = APIFactory.getInstance(getContext()).getUtxos(true);
+        List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
+        for(UTXO utxo : utxos)  {
+            outpoints.addAll(utxo.getOutpoints());
+        }
+
+        Collections.sort(outpoints, new UTXO.OutpointComparator());
+
+        for(MyTransactionOutPoint outpoint : outpoints)   {
+            Coin coin = new Coin(outpoint);
             coins.add(coin);
         }
+
     }
 
     @Override
