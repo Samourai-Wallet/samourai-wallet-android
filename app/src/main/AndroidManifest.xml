@@ -40,11 +40,15 @@
         android:required="false"
         tools:node="replace" />
 
+    <!-- usesCleartextTraffic attr is used for tor networking.
+       this is because onion urls are not using https/ssl by default.
+        -->
     <application
         android:name=".SamouraiApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:roundIcon="@drawable/ic_launcher_round"
+        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
