@@ -43,7 +43,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
     private WhirlpoolClient whirlpoolClient;
 
     private static final NetworkParameters networkParameters = TestNet3Params.get();
-    private static final String SERVER = WhirlpoolServer.LOCAL_TESTNET.getServerUrlClear();//WhirlpoolServer.TESTNET.getServerUrlClear();
+    private static final String SERVER = WhirlpoolServer.TESTNET.getServerUrlClear();//WhirlpoolServer.TESTNET.getServerUrlClear();
     private static final String POOL_ID = "0.01btc";
 
     @Before
@@ -51,7 +51,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         super.setUp(networkParameters);
 
         // persistance
-        File fileIndex = File.createTempFile("whirlpool-state-", ".json"); // TODO non temporary files
+        File fileIndex = File.createTempFile("whirlpool-state-", ".json"); // TODO permanent store
         File fileUtxo = File.createTempFile("whirlpool-utxos-", ".json");
         WhirlpoolWalletPersistHandler persistHandler = new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
 
