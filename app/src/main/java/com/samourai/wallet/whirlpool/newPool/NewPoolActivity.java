@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Pool;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
@@ -36,6 +38,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private static final String TAG = "NewPoolActivity";
 
+    private WhirlpoolTx0 tx0 = null;
 
     private TextView stepperMessage1, stepperMessage2, stepperMessage3, cycleTotalAmount;
     private View stepperLine1, stepperLine2;
@@ -97,7 +100,15 @@ public class NewPoolActivity extends AppCompatActivity {
                 enableConfirmButton(false);
             }
             else {
-                enableConfirmButton(true);
+                // default set to lowest pool
+                tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
+                tx0.make();
+                if(tx0.getTx0() != null)    {
+                    enableConfirmButton(true);
+                }
+                else    {
+                    enableConfirmButton(false);
+                }
             }
         });
         selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {

@@ -55,11 +55,6 @@ public class CoinsAdapter extends RecyclerView.Adapter<CoinsAdapter.ViewHolder> 
             holder.labelGroup.setVisibility(View.GONE);
         }
 
-        if (coin.getBlocked()) {
-            holder.btcTxView.setAlpha(.6f);
-            holder.addressTxView.setAlpha(.5f);
-            holder.checkBox.setEnabled(false);
-        }
         holder.itemView.setOnClickListener(view -> selectItem(holder, position));
         holder.checkBox.setOnClickListener(view -> selectItem(holder, position));
 
