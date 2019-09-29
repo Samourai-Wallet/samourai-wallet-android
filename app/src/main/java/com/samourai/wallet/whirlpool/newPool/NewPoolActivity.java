@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Coin;
@@ -102,7 +103,13 @@ public class NewPoolActivity extends AppCompatActivity {
             else {
                 // default set to lowest pool
                 tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
-                tx0.make();
+                try {
+                    tx0.make();
+                } catch (Exception ex) {
+                    Toast.makeText(this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                    ex.printStackTrace();
+                    return;
+                }
                 if(tx0.getTx0() != null)    {
                     enableConfirmButton(true);
                 }
@@ -111,9 +118,11 @@ public class NewPoolActivity extends AppCompatActivity {
                 }
             }
         });
+
         selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
             selectedPool = pool;
             selectedPoolPriority = priority;
+            tx0.setPool(pool.getPoolAmount());
             enableConfirmButton(selectedPool != null);
         });
 
@@ -126,9 +135,16 @@ public class NewPoolActivity extends AppCompatActivity {
                     break;
                 }
                 case 1: {
+                    try {
+                        tx0.make();
+                    }catch (Exception ex){
+                        Toast.makeText(this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
                     confirmButton.setBackgroundResource(R.drawable.button_green);
+                    reviewPoolFragment.setTx0(tx0);
                     break;
                 }
                 case 2: {

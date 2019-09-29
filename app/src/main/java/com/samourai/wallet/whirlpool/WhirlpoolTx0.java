@@ -112,24 +112,24 @@ public class WhirlpoolTx0 {
         return tx0;
     }
 
-    public void make()   {
+    public void make()  throws Exception {
 
         tx0 = null;
 
         if(nbPossiblePremix() < getPremixRequested() || getPremixRequested() == 0)    {
             premixRequested = nbPossiblePremix();
         }
-
+        debug("WhirlpoolTx0", "make: ");
         //
         // calc fee here using feeSatB and utxos passed
         //
         if(getChange() < 0L)    {
             debug("WhirlpoolTx0", "Cannot make premix: negative change:" + getAmountSelected());
-            return;
+            throw  new Exception("Cannot make premix: negative change:"+getAmountSelected());
         }
         if(nbPossiblePremix() < 1)    {
             debug("WhirlpoolTx0", "Cannot make premix: insufficient selected amount:" + getAmountSelected());
-            return;
+            throw  new Exception("Cannot make premix: negative change:"+getAmountSelected());
         }
 
         debug("WhirlpoolTx0", "amount selected:" + getAmountSelected() / 1e8);

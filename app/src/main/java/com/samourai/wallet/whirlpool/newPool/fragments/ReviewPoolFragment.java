@@ -10,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.widgets.EntropyBar;
+import com.samourai.whirlpool.client.tx0.Tx0;
+
+import java.text.DecimalFormat;
 
 
 public class ReviewPoolFragment extends Fragment {
@@ -82,4 +86,14 @@ public class ReviewPoolFragment extends Fragment {
     }
 
 
+    public void setTx0(WhirlpoolTx0 tx0) {
+        totalPoolAmount.setText(String.valueOf(tx0.getAmountSelected() / 1e8));
+        poolAmount.setText(String.valueOf(tx0.getPool() / 1e8));
+        poolFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFeeSamourai() / 1e8)));
+        minerFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFee() / 1e8)));
+        amountToCycle.setText(String.valueOf(tx0.getAmountAfterWhirlpoolFee() / 1e8));
+        uncycledAmount.setText(" "+ (tx0.getChange() /1e8));
+        totalTxs.setText(String.valueOf(tx0.getPremixRequested()));
+
+    }
 }
