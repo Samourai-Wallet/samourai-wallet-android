@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.widgets.EntropyBar;
-import com.samourai.whirlpool.client.tx0.Tx0;
 
 import java.text.DecimalFormat;
 
@@ -53,7 +52,7 @@ public class ReviewPoolFragment extends Fragment {
         poolAmount = view.findViewById(R.id.pool_review_amount);
         poolFees = view.findViewById(R.id.pool_review_pool_fee);
         minerFees = view.findViewById(R.id.pool_review_miner_fee);
-        uncycledAmount = view.findViewById(R.id.pool_review_uncyled_amount);
+        uncycledAmount = view.findViewById(R.id.pool_review_uncycled_amount);
         amountToCycle = view.findViewById(R.id.pool_review_amount_to_cycle);
         poolTotalFees = view.findViewById(R.id.pool_review_total_fees);
         combinationPerTxs = view.findViewById(R.id.pool_review_combination_per_tx);
@@ -92,6 +91,7 @@ public class ReviewPoolFragment extends Fragment {
         poolFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFeeSamourai() / 1e8)));
         minerFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFee() / 1e8)));
         amountToCycle.setText(String.valueOf(tx0.getAmountAfterWhirlpoolFee() / 1e8));
+        poolTotalFees.setText(String.valueOf(new DecimalFormat("0.########").format((tx0.getFeeSamourai() + tx0.getFee() ) / 1e8)));
         uncycledAmount.setText(" "+ (tx0.getChange() /1e8));
         totalTxs.setText(String.valueOf(tx0.getPremixRequested()));
 
