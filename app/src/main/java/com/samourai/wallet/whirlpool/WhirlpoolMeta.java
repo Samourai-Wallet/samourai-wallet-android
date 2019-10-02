@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 public class WhirlpoolMeta {
 
+    public final static double WHIRLPOOL_FEE_RATE_POOL_DENOMINATION = 0.05;
+
     private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
     private final static int WHIRLPOOL_POSTMIX = Integer.MAX_VALUE - 1;
 

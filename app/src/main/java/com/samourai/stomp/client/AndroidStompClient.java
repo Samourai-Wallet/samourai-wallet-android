@@ -27,7 +27,6 @@ import ua.naiksoftware.stomp.client.StompMessage;
 
 public class AndroidStompClient implements IStompClient {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
-    private static final long TIMEOUT = 20000;
     private Gson gson;
     private StompClient stompClient;
 
@@ -38,7 +37,8 @@ public class AndroidStompClient implements IStompClient {
     @Override
     public void connect(String url, Map<String, String> stompHeaders, final MessageErrorListener<IStompMessage, Throwable> onConnectOnDisconnectListener) {
         try {
-            log.info("connecting to " + url);
+            url += "/websocket"; // SockJS
+            log.debug("connecting to " + url);
             stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
             stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
@@ -46,18 +46,22 @@ public class AndroidStompClient implements IStompClient {
                 .subscribe(new Consumer<LifecycleEvent>() {
                     @Override
                     public void accept(LifecycleEvent lifecycleEvent) {
-                        log.info("connect accept: "+lifecycleEvent.getMessage());
+                        if (lifecycleEvent.getException() != null) {
+                            log.error("STOMP connect error", lifecycleEvent.getException());
+                        } else {
+                            log.debug("STOMP connect: " + lifecycleEvent.getType()+" : "+lifecycleEvent.getMessage());
+                        }
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
-                                log.info("connected");
+                                log.debug("STOMP connected");
                                 // send back headers: no way to get connected headers on Android?
                                 onConnectOnDisconnectListener.onMessage(null);
                                 break;
                             case ERROR:
-                                log.error("Stomp connection error", lifecycleEvent.getException());
+                                log.error("STOMP error", lifecycleEvent.getException());
                                 break;
                             case CLOSED:
-                                log.info("disconnected");
+                                log.debug("STOMP disconnected");
                                 disconnect();
                                 onConnectOnDisconnectListener.onError(new Exception("disconnected"));
                         }
@@ -74,7 +78,7 @@ public class AndroidStompClient implements IStompClient {
 
     @Override
     public String getSessionId() {
-        return null; // TODO
+        return null; // TODO !!!
     }
 
     @Override
@@ -82,7 +86,7 @@ public class AndroidStompClient implements IStompClient {
         try {
             String destination = getDestination(stompHeaders);
             List<StompHeader> myHeaders = computeHeaders(stompHeaders);
-            log.info("subscribing " + destination);
+            log.debug("subscribing " + destination);
             stompClient.topic(destination, myHeaders)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -106,7 +110,7 @@ public class AndroidStompClient implements IStompClient {
             log.error("subscribe error", e);
             onMessageOnErrorListener.onError(e.getMessage());
         }
-        log.info("subscribed");
+        log.debug("subscribed");
     }
 
     @Override
@@ -117,18 +121,18 @@ public class AndroidStompClient implements IStompClient {
             String jsonPayload = gson.toJson(payload);
             StompMessage stompMessage = new StompMessage(StompCommand.SEND, myHeaders, jsonPayload);
 
-            log.info("sending " + destination + ": " + jsonPayload);
+            log.debug("sending " + destination + ": " + jsonPayload);
             stompClient.send(stompMessage)
                     .compose(applySchedulers())
                     .subscribe(new Action() {
                         @Override
                         public void run() throws Exception {
-                            log.info("send: success");
+                            log.debug("send: success");
                         }
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
-                            log.info("send: error", throwable);
+                            log.debug("send: error", throwable);
                         }
                     });
         } catch(Exception e) {
@@ -143,11 +147,6 @@ public class AndroidStompClient implements IStompClient {
                 stompClient.disconnect();
             } catch(Exception e) {}
         }
-    }
-
-    @Override
-    public IStompClient copyForNewClient() {
-        return new AndroidStompClient();
     }
 
     private String getDestination(Map<String, String> stompHeaders) {

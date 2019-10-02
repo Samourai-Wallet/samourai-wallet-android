@@ -74,6 +74,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
@@ -328,6 +329,12 @@ public class BalanceActivity extends AppCompatActivity {
         Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
+
+        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
+            Intent intent = new Intent(BalanceActivity.this, WhirlpoolMain.class);
+            startActivity(intent);
+            menuFab.toggle(true);
+        });
 
         findViewById(R.id.send_fab).setOnClickListener(view -> {
             Intent intent = new Intent(BalanceActivity.this, SendActivity.class);

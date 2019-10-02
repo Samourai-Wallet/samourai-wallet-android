@@ -5,6 +5,7 @@ import android.test.mock.MockContext;
 
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.stomp.client.AndroidStompClient;
+import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.client.Bip84Wallet;
@@ -35,7 +36,7 @@ public abstract class AbstractWhirlpoolTest {
     protected BIP47Util bip47Util = BIP47Util.getInstance(context);
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
     protected AndroidHttpClient whirlpoolHttpClient = new AndroidHttpClient(WebUtil.getInstance(null));
-    protected AndroidStompClient stompClient = new AndroidStompClient();
+    protected AndroidStompClientService stompClientService = new AndroidStompClientService();
     protected NetworkParameters networkParameters;
 
     public void setUp(NetworkParameters networkParameters) throws Exception {

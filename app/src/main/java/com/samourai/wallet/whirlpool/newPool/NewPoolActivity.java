@@ -18,6 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Pool;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
@@ -27,6 +31,7 @@ import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -34,6 +39,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private static final String TAG = "NewPoolActivity";
 
+    private WhirlpoolTx0 tx0 = null;
 
     private TextView stepperMessage1, stepperMessage2, stepperMessage3, cycleTotalAmount;
     private View stepperLine1, stepperLine2;
@@ -44,8 +50,8 @@ public class NewPoolActivity extends AppCompatActivity {
     private ViewPager newPoolViewPager;
     private Button confirmButton;
 
-    private ArrayList<Coin> selectedCoins = new ArrayList<>();
-    private ArrayList<Long> fees = new ArrayList<>();
+    private List<Coin> selectedCoins = new ArrayList<Coin>();
+    private ArrayList<Long> fees = new ArrayList<Long>();
     private Pool selectedPool = null;
     private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
 
@@ -56,10 +62,12 @@ public class NewPoolActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_new_whirlpool);
 
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
+        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(new ArrayList<Coin>())) / 1e8) + " BTC");
 
         fees.add(20L);
         fees.add(30L);
@@ -84,15 +92,37 @@ public class NewPoolActivity extends AppCompatActivity {
         enableConfirmButton(false);
 
         chooseUTXOsFragment.setOnUTXOSelectionListener(coins -> {
+
+            selectedCoins = coins;
+
+            cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC");
+
             if (coins.size() == 0) {
                 enableConfirmButton(false);
-            } else {
-                enableConfirmButton(true);
+            }
+            else {
+                // default set to lowest pool
+                tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
+                try {
+                    tx0.make();
+                } catch (Exception ex) {
+                    Toast.makeText(this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                    ex.printStackTrace();
+                    return;
+                }
+                if(tx0.getTx0() != null)    {
+                    enableConfirmButton(true);
+                }
+                else    {
+                    enableConfirmButton(false);
+                }
             }
         });
+
         selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
             selectedPool = pool;
             selectedPoolPriority = priority;
+            tx0.setPool(pool.getPoolAmount());
             enableConfirmButton(selectedPool != null);
         });
 
@@ -100,14 +130,21 @@ public class NewPoolActivity extends AppCompatActivity {
             switch (newPoolViewPager.getCurrentItem()) {
                 case 0: {
                     newPoolViewPager.setCurrentItem(1);
-                    initUTXOReviewButton();
+                    initUTXOReviewButton(selectedCoins);
                     enableConfirmButton(selectedPool != null);
                     break;
                 }
                 case 1: {
+                    try {
+                        tx0.make();
+                    }catch (Exception ex){
+                        Toast.makeText(this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
                     confirmButton.setBackgroundResource(R.drawable.button_green);
+                    reviewPoolFragment.setTx0(tx0);
                     break;
                 }
                 case 2: {
@@ -143,7 +180,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         break;
                     }
                     case 1: {
-                        initUTXOReviewButton();
+                        initUTXOReviewButton(selectedCoins);
                         enableStep2(true);
                         enableConfirmButton(selectedPool != null);
                         break;
@@ -163,11 +200,11 @@ public class NewPoolActivity extends AppCompatActivity {
         });
     }
 
-    private void initUTXOReviewButton() {
+    private void initUTXOReviewButton(List<Coin> coins) {
 
         String reviewMessage = getString(R.string.review_cycle_details).concat("\n");
         String reviewAmountMessage = getString(R.string.total_being_cycled).concat(" ");
-        String amount = "1.1".concat(" BTC");
+        String amount = MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC";
 
         SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));
         spannable.setSpan(
@@ -312,4 +349,22 @@ public class NewPoolActivity extends AppCompatActivity {
         }
     }
 
+    private long getCycleTotalAmount(List<Coin> coins)   {
+
+        long ret = 0L;
+
+        for(Coin coin : coins)   {
+            ret += coin.getValue();
+        }
+
+        return ret;
+
+    }
+/*
+    private void displayCycleTotalAmount(List<Coin> coins)   {
+
+        cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double)getCycleTotalAmount(coins)) / 1e8) + " BTC");
+
+    }
+*/
 }

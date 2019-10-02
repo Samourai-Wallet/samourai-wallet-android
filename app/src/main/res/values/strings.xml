@@ -14,6 +14,7 @@
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
+    <string name="action_whirlpool">Whirlpool</string>
 
     <string name="about_us">About Samourai Wallet</string>
 

@@ -99,20 +99,20 @@ public class SelectPoolFragment extends Fragment {
     private void loadPools() {
         Pool pool1 = new Pool();
         pool1.setPoolAmount(1000000);
-        pool1.setMinerFee(250000);
-        pool1.setTotalFee(348450);
+        pool1.setPoolFee(50000);
+        pool1.setMinerFee(4000);
         pools.add(pool1);
 
         Pool pool2 = new Pool();
         pool2.setPoolAmount(5000000);
-        pool2.setMinerFee(250000);
-        pool2.setTotalFee(348450);
+        pool2.setPoolFee(250000);
+        pool2.setMinerFee(9855);
         pools.add(pool2);
 
         Pool pool3 = new Pool();
-        pool3.setPoolAmount(10000000);
-        pool3.setMinerFee(250000);
-        pool3.setTotalFee(348450);
+        pool3.setPoolAmount(50000000);
+        pool3.setPoolFee(2500000);
+        pool3.setMinerFee(22200);
         pools.add(pool3);
         poolsAdapter.notifyDataSetChanged();
     }

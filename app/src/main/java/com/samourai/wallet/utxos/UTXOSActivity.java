@@ -39,6 +39,7 @@ import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.UTXOUtil;
@@ -179,6 +180,14 @@ public class UTXOSActivity extends AppCompatActivity {
                     loadUTXOs(true);
                 });
         compositeDisposable.add(subscribe);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        AppUtil.getInstance(UTXOSActivity.this).checkTimeOut();
+
     }
 
     @Override
