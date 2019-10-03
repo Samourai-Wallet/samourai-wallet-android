@@ -2,6 +2,8 @@ package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,20 +42,31 @@ public class WhirlpoolMeta {
         return WHIRLPOOL_POSTMIX;
     }
 
-    public static int getPreIdx() {
+    public int getPreIdx() {
         return preIdx;
     }
 
-    public static void setPreIdx(int idx) {
+    public void setPreIdx(int idx) {
         WhirlpoolMeta.preIdx = idx;
     }
 
-    public static int getPostIdx() {
+    public int getPostIdx() {
         return postIdx;
     }
 
-    public static void setPostIdx(int idx) {
+    public void setPostIdx(int idx) {
         WhirlpoolMeta.postIdx = idx;
+    }
+
+    public String getDefaultFeeAddress()    {
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return "tb1qhq028k8qey83ylmc003qdtt7mhp76a5cgk5htj";
+        }
+        else    {
+            return "bc1qxya59zn6fgenfls0pedt0xqkagd33fcfc5s04n";
+        }
+
     }
 
     public JSONObject toJSON() {
