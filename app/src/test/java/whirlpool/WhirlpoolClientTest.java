@@ -57,7 +57,6 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
 
         // client configuration (server...)
         WhirlpoolClientConfig config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClientService, persistHandler, SERVER, networkParameters);
-        config.setTestMode(true); // TODO skipping utxo validations
 
         // instanciate client
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
