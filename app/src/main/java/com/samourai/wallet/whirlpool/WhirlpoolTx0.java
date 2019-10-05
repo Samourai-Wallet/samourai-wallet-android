@@ -75,7 +75,7 @@ public class WhirlpoolTx0 {
     }
 
     public long getChange() {
-        return getAmountSelected() - (((long)(getPremixRequested() * getPool())) + getFeeSamourai() + getFee());
+        return getAmountSelected() - ((getPremixRequested() * getTxAmount()) + getFeeSamourai() + getFee());
     }
 
     public long getFee() {
@@ -84,6 +84,10 @@ public class WhirlpoolTx0 {
 
     public long getAmountAfterWhirlpoolFee() {
         return getAmountSelected() - getFeeSamourai();
+    }
+
+    public long getTxAmount()   {
+        return getPool() + (getFeeSatB() * 102L);
     }
 
     public long getAmountSelected() {
