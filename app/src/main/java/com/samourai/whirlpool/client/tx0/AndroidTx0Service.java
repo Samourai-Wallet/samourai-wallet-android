@@ -39,8 +39,10 @@ public class AndroidTx0Service extends Tx0Service {
 
     protected long computeTx0MinerFee(int nbPremix, long feeTx0, Collection<UnspentResponse.UnspentOutput> spendFroms) {
         int nbOutputsNonOpReturn = nbPremix + 2; // outputs + change + fee
+
         // spend from N bech32 input
-        long tx0MinerFee = feeUtil.estimatedFeeSegwit(0, 0, spendFroms.size(), nbOutputsNonOpReturn, 1, feeTx0);
+        int nbSpendFroms = (spendFroms != null ? spendFroms.size() : 1);
+        long tx0MinerFee = feeUtil.estimatedFeeSegwit(0, 0, nbSpendFroms, nbOutputsNonOpReturn, 1, feeTx0);
 
         if (log.isDebugEnabled()) {
             log.debug(
