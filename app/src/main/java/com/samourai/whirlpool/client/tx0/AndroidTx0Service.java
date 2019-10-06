@@ -59,7 +59,7 @@ public class AndroidTx0Service extends Tx0Service {
 
     @Override
     protected Transaction buildTx0(
-            byte[] spendFromPrivKey,
+            Collection<byte[]> spendFromPrivKeys,
             Collection<UnspentResponse.UnspentOutput> depositSpendFroms,
             Bip84Wallet depositWallet,
             Bip84Wallet premixWallet,
@@ -178,7 +178,7 @@ public class AndroidTx0Service extends Tx0Service {
         }
 
         // input
-        ECKey spendFromKey = ECKey.fromPrivate(spendFromPrivKey);
+        ECKey spendFromKey = ECKey.fromPrivate(spendFromPrivKeys.iterator().next());
 
         final Script segwitPubkeyScript = ScriptBuilder.createP2WPKHOutputScript(spendFromKey);
 
