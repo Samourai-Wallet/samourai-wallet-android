@@ -12,23 +12,26 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.samourai.api.client.BackendServer;
+import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.api.client.SamouraiApi;
 import com.samourai.http.client.IHttpClient;
 import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.backend.BackendApi;
+import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.client.Bip84ApiWallet;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.WebUtil;
@@ -40,18 +43,26 @@ import com.samourai.wallet.whirlpool.newPool.fragments.ChooseUTXOsFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
+import com.samourai.whirlpool.client.tx0.Tx0;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
+import com.samourai.whirlpool.protocol.beans.Utxo;
 
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import java8.util.Lists;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -182,44 +193,41 @@ public class NewPoolActivity extends AppCompatActivity {
 
         Toast.makeText(this,"Begin Pool",Toast.LENGTH_SHORT).show();
 
-        IHttpClient httpClient = new com.samourai.http.client.AndroidHttpClient(WebUtil.getInstance(NewPoolActivity.this));
-        IStompClientService stompClientService = new com.samourai.stomp.client.AndroidStompClientService();
-        WhirlpoolWalletPersistHandler persistHandler =
-                new FileWhirlpoolWalletPersistHandler(new File("wallet/whirlpool_state"), new File("wallet/whirlpool_utxos"));
-
-        WhirlpoolServer whirlpoolServer = SamouraiWallet.getInstance().isTestNet() ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
-
-        boolean onion = false;
-        String serverUrl = whirlpoolServer.getServerUrl(onion);
-        String backendUrl = BackendServer.TESTNET.getBackendUrl(onion);
-        SamouraiApi samouraiApi = new SamouraiApi(httpClient, backendUrl, null);
-
-        NetworkParameters params = whirlpoolServer.getParams();
-        WhirlpoolWalletConfig whirlpoolWalletConfig =
-                new WhirlpoolWalletConfig(
-                        httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
-
-        whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
-        whirlpoolWalletConfig.setAutoMix(false); // disable auto-mix
-
-        // configure optional settings (or don't set anything for using default values)
-//        whirlpoolWalletConfig.setScode("foo");
-        whirlpoolWalletConfig.setMaxClients(1);
-        whirlpoolWalletConfig.setClientDelay(15);
-
-        // configure wallet
-        HD_Wallet bip84w = BIP84Util.getInstance(this).getWallet(); // provide your wallet here
+        final Coin coin = selectedCoins.get(0);
 
         new Thread(() -> {
+
             Looper.prepare();
 
             try {
-                WhirlpoolWallet whirlpoolWallet = new WhirlpoolWalletService().openWallet(whirlpoolWalletConfig, bip84w);
-                whirlpoolWallet.start();
+                WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet(getApplicationContext());
+
+                Log.i("NewPoolActivity", "pools:" + whirlpoolWallet.getPools().toString());
+
+                UnspentResponse.UnspentOutput unspentOutput = new UnspentResponse.UnspentOutput();
+                unspentOutput.addr = coin.getAddress();
+                unspentOutput.script = Hex.toHexString(coin.getOutpoint().getScriptBytes());
+                unspentOutput.confirmations = coin.getOutpoint().getConfirmations();
+                unspentOutput.tx_hash = coin.getOutpoint().getTxHash().toString();
+                unspentOutput.tx_output_n = coin.getOutpoint().getTxOutputN();
+                unspentOutput.value = coin.getValue();
+                unspentOutput.xpub = new UnspentResponse.UnspentOutput.Xpub();
+                unspentOutput.xpub.path = "M/0/0";
+
+                ECKey eckey = SendFactory.getPrivKey(coin.getAddress(), 0);
+                com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
+                Tx0 tx0 = whirlpoolWallet.tx0(Lists.of(unspentOutput), Lists.of(eckey.getPrivKeyBytes()), pool, Tx0FeeTarget.BLOCKS_2);
+                Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
+
+                for(Utxo utxo : tx0.getPremixUtxos())   {
+                    Log.i("NewPoolActivity", "pre-mix:" + utxo.toString());
+                }
+
             }
             catch(Exception e) {
                 e.printStackTrace();
             }
+
             Looper.loop();
 
         }).start();

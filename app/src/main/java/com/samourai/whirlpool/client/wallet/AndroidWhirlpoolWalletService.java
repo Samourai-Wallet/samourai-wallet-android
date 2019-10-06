@@ -11,6 +11,7 @@ import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
@@ -30,15 +31,15 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         return instance;
     }
 
-    public WhirlpoolWallet openWallet(Context ctx) throws Exception {
+    public WhirlpoolWallet getWhirlpoolWallet(Context ctx) throws Exception {
         // configure whirlpool
-        WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig();
+        WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx);
         HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
         return openWallet(config, bip84w);
     }
 
-    private WhirlpoolWalletConfig computeWhirlpoolWalletConfig() throws Exception {
-        IHttpClient httpClient = new AndroidHttpClient(null);
+    private WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx) throws Exception {
+        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
         IStompClientService stompClientService = new AndroidStompClientService();
         File fileIndex = File.createTempFile("whirlpool-state-", ".json"); // TODO permanent store
         File fileUtxo = File.createTempFile("whirlpool-utxos-", ".json");
@@ -58,7 +59,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
                         httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
-        whirlpoolWalletConfig.setAutoMix(false); // disable auto-mix
+        whirlpoolWalletConfig.setAutoMix(true); // disable auto-mix
 
         //whirlpoolWalletConfig.setScode("foo"); // TODO
         whirlpoolWalletConfig.setMaxClients(1);
