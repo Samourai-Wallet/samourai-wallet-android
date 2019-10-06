@@ -9,8 +9,10 @@ import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
+import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.WhirlpoolClient;
 import com.samourai.whirlpool.client.mix.MixParams;
@@ -39,12 +41,14 @@ import com.samourai.whirlpool.client.whirlpool.beans.Pool;
 import com.samourai.whirlpool.client.whirlpool.beans.Pools;
 import com.samourai.whirlpool.client.whirlpool.listener.LoggingWhirlpoolClientListener;
 import com.samourai.whirlpool.client.whirlpool.listener.WhirlpoolClientListener;
+import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
 import junit.framework.Assert;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.params.TestNet3Params;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -54,6 +58,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
+
+import java8.util.Lists;
 
 @Ignore
 public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
@@ -66,11 +72,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
 
     @Test
     public void test() throws Exception {
-        // configure wallet
-        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().openWallet(null);
-
-        // start whirlpool wallet
-        whirlpoolWallet.start();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet(null);
 
         // get state
         WhirlpoolWalletState whirlpoolWalletState = whirlpoolWallet.getState();
@@ -79,49 +81,26 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         Collection<Pool> pools = whirlpoolWallet.getPools();
 
         // find pool by poolId
-        Pool pool05btc = whirlpoolWallet.findPoolById("0.5btc");
-
-        // tx0 method 1: spending a whirlpool-managed utxo
-        {
-            // whirlpool utxo for tx0
-            String utxoHash = "6517ece36402a89d76d075c60a8d3d0e051e4e5efa42a01c9033328707631b61";
-            int utxoIndex = 2;
-            WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.findUtxo(utxoHash, utxoIndex);
-            if (whirlpoolUtxo == null) {} // utxo not found
-
-            // find eligible pools for this utxo
-            Tx0FeeTarget feeTarget = Tx0FeeTarget.BLOCKS_4;
-            Collection<Pool> eligiblePools =
-                    whirlpoolWallet.findPoolsForTx0(whirlpoolUtxo.getUtxo().value, 1, feeTarget);
-
-            // choose pool
-            whirlpoolWallet.setPool(whirlpoolUtxo, "0.01btc");
-
-            // execute tx0
-            try {
-                Tx0 tx0 = whirlpoolWallet.tx0(whirlpoolUtxo, feeTarget);
-                String txid = tx0.getTx().getHashAsString(); // get txid
-            } catch (Exception e) {
-                // tx0 failed
-            }
-        }
+        Pool pool = whirlpoolWallet.findPoolById("0.01btc");
 
         // tx0 method 2: spending an external utxo
         {
             // external utxo for tx0
-            UnspentResponse.UnspentOutput spendFrom = null; // provide utxo outpoint
+            UnspentResponse.UnspentOutput spendFrom = whirlpoolWallet.getUtxosDeposit().iterator().next().getUtxo(); // provide utxo outpoint
+
+
+            //ECKey eckey = SendFactory.getPrivKey(coin.getAddress(), 0);
+
             byte[] spendFromPrivKey = null; // provide utxo private key
-            long spendFromValue = 12345678; // provide utxo value
 
             // pool for tx0
-            Pool pool = whirlpoolWallet.findPoolById("0.01btc"); // provide poolId
             Tx0FeeTarget feeTarget = Tx0FeeTarget.BLOCKS_4;
 
             // execute tx0
             try {
                 Tx0 tx0 =
                         whirlpoolWallet.tx0(
-                                spendFrom, spendFromPrivKey, spendFromValue, pool, feeTarget);
+                                Lists.of(spendFrom), Lists.of(spendFromPrivKey), pool, feeTarget);
                 String txid = tx0.getTx().getHashAsString(); // get txid
             } catch (Exception e) {
                 // tx0 failed

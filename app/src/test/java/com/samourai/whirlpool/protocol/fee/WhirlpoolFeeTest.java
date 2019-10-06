@@ -1,5 +1,6 @@
 package com.samourai.whirlpool.protocol.fee;
 
+import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.bip47.rpc.java.SecretPointFactoryJava;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class WhirlpoolFeeTest {
   private static final WhirlpoolFee whirlpoolFee =
-      WhirlpoolFee.getInstance(SecretPointFactoryJava.getInstance());
+      WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance());
 
   @Test
   public void encodeBytes() throws Exception {

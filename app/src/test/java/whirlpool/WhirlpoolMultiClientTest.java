@@ -51,7 +51,6 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
 
         // client configuration (server...)
         config = new WhirlpoolClientConfig(whirlpoolHttpClient, stompClientService, persistHandler, SERVER, networkParameters);
-        config.setTestMode(true); // TODO skipping utxo validations
 
         // instanciate one client for fetching pools
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
