@@ -22,4 +22,9 @@ allprojects {
         google()
         mavenLocal()
     }
+
+    configurations.all {
+        // Don't cache SNAPSHOTS
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
 }
