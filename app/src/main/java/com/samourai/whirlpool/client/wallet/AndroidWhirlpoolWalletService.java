@@ -16,6 +16,7 @@ import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
+import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
 import org.bitcoinj.core.NetworkParameters;
 
@@ -32,6 +33,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     public WhirlpoolWallet getWhirlpoolWallet(Context ctx) throws Exception {
+        WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance());
         // configure whirlpool
         WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx);
         HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
