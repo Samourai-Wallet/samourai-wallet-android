@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool.newPool;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,10 +18,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.samourai.api.client.BackendServer;
+import com.samourai.api.client.SamouraiApi;
+import com.samourai.http.client.IHttpClient;
+import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.backend.BackendApi;
+import com.samourai.wallet.client.Bip84ApiWallet;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Pool;
@@ -29,7 +40,16 @@ import com.samourai.wallet.whirlpool.newPool.fragments.ChooseUTXOsFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
+import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
+import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
 
+import org.bitcoinj.core.NetworkParameters;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,7 +179,53 @@ public class NewPoolActivity extends AppCompatActivity {
     }
 
     private void processWhirlPool() {
+
         Toast.makeText(this,"Begin Pool",Toast.LENGTH_SHORT).show();
+
+        IHttpClient httpClient = new com.samourai.http.client.AndroidHttpClient(WebUtil.getInstance(NewPoolActivity.this));
+        IStompClientService stompClientService = new com.samourai.stomp.client.AndroidStompClientService();
+        WhirlpoolWalletPersistHandler persistHandler =
+                new FileWhirlpoolWalletPersistHandler(new File("wallet/whirlpool_state"), new File("wallet/whirlpool_utxos"));
+
+        WhirlpoolServer whirlpoolServer = SamouraiWallet.getInstance().isTestNet() ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
+
+        boolean onion = false;
+        String serverUrl = whirlpoolServer.getServerUrl(onion);
+        String backendUrl = BackendServer.TESTNET.getBackendUrl(onion);
+        SamouraiApi samouraiApi = new SamouraiApi(httpClient, backendUrl, null);
+
+        NetworkParameters params = whirlpoolServer.getParams();
+        WhirlpoolWalletConfig whirlpoolWalletConfig =
+                new WhirlpoolWalletConfig(
+                        httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
+
+        whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
+        whirlpoolWalletConfig.setAutoMix(false); // disable auto-mix
+
+        // configure optional settings (or don't set anything for using default values)
+//        whirlpoolWalletConfig.setScode("foo");
+        whirlpoolWalletConfig.setMaxClients(1);
+        whirlpoolWalletConfig.setClientDelay(15);
+
+        // configure wallet
+        HD_Wallet bip84w = BIP84Util.getInstance(this).getWallet(); // provide your wallet here
+
+        new Thread(() -> {
+            Looper.prepare();
+
+            try {
+                WhirlpoolWallet whirlpoolWallet = new WhirlpoolWalletService().openWallet(whirlpoolWalletConfig, bip84w);
+                whirlpoolWallet.start();
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+            Looper.loop();
+
+        }).start();
+
+        Toast.makeText(this,"Began Pool",Toast.LENGTH_SHORT).show();
+
     }
 
     private void setUpViewPager() {

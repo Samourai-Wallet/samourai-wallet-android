@@ -7,6 +7,8 @@ import com.samourai.wallet.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -54,7 +56,8 @@ public class AndroidHttpClient implements IHttpClient {
     public <T> T postUrlEncoded(String url, Class<T> responseType, Map<String, String> headers, Map<String, String> body) throws HttpException {
         log.debug("postUrlEncoded: "+url);
         try {
-            String jsonString = gson.toJson(body);
+            String jsonString = queryString(body);
+            log.debug("postUrlEncoded json string:" + jsonString);
             String responseString = webUtil.postURL(null, url, jsonString);
             //webUtil.tor_postURL(null, url, body) // TODO !!! use TOR
             return gson.fromJson(responseString, responseType);
@@ -64,4 +67,21 @@ public class AndroidHttpClient implements IHttpClient {
             throw new HttpException(e, responseBody);
         }
     }
+
+    public String queryString(final Map<String,String> parameters) throws UnsupportedEncodingException {
+
+        String url = "";
+
+        for (Map.Entry<String,String> parameter : parameters.entrySet()) {
+
+            final String encodedKey = URLEncoder.encode(parameter.getKey().toString(), "UTF-8");
+            final String encodedValue = URLEncoder.encode(parameter.getValue().toString(), "UTF-8");
+
+            url += encodedKey + "=" + encodedValue+"&";
+        }
+
+        return url;
+    }
+
+
 }
