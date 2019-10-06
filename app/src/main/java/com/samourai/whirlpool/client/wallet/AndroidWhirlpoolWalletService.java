@@ -8,6 +8,7 @@ import com.samourai.http.client.IHttpClient;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.api.backend.BackendServer;
+import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
@@ -55,7 +56,6 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
                         httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
-        whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
         whirlpoolWalletConfig.setAutoMix(false); // disable auto-mix
@@ -63,6 +63,8 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         //whirlpoolWalletConfig.setScode("foo"); // TODO
         whirlpoolWalletConfig.setMaxClients(1);
 
+        whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
+        whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
         return whirlpoolWalletConfig;
     }
 }
