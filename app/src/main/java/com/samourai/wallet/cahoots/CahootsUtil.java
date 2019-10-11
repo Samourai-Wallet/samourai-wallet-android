@@ -42,6 +42,7 @@ import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -133,7 +134,6 @@ public class CahootsUtil {
         //
         debug("CahootsUtil", "sender account (0):" + account);
         Stowaway stowaway0 = new Stowaway(spendAmount, params, account);
-        stowaway0.setStep(0);
         try {
             stowaway0.setFingerprint(HD_WalletFactory.getInstance(context).getFingerprint());
         }
@@ -156,14 +156,30 @@ public class CahootsUtil {
 
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalContributedAmount = 0L;
+        List<UTXO> highUTXO = new ArrayList<UTXO>();
         for (UTXO utxo : utxos) {
-            selectedUTXO.add(utxo);
-            totalContributedAmount += utxo.getValue();
-            debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
-            if (totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
-                break;
+            if (utxo.getValue() > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                highUTXO.add(utxo);
             }
         }
+        if(highUTXO.size() > 0)    {
+            SecureRandom random = new SecureRandom();
+            UTXO utxo = highUTXO.get(random.nextInt(highUTXO.size()));
+            debug("CahootsUtil", "BIP84 selected random utxo:" + utxo.getValue());
+            selectedUTXO.add(utxo);
+            totalContributedAmount = utxo.getValue();
+        }
+        if (selectedUTXO.size() == 0) {
+            for (UTXO utxo : utxos) {
+                selectedUTXO.add(utxo);
+                totalContributedAmount += utxo.getValue();
+                debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
+                if (totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                    break;
+                }
+            }
+        }
+
         if (!(totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
             return null;
         }
@@ -207,7 +223,6 @@ public class CahootsUtil {
 
         Stowaway stowaway1 = new Stowaway(stowaway0);
         stowaway1.inc(inputsA, outputsA, null);
-        stowaway1.setStep(1);
 
         return stowaway1;
     }
@@ -233,35 +248,126 @@ public class CahootsUtil {
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         int nbTotalSelectedOutPoints = 0;
         long totalSelectedAmount = 0L;
+        List<UTXO> lowUTXO = new ArrayList<UTXO>();
         for (UTXO utxo : utxos) {
-            selectedUTXO.add(utxo);
-            totalSelectedAmount += utxo.getValue();
-            debug("BIP84 selected utxo:", "" + utxo.getValue());
-            nbTotalSelectedOutPoints += utxo.getOutpoints().size();
-            if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+            if(utxo.getValue() < stowaway1.getSpendAmount())    {
+                lowUTXO.add(utxo);
+            }
+        }
 
-                // discard "extra" utxo, if any
-                List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
-                Collections.reverse(selectedUTXO);
-                int _nbTotalSelectedOutPoints = 0;
-                long _totalSelectedAmount = 0L;
-                for (UTXO utxoSel : selectedUTXO) {
-                    _selectedUTXO.add(utxoSel);
-                    _totalSelectedAmount += utxoSel.getValue();
-                    debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
-                    _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
-                    if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
-                        selectedUTXO.clear();
-                        selectedUTXO.addAll(_selectedUTXO);
-                        totalSelectedAmount = _totalSelectedAmount;
-                        nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
-                        break;
+        List<List<UTXO>> listOfLists = new ArrayList<List<UTXO>>();
+        Collections.shuffle(lowUTXO);
+        listOfLists.add(lowUTXO);
+        listOfLists.add(utxos);
+        for(List<UTXO> list : listOfLists)   {
+
+            selectedUTXO.clear();
+            totalSelectedAmount = 0L;
+            nbTotalSelectedOutPoints = 0;
+
+            for (UTXO utxo : list) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
                     }
-                }
 
+                    break;
+                }
+            }
+            if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
                 break;
             }
         }
+
+        /*
+        if(lowUTXO.size() > 0)    {
+            Collections.shuffle(lowUTXO);
+            for (UTXO utxo : lowUTXO) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+        }
+        if (!(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
+            selectedUTXO.clear();
+            totalSelectedAmount = 0L;
+            nbTotalSelectedOutPoints = 0;
+            for (UTXO utxo : utxos) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+        */
         if (!(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
             return null;
         }
@@ -315,7 +421,6 @@ public class CahootsUtil {
 
         Stowaway stowaway2 = new Stowaway(stowaway1);
         stowaway2.inc(inputsB, outputsB, null);
-        stowaway2.setStep(2);
         stowaway2.setFeeAmount(fee);
 
         return stowaway2;
@@ -352,7 +457,6 @@ public class CahootsUtil {
 
         Stowaway stowaway3 = new Stowaway(stowaway2);
         stowaway3.inc(null, null, keyBag_A);
-        stowaway3.setStep(3);
 
         return stowaway3;
 
@@ -399,7 +503,6 @@ public class CahootsUtil {
 
         Stowaway stowaway4 = new Stowaway(stowaway3);
         stowaway4.inc(null, null, keyBag_B);
-        stowaway4.setStep(4);
 
         return stowaway4;
 
