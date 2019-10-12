@@ -134,7 +134,6 @@ public class CahootsUtil {
         //
         debug("CahootsUtil", "sender account (0):" + account);
         Stowaway stowaway0 = new Stowaway(spendAmount, params, account);
-        stowaway0.setStep(0);
         try {
             stowaway0.setFingerprint(HD_WalletFactory.getInstance(context).getFingerprint());
         }
@@ -150,36 +149,27 @@ public class CahootsUtil {
     public Cahoots doStowaway1(Stowaway stowaway0) throws Exception {
 
         List<UTXO> utxos = getCahootsUTXO(0);
-
-        // sort in ascending order by value
+        // sort in descending order by value
         Collections.sort(utxos, new UTXO.UTXOComparator());
-        Collections.reverse(utxos);
 
         debug("CahootsUtil", "BIP84 utxos:" + utxos.size());
 
-        List<UTXO> randomUTXO = new ArrayList<UTXO>();
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalContributedAmount = 0L;
-        // if single value covers total cost, select it
+        List<UTXO> highUTXO = new ArrayList<UTXO>();
         for (UTXO utxo : utxos) {
             if (utxo.getValue() > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
-                debug("CahootsUtil", "BIP84 selected utxo:" + utxo.getValue());
-                randomUTXO.add(utxo);
+                highUTXO.add(utxo);
             }
         }
-        int size = randomUTXO.size();
-        if(size > 0)    {
+        if(highUTXO.size() > 0)    {
             SecureRandom random = new SecureRandom();
-            UTXO selected = randomUTXO.get(random.nextInt(size));
-            selectedUTXO.add(selected);
-            totalContributedAmount = selected.getValue();
+            UTXO utxo = highUTXO.get(random.nextInt(highUTXO.size()));
+            debug("CahootsUtil", "BIP84 selected random utxo:" + utxo.getValue());
+            selectedUTXO.add(utxo);
+            totalContributedAmount = utxo.getValue();
         }
-        // if smallest single cannot cover total cost, select highest
-        if (!(totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
-            // sort in descending order by value
-            Collections.sort(utxos, new UTXO.UTXOComparator());
-            selectedUTXO.clear();
-            totalContributedAmount = 0L;
+        if (selectedUTXO.size() == 0) {
             for (UTXO utxo : utxos) {
                 selectedUTXO.add(utxo);
                 totalContributedAmount += utxo.getValue();
@@ -189,6 +179,7 @@ public class CahootsUtil {
                 }
             }
         }
+
         if (!(totalContributedAmount > stowaway0.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
             return null;
         }
@@ -232,7 +223,6 @@ public class CahootsUtil {
 
         Stowaway stowaway1 = new Stowaway(stowaway0);
         stowaway1.inc(inputsA, outputsA, null);
-        stowaway1.setStep(1);
 
         return stowaway1;
     }
@@ -258,35 +248,126 @@ public class CahootsUtil {
         List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         int nbTotalSelectedOutPoints = 0;
         long totalSelectedAmount = 0L;
+        List<UTXO> lowUTXO = new ArrayList<UTXO>();
         for (UTXO utxo : utxos) {
-            selectedUTXO.add(utxo);
-            totalSelectedAmount += utxo.getValue();
-            debug("BIP84 selected utxo:", "" + utxo.getValue());
-            nbTotalSelectedOutPoints += utxo.getOutpoints().size();
-            if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+            if(utxo.getValue() < stowaway1.getSpendAmount())    {
+                lowUTXO.add(utxo);
+            }
+        }
 
-                // discard "extra" utxo, if any
-                List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
-                Collections.reverse(selectedUTXO);
-                int _nbTotalSelectedOutPoints = 0;
-                long _totalSelectedAmount = 0L;
-                for (UTXO utxoSel : selectedUTXO) {
-                    _selectedUTXO.add(utxoSel);
-                    _totalSelectedAmount += utxoSel.getValue();
-                    debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
-                    _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
-                    if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
-                        selectedUTXO.clear();
-                        selectedUTXO.addAll(_selectedUTXO);
-                        totalSelectedAmount = _totalSelectedAmount;
-                        nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
-                        break;
+        List<List<UTXO>> listOfLists = new ArrayList<List<UTXO>>();
+        Collections.shuffle(lowUTXO);
+        listOfLists.add(lowUTXO);
+        listOfLists.add(utxos);
+        for(List<UTXO> list : listOfLists)   {
+
+            selectedUTXO.clear();
+            totalSelectedAmount = 0L;
+            nbTotalSelectedOutPoints = 0;
+
+            for (UTXO utxo : list) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
                     }
-                }
 
+                    break;
+                }
+            }
+            if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
                 break;
             }
         }
+
+        /*
+        if(lowUTXO.size() > 0)    {
+            Collections.shuffle(lowUTXO);
+            for (UTXO utxo : lowUTXO) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+        }
+        if (!(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
+            selectedUTXO.clear();
+            totalSelectedAmount = 0L;
+            nbTotalSelectedOutPoints = 0;
+            for (UTXO utxo : utxos) {
+                selectedUTXO.add(utxo);
+                totalSelectedAmount += utxo.getValue();
+                debug("BIP84 selected utxo:", "" + utxo.getValue());
+                nbTotalSelectedOutPoints += utxo.getOutpoints().size();
+                if (totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+
+                    // discard "extra" utxo, if any
+                    List<UTXO> _selectedUTXO = new ArrayList<UTXO>();
+                    Collections.reverse(selectedUTXO);
+                    int _nbTotalSelectedOutPoints = 0;
+                    long _totalSelectedAmount = 0L;
+                    for (UTXO utxoSel : selectedUTXO) {
+                        _selectedUTXO.add(utxoSel);
+                        _totalSelectedAmount += utxoSel.getValue();
+                        debug("CahootsUtil", "BIP84 post selected utxo:" + utxoSel.getValue());
+                        _nbTotalSelectedOutPoints += utxoSel.getOutpoints().size();
+                        if (_totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, _nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue()) {
+                            selectedUTXO.clear();
+                            selectedUTXO.addAll(_selectedUTXO);
+                            totalSelectedAmount = _totalSelectedAmount;
+                            nbTotalSelectedOutPoints = _nbTotalSelectedOutPoints;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+        */
         if (!(totalSelectedAmount > FeeUtil.getInstance().estimatedFeeSegwit(0, 0, nbTotalSelectedOutPoints + nbIncomingInputs, 2).longValue() + stowaway1.getSpendAmount() + SamouraiWallet.bDust.longValue())) {
             return null;
         }
@@ -340,7 +421,6 @@ public class CahootsUtil {
 
         Stowaway stowaway2 = new Stowaway(stowaway1);
         stowaway2.inc(inputsB, outputsB, null);
-        stowaway2.setStep(2);
         stowaway2.setFeeAmount(fee);
 
         return stowaway2;
@@ -377,7 +457,6 @@ public class CahootsUtil {
 
         Stowaway stowaway3 = new Stowaway(stowaway2);
         stowaway3.inc(null, null, keyBag_A);
-        stowaway3.setStep(3);
 
         return stowaway3;
 
@@ -424,7 +503,6 @@ public class CahootsUtil {
 
         Stowaway stowaway4 = new Stowaway(stowaway3);
         stowaway4.inc(null, null, keyBag_B);
-        stowaway4.setStep(4);
 
         return stowaway4;
 
