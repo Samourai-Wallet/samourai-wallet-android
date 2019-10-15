@@ -773,13 +773,9 @@
     
     <string name="paste_cahoots_payload">Copier/Coller charge utile cahoots</string>
 
-    
-    
-</resources>
-
-    
-    
-    
-    
-    
+   
+    <string name="clipboard_empty">Presse-papiers vide</string>
+   
+   
+              
 </resources>
