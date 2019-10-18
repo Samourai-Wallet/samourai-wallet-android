@@ -25,7 +25,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(WhirlpoolWalletTest.class.getSimpleName());
     private WhirlpoolWallet whirlpoolWallet;
 
-    private static final String SEED_WORDS = "ancient script resist own media cotton edit december waste supply humor plunge";//"all all all all all all all all all all all all";
+    private static final String SEED_WORDS = "all all all all all all all all all all all all";
     private static final String SEED_PASSPHRASE = "test";
 
     @Before
