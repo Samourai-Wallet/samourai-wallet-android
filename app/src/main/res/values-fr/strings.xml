@@ -576,7 +576,7 @@
       
     <string name="encrypted_backup_detected">Sauvegarde chiffrée détectée</string>
     <string name="restore">RESTAURER</string>
-    <string name="request_amount">Demande Montant</string>
+    <string name="request_amount">Montant requis</string>
     <string name="address_type">Type d\'Adresse</string>
     <string name="path">Chemin d\'accès</string>  
   
