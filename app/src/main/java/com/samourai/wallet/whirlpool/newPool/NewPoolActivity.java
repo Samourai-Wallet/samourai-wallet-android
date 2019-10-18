@@ -201,7 +201,8 @@ public class NewPoolActivity extends AppCompatActivity {
 
             try {
                 WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet(getApplicationContext());
-
+                whirlpoolWallet.start();
+                
                 Log.i("NewPoolActivity", "pools:" + whirlpoolWallet.getPools().toString());
 
                 UnspentResponse.UnspentOutput unspentOutput = new UnspentResponse.UnspentOutput();

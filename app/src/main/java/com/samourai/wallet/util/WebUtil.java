@@ -2,16 +2,13 @@ package com.samourai.wallet.util;
 
 import android.content.Context;
 import android.util.Log;
-//import android.util.Log;
 
-import com.google.gson.Gson;
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.tor.TorManager;
 
 import org.apache.commons.io.IOUtils;
-import org.bitcoinj.wallet.Wallet;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -24,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -43,6 +41,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+//import android.util.Log;
 
 public class WebUtil {
 
@@ -86,21 +86,25 @@ public class WebUtil {
     }
 
     public String postURL(String request, String urlParameters) throws Exception {
+        return postURL(request, urlParameters, (Map<String,String>)null);
+    }
+
+    public String postURL(String request, String urlParameters, Map<String, String> headers) throws Exception {
 
         if (context == null) {
-            return postURL(null, request, urlParameters);
+            return postURL(null, request, urlParameters, headers);
         } else {
             Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
             if (TorManager.getInstance(context).isRequired()) {
                 if (urlParameters.startsWith("tx=")) {
                     HashMap<String, String> args = new HashMap<String, String>();
                     args.put("tx", urlParameters.substring(3));
-                    return tor_postURL(request, args);
+                    return tor_postURL(request, args, headers);
                 } else {
-                    return tor_postURL(request + urlParameters, new HashMap());
+                    return tor_postURL(request + urlParameters, new HashMap(), headers);
                 }
             } else {
-                return postURL(null, request, urlParameters);
+                return postURL(null, request, urlParameters, headers);
             }
 
         }
@@ -108,6 +112,20 @@ public class WebUtil {
     }
 
     public String postURL(String contentType, String request, String urlParameters) throws Exception {
+        return postURL(contentType, request, urlParameters, null);
+    }
+
+    public String postURL(String contentType, String request, String urlParameters, Map<String, String> headers) throws Exception {
+        // default headers
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        if (!headers.containsKey("charset")) {
+            headers.put("charset", "utf-8");
+        }
+        if (!headers.containsKey("User-Agent")) {
+            headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+        }
 
         String error = null;
 
@@ -120,10 +138,13 @@ public class WebUtil {
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", contentType == null ? "application/x-www-form-urlencoded" : contentType);
-                connection.setRequestProperty("charset", "utf-8");
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+                // set headers
+                for (Map.Entry<String,String> e : headers.entrySet()) {
+                    connection.setRequestProperty(e.getKey(), e.getValue());
+                }
 
                 connection.setUseCaches(false);
 
@@ -206,24 +227,37 @@ public class WebUtil {
     }
 
     public String getURL(String URL) throws Exception {
+        return getURL(null);
+    }
+
+    public String getURL(String URL, Map<String,String> headers) throws Exception {
+        // default headers
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        if (!headers.containsKey("charset")) {
+            headers.put("charset", "utf-8");
+        }
+        if (!headers.containsKey("User-Agent")) {
+            headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+        }
 
         if (context == null) {
-            return _getURL(URL);
+            return _getURL(URL, headers);
         } else {
             //if(TorUtil.getInstance(context).orbotIsRunning())    {
             Log.i("WebUtil", "Tor required status:" + TorManager.getInstance(context).isRequired());
             if (TorManager.getInstance(context).isRequired()) {
-                return tor_getURL(URL);
+                return tor_getURL(URL, headers);
             } else {
-                return _getURL(URL);
+                return _getURL(URL, headers);
             }
 
         }
 
     }
 
-    private String _getURL(String URL) throws Exception {
-
+    private String _getURL(String URL, Map<String,String> headers) throws Exception {
         URL url = new URL(URL);
 
         String error = null;
@@ -234,8 +268,11 @@ public class WebUtil {
 
             try {
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("charset", "utf-8");
-                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36");
+
+                // set headers
+                for (Map.Entry<String,String> e : headers.entrySet()) {
+                    connection.setRequestProperty(e.getKey(), e.getValue());
+                }
 
                 connection.setConnectTimeout(DefaultRequestTimeout);
                 connection.setReadTimeout(DefaultRequestTimeout);
@@ -258,7 +295,7 @@ public class WebUtil {
         return error;
     }
 
-    private String tor_getURL(String URL) throws Exception {
+    private String tor_getURL(String URL, Map<String,String> headers) throws Exception {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .proxy(TorManager.getInstance(this.context).getProxy())
@@ -272,10 +309,17 @@ public class WebUtil {
             getHostNameVerifier(builder);
         }
 
-        Request request = new Request.Builder()
-                .url(URL)
-                .build();
+        Request.Builder rb = new Request.Builder().url(URL);
 
+        // set headers
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        for (Map.Entry<String,String> e : headers.entrySet()) {
+            rb = rb.header(e.getKey(), e.getValue());
+        }
+
+        Request request = rb.build();
         try (Response response = builder.build().newCall(request).execute()) {
             if(response.body() == null){
                 return  "";
@@ -287,7 +331,10 @@ public class WebUtil {
     }
 
     public String tor_postURL(String URL, HashMap<String, String> args) throws Exception {
+        return tor_postURL(URL, args, null);
+    }
 
+    public String tor_postURL(String URL, HashMap<String, String> args, Map<String,String> headers) throws Exception {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
         if (args != null && args.size()!=0) {
@@ -311,8 +358,17 @@ public class WebUtil {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
 
-        Request request = new Request.Builder()
-                .url(URL)
+        Request.Builder rb = new Request.Builder().url(URL);
+
+        // set headers
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        for (Map.Entry<String,String> e : headers.entrySet()) {
+            rb = rb.header(e.getKey(), e.getValue());
+        }
+
+        Request request = rb
                 .post(formBodyBuilder.build())
                 .build();
 

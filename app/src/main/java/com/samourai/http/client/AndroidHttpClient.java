@@ -28,11 +28,11 @@ public class AndroidHttpClient implements IHttpClient {
     public <T> T getJson(String url, Class<T> entityClass, Map<String, String> headers) throws HttpException {
         log.debug("getJson: "+url);
         try {
-            String responseString = webUtil.getURL(url); // TODO !!! headers
+            String responseString = webUtil.getURL(url, headers);
             return gson.fromJson(responseString, entityClass);
         }
         catch(Exception e) {
-            String responseBody = null; // TODO get server response
+            String responseBody = e.getMessage();
             throw new HttpException(e, responseBody);
         }
     }
@@ -42,9 +42,12 @@ public class AndroidHttpClient implements IHttpClient {
         log.debug("postJsonOverTor: "+url);
         try {
             String jsonString = gson.toJson(body);
-            //webUtil.tor_postURL("application/json", url, body) // TODO !!! use TOR
-            String responseString = webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString);
-            return gson.fromJson(responseString, responseType);
+            String responseString = webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString, headers);
+            T response = null;
+            if (responseType != null) {
+                response = gson.fromJson(responseString, responseType);
+            }
+            return response;
         }
         catch(Exception e) {
             String responseBody = e.getMessage();
@@ -58,9 +61,12 @@ public class AndroidHttpClient implements IHttpClient {
         try {
             String jsonString = queryString(body);
             log.debug("postUrlEncoded json string:" + jsonString);
-            String responseString = webUtil.postURL(null, url, jsonString);
-            //webUtil.tor_postURL(null, url, body) // TODO !!! use TOR
-            return gson.fromJson(responseString, responseType);
+            String responseString = webUtil.postURL(null, url, jsonString, headers);
+            T response = null;
+            if (responseType != null) {
+                response = gson.fromJson(responseString, responseType);
+            }
+            return response;
         }
         catch(Exception e) {
             String responseBody = e.getMessage();
@@ -69,17 +75,12 @@ public class AndroidHttpClient implements IHttpClient {
     }
 
     public String queryString(final Map<String,String> parameters) throws UnsupportedEncodingException {
-
         String url = "";
-
         for (Map.Entry<String,String> parameter : parameters.entrySet()) {
-
-            final String encodedKey = URLEncoder.encode(parameter.getKey().toString(), "UTF-8");
-            final String encodedValue = URLEncoder.encode(parameter.getValue().toString(), "UTF-8");
-
+            final String encodedKey = URLEncoder.encode(parameter.getKey(), "UTF-8");
+            final String encodedValue = URLEncoder.encode(parameter.getValue(), "UTF-8");
             url += encodedKey + "=" + encodedValue+"&";
         }
-
         return url;
     }
 
