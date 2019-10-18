@@ -18,12 +18,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import ua.naiksoftware.stomp.LifecycleEvent;
 import ua.naiksoftware.stomp.Stomp;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompCommand;
-import ua.naiksoftware.stomp.client.StompMessage;
+import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.LifecycleEvent;
+import ua.naiksoftware.stomp.dto.StompCommand;
+import ua.naiksoftware.stomp.dto.StompHeader;
+import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class AndroidStompClient implements IStompClient {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
@@ -35,7 +35,7 @@ public class AndroidStompClient implements IStompClient {
     }
 
     @Override
-    public void connect(String url, Map<String, String> stompHeaders, final MessageErrorListener<IStompMessage, Throwable> onConnectOnDisconnectListener) {
+    public void connect(String url, Map<String, String> stompHeaders, final MessageErrorListener<Void, Throwable> onConnectOnDisconnectListener) {
         try {
             url += "/websocket"; // SockJS
             log.debug("connecting to " + url);
@@ -54,7 +54,6 @@ public class AndroidStompClient implements IStompClient {
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
                                 log.debug("STOMP connected");
-                                // send back headers: no way to get connected headers on Android?
                                 onConnectOnDisconnectListener.onMessage(null);
                                 break;
                             case ERROR:
@@ -77,11 +76,6 @@ public class AndroidStompClient implements IStompClient {
     }
 
     @Override
-    public String getSessionId() {
-        return null; // TODO !!!
-    }
-
-    @Override
     public void subscribe(Map<String, String> stompHeaders, final MessageErrorListener<IStompMessage, String> onMessageOnErrorListener) {
         try {
             String destination = getDestination(stompHeaders);
@@ -92,7 +86,7 @@ public class AndroidStompClient implements IStompClient {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<StompMessage>() {
                         @Override
-                        public void accept(StompMessage stompMessage) throws Exception {
+                        public void accept(StompMessage stompMessage) {
                             try {
                                 String messageType = stompMessage.findHeader(WhirlpoolProtocol.HEADER_MESSAGE_TYPE);
                                 String jsonPayload = stompMessage.getPayload();
