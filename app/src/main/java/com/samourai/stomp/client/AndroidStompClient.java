@@ -121,11 +121,12 @@ public class AndroidStompClient implements IStompClient {
                     .subscribe(new Action() {
                         @Override
                         public void run() throws Exception {
-                            log.debug("send: success");
+                            // sending success
                         }
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
+                            // sending error
                             log.debug("send: error", throwable);
                         }
                     });

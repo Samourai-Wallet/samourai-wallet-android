@@ -43,7 +43,11 @@ public class AndroidHttpClient implements IHttpClient {
         try {
             String jsonString = gson.toJson(body);
             String responseString = webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString, headers);
-            return gson.fromJson(responseString, responseType);
+            T response = null;
+            if (responseType != null) {
+                response = gson.fromJson(responseString, responseType);
+            }
+            return response;
         }
         catch(Exception e) {
             String responseBody = e.getMessage();
@@ -58,7 +62,11 @@ public class AndroidHttpClient implements IHttpClient {
             String jsonString = queryString(body);
             log.debug("postUrlEncoded json string:" + jsonString);
             String responseString = webUtil.postURL(null, url, jsonString, headers);
-            return gson.fromJson(responseString, responseType);
+            T response = null;
+            if (responseType != null) {
+                response = gson.fromJson(responseString, responseType);
+            }
+            return response;
         }
         catch(Exception e) {
             String responseBody = e.getMessage();

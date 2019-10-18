@@ -19,51 +19,73 @@ import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandle
 import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
 import org.bitcoinj.core.NetworkParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
+    private static final Logger LOG = LoggerFactory.getLogger(AndroidWhirlpoolWalletService.class);
+
     private static AndroidWhirlpoolWalletService instance;
+    private WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
 
     public static AndroidWhirlpoolWalletService getInstance() {
         if (instance == null) {
-            return new AndroidWhirlpoolWalletService();
+            instance = new AndroidWhirlpoolWalletService();
         }
         return instance;
     }
 
+    protected AndroidWhirlpoolWalletService() {
+        super();
+        WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance()); // fix for Android
+    }
+
     public WhirlpoolWallet getWhirlpoolWallet(Context ctx) throws Exception {
-        WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance());
-        // configure whirlpool
-        WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx);
+        // configure whirlpool for wallet
         HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
+        String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
+        WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
         return openWallet(config, bip84w);
     }
 
-    private WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx) throws Exception {
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
+        // TODO user preferences
+        boolean testnet = true;
+        boolean onion = false;
+        int mixsTarget = 5;
+        String scode = null;
+
+        // TODO dojo backend support
+        String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
+        String backendApiKey = null;
+
+        return computeWhirlpoolWalletConfig(ctx, walletIdentifier, testnet, onion, backendUrl, backendApiKey, mixsTarget, scode);
+    }
+
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier, boolean testnet, boolean onion, String backendUrl, String backendApiKey, int mixsTarget, String scode) throws Exception {
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
         IStompClientService stompClientService = new AndroidStompClientService();
-        File fileIndex = File.createTempFile("whirlpool-state-", ".json"); // TODO permanent store
-        File fileUtxo = File.createTempFile("whirlpool-utxos-", ".json");
+        SamouraiApi samouraiApi = new SamouraiApi(httpClient, backendUrl, backendApiKey);
+
+        File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
+        File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
         WhirlpoolWalletPersistHandler persistHandler =
                 new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
 
-        WhirlpoolServer whirlpoolServer = WhirlpoolServer.TESTNET; // TODO
-
-        boolean onion = false; // TODO
+        WhirlpoolServer whirlpoolServer = testnet ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
         String serverUrl = whirlpoolServer.getServerUrl(onion);
-        String backendUrl = BackendServer.TESTNET.getBackendUrl(onion);
-        SamouraiApi samouraiApi = new SamouraiApi(httpClient, backendUrl, null);
-
         NetworkParameters params = whirlpoolServer.getParams();
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
                         httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
-        whirlpoolWalletConfig.setAutoMix(true); // disable auto-mix
+        whirlpoolWalletConfig.setAutoMix(true); // enable auto-mix
 
-        //whirlpoolWalletConfig.setScode("foo"); // TODO
+        whirlpoolWalletConfig.setMixsTarget(mixsTarget);
+        whirlpoolWalletConfig.setScode(scode);
         whirlpoolWalletConfig.setMaxClients(1);
 
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
