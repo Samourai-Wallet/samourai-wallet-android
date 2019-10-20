@@ -227,7 +227,7 @@ public class WebUtil {
     }
 
     public String getURL(String URL) throws Exception {
-        return getURL(null);
+        return getURL(URL, null);
     }
 
     public String getURL(String URL, Map<String,String> headers) throws Exception {
