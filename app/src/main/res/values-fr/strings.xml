@@ -178,8 +178,8 @@
 
     <string name="you_must_have_orbot">Vous devez installer et activer Orbot comme proxy pour votre trafic internet. Voulez-vous le télécharger à partir de Google Play ?</string>
 
-    <string name="ssl_pinning_invalid">Erreur épinglage certificat SSL. Cela pourrait être le signe d\'une activité malveillante. Veuillez vérifier vote connexion internet ainsi que vote appareil avant de poursuivre.</string>
-    <string name="ssl_no_connection">Échec connexion. Certificat de sécurité impossible à vérifier. Veuillez vérifier vote connexion internet ainsi que vote appareil avant de poursuivre.</string>
+    <string name="ssl_pinning_invalid">Erreur épinglage certificat SSL. Cela pourrait être le signe d\'une activité malveillante. Veuillez vérifier votre connexion internet ainsi que vote appareil avant de poursuivre.</string>
+    <string name="ssl_no_connection">Échec connexion. Certificat de sécurité impossible à vérifier. Veuillez vérifier votre connexion internet ainsi que vote appareil avant de poursuivre.</string>
     <string name="retry">Réessayer</string>
     <string name="exit">Quitter</string>
 
@@ -690,7 +690,7 @@
     <string name="preorder">pré-commande</string>
     
     <string name="is_offline">Samourai est hors-ligne</string>
-    <string name="history_will_be_updated">Solde et Historique des transactions ne seront mis à jour qu\'une fois établie une connection de données active</string>
+    <string name="history_will_be_updated">Solde et Historique des transactions ne seront mis à jour qu\'une fois établie une connexion de données active</string>
     
     <string name="options_whirlpool_gui">Appairer avec Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Appairer avec Whirlpool GUI pour un mixage en continu.</string>
