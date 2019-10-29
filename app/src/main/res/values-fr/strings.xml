@@ -174,12 +174,12 @@
     <string name="securely_wiping_wait">Suppression du portefeuille en toute sécurité. Veuillez patienter.</string>
 
     <string name="options_scramble_pin">Affichage aléatoire touches code PIN</string>
-    <string name="options_scramble_pin2">Utilisez l\'affichage aléatoire de vote clavier numérique pour accéder à votre portefeuille. </string>
+    <string name="options_scramble_pin2">Utilisez l\'affichage aléatoire de votre clavier numérique pour accéder à votre portefeuille. </string>
 
     <string name="you_must_have_orbot">Vous devez installer et activer Orbot comme proxy pour votre trafic internet. Voulez-vous le télécharger à partir de Google Play ?</string>
 
-    <string name="ssl_pinning_invalid">Erreur épinglage certificat SSL. Cela pourrait être le signe d\'une activité malveillante. Veuillez vérifier votre connexion internet ainsi que vote appareil avant de poursuivre.</string>
-    <string name="ssl_no_connection">Échec connexion. Certificat de sécurité impossible à vérifier. Veuillez vérifier votre connexion internet ainsi que vote appareil avant de poursuivre.</string>
+    <string name="ssl_pinning_invalid">Erreur épinglage certificat SSL. Cela pourrait être le signe d\'une activité malveillante. Veuillez vérifier votre connexion internet ainsi que votre appareil avant de poursuivre.</string>
+    <string name="ssl_no_connection">Échec connexion. Certificat de sécurité impossible à vérifier. Veuillez vérifier votre connexion internet ainsi que votre appareil avant de poursuivre.</string>
     <string name="retry">Réessayer</string>
     <string name="exit">Quitter</string>
 
@@ -245,7 +245,7 @@
     <string name="bip47_status_pending">En cours - 0/1 Confirmations</string>
     <string name="bip47_status_active">Prêt à l\'envoi</string>
     <string name="bip47_status_incoming">Prêt pour recevoir</string>
-    <string name="bip47_cannot_scan_own_pcode">Impossible de scanner vote code de paiement</string>
+    <string name="bip47_cannot_scan_own_pcode">Impossible de scanner votre code de paiement</string>
     <string name="bip47_spend_to_pcode">Emprunter ce canal de paiement ?</string>
     <string name="bip47_sign">Signer le message</string>
     <string name="bip47_sign_text1">Signer le message avec la clé privée de l\'adresse de notification BIP47 ?</string>
@@ -355,7 +355,7 @@
     <string name="recovery_checkup_message">La phrase de récupération et la passphrase de votre portefeuille vont être affichées à l\'écran. Protégez-vous des regards indiscrets. Ces informations NE seront PLUS jamais affichées.</string>
     <string name="mnemonic">Phrase de récupération à 12 mots</string>
     <string name="recovery_checkup_finish">J\'AI SÉCURISÉ MES INFORMATIONS RÉCUPÉRÉES</string>
-    <string name="pin_reminder">Pour rappel, vote code PIN est:</string>
+    <string name="pin_reminder">Pour rappel, votre code PIN est:</string>
 
     <string name="opendime_confirmed_balance">Solde confirmé</string>
     <string name="opendime_privkey">Clé privée</string>
