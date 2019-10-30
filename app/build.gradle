@@ -129,7 +129,9 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation 'com.github.Samourai-Wallet:boltzmann-java:develop-SNAPSHOT'
+    implementation ('com.github.Samourai-Wallet:boltzmann-java:develop-SNAPSHOT') {
+        exclude group: 'it.unimi.dsi:fastutil', module: 'fastutil'
+    }
     // temporary fix for building boltzmann-java dependency
     implementation 'it.unimi.dsi:fastutil:7.2.1'
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
