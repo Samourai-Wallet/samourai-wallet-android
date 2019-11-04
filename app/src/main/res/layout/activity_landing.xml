@@ -16,18 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/menu_button"
-        android:layout_width="24dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="12dp"
-        android:background="@null"
-        android:onClick="showPopup"
-        android:src="@drawable/ic_more_vert_white_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/snackbar_landing"
-        app:layout_constraintStart_toStartOf="@+id/imageView10"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/imageView10"
         android:layout_width="0dp"
@@ -54,7 +42,7 @@
         android:textAlignment="center"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/menu_button"
+        app:layout_constraintStart_toStartOf="@+id/imageView10"
         app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
     <TextView
@@ -86,7 +74,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/menu_button" />
+        app:layout_constraintTop_toTopOf="@+id/imageView10" />
 
 
     <FrameLayout
