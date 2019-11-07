@@ -19,22 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.samourai.wallet.api.backend.BackendServer;
-import com.samourai.api.client.SamouraiApi;
-import com.samourai.http.client.IHttpClient;
-import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.R;
-import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.api.backend.BackendApi;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
-import com.samourai.wallet.client.Bip84ApiWallet;
-import com.samourai.wallet.hd.HD_Wallet;
-import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
-import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Coin;
 import com.samourai.wallet.whirlpool.models.Pool;
@@ -44,22 +32,17 @@ import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.widgets.ViewPager;
 import com.samourai.whirlpool.client.tx0.Tx0;
+import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
-import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
-import com.samourai.whirlpool.client.wallet.WhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
-import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
-import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
-import com.samourai.whirlpool.protocol.beans.Utxo;
 
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.TransactionOutput;
 import org.bouncycastle.util.encoders.Hex;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import java8.util.Lists;
@@ -216,12 +199,19 @@ public class NewPoolActivity extends AppCompatActivity {
                 unspentOutput.xpub.path = "M/0/0";
 
                 ECKey eckey = SendFactory.getPrivKey(coin.getAddress(), 0);
+                UnspentOutputWithKey spendFrom = new UnspentOutputWithKey(unspentOutput, eckey.getPrivKeyBytes());
+                Collection<UnspentOutputWithKey> spendFroms = Lists.of(spendFrom);
+
                 com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
-                Tx0 tx0 = whirlpoolWallet.tx0(Lists.of(unspentOutput), Lists.of(eckey.getPrivKeyBytes()), pool, Tx0FeeTarget.BLOCKS_2);
+
+                Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, Tx0FeeTarget.BLOCKS_2);
                 Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
 
-                for(Utxo utxo : tx0.getPremixUtxos())   {
-                    Log.i("NewPoolActivity", "pre-mix:" + utxo.toString());
+                for(TransactionOutput premixOutput : tx0.getPremixOutputs())   {
+                    Log.i("NewPoolActivity", "pre-mix:" + premixOutput.toString());
+                }
+                if (tx0.getChangeOutput() != null) {
+                    Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
                 }
 
             }

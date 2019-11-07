@@ -2,11 +2,11 @@ package com.samourai.whirlpool.client.wallet;
 
 import android.content.Context;
 
-import com.samourai.api.client.SamouraiApi;
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.http.client.IHttpClient;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.stomp.client.IStompClientService;
+import com.samourai.wallet.api.backend.BackendApi;
 import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
@@ -67,7 +67,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier, boolean testnet, boolean onion, String backendUrl, String backendApiKey, int mixsTarget, String scode) throws Exception {
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
         IStompClientService stompClientService = new AndroidStompClientService();
-        SamouraiApi samouraiApi = new SamouraiApi(httpClient, backendUrl, backendApiKey);
+        BackendApi backendApi = new BackendApi(httpClient, backendUrl, backendApiKey);
 
         File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
         File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
@@ -79,7 +79,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         NetworkParameters params = whirlpoolServer.getParams();
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
-                        httpClient, stompClientService, persistHandler, serverUrl, params, samouraiApi);
+                        httpClient, stompClientService, persistHandler, serverUrl, params, backendApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
         whirlpoolWalletConfig.setAutoMix(true); // enable auto-mix
