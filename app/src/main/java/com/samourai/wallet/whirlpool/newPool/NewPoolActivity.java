@@ -190,7 +190,6 @@ public class NewPoolActivity extends AppCompatActivity {
                     .getEvents()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(s -> {
-                        LogUtil.info(TAG, "processWhirlPool: s");
                         if (s.equals("CONNECTED")) {
                             Disposable tx0Dispo = beginTx0(coin)
                                     .subscribeOn(Schedulers.io())

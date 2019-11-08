@@ -111,15 +111,13 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
             //TODO: get status from whirlpool server and set event appropriately
             // for current workaround we assume that above start method successfully connected to whirlpool server
-
-//            this.
-
             LogUtil.info(TAG, "startService: Success");
             events.onNext("CONNECTED");
             return true;
         });
     }
 
+    //get the current instance of the wallet
     public WhirlpoolWallet getWallet() {
         return wallet;
     }
