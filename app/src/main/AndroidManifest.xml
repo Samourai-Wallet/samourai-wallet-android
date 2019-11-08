@@ -304,6 +304,10 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <service
+            android:name="com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
@@ -24,11 +25,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidWhirlpoolWalletService.class);
+    private Subject<String> events = PublishSubject.create();
 
+    private static final String TAG = "AndroidWhirlpoolWalletS";
     private static AndroidWhirlpoolWalletService instance;
     private WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
+    private WhirlpoolWallet wallet;
 
     public static AndroidWhirlpoolWalletService getInstance() {
         if (instance == null) {
@@ -91,5 +101,30 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
         whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
         return whirlpoolWalletConfig;
+    }
+
+
+    public Completable startService(Context context) {
+        return Completable.fromCallable(() -> {
+            this.wallet = this.getWhirlpoolWallet(context);
+            this.wallet.start();
+
+            //TODO: get status from whirlpool server and set event appropriately
+            // for current workaround we assume that above start method successfully connected to whirlpool server
+
+//            this.
+
+            LogUtil.info(TAG, "startService: Success");
+            events.onNext("CONNECTED");
+            return true;
+        });
+    }
+
+    public WhirlpoolWallet getWallet() {
+        return wallet;
+    }
+
+    public Observable<String> getEvents() {
+        return events.subscribeOn(Schedulers.io());
     }
 }
