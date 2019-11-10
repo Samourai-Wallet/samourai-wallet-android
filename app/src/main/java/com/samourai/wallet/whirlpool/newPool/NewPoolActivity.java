@@ -257,6 +257,7 @@ public class NewPoolActivity extends AppCompatActivity {
             }
             if (tx0.getChangeOutput() != null) {
                 Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
+                Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
             }
             return true;
         });
