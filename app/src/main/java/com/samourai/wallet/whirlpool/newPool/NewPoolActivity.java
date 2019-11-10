@@ -206,8 +206,18 @@ public class NewPoolActivity extends AppCompatActivity {
 
                     });
 
-            WhirlpoolNotificationService.StartService(getApplicationContext());
+            if(AndroidWhirlpoolWalletService.getInstance().getWallet() ==null || !AndroidWhirlpoolWalletService.getInstance().getWallet().isStarted()){
+                WhirlpoolNotificationService.StartService(getApplicationContext());
+            }else {
+                Disposable tx0Dispo = beginTx0(coin)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            Toast.makeText(this, "Began Pool", Toast.LENGTH_SHORT).show();
+                        }, error -> Log.e(TAG, "processWhirlPool: Tx0Error  ".concat(error.getMessage())));
 
+                disposables.add(tx0Dispo);
+            }
 
             disposables.add(disposable);
 
