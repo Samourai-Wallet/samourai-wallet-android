@@ -181,9 +181,6 @@ public class NewPoolActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Begin Pool", Toast.LENGTH_SHORT).show();
 
-        final Coin coin = selectedCoins.get(0);
-
-
         try {
 
             Disposable disposable = AndroidWhirlpoolWalletService.getInstance()
@@ -191,7 +188,7 @@ public class NewPoolActivity extends AppCompatActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(s -> {
                         if (s.equals("CONNECTED")) {
-                            Disposable tx0Dispo = beginTx0(coin)
+                            Disposable tx0Dispo = beginTx0(selectedCoins)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
@@ -209,7 +206,7 @@ public class NewPoolActivity extends AppCompatActivity {
             if(AndroidWhirlpoolWalletService.getInstance().getWallet() ==null || !AndroidWhirlpoolWalletService.getInstance().getWallet().isStarted()){
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             }else {
-                Disposable tx0Dispo = beginTx0(coin)
+                Disposable tx0Dispo = beginTx0(selectedCoins)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
@@ -228,24 +225,27 @@ public class NewPoolActivity extends AppCompatActivity {
 
     }
 
-    private Completable beginTx0(Coin coin) {
+    private Completable beginTx0(List<Coin> coins) {
         return Completable.fromCallable(() -> {
 
             WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+            Collection<UnspentOutputWithKey> spendFroms = new ArrayList<UnspentOutputWithKey>();
 
-            UnspentResponse.UnspentOutput unspentOutput = new UnspentResponse.UnspentOutput();
-            unspentOutput.addr = coin.getAddress();
-            unspentOutput.script = Hex.toHexString(coin.getOutpoint().getScriptBytes());
-            unspentOutput.confirmations = coin.getOutpoint().getConfirmations();
-            unspentOutput.tx_hash = coin.getOutpoint().getTxHash().toString();
-            unspentOutput.tx_output_n = coin.getOutpoint().getTxOutputN();
-            unspentOutput.value = coin.getValue();
-            unspentOutput.xpub = new UnspentResponse.UnspentOutput.Xpub();
-            unspentOutput.xpub.path = "M/0/0";
+            for(Coin coin : coins)  {
+                UnspentResponse.UnspentOutput unspentOutput = new UnspentResponse.UnspentOutput();
+                unspentOutput.addr = coin.getAddress();
+                unspentOutput.script = Hex.toHexString(coin.getOutpoint().getScriptBytes());
+                unspentOutput.confirmations = coin.getOutpoint().getConfirmations();
+                unspentOutput.tx_hash = coin.getOutpoint().getTxHash().toString();
+                unspentOutput.tx_output_n = coin.getOutpoint().getTxOutputN();
+                unspentOutput.value = coin.getValue();
+                unspentOutput.xpub = new UnspentResponse.UnspentOutput.Xpub();
+                unspentOutput.xpub.path = "M/0/0";
 
-            ECKey eckey = SendFactory.getPrivKey(coin.getAddress(), 0);
-            UnspentOutputWithKey spendFrom = new UnspentOutputWithKey(unspentOutput, eckey.getPrivKeyBytes());
-            Collection<UnspentOutputWithKey> spendFroms = Lists.of(spendFrom);
+                ECKey eckey = SendFactory.getPrivKey(coin.getAddress(), 0);
+                UnspentOutputWithKey spendFrom = new UnspentOutputWithKey(unspentOutput, eckey.getPrivKeyBytes());
+                spendFroms.add(spendFrom);
+            }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
 
