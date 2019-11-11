@@ -5,7 +5,10 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32UtilGeneric;
+import com.samourai.wallet.send.MyTransactionInput;
+import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.util.FeeUtil;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
 import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
@@ -16,12 +19,15 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.core.TransactionWitness;
+import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +71,23 @@ public class AndroidTx0Service extends Tx0Service {
         // TODO handle non-segwit inputs
         ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
         TransactionOutPoint depositSpendFrom = input.computeOutpoint(params);
-        final Script segwitPubkeyScript = ScriptBuilder.createP2WPKHOutputScript(spendFromKey);
-        tx.addSignedInput(depositSpendFrom, segwitPubkeyScript, spendFromKey);
+//        final Script segwitPubkeyScript = ScriptBuilder.createP2WPKHOutputScript(spendFromKey);
+
+        SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
+        MyTransactionOutPoint _outpoint = new MyTransactionOutPoint(depositSpendFrom.getHash(), (int)depositSpendFrom.getIndex(), BigInteger.valueOf(depositSpendFrom.getValue().longValue()), segwitAddress.segWitRedeemScript().getProgram(), segwitAddress.getBech32AsString());
+        MyTransactionInput _input = new MyTransactionInput(params, null, new byte[0], _outpoint, depositSpendFrom.getHash().toString(), (int)depositSpendFrom.getIndex());
+
+        tx.addInput(_input);
+        int idx = tx.getInputs().size() - 1;
+
+        final Script redeemScript = segwitAddress.segWitRedeemScript();
+        final Script scriptCode = redeemScript.scriptCode();
+
+        TransactionSignature sig = tx.calculateWitnessSignature(idx, spendFromKey, scriptCode, depositSpendFrom.getValue(), Transaction.SigHash.ALL, false);
+        final TransactionWitness witness = new TransactionWitness(2);
+        witness.setPush(0, sig.encodeToBitcoin());
+        witness.setPush(1, spendFromKey.getPubKey());
+        tx.setWitness(idx, witness);
+
     }
 }
