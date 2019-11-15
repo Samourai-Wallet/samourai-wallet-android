@@ -1,4 +1,4 @@
-package whirlpool;
+package com.samourai.whirlpool.client.wallet;
 
 import android.content.Context;
 import android.test.mock.MockContext;
