@@ -61,7 +61,7 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
         // instanciate client
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
     }
-
+/*
     @Test
     public void testFetchPools() {
         try {
@@ -136,6 +136,6 @@ public class WhirlpoolClientTest extends AbstractWhirlpoolTest {
             Thread.sleep(1000);
         }
         while(success.get() == null);
-    }
+    }*/
 
 }

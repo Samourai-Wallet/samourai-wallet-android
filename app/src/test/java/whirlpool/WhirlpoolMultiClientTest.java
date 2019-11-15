@@ -55,7 +55,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         // instanciate one client for fetching pools
         this.whirlpoolClient = WhirlpoolClientImpl.newClient(config);
     }
-
+/*
     @Test
     public void testMultiMix() throws Exception {
         // instanciate multiClientManager
@@ -114,7 +114,7 @@ public class WhirlpoolMultiClientTest extends AbstractWhirlpoolTest {
         // wait for all clients success
         multiClientManager.waitDone();
     }
-
+*/
     @After
     public void tearDown() {
         if (multiClientManager != null) {
