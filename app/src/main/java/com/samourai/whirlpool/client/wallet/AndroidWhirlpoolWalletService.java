@@ -98,4 +98,9 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
         return whirlpoolWalletConfig;
     }
+
+    @Override
+    protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config) {
+        return new AndroidWhirlpoolDataService(config, this);
+    }
 }
