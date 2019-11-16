@@ -30,6 +30,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import java8.util.Optional;
 
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidWhirlpoolWalletService.class);
@@ -53,11 +54,15 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     public WhirlpoolWallet getWhirlpoolWallet(Context ctx) throws Exception {
-        // configure whirlpool for wallet
-        HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
-        String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
-        WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
-        return openWallet(config, bip84w);
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            // open WhirlpoolWallet
+            HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
+            String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
+            WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
+            return openWallet(config, bip84w);
+        }
+        return whirlpoolWalletOpt.get();
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
@@ -124,5 +129,11 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     public Observable<String> getEvents() {
         return events.subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config) {
+        return new AndroidWhirlpoolDataService(config, this);
+
     }
 }

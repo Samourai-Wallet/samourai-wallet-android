@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-import whirlpool.AbstractWhirlpoolTest;
-
 @Ignore
 public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(WhirlpoolWalletTest.class.getSimpleName());
