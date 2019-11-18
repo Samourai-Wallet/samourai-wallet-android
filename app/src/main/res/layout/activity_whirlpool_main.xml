@@ -47,7 +47,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/paynym_payment_code"
+                    android:id="@+id/toolbar_subtext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -85,7 +85,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/paynym_payment_code"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_subtext"
             app:tabGravity="fill"
             app:tabMode="fixed" />
 

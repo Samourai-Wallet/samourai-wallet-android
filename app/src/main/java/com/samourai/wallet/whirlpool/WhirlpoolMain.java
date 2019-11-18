@@ -31,6 +31,7 @@ public class WhirlpoolMain extends AppCompatActivity {
     private ViewPager cyclesViewPager;
     private TabLayout cyclesTabLayout;
     private TextView totalAmountToDisplay;
+    private TextView amountSubText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         }
 
         totalAmountToDisplay = findViewById(R.id.whirlpool_total_amount_to_display);
+        amountSubText = findViewById(R.id.toolbar_subtext);
         cyclesViewPager = findViewById(R.id.whirlpool_viewpager);
         cyclesTabLayout = findViewById(R.id.whirlpool_home_tabs);
         cyclesTabLayout.setupWithViewPager(cyclesViewPager);
@@ -54,7 +56,44 @@ public class WhirlpoolMain extends AppCompatActivity {
         CyclesViewPagerAdapter adapter = new CyclesViewPagerAdapter(getSupportFragmentManager());
         cyclesViewPager.setAdapter(adapter);
         cyclesViewPager.setCurrentItem(1);
-        findViewById(R.id.whirlpool_fab).setOnClickListener( view -> startActivity(new Intent( this, NewPoolActivity.class)));
+        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> startActivity(new Intent(this, NewPoolActivity.class)));
+
+        cyclesViewPager.addOnPageChangeListener(new android.support.v4.view.ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                switch (position) {
+                    //Dashboard
+                    case 0: {
+                        amountSubText.setText(R.string.total_being_cycled);
+                        totalAmountToDisplay.setText("0.0 BTC");
+                        break;
+                    }
+
+                    case 1: {
+                        //In-Progress
+                        amountSubText.setText(R.string.premix_balance);
+                        totalAmountToDisplay.setText("0.0 BTC");
+                        break;
+                    }
+
+                    case 2: {
+                        //Completed
+                        amountSubText.setText(R.string.post_mix_balance);
+                        totalAmountToDisplay.setText("0.0 BTC");
+                        break;
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onPageSelected(int position) { }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
+        });
     }
 
     @Override
