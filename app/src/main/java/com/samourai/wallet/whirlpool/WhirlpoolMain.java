@@ -30,7 +30,7 @@ public class WhirlpoolMain extends AppCompatActivity {
     private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
     private ViewPager cyclesViewPager;
     private TabLayout cyclesTabLayout;
-    private TextView totalAmountSpendable;
+    private TextView totalAmountToDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        totalAmountSpendable = findViewById(R.id.whirlpool_total_amount_spendable);
+        totalAmountToDisplay = findViewById(R.id.whirlpool_total_amount_to_display);
         cyclesViewPager = findViewById(R.id.whirlpool_viewpager);
         cyclesTabLayout = findViewById(R.id.whirlpool_home_tabs);
         cyclesTabLayout.setupWithViewPager(cyclesViewPager);
