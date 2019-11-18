@@ -2016,6 +2016,10 @@ public class APIFactory	{
         walletBalanceObserver.onNext(value);
     }
 
+    public long getXpubPreMixBalance()  {
+        return xpub_premix_balance;
+    }
+
     public long getXpubPostMixBalance()  {
         return xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
     }
