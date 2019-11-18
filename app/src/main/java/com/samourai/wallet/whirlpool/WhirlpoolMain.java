@@ -14,11 +14,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.whirlpool.fragments.WhirlpoolCyclesFragment;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.widgets.ViewPager;
+
+import org.bitcoinj.core.Coin;
 
 import java.util.ArrayList;
 
@@ -66,21 +69,24 @@ public class WhirlpoolMain extends AppCompatActivity {
                     //Dashboard
                     case 0: {
                         amountSubText.setText(R.string.total_being_cycled);
-                        totalAmountToDisplay.setText("0.0 BTC");
+                        long value = APIFactory.getInstance(WhirlpoolMain.this).getXpubBalance();
+                        totalAmountToDisplay.setText(Coin.valueOf(value).toPlainString() + " BTC");
                         break;
                     }
 
                     case 1: {
                         //In-Progress
                         amountSubText.setText(R.string.premix_balance);
-                        totalAmountToDisplay.setText("0.0 BTC");
+                        long value = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
+                        totalAmountToDisplay.setText(Coin.valueOf(value).toPlainString() + " BTC");
                         break;
                     }
 
                     case 2: {
                         //Completed
                         amountSubText.setText(R.string.post_mix_balance);
-                        totalAmountToDisplay.setText("0.0 BTC");
+                        long value = APIFactory.getInstance(WhirlpoolMain.this).getXpubPostMixBalance();
+                        totalAmountToDisplay.setText(Coin.valueOf(value).toPlainString() + " BTC");
                         break;
                     }
 
