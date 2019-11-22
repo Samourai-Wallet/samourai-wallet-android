@@ -81,13 +81,18 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier, boolean testnet, boolean onion, String backendUrl, String backendApiKey, int mixsTarget, String scode) throws Exception {
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
-        IStompClientService stompClientService = new AndroidStompClientService();
         BackendApi backendApi = new BackendApi(httpClient, backendUrl, backendApiKey);
 
         File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
         File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
         WhirlpoolWalletPersistHandler persistHandler =
                 new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
+
+        return computeWhirlpoolWalletConfig(ctx, persistHandler, testnet, onion, mixsTarget, scode, httpClient, backendApi);
+    }
+
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, WhirlpoolWalletPersistHandler persistHandler, boolean testnet, boolean onion, int mixsTarget, String scode, IHttpClient httpClient, BackendApi backendApi) throws Exception {
+        IStompClientService stompClientService = new AndroidStompClientService();
 
         WhirlpoolServer whirlpoolServer = testnet ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
         String serverUrl = whirlpoolServer.getServerUrl(onion);

@@ -78,16 +78,28 @@ public class AndroidTx0Service extends Tx0Service {
         MyTransactionInput _input = new MyTransactionInput(params, null, new byte[0], _outpoint, depositSpendFrom.getHash().toString(), (int)depositSpendFrom.getIndex());
 
         tx.addInput(_input);
-        int idx = tx.getInputs().size() - 1;
 
-        final Script redeemScript = segwitAddress.segWitRedeemScript();
-        final Script scriptCode = redeemScript.scriptCode();
+    }
 
-        TransactionSignature sig = tx.calculateWitnessSignature(idx, spendFromKey, scriptCode, depositSpendFrom.getValue(), Transaction.SigHash.ALL, false);
-        final TransactionWitness witness = new TransactionWitness(2);
-        witness.setPush(0, sig.encodeToBitcoin());
-        witness.setPush(1, spendFromKey.getPubKey());
-        tx.setWitness(idx, witness);
+    @Override
+    protected void signTx0(Transaction tx, Collection<UnspentOutputWithKey> inputs, NetworkParameters params) {
+        int idx = 0;
+        for (UnspentOutputWithKey input : inputs) {
+            // sign input
+            ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
 
+            SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
+            final Script redeemScript = segwitAddress.segWitRedeemScript();
+            final Script scriptCode = redeemScript.scriptCode();
+
+            TransactionSignature sig = tx.calculateWitnessSignature(idx, spendFromKey, scriptCode, Coin.valueOf(input.value), Transaction.SigHash.ALL, false);
+            final TransactionWitness witness = new TransactionWitness(2);
+            witness.setPush(0, sig.encodeToBitcoin());
+            witness.setPush(1, spendFromKey.getPubKey());
+            tx.setWitness(idx, witness);
+
+            idx++;
+        }
+        super.signTx0(tx, inputs, params);
     }
 }

@@ -7,6 +7,7 @@ import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.client.indexHandler.MemoryIndexHandler;
@@ -88,5 +89,18 @@ public abstract class AbstractWhirlpoolTest {
 
     protected Context getContext()  {
         return new MockContext();
+    }
+
+    protected UnspentResponse.UnspentOutput newUnspentOutput(String hash, int index, long value) {
+        UnspentResponse.UnspentOutput spendFrom = new UnspentResponse.UnspentOutput();
+        spendFrom.tx_hash = hash;
+        spendFrom.tx_output_n = index;
+        spendFrom.value = value;
+        spendFrom.script = "foo";
+        spendFrom.addr = "foo";
+        spendFrom.confirmations = 1234;
+        spendFrom.xpub = new UnspentResponse.UnspentOutput.Xpub();
+        spendFrom.xpub.path = "foo";
+        return spendFrom;
     }
 }
