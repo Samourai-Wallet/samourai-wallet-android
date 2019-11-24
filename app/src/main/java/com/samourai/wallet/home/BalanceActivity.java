@@ -366,11 +366,12 @@ public class BalanceActivity extends AppCompatActivity {
         IntentFilter filterDisplay = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiverDisplay, filterDisplay);
 
-        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(SamouraiPermissions.READ_WRITE_EXTERNAL_STORAGE);
+        PermissionsUtil permissionsUtil = new PermissionsUtil(BalanceActivity.this);
+        if (!permissionsUtil.hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !permissionsUtil.hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            permissionsUtil.showRequestPermissionsInfoAlertDialog(SamouraiPermissions.READ_WRITE_EXTERNAL_STORAGE);
         }
-        if (!PermissionsUtil.getInstance(BalanceActivity.this).hasPermission(Manifest.permission.CAMERA)) {
-            PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(SamouraiPermissions.CAMERA);
+        if (!permissionsUtil.hasPermission(Manifest.permission.CAMERA)) {
+            permissionsUtil.showRequestPermissionsInfoAlertDialog(SamouraiPermissions.CAMERA);
         }
 
         if (PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false) {
@@ -862,7 +863,7 @@ public class BalanceActivity extends AppCompatActivity {
 
     private void doScan() {
 
-        PermissionsUtil permissionsUtil = PermissionsUtil.getInstance(BalanceActivity.this);
+        PermissionsUtil permissionsUtil = new PermissionsUtil(BalanceActivity.this);
         if (!permissionsUtil.hasPermission(Manifest.permission.CAMERA)) {
             permissionsUtil.showRepeatedCameraPermissionRequestDialog();
             return;

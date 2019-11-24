@@ -57,7 +57,8 @@ public class ReceiversUtil  {
         boolean hideIcon = PrefsUtil.getInstance(context).getValue(PrefsUtil.ICON_HIDDEN, false);
         boolean acceptRemote = PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false);
 
-        if(hideIcon && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)) {
+        PermissionsUtil permissionsUtil = new PermissionsUtil(context);
+        if(hideIcon && permissionsUtil.hasPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)) {
             if(!receivers.contains(ocReceiver)) {
                 ocFilter = new IntentFilter();
                 ocFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
@@ -74,7 +75,7 @@ public class ReceiversUtil  {
             }
         }
 
-        if(acceptRemote && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.RECEIVE_SMS)) {
+        if(acceptRemote && permissionsUtil.hasPermission(Manifest.permission.RECEIVE_SMS)) {
             if(!receivers.contains(isReceiver)) {
                 isFilter = new IntentFilter();
                 isFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
@@ -97,7 +98,8 @@ public class ReceiversUtil  {
         //
         // check for SIM switch
         //
-        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false) == true && PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, "").length() > 0 && PermissionsUtil.getInstance(context).hasPermission(Manifest.permission.READ_PHONE_STATE)) {
+        PermissionsUtil permissionsUtil = new PermissionsUtil(context);
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false) == true && PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, "").length() > 0 && permissionsUtil.hasPermission(Manifest.permission.READ_PHONE_STATE)) {
 
             new Thread() {
                 public void run() {

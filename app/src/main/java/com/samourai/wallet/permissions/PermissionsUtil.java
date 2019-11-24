@@ -19,12 +19,8 @@ public class PermissionsUtil {
 
     private Context context;
 
-    private PermissionsUtil(Context context) {
+    public PermissionsUtil(Context context) {
         this.context = context;
-    }
-
-    public static PermissionsUtil getInstance(Context context) {
-        return new PermissionsUtil(context);
     }
 
     public boolean hasPermission(String permission) {
