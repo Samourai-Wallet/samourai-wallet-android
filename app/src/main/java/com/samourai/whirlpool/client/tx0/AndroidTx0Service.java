@@ -19,6 +19,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.TransactionWitness;
@@ -89,10 +90,10 @@ public class AndroidTx0Service extends Tx0Service {
         for (UnspentOutputWithKey input : inputs) {
 
             String address = input.addr;
+            ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
 
+            // sign input
             if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(params, address).isP2SHAddress())    {
-                // sign input
-                ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
 
                 SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
                 final Script redeemScript = segwitAddress.segWitRedeemScript();
@@ -111,6 +112,10 @@ public class AndroidTx0Service extends Tx0Service {
 //                    tx.getInput(idx).getScriptSig().correctlySpends(tx, idx, new Script(Hex.decode(input.script)), Coin.valueOf(input.value), Script.ALL_VERIFY_FLAGS);
                 }
 
+            }
+            else    {
+                TransactionSignature sig = tx.calculateSignature(idx, spendFromKey, new Script(Hex.decode(input.script)), Transaction.SigHash.ALL, false);
+                tx.getInput(idx).setScriptSig(ScriptBuilder.createInputScript(sig, spendFromKey));
             }
 
             idx++;
