@@ -632,6 +632,10 @@
     <string name="hide_log">СКРЫТЬ ЖУРНАЛ</string>
     <string name="copy">Копировать</string>
     <string name="show_log">Показать журнал</string>
+    <string name="permission_dialog_button_camera_go_to_settings">Настройки</string>
+    <string name="permission_dialog_message_camera_repeated">Чтобы сканировать QR-коды, дайте разрешение на использование камеры в следующем диалоге.</string>
+    <string name="permission_dialog_message_camera_repeated_denied_permanently">Ранее Вы запретили приложению доступ к камере. Чтобы сканировать QR-коды, перейдите в настройки и разрешите доступ.</string>
+    <string name="permission_alert_dialog_title_camera_repeated">Ранее Вы запретили доступ к камере</string>
 
 
 </resources>
