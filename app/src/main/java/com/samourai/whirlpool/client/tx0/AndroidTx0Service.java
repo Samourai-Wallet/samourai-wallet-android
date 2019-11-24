@@ -10,9 +10,11 @@ import com.samourai.wallet.segwit.bech32.Bech32UtilGeneric;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.util.FeeUtil;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
 import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
@@ -24,6 +26,7 @@ import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptOpCodes;
+import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +74,6 @@ public class AndroidTx0Service extends Tx0Service {
         // TODO handle non-segwit inputs
         ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
         TransactionOutPoint depositSpendFrom = input.computeOutpoint(params);
-//        final Script segwitPubkeyScript = ScriptBuilder.createP2WPKHOutputScript(spendFromKey);
 
         SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
         MyTransactionOutPoint _outpoint = new MyTransactionOutPoint(depositSpendFrom.getHash(), (int)depositSpendFrom.getIndex(), BigInteger.valueOf(depositSpendFrom.getValue().longValue()), segwitAddress.segWitRedeemScript().getProgram(), segwitAddress.getBech32AsString());
@@ -85,20 +87,34 @@ public class AndroidTx0Service extends Tx0Service {
     protected void signTx0(Transaction tx, Collection<UnspentOutputWithKey> inputs, NetworkParameters params) {
         int idx = 0;
         for (UnspentOutputWithKey input : inputs) {
-            // sign input
-            ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
 
-            SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
-            final Script redeemScript = segwitAddress.segWitRedeemScript();
-            final Script scriptCode = redeemScript.scriptCode();
+            String address = input.addr;
 
-            TransactionSignature sig = tx.calculateWitnessSignature(idx, spendFromKey, scriptCode, Coin.valueOf(input.value), Transaction.SigHash.ALL, false);
-            final TransactionWitness witness = new TransactionWitness(2);
-            witness.setPush(0, sig.encodeToBitcoin());
-            witness.setPush(1, spendFromKey.getPubKey());
-            tx.setWitness(idx, witness);
+            if(FormatsUtil.getInstance().isValidBech32(address) || Address.fromBase58(params, address).isP2SHAddress())    {
+                // sign input
+                ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
+
+                SegwitAddress segwitAddress = new SegwitAddress(spendFromKey.getPubKey(), params);
+                final Script redeemScript = segwitAddress.segWitRedeemScript();
+                final Script scriptCode = redeemScript.scriptCode();
+
+                TransactionSignature sig = tx.calculateWitnessSignature(idx, spendFromKey, scriptCode, Coin.valueOf(input.value), Transaction.SigHash.ALL, false);
+                final TransactionWitness witness = new TransactionWitness(2);
+                witness.setPush(0, sig.encodeToBitcoin());
+                witness.setPush(1, spendFromKey.getPubKey());
+                tx.setWitness(idx, witness);
+
+                if(!FormatsUtil.getInstance().isValidBech32(address) && Address.fromBase58(params, address).isP2SHAddress())    {
+                    final ScriptBuilder sigScript = new ScriptBuilder();
+                    sigScript.data(redeemScript.getProgram());
+                    tx.getInput(idx).setScriptSig(sigScript.build());
+//                    tx.getInput(idx).getScriptSig().correctlySpends(tx, idx, new Script(Hex.decode(input.script)), Coin.valueOf(input.value), Script.ALL_VERIFY_FLAGS);
+                }
+
+            }
 
             idx++;
+
         }
         super.signTx0(tx, inputs, params);
     }
