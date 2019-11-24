@@ -5,125 +5,121 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
 
 import com.samourai.wallet.R;
 
 public class PermissionsUtil {
 
-    public final static int READ_WRITE_EXTERNAL_PERMISSION_CODE = 0;
-//    public static final int SMS_PERMISSION_CODE = 1;
-//    public static final int OUTGOING_CALL_PERMISSION_CODE = 2;
-    public static final int CAMERA_PERMISSION_CODE = 3;
+    private Context context;
 
-    private static PermissionsUtil instance = null;
-    private static Context context = null;
+    private PermissionsUtil(Context context) {
+        this.context = context;
+    }
 
-    private PermissionsUtil()   { ; }
-
-    public static PermissionsUtil getInstance(Context ctx) {
-
-        context = ctx;
-
-        if(instance == null)    {
-            instance = new PermissionsUtil();
-        }
-
-        return instance;
+    public static PermissionsUtil getInstance(Context context) {
+        return new PermissionsUtil(context);
     }
 
     public boolean hasPermission(String permission) {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public void showRequestPermissionsInfoAlertDialog(final int code) {
+    public void showRequestPermissionsInfoAlertDialog(final SamouraiPermissions code) {
 
-        String title = "";
-        String message = "";
+        int title = -1;
+        int message = -1;
 
-        switch(code)    {
-            case READ_WRITE_EXTERNAL_PERMISSION_CODE:
-                title = context.getString(R.string.permission_alert_dialog_title_external);
-                message = context.getString(R.string.permission_dialog_message_external);
+        switch (code) {
+            case READ_WRITE_EXTERNAL_STORAGE:
+                title = R.string.permission_alert_dialog_title_external;
+                message = R.string.permission_dialog_message_external;
                 break;
-/*
-            case SMS_PERMISSION_CODE:
-                title = context.getString(R.string.permission_alert_dialog_title_sms);
-                message = context.getString(R.string.permission_dialog_message_sms);
-                break;
-            case OUTGOING_CALL_PERMISSION_CODE:
-                title = context.getString(R.string.permission_alert_dialog_title_outgoing);
-                message = context.getString(R.string.permission_dialog_message_outgoing);
-                break;
-*/
-            case CAMERA_PERMISSION_CODE:
-                title = context.getString(R.string.permission_alert_dialog_title_camera);
-                message = context.getString(R.string.permission_dialog_message_camera);
-                break;
-            default:
+            case CAMERA:
+                title = R.string.permission_alert_dialog_title_camera;
+                message = R.string.permission_dialog_message_camera;
                 break;
         }
 
+
+        showDialog(title, message, R.string.ok, (dialog, which) -> {
+
+            switch (code) {
+                case READ_WRITE_EXTERNAL_STORAGE:
+                    requestPermissions(
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            SamouraiPermissions.READ_WRITE_EXTERNAL_STORAGE.ordinal());
+                    break;
+
+                case CAMERA:
+                    requestPermissions(
+                            new String[]{Manifest.permission.CAMERA},
+                            SamouraiPermissions.CAMERA.ordinal());
+                    break;
+            }
+            dialog.dismiss();
+        });
+    }
+
+    private void showDialog(int titleStringId, int messageStringId, int positiveButtonStringId, DialogInterface.OnClickListener onClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
+        builder.setTitle(titleStringId);
         builder.setCancelable(false);
-        builder.setMessage(message);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setMessage(messageStringId);
+        builder.setPositiveButton(positiveButtonStringId, onClickListener);
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
 
-                switch(code)    {
-                    case READ_WRITE_EXTERNAL_PERMISSION_CODE:
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_WRITE_EXTERNAL_PERMISSION_CODE);
-                        break;
-/*
-                    case SMS_PERMISSION_CODE:
-                        requestPermissions(new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_PHONE_STATE}, SMS_PERMISSION_CODE);
-                        break;
-                    case OUTGOING_CALL_PERMISSION_CODE:
-                        requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, OUTGOING_CALL_PERMISSION_CODE);
-                        break;
-*/
-                    case CAMERA_PERMISSION_CODE:
-                        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-                        break;
-                    default:
-                        break;
-                }
-
-                dialog.dismiss();
-
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        if(!((Activity)context).isFinishing())    {
+        if (!((Activity) context).isFinishing()) {
             builder.show();
         }
-
     }
 
     private void requestPermissions(String[] permissions, int code) {
 
-        for(int i = 0; i < permissions.length; i++)   {
-            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity)context, permissions[i])) {
+        for (int i = 0; i < permissions.length; i++) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, permissions[i])) {
                 Log.d("PermissionsUtil", "shouldShowRequestPermissionRationale(), no permission requested");
-            }
-            else    {
-                ActivityCompat.requestPermissions((Activity)context, permissions, code);
+            } else {
+                ActivityCompat.requestPermissions((Activity) context, permissions, code);
                 break;
             }
         }
+    }
 
+    public void showRepeatedCameraPermissionRequestDialog() {
+        Activity activity = (Activity) context;
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
+            showDialog(
+                    R.string.permission_alert_dialog_title_camera_repeated,
+                    R.string.permission_dialog_message_camera_repeated,
+                    R.string.ok,
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        ActivityCompat.requestPermissions(
+                                (Activity) context,
+                                new String[]{Manifest.permission.CAMERA}, SamouraiPermissions.CAMERA.ordinal());
+                    }
+            );
+        } else {
+            showDialog(
+                    R.string.permission_alert_dialog_title_camera,
+                    R.string.permission_dialog_message_camera_repeated_denied_permanently,
+                    R.string.permission_dialog_button_camera_go_to_settings,
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                        settingsIntent.setData(uri);
+                        activity.startActivityForResult(settingsIntent, SamouraiPermissions.CAMERA.ordinal());
+                    }
+            );
+        }
     }
 
 }

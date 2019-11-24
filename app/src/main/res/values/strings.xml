@@ -531,6 +531,10 @@
     <string name="permission_dialog_message_external">Your wallet needs access to file storage so it can automatically save an encrypted backup of your wallet to your device.</string>
     <string name="permission_alert_dialog_title_camera">Requesting camera permission</string>
     <string name="permission_dialog_message_camera">Your wallet needs access to the camera so it can scan QR codes.</string>
+    <string name="permission_alert_dialog_title_camera_repeated">You have previously denied camera permission</string>
+    <string name="permission_dialog_message_camera_repeated">Please grant the permission in the following dialog to be able to scan QR codes.</string>
+    <string name="permission_dialog_message_camera_repeated_denied_permanently">You have permanently denied a camera permission necessary to scan QR codes. Please go to app settings to turn it on.</string>
+    <string name="permission_dialog_button_camera_go_to_settings">App settings</string>
 
     <string name="use_bech32">Use bech32 address</string>
 
