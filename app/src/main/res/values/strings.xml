@@ -592,6 +592,7 @@
         <item>Ricochet Segwit</item>
         <item>Whirlpool Segwit pre-mix</item>
         <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
     </string-array>
 
     <string name="chain_id">Address chain</string>
