@@ -408,7 +408,6 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("cahoots", CahootsFactory.getInstance().toJSON());
-            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorManager.getInstance(context).toJSON());
@@ -635,9 +634,6 @@ public class PayloadUtil	{
                 }
                 if(meta.has("cahoots")) {
                     CahootsFactory.getInstance().fromJSON((JSONArray) meta.get("cahoots"));
-                }
-                if(meta.has("whirlpool")) {
-                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
                 }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
