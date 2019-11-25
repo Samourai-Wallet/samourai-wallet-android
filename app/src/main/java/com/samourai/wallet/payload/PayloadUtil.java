@@ -314,6 +314,8 @@ public class PayloadUtil	{
             AddressFactory.getInstance().setHighestPreChangeIdx(0);
             AddressFactory.getInstance().setHighestPostReceiveIdx(0);
             AddressFactory.getInstance().setHighestPostChangeIdx(0);
+            AddressFactory.getInstance().setHighestBadBankReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBadBankChangeIdx(0);
 
             HD_WalletFactory.getInstance(context).set(null);
         }
@@ -404,6 +406,10 @@ public class PayloadUtil	{
             postObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPostReceiveIdx());
             postObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPostChangeIdx());
             whirlpool_account.put(postObj);
+            JSONObject badbankObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).toJSON(84);
+            badbankObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestBadBankReceiveIdx());
+            badbankObj.put("changeIdx", AddressFactory.getInstance(context).getHighestBadBankChangeIdx());
+            whirlpool_account.put(badbankObj);
             wallet.put("whirlpool_account", whirlpool_account);
 
             //
