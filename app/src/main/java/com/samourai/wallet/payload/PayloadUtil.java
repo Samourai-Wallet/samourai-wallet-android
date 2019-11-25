@@ -85,8 +85,10 @@ public class PayloadUtil	{
     private final static String strPayNymFilename = "samourai.paynyms";
     private final static String strMultiAddrPreFilename = "samourai.multi.pre";
     private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strMultiAddrBadBankFilename = "samourai.multi.badbank";
     private final static String strUTXOPreFilename = "samourai.utxo.pre";
     private final static String strUTXOPostFilename = "samourai.utxo.post";
+    private final static String strUTXOBadBankFilename = "samourai.utxo.badbank";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -167,6 +169,12 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+        }
+    }
+
     public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
         if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -213,6 +221,18 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeUTXOBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
+            }
+        }
+    }
+
     public void serializeFees(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, null, strFeesFilename);
@@ -237,8 +257,16 @@ public class PayloadUtil	{
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
     }
 
+    public JSONObject deserializeMultiAddrBadBank()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+    }
+
     public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+    }
+
+    public JSONObject deserializeUTXOBadBank()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
     }
 
     public JSONObject deserializeFees()  throws IOException, JSONException  {
