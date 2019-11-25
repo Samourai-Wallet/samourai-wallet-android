@@ -1706,6 +1706,9 @@ public class APIFactory	{
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTREG, false) == false)    {
                 registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr(), 84, PrefsUtil.XPUBPOSTREG);
             }
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBBADBANKREG, false) == false)    {
+                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr(), 84, PrefsUtil.XPUBPOSTREG);
+            }
 
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());
 
