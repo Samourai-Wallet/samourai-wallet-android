@@ -90,6 +90,7 @@ public class APIFactory	{
     private static long xpub_balance = 0L;
     private static long xpub_premix_balance = 0L;
     private static long xpub_postmix_balance = 0L;
+    private static long xpub_badbank_balance = 0L;
     private static HashMap<String, Long> xpub_amounts = null;
     private static HashMap<String,List<Tx>> xpub_txs = null;
     private static HashMap<String,Integer> unspentAccounts = null;
@@ -97,10 +98,12 @@ public class APIFactory	{
     private static HashMap<String,Integer> unspentBIP84 = null;
     private static HashMap<String,Integer> unspentBIP84PreMix = null;
     private static HashMap<String,Integer> unspentBIP84PostMix = null;
+    private static HashMap<String,Integer> unspentBIP84BadBank = null;
     private static HashMap<String,String> unspentPaths = null;
     private static HashMap<String,UTXO> utxos = null;
     private static HashMap<String,UTXO> utxosPreMix = null;
     private static HashMap<String,UTXO> utxosPostMix = null;
+    private static HashMap<String,UTXO> utxosBadBank = null;
 
     private static JSONObject utxoObj0 = null;
     private static JSONObject utxoObj1 = null;
@@ -129,14 +132,19 @@ public class APIFactory	{
             xpub_amounts = new HashMap<String, Long>();
             xpub_txs = new HashMap<String,List<Tx>>();
             xpub_balance = 0L;
+            xpub_premix_balance = 0L;
+            xpub_postmix_balance = 0L;
+            xpub_badbank_balance = 0L;
             bip47_amounts = new HashMap<String, Long>();
             unspentPaths = new HashMap<String, String>();
             unspentAccounts = new HashMap<String, Integer>();
             unspentBIP49 = new HashMap<String, Integer>();
             unspentBIP84 = new HashMap<String, Integer>();
             unspentBIP84PostMix = new HashMap<String, Integer>();
+            unspentBIP84BadBank = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
             utxosPostMix = new HashMap<String, UTXO>();
+            utxosBadBank = new HashMap<String, UTXO>();
             instance = new APIFactory();
         }
 
@@ -145,6 +153,9 @@ public class APIFactory	{
 
     public synchronized void reset() {
         xpub_balance = 0L;
+        xpub_premix_balance = 0L;
+        xpub_postmix_balance = 0L;
+        xpub_badbank_balance = 0L;
         xpub_amounts.clear();
         bip47_amounts.clear();
         xpub_txs.clear();
@@ -153,8 +164,10 @@ public class APIFactory	{
         unspentBIP49 = new HashMap<String, Integer>();
         unspentBIP84 = new HashMap<String, Integer>();
         unspentBIP84PostMix = new HashMap<String, Integer>();
+        unspentBIP84BadBank = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
         utxosPostMix = new HashMap<String, UTXO>();
+        utxosBadBank = new HashMap<String, UTXO>();
 
         UTXOFactory.getInstance().clear();
     }
@@ -1793,6 +1806,7 @@ public class APIFactory	{
 
             String strPreMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr();
             String strPostMix = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr();
+            String strBadBank = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr();
 
             JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
             JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
@@ -1812,6 +1826,13 @@ public class APIFactory	{
 //            debug("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
 //            debug("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
 
+            JSONObject badbankMultiAddrObj = getRawXPUB(new String[] { strBadBank });
+            JSONObject badbankUnspentObj = getRawUnspentOutputs(new String[] { strBadBank });
+            debug("APIFactory", "bad bank multi:" + badbankMultiAddrObj.toString());
+            debug("APIFactory", "bad bank unspent:" + badbankUnspentObj.toString());
+            boolean parsedBadBankMultiAddr = parseMixXPUB(badbankMultiAddrObj);
+            boolean parsedBadBanktUnspent = parseMixUnspentOutputs(badbankUnspentObj.toString());
+
             //
             //
             //
@@ -1825,6 +1846,20 @@ public class APIFactory	{
 
             for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
                 if(!seenOutputsPostMix.contains(_s) && !seenOutputs.contains(_s))    {
+                    UTXOUtil.getInstance().remove(_s);
+                }
+            }
+
+            List<String> seenOutputsBadBank = new ArrayList<String>();
+            List<UTXO> _utxosBadBank = getUtxosBadBank(false);
+            for(UTXO _u : _utxosBadBank)   {
+                for(MyTransactionOutPoint _o : _u.getOutpoints())   {
+                    seenOutputsBadBank.add(_o.getTxHash().toString() + "-" + _o.getTxOutputN());
+                }
+            }
+
+            for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
+                if(!seenOutputsBadBank.contains(_s) && !seenOutputs.contains(_s))    {
                     UTXOUtil.getInstance().remove(_s);
                 }
             }
@@ -2024,8 +2059,16 @@ public class APIFactory	{
         return xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
     }
 
+    public long getXpubBadBankBalance()  {
+        return xpub_badbank_balance - BlockedUTXO.getInstance().getTotalValueBlockedBadBank();
+    }
+
     public void setXpubPostMixBalance(long value)  {
         xpub_postmix_balance = value;
+    }
+
+    public void setXpubBadBankBalance(long value)  {
+        xpub_badbank_balance = value;
     }
 
     public HashMap<String,Long> getXpubAmounts()  {
@@ -2144,12 +2187,40 @@ public class APIFactory	{
         return unspents;
     }
 
+    public List<UTXO> getUtxosBadBank(boolean filter) {
+
+        List<UTXO> unspents = new ArrayList<UTXO>();
+
+        if(filter)    {
+            for(String key : utxosBadBank.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxosBadBank.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().containsBadBank(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+            unspents.addAll(utxosBadBank.values());
+        }
+
+        return unspents;
+    }
+
     public void setUtxos(HashMap<String, UTXO> utxos) {
         APIFactory.utxos = utxos;
     }
 
     public void setUtxosPostMix(HashMap<String, UTXO> utxos) {
         APIFactory.utxosPostMix = utxos;
+    }
+
+    public void setUtxosBadBank(HashMap<String, UTXO> utxos) {
+        APIFactory.utxosBadBank = utxos;
     }
 
     public synchronized List<Tx> getAllXpubTxs()  {
@@ -2399,16 +2470,20 @@ public class APIFactory	{
 
     private synchronized boolean parseMixXPUB(JSONObject jsonObject) throws JSONException  {
 
+        final int PRE_MIX = 0;
+        final int POST_MIX = 1;
+        final int BAD_BANK = 2;
+
+        int account_type = 0;
+
         if(jsonObject != null)  {
 
             long xpub_mix_balance = 0;
-            boolean isPost = true;
 
             if(jsonObject.has("wallet"))  {
                 JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
                 if(walletObj.has("final_balance"))  {
                     xpub_mix_balance = walletObj.getLong("final_balance");
-                    debug("APIFactory", "xpub_postmix_balance:" + xpub_postmix_balance);
                 }
             }
 
@@ -2438,7 +2513,7 @@ public class APIFactory	{
                                     addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).zpubstr()))    {
 
                                 xpub_postmix_balance = xpub_mix_balance;
-                                isPost = true;
+                                account_type = POST_MIX;
 
                                 AddressFactory.getInstance().setHighestPostReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestPostChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
@@ -2449,12 +2524,23 @@ public class APIFactory	{
                                     addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr()))    {
 
                                 xpub_premix_balance = xpub_mix_balance;
-                                isPost = false;
+                                account_type = PRE_MIX;
 
                                 AddressFactory.getInstance().setHighestPreReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestPreChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                 BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                            }
+                            else if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr()) ||
+                                    addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).zpubstr()))    {
+
+                                xpub_badbank_balance = xpub_mix_balance;
+                                account_type = BAD_BANK;
+
+                                AddressFactory.getInstance().setHighestBadBankReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                AddressFactory.getInstance().setHighestBadBankChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
                             else    {
                                 ;
@@ -2465,11 +2551,14 @@ public class APIFactory	{
             }
 
             try {
-                if(isPost)    {
+                if(account_type == POST_MIX)    {
                     PayloadUtil.getInstance(context).serializeMultiAddrPost(jsonObject);
                 }
-                else    {
+                else if(account_type == PRE_MIX)    {
                     PayloadUtil.getInstance(context).serializeMultiAddrPre(jsonObject);
+                }
+                else    {
+                    PayloadUtil.getInstance(context).serializeMultiAddrBadBank(jsonObject);
                 }
             }
             catch(IOException | DecryptionException e) {
@@ -2486,9 +2575,13 @@ public class APIFactory	{
 
     private synchronized boolean parseMixUnspentOutputs(String unspents)   {
 
-        if(unspents != null)    {
+        final int PRE_MIX = 0;
+        final int POST_MIX = 1;
+        final int BAD_BANK = 2;
 
-            boolean isPost = true;
+        int account_type = 0;
+
+        if(unspents != null)    {
 
             try {
                 JSONObject jsonObj = new JSONObject(unspents);
@@ -2524,11 +2617,15 @@ public class APIFactory	{
                             unspentPaths.put(address, path);
                             if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()))    {
                                 unspentBIP84PostMix.put(address, WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix());
-                                isPost = true;
+                                account_type = POST_MIX;
                             }
                             else if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()))    {
                                 unspentBIP84PreMix.put(address, WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount());
-                                isPost = false;
+                                account_type = PRE_MIX;
+                            }
+                            else if(m.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr()))    {
+                                unspentBIP84BadBank.put(address, WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank());
+                                account_type = BAD_BANK;
                             }
                             else    {
                                 ;
@@ -2542,7 +2639,7 @@ public class APIFactory	{
                         MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
                         outPoint.setConfirmations(confirmations);
 
-                        if(isPost)    {
+                        if(account_type == POST_MIX)    {
                             if(utxosPostMix.containsKey(script))    {
                                 utxosPostMix.get(script).getOutpoints().add(outPoint);
                             }
@@ -2554,7 +2651,7 @@ public class APIFactory	{
                             }
                             UTXOFactory.getInstance().addPostMix(txHash.toString(), txOutputN, script, utxosPostMix.get(script));
                         }
-                        else    {
+                        else if(account_type == BAD_BANK)    {
                             if(utxosPreMix.containsKey(script))    {
                                 utxosPreMix.get(script).getOutpoints().add(outPoint);
                             }
@@ -2566,6 +2663,18 @@ public class APIFactory	{
                             }
                             UTXOFactory.getInstance().addPreMix(txHash.toString(), txOutputN, script, utxosPreMix.get(script));
                         }
+                        else    {
+                            if(utxosBadBank.containsKey(script))    {
+                                utxosBadBank.get(script).getOutpoints().add(outPoint);
+                            }
+                            else    {
+                                UTXO utxo = new UTXO();
+                                utxo.getOutpoints().add(outPoint);
+                                utxo.setPath(path);
+                                utxosBadBank.put(script, utxo);
+                            }
+                            UTXOFactory.getInstance().addBadBank(txHash.toString(), txOutputN, script, utxosBadBank.get(script));
+                        }
 
                     }
                     catch(Exception e) {
@@ -2574,11 +2683,14 @@ public class APIFactory	{
 
                 }
 
-                if(isPost)    {
+                if(account_type == POST_MIX)    {
                     PayloadUtil.getInstance(context).serializeUTXOPost(jsonObj);
                 }
-                else    {
+                else if(account_type == PRE_MIX)    {
                     PayloadUtil.getInstance(context).serializeUTXOPre(jsonObj);
+                }
+                else    {
+                    PayloadUtil.getInstance(context).serializeUTXOBadBank(jsonObj);
                 }
 
                 return true;
