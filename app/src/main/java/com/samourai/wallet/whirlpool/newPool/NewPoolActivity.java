@@ -33,6 +33,7 @@ import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ViewPager;
 import com.samourai.whirlpool.client.tx0.Tx0;
+import com.samourai.whirlpool.client.tx0.Tx0Config;
 import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
@@ -51,7 +52,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import java8.util.Lists;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -248,8 +248,8 @@ public class NewPoolActivity extends AppCompatActivity {
             }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
-
-            Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, Tx0FeeTarget.BLOCKS_2);
+            Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setBadbankChange(false);
+            Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
             Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
 
             for (TransactionOutput premixOutput : tx0.getPremixOutputs()) {
