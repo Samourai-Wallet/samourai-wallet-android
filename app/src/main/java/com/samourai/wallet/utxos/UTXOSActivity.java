@@ -255,7 +255,7 @@ public class UTXOSActivity extends AppCompatActivity {
         compositeDisposable.add(disposable);
     }
 
-    private Observable<Map<String, Object>> getDataUTXOData() {
+    private Observable<Map<String, Object>>  getDataUTXOData() {
         return Observable.fromCallable(() -> {
             long totalP2WPKH = 0L;
             long totalBlocked = 0L;
@@ -324,136 +324,74 @@ public class UTXOSActivity extends AppCompatActivity {
     }
 
     private void onItemClick(int position, View view) {
-        PopupMenu menu = new PopupMenu(getApplicationContext(), view, Gravity.RIGHT);
-        menu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            switch (id) {
-                case R.id.item_tag: {
-                    tagItem(position);
-                }
-
-                break;
+//        PopupMenu menu = new PopupMenu(getApplicationContext(), view, Gravity.RIGHT);
+//        menu.setOnMenuItemClickListener(item -> {
+//            int id = item.getItemId();
+//            switch (id) {
+//                case R.id.item_tag: {
+//                    tagItem(position);
+//                }
 //
-                case R.id.item_do_not_spend: {
-                    doNotSpend(position);
-
-                }
-
-                break;
+//                break;
+////
+//                case R.id.item_do_not_spend: {
+//                    doNotSpend(position);
 //
-                case R.id.item_sign: {
-                    sign(position);
-                }
-
-                break;
-
-                case R.id.item_redeem: {
-                    redeem(position);
-                }
-
-                break;
-
-                case R.id.item_view: {
-                    viewInExplorer(position);
-                }
-
-                break;
+//                }
 //
-                case R.id.item_privkey: {
-                    viewPrivateKey(position);
-                }
-
-                break;
-
-            }
-            adapter.notifyItemChanged(position);
-
-            return true;
-        });
-        menu.inflate(R.menu.utxo_popup_menu);
-
-        if (BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) ||
-                BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx)) {
-            menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
-        } else {
-            menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_do_not_spend);
-        }
-
-        String addr = data.get(position).addr;
-        if (!FormatsUtil.getInstance().isValidBech32(addr) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
-            menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
-        }
-
-        menu.show();
+//                break;
+////
+//                case R.id.item_sign: {
+//                    sign(position);
+//                }
+//
+//                break;
+//
+//                case R.id.item_redeem: {
+//                    redeem(position);
+//                }
+//
+//                break;
+//
+//                case R.id.item_view: {
+//                    viewInExplorer(position);
+//                }
+//
+//                break;
+////
+//                case R.id.item_privkey: {
+//                    viewPrivateKey(position);
+//                }
+//
+//                break;
+//
+//            }
+//            adapter.notifyItemChanged(position);
+//
+//            return true;
+//        });
+//        menu.inflate(R.menu.utxo_popup_menu);
+//
+//        if (BlockedUTXO.getInstance().contains(data.get(position).hash, data.get(position).idx) ||
+//                BlockedUTXO.getInstance().containsPostMix(data.get(position).hash, data.get(position).idx)) {
+//            menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_spend);
+//        } else {
+//            menu.getMenu().findItem(R.id.item_do_not_spend).setTitle(R.string.mark_do_not_spend);
+//        }
+//
+//        String addr = data.get(position).addr;
+//        if (!FormatsUtil.getInstance().isValidBech32(addr) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
+//            menu.getMenu().findItem(R.id.item_redeem).setVisible(false);
+//        }
+//
+//        menu.show();
+        Intent intent = new Intent(this,UTXODetailsActivity.class);
+        intent.putExtra("hash",data.get(position).hash);
+        intent.putExtra("account",account);
+        startActivity(intent);
     }
 
-    private void viewPrivateKey(int position) {
-        String addr = data.get(position).addr;
-        ECKey ecKey = SendFactory.getPrivKey(addr, account);
-        String strPrivKey = ecKey.getPrivateKeyAsWiF(SamouraiWallet.getInstance().getCurrentNetworkParams());
 
-        ImageView showQR = new ImageView(this);
-        Bitmap bitmap = null;
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(strPrivKey, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        showQR.setImageBitmap(bitmap);
-
-        TextView showText = new TextView(this);
-        showText.setText(strPrivKey);
-        showText.setTextIsSelectable(true);
-        showText.setPadding(40, 10, 40, 10);
-        showText.setTextSize(18.0f);
-
-        LinearLayout privkeyLayout = new LinearLayout(this);
-        privkeyLayout.setOrientation(LinearLayout.VERTICAL);
-        privkeyLayout.addView(showQR);
-        privkeyLayout.addView(showText);
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
-                .setView(privkeyLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
-                }).show();
-    }
-
-    private void viewInExplorer(int position) {
-        String blockExplorer = "https://m.oxt.me/transaction/";
-        if (SamouraiWallet.getInstance().isTestNet()) {
-            blockExplorer = "https://blockstream.info/testnet/";
-        }
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(blockExplorer + data.get(position).hash));
-        startActivity(browserIntent);
-    }
-
-    private void redeem(int position) {
-        String addr = data.get(position).addr;
-        ECKey ecKey = SendFactory.getPrivKey(addr, account);
-        SegwitAddress segwitAddress = new SegwitAddress(ecKey.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-        if (ecKey != null && segwitAddress != null) {
-
-            String redeemScript = Hex.toHexString(segwitAddress.segWitRedeemScript().getProgram());
-
-            TextView showText = new TextView(this);
-            showText.setText(redeemScript);
-            showText.setTextIsSelectable(true);
-            showText.setPadding(40, 10, 40, 10);
-            showText.setTextSize(18.0f);
-
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.app_name)
-                    .setView(showText)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
-                    })
-                    .show();
-        }
-    }
 
     private void sign(int position) {
         String addr = data.get(position).addr;

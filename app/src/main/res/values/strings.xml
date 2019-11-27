@@ -564,38 +564,25 @@
 
     <string name="prune_backup">Prune payload and backup files?</string>
 
-    <string-array name="address_types">
-        <item>Segwit compatibility (P2SH)</item>
-        <item>Segwit native (bech32)</item>
-        <item>Legacy (P2PKH)</item>
-    </string-array>
-
     <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+
     <string name="broadcast_off">Your Samourai Wallet broadcasting is switched off.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
     <string name="enter_paynym">PayNym</string>
     <string name="enter_index">Index</string>
-
     <string name="receive_addresses">Receive addresses</string>
+
     <string name="send_addresses">Send addresses</string>
     <string name="display_receive_redeem">Receive redeem script</string>
     <string name="display_receive_privkey">Receive private key</string>
     <string name="invalid_index">Invalid index</string>
     <string name="type_address">Type of address</string>
-
-    <string-array name="account_types">
-        <item>BIP49 Segwit</item>
-        <item>BIP84 Segwit</item>
-        <item>BIP44 P2PKH</item>
-        <item>Ricochet Segwit</item>
-        <item>Whirlpool Segwit pre-mix</item>
-        <item>Whirlpool Segwit post-mix</item>
-    </string-array>
-
     <string name="chain_id">Address chain</string>
+
     <string name="receive_chain">Receive address</string>
+
     <string name="change_chain">Change address</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
     <string name="encrypted_backup_detected">Encrypted backup detected</string>
@@ -603,9 +590,9 @@
     <string name="request_amount">Request Amount</string>
     <string name="address_type">Address Type</string>
     <string name="path">Path</string>
-
     <string name="title_activity_send_new_ui">SendNewUIActivity</string>
     <string name="ricochet_hops_msg">Additional hops between your wallet and the final destination for increased fungibility</string>
+
     <string name="review_transaction">REVIEW TRANSACTION</string>
     <string name="stonewall_increases_deniability">STONEWALL increases deniability and reduces linkability of this transaction.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
@@ -646,9 +633,9 @@
     <string name="confirmation">Confirmation</string>
     <string name="total_available_amount">Total available amount</string>
     <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
-
     <string name="experimental">Experimental</string>
     <string name="cahoots">#Cahoots</string>
+
     <string name="options_cahoots2">Make every spend a CoinJoin.</string>
     <string name="PSBT">PSBT</string>
     <string name="options_psbt2">Partially Signed Bitcoin Transaction.</string>
@@ -662,15 +649,15 @@
     <string name="urgent">Urgent</string>
     <string name="normal">Normal</string>
     <string name="low">Low</string>
-
     <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
     <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
+
     <string name="tag_utxo">Label UTXO</string>
     <string name="boost_transaction_fee">Boost transaction fee</string>
     <string name="refund">Refund</string>
-
     <string name="not_cahoots">Invalid #Cahoots</string>
     <string name="not_valid_json">JSON parsing error</string>
+
     <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
     <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
     <string name="start_stowaway">Begin Stowaway as spender</string>
@@ -698,16 +685,16 @@
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
     <string name="address">Address</string>
-
     <string name="is_offline">Samourai is offline</string>
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is established</string>
+
     <string name="you_received_s">You received</string>
     <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
     <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
     <string name="initializing_tor">initializing Tor...</string>
-
     <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
     <string name="message_copied">message copied</string>
+
     <string name="scan_code">Scan Code</string>
     <string name="follows_you">Follows you</string>
     <string name="edit_paynym">Edit paynym</string>
@@ -724,15 +711,15 @@
     <string name="initial_transaction">Initial Transaction</string>
     <string name="progress">Progress</string>
     <string name="waiting_for_blockchain_confirmation">Waiting for blockchain confirmation</string>
-
     <string name="create_password">Create password</string>
     <string name="confirm_password">Confirm password</string>
+
     <string name="pairing_password">Define pairing password: (6-255 characters)</string>
     <string name="password_error">Error creating password</string>
     <string name="password_invalid">Invalid password</string>
-
     <string name="review_whirlpool">Review Whirlpool Details</string>
     <string name="total_selected">Total selected</string>
+
     <string name="cycle">Cycle</string>
     <string name="postmix_without_boltzmann">Please note that spending from your post-mix account without using STONEWALL will result in a loss of the privacy gained through Whirlpool.</string>
     <string name="estimated_entropy">Estimated Entropy</string>
@@ -740,9 +727,9 @@
     <string name="review_tx_before_braodcast">Review the transaction before broadcasting</string>
     <string name="select_participant">Select participant</string>
     <string name="select_cahoots_type">Select cahoots type</string>
-
     <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
     <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
+
     <string name="renew">RENEW</string>
     <string name="continue_exchanging_qr_codes">Continue exchanging QR codes\n until the transaction is broadcast!</string>
     <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirm that you wish to broadcast this transaction.</string>
@@ -761,6 +748,21 @@
     <string name="clipboard_empty">Clipboard empty</string>
     <string name="premix_balance">Premix balance</string>
     <string name="post_mix_balance">Post mix balance</string>
+    <string name="spendable">Spendable</string>
+    <string name="reveal_the_redeem_script_for_this_address">Reveal the redeem script for this address</string>
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+    </string-array>
 
 
 </resources>
