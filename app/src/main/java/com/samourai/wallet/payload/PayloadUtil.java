@@ -415,6 +415,7 @@ public class PayloadUtil	{
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
             meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
             meta.put("utxo_notes", UTXOUtil.getInstance().toJSON_notes());
+            meta.put("utxo_scores", UTXOUtil.getInstance().toJSON_scores());
 
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
@@ -657,6 +658,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("utxo_notes")) {
                     UTXOUtil.getInstance().fromJSON_notes((JSONArray) meta.get("utxo_notes"));
+                }
+                if(meta.has("utxo_scores")) {
+                    UTXOUtil.getInstance().fromJSON_scores((JSONArray) meta.get("utxo_scores"));
                 }
 
                 if(meta.has("trusted_no")) {
