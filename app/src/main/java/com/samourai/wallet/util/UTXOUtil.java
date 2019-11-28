@@ -11,6 +11,7 @@ public class UTXOUtil {
 
     private static HashMap<String,String> utxoTags = null;
     private static HashMap<String,String> utxoNotes = null;
+    private static HashMap<String,Integer> utxoScores = null;
 
     private UTXOUtil() { ; }
 
@@ -19,6 +20,7 @@ public class UTXOUtil {
         if(instance == null) {
             utxoTags = new HashMap<String,String>();
             utxoNotes = new HashMap<String,String>();
+            utxoScores = new HashMap<String,Integer>();
             instance = new UTXOUtil();
         }
 
@@ -28,6 +30,7 @@ public class UTXOUtil {
     public void reset() {
         utxoTags.clear();
         utxoNotes.clear();
+        utxoScores.clear();
     }
 
     public void add(String utxo, String tag) {
@@ -74,6 +77,38 @@ public class UTXOUtil {
         utxoNotes.remove(utxo);
     }
 
+    public void addScore(String utxo, int score) {
+        utxoScores.put(utxo, score);
+    }
+
+    public int getScore(String utxo) {
+        if(utxoScores.containsKey(utxo))  {
+            return utxoScores.get(utxo);
+        }
+        else    {
+            return 0;
+        }
+
+    }
+
+    public void incScore(String utxo, int score) {
+        if(utxoScores.containsKey(utxo))  {
+            utxoScores.put(utxo, utxoScores.get(utxo) + score);
+        }
+        else    {
+            utxoScores.put(utxo, score);
+        }
+
+    }
+
+    public HashMap<String,Integer> getScores() {
+        return utxoScores;
+    }
+
+    public void removeScore(String utxo) {
+        utxoScores.remove(utxo);
+    }
+
     public JSONArray toJSON() {
 
         JSONArray utxos = new JSONArray();
@@ -82,12 +117,6 @@ public class UTXOUtil {
             tag.put(key);
             tag.put(utxoTags.get(key));
             utxos.put(tag);
-        }
-        for(String key : utxoNotes.keySet()) {
-            JSONArray note = new JSONArray();
-            note.put(key);
-            note.put(utxoNotes.get(key));
-            utxos.put(note);
         }
 
         return utxos;
@@ -98,10 +127,6 @@ public class UTXOUtil {
             for(int i = 0; i < utxos.length(); i++) {
                 JSONArray tag = (JSONArray)utxos.get(i);
                 utxoTags.put((String)tag.get(0), (String)tag.get(1));
-            }
-            for(int i = 0; i < utxos.length(); i++) {
-                JSONArray note = (JSONArray)utxos.get(i);
-                utxoNotes.put((String)note.get(0), (String)note.get(1));
             }
         }
         catch(JSONException ex) {
@@ -127,6 +152,31 @@ public class UTXOUtil {
             for(int i = 0; i < utxos.length(); i++) {
                 JSONArray note = (JSONArray)utxos.get(i);
                 utxoNotes.put((String)note.get(0), (String)note.get(1));
+            }
+        }
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public JSONArray toJSON_scores() {
+
+        JSONArray utxos = new JSONArray();
+        for(String key : utxoScores.keySet()) {
+            JSONArray score = new JSONArray();
+            score.put(key);
+            score.put(utxoScores.get(key));
+            utxos.put(score);
+        }
+
+        return utxos;
+    }
+
+    public void fromJSON_scores(JSONArray utxos) {
+        try {
+            for(int i = 0; i < utxos.length(); i++) {
+                JSONArray score = (JSONArray)utxos.get(i);
+                utxoScores.put((String)score.get(0), (int)score.get(1));
             }
         }
         catch(JSONException ex) {
