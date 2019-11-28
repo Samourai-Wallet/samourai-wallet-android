@@ -56,7 +56,6 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".utxos.UTXODetailsActivity"
-            android:exported="true"
             android:label=""
             android:parentActivityName=".utxos.UTXOSActivity"
             android:theme="@style/ui_2_theme" />

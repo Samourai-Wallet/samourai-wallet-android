@@ -22,7 +22,7 @@
     <color name="tx_broadcast_offline_bg">#d8b77d</color>
 
     <color name="white">#FAFAFA</color>
-    <color name="blue_semi_transparent_pressed">#80738ffe</color>
+    <color name="blue_semi_transparent_pressed">#5C738FFE</color>
     <color name="grey_accent">#6c768b</color>
     <color name="windowDark">#282d33</color>
     <color name="blue_ui_2">#1561CB</color>
@@ -46,4 +46,7 @@
 
     <color name="whirlpool_window_dark">#262c33</color>
     <color name="warning_yellow">#B6B260</color>
+
+    <color name="select_overlay">#343B48</color>
+
 </resources>
