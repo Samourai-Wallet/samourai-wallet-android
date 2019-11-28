@@ -194,4 +194,18 @@ public class UTXOUtil {
         }
     }
 
+    public static AddressTypes getAddressType(String address) {
+
+
+        if (FormatsUtil.getInstance().isValidBech32(address)) {
+            // is bech32: p2wpkh BIP84
+            return AddressTypes.SEGWIT_NATIVE;
+        } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            // is P2SH wrapped segwit BIP49
+            return AddressTypes.SEGWIT_COMPAT;
+        } else {
+            return AddressTypes.LEGACY;
+        }
+    }
+
 }
