@@ -1826,6 +1826,7 @@ public class APIFactory	{
             for(String _s : UTXOUtil.getInstance().getTags().keySet())   {
                 if(!seenOutputsPostMix.contains(_s) && !seenOutputs.contains(_s))    {
                     UTXOUtil.getInstance().remove(_s);
+                    UTXOUtil.getInstance().removeNote(_s);
                 }
             }
 
