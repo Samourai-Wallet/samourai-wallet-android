@@ -1,22 +1,34 @@
 package com.samourai.wallet.util;
 
+import com.samourai.wallet.SamouraiWallet;
+
+import org.bitcoinj.core.Address;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.HashMap;
 
+
 public class UTXOUtil {
+
+    public enum AddressTypes {
+        LEGACY,
+        SEGWIT_COMPAT,
+        SEGWIT_NATIVE;
+    }
 
     private static UTXOUtil instance = null;
 
-    private static HashMap<String,String> utxoTags = null;
+    private static HashMap<String, String> utxoTags = null;
 
-    private UTXOUtil() { ; }
+    private UTXOUtil() {
+        ;
+    }
 
     public static UTXOUtil getInstance() {
 
-        if(instance == null) {
-            utxoTags = new HashMap<String,String>();
+        if (instance == null) {
+            utxoTags = new HashMap<String, String>();
             instance = new UTXOUtil();
         }
 
@@ -32,16 +44,15 @@ public class UTXOUtil {
     }
 
     public String get(String utxo) {
-        if(utxoTags.containsKey(utxo))  {
+        if (utxoTags.containsKey(utxo)) {
             return utxoTags.get(utxo);
-        }
-        else    {
+        } else {
             return null;
         }
 
     }
 
-    public HashMap<String,String> getTags() {
+    public HashMap<String, String> getTags() {
         return utxoTags;
     }
 
@@ -52,7 +63,7 @@ public class UTXOUtil {
     public JSONArray toJSON() {
 
         JSONArray utxos = new JSONArray();
-        for(String key : utxoTags.keySet()) {
+        for (String key : utxoTags.keySet()) {
             JSONArray tag = new JSONArray();
             tag.put(key);
             tag.put(utxoTags.get(key));
@@ -64,14 +75,28 @@ public class UTXOUtil {
 
     public void fromJSON(JSONArray utxos) {
         try {
-            for(int i = 0; i < utxos.length(); i++) {
-                JSONArray tag = (JSONArray)utxos.get(i);
-                utxoTags.put((String)tag.get(0), (String)tag.get(1));
+            for (int i = 0; i < utxos.length(); i++) {
+                JSONArray tag = (JSONArray) utxos.get(i);
+                utxoTags.put((String) tag.get(0), (String) tag.get(1));
             }
-        }
-        catch(JSONException ex) {
+        } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
     }
+
+    public static AddressTypes getAddressType(String address) {
+
+
+        if (FormatsUtil.getInstance().isValidBech32(address)) {
+            // is bech32: p2wpkh BIP84
+            return AddressTypes.SEGWIT_NATIVE;
+        } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            // is P2SH wrapped segwit BIP49
+            return AddressTypes.SEGWIT_COMPAT;
+        } else {
+            return AddressTypes.LEGACY;
+        }
+    }
+
 
 }
