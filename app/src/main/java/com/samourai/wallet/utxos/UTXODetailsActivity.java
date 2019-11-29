@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
 import android.view.Menu;
@@ -26,6 +27,9 @@ import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.bip47.paynym.WebUtil;
+import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -36,6 +40,7 @@ import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
@@ -54,6 +59,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
     private TextView addressTextView, amountTextView, statusTextView, notesTextView, hashTextView;
     private int account = 0;
     private EditText noteEditText;
+    private LinearLayout paynymLayout;
     private ImageView deleteButton;
     private TextView addNote;
     private static final String TAG = "UTXODetailsActivity";
@@ -76,6 +82,8 @@ public class UTXODetailsActivity extends AppCompatActivity {
         addNote = findViewById(R.id.add_note_button);
         notesTextView = findViewById(R.id.utxo_details_note);
         deleteButton = findViewById(R.id.delete_note);
+        paynymLayout = findViewById(R.id.utxo_details_paynym_container);
+        paynymLayout.setVisibility(View.GONE);
 
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(8);
@@ -128,7 +136,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
             if (UTXOUtil.getInstance().getNote(hash) != null) {
                 ((EditText) dialog.findViewById(R.id.utxo_details_note)).setText(UTXOUtil.getInstance().getNote(hash));
                 submitButton.setText("Save");
-            }else {
+            } else {
                 submitButton.setText("Add");
             }
 
@@ -151,6 +159,28 @@ public class UTXODetailsActivity extends AppCompatActivity {
         hashTextView.setText(hash);
         amountTextView.setText(df.format(((double) (amount) / 1e8)) + " BTC");
 
+        if (isBIP47(addr)) {
+            paynymLayout.setVisibility(View.VISIBLE);
+            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(addr);
+            ImageView avatar = paynymLayout.findViewById(R.id.paynym_avatar);
+            paynymLayout.findViewById(R.id.paynym_list_container).setOnClickListener(view -> {
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this, avatar, "profile");
+
+
+                startActivity(new Intent(this, PayNymDetailsActivity.class).putExtra("pcode", pcode), options.toBundle());
+            });
+            if (pcode != null && pcode.length() > 0) {
+
+                ((TextView) paynymLayout.findViewById(R.id.paynym_code)).setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
+
+                Picasso.with(getApplicationContext()).load(WebUtil.PAYNYM_API + pcode + "/avatar")
+                        .into(avatar);
+
+            } else {
+                ((TextView) paynymLayout.findViewById(R.id.paynym_code)).setText(getText(R.string.paycode).toString());
+            }
+        }
     }
 
     void setNoteState() {
@@ -236,6 +266,28 @@ public class UTXODetailsActivity extends AppCompatActivity {
         UTXOUtil.getInstance().addNote(hash, text);
         setNoteState();
     }
+
+    private boolean isBIP47(String address) {
+
+        try {
+            String path = APIFactory.getInstance(getApplicationContext()).getUnspentPaths().get(address);
+            if (path != null) {
+                return false;
+            } else {
+                String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                List<Integer> unspentIdxs = BIP47Meta.getInstance().getUnspent(pcode);
+
+                return unspentIdxs != null && unspentIdxs.contains(Integer.valueOf(idx));
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     @Override
     protected void onDestroy() {

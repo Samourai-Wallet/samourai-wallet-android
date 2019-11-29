@@ -111,9 +111,18 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textSize="12sp"
-                    tools:text="2.030 BTC" />
+                    tools:text="address" />
 
             </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.2"
+                android:background="@color/white"
+                android:padding="12dp" />
+
 
 
             <View
@@ -156,6 +165,34 @@
                 android:background="@color/white"
                 android:padding="12dp" />
 
+            <LinearLayout
+                android:id="@+id/utxo_details_paynym_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/paynym"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="12dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <include layout="@layout/paynym_list_item" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.2"
+                android:background="@color/white"
+                android:padding="12dp" />
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
