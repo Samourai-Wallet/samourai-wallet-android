@@ -116,4 +116,9 @@
 
     <style name="stowaway_dialog" parent="Theme.AppCompat.Light.Dialog.Alert" />
 
+    <style name="bottom_sheet_note" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

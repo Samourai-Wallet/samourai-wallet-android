@@ -469,7 +469,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         Intent intent = new Intent(this, UTXODetailsActivity.class);
         intent.putExtra("hash", filteredUTXOs.get(position).hash);
         intent.putExtra("account", account);
-        startActivity(intent);
+        startActivityForResult(intent,0);
     }
 
     private boolean onListLongPress(int postion) {
@@ -673,6 +673,12 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         compositeDisposable.dispose();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        this.loadUTXOs(true);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     class UTXOListAdapter extends RecyclerView.Adapter<UTXOListAdapter.ViewHolder> {

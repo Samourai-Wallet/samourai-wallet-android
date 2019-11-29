@@ -7,12 +7,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.TransitionManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -27,7 +32,9 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
+import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.core.Address;
@@ -43,10 +50,15 @@ import java.util.Objects;
 
 public class UTXODetailsActivity extends AppCompatActivity {
     final DecimalFormat df = new DecimalFormat("#");
-    private String hash, addr;
+    private String hash, addr, t;
     private TextView addressTextView, amountTextView, statusTextView, notesTextView, hashTextView;
     private int account = 0;
-
+    private EditText noteEditText;
+    private ImageView deleteButton;
+    private TextView addNote;
+    private static final String TAG = "UTXODetailsActivity";
+    private int idx;
+    private long amount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +73,9 @@ public class UTXODetailsActivity extends AppCompatActivity {
         amountTextView = findViewById(R.id.utxo_details_amount);
         statusTextView = findViewById(R.id.utxo_details_spendable_status);
         hashTextView = findViewById(R.id.utxo_details_hash);
+        addNote = findViewById(R.id.add_note_button);
+        notesTextView = findViewById(R.id.utxo_details_note);
+        deleteButton = findViewById(R.id.delete_note);
 
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(8);
@@ -89,21 +104,144 @@ public class UTXODetailsActivity extends AppCompatActivity {
         for (UTXO utxo : utxos) {
             for (MyTransactionOutPoint outpoint : utxo.getOutpoints()) {
                 if (outpoint.getTxHash() != null && outpoint.getTxHash().toString().equals(hash)) {
-                    addressTextView.setText(outpoint.getAddress());
-                    amountTextView.setText(df.format(((double) (outpoint.getValue().longValue()) / 1e8)) + " BTC");
+                    idx = outpoint.getTxOutputN();
+                    amount = outpoint.getValue().longValue();
                     addr = outpoint.getAddress();
-                    hashTextView.setText(outpoint.getTxHash().toString());
-                    if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
-                        statusTextView.setText("Blocked");
-                    } else {
-                        statusTextView.setText(getText(R.string.spendable));
-                    }
+                    setUTXOState();
                 }
             }
 
         }
+        deleteButton.setOnClickListener(view -> {
+            if (UTXOUtil.getInstance().getNote(hash) != null) {
+                UTXOUtil.getInstance().removeNote(hash);
+            }
+            setNoteState();
+        });
+        addNote.setOnClickListener(view -> {
+            View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_note, null);
+            BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.bottom_sheet_note);
+            dialog.setContentView(dialogView);
+            dialog.show();
+            Button submitButton = dialog.findViewById(R.id.submit_note);
+
+            if (UTXOUtil.getInstance().getNote(hash) != null) {
+                ((EditText) dialog.findViewById(R.id.utxo_details_note)).setText(UTXOUtil.getInstance().getNote(hash));
+                submitButton.setText("Save");
+            }else {
+                submitButton.setText("Add");
+            }
+
+            dialog.findViewById(R.id.submit_note).setOnClickListener((View view1) -> {
+                dialog.dismiss();
+                addNote(((EditText) dialog.findViewById(R.id.utxo_details_note)).getText().toString());
+            });
+        });
+
+        setNoteState();
     }
 
+    void setUTXOState() {
+        if (BlockedUTXO.getInstance().contains(hash, idx)) {
+            statusTextView.setText("Blocked");
+        } else {
+            statusTextView.setText(getText(R.string.spendable));
+        }
+        addressTextView.setText(addr);
+        hashTextView.setText(hash);
+        amountTextView.setText(df.format(((double) (amount) / 1e8)) + " BTC");
+
+    }
+
+    void setNoteState() {
+        TransitionManager.beginDelayedTransition((ViewGroup) notesTextView.getRootView());
+        if (UTXOUtil.getInstance().getNote(hash) == null) {
+            notesTextView.setVisibility(View.GONE);
+            addNote.setText("Add");
+            deleteButton.setVisibility(View.GONE);
+        } else {
+            notesTextView.setVisibility(View.VISIBLE);
+            notesTextView.setText(UTXOUtil.getInstance().getNote(hash));
+            deleteButton.setVisibility(View.VISIBLE);
+            addNote.setText("Edit");
+        }
+    }
+
+
+    void setSpendStatus() {
+
+        final String[] export_methods = new String[2];
+        export_methods[0] = "Spendable";
+        export_methods[1] = "Do not spend";
+
+
+        int selected = 0;
+        if (BlockedUTXO.getInstance().contains(hash, idx)) {
+            selected = 1;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Set status")
+                .setSingleChoiceItems(export_methods, selected, (dialog, which) -> {
+
+                            if (which == 0) {
+                                if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(hash, idx)) {
+                                    BlockedUTXO.getInstance().remove(hash, idx);
+                                    BlockedUTXO.getInstance().addNotDusted(hash, idx);
+
+                                } else if (BlockedUTXO.getInstance().contains(hash, idx)) {
+
+                                    BlockedUTXO.getInstance().remove(hash, idx);
+
+
+                                } else if (BlockedUTXO.getInstance().containsPostMix(hash, idx)) {
+
+                                    BlockedUTXO.getInstance().removePostMix(hash, idx);
+
+                                }
+
+                            } else {
+                                if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(hash, idx)) {
+
+                                    //No-op
+
+
+                                } else if (BlockedUTXO.getInstance().contains(hash, idx)) {
+                                    //No-op
+
+                                } else if (BlockedUTXO.getInstance().containsPostMix(hash, idx)) {
+
+                                    //No-op
+                                } else {
+
+                                    if (account == 0) {
+                                        BlockedUTXO.getInstance().add(hash, idx, amount);
+                                    } else {
+                                        BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
+                                    }
+                                    LogUtil.debug("UTXOActivity", "added:" + hash + "-" + idx);
+
+                                }
+                            }
+                            setUTXOState();
+                            dialog.dismiss();
+                        }
+                ).
+
+                show();
+
+    }
+
+    void addNote(String text) {
+        UTXOUtil.getInstance().addNote(hash, text);
+        setNoteState();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setResult(RESULT_OK, new Intent());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +257,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
             finish();
         }
         if (item.getItemId() == R.id.utxo_details_add_to_whirlpool) {
-//TODO:
+            //TODO:
         }
         if (item.getItemId() == R.id.utxo_details_menu_action_more_options) {
             showMoreOptions();
@@ -142,9 +280,11 @@ public class UTXODetailsActivity extends AppCompatActivity {
         dialog.findViewById(R.id.utxo_details_option_redeem).setOnClickListener(view -> redeem());
         dialog.findViewById(R.id.utxo_details_option_private_key).setOnClickListener(view -> viewPrivateKey());
 
-        //TODO
-        dialog.findViewById(R.id.utxo_details_option_status).setOnClickListener(view -> viewPrivateKey());
-        dialog.findViewById(R.id.utxo_details_option_spend).setOnClickListener(view -> viewPrivateKey());
+        dialog.findViewById(R.id.utxo_details_option_status).setOnClickListener(view -> {
+            setSpendStatus();
+            dialog.dismiss();
+        });
+        dialog.findViewById(R.id.utxo_details_option_spend).setOnClickListener(view -> Toast.makeText(getApplicationContext(), R.string.coming_soon, Toast.LENGTH_SHORT).show());
 
     }
 
