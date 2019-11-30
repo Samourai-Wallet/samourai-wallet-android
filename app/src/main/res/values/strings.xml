@@ -751,6 +751,7 @@
     <string name="spendable">Spendable</string>
     <string name="reveal_the_redeem_script_for_this_address">Reveal the redeem script for this address</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="active">Active</string>
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>

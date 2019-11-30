@@ -749,7 +749,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
             if (filteredUTXOs.get(position) instanceof UTXOSActivity.UTXOModelSection) {
                 UTXOSActivity.UTXOModelSection utxoModelSection = (UTXOSActivity.UTXOModelSection) filteredUTXOs.get(position);
-                holder.section.setText(utxoModelSection.isActive ? "Active" : "Do not spend");
+                holder.section.setText(utxoModelSection.isActive ? getString(R.string.active) : getString(R.string.do_not_spend));
                 if (!utxoModelSection.isActive) {
                     holder.section.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
                     holder.section.setTypeface(Typeface.DEFAULT_BOLD);
@@ -760,7 +760,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             }
             UTXOSActivity.UTXOModel item = filteredUTXOs.get(position);
             holder.address.setText(item.addr);
-            holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)) + " BTC");
+            holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)).concat(" BTC");
             holder.rootViewGroup.setOnClickListener(view -> {
                 if (!multiSelect)
                     onItemClick(position, view);
@@ -786,7 +786,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 TextView tx = new TextView(holder.rootViewGroup.getContext());
-                tx.setText("DUST");
+                tx.setText(getString(R.string.dust));
                 tx.setLayoutParams(lparams);
                 tx.setBackgroundResource(R.drawable.tag_round_shape);
                 float scale = getResources().getDisplayMetrics().density;
@@ -905,7 +905,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         List<UTXOModel> oldList;
         List<UTXOModel> newList;
 
-        public UTXODiffCallback(List<UTXOModel> newPersons, List<UTXOModel> oldPersons) {
+        UTXODiffCallback(List<UTXOModel> newPersons, List<UTXOModel> oldPersons) {
             this.newList = newPersons;
             this.oldList = oldPersons;
         }
