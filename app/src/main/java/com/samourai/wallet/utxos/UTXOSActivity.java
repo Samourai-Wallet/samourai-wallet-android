@@ -760,7 +760,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             }
             UTXOSActivity.UTXOModel item = filteredUTXOs.get(position);
             holder.address.setText(item.addr);
-            holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)).concat(" BTC");
+            holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)).concat(" BTC"));
             holder.rootViewGroup.setOnClickListener(view -> {
                 if (!multiSelect)
                     onItemClick(position, view);
