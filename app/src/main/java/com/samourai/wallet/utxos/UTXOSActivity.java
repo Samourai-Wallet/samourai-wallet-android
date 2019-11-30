@@ -2,7 +2,9 @@ package com.samourai.wallet.utxos;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
@@ -746,6 +749,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            float scale = getResources().getDisplayMetrics().density;
 
             if (filteredUTXOs.get(position) instanceof UTXOSActivity.UTXOModelSection) {
                 UTXOSActivity.UTXOModelSection utxoModelSection = (UTXOSActivity.UTXOModelSection) filteredUTXOs.get(position);
@@ -787,14 +791,24 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 TextView tx = new TextView(holder.rootViewGroup.getContext());
                 tx.setText(getString(R.string.dust));
+                tx.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_accent));
                 tx.setLayoutParams(lparams);
                 tx.setBackgroundResource(R.drawable.tag_round_shape);
-                float scale = getResources().getDisplayMetrics().density;
-                int dpAsPixels = (int) (4 * scale + 0.5f);
-                tx.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels);
+                tx.setPadding((int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f));
                 lparams.leftMargin = 8;
+                tx.setTypeface(Typeface.DEFAULT_BOLD);
                 tx.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
                 holder.tagsLayout.addView(tx);
+            }
+
+            if (UTXOUtil.getInstance().getNote(item.hash) != null) {
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (12 * scale + 0.5f),(int) (12 * scale + 0.5f));
+                ImageView im = new ImageView(holder.rootViewGroup.getContext());
+                im.setImageResource(R.drawable.ic_note_black_24dp);
+                im.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f),0);
+                im.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey_accent)));
+                lparams.leftMargin = 8;
+                holder.tagsLayout.addView(im);
             }
             holder.checkBox.setChecked(item.isSelected);
 

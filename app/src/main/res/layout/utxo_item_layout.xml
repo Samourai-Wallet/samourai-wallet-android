@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/utxo_item"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:background="@drawable/tx_ripples"
     android:clickable="true"
