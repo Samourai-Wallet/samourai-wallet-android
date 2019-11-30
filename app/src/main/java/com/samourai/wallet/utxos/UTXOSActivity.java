@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
@@ -74,7 +73,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private ActionMode toolbarActionMode;
 
 
-    public class UTXOModel {
+    class UTXOModel {
         private String addr = null;
         int id;
         long amount = 0L;
@@ -90,7 +89,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
     private List<UTXOModel> filteredUTXOs = new ArrayList<>();
     private List<UTXOModel> unFilteredUTXOS = new ArrayList<>();
-    private List<String> selectedHashes = new ArrayList<>();
     private static final String TAG = "UTXOSActivity";
     private long totalP2PKH = 0L;
     private long totalP2SH_P2WPKH = 0L;
@@ -106,8 +104,13 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private Toolbar toolbar;
 
     //Filter states
-    private boolean addressFilterLegacy = true, addressFilterSegwitCompat = true, addressFilterSegwitNat = true, statusSpendable = true, statusUnSpendable = true;
-    private boolean utxoSortOrder = true;
+    private boolean
+            addressFilterLegacy = true,
+            addressFilterSegwitCompat = true,
+            addressFilterSegwitNat = true,
+            statusSpendable = true,
+            statusUnSpendable = true,
+            utxoSortOrder = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +142,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         utxoList.addItemDecoration(new ItemDividerDecorator(getDrawable(R.color.disabled_white)));
         utxoList.setAdapter(adapter);
         loadUTXOs(false);
+
         utxoSwipeRefresh.setOnRefreshListener(() -> {
             loadUTXOs(false);
         });
@@ -254,8 +258,18 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         //types includes SEGWIT_NATIVE,SEGWIT_COMPAT,LEGACY
         List<UTXOModel> filteredAddress = new ArrayList<>(filteredStatus);
 
+        //counters to check spendables and unspendables
+        //sections will be added based on this counters
+        int unspendables = 0;
+        int spendables = 0;
 
         for (UTXOModel model : filteredStatus) {
+            if (model.doNotSpend) {
+                unspendables = unspendables + 1;
+            } else {
+                spendables = spendables + 1;
+
+            }
             UTXOUtil.AddressTypes type = UTXOUtil.getAddressType(model.addr);
             switch (type) {
                 case LEGACY:
@@ -290,24 +304,29 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         //here array will split based on spending status
         List<UTXOModel> sectioned = new ArrayList<>();
 
-        UTXOModelSection active = new UTXOModelSection();
-        active.id = 0;
-        active.isActive = true;
-        sectioned.add(active);
 
+        if (spendables > 0) {
+
+            UTXOModelSection active = new UTXOModelSection();
+            active.id = 0;
+            active.isActive = true;
+            sectioned.add(active);
+
+        }
         for (UTXOModel models : filteredAddress) {
             if (!models.doNotSpend) {
                 models.id = filteredAddress.indexOf(models) + 1;
                 sectioned.add(models);
             }
         }
+        if (unspendables > 0) {
 
-        UTXOModelSection doNotSpend = new UTXOModelSection();
-        doNotSpend.id = filteredAddress.size() + 1;
-        doNotSpend.isActive = false;
-        doNotSpend.hash = "not_active";
-        sectioned.add(doNotSpend);
-
+            UTXOModelSection doNotSpend = new UTXOModelSection();
+            doNotSpend.id = filteredAddress.size() + 1;
+            doNotSpend.isActive = false;
+            doNotSpend.hash = "not_active";
+            sectioned.add(doNotSpend);
+        }
         for (UTXOModel models : filteredAddress) {
             if (models.doNotSpend) {
                 models.id = filteredAddress.indexOf(models) + 1;
@@ -469,7 +488,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         Intent intent = new Intent(this, UTXODetailsActivity.class);
         intent.putExtra("hash", filteredUTXOs.get(position).hash);
         intent.putExtra("account", account);
-        startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
     }
 
     private boolean onListLongPress(int postion) {
