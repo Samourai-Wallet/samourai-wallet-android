@@ -705,7 +705,7 @@
     <string name="pool_fee">POOL FEE</string>
     <string name="total_fees">TOTAL FEES</string>
     <string name="miner_fee">MINER FEE</string>
-    <string name="total_being_cycled">Total being cycled:</string>
+    <string name="total_whirlpool_balance">Total Whirlpool Balance</string>
     <string name="review_cycle_details">REVIEW CYCLE DETAILS</string>
     <string name="cycled_transactions">Cycled Transactions</string>
     <string name="initial_transaction">Initial Transaction</string>

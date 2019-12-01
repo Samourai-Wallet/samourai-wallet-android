@@ -304,7 +304,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private void initUTXOReviewButton(List<Coin> coins) {
 
         String reviewMessage = getString(R.string.review_cycle_details).concat("\n");
-        String reviewAmountMessage = getString(R.string.total_being_cycled).concat(" ");
+        String reviewAmountMessage = getString(R.string.total_whirlpool_balance).concat(" ");
         String amount = MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC";
 
         SpannableString spannable = new SpannableString(reviewMessage.concat(reviewAmountMessage).concat(amount));

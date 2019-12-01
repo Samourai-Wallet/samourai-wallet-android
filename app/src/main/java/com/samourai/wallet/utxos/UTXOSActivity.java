@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -437,9 +436,11 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             ArrayList<UTXOModel> items = new ArrayList<>();
             for (UTXO utxo : utxos) {
                 for (MyTransactionOutPoint outpoint : utxo.getOutpoints()) {
+                    LogUtil.info(TAG, "getDataUTXOData: ".concat(utxo.getPath()));
                     UTXOModel displayData = new UTXOModel();
                     displayData.addr = outpoint.getAddress();
                     displayData.amount = outpoint.getValue().longValue();
+                    LogUtil.info(TAG, "getDataUTXOData: ".concat(displayData.addr));
                     displayData.hash = outpoint.getTxHash().toString();
                     displayData.idx = outpoint.getTxOutputN();
                     if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
@@ -472,6 +473,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                         items.add(displayData);
 
                 }
+                LogUtil.info(TAG, "_------ ____ _-----_-____");
 
             }
             dataSet.put("totalP2WPKH", totalP2WPKH);
@@ -802,10 +804,10 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             }
 
             if (UTXOUtil.getInstance().getNote(item.hash) != null) {
-                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (12 * scale + 0.5f),(int) (12 * scale + 0.5f));
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (12 * scale + 0.5f), (int) (12 * scale + 0.5f));
                 ImageView im = new ImageView(holder.rootViewGroup.getContext());
                 im.setImageResource(R.drawable.ic_note_black_24dp);
-                im.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f),0);
+                im.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
                 im.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey_accent)));
                 lparams.leftMargin = 8;
                 holder.tagsLayout.addView(im);
