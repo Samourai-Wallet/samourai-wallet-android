@@ -15,5 +15,10 @@
         android:orderInCategory="100"
         android:title="@string/action_support"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_voucher"
+        android:orderInCategory="100"
+        android:title="Vouchers"
+        app:showAsAction="never" />
 
 </menu>
