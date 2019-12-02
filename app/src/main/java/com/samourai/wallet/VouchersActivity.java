@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.VouchersUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,20 +30,19 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 public class VouchersActivity extends AppCompatActivity {
 
-    private String fbtc = "https://wallet-api.fastbitcoins.com/w-api/v1/samourai/";
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private Button redeemButton;
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+    private String fbtc = null;
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private String addr84;
     private boolean validVoucher = false;
     private TextView log;
     private static final String TAG = "VouchersActivity";
     private String quotationSecret;
     private int quotationId;
-    private String email = "sarath@samourai.io";
-    private String validVoucherCode;
+    private String email = null;
+    private String voucherCode;
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Button redeemButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,9 @@ public class VouchersActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.voucher_receive_add)).setText("Receive address: ".concat(addr84));
 
         setSupportActionBar(findViewById(R.id.appbar_voucher));
+
+        fbtc = VouchersUtil.getInstance().getFastBitcoinsAPI();
+        email = VouchersUtil.getInstance().getFastBitcoinsEmail();
 
         redeemButton = findViewById(R.id.redeem_button);
         log = findViewById(R.id.voucher_log);
@@ -71,10 +74,10 @@ public class VouchersActivity extends AppCompatActivity {
                                 Snackbar.make(view, "Valid voucher", Snackbar.LENGTH_SHORT).show();
                                 redeemButton.setText("Redeem");
                                 log.setText(jsonObject.toString(2));
-                                validVoucherCode = edt.getText().toString();
+                                voucherCode = edt.getText().toString().toUpperCase().trim();
                                 quotationSecret = jsonObject.getString("quotation_secret");
                                 quotationId = jsonObject.getInt("quotation_id");
-                                validVoucher = true;
+                                validVoucher = VouchersUtil.getInstance().isValidFastBitcoinsCode(voucherCode);
                             } else {
                                 Snackbar.make(view, "Error : ".concat(throwable.getMessage()), Snackbar.LENGTH_SHORT).show();
                             }
@@ -146,7 +149,8 @@ public class VouchersActivity extends AppCompatActivity {
         String url = fbtc.concat("redeem");
 
         return Single.fromCallable(() -> {
-            if (validVoucherCode == null) {
+            if (voucherCode == null) {
+                validVoucher = false;
                 throw new Exception("Error invalid code");
             }
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -164,7 +168,7 @@ public class VouchersActivity extends AppCompatActivity {
             json.put("currency", "voucher");
             json.put("email_address", email);
             json.put("currency", "USD");
-            json.put("code", validVoucherCode);
+            json.put("code", voucherCode);
             json.put("quotation_id", quotationId);
             json.put("quotation_secret", quotationSecret);
             json.put("delivery_address", addr84);
