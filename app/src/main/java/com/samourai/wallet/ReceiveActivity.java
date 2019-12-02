@@ -556,6 +556,10 @@ public class ReceiveActivity extends AppCompatActivity {
                 }).show();
                 break;
             }
+            case  R.id.action_voucher:{
+                startActivity(new Intent(this,VouchersActivity.class));
+                break;
+            }
             case R.id.action_refresh: {
                 if (useSegwit && isBIP84Selected() && canRefresh84) {
                     addr84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
