@@ -2,7 +2,7 @@ package com.samourai.wallet.whirlpool;
 
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.send.MyTransactionOutPoint;
-import com.samourai.wallet.whirlpool.models.Coin;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.params.MainNetParams;
@@ -32,13 +32,13 @@ public class WhirlpoolTx0 {
         this.premixRequested = premixRequested;
     }
 
-    public WhirlpoolTx0(long pool, long feeSatB, int premixRequested, List<Coin> coins)   {
+    public WhirlpoolTx0(long pool, long feeSatB, int premixRequested, List<UTXOCoin> coins)   {
         this.pool = pool;
         this.feeSatB = feeSatB;
         this.premixRequested = premixRequested;
-        this.outpoints = new ArrayList<MyTransactionOutPoint>();
-        for(Coin coin : coins)   {
-            outpoints.add(coin.getOutpoint());
+        this.outpoints = new ArrayList<>();
+        for(UTXOCoin coin : coins)   {
+            outpoints.add(coin.getOutPoint());
         }
     }
 

@@ -43,6 +43,8 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.UTXOUtil;
+import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.utxos.models.UTXOCoinSegment;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 
@@ -75,22 +77,8 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private ActionMode toolbarActionMode;
 
 
-    class UTXOModel {
-        private String addr = null;
-        int id;
-        long amount = 0L;
-        String hash = null;
-        private int idx = 0;
-        private boolean doNotSpend = false;
-        private boolean isSelected = false;
-    }
-
-    private class UTXOModelSection extends UTXOModel {
-        boolean isActive = false;
-    }
-
-    private List<UTXOModel> filteredUTXOs = new ArrayList<>();
-    private List<UTXOModel> unFilteredUTXOS = new ArrayList<>();
+    private List<UTXOCoin> filteredUTXOs = new ArrayList<>();
+    private List<UTXOCoin> unFilteredUTXOS = new ArrayList<>();
     private static final String TAG = "UTXOSActivity";
     private long totalP2PKH = 0L;
     private long totalP2SH_P2WPKH = 0L;
@@ -237,9 +225,9 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private void applyFilters() {
 
         //ArrayList will store UTXOs that or filtered based on spending status
-        ArrayList<UTXOModel> filteredStatus = new ArrayList<>();
+        ArrayList<UTXOCoin> filteredStatus = new ArrayList<>();
 
-        for (UTXOModel model : unFilteredUTXOS) {
+        for (UTXOCoin model : unFilteredUTXOS) {
             if (statusUnSpendable) {
                 if (model.doNotSpend) {
                     if (!filteredStatus.contains(model)) {
@@ -258,21 +246,21 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         //ArrayList will store UTXOs that or filtered based on Address types
         //types includes SEGWIT_NATIVE,SEGWIT_COMPAT,LEGACY
-        List<UTXOModel> filteredAddress = new ArrayList<>(filteredStatus);
+        List<UTXOCoin> filteredAddress = new ArrayList<>(filteredStatus);
 
         //counters to check spendables and unspendables
         //sections will be added based on this counters
         int unspendables = 0;
         int spendables = 0;
 
-        for (UTXOModel model : filteredStatus) {
+        for (UTXOCoin model : filteredStatus) {
             if (model.doNotSpend) {
                 unspendables = unspendables + 1;
             } else {
                 spendables = spendables + 1;
 
             }
-            UTXOUtil.AddressTypes type = UTXOUtil.getAddressType(model.addr);
+            UTXOUtil.AddressTypes type = UTXOUtil.getAddressType(model.address);
             switch (type) {
                 case LEGACY:
                     if (!addressFilterLegacy) {
@@ -304,18 +292,18 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         //Sectioned dataset for RecyclerView adapter
         //here array will split based on spending status
-        List<UTXOModel> sectioned = new ArrayList<>();
+        List<UTXOCoin> sectioned = new ArrayList<>();
 
 
         if (spendables > 0) {
 
-            UTXOModelSection active = new UTXOModelSection();
+            UTXOCoinSegment active = new UTXOCoinSegment(null, null);
             active.id = 0;
             active.isActive = true;
             sectioned.add(active);
 
         }
-        for (UTXOModel models : filteredAddress) {
+        for (UTXOCoin models : filteredAddress) {
             if (!models.doNotSpend) {
                 models.id = filteredAddress.indexOf(models) + 1;
                 sectioned.add(models);
@@ -323,13 +311,13 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         }
         if (unspendables > 0) {
 
-            UTXOModelSection doNotSpend = new UTXOModelSection();
+            UTXOCoinSegment doNotSpend = new UTXOCoinSegment(null, null);
             doNotSpend.id = filteredAddress.size() + 1;
             doNotSpend.isActive = false;
             doNotSpend.hash = "not_active";
             sectioned.add(doNotSpend);
         }
-        for (UTXOModel models : filteredAddress) {
+        for (UTXOCoin models : filteredAddress) {
             if (models.doNotSpend) {
                 models.id = filteredAddress.indexOf(models) + 1;
                 sectioned.add(models);
@@ -377,12 +365,12 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             utxoSwipeRefresh.setRefreshing(false);
             utxoProgressBar.setVisibility(View.VISIBLE);
         }
-        Disposable disposable = getDataUTXOData()
+        Disposable disposable = getUTXOs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(stringObjectMap -> {
-                    List<UTXOModel> items = (List<UTXOModel>) stringObjectMap.get("utxos");
-
+                    List<UTXOCoin> items = (List<UTXOCoin>) stringObjectMap.get("utxos");
+                    LogUtil.info(TAG, "loadUTXOs: ".concat(String.valueOf(items.size())));
                     try {
                         unFilteredUTXOS = new ArrayList<>();
                         unFilteredUTXOS.addAll(items);
@@ -408,7 +396,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         compositeDisposable.add(disposable);
     }
 
-    private Observable<Map<String, Object>> getDataUTXOData() {
+    private Observable<Map<String, Object>> getUTXOs() {
         return Observable.fromCallable(() -> {
             long totalP2WPKH = 0L;
             long totalBlocked = 0L;
@@ -433,16 +421,10 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 }
             }
 
-            ArrayList<UTXOModel> items = new ArrayList<>();
+            ArrayList<UTXOCoin> items = new ArrayList<>();
             for (UTXO utxo : utxos) {
                 for (MyTransactionOutPoint outpoint : utxo.getOutpoints()) {
-                    LogUtil.info(TAG, "getDataUTXOData: ".concat(utxo.getPath()));
-                    UTXOModel displayData = new UTXOModel();
-                    displayData.addr = outpoint.getAddress();
-                    displayData.amount = outpoint.getValue().longValue();
-                    LogUtil.info(TAG, "getDataUTXOData: ".concat(displayData.addr));
-                    displayData.hash = outpoint.getTxHash().toString();
-                    displayData.idx = outpoint.getTxOutputN();
+                    UTXOCoin displayData = new UTXOCoin(outpoint, utxo);
                     if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
                         displayData.doNotSpend = true;
                         totalBlocked += displayData.amount;
@@ -453,18 +435,17 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                         totalBlocked += displayData.amount;
                     } else {
 //                    Log.d("UTXOActivity", "unmarked");
-                        if (FormatsUtil.getInstance().isValidBech32(displayData.addr)) {
+                        if (FormatsUtil.getInstance().isValidBech32(displayData.address)) {
                             totalP2WPKH += displayData.amount;
-                        } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), displayData.addr).isP2SHAddress()) {
+                        } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), displayData.address).isP2SHAddress()) {
                             totalP2SH_P2WPKH += displayData.amount;
                         } else {
                             totalP2PKH += displayData.amount;
                         }
                     }
 
-                    //TODO: REMOVE THIS
                     boolean duplicatesexist = false;
-                    for (UTXOModel u : items) {
+                    for (UTXOCoin u : items) {
                         if (u.hash.equals(displayData.hash)) {
                             duplicatesexist = true;
                         }
@@ -473,7 +454,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                         items.add(displayData);
 
                 }
-                LogUtil.info(TAG, "_------ ____ _-----_-____");
 
             }
             dataSet.put("totalP2WPKH", totalP2WPKH);
@@ -539,7 +519,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
     private void calculateSelectedAmount() {
         long amount = 0L;
-        for (UTXOModel model : this.filteredUTXOs) {
+        for (UTXOCoin model : this.filteredUTXOs) {
             if (model.isSelected) {
                 amount = amount + model.amount;
             }
@@ -548,7 +528,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     }
 
     private void markAsSpendable() {
-        for (UTXOModel model : filteredUTXOs) {
+        for (UTXOCoin model : filteredUTXOs) {
             if (model.isSelected) {
                 if (model.amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(model.hash, model.idx)) {
                     BlockedUTXO.getInstance().remove(model.hash, model.idx);
@@ -572,7 +552,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     }
 
     private void markAsUnSpendable() {
-        for (UTXOModel model : filteredUTXOs) {
+        for (UTXOCoin model : filteredUTXOs) {
             if (model.isSelected) {
                 if (model.amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(model.hash, model.idx)) {
 
@@ -605,8 +585,8 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     //Clears current Toolbar action mode
     void clearSelection() {
 
-        ArrayList<UTXOModel> models = new ArrayList<>();
-        for (UTXOModel model : this.filteredUTXOs) {
+        ArrayList<UTXOCoin> models = new ArrayList<>();
+        for (UTXOCoin model : this.filteredUTXOs) {
             model.isSelected = false;
             models.add(model);
         }
@@ -734,14 +714,14 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         @Override
         public int getItemViewType(int position) {
-            if (filteredUTXOs.get(position) instanceof UTXOSActivity.UTXOModelSection) {
+            if (filteredUTXOs.get(position) instanceof UTXOCoinSegment) {
                 return SECTION;
             } else {
                 return UTXO;
             }
         }
 
-        public void updateList(List<UTXOModel> newList) {
+        public void updateList(List<UTXOCoin> newList) {
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new UTXODiffCallback(filteredUTXOs, newList));
             filteredUTXOs = new ArrayList<>();
             filteredUTXOs.addAll(newList);
@@ -753,10 +733,10 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         public void onBindViewHolder(ViewHolder holder, int position) {
             float scale = getResources().getDisplayMetrics().density;
 
-            if (filteredUTXOs.get(position) instanceof UTXOSActivity.UTXOModelSection) {
-                UTXOSActivity.UTXOModelSection utxoModelSection = (UTXOSActivity.UTXOModelSection) filteredUTXOs.get(position);
-                holder.section.setText(utxoModelSection.isActive ? getString(R.string.active) : getString(R.string.do_not_spend));
-                if (!utxoModelSection.isActive) {
+            if (filteredUTXOs.get(position) instanceof UTXOCoinSegment) {
+                UTXOCoinSegment utxoCoinSegment = (UTXOCoinSegment) filteredUTXOs.get(position);
+                holder.section.setText(utxoCoinSegment.isActive ? getString(R.string.active) : getString(R.string.do_not_spend));
+                if (!utxoCoinSegment.isActive) {
                     holder.section.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
                     holder.section.setTypeface(Typeface.DEFAULT_BOLD);
                 } else {
@@ -764,8 +744,8 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 }
                 return;
             }
-            UTXOSActivity.UTXOModel item = filteredUTXOs.get(position);
-            holder.address.setText(item.addr);
+            UTXOCoin item = filteredUTXOs.get(position);
+            holder.address.setText(item.address);
             holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)).concat(" BTC"));
             holder.rootViewGroup.setOnClickListener(view -> {
                 if (!multiSelect)
@@ -830,9 +810,9 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 //            } else {
 //                holder.label.setVisibility(View.GONE);
 //            }
-//            if (isBIP47(filteredUTXOs.get(position).addr)) {
+//            if (isBIP47(filteredUTXOs.get(position).address)) {
 //                holder.paynym.setVisibility(View.VISIBLE);
-//                String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(filteredUTXOs.get(position).addr);
+//                String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(filteredUTXOs.get(position).address);
 //                if (pcode != null && pcode.length() > 0) {
 //
 //                    holder.paynym.setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
@@ -918,10 +898,10 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
     public class UTXODiffCallback extends DiffUtil.Callback {
 
-        List<UTXOModel> oldList;
-        List<UTXOModel> newList;
+        List<UTXOCoin> oldList;
+        List<UTXOCoin> newList;
 
-        UTXODiffCallback(List<UTXOModel> newPersons, List<UTXOModel> oldPersons) {
+        UTXODiffCallback(List<UTXOCoin> newPersons, List<UTXOCoin> oldPersons) {
             this.newList = newPersons;
             this.oldList = oldPersons;
         }
