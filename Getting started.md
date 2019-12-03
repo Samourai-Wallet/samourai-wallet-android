@@ -14,7 +14,7 @@ Once Samourai is installed onto your device launch the app and tap on the **Crea
 
 ### Step 3 - Create a passphrase
 
-You will now be asked to create and confirm a passphrase of your choosing. This passphrase will provide additional security to your bitcoin wallet and will allow you to easily export your wallet onto any other compatible bitcoin wallet software. **IMPORTANT: We do not know or store your passphrase, if you forget your passphrase we cannot help you reset it. Do not forget your passphrase.**
+You will now be asked to create and confirm a passphrase of your choosing. This passphrase will provide additional security to your Bitcoin wallet and will allow you to easily export your wallet onto any other compatible Bitcoin wallet software. **IMPORTANT: We do not know or store your passphrase, if you forget your passphrase we cannot help you reset it. Do not forget your passphrase!**
 
 ### Step 4 - Create a PIN code
 
@@ -24,15 +24,15 @@ You will now be asked to create and confirm a PIN code between 5 and 8 digits lo
 
 Samourai has now created a brand new Bitcoin wallet for you. You will be shown 12 random words. **It is crucial that you write down and secure these 12 secret words.**
  
-These words when used together with your passphrase can regenerate your entire wallet, balance, and history.  **IMPORTANT: Your secret words must be kept a secret. Anyone who knows your secret words and your passphrase will be able to steal your bitcoin. Never keep your words saved on a computer or the cloud.**
+These words when used **(in order!)** together with your passphrase can regenerate your entire wallet, balance, and history.  **IMPORTANT: Your secret words must be kept a secret. Anyone who knows your secret words and your passphrase will be able to steal your Bitcoin. Never keep your words saved on a computer or the cloud.**
 
 ### Step 6 - Success!
 
-Your wallet has now been created and you are ready to begin sending and receiving bitcoin payments!
+Your wallet has now been created and you are ready to begin sending and receiving Bitcoin payments!
 
 ## Importing a wallet from another app
 
-Samourai Wallet is compatible with all modern bitcoin wallets that follow standards put forward and enforced by the bitcoin community. Follow this guide to import an existing wallet
+Samourai Wallet is compatible with all modern Bitcoin wallets that follow standards put forward and enforced by the Bitcoin community. Follow this guide to import an existing wallet
 
 ### Step 1 - Determine compatibility
 
@@ -83,15 +83,15 @@ In the case of an unsuccessful restore try the above steps again taking care to 
 
 ## Make your first deposit
 
-First things first. You cannot buy bitcoin with Samourai Wallet. You can only store bitcoins you already own. In order to take full advantage of our premium functionality that enhances your privacy you must have some bitcoin in your wallet. We recommend an initial deposit of least $5.00 worth of BTC to unlock the full potential of Samourai.
+First things first. You cannot buy Bitcoin with Samourai Wallet. You can only store Bitcoins you already own. In order to take full advantage of our premium functionality that enhances your privacy you must have some Bitcoin in your wallet. We recommend an initial deposit of least $5.00 worth of BTC to unlock the full potential of Samourai.
 
-### Step 1 - Get your latest bitcoin address
+### Step 1 - Get your latest Bitcoin address
 
-Your Samourai Wallet contains an infinite amount of bitcoin addresses that get used once and then are archived. To get your latest bitcoin address press the blue '+' button on the bottom right of the main balance and transactions screen. Then press the green 'Receive' button to open the Receive screen.
+Your Samourai Wallet contains an infinite amount of Bitcoin addresses that get used once and then are archived. To get your latest Bitcoin address press the blue '+' button on the bottom right of the main balance and transactions screen. Then press the green 'Receive' button to open the Receive screen.
 
 ### Step 2 - Scan or share your address
 
-Samourai Wallet will display a QR code of your latest bitcoin address. Underneath the QR code is the actual address text. You can scan this QR code with any other bitcoin wallet or you share the QR code or address manually...
+Samourai Wallet will display a QR code of your latest bitcoin address. Underneath the QR code is the actual address text. You can scan this QR code with any other Bitcoin wallet or you share the QR code or address manually...
 
 * **To copy the address to clipboard:** Tap the address text and press 'YES'
 * **To share the QR code image:** Tap the share icon in the toolbar
@@ -104,19 +104,19 @@ With your other wallet or service either scan the QR code on the Receive screen 
 
 You just made your first deposit. Samourai will notify you once it sees the transaction on the network. This is usually nearly instant. You will see your balance update and your first transaction appear in the transaction list!
 
-## Get your latest bitcoin address
+## Get your latest Bitcoin address
 
 Your Samourai Wallet contains an infinite amount of bitcoin addresses that get used once and then are archived. These archived addresses are never discarded, but they are not used again to protect your privacy and security.
 
-This means your bitcoin address will change all the time, this is not cause for alarm, consider your addresses as *'one-time-use'* and disposable. 
+This means your Bitcoin address will change all the time, this is not cause for alarm, consider your addresses as *'one-time-use'* and disposable. 
 
 ### Step 1 - The receive screen
 
-To get your latest bitcoin address press the blue '+' button on the bottom right of the main balance and transactions screen. Then press the green 'Receive' button to open the Receive screen.
+To get your latest Bitcoin address press the blue '+' button on the bottom right of the main balance and transactions screen. Then press the green 'Receive' button to open the Receive screen.
 
 ### Step 2 - Share your address
 
-Samourai Wallet will display a QR code of your latest bitcoin address. Underneath the QR code is the actual address text. You can show this QR code if you are in transacting in person or you can share the address and QR code manually.
+Samourai Wallet will display a QR code of your latest Bitcoin address. Underneath the QR code is the actual address text. You can show this QR code if you are in transacting in person or you can share the address or QR code manually.
 
 * **To copy the address to clipboard:** Tap the address text and press 'YES'
 * **To share the QR code image:** Tap the share icon in the toolbar
@@ -125,7 +125,7 @@ By default, your Samourai wallet will generate bech32 or "Native Segwit" address
 
 ## Sweep a private key
 
-Advanced users can sweep any existing valid bitcoin private key into Samourai Wallet. This will send the balance of the single private key to an address in Samourai Wallet. 
+Advanced users can sweep any existing valid Bitcoin private key into Samourai Wallet. This will send the balance of the single private key to an address in Samourai Wallet. 
 
 ### Step 1 - Prepare the private key
 
@@ -139,11 +139,11 @@ Tap the **three vertical dots** on the top right of the toolbar and then tap **S
 
 ### Step 3 - Confirm the sweep
 
-You will be prompted to confirm the sweep. The entire balance of the private key will be sent to your latest bitcoin address minus the miner fee. 
+You will be prompted to confirm the sweep. The entire balance of the private key will be sent to your latest Bitcoin address minus the miner fee. 
 
 **Note: Samourai will not save the private key on the device. You should discard the used private key after sweeping as it is no longer advisable to use again.**
 
-# Sending bitcoin
+# Sending Bitcoin
 
 ## Sending a transaction 
 
@@ -151,7 +151,7 @@ There comes a point when you need to make an outgoing transaction from your Samo
 
 ### Quick Scan
 
-If you have a QR code of the recipients bitcoin address the quickest way to send is to tap the Scanner icon in the toolbar on the main balance screen. This will activate the camera.  Focus the camera on the QR code until it successfully scans. 
+If you have a QR code of the recipients Bitcoin address the quickest way to send is to tap the Scanner icon in the toolbar on the main balance screen. This will activate the camera.  Focus the camera on the QR code until it successfully scans. 
 
 This method is very useful when sending to online merchants as they often encode the exact BTC amount directly into the QR code making the process even easier. 
 
@@ -161,12 +161,11 @@ If there is no BTC amount auto-filled after scanning, simply enter the amount yo
 
 To get to the Send Screen without activating the Quick Scan camera simply tap the blue '+' button on the bottom right of the main balance and transactions screen. Then press the red 'Send' button. This will open the Send Screen. 
 
-On the send screen you can manually activate the Quick Scan camera by pressing the Scanner code icon in the toolbar. You can also manually paste any bitcoin address into  the 'To' field. 
-
+On the send screen you can manually activate the Quick Scan camera by pressing the Scanner code icon in the toolbar. You can also manually paste any Bitcoin address into  the 'To' field. 
 
 ### Confirm the send
 
-Provided you have enough bitcoin to cover the send amount a green 'SEND' button will appear across the bottom of your screen. Tap it to continue. You will be asked to confirm the send one last time. Press OK to broadcast the send to the bitcoin network and wait for at least one confirmation.
+Provided you have enough Bitcoin to cover the send amount a green 'SEND' button will appear across the bottom of your screen. Tap it to continue. You will be asked to confirm the send one last time. Press OK to broadcast the send to the Bitcoin network and wait for at least one confirmation.
 
 ## Configuring your wallet for lowest transaction fees
 
@@ -195,9 +194,9 @@ The wallet is now properly configured for creating low fee transactions at the s
 
 ## Using PayNym payment code connection (BIP47)
 
-Think of a PayNym as a permanent and reusable code that you can share with anyone. It looks similar to a bitcoin address but it is longer and starts with **'PM8T'**
+Think of a PayNym as a permanent and reusable code that you can share with anyone. It looks similar to a Bitcoin address but it is longer and starts with **'PM8T'**
 
-Anybody who connects to your PayNym can generate private bitcoin addresses on demand for sending bitcoin to your wallet.
+Anybody who connects to your PayNym can generate private Bitcoin addresses on demand for sending Bitcoin to your wallet.
 
 ### Create your first connection to Samourai Dev Wallet
 
@@ -205,7 +204,7 @@ There are certain premium features and functionality that are only available to 
 
 #### Prerequisites:
 
-* In order to create a connection you will need a small amount of bitcoin in your wallet (check out our guide to your first deposit) to cover the connection fee
+* In order to create a connection you will need a small amount of Bitcoin in your wallet (check out our guide to your first deposit) to cover the connection fee
 
 ### Step 1 - Open PayNyms
 
@@ -221,17 +220,17 @@ You will see a list appear with some recommended payment codes. Select **Samoura
 
 ### Step 3 - Accept the connection fee
 
-Before the connection is made you will be asked to review the connection fee. Press **Confirm** to accept the fee and broadcast the connection to the bitcoin network. 
+Before the connection is made you will be asked to review the connection fee. Press **Confirm** to accept the fee and broadcast the connection to the Bitcoin network. 
 
-If you do not have enough bitcoin in your wallet, simply deposit more bitcoin then return to the PayNyms screen. You will see the Samourai Dev Wallet PayNym added to your list. Tap on it to resume the connection process. 
+If you do not have enough Bitcoin in your wallet, simply deposit more Bitcoin then return to the PayNyms screen. You will see the Samourai Dev Wallet PayNym added to your list. Tap on it to resume the connection process. 
 
 ### Step 4 - Wait for confirmation
 
-You must wait for 1 confirmation on the bitcoin block chain before the connection is considered established. Once established you can test out the new connection by tapping on Samourai Dev Wallet in the PayNyms list and sending a small donation to help fund further development ;)
+You must wait for 1 confirmation on the Bitcoin block chain before the connection is considered established. Once established you can test out the new connection by tapping on Samourai Dev Wallet in the PayNyms list and sending a small donation to help fund further development ;)
 
 ## Using Ricochet Send
 
-A Ricochet Send is a Samourai exclusive transaction type. Ricochet defends against bitcoin blacklists by adding additional decoy transactions between the initial send and eventual recipient. You should consider using Ricochet when sending to Bitcoin Exchanges, and companies that are known to close accounts for flimsy reasons. 
+A Ricochet Send is a Samourai exclusive transaction type. Ricochet defends against Bitcoin blacklists by adding additional decoy transactions between the initial send and eventual recipient. You should consider using Ricochet when sending to Bitcoin Exchanges, and companies that are known to close accounts for flimsy reasons. 
 
 ### Step 1 - Start with a normal send
 
