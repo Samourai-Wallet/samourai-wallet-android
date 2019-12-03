@@ -143,5 +143,110 @@ You will be prompted to confirm the sweep. The entire balance of the private key
 
 **Note: Samourai will not save the private key on the device. You should discard the used private key after sweeping as it is no longer advisable to use again.**
 
+# Sending bitcoin
+
+## Sending a transaction 
+
+There comes a point when you need to make an outgoing transaction from your Samourai Wallet. This is called a send. Samourai can get pretty fancy with different types of sends but we'll keep it simple here. 
+
+### Quick Scan
+
+If you have a QR code of the recipients bitcoin address the quickest way to send is to tap the Scanner icon in the toolbar on the main balance screen. This will activate the camera.  Focus the camera on the QR code until it successfully scans. 
+
+This method is very useful when sending to online merchants as they often encode the exact BTC amount directly into the QR code making the process even easier. 
+
+If there is no BTC amount auto-filled after scanning, simply enter the amount you wish to send manually. 
+
+### Manual Send
+
+To get to the Send Screen without activating the Quick Scan camera simply tap the blue '+' button on the bottom right of the main balance and transactions screen. Then press the red 'Send' button. This will open the Send Screen. 
+
+On the send screen you can manually activate the Quick Scan camera by pressing the Scanner code icon in the toolbar. You can also manually paste any bitcoin address into  the 'To' field. 
+
+
+### Confirm the send
+
+Provided you have enough bitcoin to cover the send amount a green 'SEND' button will appear across the bottom of your screen. Tap it to continue. You will be asked to confirm the send one last time. Press OK to broadcast the send to the bitcoin network and wait for at least one confirmation.
+
+## Configuring your wallet for lowest transaction fees
+
+By default, Samourai Wallet errs on the side of increasing the blockchain privacy and plausible deniability of transactions. This focus has a side effect of increasing in the size of transactions created, thus increasing the overall cost of the miner fee when sending. The wallet can be fully configured for creating low fee transactions by following the steps shown below.
+
+### Step 1 - Open settings
+
+Tap the **three vertical dots** on the top right of the toolbar and then tap **Settings**. This will launch the wallet settings screen, where all configuration will take place. 
+
+### Step 2 - Disable like-typed outputs
+
+From the main Settings screen tap the **Transactions** option. Disable the **Receive change to like-typed outputs** option by removing the checkmark from the checkbox. Like-typed outputs is a Samourai feature that improves your privacy on the blockchain.
+
+### Step 3 - Disable STONEWALL 
+
+From the **Transactions** settings screen Disable the **STONEWALL Spend**  option by removing the checkmark from the checkbox. Disabling STONEWALL will result in much smaller transactions, at the loss of blockchain privacy. 
+
+### Step 4 - Enable RBF
+
+From the **Transactions** settings screen Enable the **Spend using RBF** option by adding a checkmark to the checkbox. Enabling RBF will allow you to later top-up low transaction fees. 
+
+
+The wallet is now properly configured for creating low fee transactions at the sacrifice of some privacy and plausible deniability gains.
+
+# Premium transaction features 
+
+## Using PayNym payment code connection (BIP47)
+
+Think of a PayNym as a permanent and reusable code that you can share with anyone. It looks similar to a bitcoin address but it is longer and starts with **'PM8T'**
+
+Anybody who connects to your PayNym can generate private bitcoin addresses on demand for sending bitcoin to your wallet.
+
+### Create your first connection to Samourai Dev Wallet
+
+There are certain premium features and functionality that are only available to users who have an active connection to the Samourai Dev Wallet. We highly recommend users initiate a connection to Samourai Dev Wallet. 
+
+#### Prerequisites:
+
+* In order to create a connection you will need a small amount of bitcoin in your wallet (check out our guide to your first deposit) to cover the connection fee
+
+### Step 1 - Open PayNyms
+
+From the main screen of the wallet press the blue '+' button located on the bottom right of the screen. Tap the purple **PayNyms** button.
+
+These are your payment code connections. Right now the list is empty, but soon it will contain your first connection to the Samourai Dev Wallet. 
+
+### Step 2 - Create your first connection to Samourai Dev Wallet
+
+Tap the purple '+' button located on the bottom right of the PayNym screen. Tap the **Recommended** button
+
+You will see a list appear with some recommended payment codes. Select **Samourai Dev Wallet** from the list
+
+### Step 3 - Accept the connection fee
+
+Before the connection is made you will be asked to review the connection fee. Press **Confirm** to accept the fee and broadcast the connection to the bitcoin network. 
+
+If you do not have enough bitcoin in your wallet, simply deposit more bitcoin then return to the PayNyms screen. You will see the Samourai Dev Wallet PayNym added to your list. Tap on it to resume the connection process. 
+
+### Step 4 - Wait for confirmation
+
+You must wait for 1 confirmation on the bitcoin block chain before the connection is considered established. Once established you can test out the new connection by tapping on Samourai Dev Wallet in the PayNyms list and sending a small donation to help fund further development ;)
+
+## Using Ricochet Send
+
+A Ricochet Send is a Samourai exclusive transaction type. Ricochet defends against bitcoin blacklists by adding additional decoy transactions between the initial send and eventual recipient. You should consider using Ricochet when sending to Bitcoin Exchanges, and companies that are known to close accounts for flimsy reasons. 
+
+### Step 1 - Start with a normal send
+
+Ricochet is really simple. First initiate a send like you normally would. Either by tapping the square Scanner icon in the wallet toolbar and scanning a QR code, or by tapping the blue '+' button located on the bottom right of the balance and transaction screen and then tapping **Send** button.
+
+### Step 2 - Enable Ricochet
+
+On the Send Screen you will see a **'Ricochet'** label with a toggle in the off position. Tap the toggle to turn it on.
+
+**Note: You should highly consider first connecting to the Samourai Dev Wallet PayNym. It is much better for your privacy if you make the connection before performing a Ricochet.**
+
+### Step 3 - Press Send
+
+It's that simple. Once you confirm the Ricochet fees your Ricochet transaction will be sent to your destination but first it will hop between 4 additional bitcoin addresses. This type of transaction may take 1-2 minutes to complete.
+
+
 
 
