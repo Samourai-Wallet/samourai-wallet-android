@@ -91,7 +91,7 @@ Your Samourai Wallet contains an infinite amount of Bitcoin addresses that get u
 
 ### Step 2 - Scan or share your address
 
-Samourai Wallet will display a QR code of your latest bitcoin address. Underneath the QR code is the actual address text. You can scan this QR code with any other Bitcoin wallet or you share the QR code or address manually...
+Samourai Wallet will display a QR code of your latest Bitcoin address. Underneath the QR code is the actual address text. You can scan this QR code with any other Bitcoin wallet or you share the QR code or address manually...
 
 * **To copy the address to clipboard:** Tap the address text and press 'YES'
 * **To share the QR code image:** Tap the share icon in the toolbar
@@ -102,11 +102,11 @@ With your other wallet or service either scan the QR code on the Receive screen 
 
 ### Step 4 - Congrats!
 
-You just made your first deposit. Samourai will notify you once it sees the transaction on the network. This is usually nearly instant. You will see your balance update and your first transaction appear in the transaction list!
+You just made your first deposit! Samourai will notify you once it sees the transaction on the network. This is usually nearly instant. You will see your balance update and your first transaction appear in the transaction list :)
 
 ## Get your latest Bitcoin address
 
-Your Samourai Wallet contains an infinite amount of bitcoin addresses that get used once and then are archived. These archived addresses are never discarded, but they are not used again to protect your privacy and security.
+Your Samourai Wallet contains an infinite amount of Bitcoin addresses that get used once and then are archived. These archived addresses are never discarded, but they are not used again to protect your privacy and security.
 
 This means your Bitcoin address will change all the time, this is not cause for alarm, consider your addresses as *'one-time-use'* and disposable. 
 
@@ -165,11 +165,11 @@ On the send screen you can manually activate the Quick Scan camera by pressing t
 
 ### Confirm the send
 
-Provided you have enough Bitcoin to cover the send amount a green 'SEND' button will appear across the bottom of your screen. Tap it to continue. You will be asked to confirm the send one last time. Press OK to broadcast the send to the Bitcoin network and wait for at least one confirmation.
+Provided you have enough Bitcoin to cover the send amount a green 'SEND' button will appear across the bottom of your screen. Tap it to continue. You will be asked to confirm the send one last time. Press OK to broadcast the transaction to the Bitcoin network and wait for at least one confirmation.
 
 ## Configuring your wallet for lowest transaction fees
 
-By default, Samourai Wallet errs on the side of increasing the blockchain privacy and plausible deniability of transactions. This focus has a side effect of increasing in the size of transactions created, thus increasing the overall cost of the miner fee when sending. The wallet can be fully configured for creating low fee transactions by following the steps shown below.
+By default, Samourai Wallet errs on the side of increasing the blockchain privacy and plausible deniability of transactions. This focus has a side effect of increasing the size of transactions created, thus increasing the overall cost of the miner fee when sending. The wallet can be fully configured for creating low fee transactions by following the steps shown below.
 
 ### Step 1 - Open settings
 
@@ -181,7 +181,7 @@ From the main Settings screen tap the **Transactions** option. Disable the **Rec
 
 ### Step 3 - Disable STONEWALL 
 
-From the **Transactions** settings screen Disable the **STONEWALL Spend**  option by removing the checkmark from the checkbox. Disabling STONEWALL will result in much smaller transactions, at the loss of blockchain privacy. 
+From the **Transactions** settings screen Disable the **STONEWALL Spend** option by removing the checkmark from the checkbox. Disabling STONEWALL will result in much smaller transactions, at the loss of blockchain privacy. 
 
 ### Step 4 - Enable RBF
 
@@ -192,19 +192,19 @@ The wallet is now properly configured for creating low fee transactions at the s
 
 # Premium transaction features 
 
-## Using PayNym payment code connection (BIP47)
+## Using PayNym payment code connections (BIP47)
 
 Think of a PayNym as a permanent and reusable code that you can share with anyone. It looks similar to a Bitcoin address but it is longer and starts with **'PM8T'**
 
 Anybody who connects to your PayNym can generate private Bitcoin addresses on demand for sending Bitcoin to your wallet.
 
-### Create your first connection to Samourai Dev Wallet
+### Create your first connection to the Samourai Dev Wallet
 
-There are certain premium features and functionality that are only available to users who have an active connection to the Samourai Dev Wallet. We highly recommend users initiate a connection to Samourai Dev Wallet. 
+There are certain premium features and functionality that are only available to users who have an active connection to the Samourai Dev Wallet. We highly recommend users initiate a connection to the Samourai Dev Wallet. 
 
 #### Prerequisites:
 
-* In order to create a connection you will need a small amount of Bitcoin in your wallet (check out our guide to your first deposit) to cover the connection fee
+* In order to create a connection you will need a small amount of Bitcoin in your wallet to cover the connection fee
 
 ### Step 1 - Open PayNyms
 
@@ -212,7 +212,7 @@ From the main screen of the wallet press the blue '+' button located on the bott
 
 These are your payment code connections. Right now the list is empty, but soon it will contain your first connection to the Samourai Dev Wallet. 
 
-### Step 2 - Create your first connection to Samourai Dev Wallet
+### Step 2 - Create your first connection to the Samourai Dev Wallet
 
 Tap the purple '+' button located on the bottom right of the PayNym screen. Tap the **Recommended** button
 
@@ -244,7 +244,7 @@ On the Send Screen you will see a **'Ricochet'** label with a toggle in the off 
 
 ### Step 3 - Press Send
 
-It's that simple. Once you confirm the Ricochet fees your Ricochet transaction will be sent to your destination but first it will hop between 4 additional bitcoin addresses. This type of transaction may take 1-2 minutes to complete.
+It's that simple. Once you confirm the Ricochet fees your Ricochet transaction will be sent to your destination but first it will hop between 4 additional Bitcoin addresses. This type of transaction may take 1-2 minutes to complete. You can also enable Ricochet to space the "hop" transactions to occur in seperete blocks, furthering the connection to the original address.
 
 
 
