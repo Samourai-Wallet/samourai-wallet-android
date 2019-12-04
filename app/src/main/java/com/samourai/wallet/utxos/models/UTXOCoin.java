@@ -5,7 +5,7 @@ import com.samourai.wallet.send.UTXO;
 
 /**
  * UTXO model for UI
- * since there is already a UTXO class exist, {@link UTXOCoin} class is used mainly used for RecyclerView
+ * since there is already a UTXO class exist, {@link UTXOCoin} class is mainly used for RecyclerView
  * UTXOCoin support extra UI related states like isSelected doNotSpend etc..
  */
 public class UTXOCoin {

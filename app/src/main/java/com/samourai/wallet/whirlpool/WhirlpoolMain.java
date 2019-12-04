@@ -20,7 +20,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.whirlpool.fragments.WhirlpoolCyclesFragment;
 import com.samourai.wallet.whirlpool.models.Cycle;
-import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
+import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.widgets.ViewPager;
 
@@ -64,7 +64,9 @@ public class WhirlpoolMain extends AppCompatActivity {
 //        CyclesViewPagerAdapter adapter = new CyclesViewPagerAdapter(getSupportFragmentManager());
 //        cyclesViewPager.setAdapter(adapter);
 //        cyclesViewPager.setCurrentItem(1);
-        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> startActivity(new Intent(this, NewPoolActivity.class)));
+        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
+            showBottomSheetDialog();
+        });
 //
 //        cyclesViewPager.addOnPageChangeListener(new android.support.v4.view.ViewPager.OnPageChangeListener() {
 //            @Override
@@ -113,6 +115,11 @@ public class WhirlpoolMain extends AppCompatActivity {
         mixList.addItemDecoration(new ItemDividerDecorator(drawable));
         mixList.setAdapter(adapter);
 
+    }
+
+    private void showBottomSheetDialog() {
+        DepositOrChooseUtxoDialog depositOrChooseUtxoDialog = new DepositOrChooseUtxoDialog();
+        depositOrChooseUtxoDialog.show(getSupportFragmentManager(), depositOrChooseUtxoDialog.getTag());
     }
 
     @Override
