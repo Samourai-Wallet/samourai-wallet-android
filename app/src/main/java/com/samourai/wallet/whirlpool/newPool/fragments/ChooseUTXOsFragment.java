@@ -343,6 +343,7 @@ public class ChooseUTXOsFragment extends Fragment {
                 checkBox = itemView.findViewById(R.id.multiselect_checkbox);
                 checkBox.setVisibility(View.GONE);
                 rootViewGroup = (ViewGroup) itemView;
+                itemView.findViewById(R.id.utxo_more_details_icon).setVisibility(View.GONE);
             }
         }
 

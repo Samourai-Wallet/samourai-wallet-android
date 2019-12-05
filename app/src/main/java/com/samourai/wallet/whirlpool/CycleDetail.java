@@ -99,9 +99,12 @@ public class CycleDetail extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.whirlpool_explore_menu : {
-                Toast.makeText(getApplicationContext(),"Open in browser", Toast.LENGTH_SHORT).show();
+            case R.id.whirlpool_explore_menu: {
+                Toast.makeText(getApplicationContext(), "Open in browser", Toast.LENGTH_SHORT).show();
                 break;
+            }
+            case android.R.id.home: {
+                finish();
             }
         }
         return super.onOptionsItemSelected(item);
