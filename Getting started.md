@@ -129,11 +129,11 @@ Advanced users can sweep any existing valid Bitcoin private key into Samourai Wa
 
 ### Step 1 - Prepare the private key
 
-Samourai Wallet will scan a QR code representing the private key. Make sure the private key is accessible and ready to be scanned by Samourai Wallet
+Samourai Wallet can scan a QR code or you can input the private key manually. Make sure the private key is accessible and ready to be pasted or scanned by Samourai Wallet
 
 ### Step 2 - Open the sweep camera
 
-Tap the **three vertical dots** on the top right of the toolbar and then tap **Sweep Private Key**. This will launch the sweep camera. Focus the camera onto the QR code of the private key until it scans.
+Tap the **three vertical dots** on the top right of the toolbar and then tap **Sweep Private Key**. Then you'll be able to choose enter the private key or launch the sweep camera. Now you can paste the private key or focus the camera onto the QR code of the private key until it scans.
 
 *If the private key is encrypted with a password you will be prompted to enter the password before being able to continue.*
 
