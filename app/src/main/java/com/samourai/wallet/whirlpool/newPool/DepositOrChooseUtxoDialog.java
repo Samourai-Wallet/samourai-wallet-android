@@ -1,22 +1,30 @@
 package com.samourai.wallet.whirlpool.newPool;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.android.Contents;
+import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.AddressFactory;
+
+import static com.samourai.wallet.util.FormatsUtil.valueAsDp;
 
 public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
 
@@ -39,16 +47,36 @@ public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
 
         view.findViewById(R.id.whirlpool_dialog_deposit_btn).setOnClickListener(view1 -> {
             String addr84 = AddressFactory.getInstance(getActivity()).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
-            TransitionManager.beginDelayedTransition((ViewGroup) view);
-            addressText.setText(addr84);
-            addressText.setVisibility(View.VISIBLE);
-            addressText.setOnClickListener(view2 -> {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = null;
-                clip = android.content.ClipData.newPlainText("Receive address", addr84);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-            });
+            ImageView showQR = new ImageView(getContext());
+            Bitmap bitmap = null;
+            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(addr84, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
+            try {
+                bitmap = qrCodeEncoder.encodeAsBitmap();
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+            showQR.setImageBitmap(bitmap);
+
+            TextView showText = new TextView(getContext());
+            showText.setText(addr84);
+            showText.setTextIsSelectable(true);
+
+
+            showText.setPadding(valueAsDp(getContext(), 12), valueAsDp(getContext(), 10), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12));
+            showText.setTextSize(18.0f);
+
+            LinearLayout privkeyLayout = new LinearLayout(getContext());
+            privkeyLayout.setOrientation(LinearLayout.VERTICAL);
+            privkeyLayout.addView(showQR);
+            privkeyLayout.addView(showText);
+            privkeyLayout.setPadding(valueAsDp(getContext(), 12), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12));
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.app_name)
+                    .setView(privkeyLayout)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                    }).show();
         });
         return view;
     }
