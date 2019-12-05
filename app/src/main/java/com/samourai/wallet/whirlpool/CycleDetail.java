@@ -1,6 +1,6 @@
 package com.samourai.wallet.whirlpool;
 
-import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -9,24 +9,28 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
 
 import java.util.ArrayList;
 
 
 public class CycleDetail extends AppCompatActivity {
 
-    private Boolean showMenuItems = false;
-    private TextView CycleStatus, TransactionStatus, TransactionId;
+    private Boolean showMenuItems = true;
+    private TextView cycleStatus, transactionStatus, transactionId;
     private RecyclerView cycledTxsRecyclerView;
     private TxCyclesAdapter txCyclesAdapter;
-    private ArrayList<String> txIds = new ArrayList<>();
+    private ArrayList<UTXOCoin> mixedUTXOs = new ArrayList<>();
     private ProgressBar cycleProgress;
     private TextView registeringInputs, cyclingTx, cycledTxesListHeader;
     private ImageView registeringCheck, cyclingCheck, confirmCheck;
@@ -40,12 +44,14 @@ public class CycleDetail extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TransactionId = findViewById(R.id.transaction_id);
+        transactionId = findViewById(R.id.whirlpool_header_tx_hash);
         cycleProgress = findViewById(R.id.pool_cycle_progress);
-        cycledTxsRecyclerView = findViewById(R.id.whirpool_cycled_tx_rv);
+        cycledTxsRecyclerView = findViewById(R.id.whirlpool_cycled_tx_rv);
         cycledTxsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         txCyclesAdapter = new TxCyclesAdapter();
         cycledTxsRecyclerView.setAdapter(txCyclesAdapter);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.divider_grey);
+        cycledTxsRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         cyclingTx = findViewById(R.id.cycling_tx_txt);
         registeringInputs = findViewById(R.id.registering_inputs_txt);
         cycledTxesListHeader = findViewById(R.id.cycled_transaction_list_header);
@@ -59,12 +65,14 @@ public class CycleDetail extends AppCompatActivity {
         cycleProgress.setMax(100);
         cycleProgress.setProgress(0);
 
-        txIds.add("36ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0bfaea3b3dcc9b84313");
-        txCyclesAdapter.notifyDataSetChanged();
+        getSupportActionBar().setTitle("0.5 BTC");
 
+        mixedUTXOs.add(new UTXOCoin(null, null));
+        txCyclesAdapter.notifyDataSetChanged();
+        transactionId.setText("36ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0bfaea3b3dcc9b84313");
         new Handler().postDelayed(() -> {
             enableCheck(confirmCheck);
-            txIds.add("36ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0bfaea3b3dcc9b84313");
+            mixedUTXOs.add(new UTXOCoin(null, null));
             txCyclesAdapter.notifyDataSetChanged();
             cycleProgress.setProgress(20);
         }, 1000);
@@ -72,32 +80,31 @@ public class CycleDetail extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             enableSection(registeringInputs, registeringCheck);
             enableCheck(registeringCheck);
-            txIds.add("ede7de4834dcbf83d0afd5f5209cd367afcb64b6eed4a0bfaea3b3dcc9b84313");
-            txIds.add("bfaea3b3dcc9b8431336ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0");
+            mixedUTXOs.add(new UTXOCoin(null, null));
             txCyclesAdapter.notifyDataSetChanged();
             cycleProgress.setProgress(46);
 
         }, 3000);
-
-        new Handler().postDelayed(() -> {
-            enableSection(cyclingTx, cyclingCheck);
-            enableCheck(cyclingCheck);
-            txIds.add("34b6eed4a0bfae6ede7de4834dcbf83d0afd5f5209cd7afcb6a3b3dcc9b84313");
-            txIds.add("b64b6eed4a0bfaea36ede7de4834dcbf83d0afd5f5209cd7afc3b3dcc9b84313");
-            txIds.add("ea3b36ede7de4834dcbf83d0afd5f5209cd7afcb64b6eed4a0bfa3dcc9b84313");
-            txCyclesAdapter.notifyDataSetChanged();
-            cycleProgress.setProgress(72);
-        }, 4000);
-
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.whirlpool_cycle_detail_menu, menu);
-        menu.findItem(R.id.whirpool_explore_menu).setVisible(showMenuItems);
-        menu.findItem(R.id.whirpool_chart_menu).setVisible(showMenuItems);
+        menu.findItem(R.id.whirlpool_explore_menu).setVisible(showMenuItems);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.whirlpool_explore_menu : {
+                Toast.makeText(getApplicationContext(),"Open in browser", Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void enableCheck(ImageView imageView) {
@@ -122,12 +129,6 @@ public class CycleDetail extends AppCompatActivity {
 
     public class TxCyclesAdapter extends RecyclerView.Adapter<TxCyclesAdapter.ViewHolder> {
 
-        private Context mContext;
-        private static final String TAG = "TxCyclesAdapter";
-
-        public TxCyclesAdapter() {
-
-        }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -138,27 +139,25 @@ public class CycleDetail extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            if (position % 2 == 0) {
-                holder.itemView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.item_separator_grey));
-            }
+            //TODO - Bind views
         }
 
         @Override
         public int getItemCount() {
 
-            return txIds.size();
+            return mixedUTXOs.size();
         }
 
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView txId, number, minorFees, totalFees;
+            TextView utxoHash, amount;
 
 
             ViewHolder(View itemView) {
                 super(itemView);
-
-
+                amount = itemView.findViewById(R.id.whirlpool_cycle_list_item_utxo_amount);
+                utxoHash = itemView.findViewById(R.id.whirlpool_cycle_list_item_utxo_hash);
             }
         }
 
