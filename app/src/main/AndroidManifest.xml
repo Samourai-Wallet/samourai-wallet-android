@@ -61,14 +61,12 @@
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".network.NetworkDashboard"
-            android:exported="true"
             android:label="@string/title_activity_network_dashboard"
             android:parentActivityName=".home.BalanceActivity"
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".utxos.UTXOSActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
             android:label="@string/unspent_outputs"
             android:theme="@style/ui_2_theme" />
         <activity
@@ -77,12 +75,10 @@
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".paynym.addPaynym.AddPaynymActivity"
-            android:exported="true"
             android:label="@string/add_new"
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".paynym.PayNymHome"
-            android:exported="true"
             android:label="@string/paynyms"
             android:theme="@style/ui_2_theme" />
         <activity
@@ -232,44 +228,36 @@
         -->
         <activity
             android:name=".TxAnimUIActivity"
-            android:exported="true"
             android:theme="@style/AppThemeLanding" />
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
             android:theme="@style/ui_2_theme"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".whirlpool.newPool.NewPoolActivity"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".whirlpool.CycleDetail"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
 
         <activity
             android:name=".tx.TxDetailsActivity"
-            android:exported="true"
             android:label=" "
             android:theme="@style/ui_2_theme" />
 
         <activity
             android:name=".tx.TxPrivacyDetailsActivity"
-            android:exported="true"
             android:label=""
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
-            android:exported="true"
             android:label="Manual Cahoots"
             android:theme="@style/ui_2_theme" />
 
@@ -316,7 +304,7 @@
         <service
             android:name=".whirlpool.service.WhirlpoolNotificationService"
             android:enabled="true"
-            android:exported="false" />
+          />
     </application>
 
 </manifest>
