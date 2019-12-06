@@ -32,6 +32,7 @@ import com.samourai.wallet.widgets.ItemDividerDecorator;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,43 +89,51 @@ public class ChooseUTXOsFragment extends Fragment {
     }
 
     private void applyFilters(List<UTXOCoin> utxoCoins) {
-        ArrayList<UTXOCoin> spendables = new ArrayList<>();
+        ArrayList<UTXOCoin> unCycled = new ArrayList<>();
 
-        UTXOCoinSegment section = new UTXOCoinSegment(null, null);
-        section.unCycled = true;
-        spendables.add(section);
 
         for (UTXOCoin model : utxoCoins) {
             if (model.account == 0 && model.path.startsWith("M/0/")) {
-                if (!spendables.contains(model)) {
-                    spendables.add(model);
+                if (!unCycled.contains(model)) {
+                    unCycled.add(model);
                 }
             } else if (model.account == 0 && model.path.equals("")) {
-                if (!spendables.contains(model)) {
-                    spendables.add(model);
+                if (!unCycled.contains(model)) {
+                    unCycled.add(model);
                 }
             }
         }
+        Collections.sort(unCycled, (model, t1) -> Long.compare(t1.amount, model.amount));
 
+        UTXOCoinSegment section = new UTXOCoinSegment(null, null);
+        section.unCycled = true;
+        unCycled.add(0, section);
 
         UTXOCoinSegment cycled = new UTXOCoinSegment(null, null);
         cycled.unCycled = false;
-        spendables.add(cycled);
+        ArrayList<UTXOCoin> changes = new ArrayList<>();
+
         for (UTXOCoin model : utxoCoins) {
             if (model.account == WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix()
                     && model.path.startsWith("M/1/")) {
-                if (!spendables.contains(model)) {
-                    spendables.add(model);
+                if (!changes.contains(model)) {
+                    changes.add(model);
                 }
             }
             if (model.account == 0
                     && model.path.startsWith("M/1/")) {
-                if (!spendables.contains(model)) {
-                    spendables.add(model);
+                if (!changes.contains(model)) {
+                    changes.add(model);
                 }
             }
         }
-        utxoAdapter.updateList(spendables);
+
+        Collections.sort(changes, (model, t1) -> Long.compare(t1.amount, model.amount));
+        changes.add(0, cycled);
+
+        unCycled.addAll(changes);
+
+        utxoAdapter.updateList(unCycled);
     }
 
     @Override
