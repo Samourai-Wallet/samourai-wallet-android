@@ -12,6 +12,8 @@
 
 [Samourai.kayako Documents](https://samourai.kayako.com/) 
 
+[PuraVlda Wiki](https://github.com/PuraVlda/samourai-wallet-android/wiki) 
+
 # Features 
 
 ## STONEWALL 
