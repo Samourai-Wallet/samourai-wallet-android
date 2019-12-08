@@ -1,6 +1,7 @@
 package com.samourai.wallet.utxos;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -17,6 +18,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -128,7 +130,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         utxoSwipeRefresh = findViewById(R.id.utxo_swipe_container);
         adapter = new UTXOListAdapter();
         adapter.setHasStableIds(true);
-        utxoList.setLayoutManager(new LinearLayoutManager(this));
+        utxoList.setLayoutManager(new LinearLayoutManagerWrapper(this));
         utxoList.addItemDecoration(new ItemDividerDecorator(getDrawable(R.color.disabled_white)));
         utxoList.setAdapter(adapter);
         loadUTXOs(false);
@@ -933,4 +935,18 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         }
     }
 
+
+
+    public class LinearLayoutManagerWrapper extends LinearLayoutManager {
+
+        LinearLayoutManagerWrapper(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean supportsPredictiveItemAnimations() {
+            // fix for inconsistency issues
+            return false;
+        }
+    }
 }
