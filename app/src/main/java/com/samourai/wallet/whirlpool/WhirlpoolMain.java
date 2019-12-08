@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
@@ -73,7 +75,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_whirl_pool_main, menu);
+        getMenuInflater().inflate(R.menu.whirlpool_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -86,12 +88,25 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_postmix) {
+            Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
+            startActivity(intent);
         }
+        else if (id == R.id.action_utxo) {
+            Intent intent = new Intent(WhirlpoolMain.this, UTXOSActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
+            startActivity(intent);
+        }
+        else {
+            ;
+        }
+
         return super.onOptionsItemSelected(item);
     }
-
 
     private class MixAdapter extends RecyclerView.Adapter<MixAdapter.ViewHolder> {
 
