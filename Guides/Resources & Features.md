@@ -50,7 +50,7 @@ BIP47  compatible wallets produce a special 'payment code' (beginning with **'PM
 
 A PayNym is created by taking a valid BIP47 code and applying a special hashing algorithm that produces a unique fingerprint used to create the PayNym Bot image and ID. A **PayNym Bot** is a visual representation of a valid BIP47 Reusable Payment Code.  
 
-![Wei Dai](Wei%20Dai.png)
+![Wei Dai](Images/Wei%20Dai.png)
 
 _Every PayNym Bot is unique._
 
