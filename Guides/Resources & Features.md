@@ -44,6 +44,8 @@ STONEWALL is enabled by default and there is no extra charge for using it. It ca
 
 ### What are PayNyms?
 
+Check out: [PayNym.is](https://paynym.is/)
+
 PayNyms are a secure and private way of sending and receiving bitcoin using BIP47 Reusable Payment Codes. PayNyms allow you to add your friends to your wallet contact list for regular sending and receiving, without revealing your balance or transaction history. PayNyms are currently supported natively by Samourai Wallet.
 
 BIP47  compatible wallets produce a special 'payment code' (beginning with **'PM8T'**) that never changes. This code can be shared publicly, and when scanned or added by a compatible wallet will generate unique unused bitcoin addreses between one another without revealing prior transaction or balance history.
