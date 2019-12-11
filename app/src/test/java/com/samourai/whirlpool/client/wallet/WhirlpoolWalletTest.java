@@ -12,7 +12,7 @@ import com.samourai.whirlpool.client.tx0.Tx0;
 import com.samourai.whirlpool.client.tx0.Tx0Config;
 import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.utils.ClientUtils;
-import com.samourai.whirlpool.client.wallet.beans.MixOrchestratorState;
+import com.samourai.whirlpool.client.wallet.beans.MixingState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
@@ -98,8 +98,8 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
 
         // keep running
         for(int i=0; i<2; i++) {
-            MixOrchestratorState mixState = whirlpoolWallet.getState().getMixState();
-            log.debug("WHIRLPOOL: "+mixState.getNbQueued()+" queued, "+mixState.getNbMixing()+" mixing: "+mixState.getUtxosMixing());
+            MixingState mixingState = whirlpoolWallet.getMixingState();
+            log.debug("WHIRLPOOL: "+mixingState.getNbQueued()+" queued, "+mixingState.getNbMixing()+" mixing: "+mixingState.getUtxosMixing());
 
             synchronized (this) {
                 wait(10000);

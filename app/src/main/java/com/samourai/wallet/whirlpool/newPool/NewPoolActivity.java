@@ -203,7 +203,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
                     });
 
-            if(AndroidWhirlpoolWalletService.getInstance().getWallet() ==null || !AndroidWhirlpoolWalletService.getInstance().getWallet().isStarted()){
+            if(AndroidWhirlpoolWalletService.getInstance().getWallet() ==null || !AndroidWhirlpoolWalletService.getInstance().getWallet().getMixingState().isStarted()){
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             }else {
                 Disposable tx0Dispo = beginTx0(selectedCoins)
