@@ -249,16 +249,37 @@ public class NewPoolActivity extends AppCompatActivity {
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
             Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setBadbankChange(false);
-            Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
-            Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
+            Tx0 tx0 = null;
+            try {
+                tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
+                final String txHash = tx0.getTx().getHashAsString();
+                // tx0 success
+                NewPoolActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(NewPoolActivity.this, txHash, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
 
-            for (TransactionOutput premixOutput : tx0.getPremixOutputs()) {
-                Log.i("NewPoolActivity", "pre-mix:" + premixOutput.toString());
+                for (TransactionOutput premixOutput : tx0.getPremixOutputs()) {
+                    Log.i("NewPoolActivity", "pre-mix:" + premixOutput.toString());
+                }
+                if (tx0.getChangeOutput() != null) {
+                    Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
+                    Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
+                }
+
             }
-            if (tx0.getChangeOutput() != null) {
-                Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
-                Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
+            catch (Exception e) {
+                // tx0 failed
+                NewPoolActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(NewPoolActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Log.i("NewPoolActivity", "result:" + e.getMessage());
             }
+
             return true;
         });
     }
