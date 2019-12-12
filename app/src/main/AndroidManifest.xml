@@ -52,6 +52,33 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".utxos.UTXODetailsActivity"
+            android:label=""
+            android:parentActivityName=".utxos.UTXOSActivity"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".network.NetworkDashboard"
+            android:label="@string/title_activity_network_dashboard"
+            android:parentActivityName=".home.BalanceActivity"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".utxos.UTXOSActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/unspent_outputs"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".paynym.paynymDetails.PayNymDetailsActivity"
+            android:label=""
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".paynym.addPaynym.AddPaynymActivity"
+            android:label="@string/add_new"
+            android:theme="@style/ui_2_theme" />
+        <activity
+            android:name=".paynym.PayNymHome"
+            android:label="@string/paynyms"
+            android:theme="@style/ui_2_theme" />
+        <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
@@ -235,7 +262,6 @@
         <activity android:name=".RecoveryWordsActivity" />
         <activity
             android:name=".TxAnimUIActivity"
-            android:exported="true"
             android:theme="@style/AppThemeLanding" />
 
         <provider
@@ -251,37 +277,30 @@
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
             android:theme="@style/ui_2_theme"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".whirlpool.newPool.NewPoolActivity"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".whirlpool.CycleDetail"
-            android:exported="true"
             android:label=""
             android:theme="@style/whirlpoolTheme" />
         <activity
             android:name=".tx.TxDetailsActivity"
-            android:exported="true"
             android:label=" "
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".tx.TxPrivacyDetailsActivity"
-            android:exported="true"
             android:label=""
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
-            android:exported="true"
             android:label="Manual Cahoots"
             android:theme="@style/ui_2_theme" />
 
@@ -301,6 +320,23 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".service.WebSocketService"
+            android:enabled="true" />
+
+        <service
+            android:name=".tor.TorService"
+            android:enabled="true"
+            android:stopWithTask="true" />
+        <service
+            android:name=".service.JobRefreshService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".whirlpool.service.WhirlpoolNotificationService"
+            android:enabled="true"
+          />
     </application>
 
 </manifest>
