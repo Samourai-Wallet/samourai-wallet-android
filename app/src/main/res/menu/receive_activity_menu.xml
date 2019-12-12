@@ -19,6 +19,7 @@
         android:id="@+id/action_voucher"
         android:orderInCategory="100"
         android:title="Vouchers"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_voucher_bitcoin"
+        app:showAsAction="always" />
 
 </menu>

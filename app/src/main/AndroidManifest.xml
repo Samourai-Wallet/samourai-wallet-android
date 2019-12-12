@@ -147,21 +147,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
         <activity
-            android:name=".VouchersActivity"
-            android:exported="true"
+            android:name=".vouchers.VouchersActivity"
+            android:label="Voucher"
             android:theme="@style/ui_2_theme" />
-        <activity
-            android:name=".network.NetworkDashboard"
-            android:exported="true"
-            android:label="@string/title_activity_network_dashboard"
-            android:parentActivityName=".home.BalanceActivity"
-            android:theme="@style/ui_2_theme"></activity>
-        <activity
-            android:name=".utxos.UTXOSActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:label="@string/unspent_outputs"
-            android:theme="@style/ui_2_theme" />
+
         <activity
             android:name=".OpenDimeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -180,20 +169,7 @@
             android:name=".paynym.ClaimPayNymActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
-        <activity
-            android:name=".paynym.paynymDetails.PayNymDetailsActivity"
-            android:label=""
-            android:theme="@style/ui_2_theme" />
-        <activity
-            android:name=".paynym.addPaynym.AddPaynymActivity"
-            android:exported="true"
-            android:label="@string/add_new"
-            android:theme="@style/ui_2_theme" />
-        <activity
-            android:name=".paynym.PayNymHome"
-            android:exported="true"
-            android:label="@string/paynyms"
-            android:theme="@style/ui_2_theme" />
+
         <activity
             android:name=".ExodusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />

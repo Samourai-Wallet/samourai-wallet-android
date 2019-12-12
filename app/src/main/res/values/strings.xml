@@ -753,6 +753,7 @@
     <string name="coming_soon">Coming soon</string>
     <string name="active">Active</string>
     <string name="change_from_postmix">Change from postmix spend</string>
+    <string name="validate">Validate</string>
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>

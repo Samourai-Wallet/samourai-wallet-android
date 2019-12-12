@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VouchersActivity">
+    tools:context=".vouchers.VouchersActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/appbar_voucher"
@@ -17,67 +17,260 @@
 
 
     <EditText
-        android:id="@+id/redeem_edttext"
-        android:layout_width="match_parent"
+        android:id="@+id/redeem_edttext_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa1234567890"
+        android:gravity="center"
+        android:inputType="textCapCharacters"
+        android:maxLength="3"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/textView24"
+        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+
+
+    <EditText
+        android:id="@+id/redeem_edttext_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa1234567890"
+        android:gravity="center"
+        android:inputType="textCapCharacters"
+        android:maxLength="3"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/redeem_edttext_1"
+        app:layout_constraintEnd_toStartOf="@+id/guideline16"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/redeem_edttext_1" />
+
+    <EditText
+        android:id="@+id/redeem_edttext_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="textCapCharacters"
+        android:maxLength="3"
+        app:layout_constraintBottom_toBottomOf="@+id/redeem_edttext_2"
+        app:layout_constraintEnd_toStartOf="@+id/guideline17"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintTop_toTopOf="@+id/redeem_edttext_2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/redeem_edttext_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="textCapCharacters"
+        android:maxLength="3"
+        app:layout_constraintBottom_toBottomOf="@+id/redeem_edttext_3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
+        app:layout_constraintTop_toTopOf="@+id/redeem_edttext_3" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Redeem  code"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toTopOf="@+id/voucher_redeemButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar_voucher"
-        app:layout_constraintVertical_bias="0.32" />
+        app:layout_constraintVertical_bias="0.0" />
 
-
-    <Button
-        android:id="@+id/redeem_button"
+    <TextView
+        android:id="@+id/vouchers_code_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Redeem"
-        app:layout_constraintEnd_toEndOf="@+id/redeem_edttext"
-        app:layout_constraintStart_toStartOf="@+id/redeem_edttext"
-        app:layout_constraintTop_toBottomOf="@+id/redeem_edttext" />
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/disabled_grey"
+        app:layout_constraintEnd_toEndOf="@+id/redeem_edttext_4"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/redeem_edttext_4"
+        app:layout_constraintTop_toBottomOf="@+id/redeem_edttext_4"
+        tools:text="0/12" />
+
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        android:tint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/voucher_input_email"
+        app:srcCompat="@drawable/ic_voucher_bitcoin" />
+
+    <TextView
+        android:id="@+id/textView41"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Redeem Voucher"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView9"
+        app:layout_constraintStart_toStartOf="@+id/imageView9"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+
+    <TextView
+        android:id="@+id/textView47"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Enter your 12 digit voucher code to deposit your FastBitcoin Voucher directly into your wallet"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintEnd_toEndOf="@+id/textView41"
+        app:layout_constraintStart_toStartOf="@+id/textView41"
+        app:layout_constraintTop_toBottomOf="@+id/textView41" />
 
 
     <TextView
-        android:id="@+id/voucher_receive_add"
+        android:id="@+id/textView49"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Loading"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBar6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/progressBar6"
+        app:layout_constraintTop_toTopOf="@+id/progressBar6"
+        app:layout_constraintVertical_bias="0.333" />
+
+    <ProgressBar
+        android:id="@+id/progressBar6"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        app:layout_constraintBottom_toTopOf="@+id/voucher_redeemButton"
+        app:layout_constraintEnd_toStartOf="@+id/textView49"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/voucher_input_email" />
+
+    <Button
+        android:id="@+id/voucher_redeemButton"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.4"
+        android:background="@drawable/button_blue"
+        android:gravity="center_vertical|center"
+        android:text="@string/validate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/voucher_input_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Receive Address"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/redeem_button"
-        app:layout_constraintVertical_bias="0.32" />
+        app:layout_constraintEnd_toEndOf="@+id/redeem_edttext_4"
+        app:layout_constraintStart_toStartOf="@+id/redeem_edttext_1"
+        app:layout_constraintTop_toBottomOf="@+id/vouchers_code_count">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/voucher_receive_add">
-
-        <TextView
-            android:id="@+id/voucher_log"
+        <EditText
+            android:id="@+id/voucher_email_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            />
+            android:hint="Email" />
 
-    </ScrollView>
+    </android.support.design.widget.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_check_circle_24dp"
+        android:tint="@color/green_ui_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar6" />
+
+    <TextView
+        android:id="@+id/voucher_redeem_success_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        tools:text="voucher code successfully redeemed."
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView18" />
+
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/voucher_snackbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        app:layout_constraintBottom_toTopOf="@+id/voucher_redeemButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Group
+        android:id="@+id/redeem_loader_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="progressBar6,textView49" />
+
+    <android.support.constraint.Group
+        android:id="@+id/voucher_success_message_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="imageView18,voucher_redeem_success_text" />
 
 
 </android.support.constraint.ConstraintLayout>
+

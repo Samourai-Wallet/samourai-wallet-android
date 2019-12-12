@@ -51,6 +51,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.vouchers.VouchersActivity;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
