@@ -89,12 +89,12 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         // list premix utxos
         Collection<WhirlpoolUtxo> utxosPremix = whirlpoolWallet.getUtxosPremix();
         log.info(utxosPremix.size()+" PREMIX utxos:");
-        ClientUtils.logWhirlpoolUtxos(utxosPremix);
+        ClientUtils.logWhirlpoolUtxos(utxosPremix, whirlpoolWallet.getConfig().getMixsTarget());
 
         // list postmix utxos
         Collection<WhirlpoolUtxo> utxosPostmix = whirlpoolWallet.getUtxosPremix();
         log.info(utxosPostmix.size()+" POSTMIX utxos:");
-        ClientUtils.logWhirlpoolUtxos(utxosPostmix);
+        ClientUtils.logWhirlpoolUtxos(utxosPostmix, whirlpoolWallet.getConfig().getMixsTarget());
 
         // keep running
         for(int i=0; i<2; i++) {

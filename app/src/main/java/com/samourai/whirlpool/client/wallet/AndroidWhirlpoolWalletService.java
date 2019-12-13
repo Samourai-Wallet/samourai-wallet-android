@@ -14,6 +14,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
+import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import ch.qos.logback.classic.Level;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -51,6 +53,12 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     protected AndroidWhirlpoolWalletService() {
         super();
         WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance()); // fix for Android
+        setLogLevel(Level.WARN, Level.WARN);
+    }
+
+    public void setLogLevel(Level whirlpoolLevel, Level whirlpoolClientLevel) {
+        // set whirlpool log level
+        ClientUtils.setLogLevel(whirlpoolLevel, whirlpoolClientLevel);
     }
 
     public WhirlpoolWallet getWhirlpoolWallet(Context ctx) throws Exception {
