@@ -68,7 +68,6 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
             String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
             WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
-            config.setTx0MinConfirmations(0);
             return openWallet(config, bip84w);
         }
         return whirlpoolWalletOpt.get();
@@ -85,10 +84,6 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
         String backendApiKey = null;
 
-        return computeWhirlpoolWalletConfig(ctx, walletIdentifier, testnet, onion, backendUrl, backendApiKey, mixsTarget, scode);
-    }
-
-    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier, boolean testnet, boolean onion, String backendUrl, String backendApiKey, int mixsTarget, String scode) throws Exception {
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
         BackendApi backendApi = new BackendApi(httpClient, backendUrl, backendApiKey);
 
