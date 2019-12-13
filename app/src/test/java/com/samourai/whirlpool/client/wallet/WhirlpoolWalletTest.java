@@ -10,9 +10,11 @@ import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.Tx0;
 import com.samourai.whirlpool.client.tx0.Tx0Config;
+import com.samourai.whirlpool.client.tx0.Tx0Preview;
 import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.MixingState;
+import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
@@ -119,7 +121,8 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
 
         Pool pool = whirlpoolWallet.findPoolById("0.01btc");
         Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setMaxOutputs(1);
-        Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, 1);
+        Tx0Preview tx0Preview = whirlpoolWallet.tx0Preview(pool, spendFroms, tx0Config, Tx0FeeTarget.BLOCKS_2);
+        Tx0 tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, Tx0FeeTarget.BLOCKS_2);
 
         Assert.assertEquals("9ae94965aee6102b96f6204ef6719137bba1f33cb1bca65cdc02c366f3d015b5", tx0.getTx().getHashAsString());
         Assert.assertEquals("01000000000101ae24e3f5dbcee7971ae0e5b83fcb1eb67057901f2d371ca494f868b3dc8c58cc0100000000ffffffff040000000000000000426a408a9eb379a4aaf4d4579118c64b64bbd327cd95ba826ac68f334155fd9ca4e3acd64acdfd75dd7c3cc5bc34d31af6c6e68b4db37eac62b574890f6cfc7b904d9950c300000000000016001441021632871b0f1cf61a7ac7b6a0187e886282915c670f00000000001600147e4a4628dd8fbd638681a728e39f7d92ada040704139bd1d00000000160014df3a4bc83635917ad18621f3ba78cef6469c5f5902483045022100f38c8f05bc665ad67181767c38cafb8ab0651e7c30ad54a8b0b9ad60020ff277022074b23406a73753c521452d43d3a78265989d493a592a8bf9bd65c902841eb5d10121032e46baef8bcde0c3a19cadb378197fa31d69adb21535de3f84de699a1cf88b4500000000", new String(Hex.encode(tx0.getTx().bitcoinSerialize())));

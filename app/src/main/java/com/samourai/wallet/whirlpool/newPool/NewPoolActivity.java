@@ -251,7 +251,7 @@ public class NewPoolActivity extends AppCompatActivity {
             Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setBadbankChange(false);
             Tx0 tx0 = null;
             try {
-                tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
+                tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, Tx0FeeTarget.BLOCKS_2);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
                 NewPoolActivity.this.runOnUiThread(new Runnable() {
