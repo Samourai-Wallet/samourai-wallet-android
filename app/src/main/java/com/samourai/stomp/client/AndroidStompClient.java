@@ -46,23 +46,21 @@ public class AndroidStompClient implements IStompClient {
                 .subscribe(new Consumer<LifecycleEvent>() {
                     @Override
                     public void accept(LifecycleEvent lifecycleEvent) {
-                        if (lifecycleEvent.getException() != null) {
-                            log.error("STOMP connect error", lifecycleEvent.getException());
-                        } else {
+                        if (log.isDebugEnabled()) {
                             log.debug("STOMP connect: " + lifecycleEvent.getType()+" : "+lifecycleEvent.getMessage());
                         }
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
-                                log.debug("STOMP connected");
                                 onConnectOnDisconnectListener.onMessage(null);
                                 break;
-                            case ERROR:
-                                log.error("STOMP error", lifecycleEvent.getException());
-                                break;
-                            case CLOSED:
-                                log.debug("STOMP disconnected");
+                            case ERROR: case CLOSED:
+                                Exception e = lifecycleEvent.getException();
+                                if  (e == null) {
+                                    e = new Exception("STOMP: "+lifecycleEvent.getType());
+                                }
                                 disconnect();
-                                onConnectOnDisconnectListener.onError(new Exception("disconnected"));
+                                onConnectOnDisconnectListener.onError(e);
+                                break;
                         }
                     }
                 });
@@ -141,6 +139,7 @@ public class AndroidStompClient implements IStompClient {
             try {
                 stompClient.disconnect();
             } catch(Exception e) {}
+            stompClient = null;
         }
     }
 
@@ -168,11 +167,4 @@ public class AndroidStompClient implements IStompClient {
         }
         return stompHeaders;
     }
-
-    /*@Override // TODO
-    protected void onDestroy() {
-        stompClient.disconnect();
-        if (mRestPingDisposable != null) mRestPingDisposable.dispose();
-        super.onDestroy();
-    }*/
 }
