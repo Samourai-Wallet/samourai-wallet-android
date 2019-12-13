@@ -24,7 +24,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
-import android.support.v4.app.JobIntentService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -42,12 +41,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.BIP38PrivateKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.script.Script;
-
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
@@ -56,39 +49,35 @@ import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
-import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
-import com.samourai.wallet.service.JobRefreshService;
-import com.samourai.wallet.utxos.UTXOSActivity;
-import com.samourai.wallet.whirlpool.WhirlpoolMain;
-import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
@@ -101,14 +90,24 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.BIP38PrivateKey;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Hex;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -566,6 +565,11 @@ public class BalanceActivity extends AppCompatActivity {
 
         if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        }
+
+        if(isFinishing()){
+            // disconnect Whirlpool on app exit
+            AndroidWhirlpoolWalletService.getInstance().closeWallet();
         }
 
         super.onDestroy();
