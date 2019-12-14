@@ -179,7 +179,7 @@ public class ChooseUTXOsFragment extends Fragment {
         return Observable.fromCallable(() -> {
             Map<String, Object> dataSet = new HashMap<>();
             List<UTXO> utxos = new ArrayList<>();
-            List<UTXO> account0 = APIFactory.getInstance(getActivity()).getUtxos(false);
+            List<UTXO> account0 = APIFactory.getInstance(getActivity()).getUtxos(true);
 //            List<UTXO> accountWhirlpool = APIFactory.getInstance(getActivity()).getUtxosPostMix(false);
 
             utxos.addAll(account0);
