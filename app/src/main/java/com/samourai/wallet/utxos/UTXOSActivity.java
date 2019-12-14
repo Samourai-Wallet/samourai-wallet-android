@@ -446,14 +446,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                         }
                     }
 
-                    boolean duplicatesexist = false;
-                    for (UTXOCoin u : items) {
-                        if (u.hash.equals(displayData.hash)) {
-                            duplicatesexist = true;
-                        }
-                    }
-                    if (!duplicatesexist)
-                        items.add(displayData);
+                    items.add(displayData);
 
                 }
 
