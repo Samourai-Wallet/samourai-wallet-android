@@ -205,7 +205,7 @@ public class ChooseUTXOsFragment extends Fragment {
 //                    else {
 //                        displayData.account = WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix();
 //                    }
-
+                    items.add(displayData);
                 }
 
             }
