@@ -183,27 +183,9 @@ public class NewPoolActivity extends AppCompatActivity {
 
         try {
 
-            Disposable disposable = AndroidWhirlpoolWalletService.getInstance()
-                    .getEvents()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(s -> {
-                        if (s.equals("CONNECTED")) {
-                            Disposable tx0Dispo = beginTx0(selectedCoins)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(() -> {
-                                        Toast.makeText(this, "Began Pool", Toast.LENGTH_SHORT).show();
-                                    }, error -> Log.e(TAG, "processWhirlPool: Tx0Error  ".concat(error.getMessage())));
 
-                            disposables.add(tx0Dispo);
-                        }
-                    }, err -> {
-                        LogUtil.error(TAG, "ERROR ".concat(err.getMessage()));
-                        Toast.makeText(this, "Error ".concat(err.getMessage()), Toast.LENGTH_SHORT).show();
 
-                    });
-
-            if(AndroidWhirlpoolWalletService.getInstance().getWallet() ==null || !AndroidWhirlpoolWalletService.getInstance().getWallet().getMixingState().isStarted()){
+            if(AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED){
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             }else {
                 Disposable tx0Dispo = beginTx0(selectedCoins)
@@ -216,7 +198,6 @@ public class NewPoolActivity extends AppCompatActivity {
                 disposables.add(tx0Dispo);
             }
 
-            disposables.add(disposable);
 
 
         } catch (Exception e) {

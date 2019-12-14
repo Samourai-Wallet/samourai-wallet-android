@@ -30,6 +30,7 @@ import ch.qos.logback.classic.Level;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import java8.util.Optional;
@@ -37,6 +38,14 @@ import java8.util.Optional;
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidWhirlpoolWalletService.class);
     private Subject<String> events = PublishSubject.create();
+
+    public enum ConnectionStates {
+        CONNECTED,
+        STARTING,
+        LOADING,
+        DISCONNECTED
+    }
+    private BehaviorSubject<ConnectionStates> source = BehaviorSubject.create();
 
     private static final String TAG = "AndroidWhirlpoolWalletS";
     private static AndroidWhirlpoolWalletService instance;
@@ -52,8 +61,9 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     protected AndroidWhirlpoolWalletService() {
         super();
+        source.onNext(ConnectionStates.LOADING);
         WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance()); // fix for Android
-        setLogLevel(Level.WARN, Level.WARN);
+        setLogLevel(Level.OFF, Level.OFF);
     }
 
     public void setLogLevel(Level whirlpoolLevel, Level whirlpoolClientLevel) {
@@ -110,7 +120,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
         whirlpoolWalletConfig.setMixsTarget(mixsTarget);
         whirlpoolWalletConfig.setScode(scode);
-        whirlpoolWalletConfig.setMaxClients(1);
+        whirlpoolWalletConfig.setMaxClients(3);
 
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
         whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
@@ -118,19 +128,30 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
 
+
     public Completable startService(Context context) {
+        if (source.hasObservers())
+            source.onNext(ConnectionStates.STARTING);
         return Completable.fromCallable(() -> {
             this.wallet = this.getWhirlpoolWallet(context);
             this.wallet.start();
-
-            //TODO: get status from whirlpool server and set event appropriately
-            // for current workaround we assume that above start method successfully connected to whirlpool server
-            LogUtil.info(TAG, "startService: Success");
-            events.onNext("CONNECTED");
+            if (source.hasObservers()) {
+                source.onNext(ConnectionStates.CONNECTED);
+            }
             return true;
         });
     }
 
+
+    public void stop() {
+        if (source.hasObservers())
+            source.onNext(ConnectionStates.DISCONNECTED);
+         wallet.stop();
+    }
+
+    public BehaviorSubject<ConnectionStates> listenConnectionStatus() {
+        return source;
+    }
     //get the current instance of the wallet
     public WhirlpoolWallet getWallet() {
         return wallet;
