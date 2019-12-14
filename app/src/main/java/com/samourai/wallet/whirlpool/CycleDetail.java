@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -28,6 +29,7 @@ import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
 
 import java.util.ArrayList;
 
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -42,13 +44,15 @@ public class CycleDetail extends AppCompatActivity {
     private TxCyclesAdapter txCyclesAdapter;
     private ArrayList<UTXOCoin> mixedUTXOs = new ArrayList<>();
     private ProgressBar cycleProgress;
-    private TextView registeringInputs, cyclingTx, cycledTxesListHeader;
+    private TextView registeringInputs, cyclingTx, cycledTxesListHeader,cycleTotalFee;
     private ImageView registeringCheck, cyclingCheck, confirmCheck;
     private WhirlpoolUtxo whirlpoolUtxo;
     private static final String TAG = "CycleDetail";
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private String hash;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cycle);
@@ -78,9 +82,7 @@ public class CycleDetail extends AppCompatActivity {
         cycleProgress.setMax(100);
         cycleProgress.setProgress(0);
 
-
-
-        String hash = getIntent().getExtras().getString("hash");
+        hash = getIntent().getExtras().getString("hash");
         if (hash == null) {
             finish();
             return;

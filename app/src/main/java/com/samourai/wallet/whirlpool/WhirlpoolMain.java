@@ -116,6 +116,10 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     private void listenPoolState() {
         wallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+        try {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         MixingState mixingState = wallet.getMixingState();
         updateCycles(mixingState.getUtxosMixing());
         Disposable disposable = mixingState.getObservable()
@@ -147,7 +151,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(whirlpoolUtxoState -> {
-                        LogUtil.info(TAG, "updateCycles: callls");
                         Cycle _copy_cycle = cycles.get(cycles.indexOf(cycle));
                         _copy_cycle.setMixStep(whirlpoolUtxo.getUtxoState().getMixProgress().getMixStep());
                         adapter.notifyDataSetChanged();

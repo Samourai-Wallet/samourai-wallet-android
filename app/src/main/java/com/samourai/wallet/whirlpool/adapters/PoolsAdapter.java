@@ -45,14 +45,24 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
         if (pool.isSelected()) {
             holder.feesGroup.setVisibility(View.VISIBLE);
         }
+        if (!pool.isDisabled())
+            holder.itemView.setOnClickListener(view -> {
+                holder.feesGroup.setVisibility(holder.feesGroup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            });
 
-        holder.itemView.setOnClickListener(view -> {
-            holder.feesGroup.setVisibility(holder.feesGroup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        });
+        if (!pool.isDisabled())
+            holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
+                onItemsSelected.onItemsSelected(position);
+            });
 
-        holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
-            onItemsSelected.onItemsSelected(position);
-        });
+        if (pool.isDisabled()) {
+            holder.layout.setAlpha(0.4f);
+            holder.layout.setClickable(false);
+        }else {
+            holder.layout.setAlpha(1f);
+            holder.layout.setClickable(true);
+        }
+        holder.checkBox.setEnabled(!pool.isDisabled());
     }
 
     private void selectItem(ViewHolder holder, int position) {
@@ -84,6 +94,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
 
         private TextView poolAmount, poolFees, minorFees, totalFees;
         private CheckBox checkBox;
+        private View layout;
         private Group feesGroup;
 
         ViewHolder(View itemView) {
@@ -94,6 +105,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
             totalFees = itemView.findViewById(R.id.pool_item_total_fee);
             checkBox = itemView.findViewById(R.id.pool_item_checkbox);
             feesGroup = itemView.findViewById(R.id.item_pool_fees_group);
+            layout = itemView;
         }
     }
 
