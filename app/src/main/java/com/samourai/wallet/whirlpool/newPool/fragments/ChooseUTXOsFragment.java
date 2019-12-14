@@ -180,10 +180,10 @@ public class ChooseUTXOsFragment extends Fragment {
             Map<String, Object> dataSet = new HashMap<>();
             List<UTXO> utxos = new ArrayList<>();
             List<UTXO> account0 = APIFactory.getInstance(getActivity()).getUtxos(false);
-            List<UTXO> accountWhirlpool = APIFactory.getInstance(getActivity()).getUtxosPostMix(false);
+//            List<UTXO> accountWhirlpool = APIFactory.getInstance(getActivity()).getUtxosPostMix(false);
 
             utxos.addAll(account0);
-            utxos.addAll(accountWhirlpool);
+//            utxos.addAll(accountWhirlpool);
 
 
             long amount = 0L;
@@ -201,18 +201,10 @@ public class ChooseUTXOsFragment extends Fragment {
                     UTXOCoin displayData = new UTXOCoin(outpoint, utxo);
                     if (account0.contains(utxo)) {
                         displayData.account = 0;
-                    } else {
-                        displayData.account = WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix();
                     }
-
-                    boolean duplicatesexist = false;
-                    for (UTXOCoin u : items) {
-                        if (u.hash.equals(displayData.hash)) {
-                            duplicatesexist = true;
-                        }
-                    }
-                    if (!duplicatesexist)
-                        items.add(displayData);
+//                    else {
+//                        displayData.account = WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix();
+//                    }
 
                 }
 
