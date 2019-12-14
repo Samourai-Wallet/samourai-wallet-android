@@ -2073,6 +2073,7 @@ public class APIFactory	{
                 for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
                     if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
+                        u.setPath(utxos.get(key).getPath());
                     }
                 }
                 if(u.getOutpoints().size() > 0)    {

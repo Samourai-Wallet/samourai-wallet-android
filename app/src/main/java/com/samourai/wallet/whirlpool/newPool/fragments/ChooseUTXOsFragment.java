@@ -135,10 +135,15 @@ public class ChooseUTXOsFragment extends Fragment {
                     changes.add(model);
                 }
             }
+            if (model.account == 0
+                    && model.path.startsWith("M/1/")) {
+                if (!changes.contains(model)) {
+                    changes.add(model);
+                }
+            }
         }
         Collections.sort(changes, (model, t1) -> Long.compare(t1.amount, model.amount));
 
-        LogUtil.info(TAG, "applyFilters: ".concat(String.valueOf(changes.size())));
         //add change utxo segment at the top of the list
         changes.add(0, changeSegment);
         /*------------------------------------------------*/
