@@ -93,7 +93,6 @@ import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.squareup.picasso.Callback;
@@ -449,7 +448,7 @@ public class BalanceActivity extends AppCompatActivity {
     private void initViewModel() {
         TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>());
         adapter.setHasStableIds(true);
-        adapter.setClickListner((position, tx) -> txDetails(tx));
+        adapter.setClickListener((position, tx) -> txDetails(tx));
 
         TxRecyclerView.setAdapter(adapter);
 
