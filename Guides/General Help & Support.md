@@ -16,7 +16,7 @@ A: You cant, IOS is not available and wont anytime soon
 
 A: Whirlpool is the Samourai implementation of CoinJoin
 
-**Q: What is CoinJoin?**
+**Q: What is CoinJoin?** 
 
 A: It's a transaction where people contribute inputs and outputs, it helps to break chain analysis tools, gives you privacy and makes the Bitcoin ecosystem more fungible 
 
