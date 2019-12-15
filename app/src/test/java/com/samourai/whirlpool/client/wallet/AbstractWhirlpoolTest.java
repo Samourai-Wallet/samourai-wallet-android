@@ -7,6 +7,7 @@ import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.backend.MinerFeeTarget;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.client.Bip84Wallet;
@@ -43,7 +44,25 @@ public abstract class AbstractWhirlpoolTest {
     protected AndroidHttpClient whirlpoolHttpClient = new AndroidHttpClient(WebUtil.getInstance(null));
     protected AndroidStompClientService stompClientService = new AndroidStompClientService();
     protected NetworkParameters networkParameters;
-    protected AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService(){
+        // mock fee for deterministic tests
+        @Override
+        protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config) {
+            return new AndroidWhirlpoolDataService(config, this){
+                @Override
+                public int getFeeSatPerByte(MinerFeeTarget feeTarget) {
+                    switch(feeTarget) {
+                        case BLOCKS_2: return 1;
+                        case BLOCKS_4: return 4;
+                        case BLOCKS_6: return 6;
+                        case BLOCKS_12: return 12;
+                        case BLOCKS_24: return 24;
+                        default: throw new RuntimeException("feeTarket not mocked");
+                    }
+                }
+            };
+        }
+    };
     protected WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
 
     public void setUp(NetworkParameters networkParameters) throws Exception {
