@@ -2,6 +2,7 @@ package com.samourai.wallet.whirlpool.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.tor.TorService;
+import com.samourai.wallet.tor.TorBroadCastReceiver;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import java.util.Objects;
@@ -44,7 +45,7 @@ public class WhirlpoolNotificationService extends Service {
                 .setGroup("service")
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setGroupSummary(false)
-                .setSmallIcon(R.drawable.ic_samourai_and_tor_notif_icon)
+                .setSmallIcon(R.drawable.ic_whirlpool)
                 .build();
 
         startForeground(WHIRLPOOL_SERVICE_NOTIFICATION_ID, notification);
@@ -61,20 +62,20 @@ public class WhirlpoolNotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_START)) {
-            //TODO: Whirlpool START SERVICE
             Disposable startDisposable = androidWhirlpoolWalletService
                     .startService(getApplicationContext())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
                         updateNotification("Online");
-                    },er->{
-                        Log.e(TAG, "onStartCommand: ".concat(er.getMessage()) );
+                    }, er -> {
+                        Log.e(TAG, "onStartCommand: ".concat(er.getMessage()));
                     });
             compositeDisposable.add(startDisposable);
 
         } else if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_STOP)) {
-            //TODO: Whirlpool STOP SERVICE
+            androidWhirlpoolWalletService.getWallet().stop();
+            this.stopSelf();
         }
 
         return START_STICKY;
@@ -90,9 +91,10 @@ public class WhirlpoolNotificationService extends Service {
                 .setSound(null)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setGroup("service")
+                .addAction(getStopAction())
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setGroupSummary(false)
-                .setSmallIcon(R.drawable.ic_samourai_and_tor_notif_icon)
+                .setSmallIcon(R.drawable.ic_whirlpool)
                 .build();
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotificationManager != null) {
@@ -111,7 +113,19 @@ public class WhirlpoolNotificationService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public  static void  StartService(Context context){
+
+    private NotificationCompat.Action getStopAction() {
+
+        Intent broadcastIntent = new Intent(this, WhirlpoolBroadCastReceiver.class);
+        broadcastIntent.setAction(WhirlpoolNotificationService.ACTION_STOP);
+
+        PendingIntent actionIntent = PendingIntent.getBroadcast(this,
+                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return new NotificationCompat.Action(R.drawable.ic_close_white_24dp, "STOP", actionIntent);
+    }
+
+    public static void StartService(Context context) {
         Intent startIntent = new Intent(context, WhirlpoolNotificationService.class);
         startIntent.setAction(WhirlpoolNotificationService.ACTION_START);
         context.startService(startIntent);

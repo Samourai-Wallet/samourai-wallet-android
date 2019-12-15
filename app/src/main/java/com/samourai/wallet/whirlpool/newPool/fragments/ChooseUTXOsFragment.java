@@ -25,6 +25,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
@@ -89,9 +90,13 @@ public class ChooseUTXOsFragment extends Fragment {
     }
 
     private void applyFilters(List<UTXOCoin> utxoCoins) {
+        ArrayList<UTXOCoin> utxoCoinList = new ArrayList<>();
+
+
+        /*------------------------------------------------*/
         ArrayList<UTXOCoin> unCycled = new ArrayList<>();
 
-
+        // Add all received utxo's
         for (UTXOCoin model : utxoCoins) {
             if (model.account == 0 && model.path.startsWith("M/0/")) {
                 if (!unCycled.contains(model)) {
@@ -105,14 +110,24 @@ public class ChooseUTXOsFragment extends Fragment {
         }
         Collections.sort(unCycled, (model, t1) -> Long.compare(t1.amount, model.amount));
 
-        UTXOCoinSegment section = new UTXOCoinSegment(null, null);
-        section.unCycled = true;
-        unCycled.add(0, section);
+        // UTXO section
+        UTXOCoinSegment utxoSegment = new UTXOCoinSegment(null, null);
+        utxoSegment.unCycled = true;
 
-        UTXOCoinSegment cycled = new UTXOCoinSegment(null, null);
-        cycled.unCycled = false;
+        //add utxo segment at the top of the list
+        unCycled.add(0, utxoSegment);
+        /*------------------------------------------------*/
+
+
+        utxoCoinList.addAll(unCycled);
+
+        /*------------------------------------------------*/
+        // Change UTXO section
+        UTXOCoinSegment changeSegment = new UTXOCoinSegment(null, null);
+        changeSegment.unCycled = false;
         ArrayList<UTXOCoin> changes = new ArrayList<>();
 
+        // Add all change utxo's
         for (UTXOCoin model : utxoCoins) {
             if (model.account == WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix()
                     && model.path.startsWith("M/1/")) {
@@ -127,13 +142,16 @@ public class ChooseUTXOsFragment extends Fragment {
                 }
             }
         }
-
         Collections.sort(changes, (model, t1) -> Long.compare(t1.amount, model.amount));
-        changes.add(0, cycled);
 
-        unCycled.addAll(changes);
+        //add change utxo segment at the top of the list
+        changes.add(0, changeSegment);
+        /*------------------------------------------------*/
 
-        utxoAdapter.updateList(unCycled);
+
+        utxoCoinList.addAll(changes);
+
+        utxoAdapter.updateList(utxoCoinList);
     }
 
     @Override
@@ -179,11 +197,11 @@ public class ChooseUTXOsFragment extends Fragment {
         return Observable.fromCallable(() -> {
             Map<String, Object> dataSet = new HashMap<>();
             List<UTXO> utxos = new ArrayList<>();
-            List<UTXO> account0 = APIFactory.getInstance(getActivity()).getUtxos(false);
-            List<UTXO> accountWhirlpool = APIFactory.getInstance(getActivity()).getUtxosPostMix(false);
+            List<UTXO> account0 = APIFactory.getInstance(getActivity()).getUtxos(true);
+//            List<UTXO> accountWhirlpool = APIFactory.getInstance(getActivity()).getUtxosPostMix(false);
 
             utxos.addAll(account0);
-            utxos.addAll(accountWhirlpool);
+//            utxos.addAll(accountWhirlpool);
 
 
             long amount = 0L;
@@ -204,16 +222,7 @@ public class ChooseUTXOsFragment extends Fragment {
                     } else {
                         displayData.account = WhirlpoolMeta.getInstance(getActivity()).getWhirlpoolPostmix();
                     }
-
-                    boolean duplicatesexist = false;
-                    for (UTXOCoin u : items) {
-                        if (u.hash.equals(displayData.hash)) {
-                            duplicatesexist = true;
-                        }
-                    }
-                    if (!duplicatesexist)
-                        items.add(displayData);
-
+                    items.add(displayData);
                 }
 
             }

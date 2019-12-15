@@ -3,6 +3,7 @@ package com.samourai.wallet.whirlpool;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,24 +20,39 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.MixingState;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 
 import org.bitcoinj.core.Coin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class WhirlpoolMain extends AppCompatActivity {
 
-    private ArrayList<Cycle> cycles = new ArrayList();
+    private ArrayList<Cycle> cycles = new ArrayList<>();
+    private static final String TAG = "WhirlpoolMain";
     private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
     private RecyclerView mixList;
     private TextView totalAmountToDisplay;
     private TextView amountSubText;
     private MixAdapter adapter;
+    WhirlpoolWallet wallet;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +82,83 @@ public class WhirlpoolMain extends AppCompatActivity {
         long preMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
 
         totalAmountToDisplay.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
+        startWhirlpool();
+
+        Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(connectionStates -> {
+                    if (connectionStates == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
+                        listenPoolState();
+                        new Handler().postDelayed(this::listenPoolState, 3000);
+                    }
+
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    private void startWhirlpool() {
+        if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue()
+                == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
+            listenPoolState();
+        } else {
+            WhirlPoolLoaderDialog whirlPoolLoaderDialog = new WhirlPoolLoaderDialog();
+            whirlPoolLoaderDialog.show(getSupportFragmentManager(), whirlPoolLoaderDialog.getTag());
+        }
+
     }
 
     private void showBottomSheetDialog() {
         DepositOrChooseUtxoDialog depositOrChooseUtxoDialog = new DepositOrChooseUtxoDialog();
         depositOrChooseUtxoDialog.show(getSupportFragmentManager(), depositOrChooseUtxoDialog.getTag());
     }
+
+
+    private void listenPoolState() {
+        wallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+        try {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        MixingState mixingState = wallet.getMixingState();
+        updateCycles(mixingState.getUtxosMixing());
+        Disposable disposable = mixingState.getObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(state -> {
+                    cycles.clear();
+                    if (!state.getUtxosMixing().isEmpty()) {
+                        updateCycles(state.getUtxosMixing());
+                        adapter.notifyDataSetChanged();
+                    }
+                }, er -> {
+                    er.printStackTrace();
+                });
+        compositeDisposable.add(disposable);
+
+    }
+
+    private void updateCycles(Collection<WhirlpoolUtxo> utxosMixing) {
+        for (WhirlpoolUtxo whirlpoolUtxo : utxosMixing) {
+            Cycle cycle = new Cycle();
+            cycle.setAmount(whirlpoolUtxo.getUtxo().value);
+            cycle.setProgress(whirlpoolUtxo.getUtxoState().getMixProgress().getProgressPercent());
+            cycle.setMixStep(whirlpoolUtxo.getUtxoState().getMixProgress().getMixStep());
+            cycle.setPoolId(whirlpoolUtxo.getUtxoConfig().getPoolId());
+            cycle.setTxHash(whirlpoolUtxo.getUtxo().tx_hash);
+            cycles.add(cycle);
+            Disposable disposable = whirlpoolUtxo.getUtxoState().getObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(whirlpoolUtxoState -> {
+                        Cycle _copy_cycle = cycles.get(cycles.indexOf(cycle));
+                        _copy_cycle.setMixStep(whirlpoolUtxo.getUtxoState().getMixProgress().getMixStep());
+                        adapter.notifyDataSetChanged();
+                    });
+            compositeDisposable.add(disposable);
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,13 +182,11 @@ public class WhirlpoolMain extends AppCompatActivity {
             Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
-        }
-        else if (id == R.id.action_utxo) {
+        } else if (id == R.id.action_utxo) {
             Intent intent = new Intent(WhirlpoolMain.this, UTXOSActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
-        }
-        else {
+        } else {
             ;
         }
 
@@ -125,15 +210,19 @@ public class WhirlpoolMain extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final MixAdapter.ViewHolder holder, int position) {
 
+            Cycle utxo = cycles.get(position);
             //TODO: bind views with WaaS mix states
-//            holder.mixingAmount.setText("0.5");
+            holder.mixingAmount.setText(utxo.getPoolId());
+            Intent intent = new Intent(getApplicationContext(), CycleDetail.class);
+            intent.putExtra("hash", utxo.getTxHash());
+            holder.mixingProgress.setText(utxo.getMixStep().getMessage());
+            holder.itemView.setOnClickListener(view -> startActivity(intent));
 
-            holder.itemView.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), CycleDetail.class)));
         }
 
         @Override
         public int getItemCount() {
-            return 1;
+            return cycles.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

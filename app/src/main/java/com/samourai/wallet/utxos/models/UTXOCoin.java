@@ -2,6 +2,7 @@ package com.samourai.wallet.utxos.models;
 
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.LogUtil;
 
 /**
  * UTXO model for UI
@@ -30,9 +31,6 @@ public class UTXOCoin {
             return;
         }
         this.outPoint = outPoint;
-        this.address = outPoint.getAddress();
-        this.address = outPoint.getAddress();
-        this.address = outPoint.getAddress();
         this.address = outPoint.getAddress();
         this.path = utxo.getPath() == null ? "" : utxo.getPath();
         this.amount = outPoint.getValue().longValue();

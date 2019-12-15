@@ -270,7 +270,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
+        <receiver android:name=".whirlpool.service.WhirlpoolBroadCastReceiver" />
         <receiver android:name=".tor.TorBroadCastReceiver" />
         <receiver
             android:name="com.msopentech.thali.android.toronionproxy.ConnectionChangeReceiver"
@@ -304,6 +304,7 @@
         <service
             android:name=".whirlpool.service.WhirlpoolNotificationService"
             android:enabled="true"
+            android:stopWithTask="true"
           />
     </application>
 

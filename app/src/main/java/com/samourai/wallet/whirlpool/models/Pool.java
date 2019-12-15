@@ -3,6 +3,7 @@ package com.samourai.wallet.whirlpool.models;
 public class Pool {
 
     private boolean isSelected = false;
+    private boolean isDisabled = false;
     private long poolAmount = 0L;
     private long poolFee = 0L;
     private long minerFee = 0L;
@@ -42,4 +43,13 @@ public class Pool {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        isDisabled = disabled;
+    }
+
 }

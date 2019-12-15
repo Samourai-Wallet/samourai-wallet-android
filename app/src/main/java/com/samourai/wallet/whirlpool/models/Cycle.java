@@ -1,6 +1,6 @@
 package com.samourai.wallet.whirlpool.models;
 
-import android.content.Intent;
+import com.samourai.whirlpool.client.mix.listener.MixStep;
 
 import java.util.Date;
 
@@ -8,25 +8,29 @@ public class Cycle {
 
     public enum CycleStatus {PENDING, SUCCESS, FAILED}
 
-    private Float amount, totalFees;
+    private long amount, totalFees;
     private CycleStatus status;
     private Date startTime;
-    private String txID;
+    private String txHash;
     private int progress = 0;
+    private String poolId = "";
+    private MixStep mixStep;
 
-    public Float getAmount() {
+
+
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(Float amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
-    public Float getTotalFees() {
+    public long getTotalFees() {
         return totalFees;
     }
 
-    public void setTotalFees(Float totalFees) {
+    public void setTotalFees(long totalFees) {
         this.totalFees = totalFees;
     }
 
@@ -46,12 +50,12 @@ public class Cycle {
         this.startTime = startTime;
     }
 
-    public String getTxID() {
-        return txID;
+    public String getTxHash() {
+        return txHash;
     }
 
-    public void setTxID(String txID) {
-        this.txID = txID;
+    public void setTxHash(String txHash) {
+        this.txHash = txHash;
     }
 
     public int getProgress() {
@@ -60,5 +64,21 @@ public class Cycle {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public String getPoolId() {
+        return poolId;
+    }
+
+    public void setPoolId(String poolId) {
+        this.poolId = poolId;
+    }
+
+    public MixStep getMixStep() {
+        return mixStep;
+    }
+
+    public void setMixStep(MixStep mixStep) {
+        this.mixStep = mixStep;
     }
 }
