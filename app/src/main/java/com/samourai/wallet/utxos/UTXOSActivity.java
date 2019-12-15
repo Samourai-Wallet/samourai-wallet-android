@@ -607,7 +607,11 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         switch (item.getItemId()) {
             case R.id.utxo_details_action_whirlpool: {
-                Toast.makeText(this, "Sent to Whirlpool", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Direct to Whirlpool", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case R.id.utxo_details_action_send: {
+                Toast.makeText(this, "Direct to spend", Toast.LENGTH_SHORT).show();
                 break;
             }
             case R.id.utxo_details_action_spendable: {
