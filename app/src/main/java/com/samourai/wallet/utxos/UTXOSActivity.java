@@ -164,14 +164,17 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
-        if (item.getItemId() == R.id.action_utxo_amounts) {
+        else if (item.getItemId() == R.id.action_utxo_amounts) {
             doDisplayAmounts();
         }
-        if (item.getItemId() == R.id.action_refresh) {
+        else if (item.getItemId() == R.id.action_refresh) {
             loadUTXOs(false);
         }
-        if (item.getItemId() == R.id.action_utxo_filter) {
+        else if (item.getItemId() == R.id.action_utxo_filter) {
             showFilterOptions();
+        }
+        else {
+            ;
         }
         return super.onOptionsItemSelected(item);
     }
