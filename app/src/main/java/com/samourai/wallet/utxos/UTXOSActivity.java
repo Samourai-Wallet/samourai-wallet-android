@@ -170,9 +170,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         if (item.getItemId() == R.id.action_refresh) {
             loadUTXOs(false);
         }
-        if (item.getItemId() == R.id.action_refresh) {
-            loadUTXOs(false);
-        }
         if (item.getItemId() == R.id.action_utxo_filter) {
             showFilterOptions();
         }
