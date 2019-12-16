@@ -18,7 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -72,12 +71,14 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
-import com.samourai.wallet.whirlpool.WhirlpoolMain;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
 
@@ -176,6 +177,8 @@ public class SendActivity extends AppCompatActivity {
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
     private int account = 0;
 
+    private List<UTXOCoin> preselectedUTXOs = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,7 +197,7 @@ public class SendActivity extends AppCompatActivity {
         toAddressEditText = findViewById(R.id.edt_send_to);
         btcEditText = findViewById(R.id.amountBTC);
         satEditText = findViewById(R.id.amountSat);
-         tvToAddress = findViewById(R.id.to_address_review);
+        tvToAddress = findViewById(R.id.to_address_review);
         tvReviewSpendAmount = findViewById(R.id.send_review_amount);
         tvReviewSpendAmountInSats = findViewById(R.id.send_review_amount_in_sats);
         tvMaxAmount = findViewById(R.id.totalBTC);
@@ -268,37 +271,43 @@ public class SendActivity extends AppCompatActivity {
 
         checkDeepLinks();
 
-        Disposable disposable = APIFactory.getInstance(getApplicationContext())
-                .walletBalanceObserver
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aLong -> {
-                    if (balance == aLong) {
-                        return;
-                    }
-                    setBalance();
-                }, Throwable::printStackTrace);
-        compositeDisposables.add(disposable);
+        if (getIntent().getExtras().containsKey("preselected")) {
+            preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
+            setBalance();
+        } else {
+
+            Disposable disposable = APIFactory.getInstance(getApplicationContext())
+                    .walletBalanceObserver
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(aLong -> {
+                        if (balance == aLong) {
+                            return;
+                        }
+                        setBalance();
+                    }, Throwable::printStackTrace);
+            compositeDisposables.add(disposable);
 
 
-        // Update fee
-        Disposable feeDisposable = Observable.fromCallable(() -> APIFactory.getInstance(getApplicationContext()).getDynamicFees())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(t -> {
-                    Log.i(TAG, "Fees : ".concat(t.toString()));
-                    setUpFee();
-                }, Throwable::printStackTrace);
+            // Update fee
+            Disposable feeDisposable = Observable.fromCallable(() -> APIFactory.getInstance(getApplicationContext()).getDynamicFees())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(t -> {
+                        Log.i(TAG, "Fees : ".concat(t.toString()));
+                        setUpFee();
+                    }, Throwable::printStackTrace);
 
-        compositeDisposables.add(feeDisposable);
+            compositeDisposables.add(feeDisposable);
+            if (getIntent().getExtras() != null) {
+                if (!getIntent().getExtras().containsKey("balance")) {
+                    return;
+                }
+                balance = getIntent().getExtras().getLong("balance");
 
-
-        if (getIntent().getExtras() != null) {
-            if (!getIntent().getExtras().containsKey("balance")) {
-                return;
             }
-            balance = getIntent().getExtras().getLong("balance");
         }
+
 
     }
 
@@ -687,22 +696,32 @@ public class SendActivity extends AppCompatActivity {
 
     private void setBalance() {
 
-        try {
-            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
-            } else {
-                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
-                if (tempBalance != 0L) {
-                    balance = tempBalance;
-                }
+        if (preselectedUTXOs != null) {
+            long amount = 0;
+            for (UTXOCoin utxo : preselectedUTXOs) {
+                amount += utxo.amount;
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-        } catch (java.lang.NullPointerException npe) {
-            npe.printStackTrace();
+            balance = amount;
+        } else {
+
+            try {
+                if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                    balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
+                } else {
+                    Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+                    if (tempBalance != 0L) {
+                        balance = tempBalance;
+                    }
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            } catch (MnemonicException.MnemonicLengthException mle) {
+                mle.printStackTrace();
+            } catch (java.lang.NullPointerException npe) {
+                npe.printStackTrace();
+            }
         }
+
         final String strAmount;
         NumberFormat nf = NumberFormat.getInstance(Locale.US);
         nf.setMaximumFractionDigits(8);
@@ -841,10 +860,9 @@ public class SendActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (editable.toString().length() != 0)  {
+            if (editable.toString().length() != 0) {
                 validateSpend();
-            }
-            else    {
+            } else {
                 setToAddress("");
             }
         }
@@ -995,7 +1013,7 @@ public class SendActivity extends AppCompatActivity {
         if (selectedCahootsType == SelectCahootsType.type.STOWAWAY) {
             setButtonForStowaway(true);
             return true;
-        }else {
+        } else {
             setButtonForStowaway(false);
 
         }
@@ -1042,7 +1060,20 @@ public class SendActivity extends AppCompatActivity {
         neededAmount += SamouraiWallet.bDust.longValue();
 
         // get all UTXO
-        List<UTXO> utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount, account);
+        List<UTXO> utxos = new ArrayList<>();
+        if (preselectedUTXOs != null && preselectedUTXOs.size() != 0) {
+//            List<UTXO> utxos = preselectedUTXOs;
+            // sort in descending order by value
+            for (UTXOCoin utxoCoin : preselectedUTXOs) {
+                UTXO u = new UTXO();
+                List<MyTransactionOutPoint> outs = new ArrayList<MyTransactionOutPoint>();
+                outs.add(utxoCoin.getOutPoint());
+                u.setOutpoints(outs);
+                utxos.add(u);
+            }
+        } else {
+            utxos = SpendUtil.getUTXOS(SendActivity.this, address, neededAmount, account);
+        }
 
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllP2SH_P2WPKH().values());
@@ -1066,6 +1097,12 @@ public class SendActivity extends AppCompatActivity {
             Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
 
         }
+
+        if (preselectedUTXOs != null) {
+            canDoBoltzmann = false;
+            SPEND_TYPE = SPEND_SIMPLE;
+        }
+
         // entire balance (can only be simple spend)
         else if (amount == balance) {
             // make sure we are using simple spend
@@ -1247,14 +1284,13 @@ public class SendActivity extends AppCompatActivity {
             ;
         }
 
-        if (SPEND_TYPE == SPEND_SIMPLE && amount == balance) {
+        if (SPEND_TYPE == SPEND_SIMPLE && amount == balance && preselectedUTXOs == null) {
             // do nothing, utxo selection handles above
             ;
         }
         // simple spend (less than balance)
         else if (SPEND_TYPE == SPEND_SIMPLE) {
             List<UTXO> _utxos = utxos;
-
             // sort in ascending order by value
             Collections.sort(_utxos, new UTXO.UTXOComparator());
             Collections.reverse(_utxos);
