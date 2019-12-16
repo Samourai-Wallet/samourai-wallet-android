@@ -107,6 +107,9 @@ Overall wealth of knowledge, creator of his own [FAQ](https://github.com/PuraVld
 **BTCxZelko** 
 Co creator of [Ronin](https://github.com/RoninDojo/RoninDojo) & wealth of knowledge about Dojo on Pi4
 
+**6102bitcoin**
+Writer of an amazing [FAQ](https://github.com/6102bitcoin/FAQ) & [bitcoin-intro](https://github.com/6102bitcoin/bitcoin-intro) guide! 
+
 **GuerraMoneta**
 Co creator of [Ronin](https://github.com/RoninDojo/RoninDojo) & wealth of knowledge about Dojo on Odroid
 
