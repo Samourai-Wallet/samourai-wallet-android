@@ -133,6 +133,12 @@ To change your receive address type to Segwit Compatibility or Legacy, simply ta
 
 ## Bitcoin Basics
 
+Some great resources for getting aquinted with Bitcoin
+
+[6102bitcoin FAQ](https://github.com/6102bitcoin/FAQ)
+
+[6102bitcoin bitcoin-intro](https://github.com/6102bitcoin/bitcoin-intro) 
+
 ### BIP 44, BIP 49, and BIP84
 
 **BIP44** refers to the accepted common standard to derive non segwit addresses. These addresses always begin with a _1_.
