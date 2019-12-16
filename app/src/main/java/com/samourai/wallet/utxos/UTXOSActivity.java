@@ -18,7 +18,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -629,7 +628,31 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         switch (item.getItemId()) {
             case R.id.utxo_details_action_whirlpool: {
                 String id = getPreSelected();
-                if(id != null) {
+                if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                    if(PreSelectUtil.getInstance().getPreSelected(id).size() != 1){
+                        Snackbar.make(utxoList, R.string.only_a_single_change_utxo_may, Snackbar.LENGTH_LONG).show();
+                        return false;
+                    }
+                    boolean blockedExist = false, receiveExist = false;
+                    for (UTXOCoin coin : PreSelectUtil.getInstance().getPreSelected(id)) {
+                        if (coin.doNotSpend) {
+                            blockedExist = true;
+                        }
+                        if (!coin.path.startsWith("M/1/")) {
+                            receiveExist = true;
+                        }
+                    }
+                    if (receiveExist) {
+                        Snackbar.make(utxoList, R.string.only_a_single_change_utxo_may, Snackbar.LENGTH_LONG).show();
+                        return false;
+                    }
+                    if (blockedExist) {
+                        Snackbar.make(utxoList, R.string.selection_contains_blocked_utxo, Snackbar.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+
+                if (id != null) {
                     Intent intent = new Intent(UTXOSActivity.this, WhirlpoolMain.class);
                     intent.putExtra("preselected", id);
                     startActivity(intent);
@@ -638,7 +661,23 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             }
             case R.id.utxo_details_action_send: {
                 String id = getPreSelected();
-                if(id != null) {
+                if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                    if (PreSelectUtil.getInstance().getPreSelected(id).size() != 1) {
+                        Snackbar.make(utxoList, R.string.only_single_utxo_may_selected, Snackbar.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+                boolean blockedExist = false;
+                for (UTXOCoin coin : PreSelectUtil.getInstance().getPreSelected(id)) {
+                    if (coin.doNotSpend) {
+                        blockedExist = true;
+                    }
+                }
+                if (blockedExist) {
+                    Snackbar.make(utxoList, R.string.selection_contains_blocked_utxo, Snackbar.LENGTH_LONG).show();
+                    return false;
+                }
+                if (id != null) {
                     Intent intent = new Intent(UTXOSActivity.this, SendActivity.class);
                     intent.putExtra("preselected", id);
                     startActivity(intent);
