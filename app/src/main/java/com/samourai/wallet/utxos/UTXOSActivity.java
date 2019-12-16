@@ -40,6 +40,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
@@ -47,6 +48,7 @@ import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 
@@ -58,6 +60,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -590,6 +593,24 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
     }
 
+    public String getPreSelected() {
+
+        ArrayList<UTXOCoin> utxos = new ArrayList<>();
+
+        for (UTXOCoin utxo : this.filteredUTXOs) {
+            if(utxo.isSelected) {
+                utxos.add(utxo);
+            }
+        }
+
+        String id = null;
+        if(utxos.size() > 0) {
+            id = UUID.randomUUID().toString();
+            PreSelectUtil.getInstance().add(id, utxos);
+        }
+
+        return id;
+    }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -607,11 +628,21 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         switch (item.getItemId()) {
             case R.id.utxo_details_action_whirlpool: {
-                Toast.makeText(this, "Direct to Whirlpool", Toast.LENGTH_SHORT).show();
+                String id = getPreSelected();
+                if(id != null) {
+                    Intent intent = new Intent(UTXOSActivity.this, WhirlpoolMain.class);
+                    intent.putExtra("preselected", id);
+                    startActivity(intent);
+                }
                 break;
             }
             case R.id.utxo_details_action_send: {
-                Toast.makeText(this, "Direct to spend", Toast.LENGTH_SHORT).show();
+                String id = getPreSelected();
+                if(id != null) {
+                    Intent intent = new Intent(UTXOSActivity.this, SendActivity.class);
+                    intent.putExtra("preselected", id);
+                    startActivity(intent);
+                }
                 break;
             }
             case R.id.utxo_details_action_spendable: {
@@ -803,45 +834,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 selectOrDeselect(position);
             });
 
-//            if (UTXOUtil.getInstance().get(filteredUTXOs.get(position).hash + "-" + filteredUTXOs.get(position).idx) != null) {
-//                holder.label.setVisibility(View.VISIBLE);
-//                holder.label.setText(UTXOUtil.getInstance().get(filteredUTXOs.get(position).hash + "-" + filteredUTXOs.get(position).idx));
-//            } else {
-//                holder.label.setVisibility(View.GONE);
-//            }
-//            if (isBIP47(filteredUTXOs.get(position).address)) {
-//                holder.paynym.setVisibility(View.VISIBLE);
-//                String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(filteredUTXOs.get(position).address);
-//                if (pcode != null && pcode.length() > 0) {
-//
-//                    holder.paynym.setText(BIP47Meta.getInstance().getDisplayLabel(pcode));
-//
-//                } else {
-//                    holder.paynym.setText(getText(R.string.paycode).toString());
-//                }
-//
-//            } else {
-//                holder.paynym.setVisibility(View.GONE);
-//            }
-//
-//            if (filteredUTXOs.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(filteredUTXOs.get(position).hash, filteredUTXOs.get(position).idx)) {
-//                holder.doNotSpend.setVisibility(View.VISIBLE);
-//                holder.doNotSpend.setText(getText(R.string.dust).toString().concat(" ").concat(getText(R.string.do_not_spend).toString()));
-//            } else if (filteredUTXOs.get(position).amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().containsNotDusted(filteredUTXOs.get(position).hash, filteredUTXOs.get(position).idx)) {
-//                holder.doNotSpend.setVisibility(View.VISIBLE);
-//                holder.doNotSpend.setText(getText(R.string.dust).toString());
-//            } else if (BlockedUTXO.getInstance().contains(filteredUTXOs.get(position).hash, filteredUTXOs.get(position).idx) ||
-//                    BlockedUTXO.getInstance().containsPostMix(filteredUTXOs.get(position).hash, filteredUTXOs.get(position).idx)) {
-//                holder.doNotSpend.setVisibility(View.VISIBLE);
-//                holder.doNotSpend.setText(getText(R.string.do_not_spend));
-//            } else {
-//                holder.doNotSpend.setVisibility(View.GONE);
-//
-//            }
-
-
         }
-
 
         @Override
         public int getItemCount() {
