@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -34,6 +33,7 @@ import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.FormatsUtil;
@@ -205,7 +205,6 @@ public class UTXODetailsActivity extends AppCompatActivity {
             addNote.setText("Edit");
         }
     }
-
 
     void setSpendStatus() {
 
@@ -384,7 +383,24 @@ public class UTXODetailsActivity extends AppCompatActivity {
             setSpendStatus();
             dialog.dismiss();
         });
-        dialog.findViewById(R.id.utxo_details_option_spend).setOnClickListener(view -> Toast.makeText(getApplicationContext(), R.string.coming_soon, Toast.LENGTH_SHORT).show());
+        dialog.findViewById(R.id.utxo_details_option_spend)
+                .setOnClickListener(view -> {
+                    dialog.dismiss();
+                    ArrayList<UTXOCoin> list = new ArrayList<>();
+                    list.add(utxoCoin);
+                    String id = UUID.randomUUID().toString();
+                    PreSelectUtil.getInstance().clear();
+                    PreSelectUtil.getInstance().add(id, list);
+                    if (utxoCoin.doNotSpend) {
+                        Snackbar.make(paynymLayout.getRootView(), R.string.utxo_is_marked_as_blocked, Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    if (id != null) {
+                        Intent intent = new Intent(getApplicationContext(), SendActivity.class);
+                        intent.putExtra("preselected", id);
+                        startActivity(intent);
+                    }
+                });
 
     }
 

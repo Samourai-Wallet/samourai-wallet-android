@@ -757,6 +757,7 @@
     <string name="only_single_utxo_may_selected">Only a single utxo may selected for direct spend from post-mix.</string>
     <string name="only_a_single_change_utxo_may">Only a single change utxo may selected for direct Whirlpooling from post-mix.</string>
     <string name="only_change_utxos_allowed">Only change utxo\'s allowed</string>
+    <string name="utxo_is_marked_as_blocked">utxo is marked as blocked</string>
     <string-array name="address_types">
         <item>Segwit compatibility (P2SH)</item>
         <item>Segwit native (bech32)</item>
