@@ -135,6 +135,8 @@ To change your receive address type to Segwit Compatibility or Legacy, simply ta
 
 Some great resources for getting aquinted with Bitcoin
 
+[bitcoin-only](https://bitcoin-only.com/) 
+
 [6102bitcoin FAQ](https://github.com/6102bitcoin/FAQ)
 
 [6102bitcoin bitcoin-intro](https://github.com/6102bitcoin/bitcoin-intro) 
