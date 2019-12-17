@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
@@ -165,17 +164,13 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-        }
-        else if (item.getItemId() == R.id.action_utxo_amounts) {
+        } else if (item.getItemId() == R.id.action_utxo_amounts) {
             doDisplayAmounts();
-        }
-        else if (item.getItemId() == R.id.action_refresh) {
+        } else if (item.getItemId() == R.id.action_refresh) {
             loadUTXOs(false);
-        }
-        else if (item.getItemId() == R.id.action_utxo_filter) {
+        } else if (item.getItemId() == R.id.action_utxo_filter) {
             showFilterOptions();
-        }
-        else {
+        } else {
             ;
         }
         return super.onOptionsItemSelected(item);
@@ -597,13 +592,13 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         ArrayList<UTXOCoin> utxos = new ArrayList<>();
 
         for (UTXOCoin utxo : this.filteredUTXOs) {
-            if(utxo.isSelected) {
+            if (utxo.isSelected) {
                 utxos.add(utxo);
             }
         }
 
         String id = null;
-        if(utxos.size() > 0) {
+        if (utxos.size() > 0) {
             id = UUID.randomUUID().toString();
             PreSelectUtil.getInstance().add(id, utxos);
         }
@@ -629,7 +624,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             case R.id.utxo_details_action_whirlpool: {
                 String id = getPreSelected();
                 if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                    if(PreSelectUtil.getInstance().getPreSelected(id).size() != 1){
+                    if (PreSelectUtil.getInstance().getPreSelected(id).size() != 1) {
                         Snackbar.make(utxoList, R.string.only_a_single_change_utxo_may, Snackbar.LENGTH_LONG).show();
                         return false;
                     }
@@ -652,11 +647,21 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                     }
                 }
 
-                if (id != null) {
-                    Intent intent = new Intent(UTXOSActivity.this, WhirlpoolMain.class);
-                    intent.putExtra("preselected", id);
-                    startActivity(intent);
-                }
+                new AlertDialog.Builder(this)
+                        .setMessage("Send selected utxo's to whirlpool")
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                            if (id != null) {
+                                Intent intent = new Intent(UTXOSActivity.this, WhirlpoolMain.class);
+                                intent.putExtra("preselected", id);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+
+                        })
+                        .show();
+
                 break;
             }
             case R.id.utxo_details_action_send: {
@@ -963,7 +968,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             return super.getChangePayload(oldItemPosition, newItemPosition);
         }
     }
-
 
 
     public class LinearLayoutManagerWrapper extends LinearLayoutManager {
