@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
@@ -39,6 +40,8 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.UTXOUtil;
+import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.squareup.picasso.Picasso;
 
@@ -52,6 +55,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class UTXODetailsActivity extends AppCompatActivity {
     final DecimalFormat df = new DecimalFormat("#");
@@ -65,6 +69,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
     private static final String TAG = "UTXODetailsActivity";
     private int idx;
     private long amount;
+    private UTXOCoin utxoCoin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +120,10 @@ public class UTXODetailsActivity extends AppCompatActivity {
                     idx = outpoint.getTxOutputN();
                     amount = outpoint.getValue().longValue();
                     addr = outpoint.getAddress();
+                    utxoCoin = new UTXOCoin(outpoint, utxo);
+                    if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
+                        utxoCoin.doNotSpend = true;
+                    }
                     setUTXOState();
                 }
             }
@@ -309,7 +318,8 @@ public class UTXODetailsActivity extends AppCompatActivity {
             finish();
         }
         if (item.getItemId() == R.id.utxo_details_add_to_whirlpool) {
-            //TODO:
+
+            sendUTXOtoWhirlpool();
         }
         if (item.getItemId() == R.id.utxo_details_menu_action_more_options) {
             showMoreOptions();
@@ -319,6 +329,44 @@ public class UTXODetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUTXOtoWhirlpool() {
+
+        new AlertDialog.Builder(this)
+                .setMessage("Send utxo to whirlpool")
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
+                    ArrayList<UTXOCoin> list = new ArrayList<>();
+                    list.add(utxoCoin);
+
+                    String id = UUID.randomUUID().toString();
+                    PreSelectUtil.getInstance().clear();
+                    PreSelectUtil.getInstance().add(id, list);
+                    if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                        if (!utxoCoin.path.startsWith("M/1/")) {
+                            Snackbar.make(paynymLayout.getRootView(), R.string.only_change_utxos_allowed, Snackbar.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+
+                    if (utxoCoin.doNotSpend) {
+                        Snackbar.make(paynymLayout.getRootView(), R.string.selection_contains_blocked_utxo, Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (id != null) {
+                        Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
+                        intent.putExtra("preselected", id);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+
+                })
+                .show();
+
+
     }
 
     private void showMoreOptions() {
