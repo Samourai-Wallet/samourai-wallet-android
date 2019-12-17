@@ -25,7 +25,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
@@ -58,6 +58,7 @@ public class ChooseUTXOsFragment extends Fragment {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private RecyclerView utxoRecyclerView;
+    private List<UTXOCoin> preselectedUTXOs = null;
 
     public ChooseUTXOsFragment() {
         df.setMinimumIntegerDigits(1);
@@ -69,6 +70,9 @@ public class ChooseUTXOsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         utxoRecyclerView = view.findViewById(R.id.whirlpool_utxo_recyclerview);
+        if (getArguments() != null && getArguments().containsKey("preselected")) {
+            preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getArguments().getString("preselected"));
+        }
         utxoRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         utxoAdapter = new WhirlpoolUTXOAdapter();
         loadCoins();
@@ -148,10 +152,36 @@ public class ChooseUTXOsFragment extends Fragment {
         changes.add(0, changeSegment);
         /*------------------------------------------------*/
 
-
         utxoCoinList.addAll(changes);
 
         utxoAdapter.updateList(utxoCoinList);
+
+        selectUTXOs();
+    }
+
+    private void selectUTXOs() {
+        if (preselectedUTXOs != null) {
+            List<UTXOCoin> selectedList = new ArrayList<>();
+
+            for (int i = 0; i < utxos.size(); i++) {
+
+                for (int j = 0; j < preselectedUTXOs.size(); j++) {
+                    //Checking current utxo lists contains preselected UTXOs
+                    if (utxos.get(i).hash != null && utxos.get(i).hash.equals(preselectedUTXOs.get(j).hash)) {
+                        utxos.get(i).isSelected = true;
+                        int finalI = i;
+                        utxoRecyclerView.post(() -> utxoAdapter.notifyItemChanged(finalI));
+                        selectedList.add(utxos.get(i));
+                    }
+                }
+            }
+            if (onUTXOSelectionListener != null)
+                onUTXOSelectionListener.onSelect(selectedList);
+            //Scroll to the selection position
+            if (selectedList.size() != 0 && utxos.size() != 0 && utxos.indexOf(selectedList.get(selectedList.size() - 1)) != -1)
+                utxoRecyclerView.smoothScrollToPosition(utxos.indexOf(selectedList.get(selectedList.size() - 1)));
+        }
+
     }
 
     @Override
@@ -404,5 +434,13 @@ public class ChooseUTXOsFragment extends Fragment {
 
     }
 
+    public static ChooseUTXOsFragment newInstance(String preselectId) {
+        ChooseUTXOsFragment chooseUTXOsFragment = new ChooseUTXOsFragment();
+        Bundle args = new Bundle();
+        if (preselectId != null)
+            args.putString("preselected", preselectId);
+        chooseUTXOsFragment.setArguments(args);
+        return chooseUTXOsFragment;
+    }
 
 }

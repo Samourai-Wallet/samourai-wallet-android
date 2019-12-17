@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool.fragments;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
@@ -43,9 +45,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
         statusText = view.findViewById(R.id.whirlpool_loader_status_text);
         statusProgress = view.findViewById(R.id.whirlpool_loader_progress);
         statusProgress.setMax(100);
-        //TODO:
-        //
-        //
+
         RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,
                 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotate.setDuration(1000);
@@ -91,7 +91,16 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                         case CONNECTED: {
                             statusText.setText("Connected");
                             statusProgress.setProgress(100);
-                            new Handler().postDelayed(this::dismiss, 900);
+                            new Handler().postDelayed(() -> {
+
+                                if (getArguments() != null && getArguments().containsKey("preselected")) {
+                                    Intent intent = new Intent(getContext(), NewPoolActivity.class);
+                                    intent.putExtra("preselected", getArguments().getString("preselected"));
+                                    startActivity(intent);
+                                }
+                                this.dismiss();
+
+                            }, 500);
                             break;
 
                         }
@@ -103,6 +112,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
+
 
     @Override
     public void onDestroy() {

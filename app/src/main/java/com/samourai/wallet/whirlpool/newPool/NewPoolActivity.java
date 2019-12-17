@@ -22,6 +22,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
@@ -95,7 +96,13 @@ public class NewPoolActivity extends AppCompatActivity {
         fees.add(FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue());
         fees.add(FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue());
 
-        chooseUTXOsFragment = new ChooseUTXOsFragment();
+
+        String preselectId = null;
+        if( getIntent().getExtras()  != null && getIntent().getExtras().containsKey("preselected")){
+            preselectId = getIntent().getExtras().getString("preselected");
+        }
+
+        chooseUTXOsFragment =   ChooseUTXOsFragment.newInstance(preselectId);
         selectPoolFragment = new SelectPoolFragment();
         reviewPoolFragment = new ReviewPoolFragment();
         selectPoolFragment.setFees(this.fees);

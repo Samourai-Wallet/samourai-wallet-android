@@ -20,11 +20,11 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
+import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
@@ -89,20 +89,34 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(connectionStates -> {
                     if (connectionStates == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
+
                         listenPoolState();
                         new Handler().postDelayed(this::listenPoolState, 3000);
                     }
 
                 });
         compositeDisposable.add(disposable);
+
     }
 
     private void startWhirlpool() {
         if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue()
                 == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
             listenPoolState();
+            if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
+                Intent intent = new Intent(getApplicationContext(), NewPoolActivity.class);
+                intent.putExtra("preselected", getIntent().getExtras().getString("preselected"));
+                startActivity(intent);
+            }
+
         } else {
             WhirlPoolLoaderDialog whirlPoolLoaderDialog = new WhirlPoolLoaderDialog();
+            //passing preselect id to loader dialog,so after whirlpool initialization dialog will start newpool activity
+            if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
+                Bundle bundle = new Bundle();
+                bundle.putString("preselected", getIntent().getExtras().getString("preselected"));
+                whirlPoolLoaderDialog.setArguments(bundle);
+            }
             whirlPoolLoaderDialog.show(getSupportFragmentManager(), whirlPoolLoaderDialog.getTag());
         }
 
