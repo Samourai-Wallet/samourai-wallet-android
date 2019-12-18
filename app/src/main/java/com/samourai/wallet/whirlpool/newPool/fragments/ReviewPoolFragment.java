@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
@@ -33,6 +34,7 @@ public class ReviewPoolFragment extends Fragment {
             uncycledAmount,
             poolFees,
             entropyPerTxs;
+    private ProgressBar progressBar;
 
 
     public ReviewPoolFragment() {
@@ -57,6 +59,7 @@ public class ReviewPoolFragment extends Fragment {
         poolTotalFees = view.findViewById(R.id.pool_review_total_fees);
         combinationPerTxs = view.findViewById(R.id.pool_review_combination_per_tx);
         totalPoolAmount = view.findViewById(R.id.pool_review_total_pool_amount);
+        progressBar = view.findViewById(R.id.pool_review_progress);
 
 
         entropyBar.setMaxBars(4);
@@ -71,17 +74,8 @@ public class ReviewPoolFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_whirlpool_review, container, false);
     }
 
-
-    @Override
-    public void onAttach
-            (Context
-                     context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    public void showProgress(boolean show){
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
 

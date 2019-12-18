@@ -1,6 +1,8 @@
 package com.samourai.wallet.whirlpool.newPool;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,6 +14,7 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +25,6 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
@@ -98,11 +100,11 @@ public class NewPoolActivity extends AppCompatActivity {
 
 
         String preselectId = null;
-        if( getIntent().getExtras()  != null && getIntent().getExtras().containsKey("preselected")){
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
             preselectId = getIntent().getExtras().getString("preselected");
         }
 
-        chooseUTXOsFragment =   ChooseUTXOsFragment.newInstance(preselectId);
+        chooseUTXOsFragment = ChooseUTXOsFragment.newInstance(preselectId);
         selectPoolFragment = new SelectPoolFragment();
         reviewPoolFragment = new ReviewPoolFragment();
         selectPoolFragment.setFees(this.fees);
@@ -141,7 +143,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 }
                 if (tx0.getTx0() != null) {
                     enableConfirmButton(true);
-                    selectPoolFragment.setTX0(getCycleTotalAmount(coins),     tx0.getFeeSatB());
+                    selectPoolFragment.setTX0(getCycleTotalAmount(coins), tx0.getFeeSatB());
                 } else {
                     enableConfirmButton(false);
                 }
@@ -191,20 +193,22 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private void processWhirlPool() {
 
-        Toast.makeText(this, "Begin Pool", Toast.LENGTH_SHORT).show();
-
         try {
-
-
             if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             } else {
+                reviewPoolFragment.showProgress(true);
                 Disposable tx0Dispo = beginTx0(selectedCoins)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
-                            Toast.makeText(this, "Began Pool", Toast.LENGTH_SHORT).show();
-                        }, error -> Log.e(TAG, "processWhirlPool: Tx0Error  ".concat(error.getMessage())));
+                            Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "TX0 Successfully broadcasted", Snackbar.LENGTH_LONG).show();
+                            reviewPoolFragment.showProgress(false);
+                            new Handler().postDelayed(() -> finish(), 14000);
+                        }, error -> {
+                            Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                            Log.e(TAG, "processWhirlPool: Tx0Error  ".concat(error.getMessage()));
+                        });
 
                 disposables.add(tx0Dispo);
             }
@@ -272,6 +276,14 @@ public class NewPoolActivity extends AppCompatActivity {
 
             return true;
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUpViewPager() {
