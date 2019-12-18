@@ -1,3 +1,11 @@
+# Getting Aquinted with Bitcoin
+
+[bitcoin-only](https://bitcoin-only.com/) 
+
+[6102bitcoin FAQ](https://github.com/6102bitcoin/FAQ)
+
+[6102bitcoin bitcoin-intro](https://github.com/6102bitcoin/bitcoin-intro) 
+
 # Starting your wallet
 
 ## New wallet

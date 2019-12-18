@@ -1,5 +1,3 @@
-# Restore & Recovery
-
 # Restoring your wallet
 
 ## Restoring your wallet from auto backup
