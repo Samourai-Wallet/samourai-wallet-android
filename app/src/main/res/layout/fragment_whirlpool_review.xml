@@ -342,4 +342,15 @@
         app:layout_constraintEnd_toStartOf="@+id/pool_review_entropy_bar"
         app:layout_constraintTop_toTopOf="@+id/pool_review_entropy_bar" />
 
+    <ProgressBar
+        android:id="@+id/pool_review_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="32dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintStart_toStartOf="@+id/guideline12"
+        app:layout_constraintTop_toBottomOf="@+id/textView70" />
+
 </android.support.constraint.ConstraintLayout>
