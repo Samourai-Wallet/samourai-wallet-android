@@ -18,6 +18,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -805,7 +806,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            float scale = getResources().getDisplayMetrics().density;
 
             if (filteredUTXOs.get(position) instanceof UTXOCoinSegment) {
                 UTXOCoinSegment utxoCoinSegment = (UTXOCoinSegment) filteredUTXOs.get(position);
@@ -827,7 +827,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 else
                     selectOrDeselect(position);
             });
-//            holder.tagsLayout.setVisibility(View.GONE);
             if (multiSelect) {
                 if (holder.checkBox.getVisibility() != View.VISIBLE) {
                     holder.checkBox.setVisibility(View.VISIBLE);
@@ -840,32 +839,46 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
             }
             holder.rootViewGroup.setOnLongClickListener(view -> onListLongPress(position));
+            holder.notesLayout.removeAllViews();
             holder.tagsLayout.removeAllViews();
-
             if (item.amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD) {
-                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                TextView tx = new TextView(holder.rootViewGroup.getContext());
-                tx.setText(getString(R.string.dust));
-                tx.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_accent));
-                tx.setLayoutParams(lparams);
-                tx.setBackgroundResource(R.drawable.tag_round_shape);
-                tx.setPadding((int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f));
-                lparams.leftMargin = 8;
-                tx.setTypeface(Typeface.DEFAULT_BOLD);
-                tx.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
-                holder.tagsLayout.addView(tx);
+                holder.tagsLayout.setVisibility(View.VISIBLE);
+                View dustTag = createTag(getBaseContext(), getString(R.string.dust));
+                holder.tagsLayout.addView(dustTag);
+            } else {
+                holder.tagsLayout.setVisibility(View.GONE);
             }
 
             if (UTXOUtil.getInstance().getNote(item.hash) != null) {
-                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (12 * scale + 0.5f), (int) (12 * scale + 0.5f));
+                float scale = getResources().getDisplayMetrics().density;
+                holder.notesLayout.setVisibility(View.VISIBLE);
                 ImageView im = new ImageView(holder.rootViewGroup.getContext());
                 im.setImageResource(R.drawable.ic_note_black_24dp);
-                im.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
+                im.requestLayout();
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (18 * scale + 0.5f), (int) (18 * scale + 0.5f));
+                im.setLayoutParams(lparams);
+                im.requestLayout();
                 im.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey_accent)));
-                lparams.leftMargin = 8;
-                holder.tagsLayout.addView(im);
+                holder.notesLayout.addView(im);
+                TextView tx = new TextView(getBaseContext());
+                tx.setText(UTXOUtil.getInstance().getNote(item.hash));
+                tx.setMaxLines(1);
+                tx.setTextSize(11);
+                tx.setTextColor(getResources().getColor(R.color.white));
+                tx.setEllipsize(TextUtils.TruncateAt.END);
+                tx.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
+                holder.notesLayout.addView(tx);
+            } else {
+                holder.notesLayout.setVisibility(View.GONE);
             }
+
+
+            if (UTXOUtil.getInstance().get(item.hash) != null) {
+                View tag = createTag(getBaseContext(), UTXOUtil.getInstance().get(item.hash));
+                holder.tagsLayout.addView(tag);
+            }
+
+
             holder.checkBox.setChecked(item.isSelected);
 
             if (item.isSelected) {
@@ -878,6 +891,22 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 selectOrDeselect(position);
             });
 
+        }
+
+        private View createTag(Context context, String tag) {
+            float scale = getResources().getDisplayMetrics().density;
+            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            TextView tx = new TextView(context);
+            tx.setText(tag);
+            tx.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_accent));
+            tx.setLayoutParams(lparams);
+            tx.setBackgroundResource(R.drawable.tag_round_shape);
+            tx.setPadding((int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (4 * scale + 0.5f));
+            tx.setTypeface(Typeface.DEFAULT_BOLD);
+            tx.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+            lparams.rightMargin = 4;
+            return tx;
         }
 
         @Override
@@ -909,6 +938,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView address, amount, doNotSpend, label, paynym, section;
+            LinearLayout notesLayout;
             LinearLayout tagsLayout;
             CheckBox checkBox;
             ViewGroup rootViewGroup;
@@ -923,7 +953,9 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 //                doNotSpend = itemView.findViewById(R.id.do_not_spend_text);
                 label = itemView.findViewById(R.id.label);
                 address = itemView.findViewById(R.id.utxo_item_address);
+                notesLayout = itemView.findViewById(R.id.utxo_item_notes_layout);
                 tagsLayout = itemView.findViewById(R.id.utxo_item_tags_layout);
+                notesLayout.setVisibility(View.GONE);
                 checkBox = itemView.findViewById(R.id.multiselect_checkbox);
                 checkBox.setVisibility(View.GONE);
 //                paynym = itemView.findViewById(R.id.paynym_txt);
