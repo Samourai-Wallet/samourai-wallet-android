@@ -1,12 +1,15 @@
-package com.samourai.wallet.util;
+package com.samourai.wallet.utxos;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.util.FormatsUtil;
 
 import org.bitcoinj.core.Address;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class UTXOUtil {
@@ -19,7 +22,7 @@ public class UTXOUtil {
 
     private static UTXOUtil instance = null;
 
-    private static HashMap<String,String> utxoTags = null;
+    private static HashMap<String, List<String>> utxoAutoTags = null;
     private static HashMap<String,String> utxoNotes = null;
     private static HashMap<String,Integer> utxoScores = null;
 
@@ -30,7 +33,7 @@ public class UTXOUtil {
     public static UTXOUtil getInstance() {
 
         if(instance == null) {
-            utxoTags = new HashMap<String,String>();
+            utxoAutoTags = new HashMap<String,List<String>>();
             utxoNotes = new HashMap<String,String>();
             utxoScores = new HashMap<String,Integer>();
             instance = new UTXOUtil();
@@ -40,30 +43,37 @@ public class UTXOUtil {
     }
 
     public void reset() {
-        utxoTags.clear();
+        utxoAutoTags.clear();
         utxoNotes.clear();
         utxoScores.clear();
     }
 
     public void add(String utxo, String tag) {
-        utxoTags.put(utxo, tag);
+        if(utxoAutoTags.containsKey(utxo)) {
+            utxoAutoTags.get(utxo).add(tag);
+        }
+        else {
+            List<String> tags = new ArrayList<String>();
+            tags.add(tag);
+            utxoAutoTags.put(utxo, tags);
+        }
     }
 
-    public String get(String utxo) {
-        if (utxoTags.containsKey(utxo)) {
-            return utxoTags.get(utxo);
+    public List<String> get(String utxo) {
+        if (utxoAutoTags.containsKey(utxo)) {
+            return utxoAutoTags.get(utxo);
         } else {
             return null;
         }
 
     }
 
-    public HashMap<String, String> getTags() {
-        return utxoTags;
+    public HashMap<String, List<String>> getTags() {
+        return utxoAutoTags;
     }
 
     public void remove(String utxo) {
-        utxoTags.remove(utxo);
+        utxoAutoTags.remove(utxo);
     }
 
     public void addNote(String utxo, String note) {
@@ -123,11 +133,14 @@ public class UTXOUtil {
     public JSONArray toJSON() {
 
         JSONArray utxos = new JSONArray();
-        for (String key : utxoTags.keySet()) {
-            JSONArray tag = new JSONArray();
-            tag.put(key);
-            tag.put(utxoTags.get(key));
-            utxos.put(tag);
+        for (String key : utxoAutoTags.keySet()) {
+            List<String> tags = utxoAutoTags.get(key);
+            for(String t : tags) {
+                JSONArray tag = new JSONArray();
+                tag.put(key);
+                tag.put(t);
+                utxos.put(tag);
+            }
         }
 
         return utxos;
@@ -137,7 +150,16 @@ public class UTXOUtil {
         try {
             for (int i = 0; i < utxos.length(); i++) {
                 JSONArray tag = (JSONArray) utxos.get(i);
-                utxoTags.put((String) tag.get(0), (String) tag.get(1));
+
+                if(utxoAutoTags.containsKey((String) tag.get(0))) {
+                    utxoAutoTags.get((String) tag.get(0)).add((String) tag.get(1));
+                }
+                else     {
+                    List<String> tags = new ArrayList<String>();
+                    tags.add((String) tag.get(1));
+                    utxoAutoTags.put((String) tag.get(0), tags);
+                }
+
             }
         } catch (JSONException ex) {
             throw new RuntimeException(ex);

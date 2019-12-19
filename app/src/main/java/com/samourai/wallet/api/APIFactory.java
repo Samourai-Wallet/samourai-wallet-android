@@ -39,12 +39,11 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.UTXOUtil;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.util.LogUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.Address;
