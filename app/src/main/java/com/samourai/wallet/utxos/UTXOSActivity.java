@@ -874,6 +874,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
 
 
             if (UTXOUtil.getInstance().get(item.hash) != null) {
+                holder.tagsLayout.setVisibility(View.VISIBLE);
                 View tag = createTag(getBaseContext(), UTXOUtil.getInstance().get(item.hash));
                 holder.tagsLayout.addView(tag);
             }
