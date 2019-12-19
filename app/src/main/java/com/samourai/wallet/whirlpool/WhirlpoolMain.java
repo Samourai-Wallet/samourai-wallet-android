@@ -191,6 +191,8 @@ public class WhirlpoolMain extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        if(id == android.R.id.home)
+            finish();
 
         if (id == R.id.action_postmix) {
             Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
