@@ -61,6 +61,14 @@
     <!--</LinearLayout>-->
 
 
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/new_pool_snackbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guideline11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn" />
+
     <com.samourai.wallet.widgets.ViewPager
         android:id="@+id/new_pool_viewpager"
         android:layout_width="0dp"
