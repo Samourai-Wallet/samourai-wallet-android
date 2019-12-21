@@ -771,6 +771,8 @@
         <item>Whirlpool Segwit pre-mix</item>
         <item>Whirlpool Segwit post-mix</item>
     </string-array>
+    <string name="title_activity_tester">tester</string>
 
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
 
 </resources>
