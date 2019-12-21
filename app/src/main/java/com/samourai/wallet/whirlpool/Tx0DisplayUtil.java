@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Tx0DisplayUtil {
 
+    private static int PRUNE_LIMIT = 25;
+
     private static List<String> seen = null;
 
     private static Tx0DisplayUtil instance = null;
@@ -58,6 +60,11 @@ public class Tx0DisplayUtil {
         } catch (JSONException ex) {
             throw new RuntimeException(ex);
         }
+
+        if(seen.size() == PRUNE_LIMIT) {
+            seen = seen.subList(seen.size() - PRUNE_LIMIT, seen.size() - 1);
+        }
+
     }
 
 }
