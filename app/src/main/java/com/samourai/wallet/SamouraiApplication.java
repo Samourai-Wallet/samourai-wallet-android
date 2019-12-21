@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.NotificationCompat;
 
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
@@ -43,8 +42,12 @@ public class SamouraiApplication extends Application {
             NotificationChannel whirlpoolChannel = new NotificationChannel(
                     WHIRLPOOL_CHANNEL,
                     "Whirlpool service ",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
+            whirlpoolChannel.enableLights(false);
+            whirlpoolChannel.enableVibration(false);
+            whirlpoolChannel.setSound(null, null);
+
             NotificationChannel serviceChannel = new NotificationChannel(
                     TOR_CHANNEL_ID,
                     "Tor service ",
