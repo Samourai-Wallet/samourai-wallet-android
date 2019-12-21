@@ -91,6 +91,7 @@ public class APIFactory	{
     private static long xpub_postmix_balance = 0L;
     private static HashMap<String, Long> xpub_amounts = null;
     private static HashMap<String,List<Tx>> xpub_txs = null;
+    private static HashMap<String,List<Tx>> premix_txs = null;
     private static HashMap<String,Integer> unspentAccounts = null;
     private static HashMap<String,Integer> unspentBIP49 = null;
     private static HashMap<String,Integer> unspentBIP84 = null;
@@ -127,6 +128,7 @@ public class APIFactory	{
         if(instance == null) {
             xpub_amounts = new HashMap<String, Long>();
             xpub_txs = new HashMap<String,List<Tx>>();
+            premix_txs = new HashMap<String,List<Tx>>();
             xpub_balance = 0L;
             bip47_amounts = new HashMap<String, Long>();
             unspentPaths = new HashMap<String, String>();
@@ -147,6 +149,7 @@ public class APIFactory	{
         xpub_amounts.clear();
         bip47_amounts.clear();
         xpub_txs.clear();
+        premix_txs.clear();
         unspentPaths = new HashMap<String, String>();
         unspentAccounts = new HashMap<String, Integer>();
         unspentBIP49 = new HashMap<String, Integer>();
@@ -1795,7 +1798,7 @@ public class APIFactory	{
 
             JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix });
             JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix });
-            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString());
+            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString(2));
             debug("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
             boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
             boolean parsedPreUnspent = parseMixUnspentOutputs(preUnspentObj.toString());
@@ -2036,6 +2039,10 @@ public class APIFactory	{
         return xpub_txs;
     }
 
+    public HashMap<String,List<Tx>> getPremixXpubTxs()  {
+        return premix_txs;
+    }
+
     public HashMap<String, String> getUnspentPaths() {
         return unspentPaths;
     }
@@ -2056,11 +2063,11 @@ public class APIFactory	{
 
         long amount = 0L;
         for(String key : utxos.keySet())   {
-            for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
-                debug("APIFactory", "utxo:" + out.getAddress() + "," + out.getValue());
-                debug("APIFactory", "utxo:" + utxos.get(key).getPath());
-                amount += out.getValue().longValue();
-            }
+//            for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+//                debug("APIFactory", "utxo:" + out.getAddress() + "," + out.getValue());
+//                debug("APIFactory", "utxo:" + utxos.get(key).getPath());
+//                amount += out.getValue().longValue();
+//            }
         }
         debug("APIFactory", "utxos by value:" + amount);
 
@@ -2463,6 +2470,93 @@ public class APIFactory	{
                         }
                     }
                 }
+            }
+
+            if(jsonObject.has("txs"))  {
+
+                JSONArray txArray = (JSONArray)jsonObject.get("txs");
+                JSONObject txObj = null;
+                for(int i = 0; i < txArray.length(); i++)  {
+
+                    txObj = (JSONObject)txArray.get(i);
+                    long height = 0L;
+                    long amount = 0L;
+                    long ts = 0L;
+                    String hash = null;
+                    String addr = null;
+                    String _addr = null;
+
+                    if(txObj.has("block_height"))  {
+                        height = txObj.getLong("block_height");
+                    }
+                    else  {
+                        height = -1L;  // 0 confirmations
+                    }
+                    if(txObj.has("hash"))  {
+                        hash = (String)txObj.get("hash");
+                    }
+                    if(txObj.has("result"))  {
+                        amount = txObj.getLong("result");
+                    }
+                    if(txObj.has("time"))  {
+                        ts = txObj.getLong("time");
+                    }
+                    if(txObj.has("inputs"))  {
+                        JSONArray inputArray = (JSONArray)txObj.get("inputs");
+                        JSONObject inputObj = null;
+                        for(int j = 0; j < inputArray.length(); j++)  {
+                            inputObj = (JSONObject)inputArray.get(j);
+                            if(inputObj.has("prev_out"))  {
+                                JSONObject prevOutObj = (JSONObject)inputObj.get("prev_out");
+                                if(prevOutObj.has("xpub"))  {
+                                    JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
+                                    addr = (String)xpubObj.get("m");
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr((String)prevOutObj.get("addr")) != null)  {
+                                    _addr = (String)prevOutObj.get("addr");
+                                }
+                                else  {
+                                    _addr = (String)prevOutObj.get("addr");
+                                }
+                            }
+                        }
+                    }
+
+                    if(txObj.has("out"))  {
+                        JSONArray outArray = (JSONArray)txObj.get("out");
+                        JSONObject outObj = null;
+                        for(int j = 0; j < outArray.length(); j++)  {
+                            outObj = (JSONObject)outArray.get(j);
+                            if(outObj.has("xpub"))  {
+                                JSONObject xpubObj = (JSONObject)outObj.get("xpub");
+                                addr = (String)xpubObj.get("m");
+                            }
+                            else  {
+                                _addr = (String)outObj.get("addr");
+                            }
+                        }
+                    }
+
+                    if(addr != null || _addr != null)  {
+
+                        if(addr == null)    {
+                            addr = _addr;
+                        }
+
+                        Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
+                        if(!premix_txs.containsKey(addr))  {
+                            premix_txs.put(addr, new ArrayList<Tx>());
+                        }
+                        if(FormatsUtil.getInstance().isValidXpub(addr))    {
+                            premix_txs.get(addr).add(tx);
+                        }
+                        else    {
+                            premix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                        }
+
+                    }
+                }
+
             }
 
             try {
