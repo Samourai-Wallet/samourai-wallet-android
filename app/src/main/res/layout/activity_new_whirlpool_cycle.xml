@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,42 +22,46 @@
         <include layout="@layout/whirlpool_stepper" />
     </android.support.design.widget.AppBarLayout>
 
-    <!--<LinearLayout-->
-    <!--android:id="@+id/review_button"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@drawable/button_blue"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:clickable="true"-->
-    <!--android:focusable="true"-->
-    <!--android:orientation="vertical"-->
-    <!--android:paddingTop="12dp"-->
-    <!--android:paddingBottom="12dp"-->
-    <!--android:text="@string/review_transaction"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintVertical_bias="1.0">-->
 
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="center_horizontal"-->
-    <!--android:text="Review whirlpool Details"-->
-    <!--android:textAlignment="center"-->
-    <!--android:textAllCaps="true"-->
-    <!--android:textStyle="bold" />-->
+    <LinearLayout
+        android:id="@+id/new_pool_tx0_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:background="#1EFFFFFF"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool.appbar">
 
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="6dp"-->
-    <!--android:gravity="center_horizontal"-->
-    <!--android:text="Total selected: 3.2121234 BTC"-->
-    <!--android:textAlignment="center"-->
-    <!--android:textSize="12sp" />-->
+        <ProgressBar
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
 
-    <!--</LinearLayout>-->
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:text="Broadcasting Tx0" />
+    </LinearLayout>
+
+    <com.samourai.wallet.widgets.ViewPager
+        android:id="@+id/new_pool_viewpager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool.appbar">
+
+    </com.samourai.wallet.widgets.ViewPager>
 
 
     <android.support.design.widget.CoordinatorLayout
@@ -68,16 +71,6 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline11"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn" />
-
-    <com.samourai.wallet.widgets.ViewPager
-        android:id="@+id/new_pool_viewpager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline11"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/whirlpool.appbar" />
-
 
     <Button
         android:id="@+id/utxo_selection_confirm_btn"
@@ -97,51 +90,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.92" />
-
-    <!--<android.support.constraint.ConstraintLayout-->
-    <!--android:id="@+id/pool_selection_review_btn"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="0dp"-->
-    <!--android:background="@drawable/whirlpool_btn_blue"-->
-    <!--android:clickable="true"-->
-    <!--android:focusable="true"-->
-    <!--android:visibility="gone"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="@+id/utxo_selection_confirm_btn"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/new_pool_viewpager">-->
-
-
-    <!--<TextView-->
-    <!--android:id="@+id/textView49"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:text="REVIEW CYCLE DETAILS"-->
-    <!--android:textColor="@color/white"-->
-    <!--android:textSize="16sp"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/textView51"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="4dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginBottom="5dp"-->
-    <!--android:text="Total being cylced : "-->
-    <!--android:textColor="@color/white"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/textView49" />-->
-    <!--</android.support.constraint.ConstraintLayout>-->
-
 
 </android.support.constraint.ConstraintLayout>

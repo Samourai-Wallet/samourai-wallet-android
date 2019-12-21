@@ -1,5 +1,6 @@
 package com.samourai.wallet.whirlpool.newPool;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +81,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private Pool selectedPool = null;
     private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
     private Tx0FeeTarget tx0FeeTarget = Tx0FeeTarget.BLOCKS_2;
+    private LinearLayout tx0Progress ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,7 @@ public class NewPoolActivity extends AppCompatActivity {
         selectPoolFragment = new SelectPoolFragment();
         reviewPoolFragment = new ReviewPoolFragment();
         selectPoolFragment.setFees(this.fees);
+        tx0Progress  = findViewById(R.id.new_pool_tx0_progress);
 
         newPoolViewPager = findViewById(R.id.new_pool_viewpager);
 
@@ -197,17 +201,19 @@ public class NewPoolActivity extends AppCompatActivity {
             if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             } else {
-                reviewPoolFragment.showProgress(true);
+                tx0Progress.setVisibility(View.VISIBLE);
                 Disposable tx0Dispo = beginTx0(selectedCoins)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "TX0 Successfully broadcasted", Snackbar.LENGTH_LONG).show();
-                            reviewPoolFragment.showProgress(false);
-                            new Handler().postDelayed(() -> finish(), 14000);
+                            tx0Progress.setVisibility(View.GONE);
+                            setResult(Activity.RESULT_OK);
+                            new Handler().postDelayed(this::finish, 800);
                         }, error -> {
-                            Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                            Log.e(TAG, "processWhirlPool: Tx0Error  ".concat(error.getMessage()));
+                            tx0Progress.setVisibility(View.GONE);
+                            Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "Error: ".concat(error.getMessage()), Snackbar.LENGTH_LONG).show();
+                            Log.e(TAG, "processWhirlPool: Tx0 Error  ".concat(error.getMessage()));
                         });
 
                 disposables.add(tx0Dispo);

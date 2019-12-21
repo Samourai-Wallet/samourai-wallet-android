@@ -29,7 +29,7 @@
         app:layout_constraintGuide_percent="0.04" />
 
     <TextView
-        android:id="@+id/textView38"
+        android:id="@+id/cyle_waiting_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -56,7 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/register_input_check"
-        app:layout_constraintTop_toBottomOf="@+id/textView38" />
+        app:layout_constraintTop_toBottomOf="@+id/cyle_waiting_txt" />
 
     <TextView
         android:id="@+id/cycling_tx_txt"
@@ -98,9 +98,9 @@
         android:layout_width="21dp"
         android:layout_height="21dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView38"
+        app:layout_constraintBottom_toBottomOf="@+id/cyle_waiting_txt"
         app:layout_constraintStart_toStartOf="@+id/guideline15"
-        app:layout_constraintTop_toTopOf="@+id/textView38"
+        app:layout_constraintTop_toTopOf="@+id/cyle_waiting_txt"
         app:srcCompat="@drawable/circle_dot_white" />
 
 
@@ -173,7 +173,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Cycled (1/2)"
+        android:text="Cycled "
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/guideline15"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
@@ -208,7 +208,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:gravity="end"
-        android:text="0.003323 BTC"
+        tools:text="0.003323 BTC"
         android:textSize="12sp"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="@+id/textView24"
@@ -223,7 +223,7 @@
         android:layout_marginStart="16dp"
         android:gravity="end"
         android:textSize="12sp"
-        android:text="0.00012 BTC"
+        tools:text="0.00012 BTC"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="@+id/textView31"
         app:layout_constraintEnd_toEndOf="@+id/textView32"

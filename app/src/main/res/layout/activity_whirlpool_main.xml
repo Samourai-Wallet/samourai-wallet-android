@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/whirlpoolBlue"
         android:elevation="0dp"
+
         app:layout_scrollFlags="enterAlways"
         android:fitsSystemWindows="true">
 
@@ -71,9 +72,22 @@
 
             </android.support.v7.widget.Toolbar>
 
+
         </android.support.design.widget.CollapsingToolbarLayout>
 
+
+        <ProgressBar
+            android:id="@+id/whirlpool_main_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:layout_marginBottom="-8dp"
+            android:visibility="invisible" />
+
     </android.support.design.widget.AppBarLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/whirlpool_fab"
