@@ -26,6 +26,7 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
@@ -57,7 +58,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class WhirlpoolMain extends AppCompatActivity {
 
-    private static int NEWPOOL_REQ_CODE = 6102;
+    public static int NEWPOOL_REQ_CODE = 6102;
     private ArrayList<Cycle> cycles = new ArrayList<>();
     private static final String TAG = "WhirlpoolMain";
     private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
@@ -299,10 +300,15 @@ public class WhirlpoolMain extends AppCompatActivity {
             Cycle cycleTX = cycles.get(position);
             holder.mixingAmount.setText(Coin.valueOf((long) cycleTX.getAmount()).toPlainString().concat(" BTC"));
 
-            if (cycleTX.getCurrentRunningMix() != null)
-                holder.mixingProgress.setText(cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage());
-            else
-                holder.mixingProgress.setText("");
+            try{
+                if (cycleTX.getCurrentRunningMix() != null)
+                    holder.mixingProgress.setText(cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage());
+                else
+                    holder.mixingProgress.setText("");
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
             Date date = new Date();
             date.setTime(cycleTX.getTS() * 1000);
             SimpleDateFormat fmt = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
@@ -313,7 +319,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                 intent.putExtra("hash", cycleTX.getHash());
                 startActivity(intent);
             });
-
         }
 
         @Override

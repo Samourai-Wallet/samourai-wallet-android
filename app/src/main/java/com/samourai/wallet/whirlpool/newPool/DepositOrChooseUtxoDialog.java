@@ -23,8 +23,10 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.LogUtil;
 
 import static com.samourai.wallet.util.FormatsUtil.valueAsDp;
+import static com.samourai.wallet.whirlpool.WhirlpoolMain.NEWPOOL_REQ_CODE;
 
 public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
 
@@ -41,7 +43,7 @@ public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
         window.setStatusBarColor(getResources().getColor(R.color.off_black));
 
         view.findViewById(R.id.whirlpool_dialog_choose_utxos_btn).setOnClickListener(view1 -> {
-            startActivity(new Intent(getActivity(), NewPoolActivity.class));
+            getActivity().startActivityForResult(new Intent(getActivity(), NewPoolActivity.class),NEWPOOL_REQ_CODE);
             this.dismiss();
         });
 

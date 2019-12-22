@@ -1,6 +1,7 @@
 package com.samourai.wallet.whirlpool.newPool;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
@@ -208,7 +210,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         .subscribe(() -> {
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "TX0 Successfully broadcasted", Snackbar.LENGTH_LONG).show();
                             tx0Progress.setVisibility(View.GONE);
-                            setResult(Activity.RESULT_OK);
+                            setResult(Activity.RESULT_OK,getIntent());
                             new Handler().postDelayed(this::finish, 800);
                         }, error -> {
                             tx0Progress.setVisibility(View.GONE);

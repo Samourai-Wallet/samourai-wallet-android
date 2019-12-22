@@ -25,7 +25,7 @@ public class Cycle extends Tx {
     public WhirlpoolUtxo getCurrentRunningMix() {
         for (WhirlpoolUtxo utxo :
                 whirlpoolUtxos) {
-            if (utxo.getUtxoState() != null && utxo.getUtxoState().getMixableStatus() != null) {
+            if (utxo.getUtxoState() != null && utxo.getUtxoState().getMixProgress() != null ) {
                 return utxo;
             }
         }
