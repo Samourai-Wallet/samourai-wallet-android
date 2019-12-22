@@ -91,8 +91,9 @@ public class CycleDetail extends AppCompatActivity {
         }
         transactionId.setText(hash);
 
-        listenUTXO();
         setMixStatus();
+        listenUTXO();
+
     }
 
     private void setMixStatus() {
@@ -112,7 +113,7 @@ public class CycleDetail extends AppCompatActivity {
         try {
             int cycled = 0;
             for (WhirlpoolUtxo utxo : whirlpoolUtxos) {
-                if ( utxo.getUtxoState().getMixProgress() != null && utxo.getUtxoState().getMixProgress().getMixStep() == MixStep.SUCCESS) {
+                if (utxo.getUtxoState().getMixProgress() != null && utxo.getUtxoState().getMixProgress().getMixStep() == MixStep.SUCCESS) {
                     cycled = cycled + 1;
                     whirlpoolUtxosMixDone.add(utxo);
                     txCyclesAdapter.notifyDataSetChanged();
@@ -136,7 +137,7 @@ public class CycleDetail extends AppCompatActivity {
 
 
     private void listenUTXO() {
-        if (getCurrentRunningMix() == null) {
+        if (getCurrentRunningMix() == null || getCurrentRunningMix().getUtxoState() == null) {
             return;
         }
         updateState(getCurrentRunningMix().getUtxoState());
