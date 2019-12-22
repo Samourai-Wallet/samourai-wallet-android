@@ -61,7 +61,7 @@ public class Tx0DisplayUtil {
             throw new RuntimeException(ex);
         }
 
-        if(seen.size() == PRUNE_LIMIT) {
+        if(seen.size() > PRUNE_LIMIT) {
             seen = seen.subList(seen.size() - PRUNE_LIMIT, seen.size() - 1);
         }
 
