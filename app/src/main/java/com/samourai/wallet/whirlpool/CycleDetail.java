@@ -153,19 +153,23 @@ public class CycleDetail extends AppCompatActivity {
     }
 
     private void updateState(WhirlpoolUtxoState whirlpoolUtxoState) {
-        cycleProgress.setProgress(whirlpoolUtxoState.getMixProgress().getProgressPercent());
-        MixStep step = whirlpoolUtxoState.getMixProgress().getMixStep();
-        if (step == MixStep.CONFIRMED_INPUT || whirlpoolUtxoState.getStatus() == WhirlpoolUtxoStatus.MIX_QUEUE) {
-            enableCheck(confirmCheck);
-        }
-        if (step == MixStep.REGISTERED_INPUT || step == MixStep.CONFIRMED_INPUT) {
-            enableCheck(confirmCheck);
-            enableCheck(registeringCheck);
-        }
-        if (step == MixStep.SUCCESS) {
-            enableCheck(confirmCheck);
-            enableCheck(registeringCheck);
-            enableCheck(cyclingCheck);
+        try {
+            cycleProgress.setProgress(whirlpoolUtxoState.getMixProgress().getProgressPercent());
+            MixStep step = whirlpoolUtxoState.getMixProgress().getMixStep();
+            if (step == MixStep.CONFIRMED_INPUT || whirlpoolUtxoState.getStatus() == WhirlpoolUtxoStatus.MIX_QUEUE) {
+                enableCheck(confirmCheck);
+            }
+            if (step == MixStep.REGISTERED_INPUT || step == MixStep.CONFIRMED_INPUT) {
+                enableCheck(confirmCheck);
+                enableCheck(registeringCheck);
+            }
+            if (step == MixStep.SUCCESS) {
+                enableCheck(confirmCheck);
+                enableCheck(registeringCheck);
+                enableCheck(cyclingCheck);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
