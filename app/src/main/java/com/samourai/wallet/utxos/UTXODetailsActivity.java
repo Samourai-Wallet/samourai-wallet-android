@@ -58,7 +58,7 @@ import java.util.UUID;
 
 public class UTXODetailsActivity extends AppCompatActivity {
     final DecimalFormat df = new DecimalFormat("#");
-    private String hash, addr, t;
+    private String hash, addr, hashIdx;
     private TextView addressTextView, amountTextView, statusTextView, notesTextView, hashTextView;
     private int account = 0;
     private EditText noteEditText;
@@ -93,11 +93,12 @@ public class UTXODetailsActivity extends AppCompatActivity {
         df.setMinimumFractionDigits(8);
         df.setMaximumFractionDigits(8);
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("hash")) {
-            hash = getIntent().getExtras().getString("hash");
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("hashIdx")) {
+            hashIdx = getIntent().getExtras().getString("hashIdx");
         } else {
             finish();
         }
+
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("account")) {
             account = getIntent().getExtras().getInt("account");
@@ -115,16 +116,21 @@ public class UTXODetailsActivity extends AppCompatActivity {
         utxos.addAll(APIFactory.getInstance(getApplicationContext()).getUtxos(false));
         for (UTXO utxo : utxos) {
             for (MyTransactionOutPoint outpoint : utxo.getOutpoints()) {
-                if (outpoint.getTxHash() != null && outpoint.getTxHash().toString().equals(hash)) {
-                    idx = outpoint.getTxOutputN();
-                    amount = outpoint.getValue().longValue();
-                    addr = outpoint.getAddress();
-                    utxoCoin = new UTXOCoin(outpoint, utxo);
-                    if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
-                        utxoCoin.doNotSpend = true;
+                if (outpoint.getTxHash() != null) {
+                    String hashWithIdx = outpoint.getTxHash().toString().concat("-").concat(String.valueOf(outpoint.getTxOutputN()));
+                    if (hashWithIdx.equals(hashIdx)) {
+                        idx = outpoint.getTxOutputN();
+                        amount = outpoint.getValue().longValue();
+                        hash = outpoint.getTxHash().toString();
+                        addr = outpoint.getAddress();
+                        utxoCoin = new UTXOCoin(outpoint, utxo);
+                        if (BlockedUTXO.getInstance().contains(outpoint.getTxHash().toString(), outpoint.getTxOutputN())) {
+                            utxoCoin.doNotSpend = true;
+                        }
+                        setUTXOState();
                     }
-                    setUTXOState();
                 }
+
             }
 
         }
@@ -294,7 +300,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
         return false;
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

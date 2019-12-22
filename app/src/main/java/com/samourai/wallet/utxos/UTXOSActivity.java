@@ -461,9 +461,9 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     /**
      * this start will start {@link UTXODetailsActivity} activity
      **/
-    private void onItemClick(int position, View view) {
+    private void onItemClick(UTXOCoin utxoCoin, View view) {
         Intent intent = new Intent(this, UTXODetailsActivity.class);
-        intent.putExtra("hash", filteredUTXOs.get(position).hash);
+        intent.putExtra("hashIdx", utxoCoin.hash.concat("-").concat(String.valueOf(utxoCoin.idx)));
         intent.putExtra("account", account);
         startActivityForResult(intent, 0);
     }
@@ -822,7 +822,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
             holder.amount.setText(df.format(((double) (filteredUTXOs.get(position).amount) / 1e8)).concat(" BTC"));
             holder.rootViewGroup.setOnClickListener(view -> {
                 if (!multiSelect)
-                    onItemClick(position, view);
+                    onItemClick(item, view);
                 else
                     selectOrDeselect(position);
             });
