@@ -11,7 +11,6 @@ import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
@@ -120,7 +119,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
         whirlpoolWalletConfig.setMixsTarget(mixsTarget);
         whirlpoolWalletConfig.setScode(scode);
-        whirlpoolWalletConfig.setMaxClients(3);
+        whirlpoolWalletConfig.setMaxClients(1);
 
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
         whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
