@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 /**
  * HTTP client used by Whirlpool.
@@ -38,9 +44,9 @@ public class AndroidHttpClient implements IHttpClient {
     }
 
     @Override
-    public <T> T postJsonOverTor(String url, Class<T> responseType, Map<String, String> headers, Object body) throws HttpException {
+    public <T> Observable<Optional<T>> postJsonOverTor(String url, Class<T> responseType, Map<String, String> headers, Object body) {
         log.debug("postJsonOverTor: "+url);
-        try {
+        return httpObservable(() -> {
             String jsonString = gson.toJson(body);
             String responseString = webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonString, headers);
             T response = null;
@@ -48,11 +54,7 @@ public class AndroidHttpClient implements IHttpClient {
                 response = gson.fromJson(responseString, responseType);
             }
             return response;
-        }
-        catch(Exception e) {
-            String responseBody = e.getMessage();
-            throw new HttpException(e, responseBody);
-        }
+        });
     }
 
     @Override
@@ -84,5 +86,17 @@ public class AndroidHttpClient implements IHttpClient {
         return url;
     }
 
-
+    private <T> Observable<Optional<T>> httpObservable(Callable<T> supplier) {
+        return Observable.fromCallable(() -> {
+            try {
+                return Optional.ofNullable(supplier.call());
+            }
+            catch(Exception e) {
+                String responseBody = e.getMessage();
+                throw new HttpException(e, responseBody);
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
+    }
 }

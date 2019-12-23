@@ -46,7 +46,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
     private HD_Wallet bip84w;
     private WhirlpoolWalletConfig config;
 
-    private static final String SEED_WORDS = "all all all all all all all all all all all all";
+    private static final String SEED_WORDS = "wise never behave tornado tool pear aunt consider season swap custom human";
     private static final String SEED_PASSPHRASE = "test";
 
     @Before
@@ -81,13 +81,14 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
             protected Tx0Data fetchTx0Data(String poolId) throws HttpException, NotifiableException {
                 Tx0Data tx0Data = super.fetchTx0Data(poolId);
                 // mock fee address for deterministic tests
-                return new Tx0Data(tx0Data.getFeePaymentCode(), tx0Data.getFeeValue(), tx0Data.getFeeChange(), tx0Data.getFeePayload(), "tb1qgyppvv58rv83eas60trmdgqc06yx9q53qs6skx", 123);
+                return new Tx0Data(tx0Data.getFeePaymentCode(), tx0Data.getFeeValue(), tx0Data.getFeeChange(), 0, tx0Data.getFeePayload(), "tb1qgyppvv58rv83eas60trmdgqc06yx9q53qs6skx", 123);
             }
         });
         whirlpoolWallet = whirlpoolWalletService.openWallet(config, bip84w);
     }
 
     @Test
+    @Ignore
     public void testStart() throws Exception {
         // start whirlpool wallet
         whirlpoolWallet.start();
@@ -111,7 +112,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         ClientUtils.logWhirlpoolUtxos(utxosPostmix, whirlpoolWallet.getConfig().getMixsTarget());
 
         // keep running
-        for(int i=0; i<2; i++) {
+        for(int i=0; i<50; i++) {
             MixingState mixingState = whirlpoolWallet.getMixingState();
             log.debug("WHIRLPOOL: "+mixingState.getNbQueued()+" queued, "+mixingState.getNbMixing()+" mixing: "+mixingState.getUtxosMixing());
 

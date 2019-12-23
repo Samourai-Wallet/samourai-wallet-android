@@ -111,7 +111,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation ('com.github.Samourai-Wallet:whirlpool-client:0.22.3-alpha6') {
+    implementation ('com.github.Samourai-Wallet:whirlpool-client:0.23.0-alpha2') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
