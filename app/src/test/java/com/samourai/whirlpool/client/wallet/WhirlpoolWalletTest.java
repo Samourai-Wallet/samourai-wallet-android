@@ -88,7 +88,6 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
     }
 
     @Test
-    @Ignore
     public void testStart() throws Exception {
         // start whirlpool wallet
         whirlpoolWallet.start();

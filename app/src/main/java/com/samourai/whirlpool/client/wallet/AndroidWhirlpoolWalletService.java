@@ -112,7 +112,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         NetworkParameters params = whirlpoolServer.getParams();
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
-                        httpClient, stompClientService, persistHandler, serverUrl, params, backendApi);
+                        httpClient, stompClientService, persistHandler, serverUrl, params, true, backendApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
         whirlpoolWalletConfig.setAutoMix(true); // enable auto-mix
