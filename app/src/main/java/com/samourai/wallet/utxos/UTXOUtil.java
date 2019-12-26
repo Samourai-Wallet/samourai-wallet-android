@@ -48,6 +48,10 @@ public class UTXOUtil {
         utxoScores.clear();
     }
 
+    public void add(String hash, int idx, String tag) {
+        add(hash + "-" + idx, tag);
+    }
+
     public void add(String utxo, String tag) {
         if(utxoAutoTags.containsKey(utxo)) {
             utxoAutoTags.get(utxo).add(tag);
@@ -57,6 +61,15 @@ public class UTXOUtil {
             tags.add(tag);
             utxoAutoTags.put(utxo, tags);
         }
+    }
+
+    public List<String> get(String hash, int idx) {
+        if (utxoAutoTags.containsKey(hash + "-" + idx)) {
+            return utxoAutoTags.get(hash + "-" + idx);
+        } else {
+            return null;
+        }
+
     }
 
     public List<String> get(String utxo) {
@@ -72,17 +85,21 @@ public class UTXOUtil {
         return utxoAutoTags;
     }
 
+    public void remove(String hash, int idx) {
+        utxoAutoTags.remove(hash + "-" + idx);
+    }
+
     public void remove(String utxo) {
         utxoAutoTags.remove(utxo);
     }
 
-    public void addNote(String utxo, String note) {
-        utxoNotes.put(utxo, note);
+    public void addNote(String hash, String note) {
+        utxoNotes.put(hash, note);
     }
 
-    public String getNote(String utxo) {
-        if(utxoNotes.containsKey(utxo))  {
-            return utxoNotes.get(utxo);
+    public String getNote(String hash) {
+        if(utxoNotes.containsKey(hash))  {
+            return utxoNotes.get(hash);
         }
         else    {
             return null;
@@ -94,8 +111,8 @@ public class UTXOUtil {
         return utxoNotes;
     }
 
-    public void removeNote(String utxo) {
-        utxoNotes.remove(utxo);
+    public void removeNote(String hash) {
+        utxoNotes.remove(hash);
     }
 
     public void addScore(String utxo, int score) {
