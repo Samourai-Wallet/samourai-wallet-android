@@ -30,6 +30,7 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
 import com.samourai.wallet.whirlpool.models.Pool;
@@ -257,20 +258,19 @@ public class NewPoolActivity extends AppCompatActivity {
                 tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, tx0FeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
+
+                if (tx0.getChangeOutput() != null) {
+                    Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
+                    Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
+                    UTXOUtil.getInstance().add(txHash + "-" + tx0.getChangeOutput().getIndex(), "\u2623 tx0 change\u2623");
+                }
+
                 NewPoolActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(NewPoolActivity.this, txHash, Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.i("NewPoolActivity", "result:" + tx0.getTx().getHashAsString());
-
-                for (TransactionOutput premixOutput : tx0.getPremixOutputs()) {
-                    Log.i("NewPoolActivity", "pre-mix:" + premixOutput.toString());
-                }
-                if (tx0.getChangeOutput() != null) {
-                    Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
-                    Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
-                }
+                Log.i("NewPoolActivity", "result:" + txHash);
 
             } catch (Exception e) {
                 // tx0 failed
