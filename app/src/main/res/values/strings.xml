@@ -774,4 +774,6 @@
 
     <string name="mixing"><em>%1$s</em> : %2$s</string>
 
+    <string name="block_tx0_change">The change output from this tx0 will be tagged. Block it to make it unspendable? If so, the amount will not be reflected in the total balance but will be visible within the wallet by consulting the list of unspents.</string>
+
 </resources>

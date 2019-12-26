@@ -1,6 +1,8 @@
 package com.samourai.wallet.whirlpool.newPool;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
+import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.service.JobRefreshService;
@@ -68,6 +71,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private static final String TAG = "NewPoolActivity";
 
     private WhirlpoolTx0 tx0 = null;
+    private boolean blockChangeOutput = false;
 
     private TextView stepperMessage1, stepperMessage2, stepperMessage3, cycleTotalAmount;
     private View stepperLine1, stepperLine2;
@@ -188,7 +192,26 @@ public class NewPoolActivity extends AppCompatActivity {
                     break;
                 }
                 case 2: {
-                    processWhirlPool();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.block_tx0_change).setCancelable(false);
+                    AlertDialog alert = builder.create();
+                    alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
+                        dialog.dismiss();
+                        blockChangeOutput = true;
+                        processWhirlPool();
+                    });
+                    alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            blockChangeOutput = false;
+                            processWhirlPool();
+                        }
+                    });
+                    if (!isFinishing()) {
+                        alert.show();
+                    }
+
                     break;
                 }
             }
@@ -258,11 +281,13 @@ public class NewPoolActivity extends AppCompatActivity {
                 tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, tx0FeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
-
                 if (tx0.getChangeOutput() != null) {
                     Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
                     Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
                     UTXOUtil.getInstance().add(txHash + "-" + tx0.getChangeOutput().getIndex(), "\u2623 tx0 change\u2623");
+                    if(blockChangeOutput) {
+                        BlockedUTXO.getInstance().add(txHash, tx0.getChangeOutput().getIndex(), tx0.getChangeValue());
+                    }
                 }
 
                 NewPoolActivity.this.runOnUiThread(new Runnable() {
