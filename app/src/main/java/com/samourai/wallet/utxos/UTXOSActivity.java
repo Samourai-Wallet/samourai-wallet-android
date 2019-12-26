@@ -871,12 +871,12 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 holder.notesLayout.setVisibility(View.GONE);
             }
 
+            String utxoIdxHash = item.hash.concat("-").concat(String.valueOf(item.idx));
 
-            if (UTXOUtil.getInstance().get(item.hash) != null) {
+            if (UTXOUtil.getInstance().get(utxoIdxHash) != null) {
                 holder.tagsLayout.setVisibility(View.VISIBLE);
-                for (String tagString: UTXOUtil.getInstance().get(item.hash)) {
+                for (String tagString: UTXOUtil.getInstance().get(utxoIdxHash)) {
                     View tag = createTag(getBaseContext(), tagString);
-
                     holder.tagsLayout.addView(tag);
                 }
             }
