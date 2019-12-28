@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:background="@color/whirlpoolBlue"
         android:elevation="0dp"
-
         app:layout_scrollFlags="enterAlways"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
+            android:id="@+id/collapsing_toolbar_whirlpool_main"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/whirlpoolBlue"
@@ -32,7 +32,7 @@
 
 
                 <TextView
-                    android:id="@+id/whirlpool_total_amount_to_display"
+                    android:id="@+id/whirlpool_balance_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -60,7 +60,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/whirlpool_total_amount_to_display" />
+                    app:layout_constraintTop_toBottomOf="@+id/whirlpool_balance_textview" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar

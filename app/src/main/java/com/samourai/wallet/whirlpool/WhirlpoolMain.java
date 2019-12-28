@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
@@ -63,13 +65,15 @@ public class WhirlpoolMain extends AppCompatActivity {
     private static final String TAG = "WhirlpoolMain";
     private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
     private RecyclerView premixList;
-    private TextView totalAmountToDisplay;
+    private TextView whirlpoolBalance;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView amountSubText;
     private MixAdapter adapter;
     WhirlpoolWallet wallet;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private ProgressBar progressBar;
-
+    private int balanceIndex = 0;
+    TextSwitcher textSwitcher;
     public static final String DISPLAY_INTENT = "com.samourai.wallet.BalanceFragment.DISPLAY";
 
 
@@ -83,7 +87,8 @@ public class WhirlpoolMain extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        totalAmountToDisplay = findViewById(R.id.whirlpool_total_amount_to_display);
+        whirlpoolBalance = findViewById(R.id.whirlpool_balance_textview);
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_whirlpool_main);
         amountSubText = findViewById(R.id.toolbar_subtext);
         progressBar = findViewById(R.id.whirlpool_main_progressBar);
         premixList = findViewById(R.id.rv_whirlpool_dashboard);
@@ -101,7 +106,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         long postMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPostMixBalance();
         long preMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
 
-        totalAmountToDisplay.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
+        whirlpoolBalance.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
         startWhirlpool();
 
         Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
@@ -118,7 +123,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         IntentFilter broadcastIntent = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, broadcastIntent);
-
+        collapsingToolbarLayout.setOnClickListener(view -> switchBalance());
     }
 
     private void loadPremixes() {
@@ -154,6 +159,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                     cycles.addAll(cycles1);
                     adapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.INVISIBLE);
+                    switchBalance();
                 }, er -> {
                     er.printStackTrace();
                     progressBar.setVisibility(View.INVISIBLE);
@@ -214,6 +220,34 @@ public class WhirlpoolMain extends AppCompatActivity {
     private void showBottomSheetDialog() {
         DepositOrChooseUtxoDialog depositOrChooseUtxoDialog = new DepositOrChooseUtxoDialog();
         depositOrChooseUtxoDialog.show(getSupportFragmentManager(), depositOrChooseUtxoDialog.getTag());
+    }
+
+    private void switchBalance() {
+        if (balanceIndex == 2) {
+            balanceIndex = 0;
+        } else {
+            balanceIndex = balanceIndex + 1;
+        }
+        long postMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPostMixBalance();
+        long preMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
+        switch (balanceIndex) {
+            case 0: {
+                amountSubText.setText(R.string.total_whirlpool_balance);
+                whirlpoolBalance.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
+                break;
+            }
+            case 1: {
+                amountSubText.setText(R.string.total_pre_mix_balance);
+                whirlpoolBalance.setText(Coin.valueOf(preMixBalance).toPlainString().concat(" BTC"));
+                break;
+            }
+            case 2: {
+                amountSubText.setText(R.string.total_post_mix_balance);
+                whirlpoolBalance.setText(Coin.valueOf(postMixBalance).toPlainString().concat(" BTC"));
+                break;
+            }
+        }
+
     }
 
 

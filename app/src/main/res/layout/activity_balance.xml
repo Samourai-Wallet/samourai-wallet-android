@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/windowDark"
     android:orientation="vertical"
-    tools:context="com.samourai.wallet.whirlpool.EmptyWhirlPool">
+    >
 
 
     <android.support.design.widget.AppBarLayout
