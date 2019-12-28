@@ -1,11 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.samourai.wallet.whirlpool.WhirlPoolMain">
-    <item android:id="@+id/action_postmix"
-        android:title="@string/options_postmix"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        />
+
     <item android:id="@+id/action_utxo"
         android:title="@string/options_utxo"
         android:orderInCategory="100"

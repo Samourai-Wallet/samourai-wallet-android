@@ -94,6 +94,11 @@ public class WhirlpoolMain extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.tx_swipe_container_whirlpool);
 
         findViewById(R.id.whirlpool_fab).setOnClickListener(view -> showBottomSheetDialog());
+        findViewById(R.id.spend_from_postmix).setOnClickListener(view -> {
+            Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
+            startActivity(intent);
+        });
 
         premixList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -316,12 +321,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home)
             finish();
-
-        if (id == R.id.action_postmix) {
-            Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
-            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
-            startActivity(intent);
-        } else if (id == R.id.action_utxo) {
+        if (id == R.id.action_utxo) {
             Intent intent = new Intent(WhirlpoolMain.this, UTXOSActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);

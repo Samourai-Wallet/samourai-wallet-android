@@ -89,16 +89,6 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/whirlpool_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="12dp"
-        android:clickable="true"
-        android:src="@drawable/ic_whirlpool"
-        android:tint="@color/white"
-        app:backgroundTint="@color/accent" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/tx_swipe_container_whirlpool"
@@ -111,4 +101,46 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <com.github.clans.fab.FloatingActionMenu
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        fab:layout_anchor="@+id/rv_whirlpool_dashboard"
+        fab:layout_anchorGravity="right|bottom"
+        fab:menu_animationDelayPerItem="32"
+        fab:menu_shadowColor="#444"
+        fab:menu_colorNormal="@color/accent"
+        fab:menu_colorPressed="#0AA1E9"
+        fab:menu_colorRipple="#A8A8A8"
+        >
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/whirlpool_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_whirlpool"
+            fab:fab_colorNormal="#e91e63"
+            fab:fab_colorPressed="#c2185b"
+            fab:fab_label="New pool"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/spend_from_postmix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_samourai_send_24dp"
+            app:fab_colorNormal="#00bfa5"
+            app:fab_colorPressed="#009688"
+            fab:fab_label="Spend UTXOs"
+            fab:fab_size="mini" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+
 </android.support.design.widget.CoordinatorLayout>
