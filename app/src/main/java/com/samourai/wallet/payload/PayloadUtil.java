@@ -86,8 +86,10 @@ public class PayloadUtil	{
     private final static String strPayNymFilename = "samourai.paynyms";
     private final static String strMultiAddrPreFilename = "samourai.multi.pre";
     private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strMultiAddrBadBankFilename = "samourai.multi.badbank";
     private final static String strUTXOPreFilename = "samourai.utxo.pre";
     private final static String strUTXOPostFilename = "samourai.utxo.post";
+    private final static String strUTXOBadBankFilename = "samourai.utxo.badbank";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -168,6 +170,12 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+        }
+    }
+
     public void serializeUTXO(List<JSONObject> objs)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
         if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -214,6 +222,18 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeUTXOBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
+            }
+        }
+    }
+
     public void serializeFees(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, null, strFeesFilename);
@@ -238,8 +258,16 @@ public class PayloadUtil	{
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
     }
 
+    public JSONObject deserializeMultiAddrBadBank()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+    }
+
     public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+    }
+
+    public JSONObject deserializeUTXOBadBank()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
     }
 
     public JSONObject deserializeFees()  throws IOException, JSONException  {
@@ -287,6 +315,8 @@ public class PayloadUtil	{
             AddressFactory.getInstance().setHighestPreChangeIdx(0);
             AddressFactory.getInstance().setHighestPostReceiveIdx(0);
             AddressFactory.getInstance().setHighestPostChangeIdx(0);
+            AddressFactory.getInstance().setHighestBadBankReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBadBankChangeIdx(0);
 
             HD_WalletFactory.getInstance(context).set(null);
         }
@@ -377,6 +407,10 @@ public class PayloadUtil	{
             postObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPostReceiveIdx());
             postObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPostChangeIdx());
             whirlpool_account.put(postObj);
+            JSONObject badbankObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).toJSON(84);
+            badbankObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestBadBankReceiveIdx());
+            badbankObj.put("changeIdx", AddressFactory.getInstance(context).getHighestBadBankChangeIdx());
+            whirlpool_account.put(badbankObj);
             wallet.put("whirlpool_account", whirlpool_account);
 
             //
@@ -409,7 +443,6 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("cahoots", CahootsFactory.getInstance().toJSON());
-            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorManager.getInstance(context).toJSON());
@@ -559,17 +592,13 @@ public class PayloadUtil	{
 
                 if(wallet.has("accounts")) {
                     JSONArray accounts = wallet.getJSONArray("accounts");
-                    //
-                    // temporarily set to 2 until use of public XPUB
-                    //
-                    for(int i = 0; i < 2; i++) {
-                        JSONObject account = accounts.getJSONObject(i);
-                        hdw.getAccount(i).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
-                        hdw.getAccount(i).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
 
-                        AddressFactory.getInstance().account2xpub().put(i, hdw.getAccount(i).xpubstr());
-                        AddressFactory.getInstance().xpub2account().put(hdw.getAccount(i).xpubstr(), i);
-                    }
+                    JSONObject account = accounts.getJSONObject(0);
+                    hdw.getAccount(0).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
+                    hdw.getAccount(0).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
+
+                    AddressFactory.getInstance().account2xpub().put(0, hdw.getAccount(0).xpubstr());
+                    AddressFactory.getInstance().xpub2account().put(hdw.getAccount(0).xpubstr(), 0);
                 }
 
             }
@@ -639,9 +668,6 @@ public class PayloadUtil	{
                 }
                 if(meta.has("cahoots")) {
                     CahootsFactory.getInstance().fromJSON((JSONArray) meta.get("cahoots"));
-                }
-                if(meta.has("whirlpool")) {
-                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
                 }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));

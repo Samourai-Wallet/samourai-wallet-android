@@ -204,6 +204,11 @@ public class RefreshService extends IntentService {
                 APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
             }
 
+            if(PrefsUtil.getInstance(RefreshService.this).getValue(PrefsUtil.XPUBBADBANKLOCK, false) == false)    {
+                String zpub = BIP84Util.getInstance(RefreshService.this).getWallet().getAccountAt(WhirlpoolMeta.getInstance(RefreshService.this).getWhirlpoolBadBank()).zpubstr();
+                APIFactory.getInstance(RefreshService.this).lockXPUB(zpub, 84, PrefsUtil.XPUBBADBANKLOCK);
+            }
+
         }
         else    {
 

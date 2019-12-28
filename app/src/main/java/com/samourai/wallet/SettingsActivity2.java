@@ -520,6 +520,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference zpubBadBankPref = (Preference) findPreference("zpub_badbank");
+                zpubBadBankPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolBadBank());
+                        return true;
+                    }
+                });
+
                 Preference wipePref = (Preference) findPreference("wipe");
                 wipePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {

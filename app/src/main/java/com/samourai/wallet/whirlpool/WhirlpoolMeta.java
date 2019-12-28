@@ -11,8 +11,9 @@ public class WhirlpoolMeta {
 
     public final static double WHIRLPOOL_FEE_RATE_POOL_DENOMINATION = 0.05;
 
+    private final static int WHIRLPOOL_BADBANK_ACCOUNT = Integer.MAX_VALUE - 3;
     private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
-    private final static int WHIRLPOOL_POSTMIX = Integer.MAX_VALUE - 1;
+    private final static int WHIRLPOOL_POSTMIX_ACCOUNT = Integer.MAX_VALUE - 1;
 
     private static WhirlpoolMeta instance = null;
 
@@ -36,46 +37,11 @@ public class WhirlpoolMeta {
     }
 
     public int getWhirlpoolPostmix() {
-        return WHIRLPOOL_POSTMIX;
+        return WHIRLPOOL_POSTMIX_ACCOUNT;
     }
 
-    public String getDefaultFeeAddress()    {
-
-        if(SamouraiWallet.getInstance().isTestNet())    {
-            return "tb1qhq028k8qey83ylmc003qdtt7mhp76a5cgk5htj";
-        }
-        else    {
-            return "bc1qxya59zn6fgenfls0pedt0xqkagd33fcfc5s04n";
-        }
-
-    }
-
-    public JSONObject toJSON() {
-
-        JSONObject jsonPayload = new JSONObject();
-        /*
-        try {
-
-        }
-        catch(JSONException je) {
-            ;
-        }
-        */
-
-        return jsonPayload;
-    }
-
-    public void fromJSON(JSONObject jsonPayload) {
-
-        /*
-        try {
-
-        }
-        catch(JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-        */
-
+    public int getWhirlpoolBadBank() {
+        return WHIRLPOOL_BADBANK_ACCOUNT;
     }
 
 }
