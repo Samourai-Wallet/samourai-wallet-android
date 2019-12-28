@@ -12,12 +12,12 @@
         android:layout_height="wrap_content"
         android:background="@color/whirlpoolBlue"
         android:elevation="0dp"
-        app:layout_scrollFlags="enterAlways"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:layout_scrollFlags="enterAlways">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:layout_width="match_parent"
             android:id="@+id/collapsing_toolbar_whirlpool_main"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/whirlpoolBlue"
@@ -81,9 +81,9 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="-8dp"
             android:indeterminate="true"
             android:indeterminateTint="@color/white"
-            android:layout_marginBottom="-8dp"
             android:visibility="invisible" />
 
     </android.support.design.widget.AppBarLayout>
@@ -100,10 +100,15 @@
         android:tint="@color/white"
         app:backgroundTint="@color/accent" />
 
-    <android.support.v7.widget.RecyclerView
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/rv_whirlpool_dashboard"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/tx_swipe_container_whirlpool"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_whirlpool_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

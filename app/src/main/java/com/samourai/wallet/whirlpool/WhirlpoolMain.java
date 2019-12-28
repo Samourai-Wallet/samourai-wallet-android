@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
@@ -67,8 +69,10 @@ public class WhirlpoolMain extends AppCompatActivity {
     private TextView amountSubText;
     private MixAdapter adapter;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private List<String> seenNonTx0Hashes = new ArrayList<>();
     private ProgressBar progressBar;
     private int balanceIndex = 0;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public static final String DISPLAY_INTENT = "com.samourai.wallet.BalanceFragment.DISPLAY";
 
 
@@ -87,9 +91,10 @@ public class WhirlpoolMain extends AppCompatActivity {
         amountSubText = findViewById(R.id.toolbar_subtext);
         progressBar = findViewById(R.id.whirlpool_main_progressBar);
         premixList = findViewById(R.id.rv_whirlpool_dashboard);
-        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
-            showBottomSheetDialog();
-        });
+        swipeRefreshLayout = findViewById(R.id.tx_swipe_container_whirlpool);
+
+        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> showBottomSheetDialog());
+
         premixList.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new MixAdapter(new ArrayList<>());
@@ -119,6 +124,18 @@ public class WhirlpoolMain extends AppCompatActivity {
         IntentFilter broadcastIntent = new IntentFilter(DISPLAY_INTENT);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, broadcastIntent);
         collapsingToolbarLayout.setOnClickListener(view -> switchBalance());
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            LogUtil.info(TAG, "onCreate: ".concat(String.valueOf(seenNonTx0Hashes.size())));
+            Intent intent = new Intent(this, JobRefreshService.class);
+            intent.putExtra("notifTx", false);
+            intent.putExtra("dragged", true);
+            intent.putExtra("launch", false);
+            JobRefreshService.enqueueWork(getApplicationContext(), intent);
+            swipeRefreshLayout.setRefreshing(false);
+            progressBar.setVisibility(View.VISIBLE);
+        });
+
     }
 
     private void loadPremixes() {
@@ -154,6 +171,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                     cycles.addAll(cycles1);
                     adapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.INVISIBLE);
+                    balanceIndex = balanceIndex-1;
                     switchBalance();
                 }, er -> {
                     er.printStackTrace();
@@ -170,18 +188,23 @@ public class WhirlpoolMain extends AppCompatActivity {
                 if (Tx0DisplayUtil.getInstance().contains(cycle.getHash())) {
                     txes.add(cycle);
                 } else {
-                    JSONObject object = APIFactory.getInstance(getApplicationContext()).getTxInfo(cycle.getHash());
-                    if (object.has("outputs")) {
-                        JSONArray array = object.getJSONArray("outputs");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject outpoint = array.getJSONObject(i);
-                            if (outpoint.has("type") && outpoint.getString("type").equals("nulldata")) {
-                                if (!Tx0DisplayUtil.getInstance().contains(cycle.getHash()))
-                                    Tx0DisplayUtil.getInstance().add(cycle.getHash());
-                                txes.add(cycle);
+                    if (!seenNonTx0Hashes.contains(cycle.getHash())) {
+                        JSONObject object = APIFactory.getInstance(getApplicationContext()).getTxInfo(cycle.getHash());
+                        if (object.has("outputs")) {
+                            JSONArray array = object.getJSONArray("outputs");
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject outpoint = array.getJSONObject(i);
+                                if (outpoint.has("type") && outpoint.getString("type").equals("nulldata")) {
+                                    if (!Tx0DisplayUtil.getInstance().contains(cycle.getHash()))
+                                        Tx0DisplayUtil.getInstance().add(cycle.getHash());
+                                    txes.add(cycle);
+                                }else {
+                                    seenNonTx0Hashes.add(cycle.getHash());
+                                }
                             }
                         }
                     }
+
                 }
 
             }
