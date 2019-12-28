@@ -1761,11 +1761,10 @@ public class APIFactory	{
                     System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
                 }
                 APIFactory.getInstance(context).getXPUB(all, true);
-                String[] xs = new String[4];
+                String[] xs = new String[3];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
-                xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
-                xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                xs[1] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
+                xs[2] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
                 utxoObj1 = getUnspentOutputs(xs);
                 getDynamicFees();
             }
