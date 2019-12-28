@@ -592,17 +592,13 @@ public class PayloadUtil	{
 
                 if(wallet.has("accounts")) {
                     JSONArray accounts = wallet.getJSONArray("accounts");
-                    //
-                    // temporarily set to 2 until use of public XPUB
-                    //
-                    for(int i = 0; i < 2; i++) {
-                        JSONObject account = accounts.getJSONObject(i);
-                        hdw.getAccount(i).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
-                        hdw.getAccount(i).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
 
-                        AddressFactory.getInstance().account2xpub().put(i, hdw.getAccount(i).xpubstr());
-                        AddressFactory.getInstance().xpub2account().put(hdw.getAccount(i).xpubstr(), i);
-                    }
+                    JSONObject account = accounts.getJSONObject(0);
+                    hdw.getAccount(0).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
+                    hdw.getAccount(0).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
+
+                    AddressFactory.getInstance().account2xpub().put(0, hdw.getAccount(0).xpubstr());
+                    AddressFactory.getInstance().xpub2account().put(hdw.getAccount(0).xpubstr(), 0);
                 }
 
             }
