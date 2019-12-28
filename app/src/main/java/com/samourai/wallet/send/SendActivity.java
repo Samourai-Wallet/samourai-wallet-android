@@ -1143,11 +1143,13 @@ public class SendActivity extends AppCompatActivity {
             List<UTXO> _utxos2 = null;
 
             long valueP2WPKH = UTXOFactory.getInstance().getTotalP2WPKH();
-            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
-            }
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
             long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
+            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
+                valueP2SH_P2WPKH = 0L;
+                valueP2PKH = 0L;
+            }
 
             Log.d("SendActivity", "value P2WPKH:" + valueP2WPKH);
             Log.d("SendActivity", "value P2SH_P2WPKH:" + valueP2SH_P2WPKH);
