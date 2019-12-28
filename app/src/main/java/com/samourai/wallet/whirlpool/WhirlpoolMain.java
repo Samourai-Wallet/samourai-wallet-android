@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
@@ -28,7 +27,6 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
@@ -63,17 +61,14 @@ public class WhirlpoolMain extends AppCompatActivity {
     public static int NEWPOOL_REQ_CODE = 6102;
     private ArrayList<Cycle> cycles = new ArrayList<>();
     private static final String TAG = "WhirlpoolMain";
-    private String tabTitle[] = {"Dashboard", "In Progress", "Completed"};
     private RecyclerView premixList;
     private TextView whirlpoolBalance;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView amountSubText;
     private MixAdapter adapter;
-    WhirlpoolWallet wallet;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private ProgressBar progressBar;
     private int balanceIndex = 0;
-    TextSwitcher textSwitcher;
     public static final String DISPLAY_INTENT = "com.samourai.wallet.BalanceFragment.DISPLAY";
 
 
@@ -334,12 +329,12 @@ public class WhirlpoolMain extends AppCompatActivity {
             Cycle cycleTX = cycles.get(position);
             holder.mixingAmount.setText(Coin.valueOf((long) cycleTX.getAmount()).toPlainString().concat(" BTC"));
 
-            try{
+            try {
                 if (cycleTX.getCurrentRunningMix() != null)
                     holder.mixingProgress.setText(cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage());
                 else
                     holder.mixingProgress.setText("");
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
