@@ -1046,7 +1046,7 @@ public class SendActivity extends AppCompatActivity {
 
         // if possible, get UTXO by input 'type': p2pkh, p2sh-p2wpkh or p2wpkh, else get all UTXO
         long neededAmount = 0L;
-        if (FormatsUtil.getInstance().isValidBech32(address)) {
+        if (FormatsUtil.getInstance().isValidBech32(address) || account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, 0, UTXOFactory.getInstance().getCountP2WPKH(), 4).longValue();
 //                    Log.d("SendActivity", "segwit:" + neededAmount);
         } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
@@ -1078,9 +1078,11 @@ public class SendActivity extends AppCompatActivity {
         List<UTXO> utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllP2WPKH().values());
         List<UTXO> utxosP2SH_P2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllP2SH_P2WPKH().values());
         List<UTXO> utxosP2PKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllP2PKH().values());
-        if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+        if ((preselectedUTXOs == null || preselectedUTXOs.size() == 0) && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
             utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllPostMix().values());
             utxosP2WPKH = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllPostMix().values());
+            utxosP2PKH.clear();
+            utxosP2SH_P2WPKH.clear();
         }
 
         selectedUTXO = new ArrayList<UTXO>();
