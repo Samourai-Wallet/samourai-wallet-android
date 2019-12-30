@@ -59,6 +59,12 @@
         />
 
     <Preference
+        android:title="@string/options_xpub84_badbank"
+        android:summary="@string/options_xpub84_badbank2"
+        android:key="zpub_badbank"
+        />
+
+    <Preference
         android:title="@string/options_change_pin"
         android:summary="@string/options_change_pin2"
         android:key="change_pin"

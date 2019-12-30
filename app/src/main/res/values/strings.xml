@@ -40,6 +40,8 @@
     <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
     <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
     <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
+    <string name="options_xpub84_badbank">Show Whirlpool bad bank ZPUB</string>
+    <string name="options_xpub84_badbank2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool bad bank.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
@@ -579,6 +581,7 @@
     <string name="display_receive_privkey">Receive private key</string>
     <string name="invalid_index">Invalid index</string>
     <string name="type_address">Type of address</string>
+
     <string name="chain_id">Address chain</string>
 
     <string name="receive_chain">Receive address</string>
@@ -763,6 +766,7 @@
         <item>Segwit native (bech32)</item>
         <item>Legacy (P2PKH)</item>
     </string-array>
+
     <string-array name="account_types">
         <item>BIP49 Segwit</item>
         <item>BIP84 Segwit</item>
@@ -770,6 +774,7 @@
         <item>Ricochet Segwit</item>
         <item>Whirlpool Segwit pre-mix</item>
         <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
     </string-array>
 
     <string name="mixing"><em>%1$s</em> : %2$s</string>

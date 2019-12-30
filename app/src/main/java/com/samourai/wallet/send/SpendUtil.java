@@ -22,7 +22,7 @@ public class SpendUtil {
             if(UTXOFactory.getInstance().getTotalPostMix() > neededAmount)    {
                 utxos = new ArrayList<UTXO>(UTXOFactory.getInstance().getAllPostMix().values());
             }
-            else if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+            else    {
                 return null;
             }
         }

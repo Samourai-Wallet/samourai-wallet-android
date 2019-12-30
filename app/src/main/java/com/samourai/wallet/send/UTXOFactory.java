@@ -26,6 +26,7 @@ public class UTXOFactory {
     private static HashMap<String,UTXO> p2wpkh_toxic = null;
     private static HashMap<String,UTXO> postMix_toxic = null;
     private static HashMap<String,UTXO> preMix = null;
+    private static HashMap<String,UTXO> badBank = null;
 
     private UTXOFactory() { ; }
 
@@ -43,6 +44,7 @@ public class UTXOFactory {
             p2wpkh_toxic = new HashMap<String,UTXO>();
             postMix_toxic = new HashMap<String,UTXO>();
             preMix = new HashMap<String,UTXO>();
+            badBank = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -64,6 +66,7 @@ public class UTXOFactory {
             p2wpkh_toxic = new HashMap<String,UTXO>();
             postMix_toxic = new HashMap<String,UTXO>();
             preMix = new HashMap<String,UTXO>();
+            badBank = new HashMap<String,UTXO>();
         }
 
         return instance;
@@ -79,6 +82,7 @@ public class UTXOFactory {
         p2wpkh_toxic.clear();
         postMix_toxic.clear();
         preMix.clear();
+        badBank.clear();
     }
 
     public HashMap<String,UTXO> getP2PKHClean() {
@@ -115,6 +119,10 @@ public class UTXOFactory {
 
     public HashMap<String,UTXO> getPreMix() {
         return preMix;
+    }
+
+    public HashMap<String,UTXO> getBadBankMix() {
+        return badBank;
     }
 
     public HashMap<String,UTXO> getAllP2PKH() {
@@ -191,6 +199,10 @@ public class UTXOFactory {
 
     public void addPreMix(String hash, int id, String script, UTXO utxo)  {
         preMix.put(script, utxo);
+    }
+
+    public void addBadBank(String hash, int id, String script, UTXO utxo)  {
+        badBank.put(script, utxo);
     }
 
     public long getTotalP2PKHClean() {
