@@ -16,6 +16,7 @@ public class BlockedUTXO {
     private static ConcurrentHashMap<String,Long> blockedUTXO = null;
     private static CopyOnWriteArrayList<String> notDustedUTXO = null;
     private static ConcurrentHashMap<String,Long> blockedUTXOPostMix = null;
+    private static ConcurrentHashMap<String,Long> blockedUTXOBadBank = null;
     private static CopyOnWriteArrayList<String> notDustedUTXOPostMix = null;
 
     public final static long BLOCKED_UTXO_THRESHOLD = 1001L;
@@ -32,6 +33,7 @@ public class BlockedUTXO {
             blockedUTXO = new ConcurrentHashMap<>();
             notDustedUTXO = new CopyOnWriteArrayList<>();
             blockedUTXOPostMix = new ConcurrentHashMap<>();
+            blockedUTXOBadBank = new ConcurrentHashMap<>();
             notDustedUTXOPostMix = new CopyOnWriteArrayList<>();
         }
 
@@ -110,6 +112,52 @@ public class BlockedUTXO {
         return blockedUTXO;
     }
 
+    public ConcurrentHashMap<String, Long> getBlockedUTXOBadBank() {
+        return blockedUTXOBadBank;
+    }
+
+    public long getBadBank(String hash, int idx)    {
+        return blockedUTXOBadBank.get(hash + "-" + Integer.toString(idx));
+    }
+
+    public void addBadBank(String hash, int idx, long value)    {
+        blockedUTXOBadBank.put(hash + "-" + Integer.toString(idx), value);
+        debug("BlockedUTXO", "add:" + hash + "-" + Integer.toString(idx));
+    }
+
+    public void removeBadBank(String hash, int idx)   {
+        if(blockedUTXOBadBank != null && blockedUTXOBadBank.containsKey(hash + "-" + Integer.toString(idx)))  {
+            blockedUTXOBadBank.remove(hash + "-" + Integer.toString(idx));
+            debug("BlockedUTXO", "remove:" + hash + "-" + Integer.toString(idx));
+        }
+    }
+
+    public void removeBadBank(String id)   {
+        if(blockedUTXOBadBank != null && blockedUTXOBadBank.containsKey(id))  {
+            blockedUTXOBadBank.remove(id);
+            debug("BlockedUTXO", "remove:" + id);
+        }
+    }
+
+    public boolean containsBadBank(String hash, int idx)   {
+        return blockedUTXOBadBank.containsKey(hash + "-" + Integer.toString(idx));
+    }
+
+    public void clearBadBank()    {
+        blockedUTXOBadBank.clear();
+        debug("BlockedUTXO", "clear");
+    }
+
+    public long getTotalValueBlockedBadBank()  {
+        long ret = 0L;
+        for(String id : blockedUTXOBadBank.keySet())   {
+            debug("BlockedUTXO", "bad bank blocked:" + id);
+            ret += blockedUTXOBadBank.get(id);
+        }
+        debug("BlockedUTXO", "bad bank blocked:" + ret);
+        return ret;
+    }
+
     public ConcurrentHashMap<String, Long> getBlockedUTXOPostMix() {
         return blockedUTXOPostMix;
     }
@@ -166,6 +214,7 @@ public class BlockedUTXO {
 
         JSONArray array = new JSONArray();
         JSONArray arrayPostMix = new JSONArray();
+        JSONArray arrayBadBank = new JSONArray();
         try {
             for(String id : blockedUTXO.keySet())   {
                 JSONObject obj = new JSONObject();
@@ -189,6 +238,14 @@ public class BlockedUTXO {
             }
             blockedObj.put("blockedPostMix", arrayPostMix);
 
+            for(String id : blockedUTXOBadBank.keySet())   {
+                JSONObject obj = new JSONObject();
+                obj.put("id", id);
+                obj.put("value", blockedUTXOBadBank.get(id));
+                arrayBadBank.put(obj);
+            }
+            blockedObj.put("blockedBadBank", arrayBadBank);
+
         }
         catch(JSONException je) {
             ;
@@ -201,6 +258,7 @@ public class BlockedUTXO {
 
         blockedUTXO.clear();
         blockedUTXOPostMix.clear();
+        blockedUTXOBadBank.clear();
         notDustedUTXO.clear();
 
         try {
@@ -228,6 +286,15 @@ public class BlockedUTXO {
                 for(int i = 0; i < array.length(); i++)   {
                     JSONObject obj = array.getJSONObject(i);
                     blockedUTXOPostMix.put(obj.getString("id"), obj.getLong("value"));
+                }
+            }
+
+            if(blockedObj.has("blockedBadBank"))    {
+                JSONArray array = blockedObj.getJSONArray("blockedBadBank");
+
+                for(int i = 0; i < array.length(); i++)   {
+                    JSONObject obj = array.getJSONObject(i);
+                    blockedUTXOBadBank.put(obj.getString("id"), obj.getLong("value"));
                 }
             }
 

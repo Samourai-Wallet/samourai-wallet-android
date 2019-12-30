@@ -1,6 +1,6 @@
 package com.samourai.stomp.client;
 
-import ua.naiksoftware.stomp.client.StompMessage;
+import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class AndroidStompMessage implements IStompMessage {
     private Object payload;

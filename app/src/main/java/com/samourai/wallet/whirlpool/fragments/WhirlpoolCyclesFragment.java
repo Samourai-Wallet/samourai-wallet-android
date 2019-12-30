@@ -84,7 +84,7 @@ public class WhirlpoolCyclesFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return 5;
+            return 1;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {

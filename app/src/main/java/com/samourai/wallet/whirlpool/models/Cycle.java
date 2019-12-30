@@ -1,64 +1,34 @@
 package com.samourai.wallet.whirlpool.models;
 
-import android.content.Intent;
+import com.samourai.wallet.api.Tx;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 
-import java.util.Date;
+import org.json.JSONObject;
 
-public class Cycle {
+import java.util.ArrayList;
+import java.util.List;
 
-    public enum CycleStatus {PENDING, SUCCESS, FAILED}
+public class Cycle extends Tx {
 
-    private Float amount, totalFees;
-    private CycleStatus status;
-    private Date startTime;
-    private String txID;
-    private int progress = 0;
 
-    public Float getAmount() {
-        return amount;
+    List<WhirlpoolUtxo> whirlpoolUtxos = new ArrayList<>();
+
+    public Cycle(JSONObject jsonObj) {
+        super(jsonObj);
     }
 
-    public void setAmount(Float amount) {
-        this.amount = amount;
+    public void addWhirlpoolUTXO(WhirlpoolUtxo whirlpoolUtxo) {
+        if (!this.whirlpoolUtxos.contains(whirlpoolUtxo))
+            this.whirlpoolUtxos.add(whirlpoolUtxo);
     }
 
-    public Float getTotalFees() {
-        return totalFees;
-    }
-
-    public void setTotalFees(Float totalFees) {
-        this.totalFees = totalFees;
-    }
-
-    public CycleStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CycleStatus status) {
-        this.status = status;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getTxID() {
-        return txID;
-    }
-
-    public void setTxID(String txID) {
-        this.txID = txID;
-    }
-
-    public int getProgress() {
-        return progress;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
+    public WhirlpoolUtxo getCurrentRunningMix() {
+        for (WhirlpoolUtxo utxo :
+                whirlpoolUtxos) {
+            if (utxo.getUtxoState() != null && utxo.getUtxoState().getMixProgress() != null ) {
+                return utxo;
+            }
+        }
+        return null;
     }
 }

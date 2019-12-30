@@ -724,7 +724,7 @@
     <string name="pool_fee">POOL ТАКСА</string>
     <string name="total_fees">ОБЩО ТАКСИ</string>
     <string name="miner_fee">ТАКСА КЪМ КОПАЧИТЕ</string>
-    <string name="total_being_cycled">Общо се миксират:</string>
+    <string name="total_whirlpool_balance">Общо се миксират:</string>
     <string name="review_cycle_details">ПРЕГЛЕД НА ДЕТАЙЛИ ЗА ЦИКЪЛА</string>
     <string name="cycled_transactions">Миксирани транзакции</string>
     <string name="initial_transaction">Начална транзакция</string>

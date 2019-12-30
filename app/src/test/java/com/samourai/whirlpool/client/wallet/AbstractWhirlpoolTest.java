@@ -1,17 +1,23 @@
-package whirlpool;
+package com.samourai.whirlpool.client.wallet;
 
 import android.content.Context;
 import android.test.mock.MockContext;
 
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.stomp.client.AndroidStompClient;
+import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.backend.MinerFeeTarget;
+import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.client.indexHandler.MemoryIndexHandler;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.hd.HD_WalletFactoryGeneric;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 
 import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
@@ -34,9 +40,30 @@ public abstract class AbstractWhirlpoolTest {
     protected Context context = new MockContext();
     protected BIP47Util bip47Util = BIP47Util.getInstance(context);
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
+    protected HD_WalletFactoryGeneric hdWalletFactoryGeneric;
     protected AndroidHttpClient whirlpoolHttpClient = new AndroidHttpClient(WebUtil.getInstance(null));
-    protected AndroidStompClient stompClient = new AndroidStompClient();
+    protected AndroidStompClientService stompClientService = new AndroidStompClientService();
     protected NetworkParameters networkParameters;
+    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService(){
+        // mock fee for deterministic tests
+        @Override
+        protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config) {
+            return new AndroidWhirlpoolDataService(config, this){
+                @Override
+                public int getFeeSatPerByte(MinerFeeTarget feeTarget) {
+                    switch(feeTarget) {
+                        case BLOCKS_2: return 1;
+                        case BLOCKS_4: return 4;
+                        case BLOCKS_6: return 6;
+                        case BLOCKS_12: return 12;
+                        case BLOCKS_24: return 24;
+                        default: throw new RuntimeException("feeTarket not mocked");
+                    }
+                }
+            };
+        }
+    };
+    protected WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
 
     public void setUp(NetworkParameters networkParameters) throws Exception {
         this.networkParameters = networkParameters;
@@ -54,6 +81,7 @@ public abstract class AbstractWhirlpoolTest {
         MnemonicCode mc = new MnemonicCode(wis, HD_WalletFactory.BIP39_ENGLISH_SHA256);
         hdWalletFactory.__setMnemonicCode(mc);
         wis.close();
+        hdWalletFactoryGeneric = new HD_WalletFactoryGeneric(mc);
 
         // init Samourai Wallet
         SamouraiWallet.getInstance().setCurrentNetworkParams(networkParameters);
@@ -66,9 +94,32 @@ public abstract class AbstractWhirlpoolTest {
         return ecKey;
     }
 
+    protected HD_Wallet computeBip84w(String seedWords, String passphrase) throws Exception {
+        byte[] seed = hdWalletFactoryGeneric.computeSeedFromWords(seedWords);
+        HD_Wallet bip84w = hdWalletFactoryGeneric.getBIP84(seed, passphrase, networkParameters);
+        return bip84w;
+    }
+
     protected Bip84Wallet computeBip84wallet(String seedWords, String passphrase) throws Exception {
-        HD_Wallet bip44w = hdWalletFactory.restoreWallet(seedWords, passphrase, 1);
-        Bip84Wallet bip84Wallet = new Bip84Wallet(bip44w, 0, new MemoryIndexHandler(), new MemoryIndexHandler());
+        HD_Wallet bip84w = computeBip84w(seedWords, passphrase);
+        Bip84Wallet bip84Wallet = new Bip84Wallet(bip84w, 0, new MemoryIndexHandler(), new MemoryIndexHandler());
         return bip84Wallet;
+    }
+
+    protected Context getContext()  {
+        return new MockContext();
+    }
+
+    protected UnspentResponse.UnspentOutput newUnspentOutput(String hash, int index, long value) {
+        UnspentResponse.UnspentOutput spendFrom = new UnspentResponse.UnspentOutput();
+        spendFrom.tx_hash = hash;
+        spendFrom.tx_output_n = index;
+        spendFrom.value = value;
+        spendFrom.script = "foo";
+        spendFrom.addr = "foo";
+        spendFrom.confirmations = 1234;
+        spendFrom.xpub = new UnspentResponse.UnspentOutput.Xpub();
+        spendFrom.xpub.path = "foo";
+        return spendFrom;
     }
 }

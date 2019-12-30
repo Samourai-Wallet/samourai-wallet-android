@@ -51,6 +51,17 @@
         <item name="android:statusBarColor">@color/grey_accent</item>
         <item name="android:colorControlActivated">@color/blue</item>
         <item name="android:navigationBarColor">@color/windowDark</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/actionModeStyle</item>
+    </style>
+    <style name="actionModeStyle" >
+        <item name="background">@color/grey_accent</item>
+        <item name="titleTextStyle">@style/actionModeTextStyle</item>
+    </style>
+    <style name="actionModeTextStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="whirlpoolTheme" parent="Theme.AppCompat.NoActionBar">
@@ -105,4 +116,9 @@
 
     <style name="stowaway_dialog" parent="Theme.AppCompat.Light.Dialog.Alert" />
 
+    <style name="bottom_sheet_note" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

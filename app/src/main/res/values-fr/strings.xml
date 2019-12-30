@@ -727,7 +727,7 @@
     <string name="pool_fee">FRAIS POOL</string>
     <string name="total_fees">TOTAL FRAIS</string>
     <string name="miner_fee">FRAIS MINEUR</string>
-    <string name="total_being_cycled">Total post-cycle(s):</string>
+    <string name="total_whirlpool_balance">Total post-cycle(s):</string>
     <string name="review_cycle_details">VÉRIFIER DÉTAILS CYCLE</string>
     <string name="cycled_transactions">Transactions post-cycle(s)</string>
     <string name="initial_transaction">Transaction Initiale</string>

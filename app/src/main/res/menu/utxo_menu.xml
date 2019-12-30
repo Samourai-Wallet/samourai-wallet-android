@@ -1,16 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
 
-    <item android:id="@+id/action_utxo_amounts"
+    <item
+        android:id="@+id/action_utxo_amounts"
+        android:orderInCategory="100"
         android:title="@string/action_utxo_amounts"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
-     <item android:id="@+id/action_refresh"
-        android:title="@string/refresh"
+    <item
+        android:id="@+id/action_utxo_filter"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        />
+        android:icon="@drawable/ic_filter_list"
+        app:showAsAction="always"
+        android:title="" />
+
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="@string/refresh"
+        app:showAsAction="never" />
 
 </menu>
