@@ -1178,9 +1178,13 @@ public class SendActivity extends AppCompatActivity {
             long valueP2SH_P2WPKH = UTXOFactory.getInstance().getTotalP2SH_P2WPKH();
             long valueP2PKH = UTXOFactory.getInstance().getTotalP2PKH();
             if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+
                 valueP2WPKH = UTXOFactory.getInstance().getTotalPostMix();
                 valueP2SH_P2WPKH = 0L;
                 valueP2PKH = 0L;
+
+                utxosP2SH_P2WPKH.clear();
+                utxosP2PKH.clear();
             }
 
             Log.d("SendActivity", "value P2WPKH:" + valueP2WPKH);
@@ -1195,70 +1199,85 @@ public class SendActivity extends AppCompatActivity {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            } else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
+            }
+            else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            }
+            else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                 Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
-            } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            }
+            else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                 Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
-            } else if (valueP2WPKH > (neededAmount * 2)) {
+            }
+            else if (valueP2WPKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            } else if (valueP2SH_P2WPKH > (neededAmount * 2)) {
+            }
+            else if (valueP2SH_P2WPKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
-            } else if (valueP2PKH > (neededAmount * 2)) {
+            }
+            else if (valueP2PKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
-            } else {
+            }
+            else {
                 ;
             }
 
-            if (_utxos1 == null) {
+            if (_utxos1 == null || _utxos1.size() == 0) {
                 if (valueP2SH_P2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 1 P2SH_P2WPKH");
                     _utxos1 = utxosP2SH_P2WPKH;
                     selectedP2SH_P2WPKH = true;
-                } else if (valueP2WPKH > neededAmount) {
+                }
+                else if (valueP2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 1 P2WPKH");
                     _utxos1 = utxosP2WPKH;
                     selectedP2WPKH = true;
-                } else if (valueP2PKH > neededAmount) {
+                }
+                else if (valueP2PKH > neededAmount) {
                     Log.d("SendActivity", "set 1 P2PKH");
                     _utxos1 = utxosP2PKH;
                     selectedP2PKH = true;
-                } else {
+                }
+                else {
                     ;
                 }
 
             }
 
-            if (_utxos1 != null && _utxos2 == null) {
-
+            if (_utxos1 != null || _utxos1.size() > 0) {
                 if (!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 2 P2SH_P2WPKH");
                     _utxos2 = utxosP2SH_P2WPKH;
-                } else if (!selectedP2WPKH && valueP2WPKH > neededAmount) {
+                    selectedP2SH_P2WPKH = true;
+                }
+                if (!selectedP2SH_P2WPKH && !selectedP2WPKH && valueP2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 2 P2WPKH");
                     _utxos2 = utxosP2WPKH;
-                } else if (!selectedP2PKH && valueP2PKH > neededAmount) {
+                    selectedP2WPKH = true;
+                }
+                if (!selectedP2SH_P2WPKH && !selectedP2WPKH && !selectedP2PKH && valueP2PKH > neededAmount) {
                     Log.d("SendActivity", "set 2 P2PKH");
                     _utxos2 = utxosP2PKH;
-                } else {
+                    selectedP2PKH = true;
+                }
+                else {
                     ;
                 }
             }
 
-            if (_utxos1 == null && _utxos2 == null) {
+            if ((_utxos1 == null || _utxos1.size() == 0) && (_utxos2 == null || _utxos2.size() == 0)) {
                 // can't do boltzmann, revert to SPEND_SIMPLE
                 canDoBoltzmann = false;
                 SPEND_TYPE = SPEND_SIMPLE;
@@ -1267,7 +1286,7 @@ public class SendActivity extends AppCompatActivity {
                 Log.d("SendActivity", "boltzmann spend");
 
                 Collections.shuffle(_utxos1);
-                if (_utxos2 != null) {
+                if (_utxos2 != null && _utxos2.size() > 0) {
                     Collections.shuffle(_utxos2);
                 }
 
