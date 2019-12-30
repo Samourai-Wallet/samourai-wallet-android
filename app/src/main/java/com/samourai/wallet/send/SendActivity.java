@@ -696,7 +696,7 @@ public class SendActivity extends AppCompatActivity {
 
     private void setBalance() {
 
-        if (preselectedUTXOs != null) {
+        if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
             long amount = 0;
             for (UTXOCoin utxo : preselectedUTXOs) {
                 amount += utxo.amount;
@@ -1061,7 +1061,7 @@ public class SendActivity extends AppCompatActivity {
 
         // get all UTXO
         List<UTXO> utxos = new ArrayList<>();
-        if (preselectedUTXOs != null && preselectedUTXOs.size() != 0) {
+        if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
 //            List<UTXO> utxos = preselectedUTXOs;
             // sort in descending order by value
             for (UTXOCoin utxoCoin : preselectedUTXOs) {
