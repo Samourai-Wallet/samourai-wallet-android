@@ -425,9 +425,7 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit1(boolean isDial, final String strUri, final String strPCode) {
 
-        LogUtil.info("DSS", "doAppInit1: ");
         if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
-            LogUtil.info("DSS", "ddddddd ");
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
                 doSelectNet();
@@ -436,14 +434,11 @@ public class MainActivity2 extends Activity {
             }
         } else if (isDial && AccessFactory.getInstance(MainActivity2.this).validateHash(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""), AccessFactory.getInstance(MainActivity2.this).getGUID(), new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations)) {
             TimeOutUtil.getInstance().updatePin();
-            LogUtil.info("DSS", "ddddddddsdsdp;lfvpdvp[dpv[p ");
             launchFromDialer(AccessFactory.getInstance(MainActivity2.this).getPIN());
         } else if (TimeOutUtil.getInstance().isTimedOut()) {
-            LogUtil.info("DSS", "PLDOFKLVMNV M ");
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             validatePIN(strUri == null ? null : strUri);
         } else if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
-            LogUtil.info("DSS", "doAppInit123333 ");
             TimeOutUtil.getInstance().updatePin();
 
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
