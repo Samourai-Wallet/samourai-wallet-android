@@ -335,7 +335,7 @@ public class AddressFactory {
     }
 
     public void setHighestPostChangeIdx(int idx) {
-        highestBadBankChangeIdx = idx;
+        highestPostChangeIdx = idx;
     }
 
     public int getHighestBadBankReceiveIdx() {
