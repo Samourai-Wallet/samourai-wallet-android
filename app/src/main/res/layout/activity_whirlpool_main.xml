@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/window"
@@ -14,9 +12,11 @@
         android:layout_height="wrap_content"
         android:background="@color/whirlpoolBlue"
         android:elevation="0dp"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:layout_scrollFlags="enterAlways">
 
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_whirlpool_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
@@ -32,7 +32,7 @@
 
 
                 <TextView
-                    android:id="@+id/whirlpool_total_amount_spendable"
+                    android:id="@+id/whirlpool_balance_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -47,20 +47,20 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/paynym_payment_code"
+                    android:id="@+id/toolbar_subtext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
-                    android:text="@string/total_being_cycled"
+                    android:text="@string/total_whirlpool_balance"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/whirlpool_total_amount_spendable" />
+                    app:layout_constraintTop_toBottomOf="@+id/whirlpool_balance_textview" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar
@@ -72,101 +72,75 @@
 
             </android.support.v7.widget.Toolbar>
 
+
         </android.support.design.widget.CollapsingToolbarLayout>
 
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/whirlpool_home_tabs"
+        <ProgressBar
+            android:id="@+id/whirlpool_main_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            app:tabIndicatorColor="@color/white"
             android:layout_height="wrap_content"
-            app:tabIndicatorHeight="2dp"
-            app:layout_collapseMode="parallax"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/paynym_payment_code"
-            app:tabGravity="fill"
-            app:tabMode="fixed" />
+            android:layout_marginBottom="-8dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:visibility="invisible" />
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/whirlpool_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="12dp"
-        android:clickable="true"
-        android:src="@drawable/ic_whirlpool"
-        android:tint="@color/white"
-        app:backgroundTint="@color/accent" />
 
-    <LinearLayout
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/tx_swipe_container_whirlpool"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/payment_code_sync_layout"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_whirlpool_dashboard"
             android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+    <com.github.clans.fab.FloatingActionMenu
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        fab:layout_anchor="@+id/rv_whirlpool_dashboard"
+        fab:layout_anchorGravity="right|bottom"
+        fab:menu_animationDelayPerItem="32"
+        fab:menu_shadowColor="#444"
+        fab:menu_colorNormal="@color/accent"
+        fab:menu_colorPressed="#0AA1E9"
+        fab:menu_colorRipple="#A8A8A8"
+        >
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/whirlpool_fab"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|center_vertical"
-            android:background="#32363C"
-            android:visibility="gone"
-            android:orientation="vertical">
+            android:src="@drawable/ic_whirlpool"
+            fab:fab_colorNormal="#e91e63"
+            fab:fab_colorPressed="#c2185b"
+            fab:fab_label="New pool"
+            fab:fab_size="mini" />
 
-            <TextView
-                android:id="@+id/payment_code_sync_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
-                app:layout_constraintBottom_toTopOf="@+id/progressbar_payment_code_sync"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Sycing payment code 2/15" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/spend_from_postmix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_samourai_send_24dp"
+            app:fab_colorNormal="#00bfa5"
+            app:fab_colorPressed="#009688"
+            fab:fab_label="Spend UTXOs"
+            fab:fab_size="mini" />
 
-            <ProgressBar
-                android:id="@+id/progressbar_payment_code_sync"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_weight="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+    </com.github.clans.fab.FloatingActionMenu>
 
-        <FrameLayout
-            android:id="@+id/frameLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!--<android.support.v4.widget.SwipeRefreshLayout-->
-                <!--android:id="@+id/swipeToRefreshPaynym"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content">-->
-
-                <com.samourai.wallet.widgets.ViewPager
-                    android:id="@+id/whirlpool_viewpager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
-        </FrameLayout>
-    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

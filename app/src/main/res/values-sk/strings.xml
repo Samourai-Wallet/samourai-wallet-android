@@ -680,7 +680,7 @@
     <string name="pool_fee">POOL POPLATOK</string>
     <string name="total_fees">CELKOVÉ POPLATKY</string>
     <string name="miner_fee">POPLATOK ZA ŤAŽENIE</string>
-    <string name="total_being_cycled">Celkový počet cyklov:</string>
+    <string name="total_whirlpool_balance">Celkový počet cyklov:</string>
     <string name="review_cycle_details">PREHĽAD DETAILOV CYKLU</string>
     <string name="cycled_transactions">Cyklické transakcie</string>
     <string name="initial_transaction">ˇUvodná Transakcia</string>

@@ -14,6 +14,7 @@
     <string name="action_bip47">PayNyms</string>
     <string name="action_unarchive">Activate all archived payment codes</string>
     <string name="action_sync_all">Sync all payment codes</string>
+    <string name="action_whirlpool">Whirlpool</string>
 
     <string name="about_us">About Samourai Wallet</string>
 
@@ -39,6 +40,8 @@
     <string name="options_xpub84_premix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool pre-mix.</string>
     <string name="options_xpub84_postmix">Show Whirlpool post-mix ZPUB</string>
     <string name="options_xpub84_postmix2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool post-mix.</string>
+    <string name="options_xpub84_badbank">Show Whirlpool bad bank ZPUB</string>
+    <string name="options_xpub84_badbank2">Show extended public key for BIP84 Segwit account (Bech32) Whirlpool bad bank.</string>
     <string name="options_wipe">Secure erase wallet</string>
     <string name="options_wipe2">Securely erase this wallet from the device.</string>
     <string name="options_stealth_display">Stealth launcher</string>
@@ -563,38 +566,26 @@
 
     <string name="prune_backup">Prune payload and backup files?</string>
 
-    <string-array name="address_types">
-        <item>Segwit compatibility (P2SH)</item>
-        <item>Segwit native (bech32)</item>
-        <item>Legacy (P2PKH)</item>
-    </string-array>
-
     <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+
     <string name="broadcast_off">Your Samourai Wallet broadcasting is switched off.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
     <string name="enter_paynym">PayNym</string>
     <string name="enter_index">Index</string>
-
     <string name="receive_addresses">Receive addresses</string>
+
     <string name="send_addresses">Send addresses</string>
     <string name="display_receive_redeem">Receive redeem script</string>
     <string name="display_receive_privkey">Receive private key</string>
     <string name="invalid_index">Invalid index</string>
     <string name="type_address">Type of address</string>
 
-    <string-array name="account_types">
-        <item>BIP49 Segwit</item>
-        <item>BIP84 Segwit</item>
-        <item>BIP44 P2PKH</item>
-        <item>Ricochet Segwit</item>
-        <item>Whirlpool Segwit pre-mix</item>
-        <item>Whirlpool Segwit post-mix</item>
-    </string-array>
-
     <string name="chain_id">Address chain</string>
+
     <string name="receive_chain">Receive address</string>
+
     <string name="change_chain">Change address</string>
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
     <string name="encrypted_backup_detected">Encrypted backup detected</string>
@@ -602,9 +593,9 @@
     <string name="request_amount">Request Amount</string>
     <string name="address_type">Address Type</string>
     <string name="path">Path</string>
-
     <string name="title_activity_send_new_ui">SendNewUIActivity</string>
     <string name="ricochet_hops_msg">Additional hops between your wallet and the final destination for increased fungibility</string>
+
     <string name="review_transaction">REVIEW TRANSACTION</string>
     <string name="stonewall_increases_deniability">STONEWALL increases deniability and reduces linkability of this transaction.</string>
     <string name="title_activity_empty_whirl_pool">" "</string>
@@ -645,9 +636,9 @@
     <string name="confirmation">Confirmation</string>
     <string name="total_available_amount">Total available amount</string>
     <string name="you_do_not_yet_have_any_paynym_contacts">You do not yet have any PayNym contacts</string>
-
     <string name="experimental">Experimental</string>
     <string name="cahoots">#Cahoots</string>
+
     <string name="options_cahoots2">Make every spend a CoinJoin.</string>
     <string name="PSBT">PSBT</string>
     <string name="options_psbt2">Partially Signed Bitcoin Transaction.</string>
@@ -661,15 +652,15 @@
     <string name="urgent">Urgent</string>
     <string name="normal">Normal</string>
     <string name="low">Low</string>
-
     <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
     <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>
+
     <string name="tag_utxo">Label UTXO</string>
     <string name="boost_transaction_fee">Boost transaction fee</string>
     <string name="refund">Refund</string>
-
     <string name="not_cahoots">Invalid #Cahoots</string>
     <string name="not_valid_json">JSON parsing error</string>
+
     <string name="unrecognized_cahoots">Unrecognized #Cahoots</string>
     <string name="cannot_compose_cahoots">Cannot compose #Cahoots</string>
     <string name="start_stowaway">Begin Stowaway as spender</string>
@@ -697,16 +688,16 @@
     <string name="follow">Follow</string>
     <string name="wallet_locked">Wallet Locked</string>
     <string name="address">Address</string>
-
     <string name="is_offline">Samourai is offline</string>
     <string name="history_will_be_updated">Balance and transaction history will not be updated until a working data connection is established</string>
+
     <string name="you_received_s">You received</string>
     <string name="paynym_follow_message">This fee covers the cost of creating a special  type of transaction on the blockchain.  This keeps PayNym decentralized</string>
     <string name="paynym_follow_fee_message">A one time connection fee of   will be charged to follow contact</string>
     <string name="initializing_tor">initializing Tor...</string>
-
     <string name="cannot_pair_whirlpool_gui">Cannot prepare pair to Whirlpool GUI.</string>
     <string name="message_copied">message copied</string>
+
     <string name="scan_code">Scan Code</string>
     <string name="follows_you">Follows you</string>
     <string name="edit_paynym">Edit paynym</string>
@@ -717,21 +708,21 @@
     <string name="pool_fee">POOL FEE</string>
     <string name="total_fees">TOTAL FEES</string>
     <string name="miner_fee">MINER FEE</string>
-    <string name="total_being_cycled">Total being cycled:</string>
+    <string name="total_whirlpool_balance">Total Whirlpool Balance</string>
     <string name="review_cycle_details">REVIEW CYCLE DETAILS</string>
     <string name="cycled_transactions">Cycled Transactions</string>
     <string name="initial_transaction">Initial Transaction</string>
     <string name="progress">Progress</string>
     <string name="waiting_for_blockchain_confirmation">Waiting for blockchain confirmation</string>
-
     <string name="create_password">Create password</string>
     <string name="confirm_password">Confirm password</string>
+
     <string name="pairing_password">Define pairing password: (6-255 characters)</string>
     <string name="password_error">Error creating password</string>
     <string name="password_invalid">Invalid password</string>
-
     <string name="review_whirlpool">Review Whirlpool Details</string>
     <string name="total_selected">Total selected</string>
+
     <string name="cycle">Cycle</string>
     <string name="postmix_without_boltzmann">Please note that spending from your post-mix account without using STONEWALL will result in a loss of the privacy gained through Whirlpool.</string>
     <string name="estimated_entropy">Estimated Entropy</string>
@@ -739,9 +730,9 @@
     <string name="review_tx_before_braodcast">Review the transaction before broadcasting</string>
     <string name="select_participant">Select participant</string>
     <string name="select_cahoots_type">Select cahoots type</string>
-
     <string name="cannot_disable_tor_dojo">Tor cannot be stopped since wallet is connected to a Samourai Dojo node.</string>
     <string name="temporary_dojo_disable">Uninstall Samourai Wallet to unpair from your Dojo node. \'DISABLE\' will be fully activated in a later update.</string>
+
     <string name="renew">RENEW</string>
     <string name="continue_exchanging_qr_codes">Continue exchanging QR codes\n until the transaction is broadcast!</string>
     <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirm that you wish to broadcast this transaction.</string>
@@ -758,6 +749,38 @@
     <string name="unspent_outputs_post_mix">Unspent Outputs - Post mix</string>
     <string name="paste_cahoots_payload">Paste cahoots payload</string>
     <string name="clipboard_empty">Clipboard empty</string>
+    <string name="premix_balance">Premix balance</string>
+    <string name="post_mix_balance">Post mix balance</string>
+    <string name="spendable">Spendable</string>
+    <string name="reveal_the_redeem_script_for_this_address">Reveal the redeem script for this address</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="active">Active</string>
+    <string name="change_from_postmix">Change from postmix spend</string>
+    <string name="selection_contains_blocked_utxo">Your selection contains blocked utxos. please remove and try again.</string>
+    <string name="only_single_utxo_may_selected">Only a single utxo may selected for direct spend from post-mix.</string>
+    <string name="only_a_single_change_utxo_may">Only a single change utxo may selected for direct Whirlpooling from post-mix.</string>
+    <string name="only_change_utxos_allowed">Only change utxo\'s allowed</string>
+    <string name="utxo_is_marked_as_blocked">utxo is marked as blocked</string>
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
 
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
+    </string-array>
+
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
+
+    <string name="block_tx0_change">The change output from this tx0 will be tagged. Block it to make it unspendable? If so, the amount will not be reflected in the total balance but will be visible within the wallet by consulting the list of unspents.</string>
+    <string name="total_pre_mix_balance">Total Pre-mix Balance</string>
+    <string name="total_post_mix_balance">Total Post-mix Balance</string>
 
 </resources>

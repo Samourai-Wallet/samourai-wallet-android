@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/utxo_details_add_to_whirlpool"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_whirlpool"
+        app:showAsAction="always"
+        android:title="" />
+
+    <item android:id="@+id/utxo_details_view_in_explorer"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_explore_black_24dp"
+        app:showAsAction="always"
+        android:title="" />
+
+    <item android:id="@+id/utxo_details_menu_action_more_options"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_tune"
+        app:showAsAction="always"
+        android:title="" />
+
+
+</menu>

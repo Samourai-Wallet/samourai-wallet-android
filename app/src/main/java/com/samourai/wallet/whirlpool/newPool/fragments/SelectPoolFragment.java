@@ -25,8 +25,15 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
 import com.samourai.wallet.whirlpool.models.Pool;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import java.util.ArrayList;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class SelectPoolFragment extends Fragment {
@@ -41,6 +48,7 @@ public class SelectPoolFragment extends Fragment {
     private PoolCyclePriority poolCyclePriority = PoolCyclePriority.NORMAL;
     private OnPoolSelectionComplete onPoolSelectionComplete;
     private ArrayList<Long> fees = new ArrayList<>();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public SelectPoolFragment() {
     }
@@ -62,9 +70,6 @@ public class SelectPoolFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         poolsAdapter = new PoolsAdapter(getContext(), pools);
         recyclerView.setAdapter(poolsAdapter);
-
-        loadPools();
-
         poolFee = view.findViewById(R.id.pool_fee_txt);
         feeLowBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.LOW));
         feeHighBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.HIGH));
@@ -96,25 +101,31 @@ public class SelectPoolFragment extends Fragment {
         this.fees = fees;
     }
 
-    private void loadPools() {
-        Pool pool1 = new Pool();
-        pool1.setPoolAmount(1000000);
-        pool1.setMinerFee(250000);
-        pool1.setTotalFee(348450);
-        pools.add(pool1);
+    private void loadPools(Long tx0, Long aLong) {
 
-        Pool pool2 = new Pool();
-        pool2.setPoolAmount(5000000);
-        pool2.setMinerFee(250000);
-        pool2.setTotalFee(348450);
-        pools.add(pool2);
+        pools.clear();
+        Disposable disposable = Single.fromCallable(() -> AndroidWhirlpoolWalletService.getInstance().getWallet().getPools())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((whirlpoolPools) -> {
 
-        Pool pool3 = new Pool();
-        pool3.setPoolAmount(10000000);
-        pool3.setMinerFee(250000);
-        pool3.setTotalFee(348450);
-        pools.add(pool3);
-        poolsAdapter.notifyDataSetChanged();
+                    for (com.samourai.whirlpool.client.whirlpool.beans.Pool whirlpoolPool : whirlpoolPools) {
+                        Pool pool = new Pool();
+                        pool.setPoolAmount(whirlpoolPool.getDenomination());
+                        pool.setMinerFee(aLong);
+                        pool.setPoolFee(whirlpoolPool.getFeeValue());
+                        pools.add(pool);
+                        if (pool.getPoolAmount() + pool.getPoolFee() + pool.getMinerFee() > tx0) {
+                            pool.setDisabled(true);
+                        } else {
+                            pool.setDisabled(false);
+                        }
+                    }
+                    poolsAdapter.notifyDataSetChanged();
+                }, throwable -> {
+                    throwable.printStackTrace();
+                });
+        compositeDisposable.add(disposable);
     }
 
 
@@ -124,6 +135,11 @@ public class SelectPoolFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_choose_pools, container, false);
     }
 
+    @Override
+    public void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
+    }
 
     private void setPoolCyclePriority(PoolCyclePriority poolCyclePriority) {
 
@@ -164,6 +180,10 @@ public class SelectPoolFragment extends Fragment {
     public void onDetach() {
         this.onPoolSelectionComplete = null;
         super.onDetach();
+    }
+
+    public void setTX0(long cycleTotalAmount, Long tx0) {
+        loadPools(cycleTotalAmount,tx0);
     }
 
     public interface OnPoolSelectionComplete {

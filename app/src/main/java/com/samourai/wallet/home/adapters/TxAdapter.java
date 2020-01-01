@@ -2,11 +2,11 @@ package com.samourai.wallet.home.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +66,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     }
 
-    public void setClickListner(OnClickListener listener) {
+    public void setClickListener(OnClickListener listener) {
         this.listener = listener;
     }
 
@@ -175,20 +175,22 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Tx> list) -> {
+                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TxDiffUtil(this.txes, list));
                     this.txes = list;
+                    diffResult.dispatchUpdatesTo(this);
                     this.notifyDataSetChanged();
                 });
         disposables.add(disposable);
 
     }
 
-    public class TxViewHolder extends RecyclerView.ViewHolder {
+    class TxViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvSection, tvDateView, tvAmount, tvPendingStatus, tvPaynymId;
+        private TextView tvSection, tvDateView, tvAmount, tvPaynymId;
         private ImageView tvDirection;
 
 
-        public TxViewHolder(View itemView, int viewType) {
+        TxViewHolder(View itemView, int viewType) {
             super(itemView);
             if (viewType == VIEW_SECTION) {
                 tvSection = itemView.findViewById(R.id.section_title);
@@ -275,7 +277,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                         }
                     } else if (fmt.format(key).equals(fmt.format(date))) {
 
-                        if(tx.getConfirmations() >= MAX_CONFIRM_COUNT){
+                        if (tx.getConfirmations() >= MAX_CONFIRM_COUNT) {
                             sectioned.add(tx);
                         }
 

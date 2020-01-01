@@ -18,10 +18,10 @@
         android:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_whirlpool" />
+        app:srcCompat="@drawable/incoming_tx_green" />
 
     <TextView
-        android:id="@+id/textView24"
+        android:id="@+id/whirlpool_cycle_item_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -34,73 +34,43 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView47"
+        android:id="@+id/whirlpool_cycle_item_mixing_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="42dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="0.55 BTC"
+        android:text="0.5 BTC"
         android:textColor="@color/green_ui_2"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView24"
+        app:layout_constraintBottom_toTopOf="@+id/whirlpool_cycle_item_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageView17"
         app:layout_constraintTop_toTopOf="@+id/imageView17" />
 
     <ImageView
-        android:id="@+id/imageView18"
+        android:id="@+id/whirlpool_cycle_item_mixing_status_icon"
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:tint="@color/warning_yellow"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintStart_toStartOf="@+id/textView47"
-        app:layout_constraintTop_toTopOf="@+id/textView24"
+        app:layout_constraintBottom_toBottomOf="@+id/whirlpool_cycle_item_time"
+        app:layout_constraintStart_toStartOf="@+id/whirlpool_cycle_item_mixing_amount"
+        app:layout_constraintTop_toTopOf="@+id/whirlpool_cycle_item_time"
         app:srcCompat="@drawable/circle_shape" />
 
     <TextView
-        android:id="@+id/textView49"
+        android:id="@+id/whirlpool_cycle_item_mixing_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Cycle Tx 2/11       "
+        android:text="Mixing in progress"
         android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView18"
-        app:layout_constraintStart_toEndOf="@+id/imageView18"
-        app:layout_constraintTop_toTopOf="@+id/imageView18" />
+        app:layout_constraintBottom_toBottomOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        app:layout_constraintStart_toEndOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        app:layout_constraintTop_toTopOf="@+id/whirlpool_cycle_item_mixing_status_icon" />
 
-    <ImageView
-        android:id="@+id/imageView19"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:tint="@color/txt_grey"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintStart_toEndOf="@+id/textView49"
-        app:layout_constraintTop_toTopOf="@+id/textView24"
-        app:srcCompat="@drawable/ic_pool" />
-
-    <TextView
-        android:id="@+id/textView52"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="0.05 Pool"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView19"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView19"
-        app:layout_constraintTop_toTopOf="@+id/imageView19" />
-
-    <android.support.constraint.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="textView49,imageView18" />
 
     <ImageView
         android:id="@+id/imageView20"
