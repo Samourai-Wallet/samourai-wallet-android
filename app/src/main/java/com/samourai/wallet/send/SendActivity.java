@@ -1403,7 +1403,6 @@ public class SendActivity extends AppCompatActivity {
                 }
             }
 
-            change = outputAmount - amount;
             fee = BigInteger.valueOf(inputAmount - outputAmount);
 
         } else {
