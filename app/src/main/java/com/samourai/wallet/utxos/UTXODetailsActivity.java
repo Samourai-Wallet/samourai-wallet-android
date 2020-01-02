@@ -78,6 +78,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.toolbar_utxo_activity));
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         addressTextView = findViewById(R.id.utxo_details_address);
         amountTextView = findViewById(R.id.utxo_details_amount);
@@ -316,10 +317,14 @@ public class UTXODetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
+
         if (item.getItemId() == R.id.utxo_details_add_to_whirlpool) {
 
             sendUTXOtoWhirlpool();
