@@ -685,6 +685,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                 if (id != null) {
                     Intent intent = new Intent(UTXOSActivity.this, SendActivity.class);
                     intent.putExtra("preselected", id);
+                    intent.putExtra("_account", account);
                     startActivity(intent);
                 }
                 break;
