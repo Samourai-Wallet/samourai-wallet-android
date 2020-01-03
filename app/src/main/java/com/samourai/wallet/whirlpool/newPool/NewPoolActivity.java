@@ -115,6 +115,9 @@ public class NewPoolActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
             preselectId = getIntent().getExtras().getString("preselected");
         }
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            account = getIntent().getExtras().getInt("_account");
+        }
 
         chooseUTXOsFragment = ChooseUTXOsFragment.newInstance(preselectId);
         selectPoolFragment = new SelectPoolFragment();
@@ -136,7 +139,7 @@ public class NewPoolActivity extends AppCompatActivity {
         enableConfirmButton(false);
 
         //Disable selection from fragment since post mix utxo's are populated by the activity
-        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix())
+        if (account != WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix())
             chooseUTXOsFragment.setOnUTXOSelectionListener(this::onUTXOSelected);
 
         selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
@@ -198,10 +201,9 @@ public class NewPoolActivity extends AppCompatActivity {
         setUpViewPager();
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
-            account = getIntent().getExtras().getInt("_account");
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 selectedCoins.clear();
-                List<UTXOCoin > coinList = PreSelectUtil.getInstance().getPreSelected(preselectId);
+                List<UTXOCoin> coinList = PreSelectUtil.getInstance().getPreSelected(preselectId);
                 try {
                     onUTXOSelected(coinList);
                     newPoolViewPager.setCurrentItem(1);
@@ -428,8 +430,9 @@ public class NewPoolActivity extends AppCompatActivity {
                 new android.support.v7.app.AlertDialog
                         .Builder(this)
                         .setMessage("Are you sure want to cancel?")
-                        .setPositiveButton(R.string.yes,(dialogInterface, i) -> super.onBackPressed())
-                        .setNegativeButton(R.string.no,(dialogInterface, i) -> {})
+                        .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())
+                        .setNegativeButton(R.string.no, (dialogInterface, i) -> {
+                        })
                         .create().show();
                 break;
             }
@@ -438,8 +441,9 @@ public class NewPoolActivity extends AppCompatActivity {
                     new android.support.v7.app.AlertDialog
                             .Builder(this)
                             .setMessage("Are you sure want to cancel?")
-                            .setPositiveButton(R.string.yes,(dialogInterface, i) -> super.onBackPressed())
-                            .setNegativeButton(R.string.no,(dialogInterface, i) -> {})
+                            .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())
+                            .setNegativeButton(R.string.no, (dialogInterface, i) -> {
+                            })
                             .create().show();
                     return;
                 }
