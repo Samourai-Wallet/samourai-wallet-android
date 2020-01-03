@@ -366,6 +366,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                     if (id != null) {
                         Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
                         intent.putExtra("preselected", id);
+                        intent.putExtra("account", account);
                         startActivity(intent);
                     }
                 })
@@ -407,6 +408,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                     if (id != null) {
                         Intent intent = new Intent(getApplicationContext(), SendActivity.class);
                         intent.putExtra("preselected", id);
+                        intent.putExtra("account", account);
                         startActivity(intent);
                     }
                 });
