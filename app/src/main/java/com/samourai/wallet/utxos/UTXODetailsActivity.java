@@ -366,7 +366,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                     if (id != null) {
                         Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
                         intent.putExtra("preselected", id);
-                        intent.putExtra("account", account);
+                        intent.putExtra("_account", account);
                         startActivity(intent);
                     }
                 })

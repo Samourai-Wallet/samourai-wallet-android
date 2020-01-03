@@ -238,10 +238,9 @@ public class WhirlpoolMain extends AppCompatActivity {
     private void validateIntentAndStartNewPool() {
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
-
             Intent intent = new Intent(getApplicationContext(), NewPoolActivity.class);
-            int account = getIntent().getExtras().getInt("account");
-            intent.putExtra("account", getIntent().getExtras().getInt("account"));
+            int account = getIntent().getExtras().getInt("_account");
+            intent.putExtra("_account", getIntent().getExtras().getInt("_account"));
             intent.putExtra("preselected", getIntent().getExtras().getString("preselected"));
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 List<UTXOCoin> coins = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
@@ -268,8 +267,10 @@ public class WhirlpoolMain extends AppCompatActivity {
                 } else {
                     startActivityForResult(intent, NEWPOOL_REQ_CODE);
                 }
-            }
+            } else {
+                startActivityForResult(intent, NEWPOOL_REQ_CODE);
 
+            }
         }
 
     }

@@ -464,7 +464,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private void onItemClick(UTXOCoin utxoCoin, View view) {
         Intent intent = new Intent(this, UTXODetailsActivity.class);
         intent.putExtra("hashIdx", utxoCoin.hash.concat("-").concat(String.valueOf(utxoCoin.idx)));
-        intent.putExtra("account", account);
+        intent.putExtra("_account", account);
         startActivityForResult(intent, 0);
     }
 
