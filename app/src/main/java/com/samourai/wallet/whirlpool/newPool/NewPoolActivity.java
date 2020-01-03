@@ -49,6 +49,7 @@ import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolWalletAccount;
 
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.TransactionOutput;
@@ -275,7 +276,7 @@ public class NewPoolActivity extends AppCompatActivity {
             }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
-            Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setBadbankChange(false);
+            Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
             Tx0 tx0 = null;
             try {
                 tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, tx0FeeTarget);
