@@ -101,8 +101,8 @@ public class UTXODetailsActivity extends AppCompatActivity {
         }
 
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("account")) {
-            account = getIntent().getExtras().getInt("account");
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            account = getIntent().getExtras().getInt("_account");
         } else {
             finish();
         }
