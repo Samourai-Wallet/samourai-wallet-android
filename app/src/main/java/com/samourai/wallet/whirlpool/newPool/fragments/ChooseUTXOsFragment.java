@@ -167,7 +167,9 @@ public class ChooseUTXOsFragment extends Fragment {
 
                 for (int j = 0; j < preselectedUTXOs.size(); j++) {
                     //Checking current utxo lists contains preselected UTXOs
-                    if (utxos.get(i).hash != null && utxos.get(i).hash.equals(preselectedUTXOs.get(j).hash)) {
+                    if (utxos.get(i).hash != null &&
+                            utxos.get(i).hash.equals(preselectedUTXOs.get(j).hash)
+                            && utxos.get(i).idx == (preselectedUTXOs.get(j).idx)) {
                         utxos.get(i).isSelected = true;
                         int finalI = i;
                         utxoRecyclerView.post(() -> utxoAdapter.notifyItemChanged(finalI));
