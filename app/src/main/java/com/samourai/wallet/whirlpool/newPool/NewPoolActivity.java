@@ -135,7 +135,9 @@ public class NewPoolActivity extends AppCompatActivity {
 
         enableConfirmButton(false);
 
-        chooseUTXOsFragment.setOnUTXOSelectionListener(this::onUTXOSelected);
+        //Disable selection from fragment since post mix utxo's are populated by the activity
+        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix())
+            chooseUTXOsFragment.setOnUTXOSelectionListener(this::onUTXOSelected);
 
         selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
             selectedPool = pool;
