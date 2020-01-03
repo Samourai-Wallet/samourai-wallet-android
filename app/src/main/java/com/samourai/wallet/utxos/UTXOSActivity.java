@@ -654,7 +654,7 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
                             if (id != null) {
                                 Intent intent = new Intent(UTXOSActivity.this, WhirlpoolMain.class);
                                 intent.putExtra("preselected", id);
-                                intent.putExtra("account", account);
+                                intent.putExtra("_account", account);
                                 startActivity(intent);
                             }
                         })

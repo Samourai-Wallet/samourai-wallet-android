@@ -195,8 +195,8 @@ public class NewPoolActivity extends AppCompatActivity {
 
         setUpViewPager();
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("account")) {
-            account = getIntent().getExtras().getInt("account");
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
+            account = getIntent().getExtras().getInt("_account");
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 selectedCoins.clear();
                 List<UTXOCoin > coinList = PreSelectUtil.getInstance().getPreSelected(preselectId);
@@ -295,7 +295,8 @@ public class NewPoolActivity extends AppCompatActivity {
             Tx0Config tx0Config;
             if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()){
                  tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
-            }else {
+            }
+            else {
                 tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
             }
             Tx0 tx0 = null;
