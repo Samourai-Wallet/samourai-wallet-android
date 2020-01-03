@@ -401,6 +401,12 @@ public class SendActivity extends AppCompatActivity {
 
         AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
+        try {
+            new Handler().postDelayed(this::setBalance,1000);
+        }catch (Exception ex){
+
+        }
+
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
@@ -734,6 +740,10 @@ public class SendActivity extends AppCompatActivity {
 
         tvMaxAmount.setOnClickListener(view -> {
             btcEditText.setText(strAmount);
+        });
+        tvMaxAmount.setOnLongClickListener(view -> {
+            setBalance();
+            return true;
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
