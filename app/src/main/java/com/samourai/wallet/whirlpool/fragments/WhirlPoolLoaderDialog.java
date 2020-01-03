@@ -1,7 +1,6 @@
 package com.samourai.wallet.whirlpool.fragments;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
@@ -36,6 +34,11 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
     private TextView statusText;
     private ProgressBar statusProgress;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private onInitComplete onInitComplete;
+
+    public interface onInitComplete {
+        void init();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,14 +95,9 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
                             statusText.setText("Connected");
                             statusProgress.setProgress(100);
                             new Handler().postDelayed(() -> {
-
-                                if (getArguments() != null && getArguments().containsKey("preselected")) {
-                                    Intent intent = new Intent(getContext(), NewPoolActivity.class);
-                                    intent.putExtra("preselected", getArguments().getString("preselected"));
-                                    startActivity(intent);
-                                }
-                                this.dismiss();
-
+                                dismiss();
+                                if (onInitComplete != null)
+                                    onInitComplete.init();
                             }, 500);
                             break;
 
@@ -113,6 +111,9 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
         compositeDisposable.add(disposable);
     }
 
+    public void setOnInitComplete(WhirlPoolLoaderDialog.onInitComplete onInitComplete) {
+        this.onInitComplete = onInitComplete;
+    }
 
     @Override
     public void onDestroy() {

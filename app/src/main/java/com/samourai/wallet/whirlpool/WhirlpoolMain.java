@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
@@ -29,7 +31,9 @@ import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.Cycle;
 import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
@@ -221,21 +225,51 @@ public class WhirlpoolMain extends AppCompatActivity {
     private void startWhirlpool() {
         if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue()
                 == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED && WhirlpoolNotificationService.isRunning(getApplicationContext())) {
-            if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
-                Intent intent = new Intent(getApplicationContext(), NewPoolActivity.class);
-                intent.putExtra("preselected", getIntent().getExtras().getString("preselected"));
-                startActivityForResult(intent, NEWPOOL_REQ_CODE);
-            }
-
+            validateIntentAndStartNewPool();
         } else {
             WhirlPoolLoaderDialog whirlPoolLoaderDialog = new WhirlPoolLoaderDialog();
-            //passing preselect id to loader dialog,so after whirlpool initialization dialog will start newpool activity
-            if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
-                Bundle bundle = new Bundle();
-                bundle.putString("preselected", getIntent().getExtras().getString("preselected"));
-                whirlPoolLoaderDialog.setArguments(bundle);
-            }
+            //After successful whirlpool connection  @validateIntentAndStartNewPool method will invoked to validate preselected utxo's
+            whirlPoolLoaderDialog.setOnInitComplete(this::validateIntentAndStartNewPool);
             whirlPoolLoaderDialog.show(getSupportFragmentManager(), whirlPoolLoaderDialog.getTag());
+        }
+
+    }
+
+    private void validateIntentAndStartNewPool() {
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("preselected")) {
+
+            Intent intent = new Intent(getApplicationContext(), NewPoolActivity.class);
+            int account = getIntent().getExtras().getInt("account");
+            intent.putExtra("account", getIntent().getExtras().getInt("account"));
+            intent.putExtra("preselected", getIntent().getExtras().getString("preselected"));
+            if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                List<UTXOCoin> coins = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
+                WhirlpoolTx0 tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
+                try {
+                    tx0.make();
+                } catch (Exception ex) {
+                    Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+                    ex.printStackTrace();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Tx0 is not possible with selected utxo.")
+                            .setCancelable(true);
+                    builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+                    builder.create().show();
+                    return;
+                }
+                if (tx0.getTx0() == null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Tx0 is not possible with selected utxo.")
+                            .setCancelable(true);
+                    builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+                    builder.create().show();
+
+                } else {
+                    startActivityForResult(intent, NEWPOOL_REQ_CODE);
+                }
+            }
+
         }
 
     }
