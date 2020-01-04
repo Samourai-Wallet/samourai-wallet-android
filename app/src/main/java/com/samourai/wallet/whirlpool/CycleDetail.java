@@ -191,6 +191,9 @@ public class CycleDetail extends AppCompatActivity {
             case android.R.id.home: {
                 finish();
             }
+            case R.id.refresh_cycle_details: {
+                setMixStatus();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

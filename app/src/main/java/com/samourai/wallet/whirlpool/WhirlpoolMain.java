@@ -388,10 +388,12 @@ public class WhirlpoolMain extends AppCompatActivity {
             holder.mixingAmount.setText(Coin.valueOf((long) cycleTX.getAmount()).toPlainString().concat(" BTC"));
 
             try {
-                if (cycleTX.getCurrentRunningMix() != null)
+                if (cycleTX.getCurrentRunningMix() != null){
                     holder.mixingProgress.setText(cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage());
-                else
-                    holder.mixingProgress.setText("");
+                }
+                else{
+                    holder.mixingProgress.setText("Queue");
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

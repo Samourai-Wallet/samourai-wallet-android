@@ -3,21 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/whirlpool_explore_menu"
-        app:showAsAction="always"
         android:icon="@drawable/ic_explore_black_24dp"
-        android:title="" />
+        android:title=""
+        app:showAsAction="always" />
     <item
         android:id="@+id/whirpool_chart_menu"
-        app:showAsAction="always"
-        android:visible="false"
         android:icon="@drawable/ic_insert_chart_black_24dp"
-        android:title="" />
+        android:title=""
+        android:visible="false"
+        app:showAsAction="always" />
 
     <item
-        android:id="@+id/placeholder"
-        app:showAsAction="never"
-         android:title=""
-        >
+        android:id="@+id/refresh_cycle_details"
+        android:title="Refresh"
+        app:showAsAction="never">
 
     </item>
 </menu>

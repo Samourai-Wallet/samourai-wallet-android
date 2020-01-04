@@ -263,6 +263,7 @@ public class NewPoolActivity extends AppCompatActivity {
                             confirmButton.setEnabled(true);
                             tx0Progress.setVisibility(View.GONE);
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "Error: ".concat(error.getMessage()), Snackbar.LENGTH_LONG).show();
+                            error.printStackTrace();
                         });
 
                 disposables.add(tx0Dispo);
