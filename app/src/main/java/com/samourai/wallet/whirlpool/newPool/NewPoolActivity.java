@@ -249,18 +249,20 @@ public class NewPoolActivity extends AppCompatActivity {
                 WhirlpoolNotificationService.StartService(getApplicationContext());
             } else {
                 tx0Progress.setVisibility(View.VISIBLE);
+                confirmButton.setEnabled(false);
                 Disposable tx0Dispo = beginTx0(selectedCoins)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
+                            confirmButton.setEnabled(true);
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "TX0 Successfully broadcasted", Snackbar.LENGTH_LONG).show();
                             tx0Progress.setVisibility(View.GONE);
                             setResult(Activity.RESULT_OK, getIntent());
                             new Handler().postDelayed(this::finish, 800);
                         }, error -> {
+                            confirmButton.setEnabled(true);
                             tx0Progress.setVisibility(View.GONE);
                             Snackbar.make(findViewById(R.id.new_pool_snackbar_layout), "Error: ".concat(error.getMessage()), Snackbar.LENGTH_LONG).show();
-                            Log.e(TAG, "processWhirlPool: Tx0 Error  ".concat(error.getMessage()));
                         });
 
                 disposables.add(tx0Dispo);
