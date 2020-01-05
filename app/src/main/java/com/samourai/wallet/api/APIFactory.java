@@ -93,6 +93,8 @@ public class APIFactory	{
     private static HashMap<String, Long> xpub_amounts = null;
     private static HashMap<String,List<Tx>> xpub_txs = null;
     private static HashMap<String,List<Tx>> premix_txs = null;
+    private static HashMap<String,List<Tx>> postmix_txs = null;
+    private static HashMap<String,List<Tx>> badbank_txs = null;
     private static HashMap<String,Integer> unspentAccounts = null;
     private static HashMap<String,Integer> unspentBIP49 = null;
     private static HashMap<String,Integer> unspentBIP84 = null;
@@ -132,6 +134,8 @@ public class APIFactory	{
             xpub_amounts = new HashMap<String, Long>();
             xpub_txs = new HashMap<String,List<Tx>>();
             premix_txs = new HashMap<String,List<Tx>>();
+            postmix_txs = new HashMap<String,List<Tx>>();
+            badbank_txs = new HashMap<String,List<Tx>>();
             xpub_balance = 0L;
             xpub_premix_balance = 0L;
             xpub_postmix_balance = 0L;
@@ -2625,23 +2629,45 @@ public class APIFactory	{
                         }
                     }
 
-                    if(addr != null || _addr != null)  {
+                    if (addr != null || _addr != null) {
+                        Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
 
-                        if(addr == null)    {
+                        if (addr == null) {
                             addr = _addr;
                         }
+                        if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr()) ||
+                                addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).zpubstr())) {
+                            if (!postmix_txs.containsKey(addr)) {
+                                postmix_txs.put(addr, new ArrayList<Tx>());
+                            }
+                            if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                postmix_txs.get(addr).add(tx);
+                            } else {
+                                postmix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                            }
 
-                        Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
-                        if(!premix_txs.containsKey(addr))  {
-                            premix_txs.put(addr, new ArrayList<Tx>());
-                        }
-                        if(FormatsUtil.getInstance().isValidXpub(addr))    {
-                            premix_txs.get(addr).add(tx);
-                        }
-                        else    {
-                            premix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
-                        }
+                        } else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).zpubstr())) {
+                            if (!premix_txs.containsKey(addr)) {
+                                premix_txs.put(addr, new ArrayList<Tx>());
+                            }
+                            if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                premix_txs.get(addr).add(tx);
+                            } else {
+                                premix_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                            }
+                        } else if (addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr()) ||
+                                addr.equals(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).zpubstr())) {
 
+                            if (!badbank_txs.containsKey(addr)) {
+                                badbank_txs.put(addr, new ArrayList<Tx>());
+                            }
+                            if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                badbank_txs.get(addr).add(tx);
+                            } else {
+                                badbank_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                            }
+                        }
                     }
                 }
 
