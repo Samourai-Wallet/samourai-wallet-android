@@ -165,6 +165,8 @@ public class APIFactory	{
         bip47_amounts.clear();
         xpub_txs.clear();
         premix_txs.clear();
+        postmix_txs.clear();
+        badbank_txs.clear();
         unspentPaths = new HashMap<String, String>();
         unspentAccounts = new HashMap<String, Integer>();
         unspentBIP49 = new HashMap<String, Integer>();
