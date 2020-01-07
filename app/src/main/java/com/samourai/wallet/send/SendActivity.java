@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +31,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -392,6 +395,23 @@ public class SendActivity extends AppCompatActivity {
             address = "";
         }
     }
+
+
+    public View createTag(String text){
+        float scale = getResources().getDisplayMetrics().density;
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView textView = new TextView(getApplicationContext());
+        textView.setText(text);
+        textView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        textView.setLayoutParams(lparams);
+        textView.setBackgroundResource(R.drawable.tag_round_shape);
+        textView.setPadding((int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f));
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        return textView;
+    }
+
 
     @Override
     protected void onResume() {
@@ -2124,6 +2144,12 @@ public class SendActivity extends AppCompatActivity {
             menu.findItem(R.id.action_batch).setVisible(false);
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
+        }
+        if(account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()){
+              MenuItem item =   menu.findItem(R.id.action_send_menu_account);
+              item.setVisible(true);
+              item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+              item.setActionView(createTag("POST-MIX"));
         }
 
         return super.onCreateOptionsMenu(menu);
