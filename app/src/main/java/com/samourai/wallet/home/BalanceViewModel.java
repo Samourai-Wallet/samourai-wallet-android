@@ -6,6 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -19,7 +21,6 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONArray;
@@ -31,9 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -59,8 +58,17 @@ public class BalanceViewModel extends AndroidViewModel {
         super(application);
         toggleSat.setValue(false);
 
+
+    }
+
+    public LiveData<List<Tx>> getTxs() {
+
+        return this.txs;
+    }
+
+    void loadOfflineData() {
         try {
-            JSONObject response = PayloadUtil.getInstance(application).deserializeMultiAddr();
+            JSONObject response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddr();
             if (response != null) {
                 Disposable disposable = parseXPUB(new JSONObject(response.toString()))
                         .subscribeOn(Schedulers.computation())
@@ -74,7 +82,7 @@ public class BalanceViewModel extends AndroidViewModel {
                             Collections.sort(txes, new APIFactory.TxMostRecentDateComparator());
                             txs.postValue(txes);
                             toggleSat.setValue(false);
-                            balance.postValue(xpub_balance- BlockedUTXO.getInstance().getTotalValueBlocked0());
+                            balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
 
                         }, error -> {
                             txs.postValue(new ArrayList<>());
@@ -94,11 +102,6 @@ public class BalanceViewModel extends AndroidViewModel {
             toggleSat.setValue(false);
             balance.setValue(0L);
         }
-    }
-
-    public LiveData<List<Tx>> getTxs() {
-
-        return this.txs;
     }
 
     @Override
