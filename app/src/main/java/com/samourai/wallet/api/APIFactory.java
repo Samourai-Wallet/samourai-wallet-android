@@ -2254,6 +2254,21 @@ public class APIFactory	{
         return ret;
     }
 
+    public synchronized List<Tx> getAllPostMixTxs()  {
+
+        List<Tx> ret = new ArrayList<Tx>();
+        for(String key : postmix_txs.keySet())  {
+            List<Tx> txs = postmix_txs.get(key);
+            for(Tx tx : txs)   {
+                ret.add(tx);
+            }
+        }
+
+        Collections.sort(ret, new TxMostRecentDateComparator());
+        return ret;
+    }
+
+
     public synchronized UTXO getUnspentOutputsForSweep(String address) {
 
         String _url =  WebUtil.getAPIUrl(context);
