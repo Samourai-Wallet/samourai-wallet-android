@@ -105,7 +105,6 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
             android:theme="@style/ui_2_theme" />
         <activity
             android:name=".ReceiveActivity"

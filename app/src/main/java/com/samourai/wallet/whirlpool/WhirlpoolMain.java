@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
+import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
@@ -360,8 +361,10 @@ public class WhirlpoolMain extends AppCompatActivity {
             Intent intent = new Intent(WhirlpoolMain.this, UTXOSActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
-        } else {
-            ;
+        } else if(id == R.id.action_menu_view_post_mix){
+            Intent intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
