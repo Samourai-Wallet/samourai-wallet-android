@@ -10,19 +10,19 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.whirlpool.models.Pool;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
 
 import java.util.ArrayList;
 
 public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> {
 
     private Context mContext;
-    private ArrayList<Pool> mPools;
+    private ArrayList<PoolViewModel> pools;
     private OnItemsSelected onItemsSelected;
     private static final String TAG = "CoinsAdapter";
 
-    public PoolsAdapter(Context context, ArrayList<Pool> coins) {
-        mPools = coins;
+    public PoolsAdapter(Context context, ArrayList<PoolViewModel> pools) {
+        this.pools = pools;
         mContext = context;
     }
 
@@ -35,58 +35,58 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Pool pool = mPools.get(position);
-        holder.poolAmount.setText(getBTCDisplayAmount(pool.getPoolAmount()).concat(" BTC Pool"));
-        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDisplayAmount(pool.getPoolFee())).concat(" BTC"));
-        holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("    ").concat(getBTCDisplayAmount(pool.getTotalFee())).concat(" BTC"));
-        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("    ").concat(getBTCDisplayAmount(pool.getMinerFee())).concat(" BTC"));
+        final PoolViewModel poolViewModel = pools.get(position);
+        holder.poolAmount.setText(getBTCDisplayAmount(poolViewModel.getDenomination()).concat(" BTC Pool"));
+        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getFeeValue())).concat(" BTC"));
+        holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getTotalFee())).concat(" BTC"));
+        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getMinerFee())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);
-        holder.checkBox.setChecked(pool.isSelected());
-        if (pool.isSelected()) {
+        holder.checkBox.setChecked(poolViewModel.isSelected());
+        if (poolViewModel.isSelected()) {
             holder.feesGroup.setVisibility(View.VISIBLE);
         }
-        if (!pool.isDisabled())
+        if (!poolViewModel.isDisabled())
             holder.itemView.setOnClickListener(view -> {
                 holder.feesGroup.setVisibility(holder.feesGroup.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
             });
 
-        if (!pool.isDisabled())
+        if (!poolViewModel.isDisabled())
             holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
                 onItemsSelected.onItemsSelected(position);
             });
 
-        if (pool.isDisabled()) {
+        if (poolViewModel.isDisabled()) {
             holder.layout.setAlpha(0.4f);
             holder.layout.setClickable(false);
         }else {
             holder.layout.setAlpha(1f);
             holder.layout.setClickable(true);
         }
-        holder.checkBox.setEnabled(!pool.isDisabled());
+        holder.checkBox.setEnabled(!poolViewModel.isDisabled());
     }
 
     private void selectItem(ViewHolder holder, int position) {
-        Pool pool = mPools.get(position);
-        mPools.get(position).setSelected(!pool.isSelected());
-        holder.checkBox.setChecked(pool.isSelected());
+        PoolViewModel poolViewModel = pools.get(position);
+        pools.get(position).setSelected(!poolViewModel.isSelected());
+        holder.checkBox.setChecked(poolViewModel.isSelected());
 
     }
 
 
     @Override
     public int getItemCount() {
-        if (mPools.isEmpty()) {
+        if (pools.isEmpty()) {
             return 0;
         }
-        return mPools.size();
+        return pools.size();
     }
 
     public void setOnItemsSelectListener(OnItemsSelected onItemsSelected) {
         this.onItemsSelected = onItemsSelected;
     }
 
-    public void update(ArrayList<Pool> pools) {
-        this.mPools = pools;
+    public void update(ArrayList<PoolViewModel> poolViewModels) {
+        this.pools = poolViewModels;
         this.notifyDataSetChanged();
     }
 

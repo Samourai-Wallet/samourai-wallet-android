@@ -30,14 +30,13 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
-import com.samourai.wallet.whirlpool.models.Pool;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
 import com.samourai.wallet.whirlpool.newPool.fragments.ChooseUTXOsFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
@@ -87,7 +86,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private List<UTXOCoin> selectedCoins = new ArrayList<>();
     private ArrayList<Long> fees = new ArrayList<Long>();
-    private Pool selectedPool = null;
+    private PoolViewModel selectedPoolViewModel = null;
     private PoolCyclePriority selectedPoolPriority = PoolCyclePriority.NORMAL;
     private Tx0FeeTarget tx0FeeTarget = Tx0FeeTarget.BLOCKS_2;
     private LinearLayout tx0Progress;
@@ -142,13 +141,13 @@ public class NewPoolActivity extends AppCompatActivity {
         if (account != WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix())
             chooseUTXOsFragment.setOnUTXOSelectionListener(this::onUTXOSelected);
 
-        selectPoolFragment.setOnPoolSelectionComplete((pool, priority) -> {
-            selectedPool = pool;
+        selectPoolFragment.setOnPoolSelectionComplete((poolViewModel, priority) -> {
+            selectedPoolViewModel = poolViewModel;
             selectedPoolPriority = priority;
-            if (tx0 != null && pool != null) {
-                tx0.setPool(pool.getPoolAmount());
+            if (tx0 != null && poolViewModel != null) {
+                tx0.setPool(poolViewModel.getDenomination());
             }
-            enableConfirmButton(selectedPool != null);
+            enableConfirmButton(selectedPoolViewModel != null);
         });
 
         confirmButton.setOnClickListener(view -> {
@@ -156,7 +155,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 case 0: {
                     newPoolViewPager.setCurrentItem(1);
                     initUTXOReviewButton(selectedCoins);
-                    enableConfirmButton(selectedPool != null);
+                    enableConfirmButton(selectedPoolViewModel != null);
                     break;
                 }
                 case 1: {
@@ -298,7 +297,7 @@ public class NewPoolActivity extends AppCompatActivity {
                 spendFroms.add(spendFrom);
             }
 
-            com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById("0.01btc");
+            com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById(selectedPoolViewModel.getPoolId());
             Tx0Config tx0Config;
             if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()){
                  tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
@@ -374,11 +373,11 @@ public class NewPoolActivity extends AppCompatActivity {
                     case 1: {
                         initUTXOReviewButton(selectedCoins);
                         enableStep2(true);
-                        enableConfirmButton(selectedPool != null);
+                        enableConfirmButton(selectedPoolViewModel != null);
                         break;
                     }
                     case 2: {
-                        //pass Pool information to @ReviewPoolFragment
+                        //pass PoolViewModel information to @ReviewPoolFragment
                         enableStep3(true);
                         break;
                     }

@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
-import com.samourai.wallet.whirlpool.models.Pool;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
@@ -42,7 +42,7 @@ public class SelectPoolFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PoolsAdapter poolsAdapter;
-    private ArrayList<Pool> pools = new ArrayList<Pool>();
+    private ArrayList<PoolViewModel> poolViewModels = new ArrayList<PoolViewModel>();
     private Button feeNormalBtn, feeLowBtn, feeHighBtn;
     private TextView poolFee;
     private PoolCyclePriority poolCyclePriority = PoolCyclePriority.NORMAL;
@@ -68,7 +68,7 @@ public class SelectPoolFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new SeparatorDecoration(getContext(), ContextCompat.getColor(getContext(), R.color.item_separator_grey), 1));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        poolsAdapter = new PoolsAdapter(getContext(), pools);
+        poolsAdapter = new PoolsAdapter(getContext(), poolViewModels);
         recyclerView.setAdapter(poolsAdapter);
         poolFee = view.findViewById(R.id.pool_fee_txt);
         feeLowBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.LOW));
@@ -79,21 +79,21 @@ public class SelectPoolFragment extends Fragment {
             poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
 
         poolsAdapter.setOnItemsSelectListener(position -> {
-            for (int i = 0; i < pools.size(); i++) {
+            for (int i = 0; i < poolViewModels.size(); i++) {
                 if (i == position) {
-                    boolean selected = !pools.get(position).isSelected();
-                    pools.get(i).setSelected(selected);
+                    boolean selected = !poolViewModels.get(position).isSelected();
+                    poolViewModels.get(i).setSelected(selected);
                     if (selected && this.onPoolSelectionComplete != null) {
-                        onPoolSelectionComplete.onSelect(pools.get(i), poolCyclePriority);
+                        onPoolSelectionComplete.onSelect(poolViewModels.get(i), poolCyclePriority);
                     } else {
                         if (onPoolSelectionComplete != null)
                             onPoolSelectionComplete.onSelect(null, poolCyclePriority);
                     }
                 } else {
-                    pools.get(i).setSelected(false);
+                    poolViewModels.get(i).setSelected(false);
                 }
             }
-            poolsAdapter.update(pools);
+            poolsAdapter.update(poolViewModels);
         });
     }
 
@@ -103,22 +103,20 @@ public class SelectPoolFragment extends Fragment {
 
     private void loadPools(Long tx0, Long aLong) {
 
-        pools.clear();
+        poolViewModels.clear();
         Disposable disposable = Single.fromCallable(() -> AndroidWhirlpoolWalletService.getInstance().getWallet().getPools())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((whirlpoolPools) -> {
 
                     for (com.samourai.whirlpool.client.whirlpool.beans.Pool whirlpoolPool : whirlpoolPools) {
-                        Pool pool = new Pool();
-                        pool.setPoolAmount(whirlpoolPool.getDenomination());
-                        pool.setMinerFee(aLong);
-                        pool.setPoolFee(whirlpoolPool.getFeeValue());
-                        pools.add(pool);
-                        if (pool.getPoolAmount() + pool.getPoolFee() + pool.getMinerFee() > tx0) {
-                            pool.setDisabled(true);
+                        PoolViewModel poolViewModel = new PoolViewModel(whirlpoolPool);
+                        poolViewModel.setMinerFee(aLong);
+                        poolViewModels.add(poolViewModel);
+                        if (poolViewModel.getDenomination() + poolViewModel.getFeeValue() + poolViewModel.getMinerFee() > tx0) {
+                            poolViewModel.setDisabled(true);
                         } else {
-                            pool.setDisabled(false);
+                            poolViewModel.setDisabled(false);
                         }
                     }
                     poolsAdapter.notifyDataSetChanged();
@@ -187,7 +185,7 @@ public class SelectPoolFragment extends Fragment {
     }
 
     public interface OnPoolSelectionComplete {
-        void onSelect(Pool pool, PoolCyclePriority priority);
+        void onSelect(PoolViewModel poolViewModel, PoolCyclePriority priority);
     }
 
 

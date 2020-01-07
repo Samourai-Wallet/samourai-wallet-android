@@ -1,27 +1,17 @@
 package com.samourai.wallet.whirlpool.models;
 
-public class Pool {
+import com.samourai.whirlpool.client.whirlpool.beans.Pool;
+
+public class PoolViewModel extends com.samourai.whirlpool.client.whirlpool.beans.Pool {
 
     private boolean isSelected = false;
     private boolean isDisabled = false;
-    private long poolAmount = 0L;
-    private long poolFee = 0L;
     private long minerFee = 0L;
 
-    public long getPoolAmount() {
-        return poolAmount;
-    }
-
-    public void setPoolAmount(long poolAmount) {
-        this.poolAmount = poolAmount;
-    }
-
-    public long getPoolFee() {
-        return (long)(poolAmount * 0.05);
-    }
-
-    public void setPoolFee(long poolFee) {
-        this.poolFee = poolFee;
+    public PoolViewModel(Pool pool) {
+        this.setDenomination(pool.getDenomination());
+        this.setFeeValue(pool.getFeeValue());
+        this.setPoolId(pool.getPoolId());
     }
 
     public long getMinerFee() {
@@ -33,7 +23,7 @@ public class Pool {
     }
 
     public long getTotalFee() {
-        return minerFee + poolFee;
+        return minerFee + this.getFeeValue();
     }
 
     public boolean isSelected() {
