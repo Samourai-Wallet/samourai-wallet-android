@@ -655,6 +655,10 @@ public class BalanceActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if(id == android.R.id.home){
+            this.finish();
+            return super.onOptionsItemSelected(item);
+        }
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));
