@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.samourai.wallet.R;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.MixingState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 
@@ -61,9 +62,14 @@ public class WhirlpoolNotificationService extends Service {
 
 
         try {
-            mixingState = androidWhirlpoolWalletService.getWallet().getMixingState();
+            WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
+            if (whirlpoolWallet == null) {
+                // whirlpool wallet not opened yet
+                return;
+            }
+            mixingState = whirlpoolWallet.getMixingState();
             updateNotification();
-            Disposable stateDisposable = androidWhirlpoolWalletService.getWallet().getMixingState().getObservable()
+            Disposable stateDisposable = whirlpoolWallet.getMixingState().getObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(mixingState1 -> {
@@ -71,7 +77,7 @@ public class WhirlpoolNotificationService extends Service {
                     });
 
             Disposable repeatedChecks = Observable.fromCallable(() -> {
-                mixingState = androidWhirlpoolWalletService.getWallet().getMixingState();
+                mixingState = whirlpoolWallet.getMixingState();
                 return true;
             }).repeatWhen(completed -> completed.delay(3, TimeUnit.SECONDS)).subscribe(aBoolean -> {
                 updateNotification();
@@ -101,7 +107,10 @@ public class WhirlpoolNotificationService extends Service {
 
         } else if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_STOP)) {
             compositeDisposable.clear();
-            androidWhirlpoolWalletService.getWallet().stop();
+            WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
+            if (whirlpoolWallet != null) {
+                whirlpoolWallet.stop();
+            }
             this.stopSelf();
         }
 
