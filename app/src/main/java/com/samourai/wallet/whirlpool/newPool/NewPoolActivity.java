@@ -30,14 +30,15 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.whirlpool.WhirlpoolTx0;
-import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.wallet.whirlpool.newPool.fragments.ChooseUTXOsFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.ReviewPoolFragment;
 import com.samourai.wallet.whirlpool.newPool.fragments.SelectPoolFragment;
@@ -221,9 +222,11 @@ public class NewPoolActivity extends AppCompatActivity {
         if (coins.size() == 0) {
             enableConfirmButton(false);
         } else {
+            long mediumFee= FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+
             cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC");
             // default set to lowest pool
-            tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
+            tx0 = new WhirlpoolTx0(1000000L, mediumFee, 0, coins);
 
             try {
                 tx0.make();
@@ -296,13 +299,21 @@ public class NewPoolActivity extends AppCompatActivity {
                 UnspentOutputWithKey spendFrom = new UnspentOutputWithKey(unspentOutput, eckey.getPrivKeyBytes());
                 spendFroms.add(spendFrom);
             }
+            if (selectedPoolPriority == PoolCyclePriority.HIGH) {
+                tx0FeeTarget = Tx0FeeTarget.BLOCKS_2;
+
+            } else if (selectedPoolPriority == PoolCyclePriority.NORMAL) {
+                tx0FeeTarget = Tx0FeeTarget.BLOCKS_6;
+
+            } else if (selectedPoolPriority == PoolCyclePriority.LOW) {
+                tx0FeeTarget = Tx0FeeTarget.BLOCKS_24;
+            }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById(selectedPoolViewModel.getPoolId());
             Tx0Config tx0Config;
-            if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()){
-                 tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
-            }
-            else {
+            if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
+            } else {
                 tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
             }
             Tx0 tx0 = null;
@@ -315,10 +326,9 @@ public class NewPoolActivity extends AppCompatActivity {
                     Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
                     UTXOUtil.getInstance().add(txHash + "-" + tx0.getChangeOutput().getIndex(), "\u2623 tx0 change\u2623");
                     if (blockChangeOutput) {
-                        if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                             BlockedUTXO.getInstance().addPostMix(txHash, tx0.getChangeOutput().getIndex(), tx0.getChangeValue());
-                        }
-                        else {
+                        } else {
                             BlockedUTXO.getInstance().add(txHash, tx0.getChangeOutput().getIndex(), tx0.getChangeValue());
                         }
                     }

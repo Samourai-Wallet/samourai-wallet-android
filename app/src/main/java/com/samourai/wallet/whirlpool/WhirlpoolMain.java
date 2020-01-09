@@ -28,6 +28,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
@@ -245,7 +246,8 @@ public class WhirlpoolMain extends AppCompatActivity {
             intent.putExtra("preselected", getIntent().getExtras().getString("preselected"));
             if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                 List<UTXOCoin> coins = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
-                WhirlpoolTx0 tx0 = new WhirlpoolTx0(1000000L, 10L, 0, coins);
+                long mediumFee= FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+                WhirlpoolTx0 tx0 = new WhirlpoolTx0(1000000L, mediumFee, 0, coins) ;
                 try {
                     tx0.make();
                 } catch (Exception ex) {
