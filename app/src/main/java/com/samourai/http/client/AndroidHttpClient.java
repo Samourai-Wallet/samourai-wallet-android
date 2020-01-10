@@ -5,6 +5,12 @@ import com.samourai.wallet.util.WebUtil;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 /**
  * HTTP client used by Whirlpool.
@@ -40,5 +46,12 @@ public class AndroidHttpClient extends JacksonHttpClient {
             url += encodedKey + "=" + encodedValue+"&";
         }
         return url;
+    }
+
+    @Override
+    protected <T> Observable<Optional<T>> httpObservable(final Callable<T> supplier) {
+        Observable<Optional<T>> observable = super.httpObservable(supplier);
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }
