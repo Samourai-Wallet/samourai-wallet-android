@@ -9,6 +9,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -53,7 +54,7 @@ public class UTXOUtil {
     }
 
     public void add(String utxo, String tag) {
-        if(utxoAutoTags.containsKey(utxo)) {
+        if(utxoAutoTags.containsKey(utxo) && !utxoAutoTags.get(utxo).contains(tag)) {
             utxoAutoTags.get(utxo).add(tag);
         }
         else {
@@ -152,7 +153,8 @@ public class UTXOUtil {
         JSONArray utxos = new JSONArray();
         for (String key : utxoAutoTags.keySet()) {
             List<String> tags = utxoAutoTags.get(key);
-            for(String t : tags) {
+            List<String> _tags = new ArrayList<String>(new HashSet<String>(tags));
+            for(String t : _tags) {
                 JSONArray tag = new JSONArray();
                 tag.put(key);
                 tag.put(t);
@@ -164,11 +166,14 @@ public class UTXOUtil {
     }
 
     public void fromJSON(JSONArray utxos) {
+
+        utxoAutoTags.clear();
+
         try {
             for (int i = 0; i < utxos.length(); i++) {
                 JSONArray tag = (JSONArray) utxos.get(i);
 
-                if(utxoAutoTags.containsKey((String) tag.get(0))) {
+                if(utxoAutoTags.containsKey((String) tag.get(0)) && !utxoAutoTags.get((String) tag.get(0)).contains((String) tag.get(1))) {
                     utxoAutoTags.get((String) tag.get(0)).add((String) tag.get(1));
                 }
                 else     {
@@ -197,6 +202,9 @@ public class UTXOUtil {
     }
 
     public void fromJSON_notes(JSONArray utxos) {
+
+        utxoNotes.clear();
+
         try {
             for(int i = 0; i < utxos.length(); i++) {
                 JSONArray note = (JSONArray)utxos.get(i);
@@ -222,6 +230,9 @@ public class UTXOUtil {
     }
 
     public void fromJSON_scores(JSONArray utxos) {
+
+        utxoScores.clear();
+
         try {
             for(int i = 0; i < utxos.length(); i++) {
                 JSONArray score = (JSONArray)utxos.get(i);
