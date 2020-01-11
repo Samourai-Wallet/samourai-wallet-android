@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.multidex.MultiDex;
 
-import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 public class SamouraiApplication extends Application {
@@ -25,13 +23,10 @@ public class SamouraiApplication extends Application {
     public void onCreate() {
         super.onCreate();
         setUpChannels();
-//        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
-//        startService();
-//        }
-
-        if (DojoUtil.getInstance(getApplicationContext()).getDojoParams() != null) {
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
             startService();
         }
+
     }
 
     public void startService() {
