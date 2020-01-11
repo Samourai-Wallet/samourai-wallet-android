@@ -2054,7 +2054,8 @@ public class APIFactory	{
     }
 
     public long getXpubBalance()  {
-        return xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0();
+        long ret = xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0();
+        return (ret < 0L) ? 0L : ret;
     }
 
     public void setXpubBalance(long value)  {
@@ -2067,11 +2068,13 @@ public class APIFactory	{
     }
 
     public long getXpubPostMixBalance()  {
-        return xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
+        long ret = xpub_postmix_balance - BlockedUTXO.getInstance().getTotalValueBlockedPostMix();
+        return (ret < 0L) ? 0L : ret;
     }
 
     public long getXpubBadBankBalance()  {
-        return xpub_badbank_balance - BlockedUTXO.getInstance().getTotalValueBlockedBadBank();
+        long ret = xpub_badbank_balance - BlockedUTXO.getInstance().getTotalValueBlockedBadBank();
+        return (ret < 0L) ? 0L : ret;
     }
 
     public void setXpubPostMixBalance(long value)  {
