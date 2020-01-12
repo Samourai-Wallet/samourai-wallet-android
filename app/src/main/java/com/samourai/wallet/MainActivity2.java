@@ -78,13 +78,13 @@ public class MainActivity2 extends Activity {
     protected BackgroundManager.Listener bgListener = new BackgroundManager.Listener() {
 
         public void onBecameForeground() {
-
-            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-            intent.putExtra("notifTx", false);
-            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(intent);
-
-            Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
-            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(_intent);
+//
+//            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+//            intent.putExtra("notifTx", false);
+//            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(intent);
+//
+//            Intent _intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+//            LocalBroadcastManager.getInstance(MainActivity2.this.getApplicationContext()).sendBroadcast(_intent);
 
         }
 

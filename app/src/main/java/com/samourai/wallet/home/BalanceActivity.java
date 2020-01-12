@@ -238,7 +238,6 @@ public class BalanceActivity extends AppCompatActivity {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
 
                 updateDisplay(true);
-
                 List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
                 for (UTXO utxo : utxos) {
                     List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
@@ -542,9 +541,9 @@ public class BalanceActivity extends AppCompatActivity {
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
-
-        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
-        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
+//
+//        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+//        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
     }
 
