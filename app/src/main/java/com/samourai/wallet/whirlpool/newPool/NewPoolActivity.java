@@ -325,6 +325,7 @@ public class NewPoolActivity extends AppCompatActivity {
                     Log.i("NewPoolActivity", "change:" + tx0.getChangeOutput().toString());
                     Log.i("NewPoolActivity", "change index:" + tx0.getChangeOutput().getIndex());
                     UTXOUtil.getInstance().add(txHash + "-" + tx0.getChangeOutput().getIndex(), "\u2623 tx0 change\u2623");
+                    UTXOUtil.getInstance().addNote(txHash, "tx0");
                     if (blockChangeOutput) {
                         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
                             BlockedUTXO.getInstance().addPostMix(txHash, tx0.getChangeOutput().getIndex(), tx0.getChangeValue());
