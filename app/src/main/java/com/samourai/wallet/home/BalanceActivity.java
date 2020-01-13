@@ -670,6 +670,7 @@ public class BalanceActivity extends AppCompatActivity {
                 if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
                     Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                     cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                    cahootIntent.putExtra("account",account);
                     startActivity(cahootIntent);
                 }else {
                     Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
@@ -791,6 +792,7 @@ public class BalanceActivity extends AppCompatActivity {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
                         Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                        cahootIntent.putExtra("account", account);
                         cahootIntent.putExtra("payload", strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
@@ -982,6 +984,7 @@ public class BalanceActivity extends AppCompatActivity {
                 } else if (Cahoots.isCahoots(code.trim())) {
                     Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                     cahootIntent.putExtra("payload", code.trim());
+                    cahootIntent.putExtra("account", account);
                     startActivity(cahootIntent);
 //                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
 
@@ -1015,6 +1018,7 @@ public class BalanceActivity extends AppCompatActivity {
                     } else if (Cahoots.isCahoots(code.trim())) {
                         Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                         cahootIntent.putExtra("payload",code.trim());
+                        cahootIntent.putExtra("account",account);
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
