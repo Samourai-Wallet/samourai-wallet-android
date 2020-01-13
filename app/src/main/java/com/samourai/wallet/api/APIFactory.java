@@ -2794,7 +2794,7 @@ public class APIFactory	{
                             }
                             UTXOFactory.getInstance().addPostMix(txHash.toString(), txOutputN, script, utxosPostMix.get(script));
                         }
-                        else if(account_type == BAD_BANK)    {
+                        else if(account_type == PRE_MIX)    {
                             if(utxosPreMix.containsKey(script))    {
                                 utxosPreMix.get(script).getOutpoints().add(outPoint);
                             }
