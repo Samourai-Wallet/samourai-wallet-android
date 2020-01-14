@@ -146,8 +146,10 @@ public class APIFactory	{
             unspentBIP49 = new HashMap<String, Integer>();
             unspentBIP84 = new HashMap<String, Integer>();
             unspentBIP84PostMix = new HashMap<String, Integer>();
+            unspentBIP84PreMix = new HashMap<String, Integer>();
             unspentBIP84BadBank = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
+            utxosPreMix = new HashMap<String, UTXO>();
             utxosPostMix = new HashMap<String, UTXO>();
             utxosBadBank = new HashMap<String, UTXO>();
             instance = new APIFactory();
@@ -172,6 +174,7 @@ public class APIFactory	{
         unspentBIP49 = new HashMap<String, Integer>();
         unspentBIP84 = new HashMap<String, Integer>();
         unspentBIP84PostMix = new HashMap<String, Integer>();
+        unspentBIP84PreMix = new HashMap<String, Integer>();
         unspentBIP84BadBank = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
         utxosPostMix = new HashMap<String, UTXO>();
@@ -2205,6 +2208,29 @@ public class APIFactory	{
 
         return unspents;
     }
+    public List<UTXO> getUtxosPreMix(boolean filter) {
+
+        List<UTXO> unspents = new ArrayList<UTXO>();
+
+        if(filter)    {
+            for(String key : utxosPreMix.keySet())   {
+                UTXO u = new UTXO();
+                for(MyTransactionOutPoint out : utxosPreMix.get(key).getOutpoints())    {
+                    if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
+                        u.getOutpoints().add(out);
+                    }
+                }
+                if(u.getOutpoints().size() > 0)    {
+                    unspents.add(u);
+                }
+            }
+        }
+        else    {
+             unspents.addAll(utxosPreMix.values());
+        }
+
+        return unspents;
+    }
 
     public List<UTXO> getUtxosBadBank(boolean filter) {
 
@@ -2805,8 +2831,7 @@ public class APIFactory	{
                                 utxosPreMix.put(script, utxo);
                             }
                             UTXOFactory.getInstance().addPreMix(txHash.toString(), txOutputN, script, utxosPreMix.get(script));
-                        }
-                        else    {
+                        } if(account_type == BAD_BANK)    {
                             if(utxosBadBank.containsKey(script))    {
                                 utxosBadBank.get(script).getOutpoints().add(outPoint);
                             }
@@ -2821,6 +2846,7 @@ public class APIFactory	{
 
                     }
                     catch(Exception e) {
+                        e.printStackTrace();
                         ;
                     }
 
@@ -2840,6 +2866,7 @@ public class APIFactory	{
 
             }
             catch(Exception j) {
+                j.printStackTrace();
                 ;
             }
 
