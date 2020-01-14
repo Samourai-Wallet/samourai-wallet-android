@@ -1,6 +1,7 @@
 package com.samourai.wallet.utxos;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -162,6 +165,52 @@ public class UTXODetailsActivity extends AppCompatActivity {
         });
 
         setNoteState();
+
+        addressTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                new AlertDialog.Builder(UTXODetailsActivity.this)
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.receive_address_to_clipboard)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) UTXODetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                android.content.ClipData clip = null;
+                                clip = android.content.ClipData.newPlainText("address", addr);
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(UTXODetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                            }
+
+                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                }).show();
+
+                return false;
+            }
+        });
+
+        hashTextView.setOnClickListener(view -> {
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.txid_to_clipboard)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) UTXODetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip;
+                        clip = android.content.ClipData.newPlainText("tx id", hash);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                        }
+                        Toast.makeText(UTXODetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+            }).show();
+        });
+
     }
 
     void setUTXOState() {
