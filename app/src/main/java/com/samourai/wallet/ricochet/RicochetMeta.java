@@ -59,7 +59,7 @@ public class RicochetMeta {
 
     private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1q52fzmcdqu07j845q7jnwzw9q68s924wdva3lfz";
     private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
-    private final static String SAMOURAI_NLOCKTIME_RICOCHET_TX_FEE_ADDRESS = "bc1q7r5tq0ewfr9rux6n5kwau0085u3rme8g9gs9vr";
+    private final static String SAMOURAI_NLOCKTIME_RICOCHET_TX_FEE_ADDRESS = "bc1qghsm8dhmcdluxs622nu6admlk4587qy4laqyn0";
     private final static String TESTNET_NLOCKTIME_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
