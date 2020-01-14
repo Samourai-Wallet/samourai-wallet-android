@@ -194,7 +194,22 @@ public class UTXODetailsActivity extends AppCompatActivity {
             }
         });
 
-
+        hashTextView.setOnClickListener(view -> {
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.txid_to_clipboard)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) UTXODetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip;
+                        clip = android.content.ClipData.newPlainText("tx id", hash);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(clip);
+                        }
+                        Toast.makeText(UTXODetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+            }).show();
+        });
 
     }
 
