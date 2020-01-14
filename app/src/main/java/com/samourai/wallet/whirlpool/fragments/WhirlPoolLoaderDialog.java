@@ -69,7 +69,7 @@ public class WhirlPoolLoaderDialog extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         statusProgress.setProgress(20);
         statusText.setText("Loading...");
-        WhirlpoolNotificationService.StartService(getActivity());
+        WhirlpoolNotificationService.startService(getActivity());
         Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
