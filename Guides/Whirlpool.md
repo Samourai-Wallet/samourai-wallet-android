@@ -4,7 +4,7 @@ Whirlpool is Samourai Wallet's implementation of CoinJoin, a true CoinJoin that 
 
 [Whirlpool Github](https://github.com/Samourai-Wallet/Whirlpool/tree/master)
 
-[Whirlpool Telegram Group](t.me/whirlpool_trollbox)
+[Whirlpool Telegram Group](https://t.me/whirlpool_trollbox)
 
 **You are always in control of your UTXO's as they never leave your wallet during the whole mixing process!**
 
@@ -44,11 +44,11 @@ Whirlpool can be set up in 3 configurations:
 
 - [RoninDojo Github](https://github.com/RoninDojo/RoninDojo)
 
-[RoninDojo Telegram Group](t.me/RoninDojoUI)
+[RoninDojo Telegram Group](https://t.me/RoninDojoUI)
 
 - [MyNode Github](https://github.com/mynodebtc/mynode)
 
-[MyNode Telegram Group](t.me/mynode_btc) 
+[MyNode Telegram Group](https://t.me/mynode_btc) 
 
 ###  How to install CLI & pair to GUI
 
