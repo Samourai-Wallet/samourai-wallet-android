@@ -4,6 +4,8 @@ Whirlpool is Samourai Wallet's implementation of CoinJoin, a true CoinJoin that 
 
 [Whirlpool Github](https://github.com/Samourai-Wallet/Whirlpool/tree/master)
 
+[Whirlpool Telegram Group](t.me/whirlpool_trollbox)
+
 **You are always in control of your UTXO's as they never leave your wallet during the whole mixing process!**
 
 Whirlpool uses a few key steps to break determenalistic links
