@@ -178,6 +178,7 @@ public class APIFactory	{
         unspentBIP84BadBank = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
         utxosPostMix = new HashMap<String, UTXO>();
+        utxosPreMix = new HashMap<String, UTXO>();
         utxosBadBank = new HashMap<String, UTXO>();
 
         UTXOFactory.getInstance().clear();

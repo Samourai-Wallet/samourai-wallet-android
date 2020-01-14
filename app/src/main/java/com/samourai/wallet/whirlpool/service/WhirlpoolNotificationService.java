@@ -38,6 +38,7 @@ public class WhirlpoolNotificationService extends Service {
     private AndroidWhirlpoolWalletService androidWhirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private MixingState mixingState;
+    WhirlpoolWallet whirlpoolWallet;
 
     @Override
     public void onCreate() {
@@ -101,20 +102,26 @@ public class WhirlpoolNotificationService extends Service {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::listenService, er -> {
+                        whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
                         Log.e(TAG, "onStartCommand: ".concat(er.getMessage()));
                     });
             compositeDisposable.add(startDisposable);
 
         } else if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_STOP)) {
-            compositeDisposable.clear();
-            WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
-            if (whirlpoolWallet != null) {
-                whirlpoolWallet.stop();
-            }
-            this.stopSelf();
+            this.stopWhirlPoolService();
         }
 
         return START_STICKY;
+
+    }
+
+    private void stopWhirlPoolService() {
+        compositeDisposable.clear();
+        WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
+        if (whirlpoolWallet != null) {
+            whirlpoolWallet.stop();
+        }
+        this.stopSelf();
 
     }
 
@@ -139,6 +146,8 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void setMixState(NotificationCompat.Builder builder) {
+        if (whirlpoolWallet != null)
+            mixingState = whirlpoolWallet.getMixingState();
         if (mixingState != null) {
             builder.setContentTitle("Whirlpool online: ".concat(String.valueOf(mixingState.getNbMixing()))
                     .concat(" MIXING :")
@@ -157,7 +166,11 @@ public class WhirlpoolNotificationService extends Service {
 
     @Override
     public void onDestroy() {
-        compositeDisposable.dispose();
+        try {
+            this.stopWhirlPoolService();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 

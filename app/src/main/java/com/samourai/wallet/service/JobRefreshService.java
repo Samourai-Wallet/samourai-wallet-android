@@ -103,6 +103,8 @@ public class JobRefreshService extends JobIntentService {
             } catch (AddressFormatException afe) {
                 afe.printStackTrace();
                 Toast.makeText(this.getApplicationContext(), "HD wallet error", Toast.LENGTH_SHORT).show();
+            } catch (Exception ex){
+                ex.printStackTrace();
             }
 
             //
