@@ -30,7 +30,6 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
@@ -248,7 +247,7 @@ public class NewPoolActivity extends AppCompatActivity {
 
         try {
             if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
-                WhirlpoolNotificationService.StartService(getApplicationContext());
+                WhirlpoolNotificationService.startService(getApplicationContext());
             } else {
                 tx0Progress.setVisibility(View.VISIBLE);
                 confirmButton.setEnabled(false);

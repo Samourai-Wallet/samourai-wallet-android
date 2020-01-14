@@ -90,7 +90,6 @@ import com.samourai.wallet.tx.TxDetailsActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
@@ -99,8 +98,8 @@ import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
-import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -611,7 +610,7 @@ public class BalanceActivity extends AppCompatActivity {
 
         if(isFinishing()){
             // disconnect Whirlpool on app exit
-            AndroidWhirlpoolWalletService.getInstance().closeWallet();
+            WhirlpoolNotificationService.stopService(getApplicationContext());
         }
 
         super.onDestroy();

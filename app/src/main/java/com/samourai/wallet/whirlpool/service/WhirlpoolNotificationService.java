@@ -179,11 +179,18 @@ public class WhirlpoolNotificationService extends Service {
         return new NotificationCompat.Action(R.drawable.ic_close_white_24dp, "STOP", actionIntent);
     }
 
-    public static void StartService(Context context) {
+    public static void startService(Context context) {
         Intent startIntent = new Intent(context, WhirlpoolNotificationService.class);
         startIntent.setAction(WhirlpoolNotificationService.ACTION_START);
         context.startService(startIntent);
     }
+
+    public static void stopService(Context context) {
+        Intent startIntent = new Intent(context, WhirlpoolNotificationService.class);
+        startIntent.setAction(WhirlpoolNotificationService.ACTION_STOP);
+        context.startService(startIntent);
+    }
+
     public static boolean isRunning(Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
