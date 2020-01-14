@@ -12,31 +12,31 @@ Whirlpool uses a few key steps to break determenalistic links
 * This takes your deposit and breaks it into like size UTXOs depending on your selected pool(**.5**/**.05**/**.01**)
 * **This will produce toxic change**, we will handle this later
 * This is critical when it comes to mixing, if all the UTXO sizes don't match it is possible to distinguish inputs & outputs of the user's in the CoinJoin
-* This prevents sybil attacks, making it expensive as well an attacker would have to run multiple clients
+* This prevents sybil attacks, making it expensive to conduct such an attack. An attacker would also have to run multiple clients, as only one client per mix is allowed.
 2. During Tx0 is when you pay the mixing fee
 * It is critical this fee not be included in the mix as it can provide a determenalistic link
 3.  Whirlpool incentivizes remixing
 * Premixers are the ones who pay for the miner fees to make the mix
-* Once you've mixed you can freeride to provide liquidity as well as increase the anonset/entropy for yourself & participents in mixes you've participated in
+* Once you've mixed you can freeride to provide liquidity as well as increase the anonset/entropy for yourself & participents in mixes you've taken part in
 
 # Setting up Whirlpool
 
 Whirlpool can be set up in 3 configurations:
 
-1. Standalone GUI
+1. **Standalone GUI**
 * This requires OpenJDK 8+ to be installed on the machine
-* Your only mixing when the GUI is open and active, if your computer sleeps your not mixing :(
+* Your only mixing when the GUI is open and active, if your computer sleeps your not mixing 
 
-2. Standalone CLI
+2. **Standalone CLI**
 * 24/7 mixing as long as the device is on (ex. Pi4 or Odroid N2) and Whirlpool is active
-* Not user friendly for most users :(
+* Not user friendly for those that arn't comfortable with command line
 
-3. CLI backed GUI
+3. **CLI backed GUI**
 * 24/7 mixing
-* User friendly :)
+* User friendly 
 * GUI machine doesn't require OpenJDK
 
-### A CLI backed GUI is by far the best implementation and provides the best user experience
+### A CLI backed GUI is by far the best implementation and provides the easiest user experience
 
 - First you must setup your CLI backend([Whirlpool CLI Github](https://github.com/Samourai-Wallet/whirlpool-client-cli)), this can be done manually on Command Line or via a user friendly implementation like:
 
@@ -93,7 +93,7 @@ _This guide was written by [BTCxZelko](https://twitter.com/BTCxZelko?s=09)_
 
 ## Understanding Whirlpool Desktop Configuration Options
 
-When you have paired your wallet to whirlpool you should stop the client (by pressing **STOP** in the top right) and familiarise yourself with the available configuration options. While the default configuration is ready for use immediately, it is worth understanding the client as you help beta test Whirlpool.
+When you have paired your wallet to whirlpool you should stop the client (by pressing **STOP** in the top right) and familiarise yourself with the available configuration options. While the default configuration is ready for use immediately, it is worth understanding the client as you use Whirlpool.
 
 **General Configuration**
 
@@ -101,7 +101,7 @@ Config Name | Description | Notes
 ----|----|----
  `Default Mix Target` | The default number of cycles to complete for new UTXOs added to the pool. | It is safe to leave this as 1, as you can always manually choose to cycle UTXOs again manually.
 `Auto Mix`|When enabled this will automatically queue your UTXOs for cycling.| It is safe to turn this off if you prefer to micro manage which UTXOs to cycle. If you have a lot of UTXO's it can be faster to disable this.
-`Tor`| When enabled all traffic is routed through the built in Tor layer.|Currently this is deactivated as Tor implementation continues to be developed.
+`Tor`| When enabled all traffic is routed through the built in Tor layer.|This is enabled by default & should always been enabled for privacy protections.
 `Proxy`  |Connect through SOCKS/HTTP proxy.   |This is intended for advanced users who wish their own Tor or VPN layer for networking. 
 
 
@@ -138,7 +138,7 @@ Now that you have configured the desktop client to your liking the next step i
 
 ### Deposit from an external wallet:
 
-If you do not have any UTXOs in your Samourai Wallet, you can generate a deposit address for your wallet by pressing the red `+ Deposit` button within the desktop client. Once the deposited funds have received one confirmation they will be ready to be cycled by following the directions below.
+If you do not have any UTXOs in your Samourai Wallet, you can generate a deposit address for your wallet by pressing the red `+ Deposit` button within the desktop client. Once the deposited funds have received one confirmation they will be ready to be cycled.
 
 
 ### Choose UTXO(s) from your Samourai Wallet:
@@ -162,7 +162,7 @@ Pool Denomination  |  Pool Fee | Current Status
 
 ### Choosing the right pool
 
-The denomination of the pool determines the minimum amount you can cycle through that pool and the resulting denomination of the newly cycled UTXOs in your wallet.  Generally the larger the UTXO you are cycling, the larger the pool you want to choose. 
+The denomination of the pool determines the minimum amount you can cycle through that pool and the resulting denomination of the newly cycled UTXOs in your wallet. Generally the larger the UTXO you are cycling, the larger the pool you want to choose. 
 For example: 
 
 - Cycling 1 BTC in the 0.01 Pool would create 100 outputs of 0.01 BTC
@@ -197,11 +197,11 @@ Select a target number of cycle, this can be left as 1 as you can later cycle th
 
 - Step 5
 
-Press the red `Tx0` button on the bottom of the pop up modal to begin the process. 
+Press the red `Tx0` button on the bottom of the pop up window to begin the process. 
 
 ## Add a discount code (SCODE) to Whirlpool
 
-Occasionally we will announce promotional SCODE's - or Samourai Discount Codes - that you can apply to your Whirlpool client for reduced price or even free mixes. Keep an eye on our Twitter account and our Telegram rooms to be the first to hear about new SCODE's
+Occasionally we will announce promotional SCODE's - or Samourai Discount Codes - that you can apply to your Whirlpool client for reduced price or even free mixes. Keep an eye on our Twitter account and our Telegram rooms to be the first to hear about new SCODE's
 
 ### How to add an SCODE
 
@@ -232,7 +232,7 @@ Once an SCODE expires you should remove it from your configuration. This current
 
 * Press **Toggle Developer Settings**
 
-*Remove the text field that says "SCODE"
+* Remove the text field that says "SCODE"
 
 * Press **Save**
 
@@ -243,28 +243,27 @@ Once an SCODE expires you should remove it from your configuration. This current
 
 Whirlpool has been designed with extensive privacy enhancing strategies that help make sure you do not undo the privacy gains of Whirlpool when you go to spend your UTXOs.
 
-It is advised that you keep your funds within Whirlpool and directly spend using your Samourai Wallet on an as needed basis. This will allow you to take advantage of our superior coin selection and post mix spending tools, making it very hard to accidentally undo the privacy gains of Whirlpool.
+It is advised that you keep your funds within Whirlpool and directly spend using your Samourai Wallet on an as needed basis. This will allow you to take advantage of our superior coin selection and post mix spending tools, making it very hard to accidentally undo the privacy gains of Whirlpool.
 
 ### Common Scenario:
 
-I want to send my cycled UTXOs to another wallet / cold storage device
+I want to send my cycled UTXOs to another wallet/cold storage device
 
-If you must transfer your UTXOs to another wallet / device then please follow the guidelines below:
+If you must transfer your UTXOs to another wallet/device then please follow the guidelines below:
 
 **DO NOT:**
 
-* Spend the entire balance in Whirlpool Postmix to a single address on your wallet / cold storage device. This is known as merging inputs and completely undoes the privacy gains provided by Whirlpool. 
+* Spend the entire balance in Whirlpool Postmix to a single address on your wallet/cold storage device. This is known as merging inputs and completely undoes the privacy gains provided by Whirlpool. 
 
 **DO:**
 
-* Send less than half of your Whirlpool Postmix balance to your wallet / cold storage device. This is usually enough to trigger a STONEWALL which will provide a strong amount of entropy within the transaction.
+* Send less than half of your Whirlpool Postmix balance to your wallet/cold storage device. This is usually enough to trigger a STONEWALL which will provide a strong amount of entropy within the transaction.
 
-* If you need to transfer the entire balance then you should do so on a UTXO by UTXO basis. Using the Address Calculator in your Samourai Wallet generate the private keys for each of the PostMix UTXOs that you want to transfer and sweep them with your other wallet / device. You should ideally sweep each UTXO spaced apart by a random interval of time to avoid time correlation de-anonymization. 
+* If you need to transfer the entire balance then you should do so on a UTXO by UTXO basis. Using the Address Calculator in your Samourai Wallet generate the private keys for each of the PostMix UTXOs that you want to transfer and sweep them with your other wallet/device or using Sentinel. You should ideally sweep each UTXO spaced apart by a random interval of time to avoid time correlation de-anonymization. 
 
 ### Common Scenario:
 
-I want to spend my coins at a third party service
-Navigate to the PostMix Send Screen in your Samourai Wallet and create a transaction as you normally would. If it is possible your wallet will enable STONEWALL automatically - this will provide you with additional entropy and is considered the minimum requirement for sending from your PostMix balance with minimal privacy loss. 
+I want to spend my coins at a third party service. Navigate to the PostMix Send Screen in your Samourai Wallet and create a transaction as you normally would. If it is possible your wallet will enable STONEWALL automatically - this will provide you with additional entropy and is considered the minimum requirement for sending from your PostMix balance with minimal privacy loss. 
 
 If a STONEWALL cannot be created your wallet will warn you before sending. Please follow the guidelines below if you are unable to activate STONEWALL.
 
@@ -285,8 +284,6 @@ If a STONEWALL cannot be created your wallet will warn you before sending. Pleas
 I want to spend my coins to another Samourai Wallet user
 
 Sending to another Samourai Wallet user is the same as sending to any bitcoin address and the same privacy rules apply. However, some additional Post Mix spending tools are available only between Samourai Wallet users. An example of this is Stowaway, which is a CoinJoin with a trusted friend that doesn't look like a CoinJoin and masks the true amount spent on the blockchain. 
-
-Learn about Stowaway and how to create Stowaway transactions with Samourai Wallet
 
 
 
