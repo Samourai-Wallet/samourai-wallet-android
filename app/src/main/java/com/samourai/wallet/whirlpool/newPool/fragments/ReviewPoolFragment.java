@@ -1,6 +1,5 @@
 package com.samourai.wallet.whirlpool.newPool.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -74,19 +73,19 @@ public class ReviewPoolFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_whirlpool_review, container, false);
     }
 
-    public void showProgress(boolean show){
+    public void showProgress(boolean show) {
         progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
 
     public void setTx0(WhirlpoolTx0 tx0) {
-        totalPoolAmount.setText(String.valueOf(tx0.getAmountSelected() / 1e8));
-        poolAmount.setText(String.valueOf(tx0.getPool() / 1e8));
-        poolFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFeeSamourai() / 1e8)));
-        minerFees.setText(String.valueOf(new DecimalFormat("0.########").format(tx0.getFee() / 1e8)));
-        amountToCycle.setText(String.valueOf(tx0.getAmountAfterWhirlpoolFee() / 1e8));
-        poolTotalFees.setText(String.valueOf(new DecimalFormat("0.########").format((tx0.getFeeSamourai() + tx0.getFee() ) / 1e8)));
-        uncycledAmount.setText(" "+ (tx0.getChange() /1e8));
+        totalPoolAmount.setText(new DecimalFormat("0.########").format(tx0.getAmountSelected() / 1e8));
+        poolAmount.setText(new DecimalFormat("0.########").format(tx0.getPool() / 1e8));
+        poolFees.setText(new DecimalFormat("0.########").format(tx0.getFeeSamourai() / 1e8));
+        minerFees.setText(new DecimalFormat("0.########").format(tx0.getFee() / 1e8));
+        amountToCycle.setText(new DecimalFormat("0.########").format(tx0.getAmountAfterWhirlpoolFee() / 1e8));
+        poolTotalFees.setText(new DecimalFormat("0.########").format((tx0.getFeeSamourai() + tx0.getFee()) / 1e8));
+        uncycledAmount.setText(new DecimalFormat("0.########").format((tx0.getChange() / 1e8)));
         totalTxs.setText(String.valueOf(tx0.getPremixRequested()));
 
     }
