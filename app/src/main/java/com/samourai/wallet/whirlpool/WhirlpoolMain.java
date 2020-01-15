@@ -433,8 +433,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                         int mixDone = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsDone();
                         progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
                     } catch (Exception ex) {
-                        ex.printStackTrace();
-                        //ignore
+//                        ex.printStackTrace();
                     }
 
                     holder.mixingProgress.setText(progress);
