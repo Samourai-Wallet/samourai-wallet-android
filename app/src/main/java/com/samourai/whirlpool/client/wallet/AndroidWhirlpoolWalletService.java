@@ -12,6 +12,7 @@ import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
@@ -86,7 +87,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
         // TODO user preferences
         boolean testnet = SamouraiWallet.getInstance().isTestNet();
-        boolean onion = false;
+        boolean onion = TorManager.getInstance(ctx).isRequired();
         int mixsTarget = 5;
         String scode = null;
 
