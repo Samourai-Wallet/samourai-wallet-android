@@ -47,7 +47,7 @@ public class WhirlpoolMeta {
     }
 
     public void setSCODE(String scode) {
-        strSCODE = scode;
+        strSCODE = scode.toUpperCase();
     }
 
     public String getSCODE() {
