@@ -15,6 +15,8 @@ public class WhirlpoolMeta {
     private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
     private final static int WHIRLPOOL_POSTMIX_ACCOUNT = Integer.MAX_VALUE - 1;
 
+    private static String strSCODE = null;
+
     private static WhirlpoolMeta instance = null;
 
     private static Context context = null;
@@ -42,6 +44,43 @@ public class WhirlpoolMeta {
 
     public int getWhirlpoolBadBank() {
         return WHIRLPOOL_BADBANK_ACCOUNT;
+    }
+
+    public void setSCODE(String scode) {
+        strSCODE = scode;
+    }
+
+    public String getSCODE() {
+        return (strSCODE != null && strSCODE.length() > 0) ? strSCODE : null;
+    }
+
+    public JSONObject toJSON() {
+
+        JSONObject scode = new JSONObject();
+
+        try {
+            if(strSCODE != null && strSCODE.length() > 0) {
+                scode.put("scode", strSCODE);
+            }
+        }
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return scode;
+    }
+
+    public void fromJSON(JSONObject obj) {
+
+        try {
+            if(obj.has("scode") && obj.getString("scode").length() > 0) {
+                strSCODE = obj.getString("scode");
+            }
+        }
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
 }
