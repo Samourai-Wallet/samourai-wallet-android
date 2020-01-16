@@ -418,6 +418,11 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         final EditText scode = new EditText(WhirlpoolMain.this);
 
+        String strCurrentCode = WhirlpoolMeta.getInstance(WhirlpoolMain.this).getSCODE();
+        if(strCurrentCode != null && strCurrentCode.length() > 0) {
+            scode.setText(strCurrentCode);
+        }
+
         new AlertDialog.Builder(WhirlpoolMain.this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.enter_scode)
