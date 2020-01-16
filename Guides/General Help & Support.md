@@ -151,7 +151,7 @@ Some great resources for getting aquinted with Bitcoin
 
 Samourai Wallet automatically manages and is fully compliant with all three of the address derivation standards noted above.
 
-![Addressmindblown](Images/Addressmindblown.jpeg)
+<img src="https://github.com/Crazyk031/samourai-wallet-android/blob/develop/Guides/Images/Addressmindblown.jpeg" width="300" height="300" /> 
 
 ### Segwit
 
