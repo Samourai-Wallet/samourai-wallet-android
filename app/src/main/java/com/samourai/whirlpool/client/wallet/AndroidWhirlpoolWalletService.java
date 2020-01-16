@@ -13,6 +13,7 @@ import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
@@ -84,13 +85,12 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
-        // TODO user preferences
+
         boolean testnet = SamouraiWallet.getInstance().isTestNet();
         boolean onion = false;
         int mixsTarget = 5;
-        String scode = null;
+        String scode = WhirlpoolMeta.getInstance(ctx).getSCODE();
 
-        // TODO dojo backend support
         String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
         String backendApiKey = null;
 
