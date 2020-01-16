@@ -429,7 +429,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 if (cycleTX.getCurrentRunningMix() != null) {
                     String progress = cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage();
                     try {
-                        int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTarget();
+                        int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
                         int mixDone = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsDone();
                         progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
                     } catch (Exception ex) {
