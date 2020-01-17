@@ -1,11 +1,13 @@
 package com.samourai.whirlpool.client.tx0;
 
 import com.samourai.stomp.client.AndroidStompClient;
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.bip69.BIP69OutputComparator;
 import com.samourai.wallet.client.Bip84Wallet;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.segwit.bech32.Bech32UtilGeneric;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
@@ -35,6 +37,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class AndroidTx0Service extends Tx0Service {
@@ -47,14 +50,31 @@ public class AndroidTx0Service extends Tx0Service {
         super(config);
     }
 
-    protected long computeTx0MinerFee(int nbPremix, long feeTx0, Collection<? extends UnspentResponse.UnspentOutput> spendFroms) {
+    protected long computeTx0MinerFee(int nbPremix, long feeTx0, List<UnspentResponse.UnspentOutput> spendFroms) {
 
-        // TODO handle non-segwit inputs
         int nbOutputsNonOpReturn = nbPremix + 2; // outputs + change + fee
 
-        // spend from N bech32 input
-        int nbSpendFroms = (spendFroms != null ? spendFroms.size() : 1);
-        long tx0MinerFee = feeUtil.estimatedFeeSegwit(0, 0, nbSpendFroms, nbOutputsNonOpReturn, 1, feeTx0);
+        int nbP2PKH = 0;
+        int nbP2SH = 0;
+        int nbP2WPKH = 0;
+        for(UnspentResponse.UnspentOutput uo : spendFroms) {
+
+            if(Bech32Util.getInstance().isP2WPKHScript(uo.script))    {
+                nbP2WPKH++;
+            }
+            else    {
+                String address = new Script(Hex.decode(uo.script)).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    nbP2SH++;
+                }
+                else    {
+                    nbP2PKH++;
+                }
+            }
+
+        }
+
+        long tx0MinerFee = feeUtil.estimatedFeeSegwit(nbP2PKH, nbP2SH, nbP2WPKH, nbOutputsNonOpReturn, 1, feeTx0);
 
         if (log.isDebugEnabled()) {
             log.debug(
