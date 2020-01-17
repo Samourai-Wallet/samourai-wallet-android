@@ -431,7 +431,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String strSCODE = scode.getText().toString().trim();
-                        if (scode != null && scode.length() > 0) {
+                        if (scode != null) {
                             WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE(strSCODE);
                         }
                         dialog.dismiss();
