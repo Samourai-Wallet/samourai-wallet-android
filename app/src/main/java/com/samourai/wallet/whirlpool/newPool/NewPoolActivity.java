@@ -63,6 +63,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -279,8 +280,11 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private Completable beginTx0(List<UTXOCoin> coins) {
         return Completable.fromCallable(() -> {
-
-            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+            if (!whirlpoolWalletOpt.isPresent()) {
+                return true;
+            }
+            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             Collection<UnspentOutputWithKey> spendFroms = new ArrayList<UnspentOutputWithKey>();
 
             for (UTXOCoin coin : coins) {

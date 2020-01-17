@@ -38,6 +38,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 
 public class CycleDetail extends AppCompatActivity {
@@ -97,7 +98,12 @@ public class CycleDetail extends AppCompatActivity {
     }
 
     private void setMixStatus() {
-        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            // wallet not opened
+            return;
+        }
+        WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
         try {
             for (WhirlpoolUtxo utxo : wallet.getUtxosPremix()) {
                 if (utxo.getUtxo().tx_hash.equals(hash)) {

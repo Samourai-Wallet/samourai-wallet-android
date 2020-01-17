@@ -1,5 +1,6 @@
 package com.samourai.http.client;
 
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -17,9 +18,11 @@ import java8.util.Optional;
  */
 public class AndroidHttpClient extends JacksonHttpClient {
     private WebUtil webUtil;
+    private TorManager torManager;
 
-    public AndroidHttpClient(WebUtil webUtil) {
+    public AndroidHttpClient(WebUtil webUtil, TorManager torManager) {
         this.webUtil = webUtil;
+        this.torManager = torManager;
     }
 
     @Override
@@ -29,13 +32,23 @@ public class AndroidHttpClient extends JacksonHttpClient {
 
     @Override
     protected String requestJsonPostOverTor(String url, Map<String, String> headers, String jsonBody) throws Exception {
-        return webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonBody, headers);
+        if (torManager.isRequired()) {
+            return webUtil.tor_postURL(url, jsonBody, headers);
+        } else {
+            return webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonBody, headers);
+        }
     }
 
     @Override
     protected String requestJsonPostUrlEncoded(String url, Map<String, String> headers, Map<String, String> body) throws Exception {
-        String jsonString = queryString(body);
-        return webUtil.postURL(null, url, jsonString, headers);
+        if (torManager.isRequired()) {
+            // tor enabled
+            return webUtil.tor_postURL(url, body, headers);
+        } else {
+            // tor disabled
+            String jsonString = queryString(body);
+            return webUtil.postURL(null, url, jsonString, headers);
+        }
     }
 
     public String queryString(final Map<String,String> parameters) throws UnsupportedEncodingException {

@@ -68,6 +68,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 public class WhirlpoolMain extends AppCompatActivity {
 
@@ -157,10 +158,14 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     }
 
-    private void loadPremixes(boolean loadSilently) {
+    private void loadPremixes(boolean loadSilently) throws Exception {
         if (loadSilently)
             progressBar.setVisibility(View.VISIBLE);
-        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
         HashMap<String, List<Tx>> premix_xpub = APIFactory.getInstance(getApplicationContext()).getPremixXpubTxs();
         List<Cycle> txes = new ArrayList<>();
         for (String key : premix_xpub.keySet()) {
@@ -328,11 +333,13 @@ public class WhirlpoolMain extends AppCompatActivity {
     }
 
 
-    private void listenPoolState() {
-        Disposable mixStateDisposable = AndroidWhirlpoolWalletService
-                .getInstance()
-                .getWallet()
-                .getMixingState().getObservable()
+    private void listenPoolState() throws Exception {
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
+        Disposable mixStateDisposable = whirlpoolWallet.getMixingState().getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mixingState -> {
@@ -354,10 +361,14 @@ public class WhirlpoolMain extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == NEWPOOL_REQ_CODE) {
+            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+            if (!whirlpoolWalletOpt.isPresent()) {
+                return;
+            }
+            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             try {
-                AndroidWhirlpoolWalletService.getInstance().getWallet().clearCache();
-                AndroidWhirlpoolWalletService.getInstance().getWallet().getUtxosPremix(true);
-                AndroidWhirlpoolWalletService.getInstance().getWallet().getUtxosPostmix(true);
+                whirlpoolWallet.getUtxosPremix(true);
+                whirlpoolWallet.getUtxosPostmix(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -384,7 +395,11 @@ public class WhirlpoolMain extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
-                loadPremixes(false);
+                try {
+                    loadPremixes(false);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -467,7 +482,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 if (cycleTX.getCurrentRunningMix() != null) {
                     String progress = cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage();
                     try {
-                        int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTarget();
+                        int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
                         int mixDone = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsDone();
                         progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
                     } catch (Exception ex) {

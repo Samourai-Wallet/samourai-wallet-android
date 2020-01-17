@@ -8,6 +8,7 @@ import com.samourai.wallet.api.backend.beans.HttpException;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.SegwitAddress;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.exception.NotifiableException;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
@@ -60,7 +61,8 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         String scode = null;
 
         // backendApi with mocked pushTx
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getContext()));
+        TorManager torManager = TorManager.getInstance(getContext());
+        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getContext()), torManager);
         BackendApi backendApi = new BackendApi(httpClient, BackendServer.TESTNET.getBackendUrl(onion), null) {
             @Override
             public void pushTx(String txHex) throws Exception {
@@ -75,7 +77,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
 
         // instanciate WhirlpoolWallet
         bip84w = computeBip84w(SEED_WORDS, SEED_PASSPHRASE);
-        config = whirlpoolWalletService.computeWhirlpoolWalletConfig(getContext(), persistHandler, testnet, onion, mixsTarget, scode, httpClient, backendApi);
+        config = whirlpoolWalletService.computeWhirlpoolWalletConfig(torManager, persistHandler, testnet, onion, mixsTarget, scode, httpClient, backendApi);
         config.setTx0Service(new AndroidTx0Service(config){
             @Override
             protected Tx0Data fetchTx0Data(String poolId) throws HttpException, NotifiableException {
