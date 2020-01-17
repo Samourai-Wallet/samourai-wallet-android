@@ -29,6 +29,7 @@ import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 import org.bitcoinj.core.NetworkParameters;
 
 import java.io.File;
+import java.util.Map;
 
 import ch.qos.logback.classic.Level;
 import io.reactivex.Completable;
@@ -93,6 +94,9 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
         boolean testnet = SamouraiWallet.getInstance().isTestNet();
         boolean onion = useDojo || torManager.isRequired();
+
+        Log.v(TAG, "whirlpoolWalletConfig[Tor] = onion="+onion+", useDojo="+useDojo+", torManager.isRequired="+torManager.isRequired());
+
         String scode = null;
 
         // backend configuration
@@ -139,6 +143,10 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
         whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
+
+        for (Map.Entry<String,String> configEntry : whirlpoolWalletConfig.getConfigInfo().entrySet()) {
+            Log.v(TAG, "whirlpoolWalletConfig["+configEntry.getKey()+"] = "+configEntry.getValue());
+        }
         return whirlpoolWalletConfig;
     }
 
@@ -159,7 +167,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             source.onNext(ConnectionStates.DISCONNECTED);
         }
         if (getWhirlpoolWallet().isPresent()) {
-            getWhirlpoolWallet().get().stop();
+            closeWallet();
         }
     }
 
