@@ -19,6 +19,7 @@ import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.util.oauth.OAuthManager;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
@@ -87,17 +88,6 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
-
-        /*
-        boolean testnet = SamouraiWallet.getInstance().isTestNet();
-        boolean onion = false;
-        int mixsTarget = 5;
-        String scode = WhirlpoolMeta.getInstance(ctx).getSCODE();
-
-        String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
-        String backendApiKey = null;
-        */
-
         WebUtil webUtil = WebUtil.getInstance(ctx);
         TorManager torManager = TorManager.getInstance(ctx);
 
@@ -109,7 +99,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
         Log.v(TAG, "whirlpoolWalletConfig[Tor] = onion="+onion+", useDojo="+useDojo+", torManager.isRequired="+torManager.isRequired());
 
-        String scode = null;
+        String scode = WhirlpoolMeta.getInstance(ctx).getSCODE();
 
         // backend configuration
         String backendUrl;
