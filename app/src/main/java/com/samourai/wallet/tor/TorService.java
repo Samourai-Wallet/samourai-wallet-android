@@ -16,6 +16,7 @@ import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -106,6 +107,9 @@ public class TorService extends Service {
 //
                     });
             compositeDisposable.add(disposable);
+
+            // reopen WhirlpoolWallet with new Tor config
+            AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
 
         } else if (intent.getAction().equals(TorService.RENEW_IDENTITY)) {
             renewIdentity();
@@ -200,6 +204,9 @@ public class TorService extends Service {
                 });
         logger();
         compositeDisposable.add(statusDisposable);
+
+        // reopen WhirlpoolWallet with new Tor config
+        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
     }
 
     private void logger() {

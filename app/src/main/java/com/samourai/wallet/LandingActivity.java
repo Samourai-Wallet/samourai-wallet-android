@@ -137,9 +137,6 @@ public class LandingActivity extends AppCompatActivity  {
         startIntent.setAction(TorService.STOP_SERVICE);
         startService(startIntent);
         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
-
-        // reopen WhirlpoolWallet with new Tor config
-        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
     }
 
     private void startTor() {
@@ -162,9 +159,6 @@ public class LandingActivity extends AppCompatActivity  {
 //                        if(waitingForPairing)    {
 //                            doDojoPairing1();
 //                        }
-
-                        // reopen WhirlpoolWallet with new Tor config
-                        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
 
                     } else {
                         torStatus.setVisibility(View.INVISIBLE);
