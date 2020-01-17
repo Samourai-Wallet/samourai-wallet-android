@@ -330,11 +330,11 @@ public class WebUtil {
 
     }
 
-    public String tor_postURL(String URL, HashMap<String, String> args) throws Exception {
+    public String tor_postURL(String URL, Map<String, String> args) throws Exception {
         return tor_postURL(URL, args, null);
     }
 
-    public String tor_postURL(String URL, HashMap<String, String> args, Map<String,String> headers) throws Exception {
+    public String tor_postURL(String URL, Map<String, String> args, Map<String,String> headers) throws Exception {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
         if (args != null && args.size()!=0) {
@@ -382,11 +382,14 @@ public class WebUtil {
 
     }
 
-    public String tor_postURL(String URL, JSONObject args) throws Exception {
+    public String tor_postURL(String URL, JSONObject args, Map<String,String> headers) throws Exception {
+        return tor_postURL(URL, args.toString(), headers);
+    }
 
+    public String tor_postURL(String URL, String jsonToString, Map<String,String> headers) throws Exception {
         final MediaType JSON
                 = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(JSON, args.toString());
+        RequestBody body = RequestBody.create(JSON, jsonToString);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .proxy(TorManager.getInstance(this.context).getProxy());
@@ -399,8 +402,17 @@ public class WebUtil {
             builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
 
-        Request request = new Request.Builder()
-                .url(URL)
+        Request.Builder rb = new Request.Builder();
+
+        // set headers
+        if (headers == null) {
+            headers = new HashMap<>();
+        }
+        for (Map.Entry<String,String> e : headers.entrySet()) {
+            rb = rb.header(e.getKey(), e.getValue());
+        }
+
+        Request request = rb.url(URL)
                 .post(body)
                 .build();
 

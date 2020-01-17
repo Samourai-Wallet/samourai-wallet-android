@@ -1797,7 +1797,7 @@ public class SendActivity extends AppCompatActivity {
                                                 try {
                                                     String result = "";
                                                     if (TorManager.getInstance(getApplicationContext()).isRequired()) {
-                                                        result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj);
+                                                        result = WebUtil.getInstance(SendActivity.this).tor_postURL(url, nLockTimeObj, null);
 
                                                     } else {
                                                         result = WebUtil.getInstance(SendActivity.this).postURL("application/json", url, nLockTimeObj.toString());

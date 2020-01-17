@@ -1,6 +1,7 @@
 package com.samourai.stomp.client;
 
 import com.google.gson.Gson;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.whirlpool.client.utils.MessageErrorListener;
 import com.samourai.whirlpool.protocol.WhirlpoolProtocol;
 
@@ -18,7 +19,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
 import ua.naiksoftware.stomp.dto.LifecycleEvent;
 import ua.naiksoftware.stomp.dto.StompCommand;
@@ -28,10 +28,12 @@ import ua.naiksoftware.stomp.dto.StompMessage;
 public class AndroidStompClient implements IStompClient {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
     private Gson gson;
+    private TorManager torManager;
     private StompClient stompClient;
 
-    public AndroidStompClient() {
+    public AndroidStompClient(TorManager torManager) {
         this.gson = new Gson();
+        this.torManager = torManager;
     }
 
     @Override
@@ -39,7 +41,8 @@ public class AndroidStompClient implements IStompClient {
         try {
             url += "/websocket"; // SockJS
             log.debug("connecting to " + url);
-            stompClient = Stomp.over(Stomp.ConnectionProvider.JWS, url);
+            AndroidWebSocketsConnectionProvider connectionProvider = new AndroidWebSocketsConnectionProvider(url, null, torManager);
+            stompClient = new StompClient(connectionProvider);
             stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

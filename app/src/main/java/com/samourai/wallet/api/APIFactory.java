@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
@@ -182,6 +183,34 @@ public class APIFactory	{
         utxosBadBank = new HashMap<String, UTXO>();
 
         UTXOFactory.getInstance().clear();
+    }
+
+    public String getAccessTokenNotExpired() {
+        boolean setupDojo = DojoUtil.getInstance(context).getDojoParams() != null;
+
+        String currentAccessToken = getAccessToken();
+        if(currentAccessToken == null)    {
+            // no current token => request new token
+            Log.v("APIFactory", "getAccessTokenNotExpired => requesting new, setupDojo="+setupDojo);
+            getToken(setupDojo);
+            currentAccessToken = getAccessToken();
+        }
+
+        // still no token => not available
+        if (StringUtils.isEmpty(currentAccessToken)) {
+            Log.v("APIFactory", "getAccessTokenNotExpired => not available");
+            return currentAccessToken;
+        }
+
+        // check current token not expired
+        JWT jwt = new JWT(currentAccessToken);
+        if(jwt.isExpired(getAccessTokenRefresh())) {
+            // expired => request new token
+            Log.v("APIFactory", "getAccessTokenNotExpired => expired, request new");
+            getToken(setupDojo);
+            currentAccessToken = getAccessToken();
+        }
+        return currentAccessToken;
     }
 
     public String getAccessToken() {

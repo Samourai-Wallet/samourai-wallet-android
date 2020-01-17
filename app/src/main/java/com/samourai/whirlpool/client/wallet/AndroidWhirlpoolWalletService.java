@@ -3,17 +3,21 @@ package com.samourai.whirlpool.client.wallet;
 import android.content.Context;
 
 import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.AndroidOAuthManager;
 import com.samourai.http.client.IHttpClient;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.backend.BackendApi;
 import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.wallet.util.oauth.OAuthManager;
 import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
@@ -38,6 +42,7 @@ import java8.util.Optional;
 
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidWhirlpoolWalletService.class);
+    public static final int MIXS_TARGET_DEFAULT = 5;
     private Subject<String> events = PublishSubject.create();
 
     public enum ConnectionStates {
@@ -85,29 +90,43 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
-        // TODO user preferences
+        WebUtil webUtil = WebUtil.getInstance(ctx);
+        TorManager torManager = TorManager.getInstance(ctx);
+
+        String dojoParams = DojoUtil.getInstance(ctx).getDojoParams();
+        boolean useDojo = (dojoParams != null);
+
         boolean testnet = SamouraiWallet.getInstance().isTestNet();
-        boolean onion = TorManager.getInstance(ctx).isRequired();
-        int mixsTarget = 5;
+        boolean onion = useDojo || torManager.isRequired();
         String scode = null;
 
-        // TODO dojo backend support
-        String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
-        String backendApiKey = null;
+        // backend configuration
+        String backendUrl;
+        Optional<OAuthManager> oAuthManager;
+        if (useDojo) {
+            // dojo backend
+            backendUrl = DojoUtil.getInstance(ctx).getUrl(dojoParams);
+            APIFactory apiFactory = APIFactory.getInstance(ctx);
+            oAuthManager = Optional.of(new AndroidOAuthManager(apiFactory));
+        } else {
+            // samourai backend
+            backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
+            oAuthManager = Optional.empty();
+        }
 
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(ctx));
-        BackendApi backendApi = new BackendApi(httpClient, backendUrl, backendApiKey);
+        IHttpClient httpClient = new AndroidHttpClient(webUtil, torManager);
+        BackendApi backendApi = new BackendApi(httpClient, backendUrl, oAuthManager);
 
         File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
         File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
         WhirlpoolWalletPersistHandler persistHandler =
                 new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
 
-        return computeWhirlpoolWalletConfig(ctx, persistHandler, testnet, onion, mixsTarget, scode, httpClient, backendApi);
+        return computeWhirlpoolWalletConfig(torManager, persistHandler, testnet, onion, MIXS_TARGET_DEFAULT, scode, httpClient, backendApi);
     }
 
-    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, WhirlpoolWalletPersistHandler persistHandler, boolean testnet, boolean onion, int mixsTarget, String scode, IHttpClient httpClient, BackendApi backendApi) throws Exception {
-        IStompClientService stompClientService = new AndroidStompClientService();
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(TorManager torManager, WhirlpoolWalletPersistHandler persistHandler, boolean testnet, boolean onion, int mixsTarget, String scode, IHttpClient httpClient, BackendApi backendApi) throws Exception {
+        IStompClientService stompClientService = new AndroidStompClientService(torManager);
 
         WhirlpoolServer whirlpoolServer = testnet ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
         String serverUrl = whirlpoolServer.getServerUrl(onion);
