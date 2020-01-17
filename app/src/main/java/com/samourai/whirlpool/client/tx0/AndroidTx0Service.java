@@ -1,80 +1,67 @@
 package com.samourai.whirlpool.client.tx0;
 
-import com.samourai.stomp.client.AndroidStompClient;
+import android.util.Log;
+
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
-import com.samourai.wallet.bip69.BIP69OutputComparator;
-import com.samourai.wallet.client.Bip84Wallet;
-import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
-import com.samourai.wallet.segwit.bech32.Bech32UtilGeneric;
 import com.samourai.wallet.send.MyTransactionInput;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.util.FeeUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWalletConfig;
-import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutPoint;
-import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.core.TransactionWitness;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
-import org.bitcoinj.script.ScriptOpCodes;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class AndroidTx0Service extends Tx0Service {
     private Logger log = LoggerFactory.getLogger(AndroidTx0Service.class.getSimpleName());
 
-    private final Bech32UtilGeneric bech32Util = Bech32UtilGeneric.getInstance();
     private final FeeUtil feeUtil = FeeUtil.getInstance();
 
     public AndroidTx0Service(WhirlpoolWalletConfig config) {
         super(config);
     }
 
-    protected long computeTx0MinerFee(int nbPremix, long feeTx0, List<UnspentResponse.UnspentOutput> spendFroms) {
-
+    @Override
+    protected long computeTx0MinerFee(int nbPremix, long feeTx0, Collection<? extends UnspentResponse.UnspentOutput> spendFroms) {
         int nbOutputsNonOpReturn = nbPremix + 2; // outputs + change + fee
 
         int nbP2PKH = 0;
         int nbP2SH = 0;
         int nbP2WPKH = 0;
-        for(UnspentResponse.UnspentOutput uo : spendFroms) {
+        if (spendFroms != null) { // spendFroms can be NULL (for fee simulation)
+            for (UnspentResponse.UnspentOutput uo : spendFroms) {
 
-            if(Bech32Util.getInstance().isP2WPKHScript(uo.script))    {
-                nbP2WPKH++;
-            }
-            else    {
-                String address = new Script(Hex.decode(uo.script)).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
-                    nbP2SH++;
+                if (Bech32Util.getInstance().isP2WPKHScript(uo.script)) {
+                    nbP2WPKH++;
+                } else {
+                    String address = new Script(Hex.decode(uo.script)).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                    if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+                        nbP2SH++;
+                    } else {
+                        nbP2PKH++;
+                    }
                 }
-                else    {
-                    nbP2PKH++;
-                }
             }
-
         }
-
         long tx0MinerFee = feeUtil.estimatedFeeSegwit(nbP2PKH, nbP2SH, nbP2WPKH, nbOutputsNonOpReturn, 1, feeTx0);
+        Log.e("TX0", "nbP2PKH="+nbP2PKH+", nbP2SH="+nbP2SH+", nbP2WPKH="+nbP2WPKH+", nbOutputsNonOpReturn="+nbOutputsNonOpReturn+", feeTx0="+feeTx0+", tx0MinerFee="+tx0MinerFee);
 
         if (log.isDebugEnabled()) {
             log.debug(
@@ -91,8 +78,6 @@ public class AndroidTx0Service extends Tx0Service {
 
     @Override
     protected void buildTx0Input(Transaction tx, UnspentOutputWithKey input, NetworkParameters params) {
-
-        // TODO handle non-segwit inputs
         ECKey spendFromKey = ECKey.fromPrivate(input.getKey());
         TransactionOutPoint depositSpendFrom = input.computeOutpoint(params);
 
@@ -101,7 +86,6 @@ public class AndroidTx0Service extends Tx0Service {
         MyTransactionInput _input = new MyTransactionInput(params, null, new byte[0], _outpoint, depositSpendFrom.getHash().toString(), (int)depositSpendFrom.getIndex());
 
         tx.addInput(_input);
-
     }
 
     @Override
