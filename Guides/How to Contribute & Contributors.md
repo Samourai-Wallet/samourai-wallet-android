@@ -12,7 +12,7 @@ If you'd like to contribute to these guides or the Samourai Wallet ecosystem doc
 
 ### Crazyk031
 
-[Twitter](https://twitter.com/Crazyk031?s=09)
+[Twitter](https://twitter.com/Crazyk_031?s=09)
 
 [Keybase](https://keybase.io/crazyk031)
 
