@@ -34,8 +34,15 @@ public class TxDiffUtil extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        Tx oldItem = oldTxes.get(oldItemPosition);
-        Tx newItem = oldTxes.get(newItemPosition);
+        Tx oldItem;
+        Tx newItem;
+        try {
+            oldItem = oldTxes.get(oldItemPosition);
+            newItem = oldTxes.get(newItemPosition);
+        } catch(Exception e) {
+            // IndexOutOfBoundsException
+            return false;
+        }
         if (oldItem.section != null || newItem.section != null) {
             return true;
         }
