@@ -1,12 +1,17 @@
 package com.samourai.wallet.whirlpool;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.segwit.bech32.Bech32Util;
+import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -71,7 +76,28 @@ public class WhirlpoolTx0 {
     }
 
     public long getEstimatedBytes()    {
-        return (outpoints.size() * 85) + ((getPremixRequested() + 2) * 33) + 80;
+
+        int nbP2PKH = 0;
+        int nbP2SH = 0;
+        int nbP2WPKH = 0;
+
+        for(MyTransactionOutPoint outPoint : outpoints)    {
+            if(Bech32Util.getInstance().isP2WPKHScript(Hex.toHexString(outPoint.getScriptBytes())))    {
+                nbP2WPKH++;
+            }
+            else    {
+                String address = new Script(outPoint.getScriptBytes()).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                    nbP2SH++;
+                }
+                else    {
+                    nbP2PKH++;
+                }
+            }
+
+        }
+
+        return FeeUtil.getInstance().estimatedSizeSegwit(nbP2PKH, nbP2SH, nbP2WPKH) + 80;
     }
 
     public long getChange() {

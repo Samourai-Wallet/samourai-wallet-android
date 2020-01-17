@@ -87,6 +87,17 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
+
+        /*
+        boolean testnet = SamouraiWallet.getInstance().isTestNet();
+        boolean onion = false;
+        int mixsTarget = 5;
+        String scode = WhirlpoolMeta.getInstance(ctx).getSCODE();
+
+        String backendUrl = BackendServer.get(testnet).getBackendUrl(onion);
+        String backendApiKey = null;
+        */
+
         WebUtil webUtil = WebUtil.getInstance(ctx);
         TorManager torManager = TorManager.getInstance(ctx);
 

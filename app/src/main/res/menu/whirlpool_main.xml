@@ -11,5 +11,10 @@
         />
     <item android:id="@+id/action_menu_view_post_mix"
         android:title="@string/post_mix_transactions"
+        app:showAsAction="never"
+        />
+    <item android:id="@+id/action_scode"
+        android:title="@string/scode"
+        app:showAsAction="never"
         />
 </menu>

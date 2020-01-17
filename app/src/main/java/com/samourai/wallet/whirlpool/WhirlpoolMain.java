@@ -2,6 +2,7 @@ package com.samourai.wallet.whirlpool;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -417,8 +419,44 @@ public class WhirlpoolMain extends AppCompatActivity {
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
         }
+        else if(id == R.id.action_scode){
+            doSCODE();
+        }
+        else    {
+            ;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doSCODE() {
+
+        final EditText scode = new EditText(WhirlpoolMain.this);
+
+        String strCurrentCode = WhirlpoolMeta.getInstance(WhirlpoolMain.this).getSCODE();
+        if(strCurrentCode != null && strCurrentCode.length() > 0) {
+            scode.setText(strCurrentCode);
+        }
+
+        new AlertDialog.Builder(WhirlpoolMain.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.enter_scode)
+                .setView(scode)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String strSCODE = scode.getText().toString().trim();
+                        if (scode != null) {
+                            WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE(strSCODE);
+                        }
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+        }).show();
+
     }
 
     private class MixAdapter extends RecyclerView.Adapter<MixAdapter.ViewHolder> {
@@ -448,8 +486,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                         int mixDone = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsDone();
                         progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
                     } catch (Exception ex) {
-                        ex.printStackTrace();
-                        //ignore
+//                        ex.printStackTrace();
                     }
 
                     holder.mixingProgress.setText(progress);
@@ -498,6 +535,5 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         }
     }
-
 
 }

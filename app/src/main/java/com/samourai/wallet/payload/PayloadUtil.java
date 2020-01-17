@@ -450,6 +450,7 @@ public class PayloadUtil	{
             meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
             meta.put("utxo_notes", UTXOUtil.getInstance().toJSON_notes());
             meta.put("utxo_scores", UTXOUtil.getInstance().toJSON_scores());
+            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("tx0_display", Tx0DisplayUtil.getInstance().toJSON());
 
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
@@ -689,6 +690,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("utxo_scores")) {
                     UTXOUtil.getInstance().fromJSON_scores((JSONArray) meta.get("utxo_scores"));
+                }
+                if(meta.has("whirlpool")) {
+                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
                 }
                 if(meta.has("tx0_display")) {
                     Tx0DisplayUtil.getInstance().fromJSON((JSONArray) meta.get("tx0_display"));
