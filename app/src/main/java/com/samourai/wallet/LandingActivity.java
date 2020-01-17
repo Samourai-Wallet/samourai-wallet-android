@@ -46,6 +46,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import org.apache.commons.codec.DecoderException;
 import org.bitcoinj.crypto.MnemonicException;
@@ -137,6 +138,8 @@ public class LandingActivity extends AppCompatActivity  {
         startService(startIntent);
         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, false);
 
+        // reopen WhirlpoolWallet with new Tor config
+        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
     }
 
     private void startTor() {
@@ -159,6 +162,9 @@ public class LandingActivity extends AppCompatActivity  {
 //                        if(waitingForPairing)    {
 //                            doDojoPairing1();
 //                        }
+
+                        // reopen WhirlpoolWallet with new Tor config
+                        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
 
                     } else {
                         torStatus.setVisibility(View.INVISIBLE);

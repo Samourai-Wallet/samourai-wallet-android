@@ -155,10 +155,10 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     }
 
-    private void loadPremixes(boolean loadSilently) {
+    private void loadPremixes(boolean loadSilently) throws Exception {
         if (loadSilently)
             progressBar.setVisibility(View.VISIBLE);
-        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(this);
         HashMap<String, List<Tx>> premix_xpub = APIFactory.getInstance(getApplicationContext()).getPremixXpubTxs();
         List<Cycle> txes = new ArrayList<>();
         for (String key : premix_xpub.keySet()) {
@@ -326,10 +326,10 @@ public class WhirlpoolMain extends AppCompatActivity {
     }
 
 
-    private void listenPoolState() {
+    private void listenPoolState() throws Exception {
         Disposable mixStateDisposable = AndroidWhirlpoolWalletService
                 .getInstance()
-                .getWallet()
+                .getOrOpenWhirlpoolWallet(this)
                 .getMixingState().getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -353,9 +353,9 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         if (requestCode == NEWPOOL_REQ_CODE) {
             try {
-                AndroidWhirlpoolWalletService.getInstance().getWallet().clearCache();
-                AndroidWhirlpoolWalletService.getInstance().getWallet().getUtxosPremix(true);
-                AndroidWhirlpoolWalletService.getInstance().getWallet().getUtxosPostmix(true);
+                WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(this);
+                whirlpoolWallet.getUtxosPremix(true);
+                whirlpoolWallet.getUtxosPostmix(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -382,7 +382,11 @@ public class WhirlpoolMain extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
-                loadPremixes(false);
+                try {
+                    loadPremixes(false);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     };

@@ -280,7 +280,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private Completable beginTx0(List<UTXOCoin> coins) {
         return Completable.fromCallable(() -> {
 
-            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getWallet();
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(this);
             Collection<UnspentOutputWithKey> spendFroms = new ArrayList<UnspentOutputWithKey>();
 
             for (UTXOCoin coin : coins) {

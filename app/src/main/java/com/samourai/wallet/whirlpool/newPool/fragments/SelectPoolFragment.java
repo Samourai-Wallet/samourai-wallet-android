@@ -104,7 +104,7 @@ public class SelectPoolFragment extends Fragment {
     private void loadPools(Long tx0, Long aLong) {
 
         poolViewModels.clear();
-        Disposable disposable = Single.fromCallable(() -> AndroidWhirlpoolWalletService.getInstance().getWallet().getPools())
+        Disposable disposable = Single.fromCallable(() -> AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(getContext()).getPools())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((whirlpoolPools) -> {

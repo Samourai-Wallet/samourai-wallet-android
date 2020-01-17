@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 import static android.support.v4.app.NotificationCompat.GROUP_ALERT_SUMMARY;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_CHANNEL;
@@ -37,8 +38,6 @@ public class WhirlpoolNotificationService extends Service {
     public static String ACTION_STOP = "WHRL_STOP";
     private AndroidWhirlpoolWalletService androidWhirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private MixingState mixingState;
-    WhirlpoolWallet whirlpoolWallet;
 
     @Override
     public void onCreate() {
@@ -60,25 +59,24 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void listenService() {
-
-
         try {
-            WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
-            if (whirlpoolWallet == null) {
+            Optional<WhirlpoolWallet> whirlpoolWalletOpt = androidWhirlpoolWalletService.getWhirlpoolWallet();
+            if (!whirlpoolWalletOpt.isPresent()) {
                 // whirlpool wallet not opened yet
                 return;
             }
-            mixingState = whirlpoolWallet.getMixingState();
+
+            // whirlpool wallet is opened
+            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             updateNotification();
             Disposable stateDisposable = whirlpoolWallet.getMixingState().getObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(mixingState1 -> {
+                    .subscribe(mixingState -> {
                         updateNotification();
                     });
 
             Disposable repeatedChecks = Observable.fromCallable(() -> {
-                mixingState = whirlpoolWallet.getMixingState();
                 return true;
             }).repeatWhen(completed -> completed.delay(3, TimeUnit.SECONDS)).subscribe(aBoolean -> {
                 updateNotification();
@@ -102,7 +100,6 @@ public class WhirlpoolNotificationService extends Service {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::listenService, er -> {
-                        whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
                         Log.e(TAG, "onStartCommand: ".concat(er.getMessage()));
                     });
             compositeDisposable.add(startDisposable);
@@ -117,12 +114,9 @@ public class WhirlpoolNotificationService extends Service {
 
     private void stopWhirlPoolService() {
         compositeDisposable.clear();
-        WhirlpoolWallet whirlpoolWallet = androidWhirlpoolWalletService.getWallet();
-        if (whirlpoolWallet != null) {
-            whirlpoolWallet.stop();
-        }
-        this.stopSelf();
 
+        androidWhirlpoolWalletService.stop();
+        this.stopSelf();
     }
 
 
@@ -146,9 +140,9 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void setMixState(NotificationCompat.Builder builder) {
-        if (whirlpoolWallet != null)
-            mixingState = whirlpoolWallet.getMixingState();
-        if (mixingState != null) {
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = androidWhirlpoolWalletService.getWhirlpoolWallet();
+        if (whirlpoolWalletOpt.isPresent()) {
+            MixingState mixingState = whirlpoolWalletOpt.get().getMixingState();
             builder.setContentTitle("Whirlpool online: ".concat(String.valueOf(mixingState.getNbMixing()))
                     .concat(" MIXING :")
                     .concat(String.valueOf(mixingState.getNbQueued())).concat(" QUEUED"));
