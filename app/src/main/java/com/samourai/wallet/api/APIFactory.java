@@ -13,10 +13,12 @@ import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
+import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
+import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_Wallet;
@@ -40,11 +42,12 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.bip47.rpc.PaymentCode;
-import com.samourai.wallet.R;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.Address;
@@ -54,13 +57,11 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.script.Script;
-
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -77,6 +78,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.subjects.BehaviorSubject;
+import java8.util.Optional;
 
 import static com.samourai.wallet.util.LogUtil.debug;
 import static com.samourai.wallet.util.LogUtil.info;
@@ -1925,6 +1927,14 @@ public class APIFactory	{
                 }
             }
 
+            // refresh Whirlpool utxos
+            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+            if (whirlpoolWalletOpt.isPresent()) {
+                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.DEPOSIT);
+                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.PREMIX);
+                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.POSTMIX);
+                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.BADBANK);
+            }
         }
         catch (IndexOutOfBoundsException ioobe) {
             ioobe.printStackTrace();
@@ -2284,18 +2294,6 @@ public class APIFactory	{
         }
 
         return unspents;
-    }
-
-    public void setUtxos(HashMap<String, UTXO> utxos) {
-        APIFactory.utxos = utxos;
-    }
-
-    public void setUtxosPostMix(HashMap<String, UTXO> utxos) {
-        APIFactory.utxosPostMix = utxos;
-    }
-
-    public void setUtxosBadBank(HashMap<String, UTXO> utxos) {
-        APIFactory.utxosBadBank = utxos;
     }
 
     public synchronized List<Tx> getAllXpubTxs()  {

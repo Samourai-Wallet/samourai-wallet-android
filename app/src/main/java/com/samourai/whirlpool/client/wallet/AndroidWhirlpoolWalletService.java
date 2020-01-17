@@ -33,16 +33,11 @@ import java.util.Map;
 
 import ch.qos.logback.classic.Level;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 import java8.util.Optional;
 
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     public static final int MIXS_TARGET_DEFAULT = 5;
-    private Subject<String> events = PublishSubject.create();
 
     public enum ConnectionStates {
         CONNECTED,
@@ -69,7 +64,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance()); // fix for Android
 
         // set whirlpool log level
-        ClientUtils.setLogLevel(Level.OFF, Level.OFF);
+        ClientUtils.setLogLevel(Level.WARN, Level.WARN);
     }
 
     private WhirlpoolWallet getOrOpenWhirlpoolWallet(Context ctx) throws Exception {
@@ -79,10 +74,16 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
             String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
             WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
-            return openWallet(config, bip84w);
+            APIFactory apiFactory = APIFactory.getInstance(ctx);
+            WhirlpoolDataService dataService = newDataService(config, apiFactory);
+            return openWallet(config, dataService, bip84w);
         }
         // wallet already opened
         return whirlpoolWalletOpt.get();
+    }
+
+    protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config, APIFactory apiFactory) {
+        return new AndroidWhirlpoolDataService(config, this, apiFactory);
     }
 
     protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
@@ -183,14 +184,5 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
 
     public BehaviorSubject<ConnectionStates> listenConnectionStatus() {
         return source;
-    }
-
-    public Observable<String> getEvents() {
-        return events.subscribeOn(Schedulers.io());
-    }
-
-    @Override
-    protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config) {
-        return new AndroidWhirlpoolDataService(config, this);
     }
 }

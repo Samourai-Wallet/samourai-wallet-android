@@ -2,6 +2,7 @@ package com.samourai.whirlpool.client.wallet;
 
 import com.samourai.http.client.AndroidHttpClient;
 import com.samourai.http.client.IHttpClient;
+import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.backend.BackendApi;
 import com.samourai.wallet.api.backend.BackendServer;
 import com.samourai.wallet.api.backend.beans.HttpException;
@@ -40,6 +41,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import java8.util.Optional;
+
 @Ignore
 public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(WhirlpoolWalletTest.class.getSimpleName());
@@ -63,7 +66,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         // backendApi with mocked pushTx
         TorManager torManager = TorManager.getInstance(getContext());
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getContext()), torManager);
-        BackendApi backendApi = new BackendApi(httpClient, BackendServer.TESTNET.getBackendUrl(onion), null) {
+        BackendApi backendApi = new BackendApi(httpClient, BackendServer.TESTNET.getBackendUrl(onion), Optional.empty()) {
             @Override
             public void pushTx(String txHex) throws Exception {
                 log.info("pushTX ignored for test: "+txHex);
@@ -86,7 +89,9 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
                 return new Tx0Data(tx0Data.getFeePaymentCode(), tx0Data.getFeeValue(), tx0Data.getFeeChange(), 0, tx0Data.getFeePayload(), "tb1qgyppvv58rv83eas60trmdgqc06yx9q53qs6skx", 123);
             }
         });
-        whirlpoolWallet = whirlpoolWalletService.openWallet(config, bip84w);
+        APIFactory apiFactory = APIFactory.getInstance(context);
+        WhirlpoolDataService dataService = whirlpoolWalletService.newDataService(config, apiFactory);
+        whirlpoolWallet = whirlpoolWalletService.openWallet(config, dataService, bip84w);
     }
 
     @Test

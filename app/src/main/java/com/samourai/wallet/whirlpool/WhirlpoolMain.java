@@ -441,7 +441,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             Cycle cycleTX = cycles.get(position);
             holder.mixingAmount.setText(Coin.valueOf((long) cycleTX.getAmount()).toPlainString().concat(" BTC"));
             try {
-                if (cycleTX.getCurrentRunningMix() != null) {
+                if (cycleTX.getCurrentRunningMix() != null && cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress() != null) {
                     String progress = cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage();
                     try {
                         int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
