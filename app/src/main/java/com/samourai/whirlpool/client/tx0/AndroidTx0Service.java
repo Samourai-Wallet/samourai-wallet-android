@@ -1,7 +1,5 @@
 package com.samourai.whirlpool.client.tx0;
 
-import android.util.Log;
-
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -61,7 +59,6 @@ public class AndroidTx0Service extends Tx0Service {
             }
         }
         long tx0MinerFee = feeUtil.estimatedFeeSegwit(nbP2PKH, nbP2SH, nbP2WPKH, nbOutputsNonOpReturn, 1, feeTx0);
-        Log.e("TX0", "nbP2PKH="+nbP2PKH+", nbP2SH="+nbP2SH+", nbP2WPKH="+nbP2WPKH+", nbOutputsNonOpReturn="+nbOutputsNonOpReturn+", feeTx0="+feeTx0+", tx0MinerFee="+tx0MinerFee);
 
         if (log.isDebugEnabled()) {
             log.debug(
