@@ -23,9 +23,10 @@ import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
-import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 
 public class SelectPoolFragment extends Fragment {
@@ -104,7 +106,12 @@ public class SelectPoolFragment extends Fragment {
     private void loadPools(Long tx0, Long aLong) {
 
         poolViewModels.clear();
-        Disposable disposable = Single.fromCallable(() -> AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(getContext()).getPools())
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
+        Disposable disposable = Single.fromCallable(() -> whirlpoolWallet.getPools())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((whirlpoolPools) -> {

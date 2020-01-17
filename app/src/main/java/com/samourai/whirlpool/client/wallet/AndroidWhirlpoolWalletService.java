@@ -72,7 +72,7 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         ClientUtils.setLogLevel(Level.OFF, Level.OFF);
     }
 
-    public WhirlpoolWallet getOrOpenWhirlpoolWallet(Context ctx) throws Exception {
+    private WhirlpoolWallet getOrOpenWhirlpoolWallet(Context ctx) throws Exception {
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
             // wallet closed => open WhirlpoolWallet
@@ -171,12 +171,14 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         }
     }
 
-    public void restartIfOpened(Context context) {
-        if (getWhirlpoolWallet().isPresent()) {
-            Log.v(TAG, "Restarting WhirlpoolWallet...");
-            stop();
-            startService(context);
+    public Completable restart(Context context) {
+        if (!getWhirlpoolWallet().isPresent()) {
+            // wallet not opened => nothing to do
+            Completable.fromCallable(() -> true);
         }
+        Log.v(TAG, "Restarting WhirlpoolWallet...");
+        stop();
+        return startService(context);
     }
 
     public BehaviorSubject<ConnectionStates> listenConnectionStatus() {

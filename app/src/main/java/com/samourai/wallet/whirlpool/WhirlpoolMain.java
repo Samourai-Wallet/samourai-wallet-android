@@ -66,6 +66,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 public class WhirlpoolMain extends AppCompatActivity {
 
@@ -158,7 +159,11 @@ public class WhirlpoolMain extends AppCompatActivity {
     private void loadPremixes(boolean loadSilently) throws Exception {
         if (loadSilently)
             progressBar.setVisibility(View.VISIBLE);
-        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(this);
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
         HashMap<String, List<Tx>> premix_xpub = APIFactory.getInstance(getApplicationContext()).getPremixXpubTxs();
         List<Cycle> txes = new ArrayList<>();
         for (String key : premix_xpub.keySet()) {
@@ -327,10 +332,12 @@ public class WhirlpoolMain extends AppCompatActivity {
 
 
     private void listenPoolState() throws Exception {
-        Disposable mixStateDisposable = AndroidWhirlpoolWalletService
-                .getInstance()
-                .getOrOpenWhirlpoolWallet(this)
-                .getMixingState().getObservable()
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
+        Disposable mixStateDisposable = whirlpoolWallet.getMixingState().getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mixingState -> {
@@ -352,8 +359,12 @@ public class WhirlpoolMain extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == NEWPOOL_REQ_CODE) {
+            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+            if (!whirlpoolWalletOpt.isPresent()) {
+                return;
+            }
+            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             try {
-                WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance().getOrOpenWhirlpoolWallet(this);
                 whirlpoolWallet.getUtxosPremix(true);
                 whirlpoolWallet.getUtxosPostmix(true);
             } catch (Exception e) {

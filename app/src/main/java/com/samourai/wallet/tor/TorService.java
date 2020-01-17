@@ -108,8 +108,11 @@ public class TorService extends Service {
                     });
             compositeDisposable.add(disposable);
 
-            // reopen WhirlpoolWallet with new Tor config
-            AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
+            AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+            if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+                // restart WhirlpoolWallet with new Tor config
+                whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+            }
 
         } else if (intent.getAction().equals(TorService.RENEW_IDENTITY)) {
             renewIdentity();
@@ -195,18 +198,21 @@ public class TorService extends Service {
                 }, Throwable::printStackTrace);
         compositeDisposable.add(torDisposable);
 
-
         Disposable statusDisposable = TorManager.getInstance(this)
                 .torStatus
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
+                    if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                        AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+                        if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+                            // restart WhirlpoolWallet with new Tor config once Tor is connected
+                            whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+                        }
+                    }
                 });
         logger();
         compositeDisposable.add(statusDisposable);
-
-        // reopen WhirlpoolWallet with new Tor config
-        AndroidWhirlpoolWalletService.getInstance().restartIfOpened(this);
     }
 
     private void logger() {
