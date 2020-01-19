@@ -279,6 +279,14 @@ public class SendActivity extends AppCompatActivity {
         if (getIntent().getExtras().containsKey("preselected")) {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
+
+            if(preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+                cahootsGroup.setVisibility(View.GONE);
+                ricochetHopsSwitch.setVisibility(View.GONE);
+                ricochetTitle.setVisibility(View.GONE);
+                ricochetDesc.setVisibility(View.GONE);
+            }
+
         } else {
 
             Disposable disposable = APIFactory.getInstance(getApplicationContext())
