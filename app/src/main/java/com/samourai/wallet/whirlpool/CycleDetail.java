@@ -47,11 +47,11 @@ public class CycleDetail extends AppCompatActivity {
     private TextView cycleStatus, transactionStatus, transactionId;
     private RecyclerView cycledTxsRecyclerView;
     private TxCyclesAdapter txCyclesAdapter;
-    private ArrayList<UTXOCoin> mixedUTXOs = new ArrayList<>();
     private ProgressBar cycleProgress;
     private TextView registeringInputs, cyclingTx, waitingForConfirmation, cycledTxesListHeader, cycleTotalFee;
     private ImageView registeringCheck, cyclingCheck, confirmCheck;
     private List<WhirlpoolUtxo> whirlpoolUtxos = new ArrayList<>();
+    private WhirlpoolUtxo whirlpoolUtxo = null;
     private List<WhirlpoolUtxo> whirlpoolUtxosMixDone = new ArrayList<>();
     private static final String TAG = "CycleDetail";
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -90,7 +90,6 @@ public class CycleDetail extends AppCompatActivity {
             finish();
             return;
         }
-        transactionId.setText(hash);
 
         setMixStatus();
         listenUTXO();
@@ -106,53 +105,30 @@ public class CycleDetail extends AppCompatActivity {
         WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
         try {
             for (WhirlpoolUtxo utxo : wallet.getUtxosPremix()) {
-                if (utxo.getUtxo().tx_hash.equals(hash)) {
-                    whirlpoolUtxos.add(utxo);
+                if (utxo.getUtxo().toString().equals(hash)) {
                     getSupportActionBar().setTitle(utxo.getUtxoConfig().getPoolId());
-
+                    whirlpoolUtxo = utxo;
+                    transactionId.setText(utxo.getUtxo().tx_hash);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try {
-            int cycled = 0;
-            for (WhirlpoolUtxo utxo : whirlpoolUtxos) {
-                if (utxo.getUtxoState().getMixProgress() != null && utxo.getUtxoState().getMixProgress().getMixStep() == MixStep.SUCCESS) {
-                    cycled = cycled + 1;
-                    whirlpoolUtxosMixDone.add(utxo);
-                    txCyclesAdapter.notifyDataSetChanged();
-                }
-            }
-            cycledTxesListHeader.setText("Cycled (".concat(String.valueOf(cycled).concat("/")).concat(String.valueOf(whirlpoolUtxos.size())).concat(" )"));
-        } catch (Exception e) {
-//            cycledTxesListHeader.setText("");
-            e.printStackTrace();
-        }
     }
 
-    public WhirlpoolUtxo getCurrentRunningMix() {
-        for (WhirlpoolUtxo utxo : whirlpoolUtxos) {
-            if (utxo.getUtxoState() != null && utxo.getUtxoState().getMixableStatus() != null) {
-                return utxo;
-            }
-        }
-        return null;
-    }
 
 
     private void listenUTXO() {
-        if (getCurrentRunningMix() == null || getCurrentRunningMix().getUtxoState() == null) {
+        if (whirlpoolUtxo == null || whirlpoolUtxo.getUtxoState() == null) {
             return;
         }
-        updateState(getCurrentRunningMix().getUtxoState());
-        Disposable disposable = getCurrentRunningMix().getUtxoState()
+        updateState(whirlpoolUtxo.getUtxoState());
+        Disposable disposable  = whirlpoolUtxo.getUtxoState()
                 .getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::updateState, er -> {
-                    Log.e(TAG, "listenUTXO: ".concat(er.getMessage()));
                     er.printStackTrace();
                 });
         compositeDisposable.add(disposable);

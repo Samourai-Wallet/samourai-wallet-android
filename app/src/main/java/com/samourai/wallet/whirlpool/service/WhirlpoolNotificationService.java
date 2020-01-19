@@ -16,7 +16,12 @@ import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.MixingState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
+import org.bitcoinj.core.Coin;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +34,7 @@ import java8.util.Optional;
 
 import static android.support.v4.app.NotificationCompat.GROUP_ALERT_SUMMARY;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_CHANNEL;
+import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_NOTIFICATIONS;
 
 public class WhirlpoolNotificationService extends Service {
 
@@ -38,6 +44,7 @@ public class WhirlpoolNotificationService extends Service {
     public static String ACTION_STOP = "WHRL_STOP";
     private AndroidWhirlpoolWalletService androidWhirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private List<String> notifiedUtxos = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -73,14 +80,11 @@ public class WhirlpoolNotificationService extends Service {
             Disposable stateDisposable = whirlpoolWallet.getMixingState().getObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(mixingState -> {
-                        updateNotification();
-                    });
+                    .subscribe(mixingState -> updateNotification());
 
-            Disposable repeatedChecks = Observable.fromCallable(() -> {
-                return true;
-            }).repeatWhen(completed -> completed.delay(3, TimeUnit.SECONDS)).subscribe(aBoolean -> {
+            Disposable repeatedChecks = Observable.fromCallable(() -> true).repeatWhen(completed -> completed.delay(3, TimeUnit.SECONDS)).subscribe(aBoolean -> {
                 updateNotification();
+                notifySuccessMixes(whirlpoolWallet.getMixingState());
             }, er -> {
 
             });
@@ -88,6 +92,39 @@ public class WhirlpoolNotificationService extends Service {
             compositeDisposable.add(stateDisposable);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    private void notifySuccessMixes(MixingState mixingState) {
+        for (WhirlpoolUtxo utxo : new ArrayList<>(mixingState.getUtxosMixing())) {
+            if (utxo.getUtxoState().getStatus() == WhirlpoolUtxoStatus.MIX_SUCCESS) {
+                String utxoId = utxo.getUtxo().tx_hash.concat(":").concat(String.valueOf(utxo.getUtxo().tx_output_n));
+                if (!notifiedUtxos.contains(utxoId)) {
+//                    showMixSuccessNotification(utxo);
+                    notifiedUtxos.add(utxoId);
+                }
+            }
+
+        }
+
+
+    }
+
+    private void showMixSuccessNotification(WhirlpoolUtxo utxo) {
+        String message = Coin.valueOf(utxo.getUtxo().value).toPlainString().concat(" BTC").concat(" ").concat(" mix completed");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, WHIRLPOOL_NOTIFICATIONS)
+                .setContentTitle("Mix completed")
+                .setTicker("Mix completed")
+                .setColorized(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_whirlpool)
+                .setColor(getResources().getColor(R.color.green_ui_2));
+        Notification notification = builder.build();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(utxo.getUtxo().tx_hash, utxo.getUtxo().tx_output_n, notification);
         }
     }
 

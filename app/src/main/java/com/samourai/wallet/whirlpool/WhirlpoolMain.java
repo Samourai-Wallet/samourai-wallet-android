@@ -8,11 +8,13 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,12 +31,9 @@ import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.send.FeeUtil;
-import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendActivity;
-import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.LogUtil;
@@ -42,7 +41,7 @@ import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
-import com.samourai.wallet.whirlpool.models.Cycle;
+import com.samourai.wallet.whirlpool.models.WhirlpoolUtxoViewModel;
 import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
@@ -50,18 +49,14 @@ import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
 import org.bitcoinj.core.Coin;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -73,16 +68,14 @@ import java8.util.Optional;
 public class WhirlpoolMain extends AppCompatActivity {
 
     public static int NEWPOOL_REQ_CODE = 6102;
-    private ArrayList<Cycle> cycles = new ArrayList<>();
+    private List<WhirlpoolUtxoViewModel> whirlpoolUtxoViewModels = new ArrayList<>();
     private static final String TAG = "WhirlpoolMain";
     private RecyclerView premixList;
     private TextView whirlpoolBalance;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private TextView amountSubText;
     private MixAdapter adapter;
-    private List<UTXO> premixUtxos = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private List<String> seenNonTx0Hashes = new ArrayList<>();
     private ProgressBar progressBar;
     private int balanceIndex = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -122,7 +115,6 @@ public class WhirlpoolMain extends AppCompatActivity {
         premixList.setAdapter(adapter);
 
         long postMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPostMixBalance();
-        premixUtxos = APIFactory.getInstance(WhirlpoolMain.this).getUtxosPreMix(false);
         long preMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
 
         whirlpoolBalance.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
@@ -136,7 +128,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                         listenPoolState();
                         loadPremixes(false);
                     }
-
                 });
         compositeDisposable.add(disposable);
 
@@ -146,7 +137,6 @@ public class WhirlpoolMain extends AppCompatActivity {
         collapsingToolbarLayout.setOnClickListener(view -> switchBalance());
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            LogUtil.info(TAG, "onCreate: ".concat(String.valueOf(seenNonTx0Hashes.size())));
             Intent intent = new Intent(this, JobRefreshService.class);
             intent.putExtra("notifTx", false);
             intent.putExtra("dragged", true);
@@ -154,95 +144,108 @@ public class WhirlpoolMain extends AppCompatActivity {
             JobRefreshService.enqueueWork(getApplicationContext(), intent);
             swipeRefreshLayout.setRefreshing(false);
             progressBar.setVisibility(View.VISIBLE);
+            loadPremixes(true);
         });
 
     }
 
-    private void loadPremixes(boolean loadSilently) throws Exception {
-        if (loadSilently)
-            progressBar.setVisibility(View.VISIBLE);
+    private void loadPremixes(boolean loadSilently) {
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
             return;
         }
-        WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
-        HashMap<String, List<Tx>> premix_xpub = APIFactory.getInstance(getApplicationContext()).getPremixXpubTxs();
-        List<Cycle> txes = new ArrayList<>();
-        for (String key : premix_xpub.keySet()) {
-            for (Tx tx : premix_xpub.get(key)) {
-                //allow only received tx's
-                if (tx.getAmount() > 0) {
-                    Cycle cycle = new Cycle(tx.toJSON());
-                    try {
-                        for (WhirlpoolUtxo utxo : wallet.getUtxosPremix()) {
-                            if (utxo.getUtxo().tx_hash.equals(tx.getHash())) {
-                                if (utxo.getUtxoState() != null && utxo.getUtxoState().getMixableStatus() != null) {
-                                    cycle.addWhirlpoolUTXO(utxo);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    txes.add(cycle);
-                }
-            }
-        }
-        Disposable disposable = filter(txes)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(cycles1 -> {
-                    cycles.clear();
-                    cycles.addAll(cycles1);
-                    adapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    balanceIndex = balanceIndex-1;
-                    switchBalance();
-                }, er -> {
-                    er.printStackTrace();
-                    progressBar.setVisibility(View.INVISIBLE);
-                });
 
-        compositeDisposable.add(disposable);
+        if (loadSilently)
+            progressBar.setVisibility(View.VISIBLE);
+        WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet().get();
+        try {
+
+            Disposable disposable = filter(wallet.getUtxosPremix(), new ArrayList<>(wallet.getMixingState().getUtxosMixing()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(whirlpoolUtxoViewModelList -> {
+                        adapter.updateList(whirlpoolUtxoViewModelList);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        balanceIndex = balanceIndex - 1;
+                        switchBalance();
+                    }, er -> {
+                        er.printStackTrace();
+                        progressBar.setVisibility(View.INVISIBLE);
+                    });
+
+            compositeDisposable.add(disposable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private Observable<List<Cycle>> filter(List<Cycle> cycles) {
-        premixUtxos = APIFactory.getInstance(WhirlpoolMain.this).getUtxosPreMix(false);
+    private Observable<List<WhirlpoolUtxoViewModel>> filter(Collection<WhirlpoolUtxo> premix, List<WhirlpoolUtxo> mixingUtxos) {
         return Observable.fromCallable(() -> {
-            List<Cycle> txes = new ArrayList<>();
-            for (Cycle cycle : cycles) {
-                if (Tx0DisplayUtil.getInstance().contains(cycle.getHash())) {
-                    txes.add(cycle);
-                } else {
-                    if (!seenNonTx0Hashes.contains(cycle.getHash())) {
-                        JSONObject object = APIFactory.getInstance(getApplicationContext()).getTxInfo(cycle.getHash());
-                        if (object.has("outputs")) {
-                            JSONArray array = object.getJSONArray("outputs");
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject outpoint = array.getJSONObject(i);
-                                if (outpoint.has("type") && outpoint.getString("type").equals("nulldata")) {
-                                    if (!Tx0DisplayUtil.getInstance().contains(cycle.getHash()))
-                                        Tx0DisplayUtil.getInstance().add(cycle.getHash());
-                                    txes.add(cycle);
-                                } else {
-                                    seenNonTx0Hashes.add(cycle.getHash());
-                                }
-                            }
-                        }
-                    }
+            List<WhirlpoolUtxoViewModel> list = new ArrayList<>();
 
-                }
-                for (UTXO utxo : premixUtxos) {
-                    for (MyTransactionOutPoint out : utxo.getOutpoints()) {
-                        if (out.getTxHash().toString().equals(cycle.getHash())) {
-                            cycle.setFoundUTXOsInPremix(true);
-                        }
+            List<WhirlpoolUtxo> utxoList = new ArrayList<>(premix);
+
+            WhirlpoolUtxoViewModel section = WhirlpoolUtxoViewModel.section("Mixing");
+            list.add(section);
+            for (WhirlpoolUtxo utxo : utxoList) {
+                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
+                for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
+                    if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n) {
+                        whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(utxo)));
                     }
+                }
+                if (whirlpoolUtxoViewModel == null) {
+                    whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(utxo);
+                }
+
+                if (utxo.getUtxoState() != null) {
+                    if (utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.MIX_QUEUE &&
+                            utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.TX0_FAILED) {
+
+                        list.add(whirlpoolUtxoViewModel);
+                    }
+                }
+            }
+            WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("UnMixed");
+            list.add(queueSection);
+
+            for (WhirlpoolUtxo utxo : utxoList) {
+                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
+                for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
+                    if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n)
+                        whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(utxo)));
+                }
+                if (whirlpoolUtxoViewModel == null) {
+                    whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(utxo);
+                }
+                if (whirlpoolUtxoViewModel.getUtxoState().getStatus() == WhirlpoolUtxoStatus.MIX_QUEUE) {
+                    list.add(whirlpoolUtxoViewModel);
                 }
 
             }
-            return txes;
+            for (WhirlpoolUtxoViewModel utxo : list) {
+                list.get(list.indexOf(utxo)).setId(list.indexOf(utxo));
+
+            }
+            listenPoolState(utxoList);
+            return list;
         });
+    }
+
+    private void listenPoolState(List<WhirlpoolUtxo> list) {
+        List<Observable<WhirlpoolUtxoState>> state = new ArrayList<>();
+        for (WhirlpoolUtxo utxo : list) {
+            state.add(utxo.getUtxoState().getObservable());
+        }
+
+        Disposable disposable = Observable.merge(state)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(whirlpoolUtxoState -> {
+                    loadPremixes(true);
+                });
+        compositeDisposable.add(disposable);
     }
 
     private void startWhirlpool() {
@@ -344,7 +347,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mixingState -> {
                     loadPremixes(true);
-
                 }, Throwable::printStackTrace);
 
         compositeDisposable.add(mixStateDisposable);
@@ -395,11 +397,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
-                try {
-                    loadPremixes(false);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+                loadPremixes(false);
             }
         }
     };
@@ -414,15 +412,13 @@ public class WhirlpoolMain extends AppCompatActivity {
             Intent intent = new Intent(WhirlpoolMain.this, UTXOSActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
-        } else if(id == R.id.action_menu_view_post_mix){
+        } else if (id == R.id.action_menu_view_post_mix) {
             Intent intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
             intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
             startActivity(intent);
-        }
-        else if(id == R.id.action_scode){
+        } else if (id == R.id.action_scode) {
             doSCODE();
-        }
-        else    {
+        } else {
             ;
         }
 
@@ -434,7 +430,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         final EditText scode = new EditText(WhirlpoolMain.this);
 
         String strCurrentCode = WhirlpoolMeta.getInstance(WhirlpoolMain.this).getSCODE();
-        if(strCurrentCode != null && strCurrentCode.length() > 0) {
+        if (strCurrentCode != null && strCurrentCode.length() > 0) {
             scode.setText(strCurrentCode);
         }
 
@@ -452,88 +448,207 @@ public class WhirlpoolMain extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.dismiss();
+            }
         }).show();
 
     }
 
     private class MixAdapter extends RecyclerView.Adapter<MixAdapter.ViewHolder> {
+        int SECTION = 0, UTXO = 1;
 
-
-        MixAdapter(List<Cycle> items) {
-
+        MixAdapter(List<WhirlpoolUtxoViewModel> items) {
+            this.setHasStableIds(true);
         }
 
         @Override
         public MixAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.cycle_item, parent, false);
-            return new MixAdapter.ViewHolder(view);
+
+            if (viewType == UTXO) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.cycle_item, parent, false);
+
+                return new MixAdapter.ViewHolder(view, UTXO);
+
+            } else {
+
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.tx_item_section_layout, parent, false);
+                return new ViewHolder(view, SECTION);
+            }
         }
 
         @Override
         public void onBindViewHolder(final MixAdapter.ViewHolder holder, int position) {
 
-            Cycle cycleTX = cycles.get(position);
-            holder.mixingAmount.setText(Coin.valueOf((long) cycleTX.getAmount()).toPlainString().concat(" BTC"));
+            WhirlpoolUtxoViewModel whirlpoolUtxoModel = whirlpoolUtxoViewModels.get(position);
+
+            if (whirlpoolUtxoModel.isSection()) {
+                holder.section.setText(whirlpoolUtxoModel.getSection());
+                return;
+            }
+            holder.mixingAmount.setText(Coin.valueOf(whirlpoolUtxoModel.getUtxo().value).toPlainString().concat(" BTC"));
             try {
-                if (cycleTX.getCurrentRunningMix() != null && cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress() != null) {
-                    String progress = cycleTX.getCurrentRunningMix().getUtxoState().getMixProgress().getMixStep().getMessage();
+                if (whirlpoolUtxoModel.getUtxoState() != null) {
+                    String progress = "";
+                    if (whirlpoolUtxoModel.getUtxoState().getMessage() != null) {
+                        progress = whirlpoolUtxoModel.getUtxoState().getMessage();
+                    }
                     try {
-                        int mixTarget = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
-                        int mixDone = cycleTX.getCurrentRunningMix().getUtxoConfig().getMixsDone();
+                        int mixTarget = whirlpoolUtxoModel.getUtxoConfig().getMixsTarget();
+                        int mixDone = whirlpoolUtxoModel.getUtxoConfig().getMixsDone();
                         progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
                     } catch (Exception ex) {
 //                        ex.printStackTrace();
                     }
-
                     holder.mixingProgress.setText(progress);
-                    holder.progressStatus.setColorFilter(getResources().getColor(R.color.warning_yellow));
-                } else if (cycleTX.getWhirlpoolUtxos().size() == 0 && !cycleTX.isFoundUTXOsInPremix()) {
-                    holder.mixingProgress.setText("Cycle Complete");
-                    holder.progressStatus.setColorFilter(getResources().getColor(R.color.green_ui_2));
+                    try {
+                        switch (whirlpoolUtxoModel.getUtxoState().getStatus()) {
+                            case READY: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Ready");
+                                }
+                                holder.progressStatus.setColorFilter(getResources().getColor(R.color.whirlpoolBlue));
+                                break;
+                            }
+                            case STOP: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Stop");
+                                }
+                                holder.progressStatus.setColorFilter(getResources().getColor(R.color.disabled_white));
+                                break;
+                            }
+                            case MIX_STARTED: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Joined a mix");
+                                }
+                                break;
+                            }
+                            case MIX_QUEUE: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Queued");
+                                }
+                                holder.progressStatus.setColorFilter(getResources().getColor(R.color.warning_yellow));
+                                break;
+                            }
+                            case MIX_SUCCESS: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Mix success");
+                                }
+                                holder.progressStatus.setColorFilter(getResources().getColor(R.color.green_ui_2));
+                                break;
+                            }
+                            case MIX_FAILED: {
+                                if (progress.length() == 0) {
+                                    holder.mixingProgress.setText("Mix failed");
+                                }
+                                holder.progressStatus.setColorFilter(getResources().getColor(R.color.red));
+                                break;
+                            }
+                        }
+                    } catch (Exception er) {
+                        er.printStackTrace();
+                    }
+
                 } else {
                     holder.mixingProgress.setText("Queue");
-                    holder.progressStatus.setColorFilter(getResources().getColor(R.color.disabled_grey));
+                    holder.progressStatus.setColorFilter(getResources().getColor(R.color.disabled_white));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-            Date date = new Date();
-            date.setTime(cycleTX.getTS() * 1000);
-            SimpleDateFormat fmt = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-            fmt.setTimeZone(TimeZone.getDefault());
-            holder.mixingTime.setText(fmt.format(date));
+            holder.mixingTime.setText("Premix");
             holder.itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(getApplicationContext(), CycleDetail.class);
-                intent.putExtra("hash", cycleTX.getHash());
+                intent.putExtra("hash", whirlpoolUtxoModel.getUtxo().toString());
                 startActivity(intent);
             });
         }
 
         @Override
         public int getItemCount() {
-            return cycles.size();
+            return whirlpoolUtxoViewModels.size();
+        }
+
+
+        @Override
+        public long getItemId(int position) {
+            return whirlpoolUtxoViewModels.get(position).getId();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (whirlpoolUtxoViewModels.get(position).isSection()) {
+                return SECTION;
+            } else {
+                return UTXO;
+            }
+        }
+
+        public void updateList(List<WhirlpoolUtxoViewModel> newList) {
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new WhirlpoolUtxoDiff(whirlpoolUtxoViewModels, newList));
+            whirlpoolUtxoViewModels = new ArrayList<>();
+            whirlpoolUtxoViewModels.addAll(newList);
+            diffResult.dispatchUpdatesTo(this);
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final View mView;
-            TextView mixingProgress, mixingTime, mixingAmount;
+            TextView mixingProgress, mixingTime, mixingAmount, section;
             ImageView progressStatus;
 
-            ViewHolder(View view) {
+            ViewHolder(View view, int type) {
                 super(view);
                 mView = view;
-                mixingAmount = view.findViewById(R.id.whirlpool_cycle_item_mixing_amount);
-                mixingProgress = view.findViewById(R.id.whirlpool_cycle_item_mixing_text);
-                progressStatus = view.findViewById(R.id.whirlpool_cycle_item_mixing_status_icon);
-                mixingTime = view.findViewById(R.id.whirlpool_cycle_item_time);
+                if (type == UTXO) {
+
+                    mixingAmount = view.findViewById(R.id.whirlpool_cycle_item_mixing_amount);
+                    mixingProgress = view.findViewById(R.id.whirlpool_cycle_item_mixing_text);
+                    progressStatus = view.findViewById(R.id.whirlpool_cycle_item_mixing_status_icon);
+                    mixingTime = view.findViewById(R.id.whirlpool_cycle_item_time);
+                } else {
+                    section = itemView.findViewById(R.id.section_title);
+                }
             }
 
         }
     }
 
+    public class WhirlpoolUtxoDiff extends DiffUtil.Callback {
+
+        List<WhirlpoolUtxoViewModel> oldList;
+        List<WhirlpoolUtxoViewModel> newList;
+
+        WhirlpoolUtxoDiff(List<WhirlpoolUtxoViewModel> newPersons, List<WhirlpoolUtxoViewModel> oldPersons) {
+            this.newList = newPersons;
+            this.oldList = oldPersons;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).getId() == (newList.get(newItemPosition).getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+        }
+
+        @Nullable
+        @Override
+        public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+            return super.getChangePayload(oldItemPosition, newItemPosition);
+        }
+    }
 }

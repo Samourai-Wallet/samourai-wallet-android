@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.constraint.Group;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +13,7 @@ import android.view.ViewGroup;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.whirlpool.CycleDetail;
-import com.samourai.wallet.whirlpool.models.Cycle;
-import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
+import com.samourai.wallet.whirlpool.models.WhirlpoolUtxoViewModel;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 
 import java.util.ArrayList;
@@ -66,7 +64,7 @@ public class WhirlpoolCyclesFragment extends Fragment {
     private class WhirlpoolCyclesFragmentAdapter extends RecyclerView.Adapter<WhirlpoolCyclesFragmentAdapter.ViewHolder> {
 
 
-        WhirlpoolCyclesFragmentAdapter(List<Cycle> items) {
+        WhirlpoolCyclesFragmentAdapter(List<WhirlpoolUtxoViewModel> items) {
 
         }
 

@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Mixing in progress"
+        tools:text="Mixing in progress"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/whirlpool_cycle_item_mixing_status_icon"
         app:layout_constraintStart_toEndOf="@+id/whirlpool_cycle_item_mixing_status_icon"
