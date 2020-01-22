@@ -36,7 +36,6 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
@@ -207,6 +206,9 @@ public class WhirlpoolMain extends AppCompatActivity {
                     }
                 }
             }
+            if (list.size() == 1) {
+                list.remove(section);
+            }
             WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("UnMixed");
             list.add(queueSection);
 
@@ -223,6 +225,9 @@ public class WhirlpoolMain extends AppCompatActivity {
                     list.add(whirlpoolUtxoViewModel);
                 }
 
+            }
+            if (list.get(list.size() - 1).isSection()) {
+                list.remove(queueSection);
             }
             for (WhirlpoolUtxoViewModel utxo : list) {
                 list.get(list.indexOf(utxo)).setId(list.indexOf(utxo));
