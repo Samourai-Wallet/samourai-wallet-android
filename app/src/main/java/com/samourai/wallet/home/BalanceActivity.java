@@ -604,13 +604,15 @@ public class BalanceActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiverDisplay);
 
-        if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
-        }
+        if(account == 0) {
+            if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            }
 
-        if(isFinishing()){
-            // disconnect Whirlpool on app exit
-            WhirlpoolNotificationService.stopService(getApplicationContext());
+            if(isFinishing()){
+                // disconnect Whirlpool on app exit
+                WhirlpoolNotificationService.stopService(getApplicationContext());
+            }
         }
 
         super.onDestroy();
