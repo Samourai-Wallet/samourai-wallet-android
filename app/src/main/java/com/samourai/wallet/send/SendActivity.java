@@ -159,6 +159,7 @@ public class SendActivity extends AppCompatActivity {
     private String strPCode = null;
     private long feeLow, feeMed, feeHigh;
     private String strPrivacyWarning;
+    private String strCannotDoBoltzmann;
     private ArrayList<UTXO> selectedUTXO;
     private long _change;
     private HashMap<String, BigInteger> receivers;
@@ -279,6 +280,14 @@ public class SendActivity extends AppCompatActivity {
         if (getIntent().getExtras().containsKey("preselected")) {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
+
+            if(preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+                cahootsGroup.setVisibility(View.GONE);
+                ricochetHopsSwitch.setVisibility(View.GONE);
+                ricochetTitle.setVisibility(View.GONE);
+                ricochetDesc.setVisibility(View.GONE);
+            }
+
         } else {
 
             Disposable disposable = APIFactory.getInstance(getApplicationContext())
@@ -1518,6 +1527,7 @@ public class SendActivity extends AppCompatActivity {
                 dest = address;
             }
 
+            strCannotDoBoltzmann = "";
             if (SendAddressUtil.getInstance().get(address) == 1) {
                 strPrivacyWarning = getString(R.string.send_privacy_warning) + "\n\n";
             } else {
@@ -1530,11 +1540,13 @@ public class SendActivity extends AppCompatActivity {
                 sendTransactionDetailsView.enableStonewall(false);
                 sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
+
+                if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                    strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
+                }
             }
 
-
-//                    String message = strCannotDoBoltzmann + strNoLikedTypeBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
-            message = strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
+            message = strCannotDoBoltzmann + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " to " + dest + " (fee:" + Coin.valueOf(_fee.longValue()).toPlainString() + ")?\n";
 
             if (selectedCahootsType == SelectCahootsType.type.NONE) {
                 tvTotalFee.setText(Coin.valueOf(_fee.longValue()).toPlainString().concat(" BTC"));
