@@ -256,8 +256,8 @@ public class MainActivity2 extends Activity {
 
     private void initDialog() {
         Intent intent = new Intent(MainActivity2.this, LandingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     private void validatePIN(String strUri) {
@@ -269,7 +269,6 @@ public class MainActivity2 extends Activity {
 
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             Intent intent = new Intent(MainActivity2.this, PinEntryActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (strUri != null) {
                 intent.putExtra("uri", strUri);
                 PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
@@ -278,6 +277,7 @@ public class MainActivity2 extends Activity {
                 intent.putExtras(getBundleExtras());
             }
             startActivity(intent);
+            finish();
             pinEntryActivityLaunched = true;
 
         }
