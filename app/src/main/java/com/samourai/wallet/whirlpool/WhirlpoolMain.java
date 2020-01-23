@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.Group;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -38,6 +39,7 @@ import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.WhirlpoolUtxoViewModel;
@@ -508,6 +510,12 @@ public class WhirlpoolMain extends AppCompatActivity {
 //                        ex.printStackTrace();
                     }
                     holder.mixingProgress.setText(progress);
+                    if(UTXOUtil.getInstance().getNote(whirlpoolUtxoModel.getUtxo().tx_hash) !=null){
+                        holder.txNoteGroup.setVisibility(View.VISIBLE);
+                        holder.tvNoteView.setText(UTXOUtil.getInstance().getNote(whirlpoolUtxoModel.getUtxo().tx_hash));
+                    }else {
+                        holder.txNoteGroup.setVisibility(View.GONE);
+                    }
                     try {
                         switch (whirlpoolUtxoModel.getUtxoState().getStatus()) {
                             case READY: {
@@ -600,8 +608,9 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final View mView;
-            TextView mixingProgress, mixingTime, mixingAmount, section;
+            TextView mixingProgress, mixingTime, mixingAmount, section,tvNoteView;
             ImageView progressStatus;
+            Group txNoteGroup;
 
             ViewHolder(View view, int type) {
                 super(view);
@@ -612,6 +621,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                     mixingProgress = view.findViewById(R.id.whirlpool_cycle_item_mixing_text);
                     progressStatus = view.findViewById(R.id.whirlpool_cycle_item_mixing_status_icon);
                     mixingTime = view.findViewById(R.id.whirlpool_cycle_item_time);
+                    tvNoteView = view.findViewById(R.id.tx_note_view);
+                    txNoteGroup = itemView.findViewById(R.id.whirlpool_main_note_group);
                 } else {
                     section = itemView.findViewById(R.id.section_title);
                 }
