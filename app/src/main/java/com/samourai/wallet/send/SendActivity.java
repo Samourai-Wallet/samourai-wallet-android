@@ -1131,6 +1131,7 @@ public class SendActivity extends AppCompatActivity {
         long change = 0L;
         BigInteger fee = null;
         boolean canDoBoltzmann = true;
+        boolean REVERT_TO_SPEND_SIMPLE;
 
 //                Log.d("SendActivity", "amount:" + amount);
 //                Log.d("SendActivity", "balance:" + balance);
@@ -1143,13 +1144,11 @@ public class SendActivity extends AppCompatActivity {
 
         if (preselectedUTXOs != null) {
             canDoBoltzmann = false;
-            SPEND_TYPE = SPEND_SIMPLE;
         }
 
         // entire balance (can only be simple spend)
         else if (amount == balance) {
             // make sure we are using simple spend
-            SPEND_TYPE = SPEND_SIMPLE;
             canDoBoltzmann = false;
 
 //                    Log.d("SendActivity", "amount == balance");
@@ -1208,7 +1207,7 @@ public class SendActivity extends AppCompatActivity {
             }
 
             return true;
-        } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
+        } else if (SPEND_TYPE == SPEND_BOLTZMANN && canDoBoltzmann) {
 
             Log.d("SendActivity", "needed amount:" + neededAmount);
 
@@ -1321,7 +1320,6 @@ public class SendActivity extends AppCompatActivity {
             if ((_utxos1 == null || _utxos1.size() == 0) && (_utxos2 == null || _utxos2.size() == 0)) {
                 // can't do boltzmann, revert to SPEND_SIMPLE
                 canDoBoltzmann = false;
-                SPEND_TYPE = SPEND_SIMPLE;
             } else {
 
                 Log.d("SendActivity", "boltzmann spend");
@@ -1338,7 +1336,6 @@ public class SendActivity extends AppCompatActivity {
                     // can't do boltzmann, revert to SPEND_SIMPLE
                     canDoBoltzmann = false;
                     restoreChangeIndexes();
-                    SPEND_TYPE = SPEND_SIMPLE;
                 } else {
                     canDoBoltzmann = true;
                 }
@@ -1348,12 +1345,14 @@ public class SendActivity extends AppCompatActivity {
             ;
         }
 
-        if (SPEND_TYPE == SPEND_SIMPLE && amount == balance && preselectedUTXOs == null) {
+        REVERT_TO_SPEND_SIMPLE = SPEND_TYPE == SPEND_BOLTZMANN && !canDoBoltzmann;
+
+        if ((SPEND_TYPE == SPEND_SIMPLE || REVERT_TO_SPEND_SIMPLE) && amount == balance && preselectedUTXOs == null) {
             // do nothing, utxo selection handles above
             ;
         }
         // simple spend (less than balance)
-        else if (SPEND_TYPE == SPEND_SIMPLE) {
+        else if (SPEND_TYPE == SPEND_SIMPLE || REVERT_TO_SPEND_SIMPLE) {
             List<UTXO> _utxos = utxos;
             // sort in ascending order by value
             Collections.sort(_utxos, new UTXO.UTXOComparator());
@@ -1453,7 +1452,7 @@ public class SendActivity extends AppCompatActivity {
         if (selectedUTXO.size() > 0) {
 
             // estimate fee for simple spend, already done if boltzmann
-            if (SPEND_TYPE == SPEND_SIMPLE) {
+            if (SPEND_TYPE == SPEND_SIMPLE || REVERT_TO_SPEND_SIMPLE) {
                 List<MyTransactionOutPoint> outpoints = new ArrayList<MyTransactionOutPoint>();
                 for (UTXO utxo : selectedUTXO) {
                     outpoints.addAll(utxo.getOutpoints());
@@ -1497,7 +1496,7 @@ public class SendActivity extends AppCompatActivity {
             change = totalValueSelected - (amount + fee.longValue());
 //                    Log.d("SendActivity", "change:" + change);
 
-            if (change > 0L && change < SamouraiWallet.bDust.longValue() && SPEND_TYPE == SPEND_SIMPLE) {
+            if (change > 0L && change < SamouraiWallet.bDust.longValue() && (SPEND_TYPE == SPEND_SIMPLE || REVERT_TO_SPEND_SIMPLE)) {
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                         .setTitle(R.string.app_name)
@@ -1533,11 +1532,12 @@ public class SendActivity extends AppCompatActivity {
             } else {
                 strPrivacyWarning = "";
             }
+            sendTransactionDetailsView.enableStonewall(canDoBoltzmann);
+
             if (!canDoBoltzmann) {
                 restoreChangeIndexes();
                 sendTransactionDetailsView.getStoneWallSwitch().setOnClickListener(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setEnabled(false);
-                sendTransactionDetailsView.enableStonewall(false);
                 sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
 
