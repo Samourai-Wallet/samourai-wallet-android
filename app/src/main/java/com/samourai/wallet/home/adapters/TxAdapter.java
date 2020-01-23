@@ -1,6 +1,7 @@
 package com.samourai.wallet.home.adapters;
 
 import android.content.Context;
+import android.support.constraint.Group;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.utxos.UTXOUtil;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONObject;
@@ -138,6 +140,14 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 holder.tvAmount.setText(amount);
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
             }
+
+            if(UTXOUtil.getInstance().getNote(tx.getHash()) != null){
+                holder.txNoteGroup.setVisibility(View.VISIBLE);
+                holder.tvNoteView.setText(UTXOUtil.getInstance().getNote(tx.getHash()));
+            }else {
+                holder.txNoteGroup.setVisibility(View.INVISIBLE);
+            }
+
         } else {
             SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
             fmt.setTimeZone(TimeZone.getDefault());
@@ -186,8 +196,9 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     class TxViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvSection, tvDateView, tvAmount, tvPaynymId;
+        private TextView tvSection, tvDateView, tvAmount, tvPaynymId, tvNoteView;
         private ImageView tvDirection;
+        private Group txNoteGroup;
 
 
         TxViewHolder(View itemView, int viewType) {
@@ -204,6 +215,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             tvDirection = itemView.findViewById(R.id.TransactionDirection);
             tvAmount = itemView.findViewById(R.id.tvAmount);
             tvPaynymId = itemView.findViewById(R.id.paynymId);
+            txNoteGroup = itemView.findViewById(R.id.tx_note_group);
+            tvNoteView = itemView.findViewById(R.id.tx_note_view);
 
         }
     }
