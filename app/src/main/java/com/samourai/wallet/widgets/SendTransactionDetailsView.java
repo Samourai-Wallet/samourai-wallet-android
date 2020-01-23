@@ -123,6 +123,10 @@ public class SendTransactionDetailsView extends FrameLayout {
         }
     }
 
+    public void hideStoneWallSwitch(boolean hide) {
+        stoneWallx1Switch.setVisibility(hide ? GONE: VISIBLE);
+    }
+
 
     public Switch getStoneWallSwitch() {
         return stoneWallx1Switch;

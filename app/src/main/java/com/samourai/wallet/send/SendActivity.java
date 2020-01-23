@@ -439,14 +439,21 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (compoundButton, checked) -> {
+
         SPEND_TYPE = checked ? SPEND_BOLTZMANN : SPEND_SIMPLE;
         compoundButton.setChecked(checked);
         new Handler().postDelayed(this::prepareSpend, 100);
     };
 
     private void setUpBoltzman() {
+        // default to using stonewall
         sendTransactionDetailsView.getStoneWallSwitch().setChecked(true);
-        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() != account);
+
+        // disable and hide switch for postmix sends, enable and show for regular sends
+        boolean enableStoneWallSwitch = WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() != account;
+        sendTransactionDetailsView.getStoneWallSwitch().setEnabled(enableStoneWallSwitch);
+        sendTransactionDetailsView.hideStoneWallSwitch(!enableStoneWallSwitch);
+
         sendTransactionDetailsView.enableStonewall(true);
         sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
     }
