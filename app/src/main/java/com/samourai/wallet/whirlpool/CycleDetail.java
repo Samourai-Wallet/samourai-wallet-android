@@ -170,7 +170,8 @@ public class CycleDetail extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.whirlpool_explore_menu: {
-                openExplorer(hash);
+                if (whirlpoolUtxo != null)
+                    openExplorer(whirlpoolUtxo.getUtxo().tx_hash);
                 break;
             }
             case android.R.id.home: {
