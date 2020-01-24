@@ -8,32 +8,31 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.utxos.models.UTXOCoin;
+import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.mix.listener.MixStep;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.MixableStatus;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
-import org.bitcoinj.core.Coin;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -44,15 +43,13 @@ import java8.util.Optional;
 public class CycleDetail extends AppCompatActivity {
 
     private Boolean showMenuItems = true;
-    private TextView cycleStatus, transactionStatus, transactionId;
+    private TextView cycleStatus, transactionStatus, transactionId, minerFee;
     private RecyclerView cycledTxsRecyclerView;
-    private TxCyclesAdapter txCyclesAdapter;
     private ProgressBar cycleProgress;
     private TextView registeringInputs, cyclingTx, waitingForConfirmation, cycledTxesListHeader, cycleTotalFee;
     private ImageView registeringCheck, cyclingCheck, confirmCheck;
     private List<WhirlpoolUtxo> whirlpoolUtxos = new ArrayList<>();
     private WhirlpoolUtxo whirlpoolUtxo = null;
-    private List<WhirlpoolUtxo> whirlpoolUtxosMixDone = new ArrayList<>();
     private static final String TAG = "CycleDetail";
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private String hash;
@@ -71,8 +68,6 @@ public class CycleDetail extends AppCompatActivity {
         cycleProgress = findViewById(R.id.pool_cycle_progress);
         cycledTxsRecyclerView = findViewById(R.id.whirlpool_cycled_tx_rv);
         cycledTxsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        txCyclesAdapter = new TxCyclesAdapter();
-        cycledTxsRecyclerView.setAdapter(txCyclesAdapter);
         Drawable drawable = this.getResources().getDrawable(R.drawable.divider_grey);
         cycledTxsRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         cyclingTx = findViewById(R.id.cycling_tx_txt);
@@ -81,6 +76,7 @@ public class CycleDetail extends AppCompatActivity {
         cycledTxesListHeader = findViewById(R.id.cycled_transaction_list_header);
         registeringCheck = findViewById(R.id.register_input_check);
         cyclingCheck = findViewById(R.id.cycling_check);
+        minerFee = findViewById(R.id.cycle_details_minerfee);
         confirmCheck = findViewById(R.id.blockchain_confirm_check);
         cycleProgress.setMax(100);
         cycleProgress.setProgress(0);
@@ -90,6 +86,9 @@ public class CycleDetail extends AppCompatActivity {
             finish();
             return;
         }
+        enableCycle(false);
+        enableRegister(false);
+        enableBlockChainConfirm(false);
 
         setMixStatus();
         listenUTXO();
@@ -108,7 +107,9 @@ public class CycleDetail extends AppCompatActivity {
                 if (utxo.getUtxo().toString().equals(hash)) {
                     getSupportActionBar().setTitle(utxo.getUtxoConfig().getPoolId());
                     whirlpoolUtxo = utxo;
+                    makeTxNetworkRequest();
                     transactionId.setText(utxo.getUtxo().tx_hash);
+                    updateState(whirlpoolUtxo.getUtxoState());
                 }
             }
         } catch (Exception e) {
@@ -117,6 +118,22 @@ public class CycleDetail extends AppCompatActivity {
 
     }
 
+    private void makeTxNetworkRequest() {
+        Disposable disposable = Single.create(emitter -> emitter.onSuccess(APIFactory.getInstance(getApplicationContext()).getTxInfo(whirlpoolUtxo.getUtxo().tx_hash)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((jsonObject, throwable) -> {
+                    JSONObject object = (JSONObject) jsonObject;
+                    if (throwable == null) {
+                        if (object.has("fees")) {
+                            minerFee.setText(object.getString("fees").concat(" sats"));
+                        }
+                    } else {
+                        throwable.printStackTrace();
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
 
 
     private void listenUTXO() {
@@ -124,7 +141,7 @@ public class CycleDetail extends AppCompatActivity {
             return;
         }
         updateState(whirlpoolUtxo.getUtxoState());
-        Disposable disposable  = whirlpoolUtxo.getUtxoState()
+        Disposable disposable = whirlpoolUtxo.getUtxoState()
                 .getObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -136,21 +153,26 @@ public class CycleDetail extends AppCompatActivity {
 
     private void updateState(WhirlpoolUtxoState whirlpoolUtxoState) {
         try {
+            if (whirlpoolUtxo.getUtxoState().getMixableStatus() != MixableStatus.UNCONFIRMED) {
+                enableBlockChainConfirm(true);
+                ((TextView) findViewById(R.id.cyle_waiting_txt)).setText("Tx confirmed");
+            }
             if (whirlpoolUtxoState.getMixProgress() != null) {
+                MixStep step = whirlpoolUtxoState.getMixProgress().getMixStep();
+
                 cycleProgress.setProgress(whirlpoolUtxoState.getMixProgress().getProgressPercent());
 
-                MixStep step = whirlpoolUtxoState.getMixProgress().getMixStep();
                 if (step == MixStep.CONFIRMED_INPUT || whirlpoolUtxoState.getStatus() == WhirlpoolUtxoStatus.MIX_QUEUE) {
-                    enableCheck(confirmCheck);
+                    enableBlockChainConfirm(true);
                 }
-                if (step == MixStep.REGISTERED_INPUT || step == MixStep.CONFIRMED_INPUT) {
-                    enableCheck(confirmCheck);
-                    enableCheck(registeringCheck);
+                if (step == MixStep.REGISTERED_INPUT || step == MixStep.CONFIRMED_INPUT || step == MixStep.CONFIRMING_INPUT) {
+                    enableBlockChainConfirm(true);
+                    enableRegister(true);
                 }
                 if (step == MixStep.SUCCESS) {
-                    enableCheck(confirmCheck);
-                    enableCheck(registeringCheck);
-                    enableCheck(cyclingCheck);
+                    enableBlockChainConfirm(true);
+                    enableRegister(true);
+                    enableCycle(true);
                 }
             }
         } catch (Exception ex) {
@@ -196,53 +218,46 @@ public class CycleDetail extends AppCompatActivity {
 
     }
 
-    private void enableCheck(ImageView imageView) {
+    private void enableBlockChainConfirm(boolean enable) {
+        if (enable) {
+            enableSection(findViewById(R.id.cyle_waiting_txt), confirmCheck);
+        } else {
+            disableSection(findViewById(R.id.cyle_waiting_txt), confirmCheck);
+        }
+
+    }
+
+    private void enableRegister(boolean enable) {
+        if (enable) {
+            enableSection(findViewById(R.id.registering_inputs_txt), registeringCheck);
+        } else {
+            disableSection(findViewById(R.id.registering_inputs_txt), registeringCheck);
+        }
+
+    }
+
+    private void enableCycle(boolean enable) {
+        if (enable) {
+            enableSection(findViewById(R.id.cycling_tx_txt), cyclingCheck);
+        } else {
+            disableSection(findViewById(R.id.cycling_tx_txt), cyclingCheck);
+        }
+
+    }
+
+    private void enableSection(TextView textView, ImageView imageView) {
+        textView.setAlpha(1f);
         imageView.setAlpha(1f);
         imageView.setImageResource(R.drawable.ic_check_circle_24dp);
         imageView.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
     }
 
-    public class TxCyclesAdapter extends RecyclerView.Adapter<TxCyclesAdapter.ViewHolder> {
-
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_cycle_tx, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            WhirlpoolUtxo utxo = whirlpoolUtxos.get(position);
-            holder.amount.setText(Coin.valueOf(utxo.getUtxo().value).toPlainString());
-            holder.utxoHash.setText(utxo.getUtxo().tx_hash);
-            holder.layout.setOnClickListener(view -> {
-                openExplorer(utxo.getUtxo().tx_hash);
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return whirlpoolUtxosMixDone.size();
-        }
-
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-            TextView utxoHash, amount;
-            View layout;
-
-
-            ViewHolder(View itemView) {
-                super(itemView);
-                amount = itemView.findViewById(R.id.whirlpool_cycle_list_item_utxo_amount);
-                utxoHash = itemView.findViewById(R.id.whirlpool_cycle_list_item_utxo_hash);
-                layout = itemView;
-            }
-        }
-
-
+    private void disableSection(TextView textView, ImageView imageView) {
+        textView.setAlpha(0.6f);
+        imageView.setAlpha(0.6f);
+        imageView.setImageResource(R.drawable.circle_dot_white);
+        imageView.clearColorFilter();
     }
+
 
 }
