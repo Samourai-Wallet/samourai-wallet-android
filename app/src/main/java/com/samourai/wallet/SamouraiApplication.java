@@ -7,11 +7,15 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.samourai.wallet.tor.TorService;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
+
+import java.io.File;
+import java.io.PrintWriter;
 
 public class SamouraiApplication extends Application {
 
@@ -26,6 +30,24 @@ public class SamouraiApplication extends Application {
         setUpChannels();
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.ENABLE_TOR, false)) {
             startService();
+        }
+        // Write logcat output to a file
+        if (BuildConfig.DEBUG) {
+            try {
+                String logFile = Environment.getExternalStorageDirectory().getAbsolutePath().concat("/Samourai_debug_log.txt");
+                File file = new File(logFile);
+                if (file.exists()) {
+                    // clear log file after accumulating more than 6mb
+                    if (file.length() > 6000000) {
+                        PrintWriter writer = new PrintWriter(file);
+                        writer.flush();
+                        writer.close();
+                    }
+                }
+                Runtime.getRuntime().exec("logcat -f " + logFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -65,7 +87,6 @@ public class SamouraiApplication extends Application {
             refreshService.setSound(null, null);
             refreshService.setImportance(NotificationManager.IMPORTANCE_LOW);
             refreshService.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-
 
 
             NotificationChannel whirlpoolNotifications = new NotificationChannel(
