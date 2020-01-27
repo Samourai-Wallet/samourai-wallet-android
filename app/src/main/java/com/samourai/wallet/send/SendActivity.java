@@ -160,6 +160,7 @@ public class SendActivity extends AppCompatActivity {
     private long feeLow, feeMed, feeHigh;
     private String strPrivacyWarning;
     private String strCannotDoBoltzmann;
+    private boolean REVERT_TO_SPEND_SIMPLE;
     private ArrayList<UTXO> selectedUTXO;
     private long _change;
     private HashMap<String, BigInteger> receivers;
@@ -1138,7 +1139,7 @@ public class SendActivity extends AppCompatActivity {
         long change = 0L;
         BigInteger fee = null;
         boolean canDoBoltzmann = true;
-        boolean REVERT_TO_SPEND_SIMPLE;
+
 
 //                Log.d("SendActivity", "amount:" + amount);
 //                Log.d("SendActivity", "balance:" + balance);
@@ -1661,7 +1662,6 @@ public class SendActivity extends AppCompatActivity {
     }
 
     private void initiateSpend() {
-
         if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL) {
             Intent intent = new Intent(this, ManualCahootsActivity.class);
             intent.putExtra("amount", amount);
@@ -1697,8 +1697,9 @@ public class SendActivity extends AppCompatActivity {
                 }
 
                 // add change
+
                 if (_change > 0L) {
-                    if (SPEND_TYPE == SPEND_SIMPLE) {
+                    if (SPEND_TYPE == SPEND_SIMPLE || (SPEND_TYPE == SPEND_BOLTZMANN && REVERT_TO_SPEND_SIMPLE)) {
                         if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                             String change_address = BIP84Util.getInstance(SendActivity.this).getAddressAt(WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx()).getBech32AsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
