@@ -37,6 +37,7 @@ import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.LinearLayoutManagerWrapper;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.UTXOUtil;
@@ -107,7 +108,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             startActivity(intent);
         });
 
-        premixList.setLayoutManager(new LinearLayoutManager(this));
+        premixList.setLayoutManager(new LinearLayoutManagerWrapper(this));
 
         adapter = new MixAdapter(new ArrayList<>());
 

@@ -43,6 +43,7 @@ import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.util.LinearLayoutManagerWrapper;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
@@ -1006,17 +1007,4 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         }
     }
 
-
-    public class LinearLayoutManagerWrapper extends LinearLayoutManager {
-
-        LinearLayoutManagerWrapper(Context context) {
-            super(context);
-        }
-
-        @Override
-        public boolean supportsPredictiveItemAnimations() {
-            // fix for inconsistency issues
-            return false;
-        }
-    }
 }
