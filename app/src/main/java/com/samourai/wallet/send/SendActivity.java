@@ -46,6 +46,7 @@ import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.TxAnimUIActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -75,7 +76,6 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.DecimalDigitsInputFilter;
 import com.samourai.wallet.util.FormatsUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
@@ -124,7 +124,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class SendActivity extends AppCompatActivity {
+public class SendActivity extends SamouraiActivity {
 
     private final static int SCAN_QR = 2012;
     private final static int RICOCHET = 2013;
@@ -181,7 +181,6 @@ public class SendActivity extends AppCompatActivity {
     public static String[] stubAddress = {"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "1FvzCLoTPGANNjWoUo6jUGuAG3wg1w4YjR", "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG", "1JfbZRwdDHKZmuiZgYArJZhcuuzuw2HuMu", "1GkQmKAmHtNfnD3LHhTkewJxKHVSta4m2a", "16LoW7y83wtawMg5XmT4M3Q7EdjjUmenjM", "1J6PYEzr4CUoGbnXrELyHszoTSz3wCsCaj", "12cbQLTFMXRnSzktFkuoG3eHoMeFtpTu3S", "15yN7NPEpu82sHhB6TzCW5z5aXoamiKeGy ", "1dyoBoF5vDmPCxwSsUZbbYhA5qjAfBTx9", "1PYELM7jXHy5HhatbXGXfRpGrgMMxmpobu", "17abzUBJr7cnqfnxnmznn8W38s9f9EoXiq", "1DMGtVnRrgZaji7C9noZS3a1QtoaAN2uRG", "1CYG7y3fukVLdobqgUtbknwWKUZ5p1HVmV", "16kktFTqsruEfPPphW4YgjktRF28iT8Dby", "1LPBetDzQ3cYwqQepg4teFwR7FnR1TkMCM", "1DJkjSqW9cX9XWdU71WX3Aw6s6Mk4C3TtN", "1P9VmZogiic8d5ZUVZofrdtzXgtpbG9fop", "15ubjFzmWVvj3TqcpJ1bSsb8joJ6gF6dZa"};
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
-    private int account = 0;
 
     private List<UTXOCoin> preselectedUTXOs = null;
 
@@ -250,12 +249,6 @@ public class SendActivity extends AppCompatActivity {
 
         tvTotalFee.setOnClickListener(clipboardCopy);
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
-
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
-            if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                account = WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix();
-            }
-        }
 
         SPEND_TYPE = SPEND_BOLTZMANN;
 
@@ -393,12 +386,12 @@ public class SendActivity extends AppCompatActivity {
         });
     }
 
-    private void hideToAddressForStowaway(boolean hide){
-        if(hide){
+    private void hideToAddressForStowaway(boolean hide) {
+        if (hide) {
             toAddressEditText.setText("Stowaway Collaborator");
             toAddressEditText.setEnabled(false);
             address = "";
-        }else {
+        } else {
             toAddressEditText.setEnabled(true);
             toAddressEditText.setText("");
             address = "";

@@ -34,6 +34,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -69,7 +70,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.samourai.wallet.util.LogUtil.debug;
 
-public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callback {
+public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callback {
 
 
     private boolean shownWalletLoadingMessage = false;
@@ -94,7 +95,6 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
     private UTXOListAdapter adapter;
     private ProgressBar utxoProgressBar;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private int account = 0;
     private Toolbar toolbar;
 
     //Filter states
@@ -114,14 +114,9 @@ public class UTXOSActivity extends AppCompatActivity implements ActionMode.Callb
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
-            if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                account = WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix();
-                getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
-            }
+        if ( account  ==  WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+            getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
         }
-
 
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(8);

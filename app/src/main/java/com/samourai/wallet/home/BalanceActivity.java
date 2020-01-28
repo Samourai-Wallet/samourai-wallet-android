@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
@@ -53,6 +54,7 @@ import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
@@ -129,7 +131,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class BalanceActivity extends AppCompatActivity {
+public class BalanceActivity extends SamouraiActivity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
@@ -140,7 +142,6 @@ public class BalanceActivity extends AppCompatActivity {
     private RecyclerView TxRecyclerView;
     private ProgressBar progressBar;
     private BalanceViewModel balanceViewModel;
-    private int account = 0;
 
     private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
@@ -152,7 +153,7 @@ public class BalanceActivity extends AppCompatActivity {
     private Menu menu;
     private ImageView menuTorIcon;
     private ProgressBar progressBarMenu;
-    private View whirlpoolFab,sendFab,receiveFab,paynymFab;
+    private View whirlpoolFab, sendFab, receiveFab, paynymFab;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -317,14 +318,14 @@ public class BalanceActivity extends AppCompatActivity {
     };
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
+
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        if ((getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account"))) {
-            account = getIntent().getExtras().getInt("_account");
-        }
 
         TxRecyclerView = findViewById(R.id.rv_txes);
         progressBar = findViewById(R.id.progressBar);
@@ -1014,7 +1015,7 @@ public class BalanceActivity extends AppCompatActivity {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
-                    if (privKeyReader.getFormat() != null) {
+                if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
                         Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
@@ -1023,15 +1024,15 @@ public class BalanceActivity extends AppCompatActivity {
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
-                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
-                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-                        intent.putExtra("uri", code.trim());
-                        intent.putExtra("_account", account);
-                        startActivity(intent);
-                    }
-                } catch (Exception e) {
+                } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
+                    Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                    intent.putExtra("uri", code.trim());
+                    intent.putExtra("_account", account);
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
             }
         });
     }

@@ -14,15 +14,15 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_accent"
+        android:background="?attr/colorAccent"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="210dp"
+            app:contentScrim="?attr/colorAccent"
             android:fitsSystemWindows="true"
-            app:contentScrim="#6c768b"
             app:expandedTitleGravity="center_horizontal|center"
             app:expandedTitleMarginTop="82dp"
             app:expandedTitleTextAppearance="@style/BalanceToolbarExpandedTitleStyle"
