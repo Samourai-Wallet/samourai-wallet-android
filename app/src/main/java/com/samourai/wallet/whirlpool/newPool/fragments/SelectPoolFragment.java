@@ -51,6 +51,8 @@ public class SelectPoolFragment extends Fragment {
     private OnPoolSelectionComplete onPoolSelectionComplete;
     private ArrayList<Long> fees = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Long tx0Amount = 0L;
+
 
     public SelectPoolFragment() {
     }
@@ -106,12 +108,13 @@ public class SelectPoolFragment extends Fragment {
     private void loadPools(Long tx0, Long aLong) {
 
         poolViewModels.clear();
+        this.tx0Amount = tx0;
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
             return;
         }
         WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
-        Disposable disposable = Single.fromCallable(() -> whirlpoolWallet.getPools())
+        Disposable disposable = Single.fromCallable(whirlpoolWallet::getPools)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((whirlpoolPools) -> {
@@ -127,9 +130,7 @@ public class SelectPoolFragment extends Fragment {
                         }
                     }
                     poolsAdapter.notifyDataSetChanged();
-                }, throwable -> {
-                    throwable.printStackTrace();
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -155,6 +156,8 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
                 if (fees.size() >= 1)
                     poolFee.setText(String.valueOf(fees.get(0)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 1)
+                    loadPools(this.tx0Amount, fees.get(0));
                 break;
             }
             case NORMAL: {
@@ -163,6 +166,8 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 2)
+                    loadPools(this.tx0Amount, fees.get(1));
                 break;
             }
 
@@ -172,6 +177,8 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(2)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 2)
+                    loadPools(this.tx0Amount, fees.get(2));
                 break;
             }
 
@@ -188,7 +195,7 @@ public class SelectPoolFragment extends Fragment {
     }
 
     public void setTX0(long cycleTotalAmount, Long tx0) {
-        loadPools(cycleTotalAmount,tx0);
+        loadPools(cycleTotalAmount, tx0);
     }
 
     public interface OnPoolSelectionComplete {
