@@ -11,6 +11,7 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.utxos.PreSelectUtil;
+import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.utxos.models.UTXOCoinSegment;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
@@ -114,21 +116,12 @@ public class ChooseUTXOsFragment extends Fragment {
         }
         Collections.sort(unCycled, (model, t1) -> Long.compare(t1.amount, model.amount));
 
-        // UTXO section
-        UTXOCoinSegment utxoSegment = new UTXOCoinSegment(null, null);
-        utxoSegment.unCycled = true;
-
-        //add utxo segment at the top of the list
-        unCycled.add(0, utxoSegment);
-        /*------------------------------------------------*/
-
 
         utxoCoinList.addAll(unCycled);
 
         /*------------------------------------------------*/
         // Change UTXO section
-        UTXOCoinSegment changeSegment = new UTXOCoinSegment(null, null);
-        changeSegment.unCycled = false;
+
         ArrayList<UTXOCoin> changes = new ArrayList<>();
 
         // Add all change utxo's
@@ -148,9 +141,6 @@ public class ChooseUTXOsFragment extends Fragment {
         }
         Collections.sort(changes, (model, t1) -> Long.compare(t1.amount, model.amount));
 
-        //add change utxo segment at the top of the list
-        changes.add(0, changeSegment);
-        /*------------------------------------------------*/
 
         utxoCoinList.addAll(changes);
 
@@ -266,22 +256,13 @@ public class ChooseUTXOsFragment extends Fragment {
     class WhirlpoolUTXOAdapter extends RecyclerView.Adapter<WhirlpoolUTXOAdapter.ViewHolder> {
 
 
-        int SECTION = 0, UTXO = 1;
-
 
         @Override
         public WhirlpoolUTXOAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view;
-            if (viewType == SECTION) {
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.utxo_section_layout, parent, false);
-                return new WhirlpoolUTXOAdapter.ViewHolder(view, SECTION);
-            } else {
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.utxo_item_layout, parent, false);
-                return new WhirlpoolUTXOAdapter.ViewHolder(view, UTXO);
-
-            }
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.utxo_item_layout, parent, false);
+            return new WhirlpoolUTXOAdapter.ViewHolder(view);
 
         }
 
@@ -290,14 +271,6 @@ public class ChooseUTXOsFragment extends Fragment {
             return utxos.get(position).id;
         }
 
-        @Override
-        public int getItemViewType(int position) {
-            if (utxos.get(position) instanceof UTXOCoinSegment) {
-                return SECTION;
-            } else {
-                return UTXO;
-            }
-        }
 
         void updateList(List<UTXOCoin> newList) {
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new UTXODiffCallback(utxos, newList));
@@ -311,18 +284,6 @@ public class ChooseUTXOsFragment extends Fragment {
         public void onBindViewHolder(WhirlpoolUTXOAdapter.ViewHolder holder, int position) {
             float scale = getResources().getDisplayMetrics().density;
 
-            if (utxos.get(position) instanceof UTXOCoinSegment) {
-                UTXOCoinSegment utxoCoinSegment = (UTXOCoinSegment) utxos.get(position);
-                holder.section.setText(utxoCoinSegment.unCycled ? "Uncycled UTXO's" : "Change UTXO's");
-                holder.indicator.setVisibility(View.VISIBLE);
-                if (utxoCoinSegment.unCycled) {
-                    holder.indicator.setColorFilter(ContextCompat.getColor(getContext(), R.color.disabledRed), PorterDuff.Mode.SRC_IN);
-
-                } else {
-                    holder.indicator.setColorFilter(ContextCompat.getColor(getContext(), R.color.warning_yellow), PorterDuff.Mode.SRC_IN);
-                }
-                return;
-            }
             UTXOCoin item = utxos.get(position);
             holder.address.setText(item.address);
             holder.amount.setText(df.format(((double) (utxos.get(position).amount) / 1e8)).concat(" BTC"));
@@ -333,25 +294,41 @@ public class ChooseUTXOsFragment extends Fragment {
 
             holder.tagsLayout.removeAllViews();
 
-            if (item.path.contains("M/1/") && item.account == WhirlpoolMeta.getInstance(getContext()).getWhirlpoolPostmix()) {
+            if (UTXOUtil.getInstance().getNote(item.hash) != null) {
+                holder.notesLayout.setVisibility(View.VISIBLE);
+                holder.notesLayout.removeAllViews();
                 ImageView im = new ImageView(holder.rootViewGroup.getContext());
                 im.setImageResource(R.drawable.ic_note_black_24dp);
-                im.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
+                im.requestLayout();
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams((int) (14 * scale + 0.5f), (int) (14 * scale + 0.5f));
+                im.setLayoutParams(lparams);
+                im.requestLayout();
                 im.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey_accent)));
-                holder.tagsLayout.addView(im);
-                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                TextView tx = new TextView(holder.rootViewGroup.getContext());
-                tx.setText(getText(R.string.change_from_postmix));
-                tx.setTextColor(ContextCompat.getColor(getContext(), R.color.grey_accent));
-                tx.setLayoutParams(lparams);
-                tx.setBackgroundResource(R.drawable.tag_round_shape);
-                tx.setPadding((int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f));
-                lparams.leftMargin = 8;
-                tx.setTypeface(Typeface.DEFAULT_BOLD);
-                tx.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
-                holder.tagsLayout.addView(tx);
+                holder.notesLayout.addView(im);
+                TextView tx = new TextView(getContext());
+                tx.setText(UTXOUtil.getInstance().getNote(item.hash));
+                tx.setMaxLines(1);
+                tx.setTextSize(11);
+                tx.setTextColor(getResources().getColor(R.color.white));
+                tx.setEllipsize(TextUtils.TruncateAt.END);
+                tx.setPadding((int) (8 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
+                holder.notesLayout.addView(tx);
+            } else {
+                holder.notesLayout.setVisibility(View.GONE);
             }
+//
+            String utxoIdxHash = item.hash.concat("-").concat(String.valueOf(item.idx));
+
+            if (UTXOUtil.getInstance().get(utxoIdxHash) != null) {
+                holder.tagsLayout.setVisibility(View.VISIBLE);
+                holder.tagsLayout.removeAllViews();
+                for (String tagString : UTXOUtil.getInstance().get(utxoIdxHash)) {
+                    View tag = createTag(tagString);
+                    holder.tagsLayout.addView(tag);
+                }
+            }
+
+
             holder.checkBox.setChecked(item.isSelected);
 
             if (item.isSelected) {
@@ -378,21 +355,21 @@ public class ChooseUTXOsFragment extends Fragment {
             CheckBox checkBox;
             ViewGroup rootViewGroup;
             ImageView indicator;
+            LinearLayout notesLayout;
 
-            ViewHolder(View itemView, int viewType) {
+            ViewHolder(View itemView) {
                 super(itemView);
-                if (viewType == SECTION) {
-                    section = itemView.findViewById(R.id.section_title);
-                    indicator = itemView.findViewById(R.id.utxo_section_indicator);
-                    return;
-                }
+
                 amount = itemView.findViewById(R.id.utxo_item_amount);
                 label = itemView.findViewById(R.id.label);
                 address = itemView.findViewById(R.id.utxo_item_address);
+                notesLayout = itemView.findViewById(R.id.utxo_item_notes_layout);
                 tagsLayout = itemView.findViewById(R.id.utxo_item_tags_layout);
                 checkBox = itemView.findViewById(R.id.multiselect_checkbox);
-                checkBox.setVisibility(View.GONE);
                 rootViewGroup = (ViewGroup) itemView;
+
+                checkBox.setVisibility(View.GONE);
+                notesLayout.setVisibility(View.GONE);
                 itemView.findViewById(R.id.utxo_more_details_icon).setVisibility(View.GONE);
             }
         }
@@ -435,6 +412,24 @@ public class ChooseUTXOsFragment extends Fragment {
         }
 
     }
+
+
+    private View createTag(String tag) {
+        float scale = getResources().getDisplayMetrics().density;
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView tx = new TextView(getContext());
+        tx.setText(tag);
+        tx.setTextColor(ContextCompat.getColor(getContext(), R.color.grey_accent));
+        tx.setLayoutParams(lparams);
+        tx.setBackgroundResource(R.drawable.tag_round_shape);
+        tx.setPadding((int) (8 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (4 * scale + 0.5f), (int) (4 * scale + 0.5f));
+        tx.setTypeface(Typeface.DEFAULT_BOLD);
+        tx.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        lparams.rightMargin = 4;
+        return tx;
+    }
+
 
     public static ChooseUTXOsFragment newInstance(String preselectId) {
         ChooseUTXOsFragment chooseUTXOsFragment = new ChooseUTXOsFragment();
