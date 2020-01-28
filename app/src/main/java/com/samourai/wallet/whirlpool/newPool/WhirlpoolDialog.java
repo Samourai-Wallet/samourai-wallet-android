@@ -22,21 +22,21 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.util.AddressFactory;
-import com.samourai.wallet.util.LogUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import static com.samourai.wallet.util.FormatsUtil.valueAsDp;
 import static com.samourai.wallet.whirlpool.WhirlpoolMain.NEWPOOL_REQ_CODE;
 
-public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
+public class WhirlpoolDialog extends BottomSheetDialogFragment {
 
 
-    private TextView addressText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottomsheet_deposit_or_choose_utxo, null);
-        addressText = view.findViewById(R.id.bottomsheet_whirlpool_deposit_address);
 
         Window window = getActivity().getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -47,38 +47,10 @@ public class DepositOrChooseUtxoDialog extends BottomSheetDialogFragment {
             this.dismiss();
         });
 
-        view.findViewById(R.id.whirlpool_dialog_deposit_btn).setOnClickListener(view1 -> {
-            String addr84 = AddressFactory.getInstance(getActivity()).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
-            ImageView showQR = new ImageView(getContext());
-            Bitmap bitmap = null;
-            QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(addr84, null, Contents.Type.TEXT, BarcodeFormat.QR_CODE.toString(), 500);
-            try {
-                bitmap = qrCodeEncoder.encodeAsBitmap();
-            } catch (WriterException e) {
-                e.printStackTrace();
-            }
-            showQR.setImageBitmap(bitmap);
-
-            TextView showText = new TextView(getContext());
-            showText.setText(addr84);
-            showText.setTextIsSelectable(true);
-
-
-            showText.setPadding(valueAsDp(getContext(), 12), valueAsDp(getContext(), 10), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12));
-            showText.setTextSize(18.0f);
-
-            LinearLayout privkeyLayout = new LinearLayout(getContext());
-            privkeyLayout.setOrientation(LinearLayout.VERTICAL);
-            privkeyLayout.addView(showQR);
-            privkeyLayout.addView(showText);
-            privkeyLayout.setPadding(valueAsDp(getContext(), 12), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12), valueAsDp(getContext(), 12));
-
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.app_name)
-                    .setView(privkeyLayout)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
-                    }).show();
+        view.findViewById(R.id.spend_btn_whirlpool_dialog).setOnClickListener(view1 -> {
+            Intent intent = new Intent(getActivity(), SendActivity.class);
+            intent.putExtra("_account", WhirlpoolMeta.getInstance(getContext()).getWhirlpoolPostmix());
+            startActivity(intent);
         });
         return view;
     }

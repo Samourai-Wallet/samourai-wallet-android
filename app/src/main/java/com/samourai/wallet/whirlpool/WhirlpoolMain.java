@@ -16,7 +16,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -44,7 +43,7 @@ import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.WhirlpoolUtxoViewModel;
-import com.samourai.wallet.whirlpool.newPool.DepositOrChooseUtxoDialog;
+import com.samourai.wallet.whirlpool.newPool.WhirlpoolDialog;
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
@@ -311,8 +310,8 @@ public class WhirlpoolMain extends AppCompatActivity {
     }
 
     private void showBottomSheetDialog() {
-        DepositOrChooseUtxoDialog depositOrChooseUtxoDialog = new DepositOrChooseUtxoDialog();
-        depositOrChooseUtxoDialog.show(getSupportFragmentManager(), depositOrChooseUtxoDialog.getTag());
+        WhirlpoolDialog whirlpoolDialog = new WhirlpoolDialog();
+        whirlpoolDialog.show(getSupportFragmentManager(), whirlpoolDialog.getTag());
     }
 
     private void switchBalance() {
