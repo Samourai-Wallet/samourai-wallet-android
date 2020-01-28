@@ -24,6 +24,8 @@
         <item name="android:windowActionModeOverlay">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="toolbarStyle">@style/actionBarMainAccount</item>
+        <item name="android:actionModeBackground">@color/grey_accent</item>
+        <item name="actionModeBackground">@color/grey_accent</item>
         <item name="android:toolbarStyle">@style/actionBarMainAccount</item>
 
     </style>
@@ -35,6 +37,8 @@
         <item name="toolbarStyle">@style/actionBarWhirlpool</item>
         <item name="android:toolbarStyle">@style/actionBarWhirlpool</item>
         <item name="android:statusBarColor">@color/whirlpoolBlue</item>
+        <item name="android:actionModeBackground">@color/whirlpoolBlue</item>
+        <item name="actionModeBackground">@color/whirlpoolBlue</item>
     </style>
 
 
