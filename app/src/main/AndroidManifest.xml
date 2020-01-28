@@ -58,29 +58,29 @@
             android:name=".utxos.UTXODetailsActivity"
             android:label=""
             android:parentActivityName=".utxos.UTXOSActivity"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".network.NetworkDashboard"
             android:label="@string/title_activity_network_dashboard"
             android:parentActivityName=".home.BalanceActivity"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".utxos.UTXOSActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/unspent_outputs"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".paynym.paynymDetails.PayNymDetailsActivity"
             android:label=""
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".paynym.addPaynym.AddPaynymActivity"
             android:label="@string/add_new"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".paynym.PayNymHome"
             android:label="@string/paynyms"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -105,12 +105,12 @@
         <activity
             android:name=".home.BalanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".ReceiveActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/ui_2_theme"
+            android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".BatchSendActivity"
@@ -136,7 +136,7 @@
             android:name=".PinEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label=""
-            android:theme="@style/ui_2_theme_dark_status" />
+            android:theme="@style/SamouraiAppDarkStatusTheme" />
         <activity
             android:name=".bip47.BIP47Add"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -190,7 +190,7 @@
         <activity
             android:name=".LandingActivity"
             android:label=""
-            android:theme="@style/ui_2_theme_dark_status" />
+            android:theme="@style/SamouraiAppDarkStatusTheme" />
         <activity android:name=".RecoveryWordsActivity" />
         <!--
                 <receiver
@@ -231,34 +231,34 @@
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/ui_2_theme"
+            android:theme="@style/SamouraiAppTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".whirlpool.WhirlpoolMain"
             android:label=""
-            android:theme="@style/whirlpoolTheme" />
+            android:theme="@style/SamouraiAppWhirlpoolTheme" />
         <activity
             android:name=".whirlpool.newPool.NewPoolActivity"
             android:label=""
-            android:theme="@style/whirlpoolTheme" />
+            android:theme="@style/SamouraiAppWhirlpoolTheme" />
         <activity
             android:name=".whirlpool.CycleDetail"
             android:label=""
-            android:theme="@style/whirlpoolTheme" />
+            android:theme="@style/SamouraiAppWhirlpoolTheme" />
 
         <activity
             android:name=".tx.TxDetailsActivity"
             android:label=" "
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
 
         <activity
             android:name=".tx.TxPrivacyDetailsActivity"
             android:label=""
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".send.cahoots.ManualCahootsActivity"
             android:label="Manual Cahoots"
-            android:theme="@style/ui_2_theme" />
+            android:theme="@style/SamouraiAppTheme" />
 
         <provider
             android:name=".util.GenericFileProvider"
