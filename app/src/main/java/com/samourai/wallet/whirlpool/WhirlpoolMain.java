@@ -212,7 +212,7 @@ public class WhirlpoolMain extends AppCompatActivity {
             if (list.size() == 1) {
                 list.remove(section);
             }
-            WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("UnMixed");
+            WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("Unmixed");
             list.add(queueSection);
 
             for (WhirlpoolUtxo utxo : utxoList) {
@@ -573,11 +573,11 @@ public class WhirlpoolMain extends AppCompatActivity {
                 ex.printStackTrace();
             }
             holder.mixingTime.setText("Premix");
-            holder.itemView.setOnClickListener(view -> {
-                Intent intent = new Intent(getApplicationContext(), CycleDetail.class);
-                intent.putExtra("hash", whirlpoolUtxoModel.getUtxo().toString());
-                startActivity(intent);
-            });
+//            holder.itemView.setOnClickListener(view -> {
+//                Intent intent = new Intent(getApplicationContext(), CycleDetail.class);
+//                intent.putExtra("hash", whirlpoolUtxoModel.getUtxo().toString());
+//                startActivity(intent);
+//            });
         }
 
         @Override
