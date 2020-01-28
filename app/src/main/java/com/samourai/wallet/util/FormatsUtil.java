@@ -6,6 +6,8 @@ import com.samourai.wallet.SamouraiWallet;
 
 import org.bitcoinj.core.NetworkParameters;
 
+import java.text.DecimalFormat;
+
 public class FormatsUtil extends FormatsUtilGeneric {
 
     private static FormatsUtil instance = null;
@@ -39,5 +41,20 @@ public class FormatsUtil extends FormatsUtilGeneric {
         float scale = context.getResources().getDisplayMetrics().density;
         int dpAsPixels = (int) (value * scale + 0.5f);
         return dpAsPixels;
+    }
+
+    public static String getBTCDecimalFormat(Long sats) {
+        DecimalFormat format =  new DecimalFormat("0.########");
+        format.setMinimumIntegerDigits(1);
+        format.setMaximumFractionDigits(8);
+        format.setMinimumFractionDigits(8);
+        return format.format(sats / 1e8);
+    }
+    public static String getBTCDecimalFormat(Long sats,int fractions) {
+        DecimalFormat format =  new DecimalFormat("0.########");
+        format.setMinimumIntegerDigits(1);
+        format.setMaximumFractionDigits(fractions);
+        format.setMinimumFractionDigits(fractions);
+        return format.format(sats / 1e8);
     }
 }

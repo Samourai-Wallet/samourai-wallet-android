@@ -66,6 +66,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
+import static com.samourai.wallet.util.FormatsUtil.getBTCDeimalFormat;
+
 public class WhirlpoolMain extends AppCompatActivity {
 
     public static int NEWPOOL_REQ_CODE = 6102;
@@ -118,7 +120,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         long postMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPostMixBalance();
         long preMixBalance = APIFactory.getInstance(WhirlpoolMain.this).getXpubPreMixBalance();
 
-        whirlpoolBalance.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
+        whirlpoolBalance.setText(getBTCDeimalFormat(postMixBalance + preMixBalance).concat(" BTC"));
         startWhirlpool();
 
         Disposable disposable = AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus()
@@ -325,17 +327,17 @@ public class WhirlpoolMain extends AppCompatActivity {
         switch (balanceIndex) {
             case 0: {
                 amountSubText.setText(R.string.total_whirlpool_balance);
-                whirlpoolBalance.setText(Coin.valueOf(postMixBalance + preMixBalance).toPlainString().concat(" BTC"));
+                whirlpoolBalance.setText(getBTCDeimalFormat(postMixBalance + preMixBalance).concat(" BTC"));
                 break;
             }
             case 1: {
                 amountSubText.setText(R.string.total_pre_mix_balance);
-                whirlpoolBalance.setText(Coin.valueOf(preMixBalance).toPlainString().concat(" BTC"));
+                whirlpoolBalance.setText(getBTCDeimalFormat(preMixBalance).concat(" BTC"));
                 break;
             }
             case 2: {
                 amountSubText.setText(R.string.total_post_mix_balance);
-                whirlpoolBalance.setText(Coin.valueOf(postMixBalance).toPlainString().concat(" BTC"));
+                whirlpoolBalance.setText(getBTCDeimalFormat(postMixBalance).concat(" BTC"));
                 break;
             }
         }
@@ -495,7 +497,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 holder.section.setText(whirlpoolUtxoModel.getSection());
                 return;
             }
-            holder.mixingAmount.setText(Coin.valueOf(whirlpoolUtxoModel.getUtxo().value).toPlainString().concat(" BTC"));
+            holder.mixingAmount.setText(getBTCDeimalFormat(whirlpoolUtxoModel.getUtxo().value).concat(" BTC"));
             try {
                 if (whirlpoolUtxoModel.getUtxoState() != null) {
                     String progress = "";

@@ -39,9 +39,6 @@ public class ReviewPoolFragment extends Fragment {
     public ReviewPoolFragment() {
     }
 
-    public void setOnPoolSelectionComplete() {
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -62,7 +59,7 @@ public class ReviewPoolFragment extends Fragment {
 
 
         entropyBar.setMaxBars(4);
-        entropyBar.setRange(3);
+        entropyBar.setRange(4);
 
     }
 

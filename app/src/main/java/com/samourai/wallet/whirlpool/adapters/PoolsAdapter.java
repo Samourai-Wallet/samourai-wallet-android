@@ -10,9 +10,13 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.whirlpool.models.PoolViewModel;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import static com.samourai.wallet.util.FormatsUtil.getBTCDecimalFormat;
 
 public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> {
 
@@ -36,10 +40,10 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final PoolViewModel poolViewModel = pools.get(position);
-        holder.poolAmount.setText(getBTCDisplayAmount(poolViewModel.getDenomination()).concat(" BTC Pool"));
-        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getFeeValue())).concat(" BTC"));
-        holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getTotalFee())).concat(" BTC"));
-        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("    ").concat(getBTCDisplayAmount(poolViewModel.getMinerFee())).concat(" BTC"));
+        holder.poolAmount.setText(getBTCDecimalFormat(poolViewModel.getDenomination(),2).concat(" BTC Pool"));
+        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDecimalFormat(poolViewModel.getFeeValue())).concat(" BTC"));
+        holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getTotalFee())).concat(" BTC").concat(" (").concat(String.valueOf(poolViewModel.getTotalEstimatedBytes())).concat( " bytes)"));
+        holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getMinerFee())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);
         holder.checkBox.setChecked(poolViewModel.isSelected());
         if (poolViewModel.isSelected()) {
@@ -58,7 +62,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
         if (poolViewModel.isDisabled()) {
             holder.layout.setAlpha(0.4f);
             holder.layout.setClickable(false);
-        }else {
+        } else {
             holder.layout.setAlpha(1f);
             holder.layout.setClickable(true);
         }
@@ -114,10 +118,6 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
         void onItemsSelected(int position);
     }
 
-
-    private String getBTCDisplayAmount(long value) {
-        return org.bitcoinj.core.Coin.valueOf(value).toPlainString();
-    }
 
 
 }
