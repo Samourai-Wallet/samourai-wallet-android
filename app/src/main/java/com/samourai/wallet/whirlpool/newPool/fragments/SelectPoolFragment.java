@@ -22,13 +22,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
 import com.samourai.wallet.whirlpool.models.PoolViewModel;
+import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -52,7 +57,7 @@ public class SelectPoolFragment extends Fragment {
     private ArrayList<Long> fees = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Long tx0Amount = 0L;
-
+    private List<UTXOCoin> coins = new ArrayList<>();
 
     public SelectPoolFragment() {
     }
@@ -105,10 +110,10 @@ public class SelectPoolFragment extends Fragment {
         this.fees = fees;
     }
 
-    private void loadPools(Long tx0, Long aLong) {
+    private void loadPools() {
 
         poolViewModels.clear();
-        this.tx0Amount = tx0;
+        this.tx0Amount = NewPoolActivity.getCycleTotalAmount(coins);
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
             return;
@@ -121,9 +126,23 @@ public class SelectPoolFragment extends Fragment {
 
                     for (com.samourai.whirlpool.client.whirlpool.beans.Pool whirlpoolPool : whirlpoolPools) {
                         PoolViewModel poolViewModel = new PoolViewModel(whirlpoolPool);
-                        poolViewModel.setMinerFee(aLong);
+                        Long fee = fees.get(1); ;
+                        switch (this.poolCyclePriority) {
+                            case HIGH:
+                                fee = fees.get(2);
+                                break;
+                            case NORMAL:
+                                fee = fees.get(1);
+                                break;
+                            case LOW: {
+                                fee = fees.get(0);
+                                break;
+                            }
+                        }
+
+                        poolViewModel.setMinerFee(fee,this.coins);
                         poolViewModels.add(poolViewModel);
-                        if (poolViewModel.getDenomination() + poolViewModel.getFeeValue() + poolViewModel.getMinerFee() > tx0) {
+                        if (poolViewModel.getDenomination() + poolViewModel.getFeeValue() + poolViewModel.getMinerFee() > this.tx0Amount) {
                             poolViewModel.setDisabled(true);
                         } else {
                             poolViewModel.setDisabled(false);
@@ -148,6 +167,7 @@ public class SelectPoolFragment extends Fragment {
     }
 
     private void setPoolCyclePriority(PoolCyclePriority poolCyclePriority) {
+        this.poolCyclePriority = poolCyclePriority;
 
         switch (poolCyclePriority) {
             case LOW: {
@@ -157,7 +177,7 @@ public class SelectPoolFragment extends Fragment {
                 if (fees.size() >= 1)
                     poolFee.setText(String.valueOf(fees.get(0)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 1)
-                    loadPools(this.tx0Amount, fees.get(0));
+                    loadPools();
                 break;
             }
             case NORMAL: {
@@ -167,7 +187,7 @@ public class SelectPoolFragment extends Fragment {
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 2)
-                    loadPools(this.tx0Amount, fees.get(1));
+                    loadPools();
                 break;
             }
 
@@ -178,13 +198,12 @@ public class SelectPoolFragment extends Fragment {
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(2)).concat(" ").concat(getString(R.string.sat_b)));
                 if (fees.size() >= 2)
-                    loadPools(this.tx0Amount, fees.get(2));
+                    loadPools();
                 break;
             }
 
 
         }
-        this.poolCyclePriority = poolCyclePriority;
     }
 
 
@@ -194,8 +213,9 @@ public class SelectPoolFragment extends Fragment {
         super.onDetach();
     }
 
-    public void setTX0(long cycleTotalAmount, Long tx0) {
-        loadPools(cycleTotalAmount, tx0);
+    public void setTX0(List<UTXOCoin> coins) {
+        this.coins = coins;
+        loadPools();
     }
 
     public interface OnPoolSelectionComplete {

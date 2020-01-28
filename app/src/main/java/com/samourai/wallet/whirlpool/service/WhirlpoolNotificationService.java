@@ -35,6 +35,7 @@ import java8.util.Optional;
 import static android.support.v4.app.NotificationCompat.GROUP_ALERT_SUMMARY;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_CHANNEL;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_NOTIFICATIONS;
+import static com.samourai.wallet.util.FormatsUtil.getBTCDecimalFormat;
 
 public class WhirlpoolNotificationService extends Service {
 
@@ -112,7 +113,7 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void showMixSuccessNotification(WhirlpoolUtxo utxo) {
-        String message = Coin.valueOf(utxo.getUtxo().value).toPlainString().concat(" BTC").concat(" ").concat(" mix completed");
+        String message = getBTCDecimalFormat(utxo.getUtxo().value).concat(" BTC").concat(" ").concat(" mix completed");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, WHIRLPOOL_NOTIFICATIONS)
                 .setContentTitle("Mix completed")
                 .setTicker("Mix completed")

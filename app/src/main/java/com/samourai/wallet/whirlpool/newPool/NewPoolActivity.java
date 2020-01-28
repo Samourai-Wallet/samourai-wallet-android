@@ -30,6 +30,7 @@ import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendFactory;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOUtil;
@@ -166,6 +167,7 @@ public class NewPoolActivity extends AppCompatActivity {
                         Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
+                    calculateTx0(selectedPoolViewModel.getDenomination(),selectedPoolViewModel.getMinerFee()/1000L);
                     newPoolViewPager.setCurrentItem(2);
                     confirmButton.setText(getString(R.string.begin_cycle));
                     confirmButton.setBackgroundResource(R.drawable.button_green);
@@ -222,25 +224,30 @@ public class NewPoolActivity extends AppCompatActivity {
         if (coins.size() == 0) {
             enableConfirmButton(false);
         } else {
-            long mediumFee= FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+            long mediumFee = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
 
             cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(coins)) / 1e8) + " BTC");
             // default set to lowest pool
-            tx0 = new WhirlpoolTx0(1000000L, mediumFee, 0, coins);
+            calculateTx0(1000000L, mediumFee);
+        }
+    }
 
-            try {
-                tx0.make();
-            } catch (Exception ex) {
-                Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-                ex.printStackTrace();
-                return;
-            }
-            if (tx0.getTx0() != null) {
-                enableConfirmButton(true);
-                selectPoolFragment.setTX0(getCycleTotalAmount(coins), tx0.getFeeSatB());
-            } else {
-                enableConfirmButton(false);
-            }
+    private void calculateTx0(long denomination, long fee) {
+        tx0 = new WhirlpoolTx0(denomination, fee, 0, selectedCoins);
+
+        LogUtil.info(TAG, "calculateTx0: ".concat(String.valueOf(denomination)).concat(" fee").concat(String.valueOf(fee)));
+        try {
+            tx0.make();
+        } catch (Exception ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            ex.printStackTrace();
+            return;
+        }
+        if (tx0.getTx0() != null) {
+            enableConfirmButton(true);
+            selectPoolFragment.setTX0(selectedCoins);
+        } else {
+            enableConfirmButton(false);
         }
     }
 
@@ -571,7 +578,7 @@ public class NewPoolActivity extends AppCompatActivity {
         }
     }
 
-    private long getCycleTotalAmount(List<UTXOCoin> utxoCoinList) {
+    public static long getCycleTotalAmount(List<UTXOCoin> utxoCoinList) {
 
         long ret = 0L;
 
