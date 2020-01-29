@@ -18,6 +18,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.utxos.UTXOUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private static final String TAG = "TxAdapter";
     private Context mContext;
     private List<Tx> txes;
+    private int account = 0;
     private CompositeDisposable disposables = new CompositeDisposable();
     private OnClickListener listener;
     private Boolean displaySatUnit = false;
@@ -55,8 +57,9 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         void onClick(int position, Tx tx);
     }
 
-    public TxAdapter(Context mContext, List<Tx> txes) {
+    public TxAdapter(Context mContext, List<Tx> txes, int account) {
         this.mContext = mContext;
+        this.account = account;
         this.txes = new ArrayList<>();
         Disposable disposable = makeSectionedDataSet(txes)
                 .subscribeOn(Schedulers.computation())
@@ -137,14 +140,21 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
                 String amount = displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
+                if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
+                    amount = amount.concat(" (Remix)");
+                }
                 holder.tvAmount.setText(amount);
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
             }
 
-            if(UTXOUtil.getInstance().getNote(tx.getHash()) != null){
+            if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
+                holder.tvDirection.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_24dp));
+            }
+
+            if (UTXOUtil.getInstance().getNote(tx.getHash()) != null) {
                 holder.txNoteGroup.setVisibility(View.VISIBLE);
                 holder.tvNoteView.setText(UTXOUtil.getInstance().getNote(tx.getHash()));
-            }else {
+            } else {
                 holder.txNoteGroup.setVisibility(View.INVISIBLE);
             }
 

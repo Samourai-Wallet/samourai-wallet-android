@@ -21,7 +21,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
@@ -29,7 +28,6 @@ import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -474,7 +472,7 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
     private void initViewModel() {
-        TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>());
+        TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>(), account);
         adapter.setHasStableIds(true);
         adapter.setClickListener((position, tx) -> txDetails(tx));
 
