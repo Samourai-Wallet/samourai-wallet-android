@@ -549,6 +549,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                         holder.txNoteGroup.setVisibility(View.GONE);
                     }
                     try {
+                        holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.incoming_tx_green));
+                        holder.utxoType.setText("Premix");
                         switch (whirlpoolUtxoModel.getUtxoState().getStatus()) {
                             case READY: {
                                 if (progress.length() == 0) {
@@ -568,6 +570,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                                 if (progress.length() == 0) {
                                     holder.mixingProgress.setText("Joined a mix");
                                 }
+                                holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
+                                holder.utxoType.setText("Postmix");
                                 break;
                             }
                             case MIX_QUEUE: {
@@ -581,6 +585,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                                 if (progress.length() == 0) {
                                     holder.mixingProgress.setText("Mix success");
                                 }
+                                holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
+                                holder.utxoType.setText("Postmix");
                                 holder.progressStatus.setColorFilter(getResources().getColor(R.color.green_ui_2));
                                 break;
                             }
@@ -603,7 +609,6 @@ public class WhirlpoolMain extends AppCompatActivity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            holder.mixingTime.setText("Premix");
 //            holder.itemView.setOnClickListener(view -> {
 //                Intent intent = new Intent(getApplicationContext(), CycleDetail.class);
 //                intent.putExtra("hash", whirlpoolUtxoModel.getUtxo().toString());
@@ -640,8 +645,8 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final View mView;
-            TextView mixingProgress, mixingTime, mixingAmount, section, tvNoteView;
-            ImageView progressStatus;
+            TextView mixingProgress, utxoType, mixingAmount, section, tvNoteView;
+            ImageView progressStatus,mixingUtxoIndicator;
             Group txNoteGroup;
 
             ViewHolder(View view, int type) {
@@ -652,7 +657,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                     mixingAmount = view.findViewById(R.id.whirlpool_cycle_item_mixing_amount);
                     mixingProgress = view.findViewById(R.id.whirlpool_cycle_item_mixing_text);
                     progressStatus = view.findViewById(R.id.whirlpool_cycle_item_mixing_status_icon);
-                    mixingTime = view.findViewById(R.id.whirlpool_cycle_item_time);
+                    utxoType = view.findViewById(R.id.whirlpool_cycle_item_time);
+                    mixingUtxoIndicator = view.findViewById(R.id.utxo_mixing_indicator_icon);
                     tvNoteView = view.findViewById(R.id.tx_note_view);
                     txNoteGroup = itemView.findViewById(R.id.whirlpool_main_note_group);
                 } else {
