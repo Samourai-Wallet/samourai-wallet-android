@@ -1651,7 +1651,7 @@ public class SendActivity extends SamouraiActivity {
         if (selectedCahootsType == SelectCahootsType.type.STOWAWAY || selectedCahootsType == SelectCahootsType.type.STONEWALLX2_MANUAL) {
             Intent intent = new Intent(this, ManualCahootsActivity.class);
             intent.putExtra("amount", amount);
-            intent.putExtra("account", account);
+            intent.putExtra("_account", account);
             intent.putExtra("address", address);
             intent.putExtra("type", selectedCahootsType == SelectCahootsType.type.STOWAWAY ? Cahoots.CAHOOTS_STOWAWAY : Cahoots.CAHOOTS_STONEWALLx2);
             startActivity(intent);
@@ -1908,7 +1908,7 @@ public class SendActivity extends SamouraiActivity {
         if (Cahoots.isCahoots(data.trim())) {
 //            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
             Intent cahootsIntent = new Intent(this, ManualCahootsActivity.class);
-            cahootsIntent.putExtra("account", account);
+            cahootsIntent.putExtra("_account", account);
             cahootsIntent.putExtra("payload",data.trim());
             startActivity(cahootsIntent);
 
