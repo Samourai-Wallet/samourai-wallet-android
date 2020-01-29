@@ -785,5 +785,7 @@
     <string name="post_mix_transactions">Post-mix transactions</string>
     <string name="scode">Whirlpool SCODE</string>
     <string name="enter_scode">Enter your Whirlpool SCODE</string>
+    <string name="this_utxo_is_marked_as_spendable">This UTXO is marked as Spendable</string>
+    <string name="this_utxo_is_marked_as_blocked">This UTXO is marked as Blocked</string>
 
 </resources>

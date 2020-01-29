@@ -71,8 +71,9 @@
 
         <TextView
             android:layout_width="match_parent"
+            android:id="@+id/utxo_details_spending_status"
             android:layout_height="wrap_content"
-            android:text="This UTXO is marked as Spendable"
+            android:text="@string/this_utxo_is_marked_as_spendable"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textSize="12sp" />
 

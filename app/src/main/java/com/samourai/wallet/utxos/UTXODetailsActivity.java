@@ -1,7 +1,6 @@
 package com.samourai.wallet.utxos;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -166,33 +164,18 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
         setNoteState();
 
-        addressTextView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                new AlertDialog.Builder(UTXODetailsActivity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.receive_address_to_clipboard)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) UTXODetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
-                                android.content.ClipData clip = null;
-                                clip = android.content.ClipData.newPlainText("address", addr);
-                                clipboard.setPrimaryClip(clip);
-                                Toast.makeText(UTXODetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                            }
-
-                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                }).show();
-
-                return false;
-            }
-        });
+        addressTextView.setOnClickListener((event) -> new AlertDialog.Builder(UTXODetailsActivity.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.receive_address_to_clipboard)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) UTXODetailsActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = null;
+                    clip = android.content.ClipData.newPlainText("address", addr);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(UTXODetailsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                }).setNegativeButton(R.string.no, (dialog, whichButton) -> {
+                }).show());
 
         hashTextView.setOnClickListener(view -> {
             new android.app.AlertDialog.Builder(this)
@@ -286,12 +269,12 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
                                     BlockedUTXO.getInstance().remove(hash, idx);
 
-
                                 } else if (BlockedUTXO.getInstance().containsPostMix(hash, idx)) {
 
                                     BlockedUTXO.getInstance().removePostMix(hash, idx);
 
                                 }
+                                utxoCoin.doNotSpend = false;
 
                             } else {
                                 if (amount < BlockedUTXO.BLOCKED_UTXO_THRESHOLD && BlockedUTXO.getInstance().contains(hash, idx)) {
@@ -312,6 +295,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                                     } else {
                                         BlockedUTXO.getInstance().addPostMix(hash, idx, amount);
                                     }
+                                    utxoCoin.doNotSpend = true;
                                     LogUtil.debug("UTXOActivity", "added:" + hash + "-" + idx);
 
                                 }
@@ -428,11 +412,21 @@ public class UTXODetailsActivity extends AppCompatActivity {
     }
 
     private void showMoreOptions() {
+
         View dialogView = getLayoutInflater().inflate(R.layout.utxo_details_options_bottomsheet, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         dialog.setContentView(dialogView);
         dialog.show();
+        TextView spendOption = dialog.findViewById(R.id.utxo_details_spending_status);
 
+
+        if (utxoCoin.doNotSpend) {
+            if (spendOption != null)
+                spendOption.setText(R.string.this_utxo_is_marked_as_blocked);
+        } else {
+            if (spendOption != null)
+                spendOption.setText(R.string.this_utxo_is_marked_as_spendable);
+        }
 
         dialog.findViewById(R.id.utxo_details_option_sign).setOnClickListener(view -> sign());
         dialog.findViewById(R.id.utxo_details_option_redeem).setOnClickListener(view -> redeem());
