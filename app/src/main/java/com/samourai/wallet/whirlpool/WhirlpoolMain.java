@@ -31,11 +31,18 @@ import android.widget.Toast;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.cahoots.Cahoots;
+import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.home.BalanceActivity;
+import com.samourai.wallet.network.NetworkDashboard;
+import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.SendActivity;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
 import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LinearLayoutManagerWrapper;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
@@ -43,8 +50,8 @@ import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.fragments.WhirlPoolLoaderDialog;
 import com.samourai.wallet.whirlpool.models.WhirlpoolUtxoViewModel;
-import com.samourai.wallet.whirlpool.newPool.WhirlpoolDialog;
 import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
+import com.samourai.wallet.whirlpool.newPool.WhirlpoolDialog;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
@@ -425,8 +432,33 @@ public class WhirlpoolMain extends AppCompatActivity {
             startActivity(intent);
         } else if (id == R.id.action_scode) {
             doSCODE();
-        } else {
-            ;
+        } else if (id == R.id.action_scan_qr) {
+            CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
+            cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
+
+            cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
+                cameraFragmentBottomSheet.dismissAllowingStateLoss();
+                try {
+                    if (Cahoots.isCahoots(code.trim())) {
+                        Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                        cahootIntent.putExtra("payload", code.trim());
+                        cahootIntent.putExtra("_account", WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix());
+                        startActivity(cahootIntent);
+                    } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
+                        CahootsUtil.getInstance(getApplication()).doPSBT(code.trim());
+                    } else if (DojoUtil.getInstance(getApplication()).isValidPairingPayload(code.trim())) {
+                        Intent intent = new Intent(getApplication(), NetworkDashboard.class);
+                        intent.putExtra("params", code.trim());
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(getApplication(), SendActivity.class);
+                        intent.putExtra("uri", code.trim());
+                        intent.putExtra("_account", WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix());
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                }
+            });
         }
 
         return super.onOptionsItemSelected(item);
@@ -510,10 +542,10 @@ public class WhirlpoolMain extends AppCompatActivity {
 //                        ex.printStackTrace();
                     }
                     holder.mixingProgress.setText(progress);
-                    if(UTXOUtil.getInstance().getNote(whirlpoolUtxoModel.getUtxo().tx_hash) !=null){
+                    if (UTXOUtil.getInstance().getNote(whirlpoolUtxoModel.getUtxo().tx_hash) != null) {
                         holder.txNoteGroup.setVisibility(View.VISIBLE);
                         holder.tvNoteView.setText(UTXOUtil.getInstance().getNote(whirlpoolUtxoModel.getUtxo().tx_hash));
-                    }else {
+                    } else {
                         holder.txNoteGroup.setVisibility(View.GONE);
                     }
                     try {
@@ -608,7 +640,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final View mView;
-            TextView mixingProgress, mixingTime, mixingAmount, section,tvNoteView;
+            TextView mixingProgress, mixingTime, mixingAmount, section, tvNoteView;
             ImageView progressStatus;
             Group txNoteGroup;
 
