@@ -418,7 +418,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
                 } else {
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                 }
-                getApplicationContext().startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
+                ManualCahootsActivity.this.startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
             }
 
         });
