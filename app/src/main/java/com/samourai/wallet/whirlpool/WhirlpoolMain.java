@@ -480,6 +480,18 @@ public class WhirlpoolMain extends AppCompatActivity {
                         String strSCODE = scode.getText().toString().trim();
                         if (scode != null) {
                             WhirlpoolMeta.getInstance(WhirlpoolMain.this).setSCODE(strSCODE);
+                            WhirlpoolNotificationService.stopService(getApplicationContext());
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent _intent = new Intent(WhirlpoolMain.this, BalanceActivity.class);
+                                    _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(_intent);
+                                }
+
+                            }, 1000L);
+
                         }
                         dialog.dismiss();
                     }
