@@ -197,7 +197,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
     }
 
     void setUTXOState() {
-        if (BlockedUTXO.getInstance().contains(hash, idx)) {
+        if (isBlocked()) {
             statusTextView.setText("Blocked");
         } else {
             statusTextView.setText(getText(R.string.spendable));
@@ -230,6 +230,12 @@ public class UTXODetailsActivity extends AppCompatActivity {
         }
     }
 
+    boolean isBlocked() {
+        return BlockedUTXO.getInstance().contains(hash, idx) ||
+                BlockedUTXO.getInstance().containsPostMix(hash, idx) ||
+                BlockedUTXO.getInstance().containsBadBank(hash, idx);
+    }
+
     void setNoteState() {
         TransitionManager.beginDelayedTransition((ViewGroup) notesTextView.getRootView());
         if (UTXOUtil.getInstance().getNote(hash) == null) {
@@ -252,7 +258,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
 
         int selected = 0;
-        if (BlockedUTXO.getInstance().contains(hash, idx)) {
+        if (isBlocked()) {
             selected = 1;
         }
 
