@@ -88,8 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_whirlpool"
-            fab:fab_colorNormal="#e91e63"
-            fab:fab_colorPressed="#c2185b"
+            fab:fab_colorNormal="@color/whirlpoolBlue"
+            fab:fab_colorPressed="@color/whirlpoolBlue"
             fab:fab_label="@string/action_whirlpool"
             fab:fab_size="mini" />
 
