@@ -1,5 +1,6 @@
 package com.samourai.wallet.whirlpool;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LinearLayoutManagerWrapper;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.UTXOUtil;
@@ -108,11 +110,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.tx_swipe_container_whirlpool);
 
         findViewById(R.id.whirlpool_fab).setOnClickListener(view -> showBottomSheetDialog());
-        findViewById(R.id.spend_from_postmix).setOnClickListener(view -> {
-            Intent intent = new Intent(WhirlpoolMain.this, SendActivity.class);
-            intent.putExtra("_account", WhirlpoolMeta.getInstance(WhirlpoolMain.this).getWhirlpoolPostmix());
-            startActivity(intent);
-        });
+
 
         premixList.setLayoutManager(new LinearLayoutManagerWrapper(this));
 
