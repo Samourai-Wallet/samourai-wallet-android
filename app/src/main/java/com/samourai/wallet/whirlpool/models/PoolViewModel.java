@@ -26,7 +26,7 @@ public class PoolViewModel extends com.samourai.whirlpool.client.whirlpool.beans
         this.minerFee = minerFee;
         try {
             this.tx0 = new WhirlpoolTx0(this.getDenomination(), minerFee / 1000L, 0, coins);
-            tx0.make();
+//            tx0.make();
             this.totalMinerFee = tx0.getFee();
             this.totalEstimatedBytes = tx0.getEstimatedBytes();
         } catch (Exception ex) {
