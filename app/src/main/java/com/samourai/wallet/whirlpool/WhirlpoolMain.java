@@ -375,8 +375,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == NEWPOOL_REQ_CODE) {
+        if (requestCode == NEWPOOL_REQ_CODE && resultCode== Activity.RESULT_OK) {
             Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
             if (!whirlpoolWalletOpt.isPresent()) {
                 return;
