@@ -19,7 +19,7 @@ If you would like to know more about trusted node & how it was implemented [Samo
 
 **What is Dojo?**
 
-Samourai Dojo is the backend server for your Samourai Wallet. By default your wallet is connected to the Samourai servers Dojo, but to provide privacy & financial self sovereignty you can implement your own Dojo! This provides HD account, loose addresses (BIP47) balances, transactions lists & unspent output lists to the wallet. As well as PushTX endpoint broadcasts transactions through the backing bitcoind node. All through Tor! 
+Samourai Dojo is the backend server/node for your Samourai Wallet. By default your wallet is connected to the Samourai servers Dojo, but to provide privacy & financial self sovereignty you can implement your own Dojo! This provides HD account, loose addresses (BIP47) balances, transactions lists & unspent output lists to the wallet. As well as PushTX endpoint broadcasts transactions through the backing bitcoind node. All through Tor! 
 
 [Dojo Github](https://github.com/Samourai-Wallet/samourai-dojo)
 
