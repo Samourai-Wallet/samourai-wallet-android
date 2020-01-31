@@ -1,3 +1,14 @@
+# Table of Contents
+- [**Trusted Node**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Trusted-Node)
+- [**Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Dojo)
+- [**Pairing your wallet to your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Pairing-your-wallet-to-your-Dojo)
+- [**Displaying unspent outputs**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Displaying-unspent-outputs)
+- [**View a UTXO private key**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#View-a-UTXO-private-key)
+- [**Sign a message with a UTXO**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Sign-a-message-with-a-UTXO)
+- [**Like-type change outputs**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Advanced%20Features.md#Like-type-change-outputs)
+
+
+
 ## Trusted Node
 
 **_Trusted node has been phased out, you must now use Dojo_**
@@ -12,7 +23,7 @@ Samourai Dojo is the backend server for your Samourai Wallet. By default your wa
 
 [Dojo Github](https://github.com/Samourai-Wallet/samourai-dojo)
 
-**FAQ TO BE ADDED**
+[Dojo FAQ](https://github.com/Crazyk031/samourai-wallet-android/blob/develop/Guides/Dojo.md)
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
@@ -40,7 +51,7 @@ Tap the **three vertical dots** on the top right of the toolbar and then tap **S
 
 ### View a UTXO private key
 
-Samourai Wallet is an HD wallet. This means that when you combine your 12 secret words with your passphrase you can generate every private key for every address your wallet will ever create. However there are circumstances where you may quickly require an individual private key for an active address in your wallet. This guide will walk you through viewing a private key for an active utxo in your wallet.
+Samourai Wallet is an HD wallet. This means that when you combine your 12 secret words with your passphrase you can generate every private key for every address your wallet will ever create. However there are circumstances where you may quickly require an individual private key for an active address in your wallet. This guide will walk you through viewing a private key for an active UTXO in your wallet.
 
 **Step 1 - Show unspent outputs**
 
@@ -52,11 +63,11 @@ Tap the unspent output that corresponds with the bitcoin address that you want t
 
 **Step 3 - View the private key**
 
-The private key will be displayed to you in both text and QR code form. Please be aware that the private key grants access to the bitcoin on that address and should never be shared with anyone.
+The private key will be displayed to you in both text and QR code form. **Please be aware that the private key grants access to the bitcoin on that address and should never be shared with anyone!**
 
 ### Sign a message with a UTXO
 
-Samourai Wallet has built-in signature generation to prove control of a Bitcoin address private key without revealing the private key to anyone. The list of current unspent outputs contains a list of addresses that can sign messages in your wallet. Currently you can only sign messages with addresses that contain an unspent balance of Bitcoin. 
+Samourai Wallet has built-in signature generation to prove control of a bitcoin address private key without revealing the private key to anyone. The list of current unspent outputs contains a list of addresses that can sign messages in your wallet. Currently you can only sign messages with addresses that contain an unspent balance of Bitcoin. 
 
 **Step 1 - Show unspent outputs**
 
@@ -80,7 +91,7 @@ When a Bitcoin transaction is created, the Bitcoin wallet searches for available
 
 The entire unspent output must be spent, so if the amount on the output is larger than the specified amount to send, the remainder is returned to your wallet, in an output referred to as "_change_".
 
-By default, Samourai Wallet will either create segwit enabled or standard change outputs depending on the type of address that is being **sent to**. For example, if you are sending to a segwit enabled address, the change output returned to your wallet will also be segwit enabled. Conversely, if you're sending to a standard Bitcoin address, the change output will be a standard address. 
+By default, Samourai Wallet will either create segwit enabled or standard change outputs depending on the type of address that is being **sent to**. For example, if you are sending to a segwit enabled address, the change output returned to your wallet will also be segwit enabled. Conversely, if you're sending to a legacy Bitcoin address, the change output will be a legacy address. 
 
 **Privacy benefit**
 
