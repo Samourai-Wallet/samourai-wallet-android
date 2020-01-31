@@ -23,7 +23,7 @@ Samourai Dojo is the backend server for your Samourai Wallet. By default your wa
 
 [Dojo Github](https://github.com/Samourai-Wallet/samourai-dojo)
 
-[Dojo FAQ](https://github.com/Crazyk031/samourai-wallet-android/blob/develop/Guides/Dojo.md)
+[Dojo FAQ](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md)
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
