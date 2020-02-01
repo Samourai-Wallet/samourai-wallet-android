@@ -846,7 +846,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                 holder.tagsLayout.setVisibility(View.GONE);
             }
 
-            if (UTXOUtil.getInstance().getNote(item.hash) != null) {
+            if (UTXOUtil.getInstance().getNote(item.hash) != null && UTXOUtil.getInstance().getNote(item.hash).length() > 0) {
                 float scale = getResources().getDisplayMetrics().density;
                 holder.notesLayout.setVisibility(View.VISIBLE);
                 ImageView im = new ImageView(holder.rootViewGroup.getContext());

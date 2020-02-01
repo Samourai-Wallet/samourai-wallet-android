@@ -316,7 +316,12 @@ public class UTXODetailsActivity extends AppCompatActivity {
     }
 
     void addNote(String text) {
-        UTXOUtil.getInstance().addNote(hash, text);
+        if(text != null && text.length() > 0) {
+            UTXOUtil.getInstance().addNote(hash, text);
+        }
+        else {
+            UTXOUtil.getInstance().removeNote(hash);
+        }
         setNoteState();
     }
 
