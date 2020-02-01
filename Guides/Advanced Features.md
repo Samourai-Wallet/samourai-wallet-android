@@ -27,7 +27,7 @@ Samourai Dojo is the backend server/node for your Samourai Wallet. By default yo
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
-For a very easy & slick implementation of Dojo check out [Ronin](https://github.com/RoninDojo/RoninDojo)
+For a very easy & slick implementation of Dojo check out [Ronin](https://github.com/RoninDojo/RoninDojo/wiki)
 
 ### Pairing your wallet to your Dojo
 
@@ -35,7 +35,7 @@ Once the database(IBD) has finished syncing, you can pair your Samourai Wallet w
 
 - Open the maintenance tool in a Tor browser (Tor v3 onion address) and sign in with your admin key.
 
-- Get your smartphone and launch the Samourai Wallet app. **Currently only new wallets should be paired.** When you first open the app hit the [⋮] in the upper right corner and choose  "Connect to existing Dojo". Scan the QRCode displayed in the "Pairing" tab of the maintenance tool.
+- Get your smartphone and launch the Samourai Wallet app. **Currently only new wallets should be paired.** When you first open the app hit the [⋮] in the upper right corner and choose  "Connect to existing Dojo". Scan the QR Code displayed in the "Pairing" tab of the maintenance tool.
 
 If you experience any problems when pairing, try re-installing the app and select "Connect to existing Dojo" from the [⋮] menu.
 
@@ -43,7 +43,7 @@ If you experience any problems when pairing, try re-installing the app and selec
 
 ### Displaying unspent outputs
 
-Unspent outputs are simply put, Bitcoin in your wallet that can be spent as an input in a new transaction. The combined amount of unspent outputs is equal to your total spendable balance. 
+Unspent outputs are simply put, bitcoin in your wallet that can be spent as an input in a new transaction. The combined amount of unspent outputs is equal to your total spendable balance. 
 
 **How to display unspent outputs**
 
@@ -67,7 +67,7 @@ The private key will be displayed to you in both text and QR code form. **Please
 
 ### Sign a message with a UTXO
 
-Samourai Wallet has built-in signature generation to prove control of a bitcoin address private key without revealing the private key to anyone. The list of current unspent outputs contains a list of addresses that can sign messages in your wallet. Currently you can only sign messages with addresses that contain an unspent balance of Bitcoin. 
+Samourai Wallet has built-in signature generation to prove control of a bitcoin address private key without revealing the private key to anyone. The list of current unspent outputs contains a list of addresses that can sign messages in your wallet. Currently you can only sign messages with addresses that contain an unspent balance of bitcoin. 
 
 **Step 1 - Show unspent outputs**
 
@@ -75,7 +75,7 @@ Tap the **three vertical dots** on the top right of the toolbar and then tap **S
 
 **Step 2 - Select the address to sign from**
 
-Tap the unspent output that corresponds with the Bitcoin address that you want to sign the message from. Tap on **sign message**
+Tap the unspent output that corresponds with the bitcoin address that you want to sign the message from. Tap on **sign message**
 
 **Step 3 - Enter your message**
 
@@ -87,11 +87,11 @@ Copy the signature and share it.
 
 ### Like-type change outputs
 
-When a Bitcoin transaction is created, the Bitcoin wallet searches for available unspent outputs in the wallet and uses them to send the specified amount to the specified destination. 
+When a bitcoin transaction is created, the bitcoin wallet searches for available unspent outputs in the wallet and uses them to send the specified amount to the specified destination. 
 
 The entire unspent output must be spent, so if the amount on the output is larger than the specified amount to send, the remainder is returned to your wallet, in an output referred to as "_change_".
 
-By default, Samourai Wallet will either create segwit enabled or standard change outputs depending on the type of address that is being **sent to**. For example, if you are sending to a segwit enabled address, the change output returned to your wallet will also be segwit enabled. Conversely, if you're sending to a legacy Bitcoin address, the change output will be a legacy address. 
+By default, Samourai Wallet will either create segwit enabled or standard change outputs depending on the type of address that is being **sent to**. For example, if you are sending to a segwit enabled address, the change output returned to your wallet will also be segwit enabled. Conversely, if you're sending to a legacy bitcoin address, the change output will be a legacy address. 
 
 **Privacy benefit**
 
