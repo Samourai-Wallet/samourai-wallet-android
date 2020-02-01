@@ -19,6 +19,8 @@
 
 ## New wallet
 
+[**Video Tutorial**](https://www.youtube.com/watch?v=SXboJEaXzlA&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=2&t=0s)
+
 Samourai Wallets private keys are generated offline on your device and are never known by anyone but yourself.  Follow this guide to create a new Samourai Wallet.
 
 ### Step 1 - Install
@@ -48,6 +50,8 @@ These words when used **(in order!)** together with your passphrase can regenera
 Your wallet has now been created and you are ready to begin sending and receiving Bitcoin payments!
 
 ## Importing a wallet from another app
+
+[**Video Tutorial**](https://www.youtube.com/watch?v=MvcPud3-2ng&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=3&t=0s)
 
 Samourai Wallet is compatible with all modern Bitcoin wallets that follow standards put forward and enforced by the Bitcoin community. Follow this guide to import an existing wallet
 
@@ -161,6 +165,8 @@ You will be prompted to confirm the sweep. The entire balance of the private key
 **Note: Samourai will not save the private key on the device. You should discard the used private key after sweeping as it is no longer advisable to use again.**
 
 # Sending Bitcoin
+
+[**Offline Sending Video Tutorial**](https://www.youtube.com/watch?v=sl5hR_mwwYM&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=6&t=0s)
 
 ## Sending a transaction 
 
