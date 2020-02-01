@@ -1,3 +1,14 @@
+# Table of Contents
+- [**What is Whirlpool?**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#What-is-Whirlpool?)
+- [**Setting up Whirlpool**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Setting-up-Whirlpool)
+- [**Understanding Whirlpool Desktop Configuration Options**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Understanding-Whirlpool-Desktop-Configuration-Options)
+- [**Understanding Deposit, Premix, and Postmix accounts**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Understanding-Deposit,-Premix,-and-Postmix-accounts)
+- [**Fund your deposit account on Whirlpool Desktop**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Fund-your-deposit-account-on-Whirlpool-Desktop)
+- [**Understanding pools and pool fees**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Understanding-pools-and-pool-fees)
+- [**Adding your UTXOs to a pool with Whirlpool Desktop**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Adding-your-UTXOs-to-a-pool-with-Whirlpool-Desktop)
+- [**Add a discount code SCODE to Whirlpool**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Add-a-discount-code-SCODE-to-Whirlpool)
+- [**Privacy considerations when Spending cycled UTXOs**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md#Privacy-considerations-when-Spending-cycled-UTXOs)
+
 # What is Whirlpool? 
 
 Whirlpool is Samourai Wallet's implementation of CoinJoin, a true CoinJoin that breaks determenalistic links. 
@@ -42,7 +53,7 @@ Whirlpool can be set up in 3 configurations:
 
 - First you must setup your CLI backend([Whirlpool CLI Github](https://github.com/Samourai-Wallet/whirlpool-client-cli)), this can be done manually on Command Line or via a user friendly implementation like:
 
-- [RoninDojo Github](https://github.com/RoninDojo/RoninDojo)
+- [RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki)
 
 [RoninDojo Telegram Group](https://t.me/RoninDojoUI)
 
@@ -149,7 +160,9 @@ Within the Desktop Client navigate to the **Deposit** tab directly under Last
 
 ## Understanding pools and pool fees
 
-Whirlpool is different than other CoinJoin services, in that you do not pay a volume based fee per anonymity set, but instead you pay a one time flat fee for an unlimited anonymity set.
+Whirlpool is different than other CoinJoin services, in that you do not pay a volume based fee per anonymity set, but instead you pay a one time flat fee for an unlimited anonymity set. You do pay a miner fee for each UTXO created after Tx0.
+
+You can message [Whirlbot](https://t.me/SW_whirlpool_bot) on Telegram to calculate fees and see pool stats
 
 To put it simply, it costs the same in Pool Fees to cycle 1 BTC or 1000 BTC. Once the pool fee is paid, it costs nothing to continue cycling. With each cycle you gain a greater privacy advantage with a deeper anonymity set.
 
@@ -201,11 +214,11 @@ Select a target number of cycle, this can be left as 1 as you can later cycle th
 
 Press the red `Tx0` button on the bottom of the pop up window to begin the process. 
 
-## Add a discount code (SCODE) to Whirlpool
+## Add a discount code SCODE to Whirlpool
 
 Occasionally we will announce promotional SCODE's - or Samourai Discount Codes - that you can apply to your Whirlpool client for reduced price or even free mixes. Keep an eye on our Twitter account and our Telegram rooms to be the first to hear about new SCODE's
 
-### How to add an SCODE
+### How to add a SCODE
 
 Once you have a valid SCODE you can add it to your Whirlpool client
 
@@ -224,7 +237,7 @@ Once you have a valid SCODE you can add it to your Whirlpool client
 
 Whirlpool will now apply the SCODE discount when you make new Whirlpool Tx0 transactions. 
 
-### How to remove an SCODE
+### How to remove a SCODE
 
 Once an SCODE expires you should remove it from your configuration. This currently must be done manually, and it is important you do not forget to disable the SCODE once it expires. 
 
@@ -286,12 +299,3 @@ If a STONEWALL cannot be created your wallet will warn you before sending. Pleas
 I want to spend my coins to another Samourai Wallet user
 
 Sending to another Samourai Wallet user is the same as sending to any bitcoin address and the same privacy rules apply. However, some additional Post Mix spending tools are available only between Samourai Wallet users. An example of this is Stowaway, which is a CoinJoin with a trusted friend that doesn't look like a CoinJoin and masks the true amount spent on the blockchain. 
-
-
-
-
-
-
-
-
-
