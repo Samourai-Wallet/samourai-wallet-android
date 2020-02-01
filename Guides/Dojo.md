@@ -1,21 +1,34 @@
+# Table of Contents 
+- [**What is Dojo?**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#What-is-Dojo?)
+- [**My Dojo Installation**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#MyDojo-installation-with-Docker-and-Docker-Compose)
+- [**Theory of Operation**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Theory-of-Operation)
+- [**Architecture**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Architecture)
+- [**Implementation Notes**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Implementation-Notes)
+- [**Pairing your wallet to your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Pairing-your-wallet-to-your-Dojo)
+- [**Commands for Interacting with your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Commands-for-Interacting-with-your-Dojo
+)
+- [**Log Examples**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Log-Examples)
+- [**Common Dojo issues**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Common-Dojo-issues)
+
+
 ## What is Dojo?
 
-Samourai Dojo is the backend server for your Samourai Wallet. By default your wallet is connected to the Samourai servers Dojo, but to provide privacy & financial self sovereignty you can implement your own Dojo! This provides HD account, loose addresses (BIP47) balances, transactions lists & unspent output lists to the wallet. As well as a PushTX endpoint that broadcasts transactions to the network through the backing bitcoind node. All through Tor! 
+Samourai Dojo is the backend server/node for your Samourai Wallet. By default your wallet is connected to the Samourai servers Dojo, but to provide privacy & financial self sovereignty you can implement your own Dojo! This provides HD account, loose addresses (BIP47) balances, transactions lists & unspent output lists to the wallet. As well as a PushTX endpoint that broadcasts transactions to the network through the backing bitcoind node. All through Tor! 
 
 [Dojo Github](https://github.com/Samourai-Wallet/samourai-dojo)
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
-For a very easy & slick implementation of Dojo check out [RoninDojo Github](https://github.com/RoninDojo/RoninDojo)
+For a very easy & slick implementation of Dojo check out [RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki)
 
 [RoninDojo Telegram Group](t.me/RoninDojoUI)
 
 [View API documentation](../master/doc/README.md)
 
 
-## Installation ##
+## Installation 
 
-### MyDojo (installation with Docker and Docker Compose)
+### MyDojo installation with Docker and Docker Compose
 
 This setup is recommended to Samourai users who feel comfortable with a few command lines.
 
@@ -89,7 +102,7 @@ Once the database(IBD) has finished syncing, you can pair your Samourai Wallet w
 
 If you experience any problems when pairing, try re-installing the app and select "Connect to existing Dojo" from the [⋮] menu.
 
-## Interacting with your Dojo
+## Commands for Interacting with your Dojo
 
 ### Usage: `./dojo.sh  "command"  "module" "options"`
 
