@@ -5,8 +5,7 @@
 - [**Architecture**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Architecture)
 - [**Implementation Notes**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Implementation-Notes)
 - [**Pairing your wallet to your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Pairing-your-wallet-to-your-Dojo)
-- [**Commands for Interacting with your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Commands-for-Interacting-with-your-Dojo
-)
+- [**Commands for Interacting with your Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Commands-for-Interacting-with-your-Dojo)
 - [**Log Examples**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Log-Examples)
 - [**Common Dojo issues**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md#Common-Dojo-issues)
 
@@ -21,9 +20,9 @@ Samourai Dojo is the backend server/node for your Samourai Wallet. By default yo
 
 For a very easy & slick implementation of Dojo check out [RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki)
 
-[RoninDojo Telegram Group](t.me/RoninDojoUI)
+[RoninDojo Telegram Group](https://t.me/RoninDojoUI)
 
-[View API documentation](../master/doc/README.md)
+[View API documentation](https://github.com/Samourai-Wallet/samourai-dojo/blob/master/doc/README.md)
 
 
 ## Installation 
@@ -40,7 +39,7 @@ It provides in a single command the setup of a full Samourai backend composed of
 * a maintenance tool accessible through a Tor web browser,
 * a block explorer ([BTC RPC Explorer](https://github.com/janoside/btc-rpc-explorer)) accessible through a Tor web browser.
 
-See [the documentation](./doc/DOCKER_setup.md) for detailed setup instructions.
+See [the documentation](https://github.com/Samourai-Wallet/samourai-dojo/blob/develop/doc/DOCKER_setup.md) for detailed setup instructions.
 
 ## Theory of Operation
 
@@ -49,6 +48,46 @@ Tracking wallet balances via `xpub` requires conforming to [BIP44](https://githu
 Dojo relies on the backing bitcoind node to maintain privacy.
 
 ### Architecture
+
+<a name="architecture"/>
+
+
+
+                -------------------    -------------------      --------------------
+               |  Samourai Wallet  |  |     Sentinel      |    | Bitcoin full nodes |
+                -------------------    -------------------      --------------------
+                        |_______________________|_______________________|
+                                                |
+                                          ------------
+
+                                          Tor network
+
+                                          ------------
+                                                |
+                  Host machine                  | (Tor hidden services)
+                 ______________________________ | _____________________________
+                |                               |                              |
+                |                      -------------------           dmznet    |
+                |                     |   Tor Container   |                    |
+                |                      -------------------                     |
+                |                             |        |                       |
+                |             -------------------      |                       |
+                |            |  Nginx Container  |     |                       |
+                |             -------------------      |                       |
+                |- - - - - - - - - - - | - - -|- - - - | - - - - - - - - - - - |
+                |     --------------------    |     --------------------       |
+                |    |  Nodejs Container  | ------ | Bitcoind Container |      |
+                |     --------------------    |     --------------------       |
+                |               |             |               |                |
+                |     --------------------    |     --------------------       |
+                |    |  MySQL Container   |   ---- |  BTC RPC Explorer  |      |
+                |     --------------------          --------------------       |
+                |                                                              |
+                |                                                  dojonet     |
+                |______________________________________________________________|
+
+
+<a name="requirements"/>
 
 Dojo is composed of 3 modules:
 * API (/account): web server providing a REST API and web sockets used by Samourai Wallet and Sentinel.
@@ -98,7 +137,7 @@ Once the database(IBD) has finished syncing, you can pair your Samourai Wallet w
 
 - Open the maintenance tool in a Tor browser (Tor v3 onion address) and sign in with your admin key.
 
-- Get your smartphone and launch the Samourai Wallet app. **Currently only new wallets should be paired.** When you first open the app hit the [⋮] in the upper right corner and choose  "Connect to existing Dojo". Scan the QRCode displayed in the "Pairing" tab of the maintenance tool.
+- Get your smartphone and launch the Samourai Wallet app. **Currently only new wallets should be paired.** When you first open the app hit the [⋮] in the upper right corner and choose  "Connect to existing Dojo". Scan the QR Code displayed in the "Pairing" tab of the maintenance tool.
 
 If you experience any problems when pairing, try re-installing the app and select "Connect to existing Dojo" from the [⋮] menu.
 
