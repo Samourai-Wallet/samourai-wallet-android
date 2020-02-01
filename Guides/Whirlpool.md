@@ -256,6 +256,10 @@ Once an SCODE expires you should remove it from your configuration. This current
 
 ## Privacy considerations when Spending cycled UTXOs
 
+**Toxic Change**
+
+Toxic change is just as its name implies, it is toxic to your privacy! The change created during a Tx0 or from post mix spends will be toxic, using this change can link back to those previous UTXOs. Many people have different ways to handle this change, but since it is such a nuanced topic **DYOR!**
+
 Whirlpool has been designed with extensive privacy enhancing strategies that help make sure you do not undo the privacy gains of Whirlpool when you go to spend your UTXOs.
 
 It is advised that you keep your funds within Whirlpool and directly spend using your Samourai Wallet on an as needed basis. This will allow you to take advantage of our superior coin selection and post mix spending tools, making it very hard to accidentally undo the privacy gains of Whirlpool.
