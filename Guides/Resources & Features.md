@@ -3,6 +3,7 @@
 - [**STONEWALL**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STONEWALL)
 - [**PayNym**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#PayNym)
 - [**Batch Spending**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Batch-Spending)
+- [**CAHOOTS**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#CAHOOTS)
 - [**STOWAWAY**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STOWAWAY)
 - [**STONEWALLx2**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STONEWALLx2)
 - [**Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Dojo)
@@ -162,13 +163,16 @@ When you are ready to broadcast the batch transaction to the network press the e
 
 # CAHOOTS
 
+A suite of tools within Samourai Wallet used to create collaborative CoinJoin transactions between two wallets
+
+**Make every spend a CoinJoin!**
+
 ## STOWAWAY
 
 [Video Tutorial](https://www.youtube.com/watch?v=Pzp8zDCzMUY&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=12&t=0s)
 
 ### Creating a Stowaway Transaction
 
-**NOTE: These are temporary steps for power users who wish to help test the bleeding edge of privacy transactions within Samourai Wallet. This functionality is provided without a completed UI.**
 
 Use Stowaway to create a transaction that looks like a "typical" bitcoin transaction but actually is a mini CoinJoin with an obfuscated amount sent on the blockchain. **You can only send a Stowaway transaction to the person you are collaborating with**, so this is a good transaction to use when sending to your privacy conscious friends who use Samourai Wallet.
 
@@ -208,8 +212,6 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 [Video Tutorial](https://www.youtube.com/watch?v=F-b9wWw_kQs&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=11&t=0s)
 
 ### How to create a STONEWALLx2 Transaction
-
-**NOTE: These are temporary steps for power users who wish to help test the bleeding edge of privacy transactions within Samourai Wallet. This functionality is provided without a completed UI.**
 
 Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help of a privacy conscious friend who allows you to mix some of their UTXOs with your own transaction. **You can send a STONEWALLx2  transaction to any third party**, so this is good to use when sending to any person to service regardless of what wallet they use.
  
