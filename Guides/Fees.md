@@ -1,10 +1,15 @@
+# Table of Contents
+- [**Miner Fee's**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Fees.md#Miner-Fee's)
+- [**Increasing the Miner Fee/RBF**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Fees.md#Increasing-the-miner-fee/RBF)
+- [**Premium Transaction Fee's**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Fees.md#Premium-Transaction-Fee's)
+
 ## Miner Fee's
 
 Miner fees are paid by the sender to incentivize the Bitcoin miners to include transactions in the blockchain
 
 ### Choosing the right miner fee profile
 
-Samourai Wallet provides users with dynamic fee profiles based on current network conditions. From the send screen you are able to modify the fee profile used on a per-transaction basis using the fee slider. The fee slider features three different priority 'profiles', and these are based on how quickly you need the transaction to be added to a block. In Bitcoin a block is usually produced roughly every 10 minutes.
+Samourai Wallet provides users with dynamic fee profiles based on current network conditions. From the send screen you are able to modify the fee used on a per-transaction basis using the fee slider. The fee slider can be adjusted based on current mempool activity to select how quickly you need the transaction to be added to a block. In Bitcoin a block is usually produced roughly every 10 minutes.
 
 **Low Fee Profile**
 
@@ -24,7 +29,9 @@ By default Samourai Wallet transactions are set to follow a Normal fee policy.  
 
 You will be prompted to review the miner fee once you press the green send button. 
 
-### Increasing the miner fee on an unconfirmed transaction sent/received 
+### Increasing the miner fee/RBF
+
+**RBF=Replace-by-Fee**
 
 Samourai is one of the only Bitcoin wallets that allows you to top-up the miner fee of transactions even after you have already sent/received them. This can be useful if a transaction was made with a low custom fee resulting in a very long confirmation time. 
 
@@ -50,7 +57,7 @@ The fee is automatically paid by your wallet as part of the Connection transacti
 
 ### How much does Ricochet cost?
 
-Samourai Wallet charges 0.002 BTC + normal miner fees for every 4- hop Ricochet transaction.
+Samourai Wallet charges 0.002 BTC + normal miner fees for every 4 hop Ricochet transaction.
 
 The fee is automatically paid by your wallet as part of the Ricochet transaction. You will be asked to review and accept the total fee before confirming the send. 
 
