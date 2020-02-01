@@ -1,3 +1,8 @@
+# Table of Contents
+- [**Furkan's FAQ**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/General%20Help%20%26%20Support.md#Furkan's-FAQ)
+- [**Samourai Wallet Basics**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/General%20Help%20%26%20Support.md#Is-Bitcoin-Cash/bcash-supported?)
+- [**Bitcoin Basics**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/General%20Help%20%26%20Support.md#Bitcoin-Basics)
+
 ## FAQs
 
 ### Furkan's FAQ
@@ -42,7 +47,7 @@ A: Not exactly, exchanges can sometimes blacklist or "freeze" your Bitcoins when
 
 A: PayNym is what Samourai call it, in reality they are payment codes (BIP47) which are awesome for privacy. imagine you share an address with public and nobody can lookup the balance of it from the blockchain, you dont have to imagine you can start to use them today! 
 
-### Is Bitcoin Cash (bcash) supported?
+### Is Bitcoin Cash/bcash supported?
 
 **No..**
 
