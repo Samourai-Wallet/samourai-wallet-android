@@ -580,7 +580,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                                     holder.mixingProgress.setText("Joined a mix");
                                 }
                                 holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
-                                holder.utxoType.setText("Postmix");
+                                holder.utxoType.setText("Mixing");
                                 break;
                             }
                             case MIX_QUEUE: {
