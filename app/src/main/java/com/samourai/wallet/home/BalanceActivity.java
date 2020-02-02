@@ -466,6 +466,7 @@ public class BalanceActivity extends SamouraiActivity {
             View logoView = null;
             if(potentialViews.size() > 0){
                 logoView = potentialViews.get(0);
+                logoView.setScaleX(-1.0f);
                 logoView.setOnClickListener(new View.OnClickListener() {
                     @Override public void onClick(View v) {
                         Intent _intent = new Intent(BalanceActivity.this, BalanceActivity.class);
