@@ -435,10 +435,45 @@ public class BalanceActivity extends SamouraiActivity {
 
                 updateDisplay(false);
             }, 100L);
+
             getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+
+            boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+            String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+            toolbar.setLogoDescription(contentDescription);
+            ArrayList<View> potentialViews = new ArrayList<View>();
+            toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+            View logoView = null;
+            if(potentialViews.size() > 0){
+                logoView = potentialViews.get(0);
+                logoView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        Intent _intent = new Intent(BalanceActivity.this, BalanceActivity.class);
+                        _intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+                        startActivity(_intent);
+                    } });
+            }
+
             balanceViewModel.loadOfflineData();
         } else {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+
+            boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+            String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+            toolbar.setLogoDescription(contentDescription);
+            ArrayList<View> potentialViews = new ArrayList<View>();
+            toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+            View logoView = null;
+            if(potentialViews.size() > 0){
+                logoView = potentialViews.get(0);
+                logoView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        Intent _intent = new Intent(BalanceActivity.this, BalanceActivity.class);
+                        _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(_intent);
+                    } });
+            }
+
             receiveFab.setVisibility(View.GONE);
             whirlpoolFab.setVisibility(View.GONE);
             paynymFab.setVisibility(View.GONE);
