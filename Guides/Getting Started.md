@@ -1,5 +1,5 @@
 # Table of Contents
-- [**Getting Aquainted with Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Getting-Aquainted-with-Bitcoin)
+- [**Getting Acquainted with Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Getting-Acquainted-with-Bitcoin)
 - [**Starting your wallet**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Starting-your-wallet)
 - [**Importing a wallet from another app**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Importing-a-wallet-from-another-app)
 - [**Receiving Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Receiving-Bitcoin)
@@ -7,7 +7,7 @@
 - [**Sending Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Sending-Bitcoin)
 - [**Using Ricochet Send**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Using-Ricochet-Send)
 
-# Getting Aquainted with Bitcoin
+# Getting Acquainted with Bitcoin
 
 [bitcoin-only](https://bitcoin-only.com/) 
 
