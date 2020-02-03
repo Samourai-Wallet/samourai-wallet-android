@@ -8,6 +8,20 @@
 
 # Restoring your wallet
 
+**Derivation Paths:**
+
+**Deposit:** `m/44'|49'|84'|47'/0'/0'`
+
+**Bad Bank:** `m/84'/0'/2147483644'`
+
+**Pre Mix:** `m/84'/0'/2147483645'`
+
+**Post Mix:** `m/84'/0'/2147483646'`
+
+**Ricochet:** `m/44'|49'|84'/0'/2147483647'`
+
+For more information on wallet derivation paths check [WalletsRecovery.org](https://walletsrecovery.org/)
+
 ## Restoring your wallet from auto backup
 
 [Video Tutorial](https://www.youtube.com/watch?v=Fqpix_h1oEU&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=4&t=0s)
