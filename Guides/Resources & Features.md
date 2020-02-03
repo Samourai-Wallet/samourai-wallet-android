@@ -183,7 +183,7 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 -  **Step 3:** Enter the amount you want to send
 (in satoshi)
 
--  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR"
+-  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - 	**Step 5:** Show the QR code to the person you are sending to. Have them scan it with their Samourai Wallet
 
@@ -205,7 +205,7 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 
 4. Valid #Cahoots JSON blobs will be recognized by scan. Text entry (paste) can be done via Settings->Transactions->#Cahoots
 
-**Alert: For maximum privacy you should only create Stowaway transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the Stowaway transaction.**
+**Alert: For maximum privacy you should only create STOWAWAY transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the STOWAWAY transaction.**
 
 ## STONEWALLx2
 
@@ -213,7 +213,7 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 
 ### How to create a STONEWALLx2 Transaction
 
-Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help of a privacy conscious friend who allows you to mix some of their UTXOs with your own transaction. **You can send a STONEWALLx2  transaction to any third party**, so this is good to use when sending to any person to service regardless of what wallet they use.
+Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help of a privacy conscious friend who allows you to mix some of their UTXOs with your own transaction. **You can send a STONEWALLx2 transaction to any third party**, so this is good to use when sending to any person to service regardless of what wallet they use.
  
 
 - **Step 1:** Open the Send Screen
@@ -226,7 +226,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 - **Step 4:** Enter the address you want to send to
 (bech32 addresses only)
 
-- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin}(https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
+- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - **Step 6:** Show the QR code to the person participating in the STONEWALLx2. Have them scan it with their Samourai Wallet
 
@@ -244,7 +244,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 
 4. Valid #Cahoots JSON blobs will be recognized by scan. Text entry (paste) can be done via Settings->Transactions->#Cahoots
 
-**Alert: For maximum privacy you should only create Stowaway transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the Stowaway transaction.**
+**Alert: For maximum privacy you should only create STONEWALLx2 transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the STONEWALLx2 transaction.**
 
 ## Dojo
 
@@ -305,8 +305,3 @@ You can also try a forked version of Sentinal called Sentinel x
 [Remote SMS Commands](https://samourai.kayako.com/section/34-remote-sms-commands) 
 
 [Stealth Mode](https://samourai.kayako.com/section/33-stealth-mode) 
-
-
-
-
-
