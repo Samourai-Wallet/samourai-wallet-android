@@ -118,6 +118,9 @@ public class SelectPoolFragment extends Fragment {
         if (!whirlpoolWalletOpt.isPresent()) {
             return;
         }
+        if (poolsAdapter == null) {
+            poolsAdapter = new PoolsAdapter(getContext(), poolViewModels);
+        }
         WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
         Disposable disposable = Single.fromCallable(whirlpoolWallet::getPools)
                 .subscribeOn(Schedulers.io())
