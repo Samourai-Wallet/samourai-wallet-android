@@ -31,6 +31,11 @@ public class AndroidHttpClient extends JacksonHttpClient {
     }
 
     @Override
+    protected String requestJsonPost(String url, Map<String, String> headers, String jsonBody) throws Exception {
+        return webUtil.postURL(WebUtil.CONTENT_TYPE_APPLICATION_JSON, url, jsonBody, headers);
+    }
+
+    @Override
     protected String requestJsonPostOverTor(String url, Map<String, String> headers, String jsonBody) throws Exception {
         if (torManager.isRequired()) {
             return webUtil.tor_postURL(url, jsonBody, headers);
