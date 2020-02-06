@@ -643,11 +643,6 @@ public class BalanceActivity extends SamouraiActivity {
             if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
                 stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
             }
-
-            if(isFinishing()){
-                // disconnect Whirlpool on app exit
-                WhirlpoolNotificationService.stopService(getApplicationContext());
-            }
         }
 
         super.onDestroy();
@@ -876,6 +871,9 @@ public class BalanceActivity extends SamouraiActivity {
                 } catch (IOException ioe) {
                 } catch (DecryptionException de) {
                 }
+
+                // disconnect Whirlpool on app back key exit
+                WhirlpoolNotificationService.stopService(getApplicationContext());
 
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
