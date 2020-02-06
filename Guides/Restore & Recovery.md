@@ -1,6 +1,30 @@
+# Table of Contents
+- [**Restoring your wallet from auto backup**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Restoring-your-wallet-from-auto-backup)
+- [**Restoring your wallet with your secret words**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Restoring-your-wallet-with-your-secret-words)
+- [**Testing your current wallet passphrase and backup**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Testing-your-current-wallet-passphrase-and-backup)
+- [**Exporting Wallet**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Exporting-Wallet)
+- [**Forgotten Details**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Forgotten-Details)
+- [**Private Keys**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Restore%20%26%20Recovery.md#Private-Keys)
+
 # Restoring your wallet
 
+**Derivation Paths:**
+
+**Deposit:** `m/44'|49'|84'|47'/0'/0'`
+
+**Bad Bank:** `m/84'/0'/2147483644'`
+
+**Pre Mix:** `m/84'/0'/2147483645'`
+
+**Post Mix:** `m/84'/0'/2147483646'`
+
+**Ricochet:** `m/44'|49'|84'/0'/2147483647'`
+
+For more information on wallet derivation paths check [WalletsRecovery.org](https://walletsrecovery.org/)
+
 ## Restoring your wallet from auto backup
+
+[Video Tutorial](https://www.youtube.com/watch?v=Fqpix_h1oEU&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=4&t=0s)
 
 By default Samourai Wallet saves an encrypted backup of your entire wallet on your device. This allows you to easily restore your wallet from the latest auto backup in case you accidentally uninstall Samourai wallet.
 
@@ -32,7 +56,9 @@ Your wallet should now be fully restored with the expected balance, transaction 
 
 **Note: If the auto backup process fails or you return unexpected results. Please try restoring your wallet with your secret words.**
 
-## Restoring wallet your with your secret words
+## Restoring your wallet with your secret words
+
+[Video Tutorial](https://www.youtube.com/watch?v=MvcPud3-2ng&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=3&t=0s)
 
 Your secret words are extremely important. When you combine your passphrase with your 12 secret words you get the *"backup of last resort"*. This combination is an industry standard and can be considered a valid backup for almost all modern bitcoin wallets. 
 
@@ -111,6 +137,8 @@ You will be asked to choose where you would like to export the wallet backup.
 - Choose **Export to email** if you would like Samourai to open your default mail application and paste the backup into a new message for you. 
 
 # Forgotten Details
+
+[Video Tutorial](https://www.youtube.com/watch?v=XDMYIFavUiw&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=5&t=0s)
 
 ## Forgotten Passphrase
 

@@ -4,7 +4,7 @@ If these guides have helped you consider making a donation
 
 _This is an incomplete list, many more have contributed their time and effort to further the documention & ecosystem surrounding Samourai Wallet_
 
-If your a contributor and aren't on the list, but would like to be added, DM @crazyk031 on Twitter or Telegram. 
+If your a contributor and aren't on the list, but would like to be added, DM @crazyk_031 on Twitter or @crazyk031 on Telegram/Keybase. 
 
 
 ### Dev Team

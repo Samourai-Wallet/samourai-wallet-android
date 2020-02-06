@@ -1,4 +1,13 @@
-# Getting Aquinted with Bitcoin
+# Table of Contents
+- [**Getting Acquainted with Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Getting-Acquainted-with-Bitcoin)
+- [**Starting your wallet**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Starting-your-wallet)
+- [**Importing a wallet from another app**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Importing-a-wallet-from-another-app)
+- [**Receiving Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Receiving-Bitcoin)
+- [**Sweep a private key**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Sweep-a-private-key)
+- [**Sending Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Sending-Bitcoin)
+- [**Using Ricochet Send**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Getting%20Started.md#Using-Ricochet-Send)
+
+# Getting Acquainted with Bitcoin
 
 [bitcoin-only](https://bitcoin-only.com/) 
 
@@ -8,7 +17,13 @@
 
 # Starting your wallet
 
+Samourai  Wallet uses a BIP39 seedphrase. The password is the 13th word. **It wont have been saved anywhere, their are multiple warnings when you create a wallet to remember/record it.**
+
+Suggestions, write down everything seedphrase/passphrase/pin and put in secure location. Also make multiple copies of your encrypted backup on your device(save to seperate location/SD card/password manager) or in another secure digital location. You can also email it to yourself(its encrypted so clearnet is OK) or better yet send via something like Tutanota(save your recover seed for this too), which is also encrypted.
+
 ## New wallet
+
+[**Video Tutorial**](https://www.youtube.com/watch?v=SXboJEaXzlA&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=2&t=0s)
 
 Samourai Wallets private keys are generated offline on your device and are never known by anyone but yourself.  Follow this guide to create a new Samourai Wallet.
 
@@ -39,6 +54,8 @@ These words when used **(in order!)** together with your passphrase can regenera
 Your wallet has now been created and you are ready to begin sending and receiving Bitcoin payments!
 
 ## Importing a wallet from another app
+
+[**Video Tutorial**](https://www.youtube.com/watch?v=MvcPud3-2ng&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=3&t=0s)
 
 Samourai Wallet is compatible with all modern Bitcoin wallets that follow standards put forward and enforced by the Bitcoin community. Follow this guide to import an existing wallet
 
@@ -152,6 +169,8 @@ You will be prompted to confirm the sweep. The entire balance of the private key
 **Note: Samourai will not save the private key on the device. You should discard the used private key after sweeping as it is no longer advisable to use again.**
 
 # Sending Bitcoin
+
+[**Offline Sending Video Tutorial**](https://www.youtube.com/watch?v=sl5hR_mwwYM&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=6&t=0s)
 
 ## Sending a transaction 
 

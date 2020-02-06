@@ -12,7 +12,7 @@ If you'd like to contribute to these guides or the Samourai Wallet ecosystem doc
 
 ### Crazyk031
 
-[Twitter](https://twitter.com/Crazyk031?s=09)
+[Twitter](https://twitter.com/Crazyk_031?s=09)
 
 [Keybase](https://keybase.io/crazyk031)
 
@@ -99,7 +99,7 @@ Once the Samourai team reviews your translation and approves it, your pull reque
 
 _This is an incomplete list, many more have contributed their time and effort to further the documention & ecosystem surrounding Samourai Wallet_
 
-If your a contributor and aren't on the list, but would like to be added, DM @crazyk031 on Twitter or Telegram. 
+If your a contributor and aren't on the list, but would like to be added, DM @crazyk_031 on Twitter or Crazyk031 on Telegram/Keybase
 
 **PuraVida** 
 Overall wealth of knowledge, creator of his own [FAQ](https://github.com/PuraVlda/samourai-wallet-android/wiki) & operator of [Lightning Hood](https://lightninghood.com/) where you can get all your Samourai swag! 
@@ -118,8 +118,3 @@ Overall wealth of knowledge & Dojo troubleshooting wizard!
 
 **Furkan**
 Admin on Samourai Wallet Telegram chat & devoloper of his own FAQ
-
-
-
-
-
