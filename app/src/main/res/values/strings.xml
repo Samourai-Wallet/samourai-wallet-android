@@ -661,6 +661,7 @@
     <string name="urgent">Urgent</string>
     <string name="normal">Normal</string>
     <string name="low">Low</string>
+    <string name="manual">Manual</string>
 
     <string name="ricochet_nlocktime_ok">Your staggered Ricochet has been forwarded for broadcast. Please wait until the block height permits the broadcasting of all the transactions in the series.</string>
     <string name="ricochet_nlocktime_ko">Your staggered Ricochet could not be forwarded for broadcast. Please try again.</string>

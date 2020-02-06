@@ -18,7 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -133,6 +133,8 @@ public class SendActivity extends AppCompatActivity {
     private ViewGroup totalMinerFeeLayout;
     private Switch cahootsSwitch;
     private SeekBar feeSeekBar;
+    private EditText feeManualEditText;
+    private Switch feeOverrideSwitch;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
@@ -175,6 +177,8 @@ public class SendActivity extends AppCompatActivity {
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
     private SelectCahootsType.type selectedCahootsType = SelectCahootsType.type.NONE;
     private int account = 0;
+    private int multiplier = 10000;
+    private DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,6 +218,8 @@ public class SendActivity extends AppCompatActivity {
         tvTotalFee = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_fee);
         btnSend = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.send_btn);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
+        feeManualEditText = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_manual_edittext);
+        feeOverrideSwitch = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_override_switch);
         tvEstimatedBlockWait = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.est_block_time);
         feeSeekBar = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.fee_seekbar);
         cahootsGroup = sendTransactionDetailsView.findViewById(R.id.cohoots_options);
@@ -241,6 +247,22 @@ public class SendActivity extends AppCompatActivity {
 
         tvTotalFee.setOnClickListener(clipboardCopy);
         tvSelectedFeeRate.setOnClickListener(clipboardCopy);
+        feeManualEditText.setFilters(new InputFilter[]{
+                (source, start, end, dest, dstart, dend) -> {
+                    double value = Double.parseDouble(dest.toString() + source.toString());
+
+                    // Sane limit 10x from max estimated fee
+                    double maxValue = (((double) feeSeekBar.getMax() / multiplier) + 1) * 10;
+
+                    if (value < 1) {
+                        return "1";
+                    } else if (value > maxValue) {
+                        return "";
+                    }
+
+                    return null;
+                }
+        });
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("_account")) {
             if (getIntent().getExtras().getInt("_account") == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
@@ -450,9 +472,6 @@ public class SendActivity extends AppCompatActivity {
 
     private void setUpFee() {
 
-
-        int multiplier = 10000;
-
         FEE_TYPE = PrefsUtil.getInstance(this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
 
@@ -511,38 +530,12 @@ public class SendActivity extends AppCompatActivity {
         tvSelectedFeeRate.setText((String.valueOf((int) feeMed).concat(" sats/b")));
 
         feeSeekBar.setProgress((feeMedSliderValue - multiplier) + 1);
-        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+
         setFeeLabels();
         feeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-                double value = ((double) i + multiplier) / (double) multiplier;
-
-                tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
-                if (value == 0.0) {
-                    value = 1.0;
-                }
-                double pct = 0.0;
-                int nbBlocks = 6;
-                if (value <= (double) feeLow) {
-                    pct = ((double) feeLow / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 24.0)).intValue();
-                } else if (value >= (double) feeHigh) {
-                    pct = ((double) feeHigh / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 2.0)).intValue();
-                    if (nbBlocks < 1) {
-                        nbBlocks = 1;
-                    }
-                } else {
-                    pct = ((double) feeMed / value);
-                    nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
-                }
-                tvEstimatedBlockWait.setText(nbBlocks + " blocks");
-                setFee(value);
-                setFeeLabels();
-
-                restoreChangeIndexes();
+                onSliderChange(i);
             }
 
             @Override
@@ -556,6 +549,38 @@ public class SendActivity extends AppCompatActivity {
             }
         });
 
+        feeOverrideSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String feeText = String.valueOf(
+                        decimalFormat.format(((double)feeSeekBar.getProgress() + multiplier) / (double) multiplier)
+                );
+
+                feeManualEditText.setText(feeText);
+                feeManualEditText.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+                feeSeekBar.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
+                setFeeLabels();
+            }
+        });
+
+        feeManualEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString() == null || s.toString().isEmpty()) return;
+                double value = Double.parseDouble(s.toString());
+                onSliderChange((int) ((double) multiplier * (value - 1)));
+            }
+        });
 
         switch (FEE_TYPE) {
             case FEE_LOW:
@@ -571,22 +596,52 @@ public class SendActivity extends AppCompatActivity {
                 FeeUtil.getInstance().sanitizeFee();
                 break;
         }
+    }
 
+    private void onSliderChange(int progress) {
+        double value = ((double) progress + multiplier) / (double) multiplier;
 
+        tvSelectedFeeRate.setText(String.valueOf(decimalFormat.format(value)).concat(" sats/b"));
+        if (value == 0.0) {
+            value = 1.0;
+        }
+        double pct = 0.0;
+        int nbBlocks = 6;
+        if (value <= (double) feeLow) {
+            pct = ((double) feeLow / value);
+            nbBlocks = ((Double) Math.ceil(pct * 24.0)).intValue();
+        } else if (value >= (double) feeHigh) {
+            pct = ((double) feeHigh / value);
+            nbBlocks = ((Double) Math.ceil(pct * 2.0)).intValue();
+            if (nbBlocks < 1) {
+                nbBlocks = 1;
+            }
+        } else {
+            pct = ((double) feeMed / value);
+            nbBlocks = ((Double) Math.ceil(pct * 6.0)).intValue();
+        }
+        tvEstimatedBlockWait.setText(nbBlocks + " blocks");
+        setFee(value);
+        setFeeLabels();
+
+        restoreChangeIndexes();
     }
 
     private void setFeeLabels() {
-        float sliderValue = (((float) feeSeekBar.getProgress()) / feeSeekBar.getMax());
+        if (feeManualEditText.isShown()) {
+            tvSelectedFeeRateLayman.setText(R.string.manual);
+        } else {
+            float sliderValue = (((float) feeSeekBar.getProgress()) / feeSeekBar.getMax());
 
-        float sliderInPercentage = sliderValue * 100;
+            float sliderInPercentage = sliderValue * 100;
 
-        if (sliderInPercentage < 33) {
-            tvSelectedFeeRateLayman.setText(R.string.low);
-        } else if (sliderInPercentage > 33 && sliderInPercentage < 66) {
-            tvSelectedFeeRateLayman.setText(R.string.normal);
-        } else if (sliderInPercentage > 66) {
-            tvSelectedFeeRateLayman.setText(R.string.urgent);
-
+            if (sliderInPercentage < 33) {
+                tvSelectedFeeRateLayman.setText(R.string.low);
+            } else if (sliderInPercentage > 33 && sliderInPercentage < 66) {
+                tvSelectedFeeRateLayman.setText(R.string.normal);
+            } else if (sliderInPercentage > 66) {
+                tvSelectedFeeRateLayman.setText(R.string.urgent);
+            }
         }
     }
 
