@@ -1,3 +1,15 @@
+# Table of Contents
+- [**Samourai Resources**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Samourai-Resources)
+- [**STONEWALL**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STONEWALL)
+- [**PayNym**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#PayNym)
+- [**Batch Spending**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Batch-Spending)
+- [**CAHOOTS**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#CAHOOTS)
+- [**STOWAWAY**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STOWAWAY)
+- [**STONEWALLx2**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#STONEWALLx2)
+- [**Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Dojo)
+- [**Whirlpool**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Whirlpool)
+- [**Sentinel**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Resources%20%26%20Features.md#Sentinel)
+
 # Samourai Resources 
 
 **Here are a few great resources to information about Samourai Wallet**
@@ -149,23 +161,29 @@ Scan an address using the QR code scanner in the toolbar and enter an amount to 
 
 When you are ready to broadcast the batch transaction to the network press the envelope icon in the toolbar. You will be asked to choose a fee profile for this send and then asked to confirm the send one last time. Once you press Yes the transaction will be sent to the network.
 
+# CAHOOTS
 
-## STOWAWAY/CAHOOTS 
+A suite of tools within Samourai Wallet used to create collaborative CoinJoin transactions between two wallets
+
+**Make every spend a CoinJoin!**
+
+## STOWAWAY
+
+[Video Tutorial](https://www.youtube.com/watch?v=Pzp8zDCzMUY&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=12&t=0s)
 
 ### Creating a Stowaway Transaction
 
-**NOTE: These are temporary steps for power users who wish to help test the bleeding edge of privacy transactions within Samourai Wallet. This functionality is provided without a completed UI.**
 
 Use Stowaway to create a transaction that looks like a "typical" bitcoin transaction but actually is a mini CoinJoin with an obfuscated amount sent on the blockchain. **You can only send a Stowaway transaction to the person you are collaborating with**, so this is a good transaction to use when sending to your privacy conscious friends who use Samourai Wallet.
 
 -  **Step 1:** Open the Send Screen
 
--  **Step 2:** Type "stowaway" in the "To" text field
+-  **Step 2:** Enable CAHOOTS slider and choose STOWAWAY
 
 -  **Step 3:** Enter the amount you want to send
 (in satoshi)
 
--  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR"
+-  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - 	**Step 5:** Show the QR code to the person you are sending to. Have them scan it with their Samourai Wallet
 
@@ -187,20 +205,20 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 
 4. Valid #Cahoots JSON blobs will be recognized by scan. Text entry (paste) can be done via Settings->Transactions->#Cahoots
 
-**Alert: For maximum privacy you should only create Stowaway transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the Stowaway transaction.**
+**Alert: For maximum privacy you should only create STOWAWAY transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the STOWAWAY transaction.**
 
 ## STONEWALLx2
 
+[Video Tutorial](https://www.youtube.com/watch?v=F-b9wWw_kQs&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=11&t=0s)
+
 ### How to create a STONEWALLx2 Transaction
 
-**NOTE: These are temporary steps for power users who wish to help test the bleeding edge of privacy transactions within Samourai Wallet. This functionality is provided without a completed UI.**
-
-Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help of a privacy conscious friend who allows you to mix some of their UTXOs with your own transaction. **You can send a STONEWALLx2  transaction to any third party**, so this is good to use when sending to any person to service regardless of what wallet they use.
+Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help of a privacy conscious friend who allows you to mix some of their UTXOs with your own transaction. **You can send a STONEWALLx2 transaction to any third party**, so this is good to use when sending to any person to service regardless of what wallet they use.
  
 
 - **Step 1:** Open the Send Screen
 
-- **Step 2:** Type "STONEWALLx2" in the "To" text field
+- **Step 2:** Enable CAHOOTS slider and choose STONEWALLx2
 
 - **Step 3:** Enter the amount you want to send
 (in satoshi)
@@ -208,7 +226,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 - **Step 4:** Enter the address you want to send to
 (bech32 addresses only)
 
-- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR"
+- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - **Step 6:** Show the QR code to the person participating in the STONEWALLx2. Have them scan it with their Samourai Wallet
 
@@ -226,7 +244,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 
 4. Valid #Cahoots JSON blobs will be recognized by scan. Text entry (paste) can be done via Settings->Transactions->#Cahoots
 
-**Alert: For maximum privacy you should only create Stowaway transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the Stowaway transaction.**
+**Alert: For maximum privacy you should only create STONEWALLx2 transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the STONEWALLx2 transaction.**
 
 ## Dojo
 
@@ -236,6 +254,8 @@ Dojo is the backend that your wallet connects to, this is the link between your 
 
 ### Dojo Resources 
 
+[Dojo FAQ](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Dojo.md)
+
 [Dojo Telegram Group](https://t.me/samourai_dojo) 
 
 [Dojo Github](https://github.com/Samourai-Wallet/samourai-dojo) 
@@ -244,7 +264,7 @@ Dojo is the backend that your wallet connects to, this is the link between your 
 
 For a very user friendly implimitation of Dojo you can check out Ronin
 
-[Ronin Github](https://github.com/RoninDojo/RoninDojo) 
+[RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki) 
 
 ## Whirlpool 
 
@@ -253,6 +273,8 @@ For a very user friendly implimitation of Dojo you can check out Ronin
 Whirlpool is Samourai Wallets implimitation of a CoinJoin. 
 
 ### Whirlpool Resources 
+
+[Whirlpool FAQ](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/Whirlpool.md)
 
 [Whirlpool Telegram Group](https://t.me/whirlpool_trollbox)
 
@@ -283,8 +305,3 @@ You can also try a forked version of Sentinal called Sentinel x
 [Remote SMS Commands](https://samourai.kayako.com/section/34-remote-sms-commands) 
 
 [Stealth Mode](https://samourai.kayako.com/section/33-stealth-mode) 
-
-
-
-
-
