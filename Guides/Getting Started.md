@@ -17,6 +17,10 @@
 
 # Starting your wallet
 
+Samourai  Wallet uses a BIP39 seedphrase. The password is the 13th word. **It wont have been saved anywhere, their are multiple warnings when you create a wallet to remember/record it.**
+
+Suggestions, write down everything seedphrase/passphrase/pin and put in secure location. Also make multiple copies of your encrypted backup on your device(save to seperate location/SD card/password manager) or in another secure digital location. You can also email it to yourself(its encrypted so clearnet is OK) or better yet send via something like Tutanota(save your recover seed for this too), which is also encrypted.
+
 ## New wallet
 
 [**Video Tutorial**](https://www.youtube.com/watch?v=SXboJEaXzlA&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=2&t=0s)
