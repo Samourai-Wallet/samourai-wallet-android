@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import io.reactivex.Observable;
@@ -89,6 +90,8 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
     private long totalP2SH_P2WPKH = 0L;
     private long totalP2WPKH = 0L;
     private long totalBlocked = 0L;
+    private TreeMap<String,Long> noteAmounts = null;
+    private TreeMap<String,Long> tagAmounts = null;
     final DecimalFormat df = new DecimalFormat("#");
     private RecyclerView utxoList;
     private SwipeRefreshLayout utxoSwipeRefresh;
@@ -117,6 +120,9 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         if ( account  ==  WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
             getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
         }
+
+        noteAmounts = new TreeMap<String,Long>();
+        tagAmounts = new TreeMap<String,Long>();
 
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(8);
@@ -398,6 +404,9 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
             long totalP2PKH = 0L;
             long totalP2SH_P2WPKH = 0L;
 
+            noteAmounts.clear();
+            tagAmounts.clear();
+
             Map<String, Object> dataSet = new HashMap<>();
             List<UTXO> utxos = null;
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
@@ -437,6 +446,35 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                         } else {
                             totalP2PKH += displayData.amount;
                         }
+                    }
+
+                    if(UTXOUtil.getInstance().get(outpoint.getTxHash().toString(), outpoint.getTxOutputN()) != null) {
+                        List<String> tags = UTXOUtil.getInstance().get(outpoint.getTxHash().toString(), outpoint.getTxOutputN());
+
+                        for(String tag : tags) {
+                            if(tagAmounts.containsKey(tag.toLowerCase())) {
+                                long val = tagAmounts.get(tag.toLowerCase());
+                                val += displayData.amount;
+                                tagAmounts.put(tag.toLowerCase(), val);
+                            }
+                            else {
+                                tagAmounts.put(tag.toLowerCase(), displayData.amount);
+                            }
+                        }
+
+                    }
+                    if(UTXOUtil.getInstance().getNote(outpoint.getTxHash().toString()) != null) {
+                        String note = UTXOUtil.getInstance().getNote(outpoint.getTxHash().toString());
+
+                        if(noteAmounts.containsKey(note.toLowerCase())) {
+                            long val = noteAmounts.get(note.toLowerCase());
+                            val += displayData.amount;
+                            noteAmounts.put(note.toLowerCase(), val);
+                        }
+                        else {
+                            noteAmounts.put(note.toLowerCase(), displayData.amount);
+                        }
+
                     }
 
                     items.add(displayData);
@@ -486,7 +524,17 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         message += getText(R.string.total_p2wpkh) + " " + df.format(((double) (totalP2WPKH) / 1e8)) + " BTC";
         message += "\n";
         message += getText(R.string.total_blocked) + " " + df.format(((double) (totalBlocked) / 1e8)) + " BTC";
-        message += "\n";
+        message += "\n\n";
+
+        for(String key : noteAmounts.keySet()) {
+            message += key + ": " + df.format(((double) (noteAmounts.get(key)) / 1e8)) + " BTC";
+            message += "\n";
+        }
+
+        for(String key : tagAmounts.keySet()) {
+            message += key + ": " + df.format(((double) (tagAmounts.get(key)) / 1e8)) + " BTC";
+            message += "\n";
+        }
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
