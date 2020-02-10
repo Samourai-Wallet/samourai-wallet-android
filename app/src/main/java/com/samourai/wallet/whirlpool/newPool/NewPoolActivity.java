@@ -107,9 +107,9 @@ public class NewPoolActivity extends AppCompatActivity {
         cycleTotalAmount = findViewById(R.id.cycle_total_amount);
         cycleTotalAmount.setText(MonetaryUtil.getInstance().getBTCFormat().format(((double) getCycleTotalAmount(new ArrayList<UTXOCoin>())) / 1e8) + " BTC");
 
-        fees.add(FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue());
-        fees.add(FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue());
-        fees.add(FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue());
+        fees.add(FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L);
+        fees.add(FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L);
+        fees.add(FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L);
 
 
         String preselectId = null;
