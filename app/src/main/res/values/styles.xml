@@ -39,6 +39,7 @@
         <item name="android:statusBarColor">@color/whirlpoolBlue</item>
         <item name="android:actionModeBackground">@color/whirlpoolBlue</item>
         <item name="actionModeBackground">@color/whirlpoolBlue</item>
+        <item name="android:colorControlActivated">@color/white</item>
     </style>
 
 
