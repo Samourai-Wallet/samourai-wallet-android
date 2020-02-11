@@ -58,6 +58,7 @@ import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
@@ -132,7 +133,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .subscribe(connectionStates -> {
                     if (connectionStates == AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
                         listenPoolState();
-                        loadPremixes(false);
+                        loadMixes(false);
                     }
                 });
         compositeDisposable.add(disposable);
@@ -150,12 +151,12 @@ public class WhirlpoolMain extends AppCompatActivity {
             JobRefreshService.enqueueWork(getApplicationContext(), intent);
             swipeRefreshLayout.setRefreshing(false);
             progressBar.setVisibility(View.VISIBLE);
-            loadPremixes(true);
+            loadMixes(true);
         });
 
     }
 
-    private void loadPremixes(boolean loadSilently) {
+    private void loadMixes(boolean loadSilently) {
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
             return;
@@ -166,7 +167,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         WhirlpoolWallet wallet = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet().get();
         try {
 
-            Disposable disposable = filter(wallet.getUtxosPremix(), new ArrayList<>(wallet.getMixingState().getUtxosMixing()))
+            Disposable disposable = filter(wallet, new ArrayList<>(wallet.getMixingState().getUtxosMixing()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(whirlpoolUtxoViewModelList -> {
@@ -186,15 +187,17 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     }
 
-    private Observable<List<WhirlpoolUtxoViewModel>> filter(Collection<WhirlpoolUtxo> premix, List<WhirlpoolUtxo> mixingUtxos) {
+    private Observable<List<WhirlpoolUtxoViewModel>> filter(WhirlpoolWallet wallet, List<WhirlpoolUtxo> mixingUtxos) {
         return Observable.fromCallable(() -> {
             List<WhirlpoolUtxoViewModel> list = new ArrayList<>();
 
-            List<WhirlpoolUtxo> utxoList = new ArrayList<>(premix);
-
+            List<WhirlpoolUtxo> utxoPremix = new ArrayList<>(wallet.getUtxosPremix());
+            List<WhirlpoolUtxo> utxoPostmix = new ArrayList<>(wallet.getUtxosPostmix());
             WhirlpoolUtxoViewModel section = WhirlpoolUtxoViewModel.section("Mixing");
             list.add(section);
-            for (WhirlpoolUtxo utxo : utxoList) {
+
+            //Adding all premix utxo's that are currently mixing/joined
+            for (WhirlpoolUtxo utxo : utxoPremix) {
                 WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
                 for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
                     if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n) {
@@ -213,13 +216,35 @@ public class WhirlpoolMain extends AppCompatActivity {
                     }
                 }
             }
+
+            //Adding all postmix utxo's (Remixes) that are currently mixing/joined
+            for (WhirlpoolUtxo utxo : utxoPostmix) {
+                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
+                for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
+                    if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n) {
+                        whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(utxo)));
+                    }
+                }
+                if (whirlpoolUtxoViewModel == null) {
+                    whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(utxo);
+                }
+
+                if (utxo.getUtxoState() != null) {
+                    if (utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.MIX_QUEUE &&
+                            utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.TX0_FAILED) {
+                        list.add(whirlpoolUtxoViewModel);
+                    }
+                }
+            }
+
+
             if (list.size() == 1) {
                 list.remove(section);
             }
             WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("Unmixed");
             list.add(queueSection);
 
-            for (WhirlpoolUtxo utxo : utxoList) {
+            for (WhirlpoolUtxo utxo : utxoPremix) {
                 WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
                 for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
                     if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n)
@@ -240,7 +265,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 list.get(list.indexOf(utxo)).setId(list.indexOf(utxo));
 
             }
-            listenPoolState(utxoList);
+            listenPoolState(mixingUtxos);
             return list;
         });
     }
@@ -255,7 +280,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(whirlpoolUtxoState -> {
-                    loadPremixes(true);
+                    loadMixes(true);
                 });
         compositeDisposable.add(disposable);
     }
@@ -358,7 +383,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mixingState -> {
-                    loadPremixes(true);
+                    loadMixes(true);
                 }, Throwable::printStackTrace);
 
         compositeDisposable.add(mixStateDisposable);
@@ -408,7 +433,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
-                loadPremixes(false);
+                loadMixes(false);
             }
         }
     };
@@ -615,6 +640,12 @@ public class WhirlpoolMain extends AppCompatActivity {
                     holder.mixingProgress.setText("Queue");
                     holder.progressStatus.setColorFilter(getResources().getColor(R.color.disabled_white));
                 }
+                if(whirlpoolUtxoModel.getAccount() == WhirlpoolAccount.POSTMIX){
+                    holder.mixingProgress.setText( holder.mixingProgress.getText().toString());
+                    holder.utxoType.setText("postmix");
+                    holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
+
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -662,7 +693,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                 super(view);
                 mView = view;
                 if (type == UTXO) {
-
                     mixingAmount = view.findViewById(R.id.whirlpool_cycle_item_mixing_amount);
                     mixingProgress = view.findViewById(R.id.whirlpool_cycle_item_mixing_text);
                     progressStatus = view.findViewById(R.id.whirlpool_cycle_item_mixing_status_icon);
