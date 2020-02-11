@@ -109,6 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:src="@drawable/ic_whirlpool"
+        android:layout_margin="16dp"
         app:fab_colorNormal="@color/whirlpoolBlue"
         app:fab_colorPressed="@color/whirlpoolBlue"
         app:fab_label="New pool" />
