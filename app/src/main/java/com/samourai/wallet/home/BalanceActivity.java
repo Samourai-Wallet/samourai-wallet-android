@@ -659,6 +659,11 @@ public class BalanceActivity extends SamouraiActivity {
 
         WhirlpoolMeta.getInstance(getApplicationContext());
         if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+
+            menu.findItem(R.id.action_sweep).setVisible(false);
+            menu.findItem(R.id.action_backup).setVisible(false);
+            menu.findItem(R.id.action_postmix).setVisible(false);
+
             menu.findItem(R.id.action_network_dashboard).setVisible(false);
             MenuItem item = menu.findItem(R.id.action_menu_account);
             item.setActionView(createTag(" POST-MIX "));
