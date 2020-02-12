@@ -45,7 +45,6 @@ import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LinearLayoutManagerWrapper;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.UTXOUtil;
@@ -64,7 +63,6 @@ import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -192,55 +190,19 @@ public class WhirlpoolMain extends AppCompatActivity {
             List<WhirlpoolUtxoViewModel> list = new ArrayList<>();
 
             List<WhirlpoolUtxo> utxoPremix = new ArrayList<>(wallet.getUtxosPremix());
-            List<WhirlpoolUtxo> utxoPostmix = new ArrayList<>(wallet.getUtxosPostmix());
             WhirlpoolUtxoViewModel section = WhirlpoolUtxoViewModel.section("Mixing");
             list.add(section);
 
-            //Adding all premix utxo's that are currently mixing/joined
-            for (WhirlpoolUtxo utxo : utxoPremix) {
-                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
-                for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
-                    if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n) {
-                        whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(utxo)));
-                    }
-                }
-                if (whirlpoolUtxoViewModel == null) {
-                    whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(utxo);
-                }
 
-                if (utxo.getUtxoState() != null) {
-                    if (utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.MIX_QUEUE &&
-                            utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.TX0_FAILED) {
-
-                        list.add(whirlpoolUtxoViewModel);
-                    }
-                }
+            for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
+                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(mixUtxo)));
+                list.add(whirlpoolUtxoViewModel);
             }
-
-            //Adding all postmix utxo's (Remixes) that are currently mixing/joined
-            for (WhirlpoolUtxo utxo : utxoPostmix) {
-                WhirlpoolUtxoViewModel whirlpoolUtxoViewModel = null;
-                for (WhirlpoolUtxo mixUtxo : mixingUtxos) {
-                    if (mixUtxo.getUtxo().tx_hash.equals(utxo.getUtxo().tx_hash) && mixUtxo.getUtxo().tx_output_n == utxo.getUtxo().tx_output_n) {
-                        whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(mixingUtxos.get(mixingUtxos.indexOf(utxo)));
-                    }
-                }
-                if (whirlpoolUtxoViewModel == null) {
-                    whirlpoolUtxoViewModel = WhirlpoolUtxoViewModel.copy(utxo);
-                }
-
-                if (utxo.getUtxoState() != null) {
-                    if (utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.MIX_QUEUE &&
-                            utxo.getUtxoState().getStatus() != WhirlpoolUtxoStatus.TX0_FAILED) {
-                        list.add(whirlpoolUtxoViewModel);
-                    }
-                }
-            }
-
 
             if (list.size() == 1) {
                 list.remove(section);
             }
+
             WhirlpoolUtxoViewModel queueSection = WhirlpoolUtxoViewModel.section("Unmixed");
             list.add(queueSection);
 
@@ -398,7 +360,7 @@ public class WhirlpoolMain extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == NEWPOOL_REQ_CODE && resultCode== Activity.RESULT_OK) {
+        if (requestCode == NEWPOOL_REQ_CODE && resultCode == Activity.RESULT_OK) {
             Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
             if (!whirlpoolWalletOpt.isPresent()) {
                 return;
@@ -640,8 +602,8 @@ public class WhirlpoolMain extends AppCompatActivity {
                     holder.mixingProgress.setText("Queue");
                     holder.progressStatus.setColorFilter(getResources().getColor(R.color.disabled_white));
                 }
-                if(whirlpoolUtxoModel.getAccount() == WhirlpoolAccount.POSTMIX){
-                    holder.mixingProgress.setText( holder.mixingProgress.getText().toString());
+                if (whirlpoolUtxoModel.getAccount() == WhirlpoolAccount.POSTMIX) {
+                    holder.mixingProgress.setText(holder.mixingProgress.getText().toString());
                     holder.utxoType.setText("postmix");
                     holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
 
@@ -686,7 +648,7 @@ public class WhirlpoolMain extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final View mView;
             TextView mixingProgress, utxoType, mixingAmount, section, tvNoteView;
-            ImageView progressStatus,mixingUtxoIndicator;
+            ImageView progressStatus, mixingUtxoIndicator;
             Group txNoteGroup;
 
             ViewHolder(View view, int type) {
