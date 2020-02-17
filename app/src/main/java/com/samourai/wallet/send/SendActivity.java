@@ -16,7 +16,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -334,9 +333,6 @@ public class SendActivity extends SamouraiActivity {
                         chosen[0] = true;
                         selectedCahootsType = type;
 
-                        hideToAddressForStowaway(false);
-
-
                         switch (selectedCahootsType) {
                             case NONE: {
                                 cahootsStatusText.setText("Off");
@@ -346,7 +342,9 @@ public class SendActivity extends SamouraiActivity {
                             case STOWAWAY: {
                                 cahootsStatusText.setText("Stowaway");
                                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_ui_2));
-                                hideToAddressForStowaway(true);
+                                toAddressEditText.setText("Stowaway Collaborator");
+                                toAddressEditText.setEnabled(false);
+                                address = "";
                                 break;
                             }
                             case STONEWALLX2_MANUAL: {
@@ -370,7 +368,7 @@ public class SendActivity extends SamouraiActivity {
                         if (!chosen[0]) {
                             compoundButton.setChecked(false);
                             selectedCahootsType = SelectCahootsType.type.NONE;
-                            hideToAddressForStowaway(false);
+                            hideToAddressForStowaway();
                         }
                         validateSpend();
                     }
@@ -379,23 +377,17 @@ public class SendActivity extends SamouraiActivity {
                 selectedCahootsType = SelectCahootsType.type.NONE;
                 cahootsStatusText.setText("Off");
                 cahootsStatusText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.warning_yellow));
-                hideToAddressForStowaway(false);
+                hideToAddressForStowaway();
                 validateSpend();
                 enableReviewButton(false);
             }
         });
     }
 
-    private void hideToAddressForStowaway(boolean hide) {
-        if (hide) {
-            toAddressEditText.setText("Stowaway Collaborator");
-            toAddressEditText.setEnabled(false);
-            address = "";
-        } else {
+    private void hideToAddressForStowaway() {
             toAddressEditText.setEnabled(true);
             toAddressEditText.setText("");
             address = "";
-        }
     }
 
 
