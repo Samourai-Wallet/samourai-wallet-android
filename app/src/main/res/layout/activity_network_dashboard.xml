@@ -184,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.16" />
+                    app:layout_constraintGuide_begin="66dp" />
             </android.support.constraint.ConstraintLayout>
 
             <View
@@ -279,7 +279,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.16" />
+                    app:layout_constraintGuide_begin="66dp" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -290,53 +290,79 @@
 
             </View>
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:id="@+id/network_dojo_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="12dp"
+                android:baselineAligned="false"
                 android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
+
 
                 <ImageView
                     android:id="@+id/network_dojo_status_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/circle_shape"
+                    android:tint="@color/disabledRed"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline17"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView33"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:src="@drawable/circle_shape"
-                    android:tint="@color/disabledRed" />
+                    android:layout_marginStart="8dp"
+                    android:text="Dojo Full Node"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/guideline17"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.355" />
 
-                <LinearLayout
-                    android:layout_width="84dp"
+                <TextView
+                    android:id="@+id/network_dojo_status"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2.5"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dojo Full Node"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/network_dojo_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Disabled" />
-                </LinearLayout>
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Disabled"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView33"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/textView33"
+                    app:layout_constraintTop_toBottomOf="@+id/textView33"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <Button
                     android:id="@+id/networking_dojo_btn"
                     style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="4dp"
-                    android:layout_weight=".5"
+                    android:layout_marginBottom="8dp"
                     android:text="Disable"
-                    android:textColor="#6eb8c5" />
-            </LinearLayout>
+                    android:textColor="#6eb8c5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@+id/network_dojo_status_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.constraint.Guideline
+                    android:id="@+id/guideline17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.16" />
+            </android.support.constraint.ConstraintLayout>
 
             <View
                 android:layout_width="match_parent"
