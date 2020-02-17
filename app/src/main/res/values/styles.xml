@@ -50,11 +50,6 @@
     </style>
 
 
-    <style name="LandingToolbar" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="actionMenuTextColor">@color/white</item>
-    </style>
-
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar" />
 
