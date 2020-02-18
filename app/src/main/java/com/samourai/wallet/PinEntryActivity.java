@@ -34,6 +34,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.widgets.PinEntryView;
@@ -53,16 +54,7 @@ import java.io.InputStreamReader;
 
 public class PinEntryActivity extends AppCompatActivity {
 
-    private Button ta = null;
-    private Button tb = null;
-    private Button tc = null;
-    private Button td = null;
-    private Button te = null;
-    private Button tf = null;
-    private Button tg = null;
-    private Button th = null;
-    private Button ti = null;
-    private Button tj = null;
+
     private ImageButton tsend = null;
     private ImageButton tback = null;
     private Vibrator vibrator;
@@ -70,7 +62,6 @@ public class PinEntryActivity extends AppCompatActivity {
 //    private TextView tvPrompt = null;
 //    private TextView tvUserInput = null;
 
-    private ScrambledPin keypad = null;
 
     private StringBuilder userInput = null;
 
@@ -97,7 +88,6 @@ public class PinEntryActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         userInput = new StringBuilder();
-        keypad = new ScrambledPin();
         pinEntryView = findViewById(R.id.pinentry_view);
         setSupportActionBar(findViewById(R.id.toolbar_pinEntry));
         pinEntryMaskLayout = findViewById(R.id.pin_entry_mask_layout);
