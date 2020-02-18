@@ -431,7 +431,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
         TextView spendOption = dialog.findViewById(R.id.utxo_details_spending_status);
 
 
-        if (utxoCoin.doNotSpend) {
+        if (isBlocked()) {
             if (spendOption != null)
                 spendOption.setText(R.string.this_utxo_is_marked_as_blocked);
         } else {
