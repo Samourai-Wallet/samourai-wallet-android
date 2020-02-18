@@ -21,7 +21,6 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.home.BalanceActivity;
-import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.service.BackgroundManager;
@@ -30,6 +29,7 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 
@@ -38,7 +38,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -47,11 +47,10 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity2 extends Activity {
 
     private ProgressDialog progress = null;
-
     public static final String ACTION_RESTART = "com.samourai.wallet.MainActivity2.RESTART_SERVICE";
     private AlertDialog.Builder dlg;
     private boolean pinEntryActivityLaunched = false;
-
+    private static final String TAG = "MainActivity2";
     private TextView loaderTxView;
     private CompositeDisposable compositeDisposables = new CompositeDisposable();
 
@@ -139,7 +138,7 @@ public class MainActivity2 extends Activity {
             AppUtil.getInstance(MainActivity2.this).setPRNG_FIXED(true);
         }
 
-        if (TorManager.getInstance(getApplicationContext()).isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.getInstance(getApplicationContext()).isConnected())  {
+        if (TorManager.getInstance(getApplicationContext()).isRequired() && ConnectivityStatus.hasConnectivity(getApplicationContext()) && !TorManager.getInstance(getApplicationContext()).isConnected()) {
             loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
@@ -273,7 +272,7 @@ public class MainActivity2 extends Activity {
                 intent.putExtra("uri", strUri);
                 PrefsUtil.getInstance(MainActivity2.this).setValue("SCHEMED_URI", strUri);
             }
-            if(getBundleExtras()!=null){
+            if (getBundleExtras() != null) {
                 intent.putExtras(getBundleExtras());
             }
             startActivity(intent);
@@ -332,45 +331,41 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
-        if(!APIFactory.getInstance(MainActivity2.this).APITokenRequired())    {
-            doAppInit1(isDial, strUri, strPCode);
-            return;
-        }
-
-
-
-        Disposable disposable = Observable.fromCallable(() -> {
+        Disposable disposable = Completable.fromCallable(() -> {
+            if (!APIFactory.getInstance(MainActivity2.this).APITokenRequired()) {
+                doAppInit1(isDial, strUri, strPCode);
+                return false;
+            }
+            boolean needToken = false;
             if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
-                return  true;
+                needToken = true;
             } else {
                 JWT jwt = new JWT(APIFactory.getInstance(MainActivity2.this).getAccessToken());
                 if (jwt.isExpired(APIFactory.getInstance(MainActivity2.this).getAccessTokenRefresh())) {
                     APIFactory.getInstance(MainActivity2.this).getToken(true);
-                    return  true;
+                    needToken = true;
                 }
             }
-            return  false;
-        }) .subscribeOn(Schedulers.io())
+            if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
+
+                APIFactory.getInstance(MainActivity2.this).stayingAlive();
+
+                doAppInit1(isDial, strUri, strPCode);
+
+                return true;
+
+            } else {
+                doAppInit1(isDial, strUri, strPCode);
+            }
+            return true;
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(needToken -> {
-
-                    if (needToken && !AppUtil.getInstance(MainActivity2.this).isOfflineMode()) {
-
-                        APIFactory.getInstance(MainActivity2.this).stayingAlive();
-
-                        doAppInit1(isDial, strUri, strPCode);
-
-                        return;
-
-                    } else {
-                        doAppInit1(isDial, strUri, strPCode);
-                    }
-
-                },error->{
-                    error.printStackTrace();
+                .subscribe(() -> {
+                }, e -> {
+                    LogUtil.error(TAG, e.getMessage());
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 });
         compositeDisposables.add(disposable);
-
 
 
     }
@@ -384,14 +379,14 @@ public class MainActivity2 extends Activity {
 
     private Bundle getBundleExtras() {
         Bundle bundle = getIntent().getExtras();
-        if(bundle==null){
+        if (bundle == null) {
             return null;
         }
         if (Intent.ACTION_VIEW.equals(getIntent().getAction()) && getIntent().getScheme() != null && getIntent().getScheme().equals("bitcoin")) {
-            bundle.putString("uri",getIntent().getData().toString());
-        }else {
-            if(bundle.containsKey("uri")){
-                bundle.putString("uri",bundle.getString("uri"));
+            bundle.putString("uri", getIntent().getData().toString());
+        } else {
+            if (bundle.containsKey("uri")) {
+                bundle.putString("uri", bundle.getString("uri"));
             }
         }
 
@@ -420,7 +415,7 @@ public class MainActivity2 extends Activity {
             Intent intent = new Intent(MainActivity2.this, BalanceActivity.class);
             intent.putExtra("notifTx", true);
             intent.putExtra("fetch", true);
-            if(getBundleExtras()!=null){
+            if (getBundleExtras() != null) {
                 intent.putExtras(getBundleExtras());
             }
             startActivity(intent);
@@ -432,10 +427,10 @@ public class MainActivity2 extends Activity {
     }
 
     private void doSelectNet() {
-        if(dlg!=null){
+        if (dlg != null) {
             return;
         }
-          dlg = new AlertDialog.Builder(this)
+        dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.select_network)
                 .setCancelable(false)
