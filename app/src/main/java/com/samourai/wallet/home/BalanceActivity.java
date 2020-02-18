@@ -852,38 +852,44 @@ public class BalanceActivity extends SamouraiActivity {
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
-        AlertDialog alert = builder.create();
 
-        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) ->  {
+        if (account == 0) {
 
-            try {
-                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-            } catch (MnemonicException.MnemonicLengthException mle) {
-            } catch (JSONException je) {
-            } catch (IOException ioe) {
-            } catch (DecryptionException de) {
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.ask_you_sure_exit);
+            AlertDialog alert = builder.create();
 
-            // disconnect Whirlpool on app back key exit
-            WhirlpoolNotificationService.stopService(getApplicationContext());
+            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
 
-            if (TorManager.getInstance(getApplicationContext()).isRequired()) {
-                Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-                startIntent.setAction(TorService.STOP_SERVICE);
-                startIntent.putExtra("KILL_TOR",true);
-                startService(startIntent);
-            }
-            TimeOutUtil.getInstance().reset();
-            finishAffinity();
-            finish();
+                try {
+                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+                } catch (MnemonicException.MnemonicLengthException mle) {
+                } catch (JSONException je) {
+                } catch (IOException ioe) {
+                } catch (DecryptionException de) {
+                }
+
+                // disconnect Whirlpool on app back key exit
+                WhirlpoolNotificationService.stopService(getApplicationContext());
+
+                if (TorManager.getInstance(getApplicationContext()).isRequired()) {
+                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+                    startIntent.setAction(TorService.STOP_SERVICE);
+                    startIntent.putExtra("KILL_TOR", true);
+                    startService(startIntent);
+                }
+                TimeOutUtil.getInstance().reset();
+                finishAffinity();
+                finish();
+                super.onBackPressed();
+            });
+
+            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), (dialog, id) -> dialog.dismiss());
+            alert.show();
+
+        } else {
             super.onBackPressed();
-        });
-
-        alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), (dialog, id) -> dialog.dismiss());
-        alert.show();
-
+        }
     }
 
     private void updateDisplay(boolean fromRefreshService) {
