@@ -331,12 +331,12 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
-        if (!APIFactory.getInstance(MainActivity2.this).APITokenRequired()) {
-            doAppInit1(isDial, strUri, strPCode);
-            return;
-        }
         Disposable disposable = Completable.fromCallable(() -> {
 
+            if (!APIFactory.getInstance(MainActivity2.this).APITokenRequired()) {
+                doAppInit1(isDial, strUri, strPCode);
+                return false;
+            }
             boolean needToken = false;
             if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
                 needToken = true;
@@ -401,16 +401,16 @@ public class MainActivity2 extends Activity {
         if (AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if (AppUtil.getInstance(MainActivity2.this).isSideLoaded()) {
-                doSelectNet();
+                runOnUiThread(this::doSelectNet);
             } else {
-                initDialog();
+                runOnUiThread(this::initDialog);
             }
         } else if (isDial && AccessFactory.getInstance(MainActivity2.this).validateHash(PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.ACCESS_HASH, ""), AccessFactory.getInstance(MainActivity2.this).getGUID(), new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getPIN()), AESUtil.DefaultPBKDF2Iterations)) {
             TimeOutUtil.getInstance().updatePin();
             launchFromDialer(AccessFactory.getInstance(MainActivity2.this).getPIN());
         } else if (TimeOutUtil.getInstance().isTimedOut()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
-            validatePIN(strUri == null ? null : strUri);
+            validatePIN(strUri);
         } else if (AccessFactory.getInstance(MainActivity2.this).isLoggedIn() && !TimeOutUtil.getInstance().isTimedOut()) {
             TimeOutUtil.getInstance().updatePin();
 
