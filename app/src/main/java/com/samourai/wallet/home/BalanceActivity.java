@@ -46,7 +46,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
@@ -851,58 +850,40 @@ public class BalanceActivity extends SamouraiActivity {
 
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public void onBackPressed() {
 
-        //Show exit option if the account is 0 otherwise finish the activity
-        if (keyCode == KeyEvent.KEYCODE_BACK && account == 0) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
+        AlertDialog alert = builder.create();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
-            AlertDialog alert = builder.create();
+        alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) ->  {
 
-            alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
-
-                try {
-                    PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
-                } catch (MnemonicException.MnemonicLengthException mle) {
-                } catch (JSONException je) {
-                } catch (IOException ioe) {
-                } catch (DecryptionException de) {
-                }
-
-                // disconnect Whirlpool on app back key exit
-                WhirlpoolNotificationService.stopService(getApplicationContext());
-
-                if (TorManager.getInstance(getApplicationContext()).isRequired()) {
-                    Intent startIntent = new Intent(getApplicationContext(), TorService.class);
-                    startIntent.setAction(TorService.STOP_SERVICE);
-                    startIntent.putExtra("KILL_TOR",true);
-                    startService(startIntent);
-                }
-                Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                BalanceActivity.this.startActivity(intent);
-
-            });
-
-            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
-
-            if (!isFinishing()) {
-                alert.show();
+            try {
+                PayloadUtil.getInstance(BalanceActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BalanceActivity.this).getGUID() + AccessFactory.getInstance(BalanceActivity.this).getPIN()));
+            } catch (MnemonicException.MnemonicLengthException mle) {
+            } catch (JSONException je) {
+            } catch (IOException ioe) {
+            } catch (DecryptionException de) {
             }
 
-            return true;
-        } else {
-            finish();
-        }
+            // disconnect Whirlpool on app back key exit
+            WhirlpoolNotificationService.stopService(getApplicationContext());
 
-        return false;
+            if (TorManager.getInstance(getApplicationContext()).isRequired()) {
+                Intent startIntent = new Intent(getApplicationContext(), TorService.class);
+                startIntent.setAction(TorService.STOP_SERVICE);
+                startIntent.putExtra("KILL_TOR",true);
+                startService(startIntent);
+            }
+            TimeOutUtil.getInstance().reset();
+            finishAffinity();
+            finish();
+            super.onBackPressed();
+        });
+
+        alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), (dialog, id) -> dialog.dismiss());
+        alert.show();
+
     }
 
     private void updateDisplay(boolean fromRefreshService) {
