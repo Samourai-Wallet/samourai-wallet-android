@@ -331,11 +331,12 @@ public class MainActivity2 extends Activity {
 
     private void doAppInit0(final boolean isDial, final String strUri, final String strPCode) {
 
+        if (!APIFactory.getInstance(MainActivity2.this).APITokenRequired()) {
+            doAppInit1(isDial, strUri, strPCode);
+            return;
+        }
         Disposable disposable = Completable.fromCallable(() -> {
-            if (!APIFactory.getInstance(MainActivity2.this).APITokenRequired()) {
-                doAppInit1(isDial, strUri, strPCode);
-                return false;
-            }
+
             boolean needToken = false;
             if (APIFactory.getInstance(MainActivity2.this).getAccessToken() == null) {
                 needToken = true;
@@ -363,6 +364,7 @@ public class MainActivity2 extends Activity {
                 .subscribe(() -> {
                 }, e -> {
                     LogUtil.error(TAG, e.getMessage());
+                    e.printStackTrace();
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 });
         compositeDisposables.add(disposable);
