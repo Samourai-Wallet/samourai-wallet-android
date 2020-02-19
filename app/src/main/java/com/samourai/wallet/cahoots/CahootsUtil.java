@@ -757,9 +757,7 @@ public class CahootsUtil {
                 debug("CahootsUtil", "script:" + new Script(script).toString());
                 debug("CahootsUtil", "address from script:" + Bech32Util.getInstance().getAddressFromScript(new Script(script)));
                 if (Bech32Util.getInstance().getAddressFromScript(new Script(script)) == null ||
-                        (!Bech32Util.getInstance().getAddressFromScript(new Script(script)).equalsIgnoreCase(stonewall1.getDestination())
-                                && transaction.getOutputs().get(i).getValue().longValue() != stonewall1.getSpendAmount())
-                ) {
+                        !Bech32Util.getInstance().getAddressFromScript(new Script(script)).equalsIgnoreCase(stonewall1.getDestination())) {
                     debug("CahootsUtil", "output value:" + transaction.getOutputs().get(i).getValue().longValue());
                     Coin value = transaction.getOutputs().get(i).getValue();
                     Coin _value = Coin.valueOf(value.longValue() - (fee / 2L));
