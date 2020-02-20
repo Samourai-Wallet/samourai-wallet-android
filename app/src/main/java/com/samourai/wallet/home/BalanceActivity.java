@@ -928,9 +928,7 @@ public class BalanceActivity extends SamouraiActivity {
                         throwable.printStackTrace();
 
                     if (balanceViewModel.getBalance().getValue() != null) {
-                        if (balance != 0L) {
                             balanceViewModel.setBalance(balance);
-                        }
                     } else {
                         balanceViewModel.setBalance(balance);
                     }
