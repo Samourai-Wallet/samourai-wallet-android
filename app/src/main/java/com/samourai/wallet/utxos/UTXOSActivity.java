@@ -581,7 +581,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
                 }
                 utxoList.post(() -> loadUTXOs(true));
-
+                setResult(RESULT_OK);
 
             }
         }
@@ -609,6 +609,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                         BlockedUTXO.getInstance().addPostMix(model.hash, model.idx, model.amount);
                     }
                     LogUtil.debug("UTXOActivity", "added:" + model.hash + "-" + model.idx);
+                    setResult(RESULT_OK);
 
                 }
 

@@ -132,6 +132,7 @@ public class BalanceActivity extends SamouraiActivity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
+    private final static int UTXO_REQUESTCODE = 2012;
     private static final String TAG = "BalanceActivity";
 
 
@@ -841,7 +842,9 @@ public class BalanceActivity extends SamouraiActivity {
                 }
 
             }
-        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
+        }if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
+            refreshTx(false,false,false);
+            progressBar.setVisibility(View.VISIBLE);
         } else {
             ;
         }
@@ -984,7 +987,7 @@ public class BalanceActivity extends SamouraiActivity {
     private void doUTXO() {
         Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
         intent.putExtra("_account", account);
-        startActivity(intent);
+        startActivityForResult(intent,UTXO_REQUESTCODE);
     }
 
     private void doScan() {
