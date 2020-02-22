@@ -57,7 +57,7 @@ We appreciate the contributions of the whole Samourai Community and especially t
 ### 2. Dojo
 
  * Q: **What are my options for building a Dojo?**
- * A: You can buy a Pre-built Dojo node or use the open source software from Samourai to build yourself with various hardware.  See [Dojo](https://github.com/PuraVlda/samourai-wallet-android/wiki/Dojo-Node) page for more information.
+ * A: You can buy a Pre-built Dojo node or use the open source software from Samourai to build yourself with various hardware.
 ------------------------------------------------------------------------------------------------------------------
  * Q: **If Dojo doesn't seem to be working right where do I go to check?**
  * A: Dojo is pretty much a self reliant piece of software, if it is not acting right most likely the logs will tell you.  To run these logs you must Open Command, Terminal (Mac) or PowerShell (WIndows) and Change Directories (cd) to where your dojo.sh script is; i.e. `Documents>dojo_dir>docker>my-dojo`.  Once there, you can run the following commands to open up logs:
@@ -156,7 +156,7 @@ i.e. `./dojo.sh logs tracker -d error -n 500`
      * Stonewall: A basic transactions that looks like a mini Coin Join in the blockchain
      * Stonewallx2: A real mini Coin Join where your friend provides you inputs
      * Stowaway: A special transaction which looks like a normal transaction but actually is a mini Coin Join between you and your friend where the real transacted amount is obfuscated in the blockchain 
-     * [More Cahoots Information](https://github.com/PuraVlda/samourai-wallet-android/wiki/Post-Mix-Tools)
+     
 ------------------------------------------------------------------------------------------------------------------
 
 ### 5. Sentinel
@@ -187,7 +187,7 @@ i.e. `./dojo.sh logs tracker -d error -n 500`
    * A: Whirlpool works by pairing your mobile wallet to the whirlpool desktop GUI/Command Line Client (CLI). There is effectively 4 phases of the mixing process: Deposit, Tx0, Pre-mix, and Post-Mix. The process begins with creating a Tx0. After the Tx0, all the new UTXOs available for mixing get moved into Pre-Mix status. After being mixed with 4 other peers, a new UTXO gets created and is moved to Post-Mix status. 
 ------------------------------------------------------------------------------------------------------------------
    * Q: **What is a Tx0?**
-   * A: A Tx0 is the initial breakdown of your initial UTXO into small equal pieces based on the pool size you joined. What cannot be mixed is sent back to deposit area and is seen in the mobile wallet. So for example if you have one UTXO of 0.1 BTC that you want to mix in the 0.01 pool. You will have 9 new UTXOs that will be queued for mixing. [More info here](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture)
+   * A: A Tx0 is the initial breakdown of your initial UTXO into small equal pieces based on the pool size you joined. What cannot be mixed is sent back to deposit area and is seen in the mobile wallet. So for example if you have one UTXO of 0.1 BTC that you want to mix in the 0.01 pool. You will have 9 new UTXOs that will be queued for mixing.
 ------------------------------------------------------------------------------------------------------------------
    * Q: **What is the fee structure of Whirlpool?**
    * A: You pay a one time fee of 5% of the pool. Additionally each new Pre-mix UTXO created requires you pay the miner fee
@@ -195,7 +195,6 @@ i.e. `./dojo.sh logs tracker -d error -n 500`
          * 0.05 pool = 0.0025 BTC + miner fees
          * 0.5 pool = 0.025 BTC + miner fees 
       * For miner fees, take th example about of 9 newly created Pre-mix UTXOs. You would pay the mixing fee of a one time 0.0005 + mining fees (say 1 sat/b) x 9. 
-[More info here](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture)
 ------------------------------------------------------------------------------------------------------------------
    * Q: **Do I have to pay the fees for each mix?**
    * A: No! Once moved into the Post-Mix status, your UTXO is considered a free-rider and will mix for free for every mix after that. This is because the Pre-mixers pay for all miner fees. Hence the term free-rider.
@@ -238,7 +237,7 @@ i.e. `./dojo.sh logs tracker -d error -n 500`
      * Enter your 12-word mnemonic
      * Enter your BIP39 passphrase on the 'Seed extension' screen
      * Type of addresses: 'native segwit (p2wpkh)'
-     * Override suggested derivation path with: m/84'/0'/2147483646' (do not omit trailing ' character)
+     * Override suggested derivation path with: `m/84'/0'/2147483646'` (do not omit trailing ' character)
      * Provide a password. You will need this password to open your wallet whenever you use Electrum.
           
 ------------------------------------------------------------------------------------------------------------------
