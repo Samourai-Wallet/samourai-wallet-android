@@ -1,4 +1,4 @@
-Welcome to the Samourai Wallet Android wiki!
+Welcome to the PuraVida's Samourai Wallet Android wiki!
 
 Here will be a collaboration of information for Samourai Wallet Tools, Knowledge and whatever else is deemed important for the community.  The goal here is to have a one stop location for any questions that may arise.
 
