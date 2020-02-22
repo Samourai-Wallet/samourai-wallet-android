@@ -7,12 +7,12 @@ Many thanks to the team at Samourai Wallet for the tools provided to the communi
 We appreciate the contributions of the whole Samourai Community and especially to those helped add to the wiki.
 
 ## Table of Contents
-* [**1. General**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#1-General)
-* [**2. Dojo**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#2-dojo)
-* [**3. Mobile Wallet**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#3-mobile-wallet)
-* [**4. Post Mix Tools**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#4-post-mix-tools)
-* [**5. Sentinel**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#5-sentinel)
-* [**6. Whirlpool**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Frequently-Asked-Questions#6-whirlpool)
+* [**1. General**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#1-General)
+* [**2. Dojo**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#2-dojo)
+* [**3. Mobile Wallet**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#3-mobile-wallet)
+* [**4. Post Mix Tools**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#4-post-mix-tools)
+* [**5. Sentinel**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#5-sentinel)
+* [**6. Whirlpool**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#6-whirlpool)
 
 ### 1. General
 
@@ -276,7 +276,7 @@ Besides privacy, connecting your Samourai Wallet to your own Dojo ensures you us
 **Your Dojo Build Options**
 
 1. [Samourai nodl](https://shop.nodl.it/en/home/38-nodl-samourai-edition.html) - Official Partnership of Samourai Wallet and nodl for a full Samourai Dojo box plus extras from nodl.
-2. [Ronin-Dojo](https://github.com/BTCxZelko/Ronin-Dojo) - Full guide build using RPi4/Odroid to install Dojo, Whirlpool, and Electrs.
+2. [Ronin-Dojo](https://github.com/RoninDojo/RoninDojo) - Full guide build using RPi4/Odroid to install Dojo, Whirlpool, and Electrs.
 3. [Self Build](https://github.com/Samourai-Wallet/samourai-dojo) - Build on your own hardware with Samourai Instructions
 4. [Self Build Mac OS Guide](https://github.com/Samourai-Wallet/samourai-dojo/blob/develop/doc/DOCKER_mac_setup.MD) - Build on Mac using a Virtual Box, Internal Docker Container or Docker with External Full Node.
 
@@ -288,10 +288,10 @@ Besides privacy, connecting your Samourai Wallet to your own Dojo ensures you us
 Please see the Samourai Wallet [Whirlpool Github](https://github.com/Samourai-Wallet/Whirlpool) for a more in depth analysis.
 
 ## Table of Contents
-* [**1. CLI Setup**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture#1-whirlpool-cli-setup-and-run)
-* [**2. GUI Setup**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture#2-whirlpool-gui-setup-and-run)
-* [**3. Tx0 Process**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture#3-tx0-and-the-process)
-* [**4. Other Whirlpool Links**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Whirlpool-Setup-and-Tx0-Architecture#4-other-whirlpool-links)
+* [**1. CLI Setup**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#1-whirlpool-cli-setup-and-run)
+* [**2. GUI Setup**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#2-whirlpool-gui-setup-and-run)
+* [**3. Tx0 Process**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#3-tx0-and-the-process)
+* [**4. Other Whirlpool Links**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#4-other-whirlpool-links)
 
 ### 1. Whirlpool CLI Setup and Run
 
@@ -331,7 +331,7 @@ Please see the Samourai Wallet [Whirlpool Github](https://github.com/Samourai-Wa
 
 ### 3. Tx0 and the Process
 
-* Merging UTXO’s Prior to Tx0 - See explanation of [Merging](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices) on the Best Practices Page.
+* Merging UTXO’s Prior to Tx0 - See explanation of [Merging](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#3-key-privacy-heuristics) on the Best Practices Page.
 
 * Premix UTXO's, Fees, Change and OP_Return
 
@@ -357,10 +357,10 @@ Please see the Samourai Wallet [Whirlpool Github](https://github.com/Samourai-Wa
 Samourai Wallet has the most comprehensive package of Post Mix Spending Tools available today.  People underestimate the importance of Post Mix transactions and they are as important if not more important than the Coin Join Mix itself.
 
 ## Table of Contents
-* [**1. Importance of Post mix**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Post-Mix-Tools#1-importance-of-post-mix)
-* [**2. Stonewall**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Post-Mix-Tools#2-stonewall)
-* [**3. Stonewallx2**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Post-Mix-Tools#3-stonewallx2)
-* [**4. Stowaway**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Post-Mix-Tools#4-stowaway)
+* [**1. Importance of Post mix**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#1-importance-of-post-mix)
+* [**2. Stonewall**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#2-stonewall)
+* [**3. Stonewallx2**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#3-stonewallx2)
+* [**4. Stowaway**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#4-stowaway)
 
 
 
@@ -400,12 +400,12 @@ A Stowaway creates a PayJoin using a friend's UTXO set.
 When it comes to Privacy on the Bitcoin Blockchain there is still some work to do.  Samourai Wallet is making great headway but it will always be a battle to stay ahead of the blockchain snoops.  Below are a list of Best Practices and potential Pitt-falls one must keep an eye out for.
 
 ## Table of Contents
-* [**1. Block Explorers**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#1-block-explorers)
-* [**2. Information Leaks**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#2-information-leaks)
-* [**3. Key Privacy Heuristics**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#3-key-privacy-heuristics)
-* [**4. Purchase and Sell Bitcoin**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#4-purchase-and-sell-bitcoin)
-* [**5. Sending and Receiving**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#5-send-and-receive-bitcoin)
-* [**6. Other Guides**](https://github.com/PuraVlda/samourai-wallet-android/wiki/Bitcoin-Privacy-Best-Practices#6-other-guides)
+* [**1. Block Explorers**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#1-block-explorers)
+* [**2. Information Leaks**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#2-information-leaks)
+* [**3. Key Privacy Heuristics**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#3-key-privacy-heuristics)
+* [**4. Purchase and Sell Bitcoin**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#4-purchase-and-sell-bitcoin)
+* [**5. Sending and Receiving**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#5-send-and-receive-bitcoin)
+* [**6. Other Guides**](https://github.com/Samourai-Wallet/samourai-wallet-android/blob/develop/Guides/PuraVida%20Wiki.md#6-other-guides)
 
 ### 1. Block Explorers 
 
