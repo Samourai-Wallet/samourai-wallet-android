@@ -779,6 +779,7 @@
 
     <string name="mixing"><em>%1$s</em> : %2$s</string>
 
+    <string name="doxxic_change_warning">Doxxic Change</string>
     <string name="block_tx0_change">The change output from this tx0 will be tagged. Block it to make it unspendable? If so, the amount will not be reflected in the total balance but will be visible within the wallet by consulting the list of unspents.</string>
     <string name="total_pre_mix_balance">Total Pre-mix Balance</string>
     <string name="total_post_mix_balance">Total Post-mix Balance</string>
