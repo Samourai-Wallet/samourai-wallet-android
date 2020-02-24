@@ -179,6 +179,7 @@ public class NewPoolActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage(R.string.block_tx0_change).setCancelable(false);
                     AlertDialog alert = builder.create();
+                    alert.setTitle(R.string.doxxic_change_warning);
                     alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
                         dialog.dismiss();
                         blockChangeOutput = true;
