@@ -299,6 +299,7 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
 
 </manifest>
