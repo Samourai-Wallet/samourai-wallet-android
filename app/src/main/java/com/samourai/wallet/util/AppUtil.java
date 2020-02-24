@@ -21,6 +21,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import java.io.File;
 import java.security.Security;
@@ -124,6 +125,7 @@ public class AppUtil {
         BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
         TrustedNodeUtil.getInstance().reset();
+        WhirlpoolMeta.getInstance(context).setSCODE(null);
 	}
 
 	public void restartApp() {

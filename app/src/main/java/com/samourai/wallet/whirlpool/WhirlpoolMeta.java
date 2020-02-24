@@ -47,7 +47,14 @@ public class WhirlpoolMeta {
     }
 
     public void setSCODE(String scode) {
-        strSCODE = scode.toUpperCase();
+
+        if(scode == null) {
+            strSCODE = null;
+        }
+        else {
+            strSCODE = scode.toUpperCase();
+        }
+
     }
 
     public String getSCODE() {
