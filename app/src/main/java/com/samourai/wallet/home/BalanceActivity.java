@@ -355,7 +355,20 @@ public class BalanceActivity extends SamouraiActivity {
             startActivity(intent);
             menuFab.toggle(true);
         });
-        setBalance(0L, false);
+
+        JSONObject payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        if(account == 0 && payload != null && payload.has("prev_balance"))    {
+            try    {
+                setBalance(payload.getLong("prev_balance"), false);
+            }
+            catch(Exception e)    {
+                setBalance(0L, false);
+            }
+        }
+        else    {
+            setBalance(0L, false);
+        }
+
         receiveFab.setOnClickListener(view -> {
             menuFab.toggle(true);
 
