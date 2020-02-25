@@ -329,7 +329,7 @@ public class NewPoolActivity extends AppCompatActivity {
             }
             Tx0 tx0 = null;
             try {
-                tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, tx0FeeTarget);
+                tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, tx0FeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
                 if (tx0.getChangeOutput() != null) {
