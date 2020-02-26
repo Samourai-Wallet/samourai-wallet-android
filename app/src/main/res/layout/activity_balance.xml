@@ -7,22 +7,22 @@
     android:layout_height="match_parent"
     android:background="@color/windowDark"
     android:orientation="vertical"
-    tools:context="com.samourai.wallet.whirlpool.EmptyWhirlPool">
+    >
 
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_accent"
+        android:background="?attr/colorAccent"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="210dp"
+            app:contentScrim="?attr/colorAccent"
             android:fitsSystemWindows="true"
-            app:contentScrim="#6c768b"
             app:expandedTitleGravity="center_horizontal|center"
             app:expandedTitleMarginTop="82dp"
             app:expandedTitleTextAppearance="@style/BalanceToolbarExpandedTitleStyle"
@@ -82,6 +82,16 @@
         fab:menu_colorPressed="#0AA1E9"
         fab:menu_colorRipple="#A8A8A8"
         tools:showIn="@layout/activity_balance">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/whirlpool_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_whirlpool"
+            fab:fab_colorNormal="@color/whirlpoolBlue"
+            fab:fab_colorPressed="@color/whirlpoolBlue"
+            fab:fab_label="@string/action_whirlpool"
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/paynym_fab"

@@ -3,104 +3,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:clickable="true"
-    android:backgroundTint="@color/white"
-    android:background="?attr/selectableItemBackground"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:backgroundTint="@color/white"
+    android:clickable="true"
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/imageView17"
+        android:id="@+id/utxo_mixing_indicator_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_whirlpool" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/incoming_tx_green" />
 
     <TextView
-        android:id="@+id/textView24"
+        android:id="@+id/whirlpool_cycle_item_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="12:24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView17"
-        app:layout_constraintStart_toStartOf="@+id/imageView17"
-        app:layout_constraintTop_toBottomOf="@+id/imageView17"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="@+id/utxo_mixing_indicator_icon"
+        app:layout_constraintStart_toStartOf="@+id/utxo_mixing_indicator_icon"
+        app:layout_constraintTop_toBottomOf="@+id/utxo_mixing_indicator_icon" />
 
     <TextView
-        android:id="@+id/textView47"
+        android:id="@+id/whirlpool_cycle_item_mixing_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="42dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="0.55 BTC"
+        android:text="0.5 BTC"
         android:textColor="@color/green_ui_2"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView24"
+        app:layout_constraintBottom_toBottomOf="@+id/utxo_mixing_indicator_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView17"
-        app:layout_constraintTop_toTopOf="@+id/imageView17" />
+        app:layout_constraintStart_toEndOf="@+id/utxo_mixing_indicator_icon"
+        app:layout_constraintTop_toTopOf="@+id/utxo_mixing_indicator_icon" />
 
     <ImageView
-        android:id="@+id/imageView18"
+        android:id="@+id/whirlpool_cycle_item_mixing_status_icon"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginTop="8dp"
         android:tint="@color/warning_yellow"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintStart_toStartOf="@+id/textView47"
-        app:layout_constraintTop_toTopOf="@+id/textView24"
+        app:layout_constraintStart_toStartOf="@+id/whirlpool_cycle_item_mixing_amount"
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool_cycle_item_mixing_amount"
         app:srcCompat="@drawable/circle_shape" />
 
     <TextView
-        android:id="@+id/textView49"
+        android:id="@+id/whirlpool_cycle_item_mixing_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Cycle Tx 2/11       "
         android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView18"
-        app:layout_constraintStart_toEndOf="@+id/imageView18"
-        app:layout_constraintTop_toTopOf="@+id/imageView18" />
+        app:layout_constraintBottom_toBottomOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        app:layout_constraintStart_toEndOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        app:layout_constraintTop_toTopOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        tools:text="Mixing in progress" />
 
-    <ImageView
-        android:id="@+id/imageView19"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:tint="@color/txt_grey"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintStart_toEndOf="@+id/textView49"
-        app:layout_constraintTop_toTopOf="@+id/textView24"
-        app:srcCompat="@drawable/ic_pool" />
-
-    <TextView
-        android:id="@+id/textView52"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="0.05 Pool"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView19"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView19"
-        app:layout_constraintTop_toTopOf="@+id/imageView19" />
-
-    <android.support.constraint.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="textView49,imageView18" />
 
     <ImageView
         android:id="@+id/imageView20"
@@ -110,8 +80,47 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:tint="#CBFFFFFF"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_chevron_right_white_24dp" />
+
+    <TextView
+        android:id="@+id/tx_note_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="12sp"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView20"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool_cycle_item_mixing_text"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="TextView" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:tint="@color/grey_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/whirlpool_cycle_item_mixing_text"
+        app:layout_constraintHorizontal_bias="0.93"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/whirlpool_cycle_item_mixing_status_icon"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_note_black_24dp" />
+
+    <android.support.constraint.Group
+        android:id="@+id/whirlpool_main_note_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tx_note_view,imageView7" />
 </android.support.constraint.ConstraintLayout>

@@ -1,12 +1,13 @@
 package com.samourai.wallet.home.adapters;
 
 import android.content.Context;
+import android.support.constraint.Group;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.utxos.UTXOUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.core.Coin;
 import org.json.JSONObject;
@@ -44,6 +47,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
     private static final String TAG = "TxAdapter";
     private Context mContext;
     private List<Tx> txes;
+    private int account = 0;
     private CompositeDisposable disposables = new CompositeDisposable();
     private OnClickListener listener;
     private Boolean displaySatUnit = false;
@@ -53,8 +57,9 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
         void onClick(int position, Tx tx);
     }
 
-    public TxAdapter(Context mContext, List<Tx> txes) {
+    public TxAdapter(Context mContext, List<Tx> txes, int account) {
         this.mContext = mContext;
+        this.account = account;
         this.txes = new ArrayList<>();
         Disposable disposable = makeSectionedDataSet(txes)
                 .subscribeOn(Schedulers.computation())
@@ -66,7 +71,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
     }
 
-    public void setClickListner(OnClickListener listener) {
+    public void setClickListener(OnClickListener listener) {
         this.listener = listener;
     }
 
@@ -135,9 +140,24 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
 
                 holder.tvDirection.setImageDrawable(mContext.getDrawable(R.drawable.incoming_tx_green));
                 String amount = displaySatUnit ? getSatoshiDisplayAmount(_amount).concat(" sat") : getBTCDisplayAmount(_amount).concat(" BTC");
+                if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
+                    amount = amount.concat(" (Remix)");
+                }
                 holder.tvAmount.setText(amount);
                 holder.tvAmount.setTextColor(ContextCompat.getColor(mContext, R.color.green_ui_2));
             }
+
+            if (this.account == WhirlpoolMeta.getInstance(mContext).getWhirlpoolPostmix() && _amount == 0) {
+                holder.tvDirection.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_24dp));
+            }
+
+            if (UTXOUtil.getInstance().getNote(tx.getHash()) != null) {
+                holder.txNoteGroup.setVisibility(View.VISIBLE);
+                holder.tvNoteView.setText(UTXOUtil.getInstance().getNote(tx.getHash()));
+            } else {
+                holder.txNoteGroup.setVisibility(View.INVISIBLE);
+            }
+
         } else {
             SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
             fmt.setTimeZone(TimeZone.getDefault());
@@ -175,20 +195,23 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Tx> list) -> {
+                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new TxDiffUtil(this.txes, list));
                     this.txes = list;
+                    diffResult.dispatchUpdatesTo(this);
                     this.notifyDataSetChanged();
                 });
         disposables.add(disposable);
 
     }
 
-    public class TxViewHolder extends RecyclerView.ViewHolder {
+    class TxViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvSection, tvDateView, tvAmount, tvPendingStatus, tvPaynymId;
+        private TextView tvSection, tvDateView, tvAmount, tvPaynymId, tvNoteView;
         private ImageView tvDirection;
+        private Group txNoteGroup;
 
 
-        public TxViewHolder(View itemView, int viewType) {
+        TxViewHolder(View itemView, int viewType) {
             super(itemView);
             if (viewType == VIEW_SECTION) {
                 tvSection = itemView.findViewById(R.id.section_title);
@@ -202,6 +225,8 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
             tvDirection = itemView.findViewById(R.id.TransactionDirection);
             tvAmount = itemView.findViewById(R.id.tvAmount);
             tvPaynymId = itemView.findViewById(R.id.paynymId);
+            txNoteGroup = itemView.findViewById(R.id.tx_note_group);
+            tvNoteView = itemView.findViewById(R.id.tx_note_view);
 
         }
     }
@@ -275,7 +300,7 @@ public class TxAdapter extends RecyclerView.Adapter<TxAdapter.TxViewHolder> {
                         }
                     } else if (fmt.format(key).equals(fmt.format(date))) {
 
-                        if(tx.getConfirmations() >= MAX_CONFIRM_COUNT){
+                        if (tx.getConfirmations() >= MAX_CONFIRM_COUNT) {
                             sectioned.add(tx);
                         }
 

@@ -103,6 +103,8 @@ public class JobRefreshService extends JobIntentService {
             } catch (AddressFormatException afe) {
                 afe.printStackTrace();
                 Toast.makeText(this.getApplicationContext(), "HD wallet error", Toast.LENGTH_SHORT).show();
+            } catch (Exception ex){
+                ex.printStackTrace();
             }
 
             //
@@ -174,6 +176,11 @@ public class JobRefreshService extends JobIntentService {
             if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBPOSTLOCK, false)) {
                 String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolPostmix()).zpubstr();
                 APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBPRELOCK);
+            }
+
+            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBBADBANKLOCK, false)) {
+                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolBadBank()).zpubstr();
+                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBBADBANKLOCK);
             }
 
         } else {

@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="@+id/coin_item_amount"
         app:layout_constraintTop_toBottomOf="@+id/coin_item_amount"
         app:layout_constraintVertical_bias="0.0"
-        tools:text="16Fg2yjwrbtC6fZp61EV9mN9mNVKmwCzGasw5zGasw5" />
+        />
 
     <TextView
         android:id="@+id/coin_item_amount"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toStartOf="@+id/coin_item_checkbox"
         app:layout_constraintStart_toEndOf="@+id/imageView15"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="3.12 BTC" />
+        />
 
     <CheckBox
         android:id="@+id/coin_item_checkbox"
@@ -82,12 +82,11 @@
         app:srcCompat="@drawable/ic_note_black_24dp" />
 
     <TextView
-        android:id="@+id/textView41"
+        android:id="@+id/coin_utxo_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Deposit from coinbase"
         android:textColor="@color/txt_grey"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView16"
@@ -98,9 +97,10 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <android.support.constraint.Group
-        android:id="@+id/coinbase_tx_group"
+        android:id="@+id/label_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="imageView16,textView41"
         android:visibility="visible" />
+
 </android.support.constraint.ConstraintLayout>

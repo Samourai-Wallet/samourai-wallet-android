@@ -3,7 +3,6 @@ package com.samourai.wallet.widgets;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
@@ -67,7 +66,7 @@ public class HorizontalStepsViewIndicator extends View {
 
 
         paintCircleTrack = new Paint();
-        paintCircleTrack.setColor(Color.parseColor("#7A8694"));
+        paintCircleTrack.setColor(getResources().getColor((R.color.white)));
         paintCircleTrack.setStrokeWidth(circleRadius);
         paintCircleTrack.setStyle(Paint.Style.FILL);
         paintCircleTrack.setAntiAlias(true);
@@ -78,7 +77,7 @@ public class HorizontalStepsViewIndicator extends View {
         paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
 
 
-        paintLineTrack.setColor(Color.parseColor("#7A8694"));
+        paintLineTrack.setColor(getResources().getColor((R.color.white)));
         paintLineTrack.setStrokeWidth(pathStrokeSize);
         paintLineTrack.setAntiAlias(true);
         paintLineTrack.setStyle(Paint.Style.FILL_AND_STROKE);

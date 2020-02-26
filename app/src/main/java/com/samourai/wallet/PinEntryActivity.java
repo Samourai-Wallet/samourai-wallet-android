@@ -34,6 +34,7 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
+import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.TimeOutUtil;
 import com.samourai.wallet.widgets.PinEntryView;
@@ -53,16 +54,7 @@ import java.io.InputStreamReader;
 
 public class PinEntryActivity extends AppCompatActivity {
 
-    private Button ta = null;
-    private Button tb = null;
-    private Button tc = null;
-    private Button td = null;
-    private Button te = null;
-    private Button tf = null;
-    private Button tg = null;
-    private Button th = null;
-    private Button ti = null;
-    private Button tj = null;
+
     private ImageButton tsend = null;
     private ImageButton tback = null;
     private Vibrator vibrator;
@@ -70,7 +62,6 @@ public class PinEntryActivity extends AppCompatActivity {
 //    private TextView tvPrompt = null;
 //    private TextView tvUserInput = null;
 
-    private ScrambledPin keypad = null;
 
     private StringBuilder userInput = null;
 
@@ -97,7 +88,6 @@ public class PinEntryActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         userInput = new StringBuilder();
-        keypad = new ScrambledPin();
         pinEntryView = findViewById(R.id.pinentry_view);
         setSupportActionBar(findViewById(R.id.toolbar_pinEntry));
         pinEntryMaskLayout = findViewById(R.id.pin_entry_mask_layout);
@@ -189,13 +179,14 @@ public class PinEntryActivity extends AppCompatActivity {
 
             if (create && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("confirm", true);
                 intent.putExtra("create", false);
                 intent.putExtra("first", userInput.toString());
                 intent.putExtra("seed", strSeed);
                 intent.putExtra("passphrase", strPassphrase);
                 startActivity(intent);
+                finish();
             } else if (confirm && strPassphrase.length() >= AccessFactory.MIN_PIN_LENGTH && userInput.toString().length() <= AccessFactory.MAX_PIN_LENGTH) {
 
                 if (userInput.toString().equals(strConfirm)) {
@@ -206,11 +197,12 @@ public class PinEntryActivity extends AppCompatActivity {
 
                 } else {
                     Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("create", true);
                     intent.putExtra("seed", strSeed);
                     intent.putExtra("passphrase", strPassphrase);
                     startActivity(intent);
+                    finish();
                 }
 
             } else {
@@ -290,6 +282,7 @@ public class PinEntryActivity extends AppCompatActivity {
                 });
                 Toast.makeText(PinEntryActivity.this, R.string.pin_error, Toast.LENGTH_SHORT).show();
                 AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                finish();
             }
 
             String randomKey = AccessFactory.getInstance(PinEntryActivity.this).getGUID();
@@ -300,6 +293,7 @@ public class PinEntryActivity extends AppCompatActivity {
                 });
                 Toast.makeText(PinEntryActivity.this, R.string.random_key_error, Toast.LENGTH_SHORT).show();
                 AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                finish();
             }
 
             String hash = PrefsUtil.getInstance(PinEntryActivity.this).getValue(PrefsUtil.ACCESS_HASH, "");
@@ -326,8 +320,9 @@ public class PinEntryActivity extends AppCompatActivity {
                                 doBackupRestore();
                             } else {
                                 Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                finish();
                             }
                         });
 
@@ -345,6 +340,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
                     }  else {
                         AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                        finish();
                     }
 
                 } catch (MnemonicException.MnemonicLengthException mle) {
@@ -370,10 +366,11 @@ public class PinEntryActivity extends AppCompatActivity {
                         doBackupRestore();
                     } else {
                         Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (getIntent().getExtras() != null)
                             intent.putExtras(getIntent().getExtras());
                         startActivity(intent);
+                        finish();
                     }
                 });
 
@@ -502,6 +499,7 @@ public class PinEntryActivity extends AppCompatActivity {
                             AccessFactory.getInstance(PinEntryActivity.this).setIsLoggedIn(true);
                             TimeOutUtil.getInstance().updatePin();
                             AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                            finish();
                         }
 
                     } else {
@@ -568,12 +566,14 @@ public class PinEntryActivity extends AppCompatActivity {
                                 if (pw == null || pw.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
                                     AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                    finish();
                                 }
 
                                 final String decrypted = PayloadUtil.getInstance(PinEntryActivity.this).getDecryptedBackupPayload(data, new CharSequenceX(pw));
                                 if (decrypted == null || decrypted.length() < 1) {
                                     Toast.makeText(PinEntryActivity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                                     AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                    finish();
                                 }
 
 
@@ -627,6 +627,7 @@ public class PinEntryActivity extends AppCompatActivity {
 
                                                             dialog.dismiss();
                                                             AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                                            finish();
 
                                                         }
                                                     }).show();
@@ -643,6 +644,7 @@ public class PinEntryActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
                                 AppUtil.getInstance(PinEntryActivity.this).restartApp(getIntent().getExtras());
+                                finish();
 
                             }
                         });
@@ -654,10 +656,11 @@ public class PinEntryActivity extends AppCompatActivity {
 
         } else {
             Intent intent = new Intent(PinEntryActivity.this, PinEntryActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (getIntent().getExtras() != null)
                 intent.putExtras(getIntent().getExtras());
             startActivity(intent);
+            finish();
         }
 
     }

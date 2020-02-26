@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
 import android.view.Display;
@@ -31,6 +30,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.cahoots.STONEWALLx2;
@@ -49,7 +49,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ManualCahootsActivity extends AppCompatActivity {
+public class ManualCahootsActivity extends SamouraiActivity {
 
     private ViewPager viewPager;
     private HorizontalStepsViewIndicator stepsViewGroup;
@@ -57,7 +57,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
     private CahootReviewFragment cahootReviewFragment;
     private TextView stepCounts;
     private AppCompatDialog dialog;
-    private int account = 0;
     private long amount = 0L;
     private String address = "";
     private static final String TAG = "ManualCahootsActivity";
@@ -81,9 +80,6 @@ public class ManualCahootsActivity extends AppCompatActivity {
         steps.add(cahootReviewFragment);
         viewPager.setAdapter(new StepAdapter(getSupportFragmentManager()));
 
-        if (getIntent().hasExtra("account")) {
-            account = getIntent().getIntExtra("account", 0);
-        }
         if (getIntent().hasExtra("amount")) {
             amount = getIntent().getLongExtra("amount", 0);
         }
@@ -126,7 +122,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
             }
             if (type == Cahoots.CAHOOTS_STONEWALLx2) {
                 stepsViewGroup.post(() -> stepsViewGroup.setStep(1));
-                payload  = CahootsUtil.getInstance(ManualCahootsActivity.this).doSTONEWALLx2_0(amount, address, account);
+                payload = CahootsUtil.getInstance(ManualCahootsActivity.this).doSTONEWALLx2_0(amount, address, account);
 
             }
         } else {
@@ -135,6 +131,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
 
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -165,9 +162,9 @@ public class ManualCahootsActivity extends AppCompatActivity {
             finish();
         }
 
-        if(menuItem.getItemId() == R.id.action_menu_paste_cahoots){
+        if (menuItem.getItemId() == R.id.action_menu_paste_cahoots) {
             try {
-                ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                 onScanCahootsPayload(item.getText().toString());
             } catch (Exception e) {
@@ -232,28 +229,27 @@ public class ManualCahootsActivity extends AppCompatActivity {
                     case 0:
                         stowaway.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway1(stowaway);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 1:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway2(stowaway);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 2:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway3(stowaway);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway4(stowaway);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        else    {
+                        } else {
                             cahootReviewFragment.setCahoots(payload);
                         }
                         break;
@@ -272,8 +268,8 @@ public class ManualCahootsActivity extends AppCompatActivity {
             viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
             stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
-            if(step == 2){
-                ( (CahootsStepFragment) steps.get(step + 1) ).setStowaway(stonewall);
+            if (step == 2) {
+                ((CahootsStepFragment) steps.get(step + 1)).setStowaway(stonewall);
             }
             try {
                 switch (step) {
@@ -281,28 +277,27 @@ public class ManualCahootsActivity extends AppCompatActivity {
                         stonewall.setCounterpartyAccount(account);  // set counterparty account
                         stonewall.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_1(stonewall);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 1:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_2(stonewall);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 2:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_3(stonewall);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_4(stonewall);
-                        if(payload == null) {
+                        if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        else    {
+                        } else {
                             cahootReviewFragment.setCahoots(payload);
                         }
                         break;
@@ -418,7 +413,7 @@ public class ManualCahootsActivity extends AppCompatActivity {
                 } else {
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                 }
-                getApplicationContext().startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
+                ManualCahootsActivity.this.startActivity(Intent.createChooser(intent, getApplicationContext().getText(R.string.send_tx)));
             }
 
         });

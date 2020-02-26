@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
@@ -75,7 +76,7 @@ public class NetworkDashboard extends AppCompatActivity {
 
     private boolean waitingForPairing = false;
     private String strPairingParams = null;
-    private LinearLayout dojoLayout = null;
+    private ConstraintLayout dojoLayout = null;
     private RegisterTask registerTask = null;
 
     private static final String TAG = "NetworkDashboard";
