@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     useLibrary 'org.apache.http.legacy'
     flavorDimensions "versionCode"
     defaultConfig {
         applicationId 'com.samourai.wallet'
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 156
         versionName "0.99.88"
         // Enabling multidex support.
