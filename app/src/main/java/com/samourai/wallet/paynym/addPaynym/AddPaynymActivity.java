@@ -1,14 +1,13 @@
 package com.samourai.wallet.paynym.addPaynym;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +23,6 @@ import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.util.FormatsUtil;
-import com.yanzhenjie.zbar.Symbol;
 
 import org.bitcoinj.core.AddressFormatException;
 
@@ -33,7 +31,6 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 import static com.samourai.wallet.bip47.BIP47Meta.strSamouraiDonationPCode;
 
 public class AddPaynymActivity extends AppCompatActivity {
