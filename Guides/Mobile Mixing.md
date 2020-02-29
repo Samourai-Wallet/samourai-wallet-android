@@ -1,7 +1,6 @@
 Samourai Wallet Mobile Mixing Tutorial
 
-Video tutorial:
-https://twitter.com/i/status/1233344364702838784
+[Video tutorial](https://twitter.com/i/status/1233344364702838784)
 
 Big thanks to @SamouraiWallet & @DiverterBTC, this guide was composed of info from their tweet threads
 
