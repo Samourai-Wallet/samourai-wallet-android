@@ -18,7 +18,7 @@ Samourai Dojo is the backend server/node for your Samourai Wallet. By default yo
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
-For a very easy & slick implementation of Dojo check out [RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki)
+For a very easy & slick implementation of Dojo check out [RoninDojo Wiki](https://code.samourai.io/ronindojo/RoninDojo/-/wikis/home)
 
 [RoninDojo Telegram Group](https://t.me/RoninDojoUI)
 
@@ -234,7 +234,7 @@ If your new to CL you might be thinking what the hell am I looking at or looking
 
 ### bitcoind
 
-<img src="https://github.com/Crazyk031/Images/blob/master/Bitcoind%20logs.jpg" width="500" height="500" />
+<img src="https://github.com/Crazyk031/Images/blob/master/Bitcoind%20logs.jpg" width="467" height="428" />
 
 This shows the blocks mined.
 
@@ -244,13 +244,13 @@ This shows the blocks mined.
 
 ### db 
 
-<img src="https://github.com/Crazyk031/Images/blob/master/DB%20logs.jpg" width="500" height="700" />
+<img src="https://github.com/Crazyk031/Images/blob/master/DB%20logs.jpg" width="458" height="815" />
 
 `This connection closed normally without authentication` can be disregard as this is normal. 
 
 ### tor
 
-<img src="https://github.com/Crazyk031/Images/blob/master/Tor%20logs.jpg" width="500" height="500" />
+<img src="https://github.com/Crazyk031/Images/blob/master/Tor%20logs.jpg" width="471" height="560" />
 
 Tor has been 100% bootstrapped and ready to go, `Have tried resolving  or connecting to address '[scrubbed]' at 3 different places. Giving up.` is totally normal and just means tor is looking for a connection
 
@@ -268,7 +268,7 @@ From Dojo documentation:
 
 > Tracker (/tracker): process listening to the bitcoind node and indexing transactions of interest.
 
-<img src="https://github.com/Crazyk031/Images/blob/master/Tracker%20logs.jpg" width="500" height="500" />
+<img src="https://github.com/Crazyk031/Images/blob/master/Tracker%20logs.jpg" width="469" height="430" />
 
 
 This will show your Dojo processing active mempool transactions & validating blocks mined
