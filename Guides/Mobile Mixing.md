@@ -2,7 +2,7 @@ Samourai Wallet Mobile Mixing Tutorial
 
 [Video tutorial](https://twitter.com/i/status/1233344364702838784)
 
-Big thanks to @SamouraiWallet & @DiverterBTC, this guide was composed of info from their tweet threads
+Big thanks to [@SamouraiWallet](https://twitter.com/SamouraiWallet) & [@DiverterBTC](https://twitter.com/DiverterBTC), this guide was composed of info from their tweet threads
 
 First, you need some coins in your wallet. The smallest amount you can mix is a little above 0.01005 BTC. If your wallet is empty, hit the blue **"+"** & then add some funds using the **"Receive"** action
 
