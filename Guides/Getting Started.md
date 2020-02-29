@@ -29,7 +29,7 @@ Samourai Wallets private keys are generated offline on your device and are never
 
 ### Step 1 - Install
 
-Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet&hl=en_US) onto your Android device. 
+Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet&hl=en_US) or [Gitlab APK](https://code.samourai.io/wallet/samourai-wallet/blob/master/apk) onto your Android device. 
 
 ### Step 2 - Create new wallet
 
@@ -78,7 +78,7 @@ This is a partial list of compatible wallets:
 
 ### Step 2 - Install Samourai
 
-Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet&hl=en_US) onto your Android device. 
+Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet&hl=en_US) or [Gitlab APK](https://code.samourai.io/wallet/samourai-wallet/blob/master/apk) onto your Android device. 
 
 ### Step 3 - Restore wallet
 
