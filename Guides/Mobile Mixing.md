@@ -63,15 +63,15 @@ A short press selection of a Postmix UTXO gets you the options on left. Also sho
 
 <img src="https://github.com/Crazyk031/Images/blob/master/Mobile%20Mixing/Advanced%20UTXO%20options.jpg" width="500" height="900" />
 
-The Samourai Wallet Toolset:
-Dojo is here, you back your own wallet 
-RoninDojo let's you do it easily on a Pi4
-Whirlpool is now on mobile
-PayNyms let you make stealth payments
-Stonewall, StonewallX2 & Stowaway chip away at heuristics
-Ricochet adds distance to avoid exchanges monitoring deposit/withdraw
-Sentinel lets you deposit/watch wallets, even cold wallets!
-TxTenna lets you broadcast transactions via SMS
+### The Samourai Wallet Toolset:
+- Dojo is here, you back your own wallet 
+- RoninDojo let's you do it easily on a Pi4
+- Whirlpool is now on mobile
+- PayNyms let you make stealth payments
+- Stonewall, StonewallX2 & Stowaway chip away at heuristics
+- Ricochet adds distance to avoid exchanges monitoring deposit/withdraw
+- Sentinel lets you deposit/watch wallets, even cold wallets!
+- TxTenna lets you broadcast transactions via SMS
 
 **Reclaim your privacy & self sovereignty with the Samourai Wallet stack!**
 
