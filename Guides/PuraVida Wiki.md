@@ -275,7 +275,7 @@ Besides privacy, connecting your Samourai Wallet to your own Dojo ensures you us
 **Your Dojo Build Options**
 
 1. [Samourai nodl](https://shop.nodl.it/en/home/38-nodl-samourai-edition.html) - Official Partnership of Samourai Wallet and nodl for a full Samourai Dojo box plus extras from nodl.
-2. [Ronin-Dojo](https://github.com/RoninDojo/RoninDojo) - Full guide build using RPi4/Odroid to install Dojo, Whirlpool, and Electrs.
+2. [RoninDojo](https://code.samourai.io/ronindojo/RoninDojo) - Full scripts for use on RPi4/Odroid to install Dojo, Whirlpool, and Electrs.
 3. [Self Build](https://github.com/Samourai-Wallet/samourai-dojo) - Build on your own hardware with Samourai Instructions
 4. [Self Build Mac OS Guide](https://github.com/Samourai-Wallet/samourai-dojo/blob/develop/doc/DOCKER_mac_setup.MD) - Build on Mac using a Virtual Box, Internal Docker Container or Docker with External Full Node.
 
