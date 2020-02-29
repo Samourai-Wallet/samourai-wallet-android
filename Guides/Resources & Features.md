@@ -24,8 +24,6 @@
 
 [Samourai.kayako Documents](https://samourai.kayako.com/) 
 
-[PuraVida Wiki](https://github.com/PuraVlda/samourai-wallet-android/wiki) 
-
 # Features 
 
 ## STONEWALL 
@@ -183,7 +181,7 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 -  **Step 3:** Enter the amount you want to send
 (in satoshi)
 
--  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
+-  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/), [0bin](https://0bin.net/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - 	**Step 5:** Show the QR code to the person you are sending to. Have them scan it with their Samourai Wallet
 
@@ -226,7 +224,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 - **Step 4:** Enter the address you want to send to
 (bech32 addresses only)
 
-- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
+- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/), [0bin](https://0bin.net/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - **Step 6:** Show the QR code to the person participating in the STONEWALLx2. Have them scan it with their Samourai Wallet
 
@@ -264,7 +262,7 @@ Dojo is the backend that your wallet connects to, this is the link between your 
 
 For a very user friendly implimitation of Dojo you can check out Ronin
 
-[RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki) 
+[RoninDojo Wiki](https://code.samourai.io/ronindojo/RoninDojo/-/wikis/home) 
 
 ## Whirlpool 
 
