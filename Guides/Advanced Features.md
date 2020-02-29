@@ -27,7 +27,7 @@ Samourai Dojo is the backend server/node for your Samourai Wallet. By default yo
 
 [Dojo Telegram Group](https://t.me/samourai_dojo)
 
-For a very easy & slick implementation of Dojo check out [Ronin](https://github.com/RoninDojo/RoninDojo/wiki)
+For a very easy & slick implementation of Dojo check out [Ronin](https://code.samourai.io/ronindojo/RoninDojo/-/wikis/home)
 
 ### Pairing your wallet to your Dojo
 
