@@ -1,6 +1,6 @@
 Welcome to the PuraVida's Samourai Wallet Android wiki!
 
-Here will be a collaboration of information for Samourai Wallet Tools, Knowledge and whatever else is deemed important for the community.  The goal here is to have a one stop location for any questions that may arise.
+Here is a collaboration of information brought together by the SW community for the Samourai Wallet Tools, Knowledge and whatever else is deemed important for the community.  The goal here is to have a one stop location for any questions that may arise.
 
 Many thanks to the team at Samourai Wallet for the tools provided to the community to help make Bitcoin more fungible.
 
