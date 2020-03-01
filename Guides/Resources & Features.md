@@ -26,7 +26,7 @@
 
 # Features 
 
-Wallet:
+**Wallet:**
 - Your private keys are stored on your device and are never communicated with any server
 - Sweep funds from private keys
 - Standard BIP44 avoids address reuse 
@@ -35,7 +35,7 @@ Wallet:
 - Read, validate, sweep Coinkite OpenDime
 - Detect private keys remaining in clipboard
 
-Security:
+**Security:**
 - 5-to-8 digit PIN protected access
 - PIN entry grid may be scrambled
 - AES-256 encryption of internal metadata
@@ -46,13 +46,13 @@ Security:
 - Samourai pushTx over Tor
 - Real-time alert if your wallet is being "dusted"
 
-Stealth addressing/BIP47 payment channels:
+**Stealth addressing/BIP47 payment channels:**
 - BIP47 "Reusable Payment Codes" support
 - PayNym.is lookup of BIP47 payment codes
 - BIP47 payment codes scannable via BIP21
 - Sign messages using BIP47 notification address
 
-Transactions:
+**Transactions:**
 - Full Segwit support (P2SH-P2WPKH)
 - Sweep P2SH-P2WPKH private keys
 - Spend to Segwit bech32 addresses 
