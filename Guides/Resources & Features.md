@@ -50,6 +50,29 @@ STONEWALL is a unique way of building transactions that increases the deniabilit
 
 STONEWALL is enabled by default and there is no extra charge for using it. It can be disabled in the transaction settings. 
 
+**STONEWALL spend description by @SamouraiDev**
+
+>Utxos are grouped by address type (P2PKH, P2SH-P2WPKH, or P2WPKH).
+
+>The group with the same address type as the address being spent to is selected if it is >= twice the spend amount.
+If the above condition is not met, then a group with a different address type and a total value >= twice the spend amount is selected.
+If the above condition is not met, then 2 groups with total amounts >= the spend amount are chosen.
+
+>Transaction composition is arranged by “sets”.
+
+>For each set:
+The utxos are processed in randomised order.
+Utxo(s) are selected until the total amount selected is >= the spend amount.
+Utxos resulting from a same transaction are never used together in a same set. Utxos of higher value replace utxos of lower value belonging to the same transaction.
+All utxos from a same address (scriptpubkey) must be consumed within the same set.
+Output addresses (scriptpubkeys) must be used exclusively as outputs and only once.
+
+>One set contains the spend output.
+The other set(s) contain(s) a “mix” output and use(s) the same amount and the same address type as the spend output.
+The change outputs in each set use the same address type as the utxo(s) for that set.
+
+>The miner's fee amount must be an even amount. Each set pays half of the miner's fee by deducting exactly 50% from each change output.
+
 ## PayNym
 
 ### What are PayNyms?
