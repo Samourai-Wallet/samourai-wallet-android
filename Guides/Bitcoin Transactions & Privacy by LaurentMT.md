@@ -351,3 +351,83 @@ Consequences for several rounds remain to be studied. If the attack is proven to
 References
 
 (1): K.Atlas - Coinjoin Sudoku (http://www.coinjoinsudoku.com/)
+
+## Some thoughts on the chain & its activity by Laurent
+
+Published Mar 1, 2016
+
+Back to home. As promised, here are some elements about the growth of activity observed during the last months. 
+I apologize in advance for the long text and my crappy english.
+
+A bit of context: I've been working on the development of OXT (an analytics platform dedicated to the bitcoin blockchain) during the last 12 months. It means that I've spent a part of this time observing charts to check if they make sense, are useful...
+During this process I've learned one thing: bitcoin is still a small economy and therefore it's still possible that the activity of a single actor/service has a visible impact at global level.
+For instance, some of these observations are related to well known events like the growth of #txs in 2012 (related to Satoshi Dice).
+Some others are less known like this pattern in the growth of the utxo set which is likely to be caused by a small number of faucets doing weekly payments (https://bitcointalk.org/index.php?topic=1055594.msg11394989#msg11394989)
+At last, some cases remain very mysterious but are likely to be caused by a single or a small number of services. For instance, there's this surprising decrease of address reuse between Q1 2013 and Q1 2014 (from around 77% to 55%).
+
+Ok. Back to the subject. 
+
+Some times ago, I was playing with a chart displaying #txs vs avg size of txs (aggregated by months): http://i.imgur.com/cYTwZ8f.png
+
+I couldn't help to notice 2 things:
+- it looks like bitcoin had several phases in its history (note that my classification is 100% partial here but you get the idea).
+- since july 2015, it looks like the network has entered a new phase which looks pretty "weird".
+My interpretation is that a part is likely to be related to the spam attacks from last summer and to cleaning operations done by mining pools after the attacks.
+At this point, no explanation for observations from October to now.
+
+A few days ago, I was playing with stats provided by bc.i about long chains of transactions and I was really surprised by the growth of long chains during the last 6 months
+
+http://i.imgur.com/zgbzxPg.png
+
+http://i.imgur.com/5F4SVAa.png
+
+Even if correlation isn't causation, I couldn't help to wonder if this activity is "natural" or not, especially if we consider the heated debate in the community and its collateral damages (spam attacks, ddos of services,...).
+For the sake of "neutrality", I've decided not to follow a specific hypothesis but to manually check in the blockchain if I could find some patterns explaining the growth of activity and long chains.
+This approach doesn't aim to provide a "proof" but it just tries to find clues. A "proof" would require (at least) an automated analysis of the blockchain dedicated to "interesting" hypotheses but I fear it's just out of my current resources (time, cost, ...).
+
+Anyway, I've found two hints which may lead to very different "conclusions":
+
+1/ It seems that there was a lot of peeling chains lately and, to be honest, I don't get what people try to achieve with this pattern.
+Usually, it is used to obfuscate the trail and/or gain more privacy. For instance, it was used by Mark Karpeles in 2011, before and after its proof of solvency tx.
+The problem: Since 2011, several startups doing blockchain analysis have been funded with more than $1M and development of tools detecting this kind of pattern (at least manually) is a no brainer (even someone like me can build this kind of tool :D )
+So, for now, my conclusion is that:
+- if these transactions are built for obfuscation and you are the person sending these transactions, you should stop it and find another method because this one isn't going to help you,
+- otherwise, it's not a proof that these transactions are spams but so far, I don't know another explanation (but I would be happy to hear new theories, really !)
+- By lack of time, I didn't try to measure how much of these transactions exist in the blockchain but that should be doable (if someone wants to work on the subject).
+
+2/ If you look at the chart of long chains, you can see a specific pattern: growth seems to start in september, peak in december, low just after christmas and in january before a new peak in february).
+OXT processes a few algorithms allowing to cluster addresses in entities. I'm cautious with these results because the work is early stage (especially the manual part associating an address to a known entity) and results are obviously incomplete.
+Anyway, I was surprised to find a pretty good correlation between patterns of activity on some exchanges (especially in China) and the pattern observed for long chains.
+
+http://i.imgur.com/1CDdsG2.png
+
+http://i.imgur.com/Y5lFsyr.png
+
+Without being a rocket scientist, I guess that recent surge in price plays a role here. 
+I didn't check the details but it's quite possible that a part of these long chains are just correlated to this surge of activity and how exchanges process their transactions (for instance, Huobi seems to follow a "1 tx per withdrawal" rule). 
+Anyway, I'm not sure that activity of exchanges alone explains the whole increase and another part may be related to actors/bots interacting with exchanges.
+FWIW, I don't know any reason to suspect a malicious activity here.
+
+
+As you can see, these are just a few checks done in the blockchain while looking for clues. I'll repeat it again, don't consider these observations as a definitive proof of anything. On the other hand, please don't ignore them because they're just clues.
+
+At last, these observations raise an interesting point: 
+
+I'm more and more convinced that we should stop talking (myself included) of spam, malicous activity,... while talking of a public blockchain aiming to provide censorship resistance. Human intents are not part of the blockchain.
+Instead, we should focus our efforts on efficient patterns & "good practices" VS inefficient patterns & "bad practices" (whatever the intents of the sender).
+
+Many bitcoin services have grown very quickly and sometimes technical solutions which were fine at small scale (even when not optimized) start to have a noticeable impact when the service grows (see my intro).
+It's likely that many services (exchanges, online wallets, gambling sites, ...) have room for optimizations and that just a few major services implementing a few optimizations may make a difference.
+For instance, I'm pretty sure that some services could collapse some of their operations (payments/withdrawals) in a single tx. Bitcoin allows it, why not use this feature ?
+Another example is Coinbase using 2 txs for each withdrawal (https://twitter.com/LaurentMT/status/703058669173403652). I get their reasons and there are obvious improvements to be done by others services about refund txs. But is it really impossible to improve this situation ?
+Obviously, proper scaling requires work at protocol level and this is the job of core devs (whatever their implementation) but the fact remains that all developers and services can help to improve the situation.
+Sadly, that point was NEVER discussed during the last 12 months (to my knowledge).
+
+IMHO, these improvements aren't going to become a reality because people are naturally good or benevolent but because there's a voluntary effort of the ecosystem (a new bitcoin alliance ?) to fight this never ending "tragedy of the commons" scenario.
+I'm certainly too optimist but I still think that we all worth better than the "tragedy of the commons" and that we can improve this situation if we really want to. 
+The unique important question is: "Do you really want to ?"
+
+My 2 satoshis
+laurent
+
+"Ask not what bitcoin can do for you, ask what you can do for bitcoin" - J.F. Kennedy (Biography - Apollo Editions)
