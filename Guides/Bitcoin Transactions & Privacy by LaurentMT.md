@@ -352,6 +352,10 @@ References
 
 (1): K.Atlas - Coinjoin Sudoku (http://www.coinjoinsudoku.com/)
 
+For some more reading, a great exchange between Laurent & Adam Gibson(Waxwing) in the comments:
+
+https://gist.github.com/LaurentMT/e758767ca4038ac40aaf
+
 ## Some thoughts on the chain & its activity by Laurent
 
 Published Mar 1, 2016
