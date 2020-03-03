@@ -629,5 +629,162 @@
     <string name="hide_log">ESCONDER LOG</string>
     <string name="copy">Copiar</string>
     <string name="show_log">Exibir Log</string>
+    <string name="unconfirmed">Não confirmado</string>
+    <string name="confirmation">Confirmado</string>
+    <string name="total_available_amount">Quantidade total disponível</string>
+    <string name="you_do_not_yet_have_any_paynym_contacts">Você ainda não tem nenhum contato PayNym</string>
+    <string name="experimental">Experimental</string>
+    <string name="cahoots">#Cahoots</string>
+
+    <string name="options_cahoots2">Faça de cada gasto um CoinJoin.</string>
+    <string name="PSBT">PSBT</string>
+    <string name="options_psbt2">Transação de Bitcoin parcialmente assinada.</string>
+    <string name="import_cahoots">Escanei ou cole um #Cahoots.</string>
+    <string name="import_psbt">Escanei ou cole um PSBT.</string>
+    <string name="enter_cahoots">Entre um texto #Cahoots</string>
+    <string name="enter_psbt">Entre texto hex PSBT</string>
+    <string name="create_cahoots">Crie um gasto #Cahoots</string>
+    <string name="stowaway">Stowaway</string>
+    <string name="stonewall">Stonewall</string>
+    <string name="urgent">Urgente</string>
+    <string name="normal">Normal</string>
+    <string name="low">Baixo</string>
+    <string name="ricochet_nlocktime_ok">Seu Ricochet foi encaminhado para transmissão. Aguarde até que a altura do bloco permita a transmissão de todas as transações da série.</string>
+    <string name="ricochet_nlocktime_ko">Seu Ricochet não foi encaminhado para transmissão. Por favor tente novamente.</string>
+
+    <string name="tag_utxo">Label UTXO</string>
+    <string name="boost_transaction_fee">Aumentar taxa de transação</string>
+    <string name="refund">Refund</string>
+    <string name="not_cahoots">#Cahoots Inválido</string>
+    <string name="boost_transaction_fee">Aumentar taxa de transação</string>
+    <string name="refund">Reembolso</string>
+    <string name="not_cahoots">#Cahoots inválido</string>
+    <string name="not_valid_json">Erro de análise JSON</string>
+
+    <string name="unrecognized_cahoots">#Cahoots não reconhecido</string>
+    <string name="cannot_compose_cahoots">Não foi possível redigir um #Cahoots</string>
+    <string name="start_stowaway">Começar Stowaway como gastador</string>
+    <string name="start_stonewall">Começar STONEWALL como gastador</string>
+    <string name="amount_sats">Coloque a quantia em sats</string>
+    <string name="zero_bits">0 bits</string>
+    <string name="not_available">N/A</string>
+    <string name="show_tx">Mostrar transação</string>
+    <string name="cannot_process_stonewall">Não é possível processar STONEWALL</string>
+    <string name="cannot_process_cahoots">Não é possível processar #Cahoots</string>
+    <string name="title_activity_network_dashboard">
+        Networking
+    </string>
+    <string name="powering_samourai_wallet_">A ativação da Samourai Wallet com seu próprio node pessoal oferece o melhor nível de privacidade e independência ao interagir com a rede bitcoin. O Dojo torna a execução de um node completo fácil e simples.</string>
+    <string name="plug_and_play_full_bitcoin_node_automatically">- Plug and Play node de bitcoin completo\n\n -Serviço oculto Tor automaticamente configurado\n\n -Independência dos servidores padrões da Samourai</string>
+    <string name="dojo_connect_instruction">Se você já tem um Dojo Full Node ou está \nexecutando o Dojo Software de código aberto e gratuito\não sendo seu próprio hardware, digitalize o QR code\nlocalizado no painel de controle do Dojo Maintenance</string>
+    <string name="dojo_headline">Fortaleça sua carteira Samourai com seu próprio FULL NODE DOJO</string>
+    <string name="connect_to_existing_dojo">Conecte a um Dojo existente</string>
+    <string name="create_to_existing_dojo">Crie uma carteira e parelhe a um Dojo</string>
+    <string name="preorder">pedido antecipado</string>
+    <string name="add_new">Adicione novo</string>
+    <string name="paynym_follow_message_2">gerar automaticamente endereços privados exclusivos para enviar bitcoin para este contato</string>
+    <string name="follow">Seguir</string>
+    <string name="wallet_locked">Carteira Trancada</string>
+    <string name="address">Endereço</string>
+    <string name="is_offline">Samourai está offline</string>
+    <string name="history_will_be_updated">O saldo e o histórico de transações não serão atualizados até que uma conexão de dados em funcionamento seja estabelecida</string>
+
+    <string name="you_received_s">Você recebeu</string>
+    <string name="paynym_follow_message">Essas taxas cobrem o custo de criação de um tipo especial de transação na blockchain. Isso mantém o PayNym descentralizado</string>
+    <string name="paynym_follow_fee_message">Será cobrada uma taxa de conexão única para acompanhar o contato</string>
+    <string name="initializing_tor">inicializando Tor...</string>
+    <string name="cannot_pair_whirlpool_gui">Não é possível preparar o parelhamento para Whirlpool GUI.</string>
+    <string name="message_copied">mensagem copiada</string>
+
+    <string name="scan_code">Escanear Código</string>
+    <string name="follows_you">Segue você</string>
+    <string name="edit_paynym">Editar paynym</string>
+    <string name="sycing_pcodes">Sincronizando códigos de pagamento</string>
+    <string name="sync_complete">Sincronização do código de pagamento concluída</string>
+    <string name="options_paynym_indexes">Mostrar indexes Paynym</string>
+    <string name="begin_cycle"></string>COMEÇAR CICLO</string>
+    <string name="pool_fee">POOL FEE</string>
+    <string name="total_fees">TAXAS TOTAIS</string>
+    <string name="miner_fee">TAXA DE MINERAÇÃO</string>
+    <string name="total_whirlpool_balance">Balanaço Total da Whirlpool</string>
+    <string name="review_cycle_details">REVISAR OS DETALHES DO CICLO</string>
+    <string name="cycled_transactions">Transações Cicladas</string>
+    <string name="initial_transaction">Transação inicial</string>
+    <string name="progress">Progresso</string>
+    <string name="waiting_for_blockchain_confirmation">Esperando confirmação da Blockchain</string>
+    <string name="create_password">Criar senha</string>
+    <string name="confirm_password">Confirmar senha</string>
+
+    <string name="pairing_password">Definir senha de emparelhamento: (6-255 caracteres)</string>
+    <string name="password_error">Erro ao criar senha</string>
+    <string name="password_invalid">Senha inválida</string>
+    <string name="review_whirlpool">Revisar detalhes Whirlpool/string>
+    <string name="total_selected">Total selecionado</string>
+
+    <string name="cycle">Ciclo</string>
+    <string name="postmix_without_boltzmann">Observe que os gastos da sua conta pós-mix sem o uso do STONEWALL resultarão em perda da privacidade obtida através da Whirlpool.</string>
+    <string name="estimated_entropy">Entropy Estimada</string>
+    <string name="share_this_qr_code_with_your_participant">Compartilhe esse código QR com seu participante</string>
+    <string name="review_tx_before_braodcast">Revise a transação antes de transmitir</string>
+    <string name="select_participant">Selecione um participante</string>
+    <string name="select_cahoots_type">Selecione o tipo cahoots</string>
+    <string name="cannot_disable_tor_dojo">Tor não pode ser parado porque a carteira está conectada a um Samourai Dojo node.</string>
+    <string name="temporary_dojo_disable">Desinstale a Samourai Wallet para desemparelhar do seu Dojo Node. \'DISABLE\' será totalmente ativado em uma atualização posterior.</string>
+
+    <string name="renew">RENOVAR</string>
+    <string name="continue_exchanging_qr_codes">Continue trocando QR codes\n até a transação for transmitida!</string>
+    <string name="confirm_that_you_wish_to_broadcast_this_transaction">Confirme que você deseja transmitir esta transação.</string>
+    <string name="begin_stowaway">Começar Stowaway</string>
+    <string name="begin_stonewallx2">Começar STONEWALLx2</string>
+    <string name="total_miner_fee">Taxa de Mineração Total :</string>
+    <string name="launch_qr_scanner">LAUNCH QR Scanner</string>
+    <string name="next_step">Próximo Passo...</string>
+    <string name="scan_the_qr_code_that_your_collaborator_provides_you">Escanei o QR CODE fornecido pelo seu colaborador.</string>
+    <string name="you_will_contribute">Você vai contribuir</string>
+    <string name="create_an_on_demand_coinjoin_transaction_for_enhanced_privacy_and_surveillance_protection">Crie uma transação CoinJoin sob demanda para aumentar sua privacidade e proteção contra vigilantes externos</string>
+    <string name="refresh">Recarregar</string>
+    <string name="unspent_outputs">Outputs Não Gastos</string>
+    <string name="unspent_outputs_post_mix">Outputs Não Gastos - Post mix</string>
+    <string name="paste_cahoots_payload">Colar cahoots payload</string>
+    <string name="clipboard_empty">Clipboard vaziu</string>
+    <string name="premix_balance">Saldo Premix</string>
+    <string name="post_mix_balance">Saldo Post mix</string>
+    <string name="spendable">Gasto</string>
+    <string name="reveal_the_redeem_script_for_this_address">Revelar o script de resgate para este endereço</string>
+    <string name="coming_soon">Em breve</string>
+    <string name="active">Ativar</string>
+    <string name="change_from_postmix">Trocar para gasto post-mix</string>
+    <string name="selection_contains_blocked_utxo">Sua seleção contém utxos bloqueados. remova e tente novamente.</string>
+    <string name="only_single_utxo_may_selected">Somente um único utxo pode ser selecionado para gastos diretos no pós-mix.</string>
+    <string name="only_a_single_change_utxo_may">Apenas um único change utxo pode ser selecionado para Whirlpool direto a partir do pós-mix.</string>
+    <string name="only_change_utxos_allowed">Apenas change utxo\'s permitido</string>
+    <string name="utxo_is_marked_as_blocked">utxo foi marcado como bloqueado</string>
+    <string-array name="address_types">
+        <item>Segwit compatibility (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Legacy (P2PKH)</item>
+    </string-array>
+
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pre-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
+    </string-array>
+
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
+
+    <string name="doxxic_change_warning">Mudança Doxxic</string>
+    <string name="block_tx0_change">O change output deste tx0 será marcado. Bloqueá-lo para torná-lo impossível de gastar? Nesse caso, o valor não será refletido no saldo total, mas será visível na carteira consultando a lista de endereços não utilizados.</string>
+    <string name="total_pre_mix_balance">Saldo Total Pre-mix</string>
+    <string name="total_post_mix_balance">Saldo Total Post-mix</string>
+    <string name="post_mix_transactions">Transações Post-mix</string>
+    <string name="scode">Whirlpool SCODE</string>
+    <string name="enter_scode">Enter your Whirlpool SCODE. Se confirmado pressionando \'OK\' o serviço Whirlpool vai fechar. Entre novamente no Whirlpool para ativar o SCODE.</string>
+    <string name="this_utxo_is_marked_as_spendable">Este UTXO está marcado como possível de ser gasto</string>
+    <string name="this_utxo_is_marked_as_blocked">Este UTXO está marcado como bloqueado</string>
 
 </resources>
