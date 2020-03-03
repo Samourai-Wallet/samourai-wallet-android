@@ -653,8 +653,6 @@
     <string name="ricochet_nlocktime_ko">Seu Ricochet não foi encaminhado para transmissão. Por favor tente novamente.</string>
 
     <string name="tag_utxo">Label UTXO</string>
-    <string name="boost_transaction_fee">Aumentar taxa de transação</string>
-    <string name="refund">Refund</string>
     <string name="not_cahoots">#Cahoots Inválido</string>
     <string name="boost_transaction_fee">Aumentar taxa de transação</string>
     <string name="refund">Reembolso</string>
