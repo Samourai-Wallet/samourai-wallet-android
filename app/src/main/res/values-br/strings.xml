@@ -718,7 +718,7 @@
     <string name="pairing_password">Definir senha de emparelhamento: (6-255 caracteres)</string>
     <string name="password_error">Erro ao criar senha</string>
     <string name="password_invalid">Senha inválida</string>
-    <string name="review_whirlpool">Revisar detalhes Whirlpool/string>
+    <string name="review_whirlpool">Revisar detalhes Whirlpool</string>
     <string name="total_selected">Total selecionado</string>
 
     <string name="cycle">Ciclo</string>
