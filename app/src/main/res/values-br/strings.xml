@@ -702,7 +702,7 @@
     <string name="sycing_pcodes">Sincronizando códigos de pagamento</string>
     <string name="sync_complete">Sincronização do código de pagamento concluída</string>
     <string name="options_paynym_indexes">Mostrar indexes Paynym</string>
-    <string name="begin_cycle"></string>COMEÇAR CICLO</string>
+    <string name="begin_cycle">COMEÇAR CICLO</string>
     <string name="pool_fee">POOL FEE</string>
     <string name="total_fees">TAXAS TOTAIS</string>
     <string name="miner_fee">TAXA DE MINERAÇÃO</string>
