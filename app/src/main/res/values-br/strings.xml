@@ -757,16 +757,6 @@
     <string name="only_change_utxos_allowed">Apenas change utxo\'s permitido</string>
     <string name="utxo_is_marked_as_blocked">utxo foi marcado como bloqueado</string>
 
-    <string-array name="account_types">
-        <item>BIP49 Segwit</item>
-        <item>BIP84 Segwit</item>
-        <item>BIP44 P2PKH</item>
-        <item>Ricochet Segwit</item>
-        <item>Whirlpool Segwit pre-mix</item>
-        <item>Whirlpool Segwit post-mix</item>
-        <item>Whirlpool Segwit bad bank</item>
-    </string-array>
-
     <string name="mixing"><em>%1$s</em> : %2$s</string>
 
     <string name="doxxic_change_warning">Mudança Doxxic</string>
