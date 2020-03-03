@@ -1282,7 +1282,7 @@ public class SendActivity extends SamouraiActivity {
 
             }
 
-            if (_utxos1 != null || _utxos1.size() > 0) {
+            if (_utxos1 != null && _utxos1.size() > 0) {
                 if (!selectedP2SH_P2WPKH && valueP2SH_P2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 2 P2SH_P2WPKH");
                     _utxos2 = utxosP2SH_P2WPKH;
