@@ -53,7 +53,7 @@ Whirlpool can be set up in 3 configurations:
 
 - First you must setup your CLI backend([Whirlpool CLI Github](https://github.com/Samourai-Wallet/whirlpool-client-cli)), this can be done manually on Command Line or via a user friendly implementation like:
 
-- [RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki)
+- [RoninDojo Wiki](https://code.samourai.io/ronindojo/RoninDojo/-/wikis/home)
 
 [RoninDojo Telegram Group](https://t.me/RoninDojoUI)
 

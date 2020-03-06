@@ -30,7 +30,7 @@ By default Samourai Wallet saves an encrypted backup of your entire wallet on yo
 
 ### Step 1 - Install
 
-If Samourai was previously installed but now it isn't, simply install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet) onto your Android device. 
+If Samourai was previously installed but now it isn't, simply install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet) or [Gitlab APK](https://code.samourai.io/wallet/samourai-wallet/tree/master/apk) onto your Android device. 
 
 ### Step 2 - Restore Wallet
 
@@ -66,7 +66,7 @@ Your secret words are extremely important. When you combine your passphrase with
 
 ### Step 1 - Install Samourai
 
-Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet) onto your Android device. 
+Install Samourai Wallet from the [Google Play store](https://play.google.com/store/apps/details?id=com.samourai.wallet) or [Gitlab APK](https://code.samourai.io/wallet/samourai-wallet/tree/master/apk) onto your Android device. 
 
 ### Step 2 - Restore wallet
 

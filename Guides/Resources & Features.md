@@ -24,9 +24,53 @@
 
 [Samourai.kayako Documents](https://samourai.kayako.com/) 
 
-[PuraVida Wiki](https://github.com/PuraVlda/samourai-wallet-android/wiki) 
-
 # Features 
+
+**Wallet:**
+- Your private keys are stored on your device and are never communicated with any server
+- Sweep funds from private keys
+- Standard BIP44 avoids address reuse 
+- BIP39 passphrase enforced on new wallets
+- Sign messages using utxo addresses (including P2SH-P2WPKH Segwit utxos)
+- Read, validate, sweep Coinkite OpenDime
+- Detect private keys remaining in clipboard
+
+**Security:**
+- 5-to-8 digit PIN protected access
+- PIN entry grid may be scrambled
+- AES-256 encryption of internal metadata
+- Exportable backup encrypted using BIP39 passphrase
+- Route outgoing transactions via your own Dojo 
+- Connect via your preferred VPN
+- Connect via Tor (Socks5 proxy using Orbot)
+- Samourai pushTx over Tor
+- Real-time alert if your wallet is being "dusted"
+
+**Stealth addressing/BIP47 payment channels:**
+- BIP47 "Reusable Payment Codes" support
+- PayNym.is lookup of BIP47 payment codes
+- BIP47 payment codes scannable via BIP21
+- Sign messages using BIP47 notification address
+
+**Transactions:**
+- Full Segwit support (P2SH-P2WPKH)
+- Sweep P2SH-P2WPKH private keys
+- Spend to Segwit bech32 addresses 
+- Batched spending (several outputs)
+- RBF (replace-by-fee) detection for incoming transactions
+- BIP69 deterministic sorting of input/outputs to prevent the wallet from leaving a discernible block chain fingerprint
+- BIP126 spending for obfuscating your outgoing transactions 
+- Ricochet spend (spend using several hops)
+- Dynamic fee support guarantees fast confirm times
+- Display up-to-date miners' fees
+- Display UTXO list (optionally display private keys of UTXOs, redeem scripts of P2SH-P2WPKH)
+- Any UTXO can be flagged as "unspendable"
+- CPFP (child-pays-for-parent) for unconfirmed received transactions
+- CPFP (child-pays-for-parent) for unconfirmed sent transactions
+- Opt-in RBF (replace-by-fee)
+- Display transaction as hex/QR code for alternative means of transmission
+- Block utxo of non-broadcast transactions (avoid spending utxo used in transactions not yet broadcast)
+- push any signed tx (scanned or pasted in hex format)
 
 ## STONEWALL 
 
@@ -52,6 +96,31 @@ STONEWALL is a unique way of building transactions that increases the deniabilit
 
 STONEWALL is enabled by default and there is no extra charge for using it. It can be disabled in the transaction settings. 
 
+**STONEWALL spend description by @SamouraiDev**
+
+```
+Utxos are grouped by address type (P2PKH, P2SH-P2WPKH, or P2WPKH).
+
+The group with the same address type as the address being spent to is selected if it is >= twice the spend amount.
+If the above condition is not met, then a group with a different address type and a total value >= twice the spend amount is selected.
+If the above condition is not met, then 2 groups with total amounts >= the spend amount are chosen.
+
+Transaction composition is arranged by “sets”.
+
+For each set:
+The utxos are processed in randomised order.
+Utxo(s) are selected until the total amount selected is >= the spend amount.
+Utxos resulting from a same transaction are never used together in a same set. Utxos of higher value replace utxos of lower value belonging to the same transaction.
+All utxos from a same address (scriptpubkey) must be consumed within the same set.
+Output addresses (scriptpubkeys) must be used exclusively as outputs and only once.
+
+One set contains the spend output.
+The other set(s) contain(s) a “mix” output and use(s) the same amount and the same address type as the spend output.
+The change outputs in each set use the same address type as the utxo(s) for that set.
+
+The miner's fee amount must be an even amount. Each set pays half of the miner's fee by deducting exactly 50% from each change output.
+
+```
 ## PayNym
 
 ### What are PayNyms?
@@ -183,7 +252,7 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 -  **Step 3:** Enter the amount you want to send
 (in satoshi)
 
--  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
+-  **Step 4:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/), [0bin](https://0bin.net/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - 	**Step 5:** Show the QR code to the person you are sending to. Have them scan it with their Samourai Wallet
 
@@ -207,6 +276,174 @@ Use Stowaway to create a transaction that looks like a "typical" bitcoin transac
 
 **Alert: For maximum privacy you should only create STOWAWAY transactions with people you trust. You will be sharing details of some of your UTXOs during the creation of the STOWAWAY transaction.**
 
+### Payjoin by LaurnetMT
+
+```
+------------------------------------
+PRINCIPLE
+------------------------------------
+
+Or a T1 transaction corresponding to a classic payment (ex: payment of 9BTC by userA to userB)
+
+            9 (B)
+(A) 10 =
+            1 (A)
+
+
+T1 can be obfuscated in a T2 transaction in which userB contributes one or more inputs from which it collects the amount
+
+
+(A) 10 11 (B)
+        =
+(B) 2 1 (A)
+
+
+------------------------------------
+CONTRIBUTED AMOUNT & ENTRY
+------------------------------------
+
+The entropy of obfuscated transactions is most of the time zero, with the exception of specific combinations.
+(assumption: no intrafee paid in these transactions)
+
+
+Amount contributed by userB <MIN (O1, O2)
+-----------------------------------------
+
+(A) 10 9.5 (B)
+        = E (Tx) = 0
+(B) 0.5 1 (A)
+
+
+Amount contributed by userB == MIN (O1, O2)
+------------------------------------------
+
+(A) 10 10 (B)
+        = E (Tx) = 1
+(B) 1 1 (A)
+
+
+Amount contributed by userB between MIN (O1, O2) and MAX (O1, O2)
+-------------------------------------------------- ------------------
+
+(A) 10 14 (B)
+        = E (Tx) = 0
+(B) 5 1 (A)
+
+
+Amount contributed by userB == MAX (O1, O2)
+------------------------------------------
+
+(A) 10 18 (B)
+        = E (Tx) = 0
+(B) 9 1 (A)
+
+
+Amount contributed by userB> MAX (O1, O2)
+------------------------------------------
+
+(A) 10 20 (B)
+        = E (Tx) = 0
+(B) 11 1 (A)
+
+
+
+------------------------------------
+CONTRIBUTED AMOUNT & INFLUENCES
+------------------------------------
+
+Although the entropy is identical, there is a difference between the following scenarios
+
+
+Amount contributed by userB <MIN (O1, O2)
+-----------------------------------------
+
+(A) 10 9.5 (B)
+        =
+(B) 0.5 1 (A)
+
+In this scenario, the input contributed by B is superfluous.
+This is true whether we consider 9.5 or 1 as the amount paid or the change.
+If we consider that most wallets implement selection algorithms aimed at reducing the number of inputs, this form produces a specific imprint making it possible to distinguish a nested samurai transaction.
+
+
+Amount contributed by userB> MIN (O1, O2) and <MAX (O1, O2)
+-------------------------------------------------- --------
+
+(A) 10 14 (B)
+        =
+(B) 5 1 (A)
+
+
+In this scenario, the input contributed by B does not appear to be superfluous.
+On the contrary, he suggests that all the inputs were necessary to reach a payable amount of 14BTC.
+
+
+However, the result obtained with this constraint deteriorates when the amount of the exchange is greater than the amount paid:
+
+(A) 10 6 (B)
+        =
+(B) 5 9 (A)
+
+In this case, the input contributed by B again appears to be superfluous.
+
+
+Amount contributed by userB> = MAX (O1, O2)
+------------------------------------------
+
+* With amount paid (9BTC)> Change (1BTC)
+
+(A) 10 19 (B)
+        =
+(B) 10 1 (A)
+
+
+* With amount paid (1BTC) <Change (9BTC)
+
+(A) 10 11 (B)
+        =
+(B) 10 9 (A)
+
+
+------------------------------------
+PROPOSED RULE
+------------------------------------
+
+IF amount (payment)> amount (change) THEN
+  amount (inputs_payee)> amount (change)
+
+IF amount (payment) <amount (change) THEN
+  amount (inputs_payee)> = amount (change)
+
+
+
+              
+
+------------------------------------
+ADDITIONAL NOTES
+------------------------------------
+
+* Certain general rules applied by Samourai for the selection of inputs should also be respected:
+  ex: paying or paying should not contribute 2 inputs from the same transaction
+
+* On the other hand the rule of selection of all the inputs "controlled" by an address * must not be used *.
+  Indeed, by using the utxos controlled by the same address within different nested txs, we maximize the over-clustering by the analysis tools. In fact, we should perhaps even prioritize the selection of such utxos for the construction of nested txs.
+
+
+* This scheme allows:
+  - trigger the over-clustering of inputs,
+  - to hide the amount of the actual payment.
+
+  In return, it reveals which output is the payment and which output is the exchange.
+
+* The protocol between the payee and the payee should include protection mechanisms to avoid:
+  - that the payee abuses the protocol to have its utxos aggregated by paying it (the costs being borne by the latter) => include a limit on the number of inputs contributed by the pay?
+  - that the payer uses the protocol to identify the payee's utxos
+  - MITM attacks
+
+* If a protocol is implemented to support this scheme, it is likely that we could make it a variant aiming to build boltzman spends rather than nested / embedded transactions. This could go in the direction of having a tool increasing the deniability of boltzman spends (at least in terms of monitoring tools). To dig...
+
+```
+
 ## STONEWALLx2
 
 [Video Tutorial](https://www.youtube.com/watch?v=F-b9wWw_kQs&list=PLIBmWVGQhizJ-mgDIWO5I5OcJlXc3apTF&index=11&t=0s)
@@ -226,7 +463,7 @@ Use STONEWALLx2 to create high entropy mini CoinJoin transaction with the help o
 - **Step 4:** Enter the address you want to send to
 (bech32 addresses only)
 
-- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
+- **Step 5:** A dialogue box will appear with a text blob. Press "Show QR" (you can also exchange text blobs back and forth, use something like [Ybin](https://ybin.me/), [0bin](https://0bin.net/) or [Pastebin](https://pastebin.com/) as many messaging apps garble the text
 
 - **Step 6:** Show the QR code to the person participating in the STONEWALLx2. Have them scan it with their Samourai Wallet
 
@@ -264,7 +501,7 @@ Dojo is the backend that your wallet connects to, this is the link between your 
 
 For a very user friendly implimitation of Dojo you can check out Ronin
 
-[RoninDojo Wiki](https://github.com/RoninDojo/RoninDojo/wiki) 
+[RoninDojo Wiki](https://code.samourai.io/ronindojo/RoninDojo/-/wikis/home) 
 
 ## Whirlpool 
 

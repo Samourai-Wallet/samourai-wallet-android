@@ -18,6 +18,8 @@ If you'd like to contribute to these guides or the Samourai Wallet ecosystem doc
 
 [Github](https://github.com/Crazyk031)
 
+[Gitlab](https://code.samourai.io/Crazyk031)
+
 # Contribute a Translation 
 
 Contribute a translation to Samourai Wallet
@@ -105,13 +107,13 @@ If your a contributor and aren't on the list, but would like to be added, DM @cr
 Overall wealth of knowledge, creator of his own [FAQ](https://github.com/PuraVlda/samourai-wallet-android/wiki) & operator of [Lightning Hood](https://lightninghood.com/) where you can get all your Samourai swag! 
 
 **BTCxZelko** 
-Co creator of [Ronin](https://github.com/RoninDojo/RoninDojo) & wealth of knowledge about Dojo on Pi4
+Co creator of [Ronin](https://code.samourai.io/ronindojo/RoninDojo) & wealth of knowledge about Dojo on Pi4
 
 **6102bitcoin**
 Writer of an amazing [FAQ](https://github.com/6102bitcoin/FAQ) & [bitcoin-intro](https://github.com/6102bitcoin/bitcoin-intro) guide! 
 
 **GuerraMoneta**
-Co creator of [Ronin](https://github.com/RoninDojo/RoninDojo) & wealth of knowledge about Dojo on Odroid
+Co creator of [Ronin](https://code.samourai.io/ronindojo/RoninDojo) & wealth of knowledge about Dojo on Odroid
 
 **LaurentMT** 
 Overall wealth of knowledge & Dojo troubleshooting wizard! 
