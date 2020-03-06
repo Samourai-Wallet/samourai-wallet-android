@@ -321,11 +321,11 @@ public class NewPoolActivity extends AppCompatActivity {
             }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById(selectedPoolViewModel.getPoolId());
-            Tx0Config tx0Config;
+            Tx0Config tx0Config = whirlpoolWallet.getTx0Config(pool);
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
+                tx0Config.setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
             } else {
-                tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
+                tx0Config.setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
             }
             Tx0 tx0 = null;
             try {

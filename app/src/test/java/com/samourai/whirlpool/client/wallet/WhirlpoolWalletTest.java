@@ -139,7 +139,7 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         spendFroms.add(new UnspentOutputWithKey(unspentOutput, ecKey.getPrivKeyBytes()));
 
         Pool pool = whirlpoolWallet.findPoolById("0.01btc");
-        Tx0Config tx0Config = whirlpoolWallet.getTx0Config().setMaxOutputs(1);
+        Tx0Config tx0Config = whirlpoolWallet.getTx0Config(pool).setMaxOutputs(1);
         Tx0Preview tx0Preview = whirlpoolWallet.tx0Preview(pool, spendFroms, tx0Config, Tx0FeeTarget.BLOCKS_2);
         Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
 
