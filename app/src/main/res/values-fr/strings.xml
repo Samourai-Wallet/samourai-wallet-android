@@ -50,7 +50,7 @@
     <string name="options_use_telno">Utiliser le numéro de mobile fiable pour commande à distance</string>
     <string name="options_use_telno2">Autoriser uniquement les commandes à distance envoyées depuis votre numéro de mobile fiable.</string>
     <string name="options_alert_telno">Numéro fiable</string>
-    <string name="options_alert_telno2">Un numéro fiable avec accès à distance restreint (utiliser le format int\'l sans espace ex.: +447385555555).</string>
+    <string name="options_alert_telno2">Un numéro fiable avec accès à distance restreint (utiliser le format int\'l sans espace ex : +447385555555).</string>
     <string name="options_hash">Hachage APK</string>
     <string name="options_hash2">Obtenir le hachage SHA-256 à partir de ce fichier APK installé (peut-être copié dans le presse-papiers).</string>
     <string name="options_VPN">VPN</string>
@@ -59,7 +59,7 @@
     <string name="options_Tor2">Lancer Orbot (Tor).</string>
     <string name="options_export">Exporter sauvegarde portefeuille</string>
     <string name="options_change_pin">Changer PIN</string>
-    <string name="options_change_pin2">Définir un nouveau code PIN; utilisé pour déverrouiller votre portefeuille.</string>
+    <string name="options_change_pin2">Définir un nouveau code PIN ; utilisé pour déverrouiller votre portefeuille.</string>
     <string name="options_remote_pin">Lancement mode furtif et PIN à distance</string>
     <string name="options_remote_pin2">Définir un PIN distinct pour lancement mode furtif et fonctions commandes à distance.</string>
     <string name="options_autosave_backup">Sauvegarde automatique dans la mémoire de l\'appareil</string>
@@ -68,7 +68,7 @@
     <string name="options_txs">Transactions</string>
     <string name="options_boltzmann">Dépense STONEWALL</string>
     <string name="options_boltzmann_2">Les Dépenses vont utiliser l\'algorithme STONEWALL pour maximiser l\'obfuscation.</string>
-    <string name="options_utxo">Montrer les sorties de transaction non dépensées ("UTXO")</string>
+    <string name="options_utxo">Montrer les sorties de transactions non dépensées ("UTXO")</string>
     <string name="options_trusted_node">Définir un noeud ("node") sécurisé</string>
     <string name="options_trusted_node2">Indiquer votre propre noeud bitcoin pour émettre les transactions.</string>
     <string name="options_use_trusted_node">Utiliser un noeud sécurisé</string>
@@ -106,7 +106,7 @@
     <string name="receive">Recevoir</string>
     <string name="cannot_select_utxo">Ne peut sélectionner les sorties de transactions non dépensées</string>
     <string name="error_bip126_output">Erreur concernant l\'adresse destinataire</string>
-    <string name="error_change_output">Erreur concernant l\'adresse de retour monnaie ("change address")</string>
+    <string name="error_change_output">Erreur concernant l\'adresse du rendu monnaie</string>
 
     <string name="copied_to_clipboard">Copiée dans le presse-papiers</string>
     <string name="send_payment_code">Envoyer le code de paiement</string>
@@ -143,7 +143,7 @@
     <string name="mnemonic_hex">Phrase de récupération à 12 mots ou entropie hex</string>
     <string name="pin_enter">Entrez votre code PIN</string>
     <string name="please_wait">Veuillez patienter...</string>
-    <string name="random_key_error">Erreur: impossible de générer une clé aléatoire</string>
+    <string name="random_key_error">Erreur : impossible de générer une clé aléatoire</string>
     <string name="login_error">Échec Login</string>
     <string name="wallet_created_ok">Création du portefeuille OK.</string>
     <string name="wallet_created_ko">Erreur survenue lors de la création du portefeuille.</string>
@@ -153,7 +153,7 @@
     <string name="address_used_previously">Vous avez déjà utilisé cette adresse ! La confidentialité de vos données n\'est pas assurée quand une même adresse est réutilisée.</string>
 
     <string name="scan">Scanner</string>
-    <string name="scan_error">Erreur: impossible de scanner</string>
+    <string name="scan_error">Erreur : impossible de scanner</string>
     <string name="enter_privkey">Entrez votre clé privée</string>
 
     <string name="to">À</string>
@@ -164,7 +164,7 @@
     <string name="invalid_amount">Montant invalide</string>
     <string name="amount">Montant</string>
 
-    <string name="receive_address_to_clipboard">Copier cette adresse de réception dans le presse-papiers ? Si oui, elle pourrait être lue par d\'autres applications.</string>
+    <string name="receive_address_to_clipboard">Copier cette adresse dans le presse-papiers ? Si oui, elle pourrait être lue par d\'autres applications.</string>
     <string name="receive_address_to_share">Partager cette adresse de réception ? Si oui, elle pourrait être lue par d\'autres applications.</string>
     <string name="sure_to_erase">Êtes-vous sûr de vouloir supprimer ce portefeuille ?</string>
     <string name="wallet_erased">Portefeuille supprimé de cet appareil.</string>
@@ -195,7 +195,7 @@
     <string name="account_Samourai">Portefeuille</string>
     <string name="account_shuffling">Échangé</string>
 
-    <string name="max_available">Max. disponible:</string>
+    <string name="max_available">Max. disponible :</string>
 
     <string name="select_account">Sélectionnez votre compte</string>
     <string name="received_bitcoin">Bitcoin Reçus</string>
@@ -212,7 +212,7 @@
     <string name="restore_wallet_from_backup">Restaurer le portefeuille à partir de la sauvegarde</string>
     <string name="restore_wallet_from_existing_backup">Sauvegarde détectée sur l\'appareil. Pour restaurer à partir de cette sauvegarde, appuyez sur \'OK\', sinon copier/coller une sauvegarde différente et appuyez sur \'OK\'.</string>
 
-    <string name="choose_email_client">Choisissez un Client de Messagerie:</string>
+    <string name="choose_email_client">Choisissez un Client de Messagerie :</string>
 
     <string name="cannot_launch_app">Le portefeuille Samourai ne peut pas être installé sur cet appareil</string>
     <string name="confirm_change_pin"> Êtes-vous sûr de vouloir modifier votre PIN ?</string>
@@ -267,7 +267,7 @@
     <string name="please_wait_sending">Envoi de la transaction, veuillez patienter.</string>
     <string name="please_wait_ricochet">Traitement file d\'attente Ricochet, veuillez patienter.</string>
 
-    <string name="change_is_dust">La monnaie restante de cette transaction est de la poussière de bitcoin ("Dust"). Recommencer en modifiant le montant de la somme ou en dépensant la totalité du solde.</string>
+    <string name="change_is_dust">Le rendu monnaie de cette transaction est de la poussière de bitcoin ("Dust"). Recommencer en modifiant le montant de la somme ou en dépensant la totalité du solde.</string>
 
     <string name="tor_routing_on">L\'acheminement de Samourai se fait via Tor.</string>
     <string name="tor_routing_off">L\'acheminement de Samourai ne se fait pas via Tor. Appuyer pour activer.</string>
@@ -316,23 +316,23 @@
     <string name="refresh_incoming_notif_tx">Notification des transactions BIP47 entrantes récupérée.</string>
     <string name="refresh_outgoing_notif_tx">Notification des transactions BIP47 sortantes mise à jour.</string>
 
-    <string name="options_unconfirmed_tx">Cette transaction est en attente de confirmation. Veuillez sélectionner une option:</string>
+    <string name="options_unconfirmed_tx">Cette transaction est en attente de confirmation. Veuillez sélectionner une option :</string>
     <string name="options_block_explorer">Aperçu de la transaction</string>
     <string name="options_bump_fee">Augmenter les frais tx</string>
 
     <string name="cpfp_cannot_retrieve_tx">Les informations concernant la transaction ne peuvent être récupérées. Veuillez réessayer.</string>
     <string name="fee_bump_not_necessary">Sachez qu\'il n\'est peut-être pas nécessaire  d\'augmenter fortement les frais de cette transaction.</string>
-    <string name="bump_fee">Voudriez-vous augmenter les frais de transaction des mineurs afin d\'accélérer l\'obtention d\'une confirmation ?\n\nFrais Additionnels des Mineurs:</string>
+    <string name="bump_fee">Voudriez-vous augmenter les frais de transaction des mineurs afin d\'accélérer l\'obtention d\'une confirmation ?\n\nFrais Additionnels des Mineurs :</string>
 
     <string name="options_sign">Signer le message</string>
 
     <string name="trusted_node_pow_failed">La preuve de travail (PoW) n\'a pas pu être apportée par votre noeud sécurisé. Veuillez vérifier votre installation.</string>
 
     <string name="options_fees">Afficher les frais des mineurs en cours</string>
-    <string name="current_fee_selection">Frais fixés à:</string>
-    <string name="current_hi_fee_value">Frais élevés en cours:</string>
-    <string name="current_mid_fee_value">Frais standards en cours:</string>
-    <string name="current_lo_fee_value">Frais bas en cours:</string>
+    <string name="current_fee_selection">Frais fixés à :</string>
+    <string name="current_hi_fee_value">Frais élevés en cours :</string>
+    <string name="current_mid_fee_value">Frais standards en cours :</string>
+    <string name="current_lo_fee_value">Frais bas en cours :</string>
     <string name="slash_sat">sat/b</string>
     <string name="set_sat">Calcul frais personnalisés en sat/b.</string>
     <string name="custom_fee_too_low">Taux frais personnalisés trop bas.</string>
@@ -355,7 +355,7 @@
     <string name="recovery_checkup_message">La phrase de récupération et la passphrase de votre portefeuille vont être affichées à l\'écran. Protégez-vous des regards indiscrets. Ces informations NE seront PLUS jamais affichées.</string>
     <string name="mnemonic">Phrase de récupération à 12 mots</string>
     <string name="recovery_checkup_finish">J\'AI SÉCURISÉ MES INFORMATIONS RÉCUPÉRÉES</string>
-    <string name="pin_reminder">Pour rappel, votre code PIN est:</string>
+    <string name="pin_reminder">Pour rappel, votre code PIN est :</string>
 
     <string name="opendime_confirmed_balance">Solde confirmé</string>
     <string name="opendime_privkey">Clé privée</string>
@@ -368,7 +368,7 @@
     <string name="opendime_topup">RECHARGER</string>
 
     <string name="select_app">Sélectionner l\'application</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="samourai_opendime">Samourai : OpenDime</string>
 
     <string name="replay_protection">Protection Rejeu ("Replay")</string>
     <string name="replay_unprotected">Non protégé</string>
@@ -384,7 +384,7 @@
     <string name="replay_description">Votre portefeuille va s\'adresser une transaction spéciale qui va définitivement séparer vos coins de l\'autre chaîne. Cela vous protégera des attaques par Rejeu.</string>
     <string name="replay_waiting_for_confirmations">en attente de confirmations</string>
     <string name="replay_confirmed">confirmée</string>
-    <string name="replay_confirmations">confirmations:</string>
+    <string name="replay_confirmations">confirmations :</string>
     <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
@@ -411,16 +411,16 @@
 
     <string name="dusting_tx">TRANSACTION POUSSIÈRE</string>
     <string name="dusting_attempt">La présence inopinée d\'une transaction poussière dans votre portefeuille peut être le signe d\'une tentative de pistage des adresses de votre portefeuille et de vos dépenses.\n\nMarquer cette poussière comme non-dépensable pour réduire les risques de tentatives extérieures de pistage.</string>
-    <string name="dusting_attempt_amount">Montant:</string>
-    <string name="dusting_attempt_id">Valeur-Hash:</string>
+    <string name="dusting_attempt_amount">Montant :</string>
+    <string name="dusting_attempt_id">Valeur-Hash :</string>
     <string name="dusting_attempt_ignore">Ignorer</string>
     <string name="dusting_attempt_mark_unspendable">Marquer comme non dépensable</string>
     <string name="paycode">PAYNYM</string>
     <string name="dust">POUSSIÈRE</string>
     <string name="do_not_spend">Ne Pas Dépenser</string>
-    <string name="dusting_tx_unblock">La fonction "Dépenser" pour cette transaction poussière est bloquée. Débloquer la fonction pour cette entrée non dépensée pour une éventuelle Dépense ?</string>
+    <string name="dusting_tx_unblock">La fonction "Dépenser" pour cette transaction poussière est verrouillée. Déverrouiller la fonction pour cette entrée non dépensée pour une éventuelle Dépense ?</string>
     <string name="mark_spend">Marquer comme dépensable</string>
-    <string name="mark_do_not_spend">Marquer ne-pas-dépenser</string>
+    <string name="mark_do_not_spend">Marquer comme ne-pas-dépenser</string>
     <string name="mark_utxo_spend">Marquer cette sortie de transaction non dépensée comme dépensable ?</string>
     <string name="mark_utxo_do_not_spend">Marquer cette sortie de transaction non dépensée comme non dépensable ?</string>
 
@@ -436,7 +436,7 @@
 
     <string name="copy_to_clipboard">Copier dans le presse-papiers</string>
 
-    <string name="no_bitpay">Erreur: Ceci n\'est pas une requête bitcoin valide. Les envois sur Samourai se font uniquement vers des adresses bitcoin valides.</string>
+    <string name="no_bitpay">Erreur : Ceci n\'est pas une requête bitcoin valide. Les envois sur Samourai se font uniquement vers des adresses bitcoin valides.</string>
     <string name="learn_more">En savoir plus</string>
 
     <string name="paynym">PayNym</string>
@@ -485,14 +485,14 @@
     <string name="samourai_bitcoin_wallet">Portefeuille Bitcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
     <string name="start_new_wallet">Lancer nouveau portefeuille</string>
-    <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>
-    <string name="get_help_restore">Restaurer un portefeuille: obtenir de l\'aide</string>
+    <string name="get_help_create">Créer un portefeuille : obtenir de l\'aide</string>
+    <string name="get_help_restore">Restaurer un portefeuille : obtenir de l\'aide</string>
 
     <string name="fee">Frais des mineurs</string>
-    <string name="fee_low_priority">Priorité niveau faible: nombre estimé 24</string>
-    <string name="fee_mid_priority">Priorité niveau normal: nombre estimé 6</string>
-    <string name="fee_high_priority">Priorité niveau élevé: nombre estimé 2</string>
-    <string name="fee_custom_priority">Frais personnalisés: estimés</string>
+    <string name="fee_low_priority">Priorité niveau faible : nombre estimé 24</string>
+    <string name="fee_mid_priority">Priorité niveau normal : nombre estimé 6</string>
+    <string name="fee_high_priority">Priorité niveau élevé : nombre estimé 2</string>
+    <string name="fee_custom_priority">Frais personnalisés : estimés</string>
     <string name="blocks_to_cf">Nombre de blocs avant confirmation</string>
 
     <string name="invalid_mnemonic_word">Mot de récupération BIP39 invalide</string>
@@ -517,15 +517,15 @@
     <string name="use_bech32">Utiliser l\'adresse bech32</string>
 
     <string name="boltzmann_cannot">Impossible d\'effectuer une dépense STONEWALL avec cet ensemble de sorties non dépensées en l\'état. Si vous désirez effectuer une dépense STONEWALL, appuyez sur \'NON\' et réessayez avec un ensemble de sorties non dépensées modifié.</string>
-    <string name="boltzmann_like_typed">Nous vous informons que la fonction \'Recevoir la monnaie à des sorties de même type\' est OFF; la transaction de votre dépense STONEWALL risque de se voir privée de conditions optimales.</string>
+    <string name="boltzmann_like_typed">Nous vous informons que la fonction \'Recevoir la monnaie à des sorties de même type\' est OFF ; la transaction de votre dépense STONEWALL risque de se voir privée de conditions optimales.</string>
 
     <string name="insufficient_fee">Fonds insuffisants</string>
     <string name="action_utxo_amounts">Aperçu des montants par type d\'adresse</string>
 
-    <string name="total_p2pkh">Total originel (p2pkh):</string>
-    <string name="total_p2sh_p2wpkh">Total segwit (p2sh):</string>
-    <string name="total_p2wpkh">Total segwit (bech32):</string>
-    <string name="total_blocked">Total bloqué:</string>
+    <string name="total_p2pkh">Total originel (p2pkh) :</string>
+    <string name="total_p2sh_p2wpkh">Total segwit (p2sh) :</string>
+    <string name="total_p2wpkh">Total segwit (bech32) :</string>
+    <string name="total_blocked">Total verrouillé :</string>
 
     <string name="tx_creating_ok">Création transaction...</string>
     <string name="tx_creating_ko">Impossible de créer la transaction</string>
@@ -570,7 +570,7 @@
     
     <string name="tx_standby">Transaction en attente</string>
     <string name="show_hex">Afficher Code Hex</string>
-    <string name="tx_tenna_coming_soon">Prochainement disponible: txTenna sur Android</string>
+    <string name="tx_tenna_coming_soon">Prochainement disponible : txTenna sur Android</string>
     
     <string name="whirlpool_postmix">Whirlpool Segwit post-mix</string>
       
@@ -708,7 +708,7 @@
     <string name="options_xpub84_postmix2">Afficher clé publique étendue pour compte Segwit BIP84 (Bech32) Whirlpool post-mix.</string>
     <string name="create_password">Créer mot de passe</string>
     <string name="confirm_password">Confirmer mot de passe</string>
-    <string name="pairing_password">Définir appairage mot de passe: (6-255 caractères)</string>
+    <string name="pairing_password">Définir appairage mot de passe : (6-255 caractères)</string>
     <string name="password_error">Erreur création mot de passe</string>
     <string name="password_invalid">Mot de passe invalide</string>
 
@@ -727,7 +727,7 @@
     <string name="pool_fee">FRAIS POOL</string>
     <string name="total_fees">TOTAL FRAIS</string>
     <string name="miner_fee">FRAIS MINEUR</string>
-    <string name="total_whirlpool_balance">Total post-cycle(s):</string>
+    <string name="total_whirlpool_balance">Total post-cycle(s) :</string>
     <string name="review_cycle_details">VÉRIFIER DÉTAILS CYCLE</string>
     <string name="cycled_transactions">Transactions post-cycle(s)</string>
     <string name="initial_transaction">Transaction Initiale</string>
@@ -758,7 +758,7 @@
     <string name="begin_stonewallx2">Démarrer STONEWALLx2</string>
 
     <string name="you_will_pay">Vous règlerez :</string>
-    <string name="total_miner_fee">Total Frais Mineur:</string>
+    <string name="total_miner_fee">Total Frais Mineur :</string>
     <string name="launch_qr_scanner">LANCER Scanner QR</string>
     <string name="next_step">Prochaine Étape...</string>
     <string name="scan_the_qr_code_that_your_collaborator_provides_you">Scannez le CODE QR que votre collaborateur vous fournit.</string>
@@ -769,10 +769,65 @@
 
     <string name="refresh">Actualiser</string>
     <string name="unspent_outputs">Sorties non dépensées</string>
-    <string name="unspent_outputs_post_mix">Sorties non dépensées - Post mix</string>
+    <string name="unspent_outputs_post_mix">Sorties non dépensées - Post-mix</string>
     
     <string name="paste_cahoots_payload">Copier/Coller charge utile cahoots</string>
 
     <string name="clipboard_empty">Presse-papiers vide</string>
+    
+    <string name="action_whirlpool">Whirlpool</string>
+    <string name="premix_balance">Solde pré-mix</string>
+    <string name="post_mix_balance">Solde post-mix</string>
+    
+    <string name="options_xpub84_badbank">Afficher Whirlpool bad bank ZPUB</string>
+    <string name="options_xpub84_badbank2">Afficher clé publique étendue pour compte Segwit BIP84 (Bech32) Whirlpool bad bank.</string>
+    
+    
+    <string name="spendable">Dépensable</string>
+    <string name="reveal_the_redeem_script_for_this_address">Montrer le script de règlement pour cette adresse</string>
+    <string-array name="address_types">
+        <item>Segwit compatibilité (P2SH)</item>
+        <item>Segwit native (bech32)</item>
+        <item>Originel (P2PKH)</item>
+    </string-array>
+    <string-array name="account_types">
+        <item>BIP49 Segwit</item>
+        <item>BIP84 Segwit</item>
+        <item>BIP44 P2PKH</item>
+        <item>Ricochet Segwit</item>
+        <item>Whirlpool Segwit pré-mix</item>
+        <item>Whirlpool Segwit post-mix</item>
+        <item>Whirlpool Segwit bad bank</item>
+    </string-array>
+    
+    <string name="coming_soon">Prochainement</string>
+    <string name="active">Active</string>
+    <string name="total_whirlpool_balance">Total Solde Whirlpool</string>
+    <string name="change_from_postmix">Rendu monnaie d\'une dépense post-mix</string>
+    <string name="selection_contains_blocked_utxo">Votre sélection comprend des utxos verrouillées. Veuillez déverrouiller et réessayer.</string>
+    <string name="only_single_utxo_may_selected">Pour une dépense à partir d\'un post-mix, vous ne pouvez sélectionner qu\'une seule utxo à la fois.</string>
+    <string name="only_a_single_change_utxo_may">Pour un Whirlpooling à partir d\'un post-mix, vous ne pouvez sélectionner qu\'un seul rendu monnaie d\'utxo à la fois.</string>
+    <string name="utxo_is_marked_as_blocked">utxo marquée comme verrouillée</string>
+    <string name="only_change_utxos_allowed">Rendu monnaie d\'utxo uniquement</string>
+    <string name="mixing"><em>%1$s</em> : %2$s</string>
+    <string name="title_activity_tester">testeur</string>
+
+    <string name="block_tx0_change">Le rendu monnaie en sortie de cette tx0 (transaction d\'accès) fera l\'objet d\'un tag. Le verrouiller pour le rendre non dépensable ? Dans ce cas, la somme n\'apparaîtra pas dans le total solde. Toutefois, vous la retrouverez dans votre portefeuille en consultant la liste des non dépensées.</string>
+    
+    <string name="total_pre_mix_balance">Total Solde Pré-mix</string>
+    <string name="total_post_mix_balance">Total Solde Post-mix</string>
+    
+    <string name="post_mix_transactions">Transactions post-mix</string>
+    
+    <string name="scode">SCODE (code promo) Whirlpool</string>
+    <string name="enter_scode">Saisissez votre SCODE Whirlpool. Une confirmation avec la touche \'OK\' entraînera la fermeture du service Whirlpool. Accédez de nouveau à Whirlpool pour activer le SCODE.</string>
+    <string name="this_utxo_is_marked_as_spendable">Cette UTXO est marquée comme Dépensable</string>
+    <string name="this_utxo_is_marked_as_blocked">Cette UTXO est marquée comme Verrouillée</string>
+
+    <string name="doxxic_change_warning">Rendu monnaie toxique</string>
+    
+    
+    
+    
 
 </resources>
