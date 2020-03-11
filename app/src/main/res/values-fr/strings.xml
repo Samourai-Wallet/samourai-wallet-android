@@ -555,13 +555,6 @@
     <string name="invalid_index">Index invalide</string>
     
     <string name="type_address">Type d\'adresse</string>
-    <string-array name="account_types">
-    <item>BIP49 Segwit</item>
-    <item>BIP84 Segwit</item>
-    <item>BIP44 P2PKH</item>
-    <item>Ricochet Segwit</item>
-    <item>Whirlpool Segwit pre-mix</item>
-    </string-array>
     <string name="chain_id">Chaîne d\'adresses</string>
     <string name="receive_chain">Recevoir l\'adresse</string>
     <string name="change_chain">Changer l\'adresse</string>
@@ -727,7 +720,9 @@
     <string name="pool_fee">FRAIS POOL</string>
     <string name="total_fees">TOTAL FRAIS</string>
     <string name="miner_fee">FRAIS MINEUR</string>
+    <!--
     <string name="total_whirlpool_balance">Total post-cycle(s) :</string>
+    -->
     <string name="review_cycle_details">VÉRIFIER DÉTAILS CYCLE</string>
     <string name="cycled_transactions">Transactions post-cycle(s)</string>
     <string name="initial_transaction">Transaction Initiale</string>
