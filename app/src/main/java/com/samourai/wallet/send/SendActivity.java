@@ -752,9 +752,11 @@ public class SendActivity extends SamouraiActivity {
 
         strAmount = nf.format(balance / 1e8);
 
-        tvMaxAmount.setOnClickListener(view -> {
-            btcEditText.setText(strAmount);
-        });
+        if(account == 0)    {
+            tvMaxAmount.setOnClickListener(view -> {
+                btcEditText.setText(strAmount);
+            });
+        }
         tvMaxAmount.setOnLongClickListener(view -> {
             setBalance();
             return true;
