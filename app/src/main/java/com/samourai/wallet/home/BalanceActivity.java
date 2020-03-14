@@ -1404,7 +1404,9 @@ public class BalanceActivity extends SamouraiActivity {
     }
 
     private void txDetails(Tx tx) {
-
+        if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() && tx.getAmount() == 0){
+            return;
+        }
         Intent txIntent = new Intent(this, TxDetailsActivity.class);
         txIntent.putExtra("TX", tx.toJSON().toString());
         startActivity(txIntent);
