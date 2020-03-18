@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +28,13 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Add;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.paynym.WebUtil;
+import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.paynym.paynymDetails.PayNymDetailsActivity;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.BlockedUTXO;
@@ -37,6 +42,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.MessageSignUtil;
@@ -47,15 +53,24 @@ import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.MnemonicException;
 import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class UTXODetailsActivity extends AppCompatActivity {
     final DecimalFormat df = new DecimalFormat("#");
@@ -70,6 +85,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
     private int idx;
     private long amount;
     private UTXOCoin utxoCoin;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +157,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                 UTXOUtil.getInstance().removeNote(hash);
             }
             setNoteState();
+            saveWalletState();
         });
         addNote.setOnClickListener(view -> {
             View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_note, null);
@@ -308,6 +325,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
                             }
                             setUTXOState();
                             dialog.dismiss();
+                            saveWalletState();
                         }
                 ).
 
@@ -323,6 +341,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
             UTXOUtil.getInstance().removeNote(hash);
         }
         setNoteState();
+        saveWalletState();
     }
 
     private boolean isBIP47(String address) {
@@ -348,6 +367,7 @@ public class UTXODetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        compositeDisposable.dispose();
         super.onDestroy();
         setResult(RESULT_OK, new Intent());
     }
@@ -559,6 +579,27 @@ public class UTXODetailsActivity extends AppCompatActivity {
                     })
                     .show();
         }
+    }
+
+    private void saveWalletState(){
+        Disposable disposable = Completable.fromCallable(() -> {
+            try {
+                PayloadUtil.getInstance(getApplicationContext()).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(getApplicationContext()).getGUID() + AccessFactory.getInstance().getPIN()));
+            } catch (MnemonicException.MnemonicLengthException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (DecryptionException e) {
+                e.printStackTrace();
+            }
+            return true;
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+        compositeDisposable.add(disposable);
     }
 
     private void viewInExplorer() {
