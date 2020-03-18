@@ -985,6 +985,55 @@ public class SendActivity extends SamouraiActivity {
 
     private void review() {
 
+        double btc_amount = 0.0;
+
+        try {
+            btc_amount = NumberFormat.getInstance(Locale.US).parse(btcEditText.getText().toString().trim()).doubleValue();
+//                    Log.i("SendFragment", "amount entered:" + btc_amount);
+        } catch (NumberFormatException nfe) {
+            btc_amount = 0.0;
+        } catch (ParseException pe) {
+            btc_amount = 0.0;
+        }
+
+        double dAmount = btc_amount;
+
+        amount = (long) (Math.round(dAmount * 1e8));
+
+        if (amount == balance && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.postmix_full_spend)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                            _review();
+
+                        }
+
+                    }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+            if (!isFinishing()) {
+                dlg.show();
+            }
+
+        }
+        else {
+            _review();
+        }
+
+    }
+
+    private void _review() {
         setUpBoltzman();
         if (validateSpend() && prepareSpend()) {
             tvReviewSpendAmount.setText(btcEditText.getText().toString().concat(" BTC"));
@@ -1000,7 +1049,6 @@ public class SendActivity extends SamouraiActivity {
             sendTransactionDetailsView.showReview(ricochetHopsSwitch.isChecked());
 
         }
-
     }
 
     private void hideKeyboard() {
@@ -1125,7 +1173,6 @@ public class SendActivity extends SamouraiActivity {
         // insufficient funds
         if (amount > balance) {
             Toast.makeText(SendActivity.this, R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
-
         }
 
         if (preselectedUTXOs != null) {
