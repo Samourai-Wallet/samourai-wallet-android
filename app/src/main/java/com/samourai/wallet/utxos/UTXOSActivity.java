@@ -36,13 +36,17 @@ import android.widget.TextView;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
+import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AppUtil;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.LinearLayoutManagerWrapper;
 import com.samourai.wallet.util.LogUtil;
@@ -53,7 +57,10 @@ import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
 
 import org.bitcoinj.core.Address;
+import org.bitcoinj.crypto.MnemonicException;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +70,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -585,6 +593,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
             }
         }
+        saveWalletState();
     }
 
     private void markAsUnSpendable() {
@@ -617,6 +626,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
             }
         }
+        saveWalletState();
     }
 
     //Clears current Toolbar action mode
@@ -799,6 +809,28 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         compositeDisposable.dispose();
         super.onDestroy();
     }
+
+    private void saveWalletState(){
+        Disposable disposable = Completable.fromCallable(() -> {
+            try {
+                PayloadUtil.getInstance(getApplicationContext()).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(getApplicationContext()).getGUID() + AccessFactory.getInstance().getPIN()));
+            } catch (MnemonicException.MnemonicLengthException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (DecryptionException e) {
+                e.printStackTrace();
+            }
+            return true;
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+        compositeDisposable.add(disposable);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
