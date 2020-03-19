@@ -68,7 +68,12 @@ public class WhirlpoolTx0 {
     }
 
     public int getPremixRequested() {
-        return premixRequested;
+        if(nbPossiblePremix() < premixRequested || premixRequested == 0)    {
+            return nbPossiblePremix();
+        }
+        else {
+            return premixRequested;
+        }
     }
 
     public long getFeeSamourai()    {
@@ -146,9 +151,6 @@ public class WhirlpoolTx0 {
 
         tx0 = null;
 
-        if(nbPossiblePremix() < getPremixRequested() || getPremixRequested() == 0)    {
-            premixRequested = nbPossiblePremix();
-        }
         debug("WhirlpoolTx0", "make: ");
         //
         // calc fee here using feeSatB and utxos passed
