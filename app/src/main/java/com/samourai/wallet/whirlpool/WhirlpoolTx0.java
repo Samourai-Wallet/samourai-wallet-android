@@ -159,7 +159,7 @@ public class WhirlpoolTx0 {
         }
         if(nbPossiblePremix() < 1)    {
             debug("WhirlpoolTx0", "Cannot make premix: insufficient selected amount:" + getAmountSelected());
-            throw  new Exception("Cannot make premix: negative change:"+getAmountSelected());
+            throw  new Exception("Cannot make premix: insufficient selected amount:"+getAmountSelected());
         }
 
         debug("WhirlpoolTx0", "amount selected:" + getAmountSelected() / 1e8);
