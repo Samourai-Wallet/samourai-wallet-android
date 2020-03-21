@@ -42,6 +42,7 @@ public class Cahoots {
     protected int cptyAccount = 0;
     protected byte[] fingerprint = null;
     protected byte[] fingerprintCollab = null;
+    protected String strCollabChange = null;
 
     public Cahoots()    { outpoints = new HashMap<String,Long>(); }
 
@@ -63,6 +64,7 @@ public class Cahoots {
         this.cptyAccount = c.getCounterpartyAccount();
         this.fingerprint = c.getFingerprint();
         this.fingerprintCollab = c.getFingerprintCollab();
+        this.strCollabChange = c.getCollabChange();
     }
 
     public int getVersion() {
@@ -163,6 +165,14 @@ public class Cahoots {
         this.fingerprintCollab = fingerprint;
     }
 
+    public String getCollabChange() {
+        return strCollabChange;
+    }
+
+    public void setCollabChange(String strCollabChange) {
+        this.strCollabChange = strCollabChange;
+    }
+
     public static boolean isCahoots(JSONObject obj)   {
         try {
             return obj.has("cahoots") && obj.getJSONObject("cahoots").has("type");
@@ -219,6 +229,7 @@ public class Cahoots {
                 obj.put("fingerprint_collab", Hex.toHexString(fingerprintCollab));
             }
             obj.put("psbt", psbt == null ? "" : Z85.getInstance().encode(psbt.toGZIP()));
+            obj.put("collabChange", strCollabChange == null ? "" : strCollabChange);
 
             cObj.put("cahoots", obj);
         }
@@ -259,6 +270,7 @@ public class Cahoots {
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
                 this.strDestination = obj.getString("dest");
+                this.strCollabChange = obj.getString("collabChange");
 //                this.strPayNymCollab = obj.getString("paynym_collab");
 //                this.strPayNymInit = obj.getString("paynym_init");
                 if(obj.has("account"))    {

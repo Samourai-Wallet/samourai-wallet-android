@@ -634,6 +634,7 @@ public class CahootsUtil {
             byte[] scriptPubKey_A1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
             _TransactionOutput output_A1 = new _TransactionOutput(params, null, Coin.valueOf(totalContributedAmount - stonewall0.getSpendAmount()), scriptPubKey_A1);
             outputsA.put(output_A1, Triple.of(segwitAddress1.getECKey().getPubKey(), stonewall0.getFingerprintCollab(), "M/1/" + idx));
+            stonewall0.setCollabChange(segwitAddress1.getBech32AsString());
         } else {
             // contributor mix output
             int idx = BIP84Util.getInstance(context).getWallet().getAccount(0).getReceive().getAddrIdx();
@@ -653,6 +654,7 @@ public class CahootsUtil {
             byte[] scriptPubKey_A1 = Bech32Segwit.getScriptPubkey(pair1.getLeft(), pair1.getRight());
             _TransactionOutput output_A1 = new _TransactionOutput(params, null, Coin.valueOf(totalContributedAmount - stonewall0.getSpendAmount()), scriptPubKey_A1);
             outputsA.put(output_A1, Triple.of(segwitAddress1.getECKey().getPubKey(), stonewall0.getFingerprintCollab(), "M/1/" + idx));
+            stonewall0.setCollabChange(segwitAddress1.getBech32AsString());
         }
 
         STONEWALLx2 stonewall1 = new STONEWALLx2(stonewall0);
@@ -750,24 +752,35 @@ public class CahootsUtil {
 
         debug("CahootsUtil", "destination:" + stonewall1.getDestination());
         if (transaction.getOutputs() != null && transaction.getOutputs().size() == 2) {
+
+            int idx = -1;
             for (int i = 0; i < 2; i++) {
                 byte[] buf = transaction.getOutputs().get(i).getScriptBytes();
-                byte[] script = new byte[buf.length - 1];
-                System.arraycopy(buf, 1, script, 0, script.length);
+                byte[] script = new byte[buf.length];
+                script[0] = 0x00;
+                System.arraycopy(buf, 1, script, 1, script.length - 1);
                 debug("CahootsUtil", "script:" + new Script(script).toString());
+                debug("CahootsUtil", "script hex:" + Hex.toHexString(script));
                 debug("CahootsUtil", "address from script:" + Bech32Util.getInstance().getAddressFromScript(new Script(script)));
-                if (Bech32Util.getInstance().getAddressFromScript(new Script(script)) == null ||
-                        !Bech32Util.getInstance().getAddressFromScript(new Script(script)).equalsIgnoreCase(stonewall1.getDestination())) {
-                    debug("CahootsUtil", "output value:" + transaction.getOutputs().get(i).getValue().longValue());
-                    Coin value = transaction.getOutputs().get(i).getValue();
-                    Coin _value = Coin.valueOf(value.longValue() - (fee / 2L));
-                    debug("CahootsUtil", "output value post fee:" + _value);
-                    transaction.getOutputs().get(i).setValue(_value);
-                    stonewall1.getPSBT().setTransaction(transaction);
+                if(Bech32Util.getInstance().getAddressFromScript(new Script(script)).equalsIgnoreCase(stonewall1.getCollabChange())) {
+                    idx = i;
                     break;
                 }
             }
-        } else {
+
+            if(idx == 0 || idx == 1) {
+                Coin value = transaction.getOutputs().get(idx).getValue();
+                Coin _value = Coin.valueOf(value.longValue() - (fee / 2L));
+                debug("CahootsUtil", "output value post fee:" + _value);
+                transaction.getOutputs().get(idx).setValue(_value);
+                stonewall1.getPSBT().setTransaction(transaction);
+            }
+            else {
+                return null;
+            }
+
+        }
+        else {
             return null;
         }
 
