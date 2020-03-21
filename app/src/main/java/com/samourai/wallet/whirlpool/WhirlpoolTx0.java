@@ -68,7 +68,12 @@ public class WhirlpoolTx0 {
     }
 
     public int getPremixRequested() {
-        return premixRequested;
+        if(nbPossiblePremix() < premixRequested || premixRequested == 0)    {
+            return nbPossiblePremix();
+        }
+        else {
+            return premixRequested;
+        }
     }
 
     public long getFeeSamourai()    {
@@ -101,7 +106,7 @@ public class WhirlpoolTx0 {
     }
 
     public long getChange() {
-        return getAmountSelected() - ((getPremixRequested() * getTxAmount()) + getFeeSamourai() + getFee());
+        return getAmountSelected() - ((getPremixRequested() * getPremixAmount()) + getFeeSamourai() + getFee());
     }
 
     public long getFee() {
@@ -112,7 +117,7 @@ public class WhirlpoolTx0 {
         return getAmountSelected() - getFeeSamourai();
     }
 
-    public long getTxAmount()   {
+    public long getPremixAmount()   {
         return getPool() + (getFeeSatB() * 102L);
     }
 
@@ -146,9 +151,6 @@ public class WhirlpoolTx0 {
 
         tx0 = null;
 
-        if(nbPossiblePremix() < getPremixRequested() || getPremixRequested() == 0)    {
-            premixRequested = nbPossiblePremix();
-        }
         debug("WhirlpoolTx0", "make: ");
         //
         // calc fee here using feeSatB and utxos passed
@@ -159,7 +161,7 @@ public class WhirlpoolTx0 {
         }
         if(nbPossiblePremix() < 1)    {
             debug("WhirlpoolTx0", "Cannot make premix: insufficient selected amount:" + getAmountSelected());
-            throw  new Exception("Cannot make premix: negative change:"+getAmountSelected());
+            throw  new Exception("Cannot make premix: insufficient selected amount:"+getAmountSelected());
         }
 
         debug("WhirlpoolTx0", "amount selected:" + getAmountSelected() / 1e8);
