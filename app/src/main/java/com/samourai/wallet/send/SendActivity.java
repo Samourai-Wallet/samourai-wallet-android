@@ -660,15 +660,6 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void setUpRicochet() {
-
-        if (account != 0) {
-            ricochetHopsSwitch.setChecked(false);
-            ricochetStaggeredDelivery.setChecked(false);
-            ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
-            layoutPremiums.setVisibility(View.GONE);
-            return;
-        }
-
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sendTransactionDetailsView.enableForRicochet(isChecked);
             enableCahoots(!isChecked);
