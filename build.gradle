@@ -21,6 +21,9 @@ allprojects {
         maven { url 'https://dl.bintray.com/magnusja/maven' }
         maven { url 'https://jitpack.io' }
         google()
+        maven {
+            url "https://raw.githubusercontent.com/guardianproject/gpmaven/master"
+        }
     }
 
     configurations.all {

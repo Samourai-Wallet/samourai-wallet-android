@@ -1,18 +1,13 @@
 package com.samourai.wallet.widgets;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Vibrator;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;

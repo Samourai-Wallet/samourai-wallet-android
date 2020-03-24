@@ -5,13 +5,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -321,15 +321,15 @@ public class NewPoolActivity extends AppCompatActivity {
             }
 
             com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById(selectedPoolViewModel.getPoolId());
-            Tx0Config tx0Config;
+            Tx0Config tx0Config = whirlpoolWallet.getTx0Config(pool);
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
+                tx0Config.setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
             } else {
-                tx0Config = whirlpoolWallet.getTx0Config().setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
+                tx0Config.setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
             }
             Tx0 tx0 = null;
             try {
-                tx0 = whirlpoolWallet.tx0(pool, spendFroms, tx0Config, tx0FeeTarget);
+                tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, tx0FeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
                 if (tx0.getChangeOutput() != null) {
@@ -456,7 +456,7 @@ public class NewPoolActivity extends AppCompatActivity {
     public void onBackPressed() {
         switch (newPoolViewPager.getCurrentItem()) {
             case 0: {
-                new android.support.v7.app.AlertDialog
+                new androidx.appcompat.app.AlertDialog
                         .Builder(this)
                         .setMessage("Are you sure want to cancel?")
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())
@@ -467,7 +467,7 @@ public class NewPoolActivity extends AppCompatActivity {
             }
             case 1: {
                 if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                    new android.support.v7.app.AlertDialog
+                    new androidx.appcompat.app.AlertDialog
                             .Builder(this)
                             .setMessage("Are you sure want to cancel?")
                             .setPositiveButton(R.string.yes, (dialogInterface, i) -> super.onBackPressed())

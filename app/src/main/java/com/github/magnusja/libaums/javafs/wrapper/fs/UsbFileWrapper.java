@@ -1,7 +1,5 @@
 package com.github.magnusja.libaums.javafs.wrapper.fs;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.mjdev.libaums.fs.AbstractUsbFile;

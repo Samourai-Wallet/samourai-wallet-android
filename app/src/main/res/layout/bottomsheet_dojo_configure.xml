@@ -13,7 +13,7 @@
     android:fitsSystemWindows="true">
 
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
@@ -138,7 +138,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView43"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <android.support.constraint.Group
+            <androidx.constraintlayout.widget.Group
                 android:id="@+id/dojo_btn_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/dojo_connect_progress"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <android.support.constraint.Group
+            <androidx.constraintlayout.widget.Group
                 android:id="@+id/dojo_progress_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -181,7 +181,7 @@
                 app:constraint_referenced_ids="dojo_progress_status_text,dojo_connect_progress" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 </ScrollView>
