@@ -112,12 +112,12 @@ public class WebSocketHandler {
 
                 Looper.prepare();
 
-                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
-                intent.putExtra("rbf", rbfHash);
-                intent.putExtra("notifTx", true);
-                intent.putExtra("fetch", true);
-                intent.putExtra("hash", blkHash);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//                Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+//                intent.putExtra("rbf", rbfHash);
+//                intent.putExtra("notifTx", true);
+//                intent.putExtra("fetch", true);
+//                intent.putExtra("hash", blkHash);
+//                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 Looper.loop();
 

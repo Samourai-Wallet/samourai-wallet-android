@@ -385,6 +385,9 @@ public class PayNymHome extends AppCompatActivity {
 
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
+        if(_pcodes.size() == 0){
+            return;
+        }
         //
         // check for own payment code
         //

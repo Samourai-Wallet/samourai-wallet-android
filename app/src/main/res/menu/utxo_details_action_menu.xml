@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/utxo_details_action_whirlpool"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_whirlpool"
+        app:showAsAction="always"
+        android:title="" />
+
+    <item android:id="@+id/utxo_details_action_send"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_send"
+        app:showAsAction="always"
+        android:title="" />
+
+    <item android:id="@+id/utxo_details_action_spendable"
+        android:orderInCategory="100"
+        android:title="Mark as Spendable" />
+
+    <item android:id="@+id/utxo_details_action_do_not_spend"
+        android:orderInCategory="100"
+        android:title="Mark as do not spend" />
+
+
+</menu>

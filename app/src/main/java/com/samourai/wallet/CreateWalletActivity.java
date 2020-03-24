@@ -392,10 +392,8 @@ public class CreateWalletActivity extends FragmentActivity implements
                             ;
                         }
 
-                        for (int i = 0; i < 2; i++) {
-                            AddressFactory.getInstance().account2xpub().put(i, HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(i).xpubstr());
-                            AddressFactory.getInstance().xpub2account().put(HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(i).xpubstr(), i);
-                        }
+                        AddressFactory.getInstance().account2xpub().put(0, HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(0).xpubstr());
+                        AddressFactory.getInstance().xpub2account().put(HD_WalletFactory.getInstance(CreateWalletActivity.this).get().getAccount(0).xpubstr(), 0);
 
                         //
                         // backup wallet for alpha

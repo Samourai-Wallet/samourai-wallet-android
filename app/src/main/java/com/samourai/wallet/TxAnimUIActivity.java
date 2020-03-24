@@ -438,6 +438,9 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     public void run() {
                         Intent _intent = new Intent(TxAnimUIActivity.this, BalanceActivity.class);
                         _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        if(SendParams.getInstance().getAccount() != 0) {
+                            _intent.putExtra("_account", SendParams.getInstance().getAccount());
+                        }
                         startActivity(_intent);
                     }
 

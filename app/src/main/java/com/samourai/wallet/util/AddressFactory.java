@@ -41,6 +41,8 @@ public class AddressFactory {
     private static int highestPreChangeIdx = 0;
     private static int highestPostReceiveIdx = 0;
     private static int highestPostChangeIdx = 0;
+    private static int highestBadBankReceiveIdx = 0;
+    private static int highestBadBankChangeIdx = 0;
 
     private static HashMap<String,Integer> xpub2account = null;
     private static HashMap<Integer,String> account2xpub = null;
@@ -334,6 +336,22 @@ public class AddressFactory {
 
     public void setHighestPostChangeIdx(int idx) {
         highestPostChangeIdx = idx;
+    }
+
+    public int getHighestBadBankReceiveIdx() {
+        return highestBadBankReceiveIdx;
+    }
+
+    public void setHighestBadBankReceiveIdx(int idx) {
+        highestBadBankReceiveIdx = idx;
+    }
+
+    public int getHighestBadBankChangeIdx() {
+        return highestBadBankChangeIdx;
+    }
+
+    public void setHighestBadBankChangeIdx(int idx) {
+        highestBadBankChangeIdx = idx;
     }
 
     public boolean canIncReceiveAddress(int account, int idx) {

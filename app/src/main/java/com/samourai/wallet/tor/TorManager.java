@@ -139,7 +139,7 @@ public class TorManager {
     }
 
     public boolean isRequired() {
-        Log.i(TAG, "isRequired: ".concat(String.valueOf(PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false))));
+        Log.v(TAG, "isRequired: ".concat(String.valueOf(PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false))));
         return PrefsUtil.getInstance(context).getValue(PrefsUtil.ENABLE_TOR, false);
     }
 

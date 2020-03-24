@@ -22,11 +22,25 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.send.FeeUtil;
+import com.samourai.wallet.send.SuggestedFee;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.adapters.PoolsAdapter;
-import com.samourai.wallet.whirlpool.models.Pool;
 import com.samourai.wallet.whirlpool.models.PoolCyclePriority;
+import com.samourai.wallet.whirlpool.models.PoolViewModel;
+import com.samourai.wallet.whirlpool.newPool.NewPoolActivity;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import java8.util.Optional;
 
 
 public class SelectPoolFragment extends Fragment {
@@ -35,12 +49,15 @@ public class SelectPoolFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PoolsAdapter poolsAdapter;
-    private ArrayList<Pool> pools = new ArrayList<Pool>();
+    private ArrayList<PoolViewModel> poolViewModels = new ArrayList<PoolViewModel>();
     private Button feeNormalBtn, feeLowBtn, feeHighBtn;
     private TextView poolFee;
     private PoolCyclePriority poolCyclePriority = PoolCyclePriority.NORMAL;
     private OnPoolSelectionComplete onPoolSelectionComplete;
     private ArrayList<Long> fees = new ArrayList<>();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Long tx0Amount = 0L;
+    private List<UTXOCoin> coins = new ArrayList<>();
 
     public SelectPoolFragment() {
     }
@@ -60,11 +77,8 @@ public class SelectPoolFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new SeparatorDecoration(getContext(), ContextCompat.getColor(getContext(), R.color.item_separator_grey), 1));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        poolsAdapter = new PoolsAdapter(getContext(), pools);
+        poolsAdapter = new PoolsAdapter(getContext(), poolViewModels);
         recyclerView.setAdapter(poolsAdapter);
-
-        loadPools();
-
         poolFee = view.findViewById(R.id.pool_fee_txt);
         feeLowBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.LOW));
         feeHighBtn.setOnClickListener(view1 -> setPoolCyclePriority(PoolCyclePriority.HIGH));
@@ -74,21 +88,21 @@ public class SelectPoolFragment extends Fragment {
             poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
 
         poolsAdapter.setOnItemsSelectListener(position -> {
-            for (int i = 0; i < pools.size(); i++) {
+            for (int i = 0; i < poolViewModels.size(); i++) {
                 if (i == position) {
-                    boolean selected = !pools.get(position).isSelected();
-                    pools.get(i).setSelected(selected);
+                    boolean selected = !poolViewModels.get(position).isSelected();
+                    poolViewModels.get(i).setSelected(selected);
                     if (selected && this.onPoolSelectionComplete != null) {
-                        onPoolSelectionComplete.onSelect(pools.get(i), poolCyclePriority);
+                        onPoolSelectionComplete.onSelect(poolViewModels.get(i), poolCyclePriority);
                     } else {
                         if (onPoolSelectionComplete != null)
                             onPoolSelectionComplete.onSelect(null, poolCyclePriority);
                     }
                 } else {
-                    pools.get(i).setSelected(false);
+                    poolViewModels.get(i).setSelected(false);
                 }
             }
-            poolsAdapter.update(pools);
+            poolsAdapter.update(poolViewModels);
         });
     }
 
@@ -97,24 +111,49 @@ public class SelectPoolFragment extends Fragment {
     }
 
     private void loadPools() {
-        Pool pool1 = new Pool();
-        pool1.setPoolAmount(1000000);
-        pool1.setMinerFee(250000);
-        pool1.setTotalFee(348450);
-        pools.add(pool1);
 
-        Pool pool2 = new Pool();
-        pool2.setPoolAmount(5000000);
-        pool2.setMinerFee(250000);
-        pool2.setTotalFee(348450);
-        pools.add(pool2);
+        poolViewModels.clear();
+        this.tx0Amount = NewPoolActivity.getCycleTotalAmount(coins);
+        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
+        if (!whirlpoolWalletOpt.isPresent()) {
+            return;
+        }
+        if (poolsAdapter == null) {
+            poolsAdapter = new PoolsAdapter(getContext(), poolViewModels);
+        }
+        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
+        Disposable disposable = Single.fromCallable(whirlpoolWallet::getPools)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((whirlpoolPools) -> {
 
-        Pool pool3 = new Pool();
-        pool3.setPoolAmount(10000000);
-        pool3.setMinerFee(250000);
-        pool3.setTotalFee(348450);
-        pools.add(pool3);
-        poolsAdapter.notifyDataSetChanged();
+                    for (com.samourai.whirlpool.client.whirlpool.beans.Pool whirlpoolPool : whirlpoolPools) {
+                        PoolViewModel poolViewModel = new PoolViewModel(whirlpoolPool);
+                        Long fee = fees.get(1); ;
+                        switch (this.poolCyclePriority) {
+                            case HIGH:
+                                fee = fees.get(2);
+                                break;
+                            case NORMAL:
+                                fee = fees.get(1);
+                                break;
+                            case LOW: {
+                                fee = fees.get(0);
+                                break;
+                            }
+                        }
+
+                        poolViewModel.setMinerFee(fee,this.coins);
+                        poolViewModels.add(poolViewModel);
+                        if (poolViewModel.getDenomination() + poolViewModel.getFeeValue() + poolViewModel.getMinerFee() > this.tx0Amount) {
+                            poolViewModel.setDisabled(true);
+                        } else {
+                            poolViewModel.setDisabled(false);
+                        }
+                    }
+                    poolsAdapter.notifyDataSetChanged();
+                }, Throwable::printStackTrace);
+        compositeDisposable.add(disposable);
     }
 
 
@@ -124,8 +163,14 @@ public class SelectPoolFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_choose_pools, container, false);
     }
 
+    @Override
+    public void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
+    }
 
     private void setPoolCyclePriority(PoolCyclePriority poolCyclePriority) {
+        this.poolCyclePriority = poolCyclePriority;
 
         switch (poolCyclePriority) {
             case LOW: {
@@ -134,6 +179,8 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_blue);
                 if (fees.size() >= 1)
                     poolFee.setText(String.valueOf(fees.get(0)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 1)
+                    loadPools();
                 break;
             }
             case NORMAL: {
@@ -142,6 +189,8 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(1)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 2)
+                    loadPools();
                 break;
             }
 
@@ -151,12 +200,13 @@ public class SelectPoolFragment extends Fragment {
                 feeLowBtn.setBackgroundResource(R.drawable.whirlpool_btn_inactive);
                 if (fees.size() >= 2)
                     poolFee.setText(String.valueOf(fees.get(2)).concat(" ").concat(getString(R.string.sat_b)));
+                if (fees.size() >= 2)
+                    loadPools();
                 break;
             }
 
 
         }
-        this.poolCyclePriority = poolCyclePriority;
     }
 
 
@@ -166,8 +216,13 @@ public class SelectPoolFragment extends Fragment {
         super.onDetach();
     }
 
+    public void setTX0(List<UTXOCoin> coins) {
+        this.coins = coins;
+        loadPools();
+    }
+
     public interface OnPoolSelectionComplete {
-        void onSelect(Pool pool, PoolCyclePriority priority);
+        void onSelect(PoolViewModel poolViewModel, PoolCyclePriority priority);
     }
 
 

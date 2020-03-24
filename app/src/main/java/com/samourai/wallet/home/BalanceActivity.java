@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,69 +25,63 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.crypto.BIP38PrivateKey;
-import org.bitcoinj.crypto.MnemonicException;
-import org.bitcoinj.script.Script;
-
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.samourai.wallet.ExodusActivity;
 import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.PoW;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
+import com.samourai.wallet.SamouraiActivity;
 import com.samourai.wallet.SamouraiWallet;
-import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.SettingsActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
-import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
-import com.samourai.wallet.utxos.UTXOSActivity;
-import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.wallet.widgets.ItemDividerDecorator;
 import com.samourai.wallet.home.adapters.TxAdapter;
 import com.samourai.wallet.network.NetworkDashboard;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.paynym.PayNymHome;
 import com.samourai.wallet.permissions.PermissionsUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.bech32.Bech32Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
+import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.send.SweepUtil;
 import com.samourai.wallet.send.UTXO;
-import com.samourai.wallet.service.RefreshService;
+import com.samourai.wallet.send.cahoots.ManualCahootsActivity;
+import com.samourai.wallet.service.JobRefreshService;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.tor.TorService;
@@ -99,14 +94,23 @@ import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.PrivKeyReader;
 import com.samourai.wallet.util.TimeOutUtil;
+import com.samourai.wallet.utxos.UTXOSActivity;
+import com.samourai.wallet.whirlpool.WhirlpoolMain;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
+import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.BIP38PrivateKey;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.script.Script;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.bouncycastle.util.encoders.Hex;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -118,15 +122,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class BalanceActivity extends AppCompatActivity {
+public class BalanceActivity extends SamouraiActivity {
 
     private final static int SCAN_COLD_STORAGE = 2011;
     private final static int SCAN_QR = 2012;
+    private final static int UTXO_REQUESTCODE = 2012;
     private static final String TAG = "BalanceActivity";
 
 
@@ -145,6 +151,7 @@ public class BalanceActivity extends AppCompatActivity {
     private Menu menu;
     private ImageView menuTorIcon;
     private ProgressBar progressBarMenu;
+    private View whirlpoolFab, sendFab, receiveFab, paynymFab;
 
     public static final String ACTION_INTENT = "com.samourai.wallet.BalanceFragment.REFRESH";
     protected BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -229,7 +236,6 @@ public class BalanceActivity extends AppCompatActivity {
             if (DISPLAY_INTENT.equals(intent.getAction())) {
 
                 updateDisplay(true);
-
                 List<UTXO> utxos = APIFactory.getInstance(BalanceActivity.this).getUtxos(false);
                 for (UTXO utxo : utxos) {
                     List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
@@ -310,9 +316,12 @@ public class BalanceActivity extends AppCompatActivity {
     };
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
+
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -327,15 +336,40 @@ public class BalanceActivity extends AppCompatActivity {
         Drawable drawable = this.getResources().getDrawable(R.drawable.divider);
         TxRecyclerView.addItemDecoration(new ItemDividerDecorator(drawable));
         menuFab = findViewById(R.id.fab_menu);
+        txs = new ArrayList<>();
+        whirlpoolFab = findViewById(R.id.whirlpool_fab);
+        sendFab =  findViewById(R.id.send_fab);
+        receiveFab =  findViewById(R.id.receive_fab);
+        paynymFab =  findViewById(R.id.paynym_fab);
 
-        findViewById(R.id.send_fab).setOnClickListener(view -> {
-            Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-            intent.putExtra("via_menu", true);
+        findViewById(R.id.whirlpool_fab).setOnClickListener(view -> {
+            Intent intent = new Intent(BalanceActivity.this, WhirlpoolMain.class);
             startActivity(intent);
             menuFab.toggle(true);
         });
-        setBalance(0L, false);
-        findViewById(R.id.receive_fab).setOnClickListener(view -> {
+
+        sendFab.setOnClickListener(view -> {
+            Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+            intent.putExtra("via_menu", true);
+            intent.putExtra("_account", account);
+            startActivity(intent);
+            menuFab.toggle(true);
+        });
+
+        JSONObject payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        if(account == 0 && payload != null && payload.has("prev_balance"))    {
+            try    {
+                setBalance(payload.getLong("prev_balance"), false);
+            }
+            catch(Exception e)    {
+                setBalance(0L, false);
+            }
+        }
+        else    {
+            setBalance(0L, false);
+        }
+
+        receiveFab.setOnClickListener(view -> {
             menuFab.toggle(true);
 
             try {
@@ -350,12 +384,11 @@ public class BalanceActivity extends AppCompatActivity {
             } catch (IOException | MnemonicException.MnemonicLengthException e) {
             }
         });
-        findViewById(R.id.paynym_fab).setOnClickListener(view -> {
+        paynymFab.setOnClickListener(view -> {
             menuFab.toggle(true);
             Intent intent = new Intent(BalanceActivity.this, PayNymHome.class);
             startActivity(intent);
         });
-        getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
         txSwipeLayout.setOnRefreshListener(() -> {
             refreshTx(false, true, false);
             txSwipeLayout.setRefreshing(false);
@@ -394,27 +427,67 @@ public class BalanceActivity extends AppCompatActivity {
         }
 
 
-        final Handler delayedHandler = new Handler();
-        delayedHandler.postDelayed(() -> {
-
-            boolean notifTx = false;
-            Bundle extras = getIntent().getExtras();
-            if (extras != null && extras.containsKey("notifTx")) {
-                notifTx = extras.getBoolean("notifTx");
-            }
-
-            refreshTx(notifTx, false, true);
-
-            updateDisplay(false);
-        }, 100L);
-
         if (!AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
             startService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
         }
         setUpTor();
         initViewModel();
-        updateDisplay(false);
         progressBar.setVisibility(View.VISIBLE);
+
+        if (account == 0) {
+            final Handler delayedHandler = new Handler();
+            delayedHandler.postDelayed(() -> {
+
+                boolean notifTx = false;
+                Bundle extras = getIntent().getExtras();
+                if (extras != null && extras.containsKey("notifTx")) {
+                    notifTx = extras.getBoolean("notifTx");
+                }
+
+                refreshTx(notifTx, false, true);
+
+                updateDisplay(false);
+            }, 100L);
+
+            getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
+
+            balanceViewModel.loadOfflineData();
+        }
+        else {
+            getSupportActionBar().setIcon(R.drawable.ic_whirlpool);
+
+            receiveFab.setVisibility(View.GONE);
+            whirlpoolFab.setVisibility(View.GONE);
+            paynymFab.setVisibility(View.GONE);
+            new Handler().postDelayed(() -> updateDisplay(true), 600L);
+        }
+
+        boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
+        String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
+        toolbar.setLogoDescription(contentDescription);
+        ArrayList<View> potentialViews = new ArrayList<View>();
+        toolbar.findViewsWithText(potentialViews,contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        View logoView = null;
+        if(potentialViews.size() > 0){
+            logoView = potentialViews.get(0);
+            if (account == 0) {
+                logoView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        Intent _intent = new Intent(BalanceActivity.this, BalanceActivity.class);
+                        _intent.putExtra("_account", WhirlpoolMeta.getInstance(BalanceActivity.this).getWhirlpoolPostmix());
+                        startActivity(_intent);
+                    } });
+            } else {
+                logoView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        Intent _intent = new Intent(BalanceActivity.this, BalanceActivity.class);
+                        _intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(_intent);
+                    } });
+            }
+        }
+
+        updateDisplay(false);
         checkDeepLinks();
     }
 
@@ -427,6 +500,7 @@ public class BalanceActivity extends AppCompatActivity {
             if (balanceViewModel.getBalance().getValue() != null)
                 bundle.putLong("balance", balanceViewModel.getBalance().getValue());
             Intent intent = new Intent(this, SendActivity.class);
+            intent.putExtra("_account",account);
             intent.putExtras(bundle);
             startActivity(intent);
         }
@@ -440,14 +514,14 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>());
+        TxAdapter adapter = new TxAdapter(getApplicationContext(), new ArrayList<>(), account);
         adapter.setHasStableIds(true);
-        adapter.setClickListner((position, tx) -> txDetails(tx));
+        adapter.setClickListener((position, tx) -> txDetails(tx));
 
         TxRecyclerView.setAdapter(adapter);
 
         balanceViewModel.getBalance().observe(this, balance -> {
-            if(balance<0){
+            if (balance < 0) {
                 return;
             }
             if (balanceViewModel.getSatState().getValue() != null) {
@@ -507,10 +581,25 @@ public class BalanceActivity extends AppCompatActivity {
 //        LocalBroadcastManager.getInstance(BalanceActivity.this).registerReceiver(receiver, filter);
 
         AppUtil.getInstance(BalanceActivity.this).checkTimeOut();
+//
+//        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
+//        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
 
-        Intent intent = new Intent("com.samourai.wallet.MainActivity2.RESTART_SERVICE");
-        LocalBroadcastManager.getInstance(BalanceActivity.this).sendBroadcast(intent);
+    }
 
+    public View createTag(String text){
+        float scale = getResources().getDisplayMetrics().density;
+        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView textView = new TextView(getApplicationContext());
+        textView.setText(text);
+        textView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+        textView.setLayoutParams(lparams);
+        textView.setBackgroundResource(R.drawable.tag_round_shape);
+        textView.setPadding((int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f));
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        return textView;
     }
 
     @Override
@@ -556,8 +645,10 @@ public class BalanceActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(BalanceActivity.this).unregisterReceiver(receiverDisplay);
 
-        if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
-            stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+        if(account == 0) {
+            if (AppUtil.getInstance(BalanceActivity.this.getApplicationContext()).isServiceRunning(WebSocketService.class)) {
+                stopService(new Intent(BalanceActivity.this.getApplicationContext(), WebSocketService.class));
+            }
         }
 
         super.onDestroy();
@@ -578,6 +669,21 @@ public class BalanceActivity extends AppCompatActivity {
         menu.findItem(R.id.action_sign).setVisible(false);
         menu.findItem(R.id.action_fees).setVisible(false);
         menu.findItem(R.id.action_batch).setVisible(false);
+
+        WhirlpoolMeta.getInstance(getApplicationContext());
+        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+
+            menu.findItem(R.id.action_sweep).setVisible(false);
+            menu.findItem(R.id.action_backup).setVisible(false);
+            menu.findItem(R.id.action_postmix).setVisible(false);
+
+            menu.findItem(R.id.action_network_dashboard).setVisible(false);
+            MenuItem item = menu.findItem(R.id.action_menu_account);
+            item.setActionView(createTag(" POST-MIX "));
+            item.setVisible(true);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        }
         this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
@@ -590,22 +696,31 @@ public class BalanceActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if(id == android.R.id.home){
+            this.finish();
+            return super.onOptionsItemSelected(item);
+        }
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_network_dashboard) {
             startActivity(new Intent(this, NetworkDashboard.class));
         }    // noinspection SimplifiableIfStatement
         if (id == R.id.action_copy_cahoots) {
             ClipboardManager clipboard = (ClipboardManager)  getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+            if(clipboard.hasPrimaryClip())    {
+                ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
 
-            if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
-                Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
-                startActivity(cahootIntent);
-            }else {
-                Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                if(Cahoots.isCahoots(clipItem.getText().toString().trim())){
+                    Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
+                    cahootIntent.putExtra("payload",clipItem.getText().toString().trim());
+                    cahootIntent.putExtra("account",account);
+                    startActivity(cahootIntent);
+                }else {
+                    Toast.makeText(this,R.string.cannot_process_cahoots,Toast.LENGTH_SHORT).show();
+                }
             }
-
+            else    {
+                Toast.makeText(this,R.string.clipboard_empty,Toast.LENGTH_SHORT).show();
+            }
         }
         if (id == R.id.action_settings) {
             doSettings();
@@ -719,7 +834,8 @@ public class BalanceActivity extends AppCompatActivity {
                         doPrivKey(strResult.trim());
                     } else if (Cahoots.isCahoots(strResult.trim())) {
                         Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                        cahootIntent.putExtra("payload",strResult.trim());
+                        cahootIntent.putExtra("_account", account);
+                        cahootIntent.putExtra("payload", strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
@@ -732,13 +848,16 @@ public class BalanceActivity extends AppCompatActivity {
                     } else {
                         Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                         intent.putExtra("uri", strResult.trim());
+                        intent.putExtra("_account", account);
                         startActivity(intent);
                     }
                 } catch (Exception e) {
                 }
 
             }
-        } else if (resultCode == Activity.RESULT_CANCELED && requestCode == SCAN_QR) {
+        }if (resultCode == Activity.RESULT_OK && requestCode == UTXO_REQUESTCODE) {
+            refreshTx(false,false,false);
+            progressBar.setVisibility(View.VISIBLE);
         } else {
             ;
         }
@@ -747,12 +866,13 @@ public class BalanceActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public void onBackPressed() {
 
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+        if (account == 0) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.ask_you_sure_exit).setCancelable(false);
+            builder.setMessage(R.string.ask_you_sure_exit);
             AlertDialog alert = builder.create();
 
             alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), (dialog, id) -> {
@@ -765,75 +885,100 @@ public class BalanceActivity extends AppCompatActivity {
                 } catch (DecryptionException de) {
                 }
 
+                // disconnect Whirlpool on app back key exit
+                WhirlpoolNotificationService.stopService(getApplicationContext());
+
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);
                     startIntent.setAction(TorService.STOP_SERVICE);
-                    startIntent.putExtra("KILL_TOR",true);
+                    startIntent.putExtra("KILL_TOR", true);
                     startService(startIntent);
                 }
-                Intent intent = new Intent(BalanceActivity.this, ExodusActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                BalanceActivity.this.startActivity(intent);
-
+                TimeOutUtil.getInstance().reset();
+                finishAffinity();
+                finish();
+                super.onBackPressed();
             });
 
-            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
+            alert.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), (dialog, id) -> dialog.dismiss());
+            alert.show();
 
-            if (!isFinishing()) {
-                alert.show();
-            }
-
-            return true;
         } else {
+            super.onBackPressed();
         }
-
-        return false;
     }
 
     private void updateDisplay(boolean fromRefreshService) {
-        txs = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
-
-        long balance = 0L;
-
-        try {
-            balance = APIFactory.getInstance(BalanceActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(BalanceActivity.this).get().getAccount(0).xpubstr());
-        } catch (IOException ioe) {
-        } catch (MnemonicException.MnemonicLengthException mle) {
-        } catch (NullPointerException npe) {
-        }
-        if (balanceViewModel.getBalance().getValue() != null) {
-            if (balance != 0L) {
-                balanceViewModel.setBalance(balance);
-            }
-        } else {
-            balanceViewModel.setBalance(balance);
-        }
-        if (txs.size() != 0) {
-            balanceViewModel.setTx(txs);
-        } else {
-            if (balanceViewModel.getTxs().getValue() != null && balanceViewModel.getTxs().getValue().size() == 0) {
-                balanceViewModel.setTx(txs);
-            }
-        }
+        Disposable txDisposable = loadTxes(account)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((txes, throwable) -> {
+                    if (throwable != null)
+                        throwable.printStackTrace();
 
 
-        if (progressBar.getVisibility() == View.VISIBLE && fromRefreshService) {
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-        if (txs != null) {
-            Collections.sort(txs, new APIFactory.TxMostRecentDateComparator());
-        }
+                    if (txes != null) {
+                        if (txes.size() != 0) {
+                            balanceViewModel.setTx(txes);
+                        } else {
+                            if (balanceViewModel.getTxs().getValue() != null && balanceViewModel.getTxs().getValue().size() == 0) {
+                                balanceViewModel.setTx(txes);
+                            }
+                        }
 
+                        Collections.sort(txes, new APIFactory.TxMostRecentDateComparator());
+                        txs.clear();
+                        txs.addAll(txes);
+                    }
+
+                    if (progressBar.getVisibility() == View.VISIBLE && fromRefreshService) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+        Disposable balanceDisposable = loadBalance(account)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((balance, throwable) -> {
+                    if (throwable != null)
+                        throwable.printStackTrace();
+
+                    if (balanceViewModel.getBalance().getValue() != null) {
+                            balanceViewModel.setBalance(balance);
+                    } else {
+                        balanceViewModel.setBalance(balance);
+                    }
+                });
+        compositeDisposable.add(balanceDisposable);
+        compositeDisposable.add(txDisposable);
 //        displayBalance();
 //        txAdapter.notifyDataSetChanged();
 
 
+    }
+
+    private Single<List<Tx>> loadTxes(int account) {
+        return Single.fromCallable(() -> {
+            List<Tx> loadedTxes = new ArrayList<>();
+            if (account == 0) {
+                loadedTxes = APIFactory.getInstance(BalanceActivity.this).getAllXpubTxs();
+            } else if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                loadedTxes = APIFactory.getInstance(BalanceActivity.this).getAllPostMixTxs();
+            }
+            return loadedTxes;
+        });
+    }
+
+    private Single<Long> loadBalance(int account) {
+        return Single.fromCallable(() -> {
+            long loadedBalance = 0L;
+            if (account == 0) {
+                loadedBalance = APIFactory.getInstance(BalanceActivity.this).getXpubBalance();
+            } else if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+                loadedBalance = APIFactory.getInstance(BalanceActivity.this).getXpubPostMixBalance();
+            }
+            return loadedBalance;
+        });
     }
 
     private void doClaimPayNym() {
@@ -848,19 +993,20 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void doSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://samourai.kayako.com/"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/"));
         startActivity(intent);
     }
 
     private void doUTXO() {
         Intent intent = new Intent(BalanceActivity.this, UTXOSActivity.class);
-        startActivity(intent);
+        intent.putExtra("_account", account);
+        startActivityForResult(intent,UTXO_REQUESTCODE);
     }
 
     private void doScan() {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
 
         cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
@@ -870,7 +1016,8 @@ public class BalanceActivity extends AppCompatActivity {
                     doPrivKey(code.trim());
                 } else if (Cahoots.isCahoots(code.trim())) {
                     Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
-                    cahootIntent.putExtra("payload",code.trim());
+                    cahootIntent.putExtra("payload", code.trim());
+                    cahootIntent.putExtra("_account", account);
                     startActivity(cahootIntent);
 //                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
 
@@ -883,6 +1030,7 @@ public class BalanceActivity extends AppCompatActivity {
                 } else {
                     Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
                     intent.putExtra("uri", code.trim());
+                    intent.putExtra("_account", account);
                     startActivity(intent);
                 }
             } catch (Exception e) {
@@ -893,27 +1041,29 @@ public class BalanceActivity extends AppCompatActivity {
     private void doSweepViaScan() {
 
         CameraFragmentBottomSheet cameraFragmentBottomSheet = new CameraFragmentBottomSheet();
-        cameraFragmentBottomSheet.show(getSupportFragmentManager(),cameraFragmentBottomSheet.getTag());
+        cameraFragmentBottomSheet.show(getSupportFragmentManager(), cameraFragmentBottomSheet.getTag());
         cameraFragmentBottomSheet.setQrCodeScanLisenter(code -> {
             cameraFragmentBottomSheet.dismissAllowingStateLoss();
             PrivKeyReader privKeyReader = new PrivKeyReader(new CharSequenceX(code.trim()));
             try {
-                    if (privKeyReader.getFormat() != null) {
+                if (privKeyReader.getFormat() != null) {
                         doPrivKey(code.trim());
                     } else if (Cahoots.isCahoots(code.trim())) {
                         Intent cahootIntent = new Intent(this, ManualCahootsActivity.class);
                         cahootIntent.putExtra("payload",code.trim());
+                        cahootIntent.putExtra("_account",account);
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
                         CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
-                    } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
-                        Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
-                        intent.putExtra("uri", code.trim());
-                        startActivity(intent);
-                    }
-                } catch (Exception e) {
+                } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
+                    Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(BalanceActivity.this, SendActivity.class);
+                    intent.putExtra("uri", code.trim());
+                    intent.putExtra("_account", account);
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
             }
         });
     }
@@ -1195,15 +1345,19 @@ public class BalanceActivity extends AppCompatActivity {
             */
         }
 
-        Intent intent = new Intent(BalanceActivity.this, RefreshService.class);
+
+        Intent intent = new Intent(this, JobRefreshService.class);
         intent.putExtra("notifTx", notifTx);
         intent.putExtra("dragged", dragged);
         intent.putExtra("launch", launch);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
+        JobRefreshService.enqueueWork(getApplicationContext(), intent);
+//
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(intent);
+//        } else {
+//            startService(intent);
+//        }
 
     }
 
@@ -1250,7 +1404,9 @@ public class BalanceActivity extends AppCompatActivity {
     }
 
     private void txDetails(Tx tx) {
-
+        if(account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix() && tx.getAmount() == 0){
+            return;
+        }
         Intent txIntent = new Intent(this, TxDetailsActivity.class);
         txIntent.putExtra("TX", tx.toJSON().toString());
         startActivity(txIntent);

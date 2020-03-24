@@ -209,14 +209,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                Preference cahootsPref = (Preference) findPreference("cahoots");
-                cahootsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        doCahoots();
-                        return true;
-                    }
-                });
-
                 Preference psbtPref = (Preference) findPreference("psbt");
                 psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -524,6 +516,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 zpubPostPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolPostmix());
+                        return true;
+                    }
+                });
+
+                Preference zpubBadBankPref = (Preference) findPreference("zpub_badbank");
+                zpubBadBankPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        getXPUB(84, WhirlpoolMeta.getInstance(SettingsActivity2.this).getWhirlpoolBadBank());
                         return true;
                     }
                 });
@@ -1654,54 +1654,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         ;
-                    }
-                });
-        if(!isFinishing())    {
-            dlg.show();
-        }
-
-    }
-
-    private void doCahoots()    {
-
-        final EditText edCahoots = new EditText(SettingsActivity2.this);
-        edCahoots.setSingleLine(false);
-        edCahoots.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        edCahoots.setLines(10);
-        edCahoots.setHint(R.string.cahoots);
-        edCahoots.setGravity(Gravity.START);
-        TextWatcher textWatcher = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                edCahoots.setSelection(0);
-            }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                ;
-            }
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ;
-            }
-        };
-        edCahoots.addTextChangedListener(textWatcher);
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.app_name)
-                .setView(edCahoots)
-                .setMessage(R.string.enter_cahoots)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        dialog.dismiss();
-
-                        final String strCahoots = edCahoots.getText().toString().trim();
-
-                        CahootsUtil.getInstance(SettingsActivity2.this).processCahoots(strCahoots, 0);
-
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
                     }
                 });
         if(!isFinishing())    {

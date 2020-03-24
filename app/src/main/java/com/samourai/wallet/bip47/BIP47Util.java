@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.bip47.rpc.AndroidSecretPointFactory;
 import com.samourai.wallet.bip47.rpc.BIP47Wallet;
 import com.samourai.wallet.bip47.rpc.NotSecp256k1Exception;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -56,14 +57,8 @@ public class BIP47Util extends BIP47UtilGeneric {
     }
 
     private BIP47Util() {
-        super(secretPointFactory);
+        super(AndroidSecretPointFactory.getInstance());
     }
-    private static final ISecretPointFactory secretPointFactory = new ISecretPointFactory() {
-        @Override
-        public ISecretPoint newSecretPoint(byte[] dataPrv, byte[] dataPub) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, InvalidKeyException {
-            return new SecretPoint(dataPrv, dataPub);
-        }
-    };
     
     private NetworkParameters getNetworkParams() {
         return SamouraiWallet.getInstance().getCurrentNetworkParams();

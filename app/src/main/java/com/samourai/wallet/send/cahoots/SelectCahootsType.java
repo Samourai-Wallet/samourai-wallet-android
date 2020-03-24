@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,7 @@ public class SelectCahootsType extends BottomSheetDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        android.view.ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.ui_2_theme); // your app theme here
+        android.view.ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.SamouraiAppTheme); // your app theme here
         return inflater.cloneInContext(contextThemeWrapper).inflate(R.layout.fragment_choose_cahoots_type, container, false);
     }
 

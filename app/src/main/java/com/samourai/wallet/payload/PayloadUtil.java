@@ -37,7 +37,8 @@ import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
-import com.samourai.wallet.util.UTXOUtil;
+import com.samourai.wallet.utxos.UTXOUtil;
+import com.samourai.wallet.whirlpool.Tx0DisplayUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.apache.commons.codec.DecoderException;
@@ -49,6 +50,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 
 import org.bitcoinj.params.TestNet3Params;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,8 +84,12 @@ public class PayloadUtil	{
     private final static String strUTXOFilename = "samourai.utxo";
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
+    private final static String strMultiAddrPreFilename = "samourai.multi.pre";
     private final static String strMultiAddrPostFilename = "samourai.multi.post";
+    private final static String strMultiAddrBadBankFilename = "samourai.multi.badbank";
+    private final static String strUTXOPreFilename = "samourai.utxo.pre";
     private final static String strUTXOPostFilename = "samourai.utxo.post";
+    private final static String strUTXOBadBankFilename = "samourai.utxo.badbank";
 
     private final static String strOptionalBackupDir = "/samourai";
     private final static String strOptionalFilename = "samourai.txt";
@@ -152,9 +158,21 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeMultiAddrPre(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPreFilename);
+        }
+    }
+
     public void serializeMultiAddrPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
         if(!AppUtil.getInstance(context).isOfflineMode())    {
             serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
+        }
+    }
+
+    public void serializeMultiAddrBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+            serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
         }
     }
 
@@ -180,6 +198,18 @@ public class PayloadUtil	{
         }
     }
 
+    public void serializeUTXOPre(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPreFilename);
+            }
+        }
+    }
+
     public void serializeUTXOPost(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
 
         if(!AppUtil.getInstance(context).isOfflineMode())    {
@@ -188,6 +218,18 @@ public class PayloadUtil	{
                 JSONObject utxoObj = new JSONObject();
                 utxoObj.put("unspent_outputs", obj);
                 serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+            }
+        }
+    }
+
+    public void serializeUTXOBadBank(JSONObject obj)  throws IOException, JSONException, DecryptionException, UnsupportedEncodingException    {
+
+        if(!AppUtil.getInstance(context).isOfflineMode())    {
+
+            if(obj != null) {
+                JSONObject utxoObj = new JSONObject();
+                utxoObj.put("unspent_outputs", obj);
+                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
             }
         }
     }
@@ -216,8 +258,16 @@ public class PayloadUtil	{
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
     }
 
+    public JSONObject deserializeMultiAddrBadBank()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+    }
+
     public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+    }
+
+    public JSONObject deserializeUTXOBadBank()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
     }
 
     public JSONObject deserializeFees()  throws IOException, JSONException  {
@@ -265,6 +315,8 @@ public class PayloadUtil	{
             AddressFactory.getInstance().setHighestPreChangeIdx(0);
             AddressFactory.getInstance().setHighestPostReceiveIdx(0);
             AddressFactory.getInstance().setHighestPostChangeIdx(0);
+            AddressFactory.getInstance().setHighestBadBankReceiveIdx(0);
+            AddressFactory.getInstance().setHighestBadBankChangeIdx(0);
 
             HD_WalletFactory.getInstance(context).set(null);
         }
@@ -309,6 +361,7 @@ public class PayloadUtil	{
                 wallet.put("seed", HD_WalletFactory.getInstance(context).get().getSeedHex());
                 wallet.put("passphrase", HD_WalletFactory.getInstance(context).get().getPassphrase());
 //                obj.put("mnemonic", getMnemonic());
+                wallet.put("fingerprint", Hex.toHexString(HD_WalletFactory.getInstance(context).getFingerprint()));
             }
 
             JSONArray accts = new JSONArray();
@@ -354,6 +407,10 @@ public class PayloadUtil	{
             postObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestPostReceiveIdx());
             postObj.put("changeIdx", AddressFactory.getInstance(context).getHighestPostChangeIdx());
             whirlpool_account.put(postObj);
+            JSONObject badbankObj = BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).toJSON(84);
+            badbankObj.put("receiveIdx", AddressFactory.getInstance(context).getHighestBadBankReceiveIdx());
+            badbankObj.put("changeIdx", AddressFactory.getInstance(context).getHighestBadBankChangeIdx());
+            whirlpool_account.put(badbankObj);
             wallet.put("whirlpool_account", whirlpool_account);
 
             //
@@ -371,7 +428,7 @@ public class PayloadUtil	{
             meta.put("device_model", Build.MODEL == null ? "" : Build.MODEL);
             meta.put("device_product", Build.PRODUCT == null ? "" : Build.PRODUCT);
 
-            meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance());
+            meta.put("prev_balance", APIFactory.getInstance(context).getXpubBalance()- BlockedUTXO.getInstance().getTotalValueBlocked0());
             meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
             meta.put("sent_tos_from_bip47", SentToFromBIP47Util.getInstance().toJSON());
             meta.put("batch_send", BatchSendUtil.getInstance().toJSON());
@@ -386,12 +443,15 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("cahoots", CahootsFactory.getInstance().toJSON());
-            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
             meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorManager.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
             meta.put("utxo_tags", UTXOUtil.getInstance().toJSON());
+            meta.put("utxo_notes", UTXOUtil.getInstance().toJSON_notes());
+            meta.put("utxo_scores", UTXOUtil.getInstance().toJSON_scores());
+            meta.put("whirlpool", WhirlpoolMeta.getInstance(context).toJSON());
+            meta.put("tx0_display", Tx0DisplayUtil.getInstance().toJSON());
 
             meta.put("trusted_no", PrefsUtil.getInstance(context).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
             meta.put("scramble_pin", PrefsUtil.getInstance(context).getValue(PrefsUtil.SCRAMBLE_PIN, false));
@@ -533,17 +593,13 @@ public class PayloadUtil	{
 
                 if(wallet.has("accounts")) {
                     JSONArray accounts = wallet.getJSONArray("accounts");
-                    //
-                    // temporarily set to 2 until use of public XPUB
-                    //
-                    for(int i = 0; i < 2; i++) {
-                        JSONObject account = accounts.getJSONObject(i);
-                        hdw.getAccount(i).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
-                        hdw.getAccount(i).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
 
-                        AddressFactory.getInstance().account2xpub().put(i, hdw.getAccount(i).xpubstr());
-                        AddressFactory.getInstance().xpub2account().put(hdw.getAccount(i).xpubstr(), i);
-                    }
+                    JSONObject account = accounts.getJSONObject(0);
+                    hdw.getAccount(0).getReceive().setAddrIdx(account.has("receiveIdx") ? account.getInt("receiveIdx") : 0);
+                    hdw.getAccount(0).getChange().setAddrIdx(account.has("changeIdx") ? account.getInt("changeIdx") : 0);
+
+                    AddressFactory.getInstance().account2xpub().put(0, hdw.getAccount(0).xpubstr());
+                    AddressFactory.getInstance().xpub2account().put(hdw.getAccount(0).xpubstr(), 0);
                 }
 
             }
@@ -614,9 +670,6 @@ public class PayloadUtil	{
                 if(meta.has("cahoots")) {
                     CahootsFactory.getInstance().fromJSON((JSONArray) meta.get("cahoots"));
                 }
-                if(meta.has("whirlpool")) {
-                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
-                }
                 if(meta.has("trusted_node")) {
                     TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
                 }
@@ -631,6 +684,18 @@ public class PayloadUtil	{
                 }
                 if(meta.has("utxo_tags")) {
                     UTXOUtil.getInstance().fromJSON((JSONArray) meta.get("utxo_tags"));
+                }
+                if(meta.has("utxo_notes")) {
+                    UTXOUtil.getInstance().fromJSON_notes((JSONArray) meta.get("utxo_notes"));
+                }
+                if(meta.has("utxo_scores")) {
+                    UTXOUtil.getInstance().fromJSON_scores((JSONArray) meta.get("utxo_scores"));
+                }
+                if(meta.has("whirlpool")) {
+                    WhirlpoolMeta.getInstance(context).fromJSON((JSONObject) meta.get("whirlpool"));
+                }
+                if(meta.has("tx0_display")) {
+                    Tx0DisplayUtil.getInstance().fromJSON((JSONArray) meta.get("tx0_display"));
                 }
 
                 if(meta.has("trusted_no")) {

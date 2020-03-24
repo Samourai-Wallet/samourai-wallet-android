@@ -23,6 +23,10 @@
         android:visible="true"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_menu_account"
+        android:title=""
+        android:visible="false" />
+    <item
         android:id="@+id/action_scan_qr"
         android:icon="@drawable/ic_crop_free_white_24dp"
         android:title=""
@@ -68,17 +72,17 @@
         android:orderInCategory="100"
         android:title="@string/options_sign"
         app:showAsAction="never" />
-    <item android:id="@+id/action_postmix"
+    <item
+        android:id="@+id/action_postmix"
+        android:orderInCategory="100"
         android:title="@string/options_postmix"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_copy_cahoots"
-        android:title="Paste cahoots payload"
+    <item
+        android:id="@+id/action_copy_cahoots"
         android:orderInCategory="100"
-        app:showAsAction="never"
-        />
+        android:title="Paste cahoots payload"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_support"
         android:orderInCategory="100"

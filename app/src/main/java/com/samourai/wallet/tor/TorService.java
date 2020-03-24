@@ -16,6 +16,7 @@ import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.util.WebUtil;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +53,7 @@ public class TorService extends Service {
                 .setContentText("Waiting...")
                 .setOngoing(true)
                 .setSound(null)
+                .setOnlyAlertOnce(true)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setGroup("Tor")
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
@@ -106,6 +108,12 @@ public class TorService extends Service {
 //
                     });
             compositeDisposable.add(disposable);
+
+            AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+            if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+                // restart WhirlpoolWallet with new Tor config
+                whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+            }
 
         } else if (intent.getAction().equals(TorService.RENEW_IDENTITY)) {
             renewIdentity();
@@ -191,12 +199,18 @@ public class TorService extends Service {
                 }, Throwable::printStackTrace);
         compositeDisposable.add(torDisposable);
 
-
         Disposable statusDisposable = TorManager.getInstance(this)
                 .torStatus
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
+                    if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                        AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
+                        if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+                            // restart WhirlpoolWallet with new Tor config once Tor is connected
+                            whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+                        }
+                    }
                 });
         logger();
         compositeDisposable.add(statusDisposable);
@@ -239,6 +253,7 @@ public class TorService extends Service {
                 .setContentTitle(title)
                 .setContentText(content)
                 .setOngoing(true)
+                .setOnlyAlertOnce(true)
                 .setGroupAlertBehavior(GROUP_ALERT_SUMMARY)
                 .setGroup("Tor")
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)

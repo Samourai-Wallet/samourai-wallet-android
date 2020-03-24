@@ -2,16 +2,20 @@ package com.samourai.wallet.whirlpool;
 
 import android.content.Context;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WhirlpoolMeta {
 
-    private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
-    private final static int WHIRLPOOL_POSTMIX = Integer.MAX_VALUE - 1;
+    public final static double WHIRLPOOL_FEE_RATE_POOL_DENOMINATION = 0.05;
 
-    private static int preIdx  = 0;
-    private static int postIdx  = 0;
+    private final static int WHIRLPOOL_BADBANK_ACCOUNT = Integer.MAX_VALUE - 3;
+    private final static int WHIRLPOOL_PREMIX_ACCOUNT = Integer.MAX_VALUE - 2;
+    private final static int WHIRLPOOL_POSTMIX_ACCOUNT = Integer.MAX_VALUE - 1;
+
+    private static String strSCODE = null;
 
     private static WhirlpoolMeta instance = null;
 
@@ -35,52 +39,50 @@ public class WhirlpoolMeta {
     }
 
     public int getWhirlpoolPostmix() {
-        return WHIRLPOOL_POSTMIX;
+        return WHIRLPOOL_POSTMIX_ACCOUNT;
     }
 
-    public static int getPreIdx() {
-        return preIdx;
+    public int getWhirlpoolBadBank() {
+        return WHIRLPOOL_BADBANK_ACCOUNT;
     }
 
-    public static void setPreIdx(int idx) {
-        WhirlpoolMeta.preIdx = idx;
+    public void setSCODE(String scode) {
+
+        if(scode == null) {
+            strSCODE = null;
+        }
+        else {
+            strSCODE = scode.toUpperCase();
+        }
+
     }
 
-    public static int getPostIdx() {
-        return postIdx;
-    }
-
-    public static void setPostIdx(int idx) {
-        WhirlpoolMeta.postIdx = idx;
+    public String getSCODE() {
+        return (strSCODE != null && strSCODE.length() > 0) ? strSCODE : null;
     }
 
     public JSONObject toJSON() {
 
-        JSONObject jsonPayload = new JSONObject();
+        JSONObject scode = new JSONObject();
+
         try {
-
-            jsonPayload.put("pre_index", preIdx);
-            jsonPayload.put("post_index", postIdx);
-
+            if(strSCODE != null && strSCODE.length() > 0) {
+                scode.put("scode", strSCODE);
+            }
         }
-        catch(JSONException je) {
-            ;
+        catch(JSONException ex) {
+            throw new RuntimeException(ex);
         }
 
-        return jsonPayload;
+        return scode;
     }
 
-    public void fromJSON(JSONObject jsonPayload) {
+    public void fromJSON(JSONObject obj) {
 
         try {
-
-            if(jsonPayload.has("pre_index"))    {
-                preIdx = jsonPayload.getInt("pre_index");
+            if(obj.has("scode") && obj.getString("scode").length() > 0) {
+                strSCODE = obj.getString("scode");
             }
-            if(jsonPayload.has("post_index"))    {
-                postIdx = jsonPayload.getInt("post_index");
-            }
-
         }
         catch(JSONException ex) {
             throw new RuntimeException(ex);
