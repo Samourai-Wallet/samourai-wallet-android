@@ -853,45 +853,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
 
-                Preference hashPref = (Preference) findPreference("hash");
-                hashPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-
-                        try {
-                            File apk = new File(SettingsActivity2.this.getPackageCodePath());
-                            MessageDigest md = MessageDigest.getInstance("SHA-256");
-                            FileInputStream fis = new FileInputStream(apk);
-                            byte[] dataBytes = new byte[1024 * 8];
-                            int nread = 0;
-                            while ((nread = fis.read(dataBytes)) != -1) {
-                                md.update(dataBytes, 0, nread);
-                            }
-                            ;
-                            byte[] hval = md.digest();
-                            String hash = Hex.toHexString(hval);
-
-                            TextView showText = new TextView(SettingsActivity2.this);
-                            showText.setText(hash);
-                            showText.setTextIsSelectable(true);
-                            showText.setPadding(40, 10, 40, 10);
-                            showText.setTextSize(18.0f);
-                            new AlertDialog.Builder(SettingsActivity2.this)
-                                    .setTitle(R.string.app_name)
-                                    .setView(showText)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
-                        } catch (Exception e) {
-                            ;
-                        }
-
-                        return true;
-                    }
-                });
-
                 Preference aboutPref = (Preference) findPreference("about");
                 aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.version_name));
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
