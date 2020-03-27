@@ -25,9 +25,7 @@ public class PrefsUtil {
 	public static final String AUTO_BACKUP = "autoBackup";
 	public static final String SPEND_TYPE = "spendType";
 	public static final String USE_RICOCHET = "useRicochet";
-	public static final String USE_TRUSTED_NODE = "useTrustedNode";
 	public static final String RBF_OPT_IN = "rbfOptIn";
-	public static final String FEE_PROVIDER_SEL = "feeProviderSel";
 	public static final String BROADCAST_TX = "broadcastTx";
 	public static final String TESTNET = "testnet";
 	public static final String USE_SEGWIT = "useSegwit";
