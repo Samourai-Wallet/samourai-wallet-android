@@ -73,6 +73,7 @@ public class CahootsUtil {
 
         String msg = null;
         PSBT psbt = new PSBT(strPSBT, SamouraiWallet.getInstance().getCurrentNetworkParams());
+        psbt.setDebug(true);
         try {
             psbt.read();
             msg = psbt.dump();

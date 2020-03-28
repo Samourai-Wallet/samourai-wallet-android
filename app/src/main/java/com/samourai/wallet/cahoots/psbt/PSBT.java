@@ -1,21 +1,19 @@
 package com.samourai.wallet.cahoots.psbt;
 
+import com.samourai.wallet.util.FormatsUtilGeneric;
 import com.samourai.wallet.util.Z85;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.*;
 import org.bitcoinj.params.MainNetParams;
-import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -30,11 +28,9 @@ public class PSBT {
     public static final int ENCODING_Z85 = 2;
 
     public static final byte PSBT_GLOBAL_UNSIGNED_TX = 0x00;
-    //
-    public static final byte PSBT_GLOBAL_REDEEM_SCRIPT = 0x01;
-    public static final byte PSBT_GLOBAL_WITNESS_SCRIPT = 0x02;
-    public static final byte PSBT_GLOBAL_BIP32_PUBKEY = 0x03;
-    public static final byte PSBT_GLOBAL_NB_INPUTS = 0x04;
+    public static final byte PSBT_GLOBAL_XPUB = 0x01;
+    public static final byte PSBT_GLOBAL_VERSION = (byte)0xFB;
+    public static final byte PSBT_GLOBAL_PROPRIETARY = (byte)0xFC;
 
     public static final byte PSBT_IN_NON_WITNESS_UTXO = 0x00;
     public static final byte PSBT_IN_WITNESS_UTXO = 0x01;
@@ -45,12 +41,16 @@ public class PSBT {
     public static final byte PSBT_IN_BIP32_DERIVATION = 0x06;
     public static final byte PSBT_IN_FINAL_SCRIPTSIG = 0x07;
     public static final byte PSBT_IN_FINAL_SCRIPTWITNESS = 0x08;
+    public static final byte PSBT_IN_POR_COMMITMENT = 0x09;
+    public static final byte PSBT_IN_PROPRIETARY = (byte)0xFC;
 
     public static final byte PSBT_OUT_REDEEM_SCRIPT = 0x00;
     public static final byte PSBT_OUT_WITNESS_SCRIPT = 0x01;
     public static final byte PSBT_OUT_BIP32_DERIVATION = 0x02;
+    public static final byte PSBT_OUT_PROPRIETARY = (byte)0xFC;
 
     public static final String PSBT_MAGIC = "70736274";
+    public static final byte PSBT_HEADER_SEPARATOR = (byte)0xFF;
 
     private static final int HARDENED = 0x80000000;
 
@@ -73,20 +73,21 @@ public class PSBT {
     private List<PSBTEntry> psbtOutputs = null;
 
     private StringBuilder sbLog = null;
+    private boolean bDebug = false;
 
     public PSBT(String strPSBT, NetworkParameters params)   {
 
-        if(!isPSBT(strPSBT))    {
+        if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
             return;
         }
 
         psbtInputs = new ArrayList<PSBTEntry>();
         psbtOutputs = new ArrayList<PSBTEntry>();
 
-        if(isBase64(strPSBT) && !isHex(strPSBT))    {
+        if(FormatsUtilGeneric.getInstance().isBase64(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))    {
             this.strPSBT = Hex.toHexString(Base64.decode(strPSBT));
         }
-        else if(Z85.getInstance().isZ85(strPSBT) && !PSBT.isHex(strPSBT))   {
+        else if(Z85.getInstance().isZ85(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))   {
             this.strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
         }
         else    {
@@ -101,27 +102,21 @@ public class PSBT {
         sbLog = new StringBuilder();
     }
 
-    public PSBT(byte[] psbt, NetworkParameters params) throws Exception   {
+    public PSBT(byte[] psbt, NetworkParameters params)   {
 
-        String strPSBT = null;
-        if(isGZIP(psbt))    {
-            strPSBT = fromGZIP(psbt);
-        }
-        else    {
-            strPSBT = Hex.toHexString(psbt);
-        }
+        String strPSBT = Hex.toHexString(psbt);
 
-        if(!isPSBT(strPSBT))    {
+        if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
             return;
         }
 
         psbtInputs = new ArrayList<PSBTEntry>();
         psbtOutputs = new ArrayList<PSBTEntry>();
 
-        if(isBase64(strPSBT) && !isHex(strPSBT))    {
+        if(FormatsUtilGeneric.getInstance().isBase64(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))    {
             this.strPSBT = Hex.toHexString(Base64.decode(strPSBT));
         }
-        else if(Z85.getInstance().isZ85(strPSBT) && !PSBT.isHex(strPSBT))   {
+        else if(Z85.getInstance().isZ85(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))   {
             this.strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
         }
         else    {
@@ -134,6 +129,48 @@ public class PSBT {
         this.transaction = new Transaction(params);
 
         sbLog = new StringBuilder();
+    }
+
+    public PSBT(byte[] gzip) throws UnsupportedEncodingException, IOException    {
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(gzip);
+        GZIPInputStream gis = new GZIPInputStream(bis);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+        gis.close();
+        bis.close();
+
+        String strPSBT = sb.toString();
+
+        if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
+            return;
+        }
+
+        psbtInputs = new ArrayList<PSBTEntry>();
+        psbtOutputs = new ArrayList<PSBTEntry>();
+
+        if(FormatsUtilGeneric.getInstance().isBase64(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))    {
+            this.strPSBT = Hex.toHexString(Base64.decode(strPSBT));
+        }
+        else if(Z85.getInstance().isZ85(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))   {
+            this.strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
+        }
+        else    {
+            this.strPSBT = strPSBT;
+        }
+
+        psbtBytes = Hex.decode(this.strPSBT);
+        psbtByteBuffer = ByteBuffer.wrap(psbtBytes);
+
+        this.transaction = new Transaction(getNetParams());
+
+        sbLog = new StringBuilder();
+
     }
 
     public PSBT()   {
@@ -187,7 +224,7 @@ public class PSBT {
         }
 
         byte sep = psbtByteBuffer.get();
-        if(sep != (byte)0xff)    {
+        if(sep != PSBT_HEADER_SEPARATOR)    {
             throw new Exception("Bad 0xff separator:" + Hex.toHexString(new byte[] { sep }));
         }
 
@@ -221,10 +258,18 @@ public class PSBT {
                         currentState = STATE_INPUTS;
                         break;
                     case STATE_INPUTS:
-                        currentState = STATE_OUTPUTS;
+                        psbtInputs.add(entry);
+                        seenInputs++;
+                        if(seenInputs == inputs)   {
+                            currentState = STATE_OUTPUTS;
+                        }
                         break;
                     case STATE_OUTPUTS:
-                        currentState = STATE_END;
+                        psbtOutputs.add(entry);
+                        seenOutputs++;
+                        if(seenOutputs == outputs)   {
+                            currentState = STATE_END;
+                        }
                         break;
                     case STATE_END:
                         parseOK = true;
@@ -245,14 +290,30 @@ public class PSBT {
                         Log("outputs:" + outputs, true);
                         Log(transaction.toString(), true);
                         break;
+                    case PSBT.PSBT_GLOBAL_XPUB:
+                        Log("xpub:" + serializeXPUB(entry.getKeyData()), true);
+                        break;
+                    case PSBT.PSBT_GLOBAL_VERSION:
+                        Log("version:" + Integer.valueOf(Hex.toHexString(entry.getKeyData()), 10), true);
+                        break;
+                    case PSBT.PSBT_GLOBAL_PROPRIETARY:
+                        Log("proprietary global data", true);
+                        break;
                     default:
                         Log("not recognized key type:" + entry.getKeyType()[0], true);
                         break;
                 }
             }
             else if(currentState == STATE_INPUTS)    {
-                if(entry.getKeyType()[0] >= PSBT_IN_NON_WITNESS_UTXO && entry.getKeyType()[0] <= PSBT_IN_FINAL_SCRIPTWITNESS)    {
+                if(entry.getKeyType()[0] >= PSBT_IN_NON_WITNESS_UTXO && entry.getKeyType()[0] <= PSBT_IN_POR_COMMITMENT)    {
                     psbtInputs.add(entry);
+
+                    if(entry.getKeyType()[0] == PSBT_IN_BIP32_DERIVATION)    {
+                        Log("fingerprint:" + Hex.toHexString(getFingerprintFromDerivationData(entry.getData())), true);
+                    }
+                }
+                else if(entry.getKeyType()[0] >= PSBT_IN_PROPRIETARY)    {
+                    Log("proprietary input data", true);
                 }
                 else    {
                     Log("not recognized key type:" + entry.getKeyType()[0], true);
@@ -260,11 +321,21 @@ public class PSBT {
             }
             else if(currentState == STATE_OUTPUTS)    {
                 if(entry.getKeyType()[0] >= PSBT_OUT_REDEEM_SCRIPT && entry.getKeyType()[0] <= PSBT_OUT_BIP32_DERIVATION)    {
-                    psbtInputs.add(entry);
+                    psbtOutputs.add(entry);
+
+                    if(entry.getKeyType()[0] == PSBT_OUT_BIP32_DERIVATION)    {
+                        Log("fingerprint:" + Hex.toHexString(getFingerprintFromDerivationData(entry.getData())), true);
+                    }
+                }
+                else if(entry.getKeyType()[0] >= PSBT_OUT_PROPRIETARY)    {
+                    Log("proprietary output data", true);
                 }
                 else    {
                     Log("not recognized key type:" + entry.getKeyType()[0], true);
                 }
+            }
+            else if(currentState == STATE_END)    {
+                Log("end PSBT", true);
             }
             else    {
                 Log("panic", true);
@@ -274,6 +345,8 @@ public class PSBT {
 
         if(currentState == STATE_END)   {
             Log("--- ***** END ***** ---", true);
+
+            parseOK = true;
         }
 
         Log("", true);
@@ -352,14 +425,6 @@ public class PSBT {
         }
         entry.setData(data);
 
-        System.out.println("PSBT entry type:" + type);
-        if(keydata != null)    {
-            System.out.println("PSBT entry keydata:" + Hex.toHexString(keydata));
-            System.out.println("PSBT entry keydata length:" + keydata.length);
-        }
-        System.out.println("PSBT entry data:" + Hex.toHexString(data));
-        System.out.println("PSBT entry data length:" + data.length);
-
         return entry;
     }
 
@@ -372,7 +437,7 @@ public class PSBT {
         // magic
         baos.write(Hex.decode(PSBT.PSBT_MAGIC), 0, Hex.decode(PSBT.PSBT_MAGIC).length);
         // separator
-        baos.write((byte)0xff);
+        baos.write(PSBT_HEADER_SEPARATOR);
 
         // globals
         baos.write(writeCompactInt(1L));                                // key length
@@ -383,38 +448,37 @@ public class PSBT {
 
         // inputs
         for(PSBTEntry entry : psbtInputs)   {
-            int keyLen = 1;
-            if(entry.getKeyData() != null)    {
-                keyLen += entry.getKeyData().length;
+            if(entry.getKey() == null)   {
+                baos.write((byte)0x00);
             }
-            baos.write(writeCompactInt(keyLen));
-            baos.write(entry.getKey());
-            if(entry.getKeyData() != null)    {
-                baos.write(entry.getKeyData());
+            else   {
+                int keyLen = 1;
+                if(entry.getKeyData() != null)    {
+                    keyLen += entry.getKeyData().length;
+                }
+                baos.write(writeCompactInt(keyLen));
+                baos.write(entry.getKey());
+                baos.write(writeCompactInt(entry.getData().length));
+                baos.write(entry.getData());
             }
-            baos.write(writeCompactInt(entry.getData().length));
-            baos.write(entry.getData());
         }
-        baos.write((byte)0x00);
 
         // outputs
         for(PSBTEntry entry : psbtOutputs)   {
-            int keyLen = 1;
-            if(entry.getKeyData() != null)    {
-                keyLen += entry.getKeyData().length;
+            if(entry.getKey() == null)   {
+                baos.write((byte)0x00);
             }
-            baos.write(writeCompactInt(keyLen));
-            baos.write(entry.getKey());
-            if(entry.getKeyData() != null)    {
-                baos.write(entry.getKeyData());
+            else   {
+                int keyLen = 1;
+                if(entry.getKeyData() != null)    {
+                    keyLen += entry.getKeyData().length;
+                }
+                baos.write(writeCompactInt(keyLen));
+                baos.write(entry.getKey());
+                baos.write(writeCompactInt(entry.getData().length));
+                baos.write(entry.getData());
             }
-            baos.write(writeCompactInt(entry.getData().length));
-            baos.write(entry.getData());
         }
-        baos.write((byte)0x00);
-
-        // eof
-        baos.write((byte)0x00);
 
         psbtBytes = baos.toByteArray();
         strPSBT = Hex.toHexString(psbtBytes);
@@ -465,6 +529,14 @@ public class PSBT {
         this.transaction = transaction;
     }
 
+    public int getInputCount() {
+        return inputs;
+    }
+
+    public int getOutputCount() {
+        return outputs;
+    }
+
     public void clear()  {
         transaction = new Transaction(getNetParams());
         psbtInputs.clear();
@@ -504,7 +576,6 @@ public class PSBT {
         gzip.close();
         byte[] compressed = bos.toByteArray();
         bos.close();
-
         return compressed;
     }
 
@@ -725,6 +796,59 @@ public class PSBT {
         return bip32buf;
     }
 
+    public static String serializeXPUB(byte[] buf)   {
+        // append checksum
+        byte[] checksum = Arrays.copyOfRange(Sha256Hash.hashTwice(buf), 0, 4);
+        byte[] xlatXpub = new byte[buf.length + checksum.length];
+        System.arraycopy(buf, 0, xlatXpub, 0, buf.length);
+        System.arraycopy(checksum, 0, xlatXpub, xlatXpub.length - 4, checksum.length);
+
+        String ret = Base58.encode(xlatXpub);
+        return ret;
+    }
+
+    private static byte[] getFingerprintFromDerivationData(byte[] buf) throws AddressFormatException {
+
+        byte[] fingerprint = new byte[4];
+        System.arraycopy(buf, 0, fingerprint, 0, fingerprint.length);
+
+        return fingerprint;
+    }
+
+    public boolean isParseOK() {
+        return parseOK;
+    }
+
+    public boolean getDebug() {
+        return bDebug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.bDebug = debug;
+    }
+
+    public String dump()    {
+        if(bDebug)  {
+            return sbLog.toString();
+        }
+        else  {
+            return null;
+        }
+    }
+
+    private void Log(String s, boolean eol)  {
+
+        if(bDebug)  {
+            sbLog.append(s);
+            System.out.print(s);
+            if(eol)    {
+                sbLog.append("\n");
+                System.out.print("\n");
+            }
+        }
+
+    }
+
     public static boolean isHex(String s)   {
         String regex = "^[0-9A-Fa-f]+$";
 
@@ -785,21 +909,6 @@ public class PSBT {
         bis.close();
 
         return sb.toString();
-    }
-
-    public void Log(String s, boolean eol)  {
-
-        sbLog.append(s);
-        System.out.print(s);
-        if(eol)    {
-            sbLog.append("\n");
-            System.out.print("\n");
-        }
-
-    }
-
-    public String dump()    {
-        return sbLog.toString();
     }
 
 }
