@@ -12,10 +12,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.content.ContextCompat;
+
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -43,6 +47,8 @@ import com.samourai.boltzmann.beans.Txos;
 import com.samourai.boltzmann.linker.TxosLinkerOptionEnum;
 import com.samourai.boltzmann.processor.TxProcessor;
 import com.samourai.boltzmann.processor.TxProcessorResult;
+import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.IHttpClient;
 import com.samourai.wallet.BatchSendActivity;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
@@ -84,6 +90,8 @@ import com.samourai.wallet.utxos.UTXOSActivity;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.SendTransactionDetailsView;
+import com.samourai.xmanager.client.XManagerClient;
+import com.samourai.xmanager.protocol.XManagerService;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.bitcoinj.core.Address;
@@ -118,6 +126,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -385,9 +394,9 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void hideToAddressForStowaway() {
-            toAddressEditText.setEnabled(true);
-            toAddressEditText.setText("");
-            address = "";
+        toAddressEditText.setEnabled(true);
+        toAddressEditText.setText("");
+        address = "";
     }
 
 
@@ -686,6 +695,7 @@ public class SendActivity extends SamouraiActivity {
             } else {
                 ricochetStaggeredOptionGroup.setVisibility(View.GONE);
             }
+            setUpRicochetFees();
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
 
@@ -699,10 +709,30 @@ public class SendActivity extends SamouraiActivity {
 
         ricochetStaggeredDelivery.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             PrefsUtil.getInstance(this).setValue(PrefsUtil.RICOCHET_STAGGERED, isChecked);
-
+            setUpRicochetFees();
             // Handle staggered delivery option
-
         });
+    }
+
+    private void setUpRicochetFees() {
+        TorManager torManager = TorManager.getInstance(getApplicationContext());
+        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
+        XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
+        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false)) {
+            btnSend.setEnabled(false);
+            Disposable disposable = Completable.fromCallable(() -> {
+                String feeAddress = xManagerClient.getAddressOrDefault(XManagerService.RICOCHET);
+                RicochetMeta.getInstance(getApplicationContext()).setRicochetFeeAddress(feeAddress);
+                return true;
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        btnSend.setEnabled(true);
+                    }, err -> {
+                        btnSend.setEnabled(true);
+                    });
+            compositeDisposables.add(disposable);
+        }
     }
 
     private void enableCahoots(boolean enable) {
