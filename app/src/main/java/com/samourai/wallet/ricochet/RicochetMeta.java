@@ -57,10 +57,8 @@ import org.spongycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
-    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1q52fzmcdqu07j845q7jnwzw9q68s924wdva3lfz";
-    private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
-    private final static String SAMOURAI_NLOCKTIME_RICOCHET_TX_FEE_ADDRESS = "bc1qghsm8dhmcdluxs622nu6admlk4587qy4laqyn0";
-    private final static String TESTNET_NLOCKTIME_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
+    private  String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1q52fzmcdqu07j845q7jnwzw9q68s924wdva3lfz";
+    private  String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
@@ -112,6 +110,14 @@ public class RicochetMeta {
 
     public void setIndex(int index) {
         RicochetMeta.index = index;
+    }
+
+    public void  setRicochetFeeAddress(String address){
+        if(SamouraiWallet.getInstance().isTestNet()){
+            TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = address;
+        }else {
+            SAMOURAI_RICOCHET_TX_FEE_ADDRESS = address;
+        }
     }
 
     public void add(JSONObject jObj)   {
@@ -581,12 +587,7 @@ public class RicochetMeta {
             receivers.put(destination, BigInteger.valueOf(spendAmount));
         }
         else    {
-            if(nTimeLock > 0L)    {
-                receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_NLOCKTIME_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_NLOCKTIME_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
-            }
-            else    {
-                receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
-            }
+            receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
             receivers.put(destination, BigInteger.valueOf(spendAmount - samouraiFeeAmount.longValue()));
         }
 
