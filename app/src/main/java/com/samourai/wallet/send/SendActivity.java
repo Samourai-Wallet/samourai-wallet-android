@@ -35,6 +35,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
@@ -84,6 +86,7 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
+import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;
@@ -141,7 +144,7 @@ public class SendActivity extends SamouraiActivity {
     private SendTransactionDetailsView sendTransactionDetailsView;
     private ViewSwitcher amountViewSwitcher;
     private EditText toAddressEditText, btcEditText, satEditText;
-    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc,cahootsStatusText,cahootsNotice;
+    private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
     private Button btnReview, btnSend;
     private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
@@ -151,6 +154,7 @@ public class SendActivity extends SamouraiActivity {
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
     private String strDestinationBTCAddress = null;
+    private ProgressBar progressBar;
 
     private final static int FEE_LOW = 0;
     private final static int FEE_NORMAL = 1;
@@ -236,6 +240,7 @@ public class SendActivity extends SamouraiActivity {
         cahootsStatusText = sendTransactionDetailsView.findViewById(R.id.cahoot_status_text);
         totalMinerFeeLayout = sendTransactionDetailsView.getTransactionReview().findViewById(R.id.total_miner_fee_group);
         cahootsNotice = sendTransactionDetailsView.findViewById(R.id.cahoots_not_enabled_notice);
+        progressBar = findViewById(R.id.send_activity_progress);
 
         btcEditText.addTextChangedListener(BTCWatcher);
         btcEditText.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 8)});
@@ -282,7 +287,7 @@ public class SendActivity extends SamouraiActivity {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
 
-            if(preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+            if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
                 cahootsGroup.setVisibility(View.GONE);
                 ricochetHopsSwitch.setVisibility(View.GONE);
                 ricochetTitle.setVisibility(View.GONE);
@@ -400,7 +405,7 @@ public class SendActivity extends SamouraiActivity {
     }
 
 
-    public View createTag(String text){
+    public View createTag(String text) {
         float scale = getResources().getDisplayMetrics().density;
         LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -425,8 +430,8 @@ public class SendActivity extends SamouraiActivity {
         AppUtil.getInstance(SendActivity.this).checkTimeOut();
 
         try {
-            new Handler().postDelayed(this::setBalance,1000);
-        }catch (Exception ex){
+            new Handler().postDelayed(this::setBalance, 1000);
+        } catch (Exception ex) {
 
         }
 
@@ -695,7 +700,6 @@ public class SendActivity extends SamouraiActivity {
             } else {
                 ricochetStaggeredOptionGroup.setVisibility(View.GONE);
             }
-            setUpRicochetFees();
         });
         ricochetHopsSwitch.setChecked(PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false));
 
@@ -709,29 +713,33 @@ public class SendActivity extends SamouraiActivity {
 
         ricochetStaggeredDelivery.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             PrefsUtil.getInstance(this).setValue(PrefsUtil.RICOCHET_STAGGERED, isChecked);
-            setUpRicochetFees();
             // Handle staggered delivery option
         });
     }
 
-    private void setUpRicochetFees() {
+    private Completable setUpRicochetFees() {
         TorManager torManager = TorManager.getInstance(getApplicationContext());
         IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
         XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
         if (PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_RICOCHET, false)) {
-            btnSend.setEnabled(false);
-            Disposable disposable = Completable.fromCallable(() -> {
+            Completable completable = Completable.fromCallable(() -> {
                 String feeAddress = xManagerClient.getAddressOrDefault(XManagerService.RICOCHET);
                 RicochetMeta.getInstance(getApplicationContext()).setRicochetFeeAddress(feeAddress);
                 return true;
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> {
-                        btnSend.setEnabled(true);
-                    }, err -> {
-                        btnSend.setEnabled(true);
-                    });
-            compositeDisposables.add(disposable);
+            });
+            //Set BIP47 Fee address if the tx is
+            if (strPCode != null) {
+                Completable pcode = Completable.fromCallable(() -> {
+                    String address = xManagerClient.getAddressOrDefault(XManagerService.BIP47);
+                    SendNotifTxFactory.getInstance().setAddress(address);
+                    return true;
+                });
+                return Completable.concatArray(completable,pcode);
+            } else {
+                return completable;
+            }
+        } else {
+            return Completable.complete();
         }
     }
 
@@ -782,7 +790,7 @@ public class SendActivity extends SamouraiActivity {
 
         strAmount = nf.format(balance / 1e8);
 
-        if(account == 0)    {
+        if (account == 0) {
             tvMaxAmount.setOnClickListener(view -> {
                 btcEditText.setText(strAmount);
             });
@@ -1056,8 +1064,7 @@ public class SendActivity extends SamouraiActivity {
                 dlg.show();
             }
 
-        }
-        else {
+        } else {
             _review();
         }
 
@@ -1304,38 +1311,31 @@ public class SendActivity extends SamouraiActivity {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            }
-            else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
+            } else if ((valueP2WPKH > (neededAmount * 2)) && FormatsUtil.getInstance().isValidBech32(address)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            }
-            else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2SH_P2WPKH > (neededAmount * 2)) && Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                 Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
-            }
-            else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
+            } else if (!FormatsUtil.getInstance().isValidBech32(address) && (valueP2PKH > (neededAmount * 2)) && !Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress()) {
                 Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
-            }
-            else if (valueP2WPKH > (neededAmount * 2)) {
+            } else if (valueP2WPKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2WPKH 2x");
                 _utxos1 = utxosP2WPKH;
                 selectedP2WPKH = true;
-            }
-            else if (valueP2SH_P2WPKH > (neededAmount * 2)) {
+            } else if (valueP2SH_P2WPKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2SH_P2WPKH 2x");
                 _utxos1 = utxosP2SH_P2WPKH;
                 selectedP2SH_P2WPKH = true;
-            }
-            else if (valueP2PKH > (neededAmount * 2)) {
+            } else if (valueP2PKH > (neededAmount * 2)) {
                 Log.d("SendActivity", "set 1 P2PKH 2x");
                 _utxos1 = utxosP2PKH;
                 selectedP2PKH = true;
-            }
-            else {
+            } else {
                 ;
             }
 
@@ -1344,18 +1344,15 @@ public class SendActivity extends SamouraiActivity {
                     Log.d("SendActivity", "set 1 P2SH_P2WPKH");
                     _utxos1 = utxosP2SH_P2WPKH;
                     selectedP2SH_P2WPKH = true;
-                }
-                else if (valueP2WPKH > neededAmount) {
+                } else if (valueP2WPKH > neededAmount) {
                     Log.d("SendActivity", "set 1 P2WPKH");
                     _utxos1 = utxosP2WPKH;
                     selectedP2WPKH = true;
-                }
-                else if (valueP2PKH > neededAmount) {
+                } else if (valueP2PKH > neededAmount) {
                     Log.d("SendActivity", "set 1 P2PKH");
                     _utxos1 = utxosP2PKH;
                     selectedP2PKH = true;
-                }
-                else {
+                } else {
                     ;
                 }
 
@@ -1376,8 +1373,7 @@ public class SendActivity extends SamouraiActivity {
                     Log.d("SendActivity", "set 2 P2PKH");
                     _utxos2 = utxosP2PKH;
                     selectedP2PKH = true;
-                }
-                else {
+                } else {
                     ;
                 }
             }
@@ -1493,10 +1489,9 @@ public class SendActivity extends SamouraiActivity {
             for (TransactionOutput output : pair.getRight()) {
                 try {
                     Script script = new Script(output.getScriptBytes());
-                    if(Bech32Util.getInstance().isP2WPKHScript(Hex.toHexString(output.getScriptBytes())))    {
+                    if (Bech32Util.getInstance().isP2WPKHScript(Hex.toHexString(output.getScriptBytes()))) {
                         receivers.put(Bech32Util.getInstance().getAddressFromScript(script), BigInteger.valueOf(output.getValue().longValue()));
-                    }
-                    else    {
+                    } else {
                         receivers.put(script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), BigInteger.valueOf(output.getValue().longValue()));
                     }
                     outputAmount += output.getValue().longValue();
@@ -1605,7 +1600,7 @@ public class SendActivity extends SamouraiActivity {
                 sendTransactionDetailsView.setEntropyBarStoneWallX1(null);
                 sendTransactionDetailsView.getStoneWallSwitch().setOnCheckedChangeListener(onCheckedChangeListener);
 
-                if(account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
                     strCannotDoBoltzmann = getString(R.string.boltzmann_cannot) + "\n\n";
                 }
             }
@@ -1697,15 +1692,15 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void setButtonForStowaway(boolean prepare) {
-        if(prepare){
+        if (prepare) {
             // Sets view with stowaway message
             // also hides overlay push icon from button
             sendTransactionDetailsView.showStowawayLayout(address, null, 1000);
             btnSend.setBackgroundResource(R.drawable.button_blue);
             btnSend.setText(getString(R.string.begin_stowaway));
             sendTransactionDetailsView.getTransactionReview().findViewById(R.id.transaction_push_icon).setVisibility(View.INVISIBLE);
-            btnSend.setPadding(0,0,0,0);
-        }else {
+            btnSend.setPadding(0, 0, 0, 0);
+        } else {
             // resets the changes made for stowaway
             int paddingDp = 12;
             float density =  getResources().getDisplayMetrics().density;
@@ -1729,7 +1724,18 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (SPEND_TYPE == SPEND_RICOCHET) {
-            ricochetSpend(ricochetStaggeredDelivery.isChecked());
+            progressBar.setVisibility(View.VISIBLE);
+            Disposable disposable = setUpRicochetFees()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ricochetSpend(ricochetStaggeredDelivery.isChecked());
+                    }, er ->  {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this,"Error ".concat(er.getMessage()),Toast.LENGTH_LONG).show();
+                    });
+            compositeDisposables.add(disposable);
             return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(SendActivity.this);
@@ -1980,7 +1986,7 @@ public class SendActivity extends SamouraiActivity {
 //            CahootsUtil.getInstance(SendActivity.this).processCahoots(data.trim(), account);
             Intent cahootsIntent = new Intent(this, ManualCahootsActivity.class);
             cahootsIntent.putExtra("_account", account);
-            cahootsIntent.putExtra("payload",data.trim());
+            cahootsIntent.putExtra("payload", data.trim());
             startActivity(cahootsIntent);
 
             return;
@@ -2167,12 +2173,12 @@ public class SendActivity extends SamouraiActivity {
             insufficientFunds = true;
         }
 
-        if(selectedCahootsType != SelectCahootsType.type.NONE){
+        if (selectedCahootsType != SelectCahootsType.type.NONE) {
             totalMinerFeeLayout.setVisibility(View.INVISIBLE);
-        }else {
+        } else {
             totalMinerFeeLayout.setVisibility(View.VISIBLE);
         }
-        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds && amount!=0) {
+        if (selectedCahootsType == SelectCahootsType.type.STOWAWAY && !insufficientFunds && amount != 0) {
             enableReviewButton(true);
             return true;
         }
@@ -2221,11 +2227,11 @@ public class SendActivity extends SamouraiActivity {
             menu.findItem(R.id.action_ricochet).setVisible(false);
             menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         }
-        if(account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()){
-              MenuItem item =   menu.findItem(R.id.action_send_menu_account);
-              item.setVisible(true);
-              item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-              item.setActionView(createTag("POST-MIX"));
+        if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+            MenuItem item = menu.findItem(R.id.action_send_menu_account);
+            item.setVisible(true);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            item.setActionView(createTag("POST-MIX"));
         }
 
         return super.onCreateOptionsMenu(menu);
