@@ -118,6 +118,7 @@ public class RicochetMeta {
         }else {
             SAMOURAI_RICOCHET_TX_FEE_ADDRESS = address;
         }
+        Log.i("TAG","address".concat(address));
     }
 
     public void add(JSONObject jObj)   {
@@ -408,7 +409,7 @@ public class RicochetMeta {
 //                        samouraiFees.add(Pair.of(strAddress, 200000L / 4L));
                     }
                     catch(Exception e) {
-                        samouraiFees.add(Pair.of(SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, feeVal));
+                        samouraiFees.add(Pair.of( SendNotifTxFactory.getInstance().SAMOURAI_NOTIF_TX_FEE_ADDRESS, feeVal));
                     }
 
                 }
