@@ -315,11 +315,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
         editPaynymBottomSheet.setSaveButtonListener(view -> {
             updatePaynym(editPaynymBottomSheet.getLabel(), editPaynymBottomSheet.getPcode());
-
+            progressBar.setVisibility(View.VISIBLE);
             Disposable disposable = getPayNymAddress()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(address -> {
+                        progressBar.setVisibility(View.GONE);
                         SendNotifTxFactory.getInstance().setAddress(address);
                         doNotifTx();
                     });
