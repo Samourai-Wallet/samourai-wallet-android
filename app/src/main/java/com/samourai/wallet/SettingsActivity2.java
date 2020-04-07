@@ -49,7 +49,7 @@ import com.samourai.wallet.JSONRPC.JSONRPC;
 import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -1664,61 +1664,45 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doPSBT()    {
 
+        final EditText edPSBT = new EditText(SettingsActivity2.this);
+        edPSBT.setSingleLine(false);
+        edPSBT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edPSBT.setLines(10);
+        edPSBT.setHint(R.string.PSBT);
+        edPSBT.setGravity(Gravity.START);
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                edPSBT.setSelection(0);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+        edPSBT.addTextChangedListener(textWatcher);
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.PSBT)
-                .setCancelable(true)
-                .setPositiveButton(R.string.enter_psbt, new DialogInterface.OnClickListener() {
+                .setView(edPSBT)
+                .setMessage(R.string.enter_psbt)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         dialog.dismiss();
 
-                        final EditText edPSBT = new EditText(SettingsActivity2.this);
-                        edPSBT.setSingleLine(false);
-                        edPSBT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                        edPSBT.setLines(10);
-                        edPSBT.setHint(R.string.PSBT);
-                        edPSBT.setGravity(Gravity.START);
-                        TextWatcher textWatcher = new TextWatcher() {
+                        final String strPSBT = edPSBT.getText().toString().replaceAll(" ", "").trim();
 
-                            public void afterTextChanged(Editable s) {
-                                edPSBT.setSelection(0);
-                            }
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                ;
-                            }
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                ;
-                            }
-                        };
-                        edPSBT.addTextChangedListener(textWatcher);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edPSBT)
-                                .setMessage(R.string.enter_psbt)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strPSBT = edPSBT.getText().toString().trim();
-
-                                        CahootsUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
+                        PSBTUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
 
                     }
-
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
                 });
         if(!isFinishing())    {
             dlg.show();
