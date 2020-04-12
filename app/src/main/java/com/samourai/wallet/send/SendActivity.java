@@ -56,6 +56,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -1947,7 +1948,7 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
-            CahootsUtil.getInstance(SendActivity.this).doPSBT(data.trim());
+            PSBTUtil.getInstance(SendActivity.this).doPSBT(data.trim());
             return;
         }
 

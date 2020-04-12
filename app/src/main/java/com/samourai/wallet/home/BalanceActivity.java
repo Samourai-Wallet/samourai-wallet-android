@@ -34,7 +34,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,7 +59,7 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
@@ -838,7 +837,7 @@ public class BalanceActivity extends SamouraiActivity {
                         cahootIntent.putExtra("payload", strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
+                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
 
                         Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
@@ -1019,10 +1018,9 @@ public class BalanceActivity extends SamouraiActivity {
                     cahootIntent.putExtra("payload", code.trim());
                     cahootIntent.putExtra("_account", account);
                     startActivity(cahootIntent);
-//                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
 
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                    CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                    PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
                     intent.putExtra("params", code.trim());
@@ -1054,7 +1052,7 @@ public class BalanceActivity extends SamouraiActivity {
                         cahootIntent.putExtra("_account",account);
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
                 } else {
