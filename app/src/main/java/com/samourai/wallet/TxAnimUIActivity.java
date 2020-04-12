@@ -27,7 +27,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -195,35 +194,16 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                     boolean isOK = false;
                                     String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx);
                                     try {
-                                        if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true) {
-                                            if (TrustedNodeUtil.getInstance().isSet()) {
-                                                response = PushTx.getInstance(TxAnimUIActivity.this).trustedNode(hexTx);
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if (jsonObject.has("result")) {
-                                                    if (jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$")) {
-                                                        isOK = true;
-                                                    } else {
-                                                        Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                        failTx(R.string.tx_broadcast_ko);
-                                                    }
+                                        if (response != null) {
+                                            JSONObject jsonObject = new org.json.JSONObject(response);
+                                            if (jsonObject.has("status")) {
+                                                if (jsonObject.getString("status").equals("ok")) {
+                                                    isOK = true;
                                                 }
-                                            } else {
-                                                Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                                                failTx(R.string.tx_broadcast_ko);
                                             }
                                         } else {
-
-                                            if (response != null) {
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if (jsonObject.has("status")) {
-                                                    if (jsonObject.getString("status").equals("ok")) {
-                                                        isOK = true;
-                                                    }
-                                                }
-                                            } else {
-                                                Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                                failTx(R.string.tx_broadcast_ko);
-                                            }
+                                            Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                            failTx(R.string.tx_broadcast_ko);
                                         }
                                     } catch (JSONException je) {
                                         failTx(R.string.tx_broadcast_ko);
@@ -327,11 +307,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
         try {
             if (isOK) {
-                if (PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false) {
-                    Toast.makeText(TxAnimUIActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(TxAnimUIActivity.this, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(TxAnimUIActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
 
                 if (SendParams.getInstance().getChangeAmount() > 0L && SendParams.getInstance().getSpendType() == SendActivity.SPEND_SIMPLE) {
 

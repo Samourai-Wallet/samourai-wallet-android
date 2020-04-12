@@ -45,9 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.samourai.wallet.JSONRPC.JSONRPC;
-import com.samourai.wallet.JSONRPC.PoW;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
@@ -140,7 +137,6 @@ public class BalanceActivity extends SamouraiActivity {
     private ProgressBar progressBar;
     private BalanceViewModel balanceViewModel;
 
-    private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
@@ -205,22 +201,6 @@ public class BalanceActivity extends SamouraiActivity {
 
                     }
                 });
-
-                if (BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet()) {
-
-//                    BalanceActivity.this.runOnUiThread(new Runnable() {
-//                    @Override
-                    handler.post(new Runnable() {
-                        public void run() {
-                            if (powTask == null || powTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                                powTask = new PoWTask();
-                                powTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, blkHash);
-                            }
-                        }
-
-                    });
-
-                }
 
             }
 
@@ -1492,66 +1472,6 @@ public class BalanceActivity extends SamouraiActivity {
         @Override
         protected void onPostExecute(String result) {
             ;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            ;
-        }
-
-    }
-
-    private class PoWTask extends AsyncTask<String, Void, String> {
-
-        private boolean isOK = true;
-        private String strBlockHash = null;
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            strBlockHash = params[0];
-
-            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            JSONObject nodeObj = jsonrpc.getBlockHeader(strBlockHash);
-            if (nodeObj != null && nodeObj.has("hash")) {
-                PoW pow = new PoW(strBlockHash);
-                String hash = pow.calcHash(nodeObj);
-                if (hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase())) {
-
-                    JSONObject headerObj = APIFactory.getInstance(BalanceActivity.this).getBlockHeader(strBlockHash);
-                    if (headerObj != null && headerObj.has("")) {
-                        if (!pow.check(headerObj, nodeObj, hash)) {
-                            isOK = false;
-                        }
-                    }
-
-                } else {
-                    isOK = false;
-                }
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            if (!isOK) {
-
-                new AlertDialog.Builder(BalanceActivity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage(getString(R.string.trusted_node_pow_failed) + "\n" + "Block hash:" + strBlockHash)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                dialog.dismiss();
-
-                            }
-                        }).show();
-
-            }
-
         }
 
         @Override
