@@ -270,7 +270,12 @@ public class Cahoots {
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
                 this.strDestination = obj.getString("dest");
-                this.strCollabChange = obj.getString("collabChange");
+                if(obj.has("collabChange")) {
+                    this.strCollabChange = obj.getString("collabChange");
+                }
+                else    {
+                    this.strCollabChange = "";
+                }
 //                this.strPayNymCollab = obj.getString("paynym_collab");
 //                this.strPayNymInit = obj.getString("paynym_init");
                 if(obj.has("account"))    {
