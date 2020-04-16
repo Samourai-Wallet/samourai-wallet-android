@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     useLibrary 'org.apache.http.legacy'
     flavorDimensions "versionCode"
@@ -62,9 +62,9 @@ android {
             minSdkVersion 21
             targetSdkVersion 28
             versionCode 161
-            versionName "0.99.93"
+            versionName "0.99.95"
             resValue "string", "app_name", "Samourai Staging"
-            resValue "string", "version_name", "0.99.93"
+            resValue "string", "version_name", "0.99.95"
         }
     }
     testOptions {
@@ -86,7 +86,7 @@ dependencies {
     implementation('com.google.zxing:core:3.3.0') {
         transitive = true
     }
-    implementation 'com.android.support:multidex:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'net.i2p.android.ext:floatingactionbutton:1.9.0'
     implementation 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
     implementation 'com.neovisionaries:nv-websocket-client:1.9'
@@ -105,13 +105,15 @@ dependencies {
     implementation 'com.github.mjdev:libaums:0.5.5'
     implementation 'de.mindpipe.android:android-logging-log4j:1.0.3'
     implementation 'com.github.magnusja:java-fs:0.1.3'
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'org.hibernate:hibernate-validator:5.4.3.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation ('com.github.Samourai-Wallet:whirlpool-client:0.23.6') {
+    implementation ('com.github.Samourai-Wallet:whirlpool-client:0.23.17') {
+        exclude group:'org.hibernate', module:'hibernate-validator'
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
@@ -120,7 +122,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('com.github.Samourai-Wallet:extlibj:0.0.10') {
+    implementation ('com.github.Samourai-Wallet:extlibj:0.0.11') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
@@ -136,7 +138,7 @@ dependencies {
     implementation 'it.unimi.dsi:fastutil:7.2.1'
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
     implementation 'org.java-websocket:Java-WebSocket:1.3.6'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'com.auth0.android:jwtdecode:1.1.1'
@@ -149,7 +151,7 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
     testImplementation 'junit:junit:4.12'
     implementation project(path: ':tor')

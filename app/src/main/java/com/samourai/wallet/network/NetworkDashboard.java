@@ -6,11 +6,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.transition.TransitionManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.transition.TransitionManager;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,10 +27,6 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
-import com.samourai.wallet.hd.HD_WalletFactory;
-import com.samourai.wallet.network.dojo.DojoConfigureBottomSheet;
-import com.samourai.wallet.segwit.BIP49Util;
-import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.service.WebSocketService;
 import com.samourai.wallet.network.dojo.DojoUtil;
 
@@ -41,11 +37,7 @@ import com.samourai.wallet.util.ConnectionChangeReceiver;
 import com.samourai.wallet.util.ConnectivityStatus;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
-import org.bitcoinj.crypto.MnemonicException;
-
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 

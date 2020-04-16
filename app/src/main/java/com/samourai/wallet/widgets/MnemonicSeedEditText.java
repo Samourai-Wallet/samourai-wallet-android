@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by Sarath kumar on 1/23/2018.
  */
-public class MnemonicSeedEditText extends android.support.v7.widget.AppCompatMultiAutoCompleteTextView {
+public class MnemonicSeedEditText extends androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView {
     TextWatcher textWatcher;
     private static final String TAG = "MnemonicSeedEditText";
     String lastString;

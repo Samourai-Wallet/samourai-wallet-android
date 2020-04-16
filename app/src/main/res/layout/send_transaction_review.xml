@@ -1,4 +1,4 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:background="@android:color/darker_gray" />
 
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ricochet_hops_layout"
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
@@ -38,7 +38,7 @@
                 android:layout_marginRight="8dp"
                 android:visibility="gone">
 
-                <android.support.constraint.Guideline
+                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline_ricochet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -121,9 +121,9 @@
                 </LinearLayout>
 
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stonewallx2_review_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -254,13 +254,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView80" />
 
-                <android.support.constraint.Group
+                <androidx.constraintlayout.widget.Group
                     android:id="@+id/entropy_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:constraint_referenced_ids="cahoots_entropy_value,divider5,textView80,cahoots_entropy_bar" />
 
-                <android.support.constraint.Guideline
+                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline_ricochets"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -277,9 +277,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/cahoots_entropy_value" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stowaway_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -364,10 +364,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/divider6"
                     app:layout_constraintVertical_bias="0.0" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stonewallx1_layout"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
@@ -477,12 +477,12 @@
                     app:layout_constraintStart_toEndOf="@+id/entropy_value_stonewallx1"
                     app:layout_constraintTop_toTopOf="@+id/entropy_value_stonewallx1"
                     app:layout_constraintVertical_bias="0.72" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -522,6 +522,6 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

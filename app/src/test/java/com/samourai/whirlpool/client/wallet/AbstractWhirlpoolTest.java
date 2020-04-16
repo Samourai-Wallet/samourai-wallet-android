@@ -1,7 +1,6 @@
 package com.samourai.whirlpool.client.wallet;
 
 import android.content.Context;
-import android.test.mock.MockContext;
 
 import com.samourai.stomp.client.AndroidStompClient;
 import com.samourai.wallet.SamouraiWallet;
@@ -35,7 +34,7 @@ import io.reactivex.schedulers.Schedulers;
 public abstract class AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
 
-    protected Context context = new MockContext();
+    protected Context context = null; //new MockContext(); // TODO sdk>=29 required
     protected BIP47Util bip47Util = BIP47Util.getInstance(context);
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
     protected HD_WalletFactoryGeneric hdWalletFactoryGeneric;
@@ -105,7 +104,7 @@ public abstract class AbstractWhirlpoolTest {
     }
 
     protected Context getContext()  {
-        return new MockContext();
+        return context;
     }
 
     protected UnspentResponse.UnspentOutput newUnspentOutput(String hash, int index, long value) {
