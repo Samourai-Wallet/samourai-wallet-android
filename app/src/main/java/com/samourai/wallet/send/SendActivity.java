@@ -56,6 +56,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -638,18 +639,6 @@ public class SendActivity extends SamouraiActivity {
         decFormat.setMinimumFractionDigits(0);
         double customValue = 0.0;
 
-        if (PrefsUtil.getInstance(this).getValue(PrefsUtil.USE_TRUSTED_NODE, false)) {
-            customValue = 0.0;
-        } else {
-
-            try {
-                customValue = (double) fee;
-            } catch (Exception e) {
-                Toast.makeText(this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-        }
         SuggestedFee suggestedFee = new SuggestedFee();
         suggestedFee.setStressed(false);
         suggestedFee.setOK(true);
@@ -660,15 +649,6 @@ public class SendActivity extends SamouraiActivity {
     }
 
     private void setUpRicochet() {
-
-        if (account != 0) {
-            ricochetHopsSwitch.setChecked(false);
-            ricochetStaggeredDelivery.setChecked(false);
-            ConstraintLayout layoutPremiums = sendTransactionDetailsView.getTransactionView().findViewById(R.id.premium_addons);
-            layoutPremiums.setVisibility(View.GONE);
-            return;
-        }
-
         ricochetHopsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sendTransactionDetailsView.enableForRicochet(isChecked);
             enableCahoots(!isChecked);
@@ -1209,7 +1189,7 @@ public class SendActivity extends SamouraiActivity {
                 samouraiFeeViaBIP47 = true;
             }
 
-            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, ricochetStaggeredDelivery.isChecked());
+            ricochetJsonObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47, ricochetStaggeredDelivery.isChecked(), account);
             if (ricochetJsonObj != null) {
 
                 try {
@@ -1956,7 +1936,7 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
-            CahootsUtil.getInstance(SendActivity.this).doPSBT(data.trim());
+            PSBTUtil.getInstance(SendActivity.this).doPSBT(data.trim());
             return;
         }
 

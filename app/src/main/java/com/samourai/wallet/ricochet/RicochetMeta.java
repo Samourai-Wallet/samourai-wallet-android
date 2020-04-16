@@ -24,6 +24,7 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.PrefsUtil;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -248,7 +249,7 @@ public class RicochetMeta {
 
     }
 
-    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47, boolean useTimeLock) {
+    public JSONObject script(long spendAmount, long feePerKBAmount, String strDestination, int nbHops, String strPCode, boolean samouraiFeeViaBIP47, boolean useTimeLock, int account) {
 
         JSONObject jObj = new JSONObject();
 
@@ -266,6 +267,7 @@ public class RicochetMeta {
 
             jObj.put("ts", System.currentTimeMillis() / 1000L);
             jObj.put("hops", nbHops);
+            jObj.put("spend_account", account);
             jObj.put("spend_amount", biSpend.longValue());
             jObj.put("samourai_fee", biSamouraiFee.longValue());
             jObj.put("samourai_fee_via_bip47", samouraiFeeViaBIP47);
@@ -290,7 +292,7 @@ public class RicochetMeta {
             }
             BigInteger biFeePerHop = FeeUtil.getInstance().calculateFee(hopSz, biFeePerKB);
 
-            Pair<List<UTXO>, BigInteger> pair = getHop0UTXO(spendAmount, nbHops, biFeePerHop.longValue(), samouraiFeeViaBIP47);
+            Pair<List<UTXO>, BigInteger> pair = getHop0UTXO(spendAmount, nbHops, biFeePerHop.longValue(), samouraiFeeViaBIP47, account);
             List<UTXO> utxos = pair.getLeft();
             long totalValueSelected = 0L;
             for(UTXO u : utxos)   {
@@ -305,7 +307,7 @@ public class RicochetMeta {
             BigInteger hop0Fee = pair.getRight();
 //            Log.d("RicochetMeta", "hop0Fee (return):" + hop0Fee.longValue());
 
-            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47, nTimeLock);
+            Transaction txHop0 = getHop0Tx(utxos, hop0.longValue(), getDestinationAddress(index), hop0Fee.longValue(), samouraiFeeViaBIP47, nTimeLock, account);
             if(txHop0 == null)    {
                 return null;
             }
@@ -511,9 +513,15 @@ public class RicochetMeta {
         return address;
     }
 
-    private Pair<List<UTXO>, BigInteger> getHop0UTXO(long spendAmount, int nbHops, long feePerHop, boolean samouraiFeeViaBIP47) {
+    private Pair<List<UTXO>, BigInteger> getHop0UTXO(long spendAmount, int nbHops, long feePerHop, boolean samouraiFeeViaBIP47, int account) {
 
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
+        List<UTXO> utxos = null;
+        if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()) {
+            utxos = APIFactory.getInstance(context).getUtxosPostMix(true);
+        }
+        else {
+            utxos = APIFactory.getInstance(context).getUtxos(true);
+        }
 
         final List<UTXO> selectedUTXO = new ArrayList<UTXO>();
         long totalValueSelected = 0L;
@@ -552,7 +560,7 @@ public class RicochetMeta {
         }
     }
 
-    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47, long nTimeLock) {
+    private Transaction getHop0Tx(List<UTXO> utxos, long spendAmount, String destination, long fee, boolean samouraiFeeViaBIP47, long nTimeLock, int account) {
 
         List<MyTransactionOutPoint> unspent = new ArrayList<MyTransactionOutPoint>();
         long totalValueSelected = 0L;
@@ -572,7 +580,15 @@ public class RicochetMeta {
         HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
 
         if(changeAmount > 0L)    {
-            String change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
+            String change_address = null;
+            if(account == WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix())    {
+                int idx = AddressFactory.getInstance(context).getHighestPostChangeIdx();
+                change_address = BIP84Util.getInstance(context).getAddressAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix(), AddressFactory.CHANGE_CHAIN, idx).getBech32AsString();
+                AddressFactory.getInstance(context).setHighestPostChangeIdx(idx + 1);
+            }
+            else    {
+                change_address = BIP84Util.getInstance(context).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP84Util.getInstance(context).getWallet().getAccount(0).getChange().getAddrIdx()).getBech32AsString();
+            }
             receivers.put(change_address, BigInteger.valueOf(changeAmount));
         }
 
@@ -594,7 +610,7 @@ public class RicochetMeta {
         if(nTimeLock > 0L)    {
             tx.setLockTime(nTimeLock);
         }
-        tx = SendFactory.getInstance(context).signTransaction(tx, 0);
+        tx = SendFactory.getInstance(context).signTransaction(tx, account);
 
         return tx;
     }

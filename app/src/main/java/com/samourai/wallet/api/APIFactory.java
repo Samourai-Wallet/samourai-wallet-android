@@ -11,8 +11,6 @@ import android.util.Log;
 
 import com.auth0.android.jwt.JWT;
 import com.samourai.wallet.BuildConfig;
-import com.samourai.wallet.JSONRPC.JSONRPC;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.BIP47Meta;
@@ -1528,52 +1526,23 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            int sel = PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
-            if(sel == 1)    {
-
-                int[] blocks = new int[] { 2, 6, 24 };
-
-                List<SuggestedFee> suggestedFees = new ArrayList<SuggestedFee>();
-
-                JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-
-                for(int i = 0; i < blocks.length; i++)   {
-                    JSONObject feeObj = jsonrpc.getFeeEstimate(blocks[i]);
-                    if(feeObj != null && feeObj.has("result"))    {
-                        double fee = feeObj.getDouble("result");
-
-                        SuggestedFee suggestedFee = new SuggestedFee();
-                        suggestedFee.setDefaultPerKB(BigInteger.valueOf((long)(fee * 1e8)));
-                        suggestedFee.setStressed(false);
-                        suggestedFee.setOK(true);
-                        suggestedFees.add(suggestedFee);
-                    }
-                }
-
-                if(suggestedFees.size() > 0)    {
-                    FeeUtil.getInstance().setEstimatedFees(suggestedFees);
-                }
-
+            String _url =  WebUtil.getAPIUrl(context);
+//            info("APIFactory", "Dynamic fees:" + url.toString());
+            String response = null;
+            if(!AppUtil.getInstance(context).isOfflineMode())    {
+                response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
             }
             else    {
-                String _url =  WebUtil.getAPIUrl(context);
-//            info("APIFactory", "Dynamic fees:" + url.toString());
-                String response = null;
-                if(!AppUtil.getInstance(context).isOfflineMode())    {
-                    response = WebUtil.getInstance(null).getURL(_url + "fees" + "?at=" + getAccessToken());
-                }
-                else    {
-                    response = PayloadUtil.getInstance(context).deserializeFees().toString();
-                }
+                response = PayloadUtil.getInstance(context).deserializeFees().toString();
+            }
 //            info("APIFactory", "Dynamic fees response:" + response);
-                try {
-                    jsonObject = new JSONObject(response);
-                    parseDynamicFees_bitcoind(jsonObject);
-                }
-                catch(JSONException je) {
-                    je.printStackTrace();
-                    jsonObject = null;
-                }
+            try {
+                jsonObject = new JSONObject(response);
+                parseDynamicFees_bitcoind(jsonObject);
+            }
+            catch(JSONException je) {
+                je.printStackTrace();
+                jsonObject = null;
             }
         }
         catch(Exception e) {
