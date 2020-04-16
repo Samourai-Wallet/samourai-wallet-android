@@ -288,7 +288,7 @@ public class SendActivity extends SamouraiActivity {
             preselectedUTXOs = PreSelectUtil.getInstance().getPreSelected(getIntent().getExtras().getString("preselected"));
             setBalance();
 
-            if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
+            if(preselectedUTXOs != null && preselectedUTXOs.size() > 0 && balance < 1000000L) {
                 cahootsGroup.setVisibility(View.GONE);
                 ricochetHopsSwitch.setVisibility(View.GONE);
                 ricochetTitle.setVisibility(View.GONE);
