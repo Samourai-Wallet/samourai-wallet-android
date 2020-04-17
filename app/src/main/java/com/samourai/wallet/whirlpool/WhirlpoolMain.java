@@ -33,7 +33,7 @@ import android.widget.Toast;
 import com.samourai.wallet.R;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.home.BalanceActivity;
 import com.samourai.wallet.network.NetworkDashboard;
@@ -429,7 +429,7 @@ public class WhirlpoolMain extends AppCompatActivity {
                         cahootIntent.putExtra("_account", WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        CahootsUtil.getInstance(getApplication()).doPSBT(code.trim());
+                        PSBTUtil.getInstance(getApplication()).doPSBT(code.trim());
                     } else if (DojoUtil.getInstance(getApplication()).isValidPairingPayload(code.trim())) {
                         Intent intent = new Intent(getApplication(), NetworkDashboard.class);
                         intent.putExtra("params", code.trim());
