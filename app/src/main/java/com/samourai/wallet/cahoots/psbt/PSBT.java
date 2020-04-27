@@ -102,9 +102,27 @@ public class PSBT {
         sbLog = new StringBuilder();
     }
 
-    public PSBT(byte[] psbt, NetworkParameters params)   {
+    public PSBT(byte[] psbt, NetworkParameters params) throws UnsupportedEncodingException, IOException    {
 
-        String strPSBT = Hex.toHexString(psbt);
+        String strPSBT = null;
+        if(psbt.length > 2 && psbt[0] == (byte)0x1f && psbt[1] == (byte)0x8b)   {
+            ByteArrayInputStream bis = new ByteArrayInputStream(psbt);
+            GZIPInputStream gis = new GZIPInputStream(bis);
+            BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            br.close();
+            gis.close();
+            bis.close();
+
+            strPSBT = sb.toString();
+        }
+        else   {
+            strPSBT = Hex.toHexString(psbt);
+        }
 
         if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
             return;
@@ -129,48 +147,6 @@ public class PSBT {
         this.transaction = new Transaction(params);
 
         sbLog = new StringBuilder();
-    }
-
-    public PSBT(byte[] gzip) throws UnsupportedEncodingException, IOException    {
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(gzip);
-        GZIPInputStream gis = new GZIPInputStream(bis);
-        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        br.close();
-        gis.close();
-        bis.close();
-
-        String strPSBT = sb.toString();
-
-        if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
-            return;
-        }
-
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
-
-        if(FormatsUtilGeneric.getInstance().isBase64(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))    {
-            this.strPSBT = Hex.toHexString(Base64.decode(strPSBT));
-        }
-        else if(Z85.getInstance().isZ85(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))   {
-            this.strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
-        }
-        else    {
-            this.strPSBT = strPSBT;
-        }
-
-        psbtBytes = Hex.decode(this.strPSBT);
-        psbtByteBuffer = ByteBuffer.wrap(psbtBytes);
-
-        this.transaction = new Transaction(getNetParams());
-
-        sbLog = new StringBuilder();
-
     }
 
     public PSBT()   {

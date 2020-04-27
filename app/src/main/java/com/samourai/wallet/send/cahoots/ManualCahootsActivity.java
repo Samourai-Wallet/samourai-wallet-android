@@ -1,8 +1,10 @@
 package com.samourai.wallet.send.cahoots;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -14,8 +16,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +39,7 @@ import com.samourai.wallet.cahoots.Cahoots;
 import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.cahoots.STONEWALLx2;
 import com.samourai.wallet.cahoots.Stowaway;
+import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
@@ -48,6 +53,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.samourai.wallet.util.LogUtil.debug;
 
 public class ManualCahootsActivity extends SamouraiActivity {
 
@@ -66,7 +73,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manual_stone_wall);
+        setContentView(R.layout.activity_manual_cahoots);
         setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -152,7 +159,10 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.manual_stonewall_menu, menu);
+        getMenuInflater().inflate(R.menu.manual_cahoots_menu, menu);
+
+        menu.findItem(R.id.action_menu_display_psbt).setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -171,6 +181,14 @@ public class ManualCahootsActivity extends SamouraiActivity {
                 e.printStackTrace();
                 Toast.makeText(this, "Invalid data", Toast.LENGTH_SHORT).show();
             }
+        }
+        else if (menuItem.getItemId() == R.id.action_menu_display_psbt) {
+
+            doDisplayPSBT();
+
+        }
+        else {
+            ;
         }
 
         return true;
@@ -249,7 +267,8 @@ public class ManualCahootsActivity extends SamouraiActivity {
                         payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway4(stowaway);
                         if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        } else {
+                        }
+                        else {
                             cahootReviewFragment.setCahoots(payload);
                         }
                         break;
@@ -258,8 +277,9 @@ public class ManualCahootsActivity extends SamouraiActivity {
                         break;
                 }
             } catch (Exception e) {
-//            Toast.makeText(getApplicationContext(), R.string.cannot_process_stonewall, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
+                Log.d("CahootsUtil", e.getMessage());
             }
         }
 
@@ -277,12 +297,14 @@ public class ManualCahootsActivity extends SamouraiActivity {
                         stonewall.setCounterpartyAccount(account);  // set counterparty account
                         stonewall.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_1(stonewall);
+
                         if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 1:
                         payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_2(stonewall);
+
                         if (payload == null) {
                             Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
                         }
@@ -306,7 +328,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
                         break;
                 }
             } catch (Exception e) {
-                Toast.makeText(this, R.string.cannot_process_stowaway, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 Log.d("CahootsUtil", e.getMessage());
             }
@@ -430,6 +452,51 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
         dialog.show();
 
+    }
+
+    private void doDisplayPSBT()    {
+
+        try {
+            PSBT psbt = payload.getPSBT();
+            psbt.read();
+
+            String strPSBT = psbt.toString();
+
+            final TextView tvHexTx = new TextView(ManualCahootsActivity.this);
+            float scale = getResources().getDisplayMetrics().density;
+            tvHexTx.setSingleLine(false);
+            tvHexTx.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+            tvHexTx.setLines(10);
+            tvHexTx.setGravity(Gravity.START);
+            tvHexTx.setText(strPSBT);
+            tvHexTx.setPadding((int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (6 * scale + 0.5f));
+
+            AlertDialog.Builder dlg = new AlertDialog.Builder(ManualCahootsActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setView(tvHexTx)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                            android.content.ClipboardManager clipboard = (android.content.ClipboardManager)getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                            android.content.ClipData clip = null;
+                            clip = android.content.ClipData.newPlainText("tx", strPSBT);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(ManualCahootsActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                        }
+                    });
+            if(!isFinishing())    {
+                dlg.show();
+            }
+        }
+        catch(Exception e) {
+            ;
+        }
 
     }
 

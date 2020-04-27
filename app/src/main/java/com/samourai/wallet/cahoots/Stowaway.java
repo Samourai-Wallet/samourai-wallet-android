@@ -79,7 +79,7 @@ public class Stowaway extends Cahoots {
         if(this.getStep() != 0 || this.getSpendAmount() == 0L)   {
             return false;
         }
-        if(this.getType() == Cahoots.CAHOOTS_STONEWALLx2 && outputs == null)    {
+        if(this.getType() == Cahoots.CAHOOTS_STOWAWAY && outputs == null)    {
             return false;
         }
 
@@ -186,6 +186,8 @@ public class Stowaway extends Cahoots {
         }
 
         psbt.setTransaction(transaction);
+
+//        this.setPSBT(new PSBT(psbt.serialize(), transaction.getParams()));
 
         this.setStep(2);
 

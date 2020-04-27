@@ -791,5 +791,6 @@
     <string name="postmix_full_spend">This transaction will spend the entirety of your post-mix wallet which will undo the privacy attained via Whirlpool mixing. Are you sure that you want to do this?</string>
 
     <string name="psbt_sign_tx">Sign transaction</string>
+    <string name="display_psbt">Display PSBT</string>
 
 </resources>
