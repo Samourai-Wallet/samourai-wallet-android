@@ -1,5 +1,6 @@
 package com.samourai.wallet.cahoots;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.Z85;
@@ -91,6 +92,10 @@ public class Cahoots {
 
     public PSBT getPSBT() {
         return psbt;
+    }
+
+    public void setPSBT(PSBT psbt) {
+        this.psbt = psbt;
     }
 
     public Transaction getTransaction() {
@@ -296,7 +301,7 @@ public class Cahoots {
                 if(obj.has("fingerprint_collab"))    {
                     fingerprintCollab = Hex.decode(obj.getString("fingerprint_collab"));
                 }
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
+                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), SamouraiWallet.getInstance().getCurrentNetworkParams());
                 if(this.psbt != null)    {
                     this.psbt.read();
                 }
