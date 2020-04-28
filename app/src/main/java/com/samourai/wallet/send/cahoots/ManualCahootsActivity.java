@@ -495,7 +495,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
             }
         }
         catch(Exception e) {
-            ;
+            e.printStackTrace();
         }
 
     }
