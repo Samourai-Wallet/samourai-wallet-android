@@ -131,7 +131,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('com.github.Samourai-Wallet:boltzmann-java:develop-SNAPSHOT') {
+    implementation ('io.samourai.code.whirlpool:boltzmann-java:1.0.1') {
         exclude group: 'it.unimi.dsi', module: 'fastutil'
     }
     // temporary fix for building boltzmann-java dependency
