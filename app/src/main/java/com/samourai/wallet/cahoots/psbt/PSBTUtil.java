@@ -61,6 +61,10 @@ public class PSBTUtil {
         psbt.setDebug(true);
         try {
             psbt.read();
+            if(!psbt.isParseOK()) {
+                Toast.makeText(context, R.string.psbt_error, Toast.LENGTH_SHORT).show();
+                return;
+            }
             msg = psbt.dump();
         }
         catch(Exception e) {
