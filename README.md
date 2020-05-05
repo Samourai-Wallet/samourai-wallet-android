@@ -66,7 +66,7 @@ A Stowaway spend, also implemented as [PayJoin](https://joinmarket.me/blog/blog/
 
 ### Tor:
 
-Samourai indicates whether or not connections are being routed via Tor Socks5 proxy (uses Orbot).
+Includes Tor bundled in-app.
 
 ### TestNet3:
 
