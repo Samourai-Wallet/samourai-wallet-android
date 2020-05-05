@@ -154,6 +154,7 @@ public class SendActivity extends SamouraiActivity {
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
     private long balance = 0L;
+    private long selectableBalance = 0L;
     private String strDestinationBTCAddress = null;
     private ProgressBar progressBar;
 
@@ -736,30 +737,34 @@ public class SendActivity extends SamouraiActivity {
 
     private void setBalance() {
 
+        try {
+            if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+                balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
+                selectableBalance = balance;
+            } else {
+                Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
+                if (tempBalance != 0L) {
+                    balance = tempBalance;
+                    selectableBalance = balance;
+                }
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (MnemonicException.MnemonicLengthException mle) {
+            mle.printStackTrace();
+        } catch (java.lang.NullPointerException npe) {
+            npe.printStackTrace();
+        }
+
         if (preselectedUTXOs != null && preselectedUTXOs.size() > 0) {
             long amount = 0;
             for (UTXOCoin utxo : preselectedUTXOs) {
                 amount += utxo.amount;
             }
             balance = amount;
-        } else {
-
-            try {
-                if (account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
-                    balance = APIFactory.getInstance(SendActivity.this).getXpubPostMixBalance();
-                } else {
-                    Long tempBalance = APIFactory.getInstance(SendActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).xpubstr());
-                    if (tempBalance != 0L) {
-                        balance = tempBalance;
-                    }
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            } catch (MnemonicException.MnemonicLengthException mle) {
-                mle.printStackTrace();
-            } catch (java.lang.NullPointerException npe) {
-                npe.printStackTrace();
-            }
+        }
+        else {
+            ;
         }
 
         final String strAmount;
@@ -1018,7 +1023,7 @@ public class SendActivity extends SamouraiActivity {
 
         amount = (long) (Math.round(dAmount * 1e8));
 
-        if (amount == balance && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
+        if (amount == balance && balance == selectableBalance && account == WhirlpoolMeta.getInstance(SendActivity.this).getWhirlpoolPostmix()) {
 
             AlertDialog.Builder dlg = new AlertDialog.Builder(SendActivity.this)
                     .setTitle(R.string.app_name)
