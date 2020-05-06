@@ -87,7 +87,6 @@ import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.utxos.PreSelectUtil;
 import com.samourai.wallet.utxos.UTXOSActivity;

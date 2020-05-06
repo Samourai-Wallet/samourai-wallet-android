@@ -786,14 +786,4 @@ public class CahootsUtil {
         return ret;
     }
 
-    public long getCahootsValue(int account) {
-        long ret = 0L;
-        List<UTXO> _utxos = getCahootsUTXO(account);
-        for(UTXO utxo : _utxos)   {
-            ret += utxo.getValue();
-        }
-
-        return ret;
-    }
-
 }

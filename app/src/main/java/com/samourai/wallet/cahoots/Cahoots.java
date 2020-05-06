@@ -220,8 +220,6 @@ public class Cahoots {
             }
             obj.put("outpoints", _outpoints);
             obj.put("dest", strDestination == null ? "" : strDestination);
-//            obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
-//            obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
             if(params instanceof TestNet3Params)    {
                 obj.put("params","testnet");
             }
@@ -281,8 +279,6 @@ public class Cahoots {
                 else    {
                     this.strCollabChange = "";
                 }
-//                this.strPayNymCollab = obj.getString("paynym_collab");
-//                this.strPayNymInit = obj.getString("paynym_init");
                 if(obj.has("account"))    {
                     this.account = obj.getInt("account");
                 }

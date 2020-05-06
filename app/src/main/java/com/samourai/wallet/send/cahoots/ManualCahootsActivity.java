@@ -54,8 +54,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.samourai.wallet.util.LogUtil.debug;
-
 public class ManualCahootsActivity extends SamouraiActivity {
 
     private ViewPager viewPager;
