@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.samourai.wallet.JSONRPC.JSONRPC;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
@@ -64,76 +62,33 @@ public class PushTx {
 
     }
 
-    public String trustedNode(String hexString) {
-
-        try {
-            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            String response = jsonrpc.pushTx(hexString).toString();
-            return response;
-        }
-        catch(Exception e) {
-            return null;
-        }
-
-    }
-
     public boolean pushTx(String hexTx) {
 
         String response = null;
         boolean isOK = false;
 
         try {
-            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-                if(TrustedNodeUtil.getInstance().isSet())    {
-                    if(DO_SPEND)    {
-                        response = PushTx.getInstance(context).trustedNode(hexTx);
-                        JSONObject jsonObject = new org.json.JSONObject(response);
-                        if(jsonObject.has("result"))    {
-                            if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
-                                isOK = true;
-                            }
-                            else    {
-                                Toast.makeText(context, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                            }
+            if(DO_SPEND)    {
+                response = PushTx.getInstance(context).samourai(hexTx);
+                if(response != null)    {
+                    JSONObject jsonObject = new org.json.JSONObject(response);
+                    if(jsonObject.has("status"))    {
+                        if(jsonObject.getString("status").equals("ok"))    {
+                            isOK = true;
                         }
-                    }
-                    else    {
-                        Log.d("PushTx", hexTx);
-                        isOK = true;
                     }
                 }
                 else    {
-                    Toast.makeText(context, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
                 }
             }
             else    {
-                if(DO_SPEND)    {
-                    response = PushTx.getInstance(context).samourai(hexTx);
-                    if(response != null)    {
-                        JSONObject jsonObject = new org.json.JSONObject(response);
-                        if(jsonObject.has("status"))    {
-                            if(jsonObject.getString("status").equals("ok"))    {
-                                isOK = true;
-                            }
-                        }
-                    }
-                    else    {
-                        Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else    {
-                    Log.d("PushTx", hexTx);
-                    isOK = true;
-                }
+                Log.d("PushTx", hexTx);
+                isOK = true;
             }
 
             if(isOK)    {
-                if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == false)    {
-                    Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                }
-                else    {
-                    Toast.makeText(context, R.string.trusted_node_tx_sent, Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
             }
             else    {
                 Toast.makeText(context, R.string.tx_failed, Toast.LENGTH_SHORT).show();

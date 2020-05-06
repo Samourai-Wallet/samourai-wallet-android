@@ -13,11 +13,15 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,8 +34,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.IHttpClient;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.send.SendActivity;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
@@ -58,13 +65,18 @@ import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.SuggestedFee;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.send.UTXOFactory;
+import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.util.MonetaryUtil;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
+import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.xmanager.client.XManagerClient;
+import com.samourai.xmanager.protocol.XManagerService;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -89,7 +101,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -161,7 +175,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                     getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("paynym", ((TextView) view).getText().toString());
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this,"Paynym id copied",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Paynym id copied", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -176,12 +190,12 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         }
 //        Log.i(TAG, "setPayNym: ".concat(String.valueOf(BIP47Meta.getInstance().getIncomingIdx(pcode))));
 
-        if(BIP47Meta.getInstance().getIncomingIdx(pcode) == BIP47Meta.STATUS_NOT_SENT)
-        if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
-            showWaitingForConfirm();
-        }
+        if (BIP47Meta.getInstance().getIncomingIdx(pcode) == BIP47Meta.STATUS_NOT_SENT)
+            if (BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_SENT_NO_CFM) {
+                showWaitingForConfirm();
+            }
 
-        if(BIP47Meta.getInstance().getIncomingIdx(pcode) >= 0){
+        if (BIP47Meta.getInstance().getIncomingIdx(pcode) >= 0) {
             historyLayout.setVisibility(View.VISIBLE);
         }
 //        if(BIP47Meta.getInstance().getIncomingIdx(pcode)) ){
@@ -301,7 +315,16 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         editPaynymBottomSheet.show(getSupportFragmentManager(), editPaynymBottomSheet.getTag());
         editPaynymBottomSheet.setSaveButtonListener(view -> {
             updatePaynym(editPaynymBottomSheet.getLabel(), editPaynymBottomSheet.getPcode());
-            doNotifTx();
+            progressBar.setVisibility(View.VISIBLE);
+            Disposable disposable = getPayNymAddress()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(address -> {
+                        progressBar.setVisibility(View.GONE);
+                        SendNotifTxFactory.getInstance().setAddress(address);
+                        doNotifTx();
+                    });
+            disposables.add(disposable);
 
         });
 
@@ -427,7 +450,14 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                 break;
             }
             case R.id.retry_notiftx: {
-                doNotifTx();
+                Disposable disposable =   getPayNymAddress()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(address -> {
+                            SendNotifTxFactory.getInstance().setAddress(address);
+                            doNotifTx();
+                        });
+                disposables.add(disposable);
                 break;
             }
             case R.id.paynym_indexes: {
@@ -507,6 +537,13 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         if (requestCode == EDIT_PCODE) {
             setPayNym();
         }
+    }
+
+    private Single<String> getPayNymAddress() {
+        TorManager torManager = TorManager.getInstance(getApplicationContext());
+        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getApplicationContext()), torManager);
+        XManagerClient xManagerClient = new XManagerClient(SamouraiWallet.getInstance().isTestNet(), torManager.isConnected(), httpClient);
+        return Single.fromCallable(() -> xManagerClient.getAddressOrDefault(XManagerService.BIP47));
     }
 
     private void doNotifTx() {
@@ -768,7 +805,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         final HashMap<String, BigInteger> receivers = new HashMap<String, BigInteger>();
         receivers.put(Hex.toHexString(op_return), BigInteger.ZERO);
         receivers.put(payment_code.notificationAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).getAddressString(), SendNotifTxFactory._bNotifTxValue);
-        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS : SendNotifTxFactory.SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
+        receivers.put(SamouraiWallet.getInstance().isTestNet() ? SendNotifTxFactory.getInstance().TESTNET_SAMOURAI_NOTIF_TX_FEE_ADDRESS :  SendNotifTxFactory.getInstance().SAMOURAI_NOTIF_TX_FEE_ADDRESS, SendNotifTxFactory._bSWFee);
 
         final long change = totalValueSelected - (amount + fee.longValue());
         if (change > 0L) {

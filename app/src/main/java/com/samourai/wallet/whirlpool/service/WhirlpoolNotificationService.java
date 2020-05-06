@@ -8,7 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.samourai.wallet.R;
@@ -17,8 +17,6 @@ import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.MixingState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
-
-import org.bitcoinj.core.Coin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java8.util.Optional;
 
-import static android.support.v4.app.NotificationCompat.GROUP_ALERT_SUMMARY;
+import static androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_CHANNEL;
 import static com.samourai.wallet.SamouraiApplication.WHIRLPOOL_NOTIFICATIONS;
 import static com.samourai.wallet.util.FormatsUtil.getBTCDecimalFormat;

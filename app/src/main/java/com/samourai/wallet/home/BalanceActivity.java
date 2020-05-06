@@ -4,8 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -21,20 +21,19 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.transition.ChangeBounds;
-import android.support.transition.TransitionManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,9 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
-import com.samourai.wallet.JSONRPC.JSONRPC;
-import com.samourai.wallet.JSONRPC.PoW;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
@@ -60,7 +56,7 @@ import com.samourai.wallet.api.Tx;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
@@ -141,7 +137,6 @@ public class BalanceActivity extends SamouraiActivity {
     private ProgressBar progressBar;
     private BalanceViewModel balanceViewModel;
 
-    private PoWTask powTask = null;
     private RicochetQueueTask ricochetQueueTask = null;
     private com.github.clans.fab.FloatingActionMenu menuFab;
     private SwipeRefreshLayout txSwipeLayout;
@@ -206,22 +201,6 @@ public class BalanceActivity extends SamouraiActivity {
 
                     }
                 });
-
-                if (BalanceActivity.this != null && blkHash != null && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true && TrustedNodeUtil.getInstance().isSet()) {
-
-//                    BalanceActivity.this.runOnUiThread(new Runnable() {
-//                    @Override
-                    handler.post(new Runnable() {
-                        public void run() {
-                            if (powTask == null || powTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                                powTask = new PoWTask();
-                                powTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, blkHash);
-                            }
-                        }
-
-                    });
-
-                }
 
             }
 
@@ -838,7 +817,7 @@ public class BalanceActivity extends SamouraiActivity {
                         cahootIntent.putExtra("payload", strResult.trim());
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(strResult.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
+                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(strResult.trim());
                     } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(strResult.trim())) {
 
                         Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
@@ -1019,10 +998,9 @@ public class BalanceActivity extends SamouraiActivity {
                     cahootIntent.putExtra("payload", code.trim());
                     cahootIntent.putExtra("_account", account);
                     startActivity(cahootIntent);
-//                    CahootsUtil.getInstance(BalanceActivity.this).processCahoots(code.trim(), 0);
 
                 } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                    CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                    PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Intent intent = new Intent(BalanceActivity.this, NetworkDashboard.class);
                     intent.putExtra("params", code.trim());
@@ -1054,7 +1032,7 @@ public class BalanceActivity extends SamouraiActivity {
                         cahootIntent.putExtra("_account",account);
                         startActivity(cahootIntent);
                     } else if (FormatsUtil.getInstance().isPSBT(code.trim())) {
-                        CahootsUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
+                        PSBTUtil.getInstance(BalanceActivity.this).doPSBT(code.trim());
                 } else if (DojoUtil.getInstance(BalanceActivity.this).isValidPairingPayload(code.trim())) {
                     Toast.makeText(BalanceActivity.this, "Samourai Dojo full node coming soon.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -1494,66 +1472,6 @@ public class BalanceActivity extends SamouraiActivity {
         @Override
         protected void onPostExecute(String result) {
             ;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            ;
-        }
-
-    }
-
-    private class PoWTask extends AsyncTask<String, Void, String> {
-
-        private boolean isOK = true;
-        private String strBlockHash = null;
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            strBlockHash = params[0];
-
-            JSONRPC jsonrpc = new JSONRPC(TrustedNodeUtil.getInstance().getUser(), TrustedNodeUtil.getInstance().getPassword(), TrustedNodeUtil.getInstance().getNode(), TrustedNodeUtil.getInstance().getPort());
-            JSONObject nodeObj = jsonrpc.getBlockHeader(strBlockHash);
-            if (nodeObj != null && nodeObj.has("hash")) {
-                PoW pow = new PoW(strBlockHash);
-                String hash = pow.calcHash(nodeObj);
-                if (hash != null && hash.toLowerCase().equals(strBlockHash.toLowerCase())) {
-
-                    JSONObject headerObj = APIFactory.getInstance(BalanceActivity.this).getBlockHeader(strBlockHash);
-                    if (headerObj != null && headerObj.has("")) {
-                        if (!pow.check(headerObj, nodeObj, hash)) {
-                            isOK = false;
-                        }
-                    }
-
-                } else {
-                    isOK = false;
-                }
-            }
-
-            return "OK";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            if (!isOK) {
-
-                new AlertDialog.Builder(BalanceActivity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage(getString(R.string.trusted_node_pow_failed) + "\n" + "Block hash:" + strBlockHash)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                dialog.dismiss();
-
-                            }
-                        }).show();
-
-            }
-
         }
 
         @Override
