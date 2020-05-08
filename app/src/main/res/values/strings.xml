@@ -793,5 +793,6 @@
     <string name="psbt_sign_tx">Sign transaction</string>
     <string name="display_psbt">Display PSBT</string>
     <string name="psbt_error">Error parsing PSBT</string>
+    <string name="psbt_sign_error">Error signing transaction via PSBT</string>
 
 </resources>

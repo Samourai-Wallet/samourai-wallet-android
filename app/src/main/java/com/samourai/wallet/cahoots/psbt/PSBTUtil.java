@@ -15,11 +15,15 @@ import android.widget.Toast;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.hd.HD_Address;
+import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Transaction;
@@ -30,6 +34,8 @@ import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.script.Script;
 import org.bouncycastle.util.encoders.Hex;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -166,67 +172,60 @@ public class PSBTUtil {
 
         HashMap<String,ECKey> keyBag = new HashMap<String,ECKey>();
         HashMap<String,Long> amountBag = new HashMap<String,Long>();
-        List<UTXO> utxos = APIFactory.getInstance(context).getUtxos(true);
 
-        for(TransactionInput input : tx.getInputs()) {
+        SegwitAddress address = null;
+        long value = 0L;
+        int idx = 0;
+        ECKey eckeyPriv = null;
+        List<PSBTEntry> psbtInputs = psbt.getPsbtInputs();
+        List<TransactionInput> txInputs = tx.getInputs();
 
-            TransactionOutPoint _outpoint = input.getOutpoint();
-            String _hash = _outpoint.getHash().toString();
-            long _idx = _outpoint.getIndex();
+        for(PSBTEntry entry : psbtInputs) {
 
-            for(UTXO utxo : utxos) {
-                List<MyTransactionOutPoint> outpoints = utxo.getOutpoints();
-                for(MyTransactionOutPoint outpoint : outpoints) {
-                    if(outpoint.getTxHash().toString().equalsIgnoreCase(_hash) && outpoint.getTxOutputN() == _idx) {
-                        debug("PSBTUtil", "stored:" + input.toString());
-                        ECKey ecKey = SendFactory.getPrivKey(outpoint.getAddress(), 0);
-                        keyBag.put(outpoint.getAddress(), ecKey);
-                        keyBag.put(_outpoint.toString(), ecKey);
-                        amountBag.put(_outpoint.toString(), outpoint.getValue().longValue());
-                    }
-                }
+            if(entry.getKeyType() == null) {
+                continue;
+            }
+            else if(org.spongycastle.util.encoders.Hex.toHexString(entry.getKeyType()).equals("01")) {
+
+                address = null;
+                value = 0L;
+                eckeyPriv = null;
+
+                byte[] data = entry.getData();
+                Pair<Long,Byte[]> pair = PSBT.readSegwitInputUTXO(data);
+                value = pair.getLeft();
+                debug("PSBTUtil", "value:" + value);
+            }
+            else if(entry.getKeyType() != null && Hex.toHexString(entry.getKeyType()).equals("06")) {
+
+                byte[] data = entry.getData();
+                String path = PSBT.readBIP32Derivation(data);
+                String[] s = path.replaceAll("'", "").split("/");
+                debug("PSBTUtil", "path:" + path);
+                // BIP84Util returns pubkey only, use bip84Wallet to get privkey
+                HD_Wallet bip84Wallet = BIP84Util.getInstance(context).getWallet();
+                HD_Address addr = bip84Wallet.getAccountAt(Integer.parseInt(s[3])).getChain(Integer.parseInt(s[4])).getAddressAt(Integer.parseInt(s[5]));
+                address = new SegwitAddress(addr.getECKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
+                debug("PSBTUtil", "address:" + address.getBech32AsString());
+                eckeyPriv = address.getECKey();
+                debug("PSBTUtil", "hasPrivKey:" + eckeyPriv.hasPrivKey());
+            }
+
+            if(eckeyPriv != null && address != null) {
+                TransactionInput input = txInputs.get(idx);
+                keyBag.put(input.getOutpoint().toString(), eckeyPriv);
+                amountBag.put(input.getOutpoint().toString(), value);
+                idx++;
             }
 
         }
 
-        tx = signTx(psbt, tx, keyBag, amountBag);
+        tx = signTx(tx, keyBag, amountBag);
 
         return tx;
     }
 
-    public Transaction signTx(PSBT psbt, Transaction transaction, HashMap<String,ECKey> keyBag, HashMap<String,Long> amountBag) {
-
-        List<PSBTEntry> psbtInputs = psbt.getPsbtInputs();
-
-        for(PSBTEntry entry : psbtInputs) {
-
-            if(entry.getKey() == null) {
-                continue;
-            }
-
-/*
-            if(org.spongycastle.util.encoders.Hex.toHexString(entry.getKeyType()).equals("01")) {
-                byte[] data = entry.getData();
-                byte[] amount = new byte[8];
-                byte[] scriptpubkey = new byte[data.length - 8];
-                System.arraycopy(data, 0, amount, 0, 8);
-                System.arraycopy(data, 8, scriptpubkey, 0, data.length - 8);
-                ByteBuffer bb = ByteBuffer.wrap(amount);
-                bb.order(ByteOrder.LITTLE_ENDIAN);
-                // Assert.assertTrue(175000000L == bb.getLong());
-                // Assert.assertTrue("16001407af7cfec745600da9bffebc6a1db29d42ea9ace".equalsIgnoreCase(org.spongycastle.util.encoders.Hex.toHexString(scriptpubkey)));
-            }
-            else if(org.spongycastle.util.encoders.Hex.toHexString(entry.getKeyType()).equals("06")) {
-                byte[] keydata = entry.getKeyData();
-                // Assert.assertTrue("tb1qq7hhelk8g4sqm2dll67x58djn4pw4xkwx040qg".equals(new SegwitAddress(keydata, TestNet3Params.get()).getBech32AsString()));
-                String address = new SegwitAddress(keydata, SamouraiWallet.getInstance().getCurrentNetworkParams()).getBech32AsString();
-                ECKey ecKey = SendFactory.getPrivKey(address, 0);
-                keyBag.put(address, ecKey);
-            }
-*/
-        }
-
-        debug("Cahoots", "signTx:" + transaction.toString());
+    public Transaction signTx(Transaction transaction, HashMap<String,ECKey> keyBag, HashMap<String,Long> amountBag) {
 
         for(int i = 0; i < transaction.getInputs().size(); i++)   {
 
