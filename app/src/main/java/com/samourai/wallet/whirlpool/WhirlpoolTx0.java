@@ -155,10 +155,12 @@ public class WhirlpoolTx0 {
         //
         // calc fee here using feeSatB and utxos passed
         //
+        /*
         if(getChange() < 0L)    {
             debug("WhirlpoolTx0", "Cannot make premix: negative change:" + getAmountSelected());
             throw  new Exception("Cannot make premix: negative change:"+getAmountSelected());
         }
+        */
         if(nbPossiblePremix() < 1)    {
             debug("WhirlpoolTx0", "Cannot make premix: insufficient selected amount:" + getAmountSelected());
             throw  new Exception("Cannot make premix: insufficient selected amount:"+getAmountSelected());
