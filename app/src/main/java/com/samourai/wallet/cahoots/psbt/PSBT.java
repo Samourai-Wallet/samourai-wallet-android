@@ -73,9 +73,16 @@ public class PSBT {
     private List<PSBTEntry> psbtOutputs = null;
 
     private StringBuilder sbLog = null;
-    private boolean bDebug = false;
+    private static boolean bDebug = false;
 
-    public PSBT(String strPSBT, NetworkParameters params)   {
+    public PSBT(Transaction transaction)   {
+        psbtInputs = new ArrayList<PSBTEntry>();
+        psbtOutputs = new ArrayList<PSBTEntry>();
+        this.transaction = transaction;
+        sbLog = new StringBuilder();
+    }
+
+    private PSBT(String strPSBT)   {
 
         if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
             return;
@@ -97,12 +104,16 @@ public class PSBT {
         psbtBytes = Hex.decode(this.strPSBT);
         psbtByteBuffer = ByteBuffer.wrap(psbtBytes);
 
-        this.transaction = new Transaction(params);
-
         sbLog = new StringBuilder();
     }
 
-    public PSBT(byte[] psbt, NetworkParameters params) throws UnsupportedEncodingException, IOException    {
+    private PSBT()   {
+        ;
+    }
+
+    public static PSBT fromBytes(byte[] psbt) throws Exception    {
+
+        PSBT ret = null;
 
         String strPSBT = null;
         if(psbt.length > 2 && psbt[0] == (byte)0x1f && psbt[1] == (byte)0x8b)   {
@@ -125,63 +136,45 @@ public class PSBT {
         }
 
         if(!FormatsUtilGeneric.getInstance().isPSBT(strPSBT))    {
-            return;
+            throw new Exception("Invalid PSBT string");
         }
-
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
 
         if(FormatsUtilGeneric.getInstance().isBase64(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))    {
-            this.strPSBT = Hex.toHexString(Base64.decode(strPSBT));
+            strPSBT = Hex.toHexString(Base64.decode(strPSBT));
         }
         else if(Z85.getInstance().isZ85(strPSBT) && !FormatsUtilGeneric.getInstance().isHex(strPSBT))   {
-            this.strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
+            strPSBT = Hex.toHexString(Z85.getInstance().decode(strPSBT));
         }
         else    {
-            this.strPSBT = strPSBT;
+            ;
         }
 
-        psbtBytes = Hex.decode(this.strPSBT);
-        psbtByteBuffer = ByteBuffer.wrap(psbtBytes);
+        ret = new PSBT(strPSBT);
+        ret.read();
+        if(ret.isParseOK())    {
+            return ret;
+        }
+        else    {
+            return null;
+        }
 
-        this.transaction = new Transaction(params);
-
-        sbLog = new StringBuilder();
     }
 
-    public PSBT()   {
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
-        this.transaction = new Transaction(MainNetParams.get());
-        sbLog = new StringBuilder();
-    }
+    public byte[] toBytes()    {
 
-    public PSBT(Transaction transaction)   {
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
-        this.transaction = transaction;
-        sbLog = new StringBuilder();
-    }
+        try {
+            return serialize();
+        }
+        catch(Exception e) {
+            return null;
+        }
 
-    public PSBT(NetworkParameters params)   {
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
-        transaction = new Transaction(params);
-        sbLog = new StringBuilder();
-    }
-
-    public PSBT(NetworkParameters params, int version)   {
-        psbtInputs = new ArrayList<PSBTEntry>();
-        psbtOutputs = new ArrayList<PSBTEntry>();
-        transaction = new Transaction(params);
-        transaction.setVersion(version);
-        sbLog = new StringBuilder();
     }
 
     //
     // reader
     //
-    public void read() throws Exception    {
+    private void read() throws Exception    {
 
         int seenInputs = 0;
         int seenOutputs = 0;
@@ -404,7 +397,7 @@ public class PSBT {
         return entry;
     }
 
-    public byte[] serialize() throws IOException {
+    private byte[] serialize() throws IOException {
 
         byte[] serialized = transaction.bitcoinSerialize();
         byte[] txLen = PSBT.writeCompactInt(serialized.length);
@@ -527,19 +520,19 @@ public class PSBT {
     //
     public String toString()    {
         try {
-            return Hex.toHexString(serialize());
+            return Hex.toHexString(toBytes());
         }
-        catch(IOException ioe) {
+        catch(Exception e) {
             return null;
         }
     }
 
-    public String toBase64String() throws IOException    {
-        return Base64.toBase64String(serialize());
+    public String toBase64String()  {
+        return Base64.toBase64String(toBytes());
     }
 
-    public String toZ85String() throws IOException    {
-        return Z85.getInstance().encode(serialize());
+    public String toZ85String() {
+        return Z85.getInstance().encode(toBytes());
     }
 
     public byte[] toGZIP() throws IOException {
@@ -795,12 +788,12 @@ public class PSBT {
         return parseOK;
     }
 
-    public boolean getDebug() {
+    public static boolean getDebug() {
         return bDebug;
     }
 
-    public void setDebug(boolean debug) {
-        this.bDebug = debug;
+    public static void setDebug(boolean debug) {
+        bDebug = debug;
     }
 
     public String dump()    {
