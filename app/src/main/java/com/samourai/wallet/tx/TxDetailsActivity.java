@@ -131,7 +131,7 @@ public class TxDetailsActivity extends AppCompatActivity {
         amount.setText(BTCDisplayAmount);
         bottomButton.setVisibility(View.GONE);
 
-        if (tx.getConfirmations() <= 3) {
+        if (tx.getConfirmations() < 3) {
             txStatus.setTextColor(ContextCompat.getColor(this, R.color.tx_broadcast_offline_bg));
             String txConfirmation = getString(R.string.unconfirmed) +
                     " (" +
@@ -140,7 +140,7 @@ public class TxDetailsActivity extends AppCompatActivity {
             txStatus.setText(txConfirmation);
         }
 
-        if (tx.getConfirmations() > 3) {
+        if (tx.getConfirmations() >= 3) {
             String txConfirmation = String.valueOf(tx.getConfirmations()) +
                     " " +
                     getString(R.string.confirmation);
