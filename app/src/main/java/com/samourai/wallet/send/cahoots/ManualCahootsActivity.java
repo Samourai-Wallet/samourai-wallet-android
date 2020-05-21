@@ -456,7 +456,9 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
         try {
             PSBT psbt = payload.getPSBT();
-            psbt.read();
+            if(psbt == null)    {
+                Toast.makeText(ManualCahootsActivity.this, R.string.psbt_error, Toast.LENGTH_SHORT).show();
+            }
 
             String strPSBT = psbt.toString();
 
