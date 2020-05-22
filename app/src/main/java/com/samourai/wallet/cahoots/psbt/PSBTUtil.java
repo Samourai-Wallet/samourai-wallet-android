@@ -62,7 +62,6 @@ public class PSBTUtil {
 
     public void doPSBT(final String strPSBT) throws Exception    {
 
-        String msg = null;
         PSBT _psbt = null;
         PSBT.setDebug(true);
         try {
@@ -73,7 +72,6 @@ public class PSBTUtil {
             return;
         }
         final PSBT psbt = PSBT.fromBytes(_psbt.toBytes());
-        msg = Hex.toHexString(psbt.getTransaction().bitcoinSerialize());
 
         final EditText edPSBT = new EditText(context);
         edPSBT.setSingleLine(false);
@@ -94,7 +92,7 @@ public class PSBTUtil {
             }
         };
         edPSBT.addTextChangedListener(textWatcher);
-        edPSBT.setText(msg);
+        edPSBT.setText(psbt.dump());
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(context)
                 .setTitle(R.string.app_name)
