@@ -1,8 +1,8 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
-import android.support.constraint.Group;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.Group;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +10,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.whirlpool.models.PoolViewModel;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.samourai.wallet.util.FormatsUtil.getBTCDecimalFormat;

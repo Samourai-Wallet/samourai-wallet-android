@@ -35,7 +35,6 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
 import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.whirlpool.Tx0DisplayUtil;
@@ -289,7 +288,6 @@ public class PayloadUtil	{
 
         PrefsUtil.getInstance(context).setValue(PrefsUtil.ENABLE_TOR, false);
         PrefsUtil.getInstance(context).setValue(PrefsUtil.IS_RESTORE, false);
-        PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
 
         PrefsUtil.getInstance(context).clear();
 
@@ -443,7 +441,6 @@ public class PayloadUtil	{
             meta.put("pin2", AccessFactory.getInstance().getPIN2());
             meta.put("ricochet", RicochetMeta.getInstance(context).toJSON());
             meta.put("cahoots", CahootsFactory.getInstance().toJSON());
-            meta.put("trusted_node", TrustedNodeUtil.getInstance().toJSON());
             meta.put("rbfs", RBFUtil.getInstance().toJSON());
             meta.put("tor", TorManager.getInstance(context).toJSON());
             meta.put("blocked_utxos", BlockedUTXO.getInstance().toJSON());
@@ -460,8 +457,6 @@ public class PayloadUtil	{
             meta.put("remote", PrefsUtil.getInstance(context).getValue(PrefsUtil.ACCEPT_REMOTE, false));
             meta.put("use_trusted", PrefsUtil.getInstance(context).getValue(PrefsUtil.TRUSTED_LOCK, false));
             meta.put("check_sim", PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false));
-            meta.put("use_trusted_node", PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false));
-            meta.put("fee_provider_sel", PrefsUtil.getInstance(context).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
             meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
@@ -670,9 +665,6 @@ public class PayloadUtil	{
                 if(meta.has("cahoots")) {
                     CahootsFactory.getInstance().fromJSON((JSONArray) meta.get("cahoots"));
                 }
-                if(meta.has("trusted_node")) {
-                    TrustedNodeUtil.getInstance().fromJSON((JSONObject) meta.get("trusted_node"));
-                }
                 if(meta.has("rbfs")) {
                     RBFUtil.getInstance().fromJSON((JSONArray) meta.get("rbfs"));
                 }
@@ -736,12 +728,6 @@ public class PayloadUtil	{
                     if(meta.getBoolean("check_sim"))    {
                         SIMUtil.getInstance(context).setStoredSIM();
                     }
-                }
-                if(meta.has("use_trusted_node")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.USE_TRUSTED_NODE, meta.getBoolean("use_trusted_node"));
-                }
-                if(meta.has("fee_provider_sel")) {
-                    PrefsUtil.getInstance(context).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));

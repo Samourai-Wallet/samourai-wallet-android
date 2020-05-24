@@ -45,11 +45,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 
-import com.samourai.wallet.JSONRPC.JSONRPC;
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
@@ -140,48 +138,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                             PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.RBF_OPT_IN, true);
                         }
 
-                        return true;
-                    }
-                });
-
-                Preference trustedNodePref = (Preference) findPreference("trustedNode");
-                trustedNodePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getTrustedNode();
-                        return true;
-                    }
-                });
-
-                final CheckBoxPreference cbPref8 = (CheckBoxPreference) findPreference("useTrustedNode");
-                if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
-                    cbPref8.setEnabled(true);
-                }
-                else    {
-                    cbPref8.setEnabled(false);
-                }
-                cbPref8.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                        if (cbPref8.isChecked()) {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
-                        }
-                        else if(TrustedNodeUtil.getInstance().isSet() && TrustedNodeUtil.getInstance().isValidated())    {
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, true);
-                        }
-                        else    {
-                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                            cbPref8.setEnabled(false);
-                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
-                        }
-
-                        return true;
-                    }
-                });
-
-                Preference feeproviderPref = (Preference) findPreference("feeProvider");
-                feeproviderPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-                        getFeeProvider();
                         return true;
                     }
                 });
@@ -853,45 +809,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
 
-                Preference hashPref = (Preference) findPreference("hash");
-                hashPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    public boolean onPreferenceClick(Preference preference) {
-
-                        try {
-                            File apk = new File(SettingsActivity2.this.getPackageCodePath());
-                            MessageDigest md = MessageDigest.getInstance("SHA-256");
-                            FileInputStream fis = new FileInputStream(apk);
-                            byte[] dataBytes = new byte[1024 * 8];
-                            int nread = 0;
-                            while ((nread = fis.read(dataBytes)) != -1) {
-                                md.update(dataBytes, 0, nread);
-                            }
-                            ;
-                            byte[] hval = md.digest();
-                            String hash = Hex.toHexString(hval);
-
-                            TextView showText = new TextView(SettingsActivity2.this);
-                            showText.setText(hash);
-                            showText.setTextIsSelectable(true);
-                            showText.setPadding(40, 10, 40, 10);
-                            showText.setTextSize(18.0f);
-                            new AlertDialog.Builder(SettingsActivity2.this)
-                                    .setTitle(R.string.app_name)
-                                    .setView(showText)
-                                    .setCancelable(false)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
-                        } catch (Exception e) {
-                            ;
-                        }
-
-                        return true;
-                    }
-                });
-
                 Preference aboutPref = (Preference) findPreference("about");
                 aboutPref.setSummary("Samourai," + " " + getResources().getString(R.string.version_name));
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -1072,206 +989,6 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 })
                 .show();
 
-    }
-
-    private void getFeeProvider()	{
-
-        final String[] providers;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-            providers = new String[FeeUtil.getInstance().getProviders().length + 1];
-            System.arraycopy(FeeUtil.getInstance().getProviders(), 0, providers, 0, FeeUtil.getInstance().getProviders().length);
-            String[] trusted = new String[] { "Trusted node" };
-            System.arraycopy(trusted, 0, providers, FeeUtil.getInstance().getProviders().length, 1);
-        }
-        else    {
-            providers = FeeUtil.getInstance().getProviders();
-        }
-
-        final int sel;
-        if(PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0) >= providers.length)    {
-            sel = 0;
-        }
-        else    {
-            sel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
-        }
-
-        new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.options_fee_provider)
-                .setSingleChoiceItems(providers, sel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, which);
-
-                                if(which != sel)    {
-
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-
-                                            APIFactory.getInstance(SettingsActivity2.this).getDynamicFees();
-
-                                        }
-                                    }).start();
-
-                                }
-
-                                dialog.dismiss();
-
-                            }
-                        }
-                ).show();
-
-    }
-
-    private void getTrustedNode()	{
-
-        final EditText edNode = new EditText(SettingsActivity2.this);
-        edNode.setHint(R.string.trusted_node_ip_hint);
-        edNode.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        edNode.setText(TrustedNodeUtil.getInstance().getNode() == null ? "" : TrustedNodeUtil.getInstance().getNode());
-        final EditText edPort = new EditText(SettingsActivity2.this);
-        edPort.setHint(R.string.trusted_node_port_hint);
-        edPort.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_NUMBER);
-        edPort.setText(TrustedNodeUtil.getInstance().getPort() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : Integer.toString(TrustedNodeUtil.getInstance().getPort()));
-        final EditText edUser = new EditText(SettingsActivity2.this);
-        edUser.setHint(R.string.trusted_node_user_hint);
-        edUser.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        edUser.setText(TrustedNodeUtil.getInstance().getUser() == null ? "" : TrustedNodeUtil.getInstance().getUser());
-        final EditText edPassword = new EditText(SettingsActivity2.this);
-        edPassword.setHint(R.string.trusted_node_password_hint);
-        edPassword.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        edPassword.setSingleLine(true);
-        edPassword.setText(TrustedNodeUtil.getInstance().getPassword() == null ? "" : TrustedNodeUtil.getInstance().getPassword());
-
-        LinearLayout restoreLayout = new LinearLayout(SettingsActivity2.this);
-        restoreLayout.setOrientation(LinearLayout.VERTICAL);
-        restoreLayout.addView(edNode);
-        restoreLayout.addView(edPort);
-        restoreLayout.addView(edUser);
-        restoreLayout.addView(edPassword);
-
-        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                .setTitle(R.string.app_name)
-                .setMessage(R.string.trusted_node)
-                .setView(restoreLayout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        final String node = edNode.getText().toString();
-                        final String port = edPort.getText().toString().length() == 0 ? Integer.toString(TrustedNodeUtil.DEFAULT_PORT) : edPort.getText().toString();
-                        final String user = edUser.getText().toString();
-                        final String password = edPassword.getText().toString();
-
-                        if(node != null && node.length() > 0 &&
-                                port != null && port.length() > 0 &&
-                                user != null && user.length() > 0 &&
-                                password != null && password.length() > 0
-                        )    {
-
-                            TrustedNodeUtil.getInstance().setParams(user, new CharSequenceX(password), node, Integer.parseInt(port));
-
-                            final Handler handler = new Handler();
-
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    Looper.prepare();
-
-                                    final CheckBoxPreference cbPref8 = (CheckBoxPreference)SettingsActivity2.this.findPreference("useTrustedNode");
-                                    boolean isOK = false;
-
-                                    JSONRPC jsonrpc = new JSONRPC(user, new CharSequenceX(password), node, Integer.parseInt(port));
-                                    String result = jsonrpc.getNetworkInfoAsString();
-                                    Log.d("TrustedNodeUtil", "getnetworkinfo:" + result);
-
-                                    if(result != null)    {
-                                        try {
-                                            JSONObject obj = new JSONObject(result);
-                                            if(obj != null && obj.has("version") && obj.has("subversion"))   {
-
-                                                if(obj.getString("subversion").contains("Bitcoin XT") || obj.getString("subversion").contains("Classic") || obj.getString("subversion").contains("BitcoinUnlimited") ||
-                                                        obj.getString("subversion").contains("SegWit2x") || obj.getString("subversion").contains("Segwit2x") ||
-                                                        obj.getString("subversion").contains("Bitcoin ABC") ||
-                                                        obj.getString("subversion").contains("Satoshi:1.14"))    {
-                                                    Toast.makeText(SettingsActivity2.this, R.string.trusted_node_breaks_consensus, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else if(obj.getInt("version") < 130100 || !obj.getString("subversion").contains("Satoshi"))   {
-                                                    isOK = true;
-                                                    Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_core_131, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else    {
-                                                    isOK = true;
-                                                    Toast.makeText(SettingsActivity2.this, "Trusted node running:\n" + obj.getString("subversion") + ", " + obj.getInt("version"), Toast.LENGTH_SHORT).show();
-                                                }
-
-                                            }
-                                            else    {
-                                                Toast.makeText(SettingsActivity2.this, R.string.trusted_node_ko, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                        catch(Exception e) {
-                                            Toast.makeText(SettingsActivity2.this, e.getMessage() + "\n" + R.string.trusted_node_error, Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                    else    {
-                                        Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_responding, Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    final boolean _isOK = isOK;
-
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-
-                                            if(_isOK)    {
-                                                cbPref8.setEnabled(true);
-                                                TrustedNodeUtil.getInstance().setValidated(true);
-                                            }
-                                            else    {
-                                                cbPref8.setChecked(false);
-                                                cbPref8.setEnabled(false);
-                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.USE_TRUSTED_NODE, false);
-                                                PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.FEE_PROVIDER_SEL, 0);
-                                                TrustedNodeUtil.getInstance().setValidated(false);
-                                            }
-
-                                            SettingsActivity2.this.recreate();
-
-                                        }
-                                    });
-
-                                    Looper.loop();
-
-                                }
-                            }).start();
-
-
-                            dialog.dismiss();
-
-                        }
-                        else if((node == null || node.length() == 0) &&
-                                (port == null || port.length() == 0) &&
-                                (user == null || user.length() == 0) &&
-                                (password == null || password.length() == 0))   {
-
-                            TrustedNodeUtil.getInstance().reset();
-
-                        }
-                        else    {
-                            Toast.makeText(SettingsActivity2.this, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                });
-        if(!isFinishing())    {
-            dlg.show();
-        }
     }
 
     private void doTroubleshoot()   {
@@ -1664,61 +1381,45 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doPSBT()    {
 
+        final EditText edPSBT = new EditText(SettingsActivity2.this);
+        edPSBT.setSingleLine(false);
+        edPSBT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edPSBT.setLines(10);
+        edPSBT.setHint(R.string.PSBT);
+        edPSBT.setGravity(Gravity.START);
+        TextWatcher textWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                edPSBT.setSelection(0);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+        edPSBT.addTextChangedListener(textWatcher);
+
         AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.PSBT)
-                .setCancelable(true)
-                .setPositiveButton(R.string.enter_psbt, new DialogInterface.OnClickListener() {
+                .setView(edPSBT)
+                .setMessage(R.string.enter_psbt)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         dialog.dismiss();
 
-                        final EditText edPSBT = new EditText(SettingsActivity2.this);
-                        edPSBT.setSingleLine(false);
-                        edPSBT.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                        edPSBT.setLines(10);
-                        edPSBT.setHint(R.string.PSBT);
-                        edPSBT.setGravity(Gravity.START);
-                        TextWatcher textWatcher = new TextWatcher() {
+                        final String strPSBT = edPSBT.getText().toString().replaceAll(" ", "").trim();
 
-                            public void afterTextChanged(Editable s) {
-                                edPSBT.setSelection(0);
-                            }
-                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                ;
-                            }
-                            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                ;
-                            }
-                        };
-                        edPSBT.addTextChangedListener(textWatcher);
-
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                                .setTitle(R.string.app_name)
-                                .setView(edPSBT)
-                                .setMessage(R.string.enter_psbt)
-                                .setCancelable(false)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                                        dialog.dismiss();
-
-                                        final String strPSBT = edPSBT.getText().toString().trim();
-
-                                        CahootsUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
-
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        if(!isFinishing())    {
-                            dlg.show();
-                        }
+                        PSBTUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
 
                     }
-
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
                 });
         if(!isFinishing())    {
             dlg.show();

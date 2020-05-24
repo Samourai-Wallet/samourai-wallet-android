@@ -1,12 +1,12 @@
 package com.samourai.wallet.widgets;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.transition.Fade;
-import android.support.transition.Slide;
-import android.support.transition.TransitionManager;
-import android.support.transition.TransitionSet;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.transition.Fade;
+import androidx.transition.Slide;
+import androidx.transition.TransitionManager;
+import androidx.transition.TransitionSet;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
