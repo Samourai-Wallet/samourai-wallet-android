@@ -60,22 +60,18 @@ public class PSBTUtil {
         return instance;
     }
 
-    public void doPSBT(final String strPSBT)    {
+    public void doPSBT(final String strPSBT) throws Exception    {
 
-        String msg = null;
-        PSBT psbt = new PSBT(strPSBT, SamouraiWallet.getInstance().getCurrentNetworkParams());
-        psbt.setDebug(true);
+        PSBT _psbt = null;
+        PSBT.setDebug(true);
         try {
-            psbt.read();
-            if(!psbt.isParseOK()) {
-                Toast.makeText(context, R.string.psbt_error, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            msg = psbt.dump();
+            _psbt = PSBT.fromBytes(Hex.decode(strPSBT));
         }
         catch(Exception e) {
-            msg = e.getMessage();
+            Toast.makeText(context, R.string.psbt_error, Toast.LENGTH_SHORT).show();
+            return;
         }
+        final PSBT psbt = PSBT.fromBytes(_psbt.toBytes());
 
         final EditText edPSBT = new EditText(context);
         edPSBT.setSingleLine(false);
@@ -96,7 +92,7 @@ public class PSBTUtil {
             }
         };
         edPSBT.addTextChangedListener(textWatcher);
-        edPSBT.setText(msg);
+        edPSBT.setText(psbt.dump());
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(context)
                 .setTitle(R.string.app_name)

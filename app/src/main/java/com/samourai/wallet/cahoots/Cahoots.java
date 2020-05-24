@@ -297,10 +297,7 @@ public class Cahoots {
                 if(obj.has("fingerprint_collab"))    {
                     fingerprintCollab = Hex.decode(obj.getString("fingerprint_collab"));
                 }
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), SamouraiWallet.getInstance().getCurrentNetworkParams());
-                if(this.psbt != null)    {
-                    this.psbt.read();
-                }
+                this.psbt = obj.getString("psbt").equals("") ? null : PSBT.fromBytes(Z85.getInstance().decode(obj.getString("psbt")));
             }
         }
         catch(JSONException je) {

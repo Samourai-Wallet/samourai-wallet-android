@@ -1413,7 +1413,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         final String strPSBT = edPSBT.getText().toString().replaceAll(" ", "").trim();
 
-                        PSBTUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
+                        try {
+                            PSBTUtil.getInstance(SettingsActivity2.this).doPSBT(strPSBT);
+                        }
+                        catch(Exception e) {
+                            ;
+                        }
 
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

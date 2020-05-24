@@ -1976,7 +1976,12 @@ public class SendActivity extends SamouraiActivity {
             return;
         }
         if (FormatsUtil.getInstance().isPSBT(data.trim())) {
-            PSBTUtil.getInstance(SendActivity.this).doPSBT(data.trim());
+            try {
+                PSBTUtil.getInstance(SendActivity.this).doPSBT(data.trim());
+            }
+            catch(Exception e) {
+                ;
+            }
             return;
         }
 
