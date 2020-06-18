@@ -1713,6 +1713,7 @@ public class SendActivity extends SamouraiActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
+                        prepareSpend();
                         progressBar.setVisibility(View.INVISIBLE);
                         ricochetSpend(ricochetStaggeredDelivery.isChecked());
                     }, er ->  {
