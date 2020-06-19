@@ -57,6 +57,10 @@ public class TorManager {
         return instance;
     }
 
+    protected TorManager() {
+        // required for tests
+    }
+
     private TorManager(Context context) {
 
         torStatus.onNext(CONNECTION_STATES.DISCONNECTED);

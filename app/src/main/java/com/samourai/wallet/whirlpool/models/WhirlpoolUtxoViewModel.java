@@ -1,31 +1,31 @@
 package com.samourai.wallet.whirlpool.models;
 
-import com.samourai.wallet.api.backend.beans.UnspentResponse;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoConfig;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
-public class WhirlpoolUtxoViewModel extends WhirlpoolUtxo {
+public class WhirlpoolUtxoViewModel {
 
-
+    private WhirlpoolUtxo whirlpoolUtxo;
     private boolean isSection = false;
     private String section = "";
     private int id = 0;
 
-    public WhirlpoolUtxoViewModel(UnspentResponse.UnspentOutput utxo, WhirlpoolAccount account, WhirlpoolUtxoConfig utxoConfig, WhirlpoolUtxoStatus status) {
-        super(utxo, account, utxoConfig, status);
+    public WhirlpoolUtxoViewModel(WhirlpoolUtxo whirlpoolUtxo) {
+        this.whirlpoolUtxo = whirlpoolUtxo;
     }
 
-    public static WhirlpoolUtxoViewModel copy(WhirlpoolUtxo utxo) {
-        return new WhirlpoolUtxoViewModel(utxo.getUtxo(), utxo.getAccount(), utxo.getUtxoConfig(), utxo.getUtxoState().getStatus());
+    public static WhirlpoolUtxoViewModel copy(WhirlpoolUtxo whirlpoolUtxo) {
+        return new WhirlpoolUtxoViewModel(whirlpoolUtxo);
     }
 
     public static WhirlpoolUtxoViewModel section(String sectionText) {
-        WhirlpoolUtxoViewModel section = new WhirlpoolUtxoViewModel(null, null, null, null);
+        WhirlpoolUtxoViewModel section = new WhirlpoolUtxoViewModel(null);
         section.setSection(true);
         section.setSection(sectionText);
         return section;
+    }
+
+    public WhirlpoolUtxo getWhirlpoolUtxo() {
+        return whirlpoolUtxo;
     }
 
     public boolean isSection() {

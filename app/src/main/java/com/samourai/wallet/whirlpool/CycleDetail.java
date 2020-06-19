@@ -22,6 +22,7 @@ import com.samourai.whirlpool.client.mix.listener.MixStep;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.MixableStatus;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoState;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
@@ -95,16 +96,14 @@ public class CycleDetail extends AppCompatActivity {
     }
 
     private void setMixStatus() {
-        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
-        if (!whirlpoolWalletOpt.isPresent()) {
-            // wallet not opened
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        if (whirlpoolWallet == null) {
             return;
         }
-        WhirlpoolWallet wallet = whirlpoolWalletOpt.get();
         try {
-            for (WhirlpoolUtxo utxo : wallet.getUtxosPremix()) {
+            for (WhirlpoolUtxo utxo : whirlpoolWallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.PREMIX)) {
                 if (utxo.getUtxo().toString().equals(hash)) {
-                    getSupportActionBar().setTitle(utxo.getUtxoConfig().getPoolId());
+                    getSupportActionBar().setTitle(utxo.getPoolId());
                     whirlpoolUtxo = utxo;
                     makeTxNetworkRequest();
                     transactionId.setText(utxo.getUtxo().tx_hash);

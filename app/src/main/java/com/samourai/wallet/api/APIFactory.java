@@ -1897,12 +1897,9 @@ public class APIFactory	{
             }
 
             // refresh Whirlpool utxos
-            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
-            if (whirlpoolWalletOpt.isPresent()) {
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.DEPOSIT);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.PREMIX);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.POSTMIX);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.BADBANK);
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(context).getWhirlpoolWalletOrNull();
+            if (whirlpoolWallet != null) {
+                whirlpoolWallet.getUtxoSupplier().expire();
             }
         }
         catch (IndexOutOfBoundsException ioobe) {
