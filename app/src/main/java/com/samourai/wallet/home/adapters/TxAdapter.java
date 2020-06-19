@@ -1,10 +1,10 @@
 package com.samourai.wallet.home.adapters;
 
 import android.content.Context;
-import android.support.constraint.Group;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;

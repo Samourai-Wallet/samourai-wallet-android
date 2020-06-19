@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.widget.Toast;
 import android.util.Log;
 
-import com.samourai.wallet.JSONRPC.TrustedNodeUtil;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -166,37 +165,18 @@ public class SweepUtil  {
 
                                 String response = null;
                                 try {
-                                    if(PrefsUtil.getInstance(context).getValue(PrefsUtil.USE_TRUSTED_NODE, false) == true)    {
-                                        if(TrustedNodeUtil.getInstance().isSet())    {
-                                            response = PushTx.getInstance(context).trustedNode(hexTx);
-                                            JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("result"))    {
-                                                if(jsonObject.getString("result").matches("^[A-Za-z0-9]{64}$"))    {
-                                                    Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                                }
-                                                else    {
-                                                    Toast.makeText(context, R.string.trusted_node_tx_error, Toast.LENGTH_SHORT).show();
-                                                }
+                                    response = PushTx.getInstance(context).samourai(hexTx);
+
+                                    if(response != null)    {
+                                        JSONObject jsonObject = new org.json.JSONObject(response);
+                                        if(jsonObject.has("status"))    {
+                                            if(jsonObject.getString("status").equals("ok"))    {
+                                                Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
                                             }
-                                        }
-                                        else    {
-                                            Toast.makeText(context, R.string.trusted_node_not_valid, Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     else    {
-                                        response = PushTx.getInstance(context).samourai(hexTx);
-
-                                        if(response != null)    {
-                                            JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("status"))    {
-                                                if(jsonObject.getString("status").equals("ok"))    {
-                                                    Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }
-                                        else    {
-                                            Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                                 catch(JSONException je) {

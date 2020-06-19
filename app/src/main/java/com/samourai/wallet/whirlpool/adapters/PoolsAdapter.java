@@ -1,8 +1,8 @@
 package com.samourai.wallet.whirlpool.adapters;
 
 import android.content.Context;
-import android.support.constraint.Group;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.Group;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +10,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.whirlpool.models.PoolViewModel;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.samourai.wallet.util.FormatsUtil.getBTCDecimalFormat;
@@ -41,7 +39,7 @@ public class PoolsAdapter extends RecyclerView.Adapter<PoolsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final PoolViewModel poolViewModel = pools.get(position);
         holder.poolAmount.setText(getBTCDecimalFormat(poolViewModel.getDenomination(),2).concat(" BTC Pool"));
-        holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat("    ").concat(getBTCDecimalFormat(poolViewModel.getFeeValue())).concat(" BTC"));
+         holder.poolFees.setText(mContext.getString(R.string.pool_fee).concat(" ").concat(getBTCDecimalFormat(poolViewModel.getFeeValue())).concat(" BTC"));
         holder.totalFees.setText(mContext.getString(R.string.total_fees).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getTotalFee())).concat(" BTC").concat(" (").concat(String.valueOf(poolViewModel.getTotalEstimatedBytes())).concat( " bytes)"));
         holder.minorFees.setText(mContext.getString(R.string.miner_fee).concat("  ").concat(getBTCDecimalFormat(poolViewModel.getMinerFee())).concat(" BTC"));
         holder.checkBox.setOnCheckedChangeListener(null);

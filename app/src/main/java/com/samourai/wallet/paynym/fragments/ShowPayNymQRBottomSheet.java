@@ -1,15 +1,14 @@
 package com.samourai.wallet.paynym.fragments;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.content.FileProvider;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import androidx.core.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,6 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
-import com.samourai.wallet.bip47.BIP47ShowQR;
-import com.samourai.wallet.bip47.BIP47Util;
-import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.util.AppUtil;
 
 

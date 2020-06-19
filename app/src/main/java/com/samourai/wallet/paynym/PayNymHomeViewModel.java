@@ -1,13 +1,10 @@
 package com.samourai.wallet.paynym;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.widget.TextView;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 
-import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.payload.PayloadUtil;
 
@@ -16,11 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import io.reactivex.Observable;

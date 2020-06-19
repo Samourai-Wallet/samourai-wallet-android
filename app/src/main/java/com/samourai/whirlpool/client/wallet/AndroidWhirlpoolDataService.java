@@ -29,16 +29,16 @@ public class AndroidWhirlpoolDataService extends WhirlpoolDataService {
         List<UTXO> utxos = null;
         switch(whirlpoolAccount) {
             case DEPOSIT:
-                utxos = apiFactory.getUtxos(false);
+                utxos = apiFactory.getUtxos(true);
                 break;
             case PREMIX:
                 utxos = apiFactory.getUtxosPreMix(false);
                 break;
             case POSTMIX:
-                utxos = apiFactory.getUtxosPostMix(false);
+                utxos = apiFactory.getUtxosPostMix(true);
                 break;
             case BADBANK:
-                utxos = apiFactory.getUtxosBadBank(false);
+                utxos = apiFactory.getUtxosBadBank(true);
                 break;
             default:
                 log.error("fetchUtxos: unknown whirlpoolAccount: "+whirlpoolAccount);

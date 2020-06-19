@@ -7,7 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="@+id/textView65"
             app:layout_constraintTop_toBottomOf="@+id/textView71" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/stonewall_fee_splitup_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -91,7 +91,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/textView40"
                 app:layout_constraintTop_toTopOf="@+id/textView40" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <Button
             android:id="@+id/cahoots_step_show_qr_btn"
             android:layout_width="0dp"
@@ -156,5 +156,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView69"
             app:layout_constraintTop_toBottomOf="@+id/textView69" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

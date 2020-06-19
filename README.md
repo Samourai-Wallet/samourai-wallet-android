@@ -46,6 +46,10 @@ Samourai spends to bech32 addresses P2WPKH based on [original BIP](https://githu
 
 Samourai implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) by Pieter Wuille and Greg Maxwell.
 
+### BIP174 (Partially Signed Bitcoin Transaction Format, PSBT):
+
+Samourai signing via PSBT implementation based on [original BIP](https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki) by  Andrew Chow.
+
 ### Spending:
 
 Samourai spends include the possibility of including custom fees as well as the use of batch spending (build up a list of batched outputs for grouped spend and fee savings).
@@ -66,7 +70,7 @@ A Stowaway spend, also implemented as [PayJoin](https://joinmarket.me/blog/blog/
 
 ### Tor:
 
-Samourai indicates whether or not connections are being routed via Tor Socks5 proxy (uses Orbot).
+Includes Tor bundled in-app.
 
 ### TestNet3:
 

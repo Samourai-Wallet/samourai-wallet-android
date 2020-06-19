@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,7 @@
     tools:context="com.samourai.wallet.utxos.UTXODetailsActivity">
 
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,14 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_utxo_activity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/grey_accent">
 
 
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         </FrameLayout>
 
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -193,7 +193,7 @@
                 android:alpha="0.2"
                 android:background="@color/white"
                 android:padding="12dp" />
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -227,7 +227,7 @@
                     app:layout_constraintStart_toEndOf="@+id/textView35"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.constraint.Group
+                <androidx.constraintlayout.widget.Group
                     android:id="@+id/textinput_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -260,7 +260,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/utxo_details_note"
                     app:srcCompat="@drawable/ic_delete_24" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </LinearLayout>
@@ -268,4 +268,4 @@
     </ScrollView>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

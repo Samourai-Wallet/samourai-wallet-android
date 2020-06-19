@@ -1,5 +1,6 @@
 package com.samourai.wallet.cahoots;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.cahoots.psbt.PSBT;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.util.Z85;
@@ -91,6 +92,10 @@ public class Cahoots {
 
     public PSBT getPSBT() {
         return psbt;
+    }
+
+    public void setPSBT(PSBT psbt) {
+        this.psbt = psbt;
     }
 
     public Transaction getTransaction() {
@@ -215,8 +220,6 @@ public class Cahoots {
             }
             obj.put("outpoints", _outpoints);
             obj.put("dest", strDestination == null ? "" : strDestination);
-//            obj.put("paynym_collab", strPayNymCollab == null ? "" : strPayNymCollab);
-//            obj.put("paynym_init", strPayNymInit == null ? "" : strPayNymInit);
             if(params instanceof TestNet3Params)    {
                 obj.put("params","testnet");
             }
@@ -270,9 +273,12 @@ public class Cahoots {
                     outpoints.put(entry.getString("outpoint"), entry.getLong("value"));
                 }
                 this.strDestination = obj.getString("dest");
-                this.strCollabChange = obj.getString("collabChange");
-//                this.strPayNymCollab = obj.getString("paynym_collab");
-//                this.strPayNymInit = obj.getString("paynym_init");
+                if(obj.has("collabChange")) {
+                    this.strCollabChange = obj.getString("collabChange");
+                }
+                else    {
+                    this.strCollabChange = "";
+                }
                 if(obj.has("account"))    {
                     this.account = obj.getInt("account");
                 }
@@ -291,10 +297,7 @@ public class Cahoots {
                 if(obj.has("fingerprint_collab"))    {
                     fingerprintCollab = Hex.decode(obj.getString("fingerprint_collab"));
                 }
-                this.psbt = obj.getString("psbt").equals("") ? null : new PSBT(Z85.getInstance().decode(obj.getString("psbt")), params);
-                if(this.psbt != null)    {
-                    this.psbt.read();
-                }
+                this.psbt = obj.getString("psbt").equals("") ? null : PSBT.fromBytes(Z85.getInstance().decode(obj.getString("psbt")));
             }
         }
         catch(JSONException je) {
