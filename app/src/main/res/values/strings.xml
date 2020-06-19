@@ -795,4 +795,8 @@
     <string name="psbt_error">Error parsing PSBT</string>
     <string name="psbt_sign_error">Error signing transaction via PSBT</string>
 
+    <string name="sweep_no_p2pkh">No amount found on legacy address. Checking compatibility derivation.</string>
+    <string name="sweep_no_p2sh_p2wpkh">No amount found on compatibility address. Checking native segwit derivation.</string>
+    <string name="sweep_no_p2wpkh">No amount found on native segwit address.</string>
+
 </resources>

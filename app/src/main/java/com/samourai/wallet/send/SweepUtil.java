@@ -200,13 +200,15 @@ public class SweepUtil  {
 
                     }
                     else if(type == TYPE_P2SH_P2WPKH)    {
+                        Toast.makeText(context, R.string.sweep_no_p2sh_p2wpkh, Toast.LENGTH_SHORT).show();
                         sweep(privKeyReader, TYPE_P2WPKH);
                     }
                     else if(type == TYPE_P2PKH)    {
+                        Toast.makeText(context, R.string.sweep_no_p2pkh, Toast.LENGTH_SHORT).show();
                         sweep(privKeyReader, TYPE_P2SH_P2WPKH);
                     }
                     else if(type == TYPE_P2WPKH)    {
-                        ;
+                        Toast.makeText(context, R.string.sweep_no_p2wpkh, Toast.LENGTH_SHORT).show();
                     }
                     else    {
                         ;
