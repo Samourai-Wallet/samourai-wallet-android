@@ -3,13 +3,6 @@ package com.samourai.wallet.whirlpool.newPool.fragments;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -30,14 +23,23 @@ import com.samourai.wallet.utxos.UTXOUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.widgets.ItemDividerDecorator;
+import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -326,6 +328,16 @@ public class ChooseUTXOsFragment extends Fragment {
                 }
             }
 
+            // Whirlpool tags for PREMIX & POSTMIX
+            Collection<String> whirlpoolTags = WhirlpoolUtils.getInstance().getWhirlpoolTags(item, getContext());
+            if (!whirlpoolTags.isEmpty()) {
+                holder.notesLayout.setVisibility(View.VISIBLE);
+                holder.tagsLayout.setVisibility(View.VISIBLE);
+                for (String tagString : whirlpoolTags) {
+                    View tag = createTag(tagString);
+                    holder.tagsLayout.addView(tag);
+                }
+            }
 
             holder.checkBox.setChecked(item.isSelected);
 

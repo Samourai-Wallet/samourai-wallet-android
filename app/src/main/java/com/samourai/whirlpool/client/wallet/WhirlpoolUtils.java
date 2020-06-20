@@ -3,13 +3,21 @@ package com.samourai.whirlpool.client.wallet;
 import android.content.Context;
 
 import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.whirlpool.client.exception.NotifiableException;
 import com.samourai.whirlpool.client.utils.ClientUtils;
+import com.samourai.whirlpool.client.wallet.beans.MixableStatus;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxoStatus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WhirlpoolUtils {
     private static final Logger LOG = LoggerFactory.getLogger(WhirlpoolUtils.class);
@@ -55,5 +63,57 @@ public class WhirlpoolUtils {
             }
         }
         return f;
+    }
+
+    public Collection<String> getWhirlpoolTags(UTXOCoin item, Context ctx) {
+        List<String> tags = new LinkedList<>();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(ctx).getWhirlpoolWalletOrNull();
+        if (whirlpoolWallet != null) {
+            WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.getUtxoSupplier().findUtxo(item.hash, item.idx);
+            if (whirlpoolUtxo != null) {
+                // tag only premix & postmix utxos
+                if (WhirlpoolAccount.PREMIX.equals(whirlpoolUtxo.getAccount()) || WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount())) {
+                    // show whirlpool tag
+                    tags.add(whirlpoolUtxo.getMixsDone() + "/" + whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT) + " MIXED");
+
+                    // show reason when not mixable
+                    MixableStatus mixableStatus = whirlpoolUtxo.getUtxoState().getMixableStatus();
+                    switch (mixableStatus) {
+                        case UNCONFIRMED:
+                            tags.add("UNCONFIRMED");
+                            break;
+                        case NO_POOL: case MIXABLE:
+                            // ignore
+                            break;
+                    }
+
+                    WhirlpoolUtxoStatus utxoStatus = whirlpoolUtxo.getUtxoState().getStatus();
+                    switch (utxoStatus) {
+                        case MIX_QUEUE:
+                            tags.add("MIX QUEUED");
+                            break;
+                        case MIX_STARTED:
+                            tags.add("MIXING");
+                            break;
+                        case MIX_SUCCESS:
+                            tags.add("MIX SUCCESS");
+                            break;
+                        case MIX_FAILED:
+                            tags.add("MIX FAILED");
+                            break;
+                        case STOP:
+                            tags.add("MIX STOPPED");
+                            break;
+                        case TX0:
+                        case TX0_SUCCESS:
+                        case TX0_FAILED:
+                        case READY:
+                            // ignore
+                            break;
+                    }
+                }
+            }
+        }
+        return tags;
     }
 }
