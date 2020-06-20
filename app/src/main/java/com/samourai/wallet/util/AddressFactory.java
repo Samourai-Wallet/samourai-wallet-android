@@ -3,6 +3,7 @@ package com.samourai.wallet.util;
 import android.content.Context;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
@@ -79,7 +80,7 @@ public class AddressFactory {
         return instance;
     }
 
-    public HD_Address get(int chain)	{
+    public Pair<Integer, HD_Address> get(int chain)	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -104,22 +105,12 @@ public class AddressFactory {
             mle.printStackTrace();
             Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
         }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return addr;
+        return Pair.of(idx, addr);
 
     }
 
-    public SegwitAddress getBIP49(int chain)	{
+    public Pair<Integer, SegwitAddress> getBIP49(int chain)	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -138,30 +129,12 @@ public class AddressFactory {
                 }
             }
 //        }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return p2shp2wpkh;
+        return Pair.of(idx, p2shp2wpkh);
 
     }
 
-    public SegwitAddress getBIP84(int chain)	{
+    public Pair<Integer, SegwitAddress> getBIP84(int chain)	{
 
         int idx = 0;
         HD_Address addr = null;
@@ -179,27 +152,8 @@ public class AddressFactory {
 //                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
             }
         }
-//        }
-        /*
-        catch(JSONException je)	{
-            je.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(IOException ioe)	{
-            ioe.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle)	{
-            mle.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(DecryptionException de)	{
-            de.printStackTrace();
-            Toast.makeText(context, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        */
 
-        return p2wpkh;
+        return Pair.of(idx, p2wpkh);
 
     }
 
