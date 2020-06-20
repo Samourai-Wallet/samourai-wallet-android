@@ -175,13 +175,13 @@ public class ReceiveActivity extends AppCompatActivity {
             }
         });
 
-        Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN);
+        Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
         addr84 = pair84.getRight().getBech32AsString();
         idx84 = pair84.getLeft();
-        Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN);
+        Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
         addr49 = pair49.getRight().getAddressAsString();
         idx49 = pair49.getLeft();
-        Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN);
+        Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
         addr44 = pair44.getRight().getAddressString();
         idx44 = pair44.getLeft();
 
@@ -262,7 +262,7 @@ public class ReceiveActivity extends AppCompatActivity {
             @Override
             public void onSwipeLeft() {
                 if (useSegwit && isBIP84Selected() && canRefresh84) {
-                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
                     addr84 = pair84.getRight().getBech32AsString();
                     addr = addr84;
                     idx84 = pair84.getLeft();
@@ -272,7 +272,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     displayQRCode();
                 }
                 else if (useSegwit && !isBIP84Selected() && canRefresh49) {
-                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
                     addr49 = pair49.getRight().getAddressAsString();
                     addr = addr49;
                     idx49 = pair49.getLeft();
@@ -282,7 +282,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     displayQRCode();
                 }
                 else if (!useSegwit && canRefresh44) {
-                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
                     addr44 = pair44.getRight().getAddressString();
                     addr = addr44;
                     idx44 = pair44.getLeft();
@@ -572,7 +572,7 @@ public class ReceiveActivity extends AppCompatActivity {
             }
             case R.id.action_refresh: {
                 if (useSegwit && isBIP84Selected() && canRefresh84) {
-                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, SegwitAddress> pair84 = AddressFactory.getInstance(ReceiveActivity.this).getBIP84Receive();
                     addr84 = pair84.getRight().getBech32AsString();
                     addr = addr84;
                     idx84 = pair84.getLeft();
@@ -582,7 +582,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     displayQRCode();
                 }
                 else if (useSegwit && !isBIP84Selected() && canRefresh49) {
-                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, SegwitAddress> pair49 = AddressFactory.getInstance(ReceiveActivity.this).getBIP49Receive();
                     addr49 = pair49.getRight().getAddressAsString();
                     addr = addr49;
                     idx49 = pair49.getLeft();
@@ -592,7 +592,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     displayQRCode();
                 }
                 else if (!useSegwit && canRefresh44) {
-                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).get(AddressFactory.RECEIVE_CHAIN);
+                    Pair<Integer, HD_Address> pair44 = AddressFactory.getInstance(ReceiveActivity.this).getReceive();
                     addr44 = pair44.getRight().getAddressString();
                     addr = addr44;
                     idx44 = pair44.getLeft();
