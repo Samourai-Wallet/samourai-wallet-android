@@ -2138,8 +2138,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxos.keySet())   {
+                UTXO item = utxos.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                         u.setPath(utxos.get(key).getPath());
@@ -2173,8 +2175,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxos.keySet())   {
+                UTXO item = utxos.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2197,8 +2201,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosPostMix.keySet())   {
+                UTXO item = utxosPostMix.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosPostMix.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2220,8 +2226,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosPreMix.keySet())   {
+                UTXO item = utxosPreMix.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosPreMix.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2244,8 +2252,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosBadBank.keySet())   {
+                UTXO item = utxosBadBank.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosBadBank.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsBadBank(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
