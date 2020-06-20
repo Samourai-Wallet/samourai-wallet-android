@@ -36,6 +36,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.access.AccessFactory;
+import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -1270,6 +1271,17 @@ public class SettingsActivity2 extends PreferenceActivity	{
         startActivity(intent);
     }
 
+    private String utxoToString(WhirlpoolUtxo whirlpoolUtxo) {
+        final StringBuilder builder = new StringBuilder();
+        UnspentResponse.UnspentOutput utxo = whirlpoolUtxo.getUtxo();
+        builder.append("[").append(utxo.tx_hash).append(":").append(utxo.tx_output_n).append("] ").append(utxo.value+"sats").append(", ").append(utxo.confirmations).append("confs");
+        builder.append(", ").append(whirlpoolUtxo.getPoolId()!=null?whirlpoolUtxo.getPoolId():"no pool");
+        builder.append(", ").append(whirlpoolUtxo.getMixsDone()+"/"+whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT)).append(" mixed");
+        builder.append(", ").append(whirlpoolUtxo.getAccount()).append(", ").append(whirlpoolUtxo.getUtxo().getPath());
+        builder.append(", ").append(whirlpoolUtxo.getUtxoState());
+        return builder.toString();
+    }
+
     private void doWhirlpoolState()	{
         AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance(getApplicationContext());
         WhirlpoolWallet whirlpoolWallet = whirlpoolWalletService.getWhirlpoolWalletOrNull();
@@ -1292,7 +1304,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             for (WhirlpoolUtxo whirlpoolUtxo : mixingState.getUtxosMixing()) {
                 MixProgress mixProgress = whirlpoolUtxo.getUtxoState().getMixProgress();
                 if (mixProgress != null) {
-                    builder.append("* " +whirlpoolUtxo.toString()+"\n");
+                    builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
                 }
             }
 
@@ -1302,7 +1314,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             builder.append(premixs.size()+" PREMIXS\n");
             builder.append(SEPARATOR);
             for (WhirlpoolUtxo whirlpoolUtxo : premixs) {
-                builder.append("* " +whirlpoolUtxo.toString()+"\n");
+                builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
             }
 
             // postmix
@@ -1311,7 +1323,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
             builder.append(postmixs.size()+" POSTMIXS\n");
             builder.append(SEPARATOR);
             for (WhirlpoolUtxo whirlpoolUtxo : postmixs) {
-                builder.append("* " +whirlpoolUtxo.toString()+"\n");
+                builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
             }
         }
 
