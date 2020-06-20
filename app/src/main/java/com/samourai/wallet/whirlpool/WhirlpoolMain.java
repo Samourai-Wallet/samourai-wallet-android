@@ -525,13 +525,6 @@ public class WhirlpoolMain extends AppCompatActivity {
                     if (whirlpoolUtxo.getUtxoState().getMessage() != null) {
                         progress = whirlpoolUtxo.getUtxoState().getMessage();
                     }
-                    try {
-                        int mixTarget = whirlpoolUtxo.getMixsTarget();
-                        int mixDone = whirlpoolUtxo.getMixsDone();
-                        progress = progress.concat(" ").concat(String.valueOf(mixDone)).concat("/").concat(String.valueOf(mixTarget));
-                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-                    }
                     holder.mixingProgress.setText(progress);
                     if (UTXOUtil.getInstance().getNote(whirlpoolUtxo.getUtxo().tx_hash) != null) {
                         holder.txNoteGroup.setVisibility(View.VISIBLE);
@@ -601,7 +594,16 @@ public class WhirlpoolMain extends AppCompatActivity {
                     holder.mixingProgress.setText(holder.mixingProgress.getText().toString());
                     holder.utxoType.setText("postmix");
                     holder.mixingUtxoIndicator.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_24dp));
+                }
 
+                // prefix with "Mix x/y - "
+                try {
+                    int currentMix = whirlpoolUtxo.getMixsDone()+1;
+                    int mixsTarget = whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT);
+                    String mixInfo = "Mix "+currentMix+"/"+mixsTarget+" - ";
+                    holder.mixingProgress.setText(mixInfo+holder.mixingProgress.getText());
+                } catch (Exception ex) {
+                        ex.printStackTrace();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
