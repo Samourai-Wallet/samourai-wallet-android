@@ -222,30 +222,6 @@ public class AddressFactory {
         return addr;
     }
 
-    public SegwitAddress getBIP49(int accountIdx, int chain, int idx)	{
-
-        HD_Address addr = null;
-        SegwitAddress p2shp2wpkh = null;
-
-        HD_Wallet hdw = BIP49Util.getInstance(context).getWallet();
-        addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        p2shp2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-        return p2shp2wpkh;
-    }
-
-    public SegwitAddress getBIP84(int accountIdx, int chain, int idx)	{
-
-        HD_Address addr = null;
-        SegwitAddress p2wpkh = null;
-
-        HD_Wallet hdw = BIP84Util.getInstance(context).getWallet();
-        addr = hdw.getAccount(accountIdx).getChain(chain).getAddressAt(idx);
-        p2wpkh = new SegwitAddress(addr.getPubKey(), SamouraiWallet.getInstance().getCurrentNetworkParams());
-
-        return p2wpkh;
-    }
-
     public int getHighestTxReceiveIdx(int account)  {
         if(highestTxReceiveIdx.get(account) != null)  {
            return highestTxReceiveIdx.get(account);
