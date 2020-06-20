@@ -181,7 +181,7 @@ public class AddressFactory {
            return highestTxReceiveIdx.get(account);
         }
         else  {
-            return -1;
+            return highestTxReceiveIdx.get(0);
         }
     }
 
@@ -195,7 +195,7 @@ public class AddressFactory {
             return highestTxChangeIdx.get(account);
         }
         else  {
-            return -1;
+            return highestTxChangeIdx.get(0);
         }
     }
 
@@ -289,7 +289,7 @@ public class AddressFactory {
             return ((idx - highestTxReceiveIdx.get(account)) < (LOOKAHEAD_GAP - 1));
         }
         else {
-            return false;
+            return ((idx - highestTxReceiveIdx.get(0)) < (LOOKAHEAD_GAP - 1));
         }
     }
 
