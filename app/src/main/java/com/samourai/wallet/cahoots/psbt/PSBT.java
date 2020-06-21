@@ -151,12 +151,15 @@ public class PSBT {
 
         ret = new PSBT(strPSBT);
         ret.read();
+        /*
         if(ret.isParseOK())    {
             return ret;
         }
         else    {
             return null;
         }
+        */
+        return ret;
 
     }
 
