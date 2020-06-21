@@ -3,9 +3,11 @@ package com.samourai.whirlpool.client.wallet;
 import android.content.Context;
 import android.util.Log;
 
-import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.AndroidHttpClientService;
 import com.samourai.http.client.AndroidOAuthManager;
+import com.samourai.http.client.HttpUsage;
 import com.samourai.http.client.IHttpClient;
+import com.samourai.http.client.IHttpClientService;
 import com.samourai.stomp.client.AndroidStompClientService;
 import com.samourai.stomp.client.IStompClientService;
 import com.samourai.wallet.SamouraiWallet;
@@ -20,11 +22,13 @@ import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.util.oauth.OAuthManager;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
-import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolServer;
-import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
-import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
+import com.samourai.whirlpool.client.wallet.data.minerFee.WalletSupplier;
+import com.samourai.whirlpool.client.wallet.data.utxo.AndroidUtxoSupplier;
+import com.samourai.whirlpool.client.wallet.data.utxo.UtxoConfigSupplier;
+import com.samourai.whirlpool.client.wallet.data.utxo.UtxoSupplier;
+import com.samourai.whirlpool.client.whirlpool.ServerApi;
 import com.samourai.whirlpool.protocol.fee.WhirlpoolFee;
 
 import org.bitcoinj.core.NetworkParameters;
@@ -39,6 +43,7 @@ import java8.util.Optional;
 
 public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     public static final int MIXS_TARGET_DEFAULT = 5;
+    private Context ctx;
 
     public enum ConnectionStates {
         CONNECTED,
@@ -52,15 +57,17 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
     private static AndroidWhirlpoolWalletService instance;
     private WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
 
-    public static AndroidWhirlpoolWalletService getInstance() {
+    public static AndroidWhirlpoolWalletService getInstance(Context ctx) {
         if (instance == null) {
-            instance = new AndroidWhirlpoolWalletService();
+            instance = new AndroidWhirlpoolWalletService(ctx);
         }
         return instance;
     }
 
-    protected AndroidWhirlpoolWalletService() {
+    protected AndroidWhirlpoolWalletService(Context ctx) {
         super();
+        this.ctx = ctx;
+
         source.onNext(ConnectionStates.LOADING);
         WhirlpoolFee.getInstance(AndroidSecretPointFactory.getInstance()); // fix for Android
 
@@ -68,26 +75,24 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         ClientUtils.setLogLevel(Level.WARN, Level.WARN);
     }
 
-    private WhirlpoolWallet getOrOpenWhirlpoolWallet(Context ctx) throws Exception {
+    private WhirlpoolWallet getOrOpenWhirlpoolWallet() throws Exception {
         Optional<WhirlpoolWallet> whirlpoolWalletOpt = getWhirlpoolWallet();
         if (!whirlpoolWalletOpt.isPresent()) {
+            WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig();
+            WhirlpoolDataService dataService = new WhirlpoolDataService(config);
+
             // wallet closed => open WhirlpoolWallet
             HD_Wallet bip84w = BIP84Util.getInstance(ctx).getWallet();
             String walletIdentifier = whirlpoolUtils.computeWalletIdentifier(bip84w);
-            WhirlpoolWalletConfig config = computeWhirlpoolWalletConfig(ctx, walletIdentifier);
-            APIFactory apiFactory = APIFactory.getInstance(ctx);
-            WhirlpoolDataService dataService = newDataService(config, apiFactory);
-            return openWallet(config, dataService, bip84w);
+            File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
+            File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
+            return openWallet(dataService, bip84w, fileIndex.getAbsolutePath(), fileUtxo.getAbsolutePath());
         }
         // wallet already opened
         return whirlpoolWalletOpt.get();
     }
 
-    protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config, APIFactory apiFactory) {
-        return new AndroidWhirlpoolDataService(config, this, apiFactory);
-    }
-
-    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(Context ctx, String walletIdentifier) throws Exception {
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig() throws Exception {
         WebUtil webUtil = WebUtil.getInstance(ctx);
         TorManager torManager = TorManager.getInstance(ctx);
 
@@ -115,26 +120,23 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
             oAuthManager = Optional.empty();
         }
 
-        IHttpClient httpClient = new AndroidHttpClient(webUtil, torManager);
+        IHttpClientService httpClientService = new AndroidHttpClientService(webUtil, torManager);
+        IHttpClient httpClient = httpClientService.getHttpClient(HttpUsage.BACKEND);
         BackendApi backendApi = new BackendApi(httpClient, backendUrl, oAuthManager);
 
-        File fileIndex = whirlpoolUtils.computeIndexFile(walletIdentifier, ctx);
-        File fileUtxo = whirlpoolUtils.computeUtxosFile(walletIdentifier, ctx);
-        WhirlpoolWalletPersistHandler persistHandler =
-                new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
-
-        return computeWhirlpoolWalletConfig(torManager, persistHandler, testnet, onion, MIXS_TARGET_DEFAULT, scode, httpClient, backendApi);
+        return computeWhirlpoolWalletConfig(torManager, testnet, onion, MIXS_TARGET_DEFAULT, scode, httpClientService, backendApi);
     }
 
-    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(TorManager torManager, WhirlpoolWalletPersistHandler persistHandler, boolean testnet, boolean onion, int mixsTarget, String scode, IHttpClient httpClient, BackendApi backendApi) {
+    protected WhirlpoolWalletConfig computeWhirlpoolWalletConfig(TorManager torManager, boolean testnet, boolean onion, int mixsTarget, String scode, IHttpClientService httpClientService, BackendApi backendApi) {
         IStompClientService stompClientService = new AndroidStompClientService(torManager);
 
         WhirlpoolServer whirlpoolServer = testnet ? WhirlpoolServer.TESTNET : WhirlpoolServer.MAINNET;
         String serverUrl = whirlpoolServer.getServerUrl(onion);
+        ServerApi serverApi = new ServerApi(serverUrl, httpClientService);
         NetworkParameters params = whirlpoolServer.getParams();
         WhirlpoolWalletConfig whirlpoolWalletConfig =
                 new WhirlpoolWalletConfig(
-                        httpClient, stompClientService, persistHandler, serverUrl, params, true, backendApi);
+                        httpClientService, stompClientService, serverApi, params, true, backendApi);
 
         whirlpoolWalletConfig.setAutoTx0PoolId(null); // disable auto-tx0
         whirlpoolWalletConfig.setAutoMix(true); // enable auto-mix
@@ -144,7 +146,6 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         whirlpoolWalletConfig.setMaxClients(1);
 
         whirlpoolWalletConfig.setSecretPointFactory(AndroidSecretPointFactory.getInstance());
-        whirlpoolWalletConfig.setTx0Service(new AndroidTx0Service(whirlpoolWalletConfig));
 
         for (Map.Entry<String,String> configEntry : whirlpoolWalletConfig.getConfigInfo().entrySet()) {
             Log.v(TAG, "whirlpoolWalletConfig["+configEntry.getKey()+"] = "+configEntry.getValue());
@@ -152,11 +153,19 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         return whirlpoolWalletConfig;
     }
 
-    public Completable startService(Context context) {
+    @Override
+    protected UtxoSupplier computeUtxoSupplier(WhirlpoolWalletConfig config, WalletSupplier walletSupplier, UtxoConfigSupplier utxoConfigSupplier) {
+        APIFactory apiFactory = APIFactory.getInstance(ctx);
+        BIP84Util bip84Util = BIP84Util.getInstance(ctx);
+        WhirlpoolMeta whirlpoolMeta = WhirlpoolMeta.getInstance(ctx);
+        return new AndroidUtxoSupplier(config.getRefreshUtxoDelay(), walletSupplier, utxoConfigSupplier, config.getBackendApi(), computeUtxoChangesListener(), apiFactory, bip84Util, whirlpoolMeta);
+    }
+
+    public Completable startService() {
         if (source.hasObservers())
             source.onNext(ConnectionStates.STARTING);
         return Completable.fromCallable(() -> {
-            this.getOrOpenWhirlpoolWallet(context).start();
+            this.getOrOpenWhirlpoolWallet().start();
             if (source.hasObservers()) {
                 source.onNext(ConnectionStates.CONNECTED);
             }
@@ -173,17 +182,21 @@ public class AndroidWhirlpoolWalletService extends WhirlpoolWalletService {
         }
     }
 
-    public Completable restart(Context context) {
+    public Completable restart() {
         if (!getWhirlpoolWallet().isPresent()) {
             // wallet not opened => nothing to do
             Completable.fromCallable(() -> true);
         }
         Log.v(TAG, "Restarting WhirlpoolWallet...");
         stop();
-        return startService(context);
+        return startService();
     }
 
     public BehaviorSubject<ConnectionStates> listenConnectionStatus() {
         return source;
+    }
+
+    public WhirlpoolWallet getWhirlpoolWalletOrNull() {
+        return getWhirlpoolWallet().orElse(null);
     }
 }

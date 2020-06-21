@@ -37,4 +37,10 @@
         android:key="pcalc"
         />
 
+    <Preference
+        android:title="@string/options_whirlpool_state"
+        android:summary="@string/options_whirlpool_state2"
+        android:key="wpstate"
+        />
+
 </PreferenceScreen>

@@ -1,18 +1,15 @@
 package com.samourai.whirlpool.client.wallet;
 
-import com.samourai.http.client.AndroidHttpClient;
+import com.samourai.http.client.AndroidHttpClientService;
+import com.samourai.http.client.HttpUsage;
 import com.samourai.http.client.IHttpClient;
-import com.samourai.wallet.api.APIFactory;
+import com.samourai.http.client.IHttpClientService;
 import com.samourai.wallet.api.backend.BackendApi;
 import com.samourai.wallet.api.backend.BackendServer;
-import com.samourai.wallet.api.backend.beans.HttpException;
 import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.segwit.SegwitAddress;
-import com.samourai.wallet.tor.TorManager;
 import com.samourai.wallet.util.WebUtil;
-import com.samourai.whirlpool.client.exception.NotifiableException;
-import com.samourai.whirlpool.client.tx0.AndroidTx0Service;
 import com.samourai.whirlpool.client.tx0.Tx0;
 import com.samourai.whirlpool.client.tx0.Tx0Config;
 import com.samourai.whirlpool.client.tx0.Tx0Preview;
@@ -20,11 +17,9 @@ import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.utils.ClientUtils;
 import com.samourai.whirlpool.client.wallet.beans.MixingState;
 import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
-import com.samourai.whirlpool.client.wallet.persist.FileWhirlpoolWalletPersistHandler;
-import com.samourai.whirlpool.client.wallet.persist.WhirlpoolWalletPersistHandler;
 import com.samourai.whirlpool.client.whirlpool.beans.Pool;
-import com.samourai.whirlpool.client.whirlpool.beans.Tx0Data;
 
 import junit.framework.Assert;
 
@@ -64,8 +59,8 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         String scode = null;
 
         // backendApi with mocked pushTx
-        TorManager torManager = TorManager.getInstance(getContext());
-        IHttpClient httpClient = new AndroidHttpClient(WebUtil.getInstance(getContext()), torManager);
+        IHttpClientService httpClientService = new AndroidHttpClientService(WebUtil.getInstance(getContext()), torManager);
+        IHttpClient httpClient = httpClientService.getHttpClient(HttpUsage.BACKEND);
         BackendApi backendApi = new BackendApi(httpClient, BackendServer.TESTNET.getBackendUrl(onion), Optional.empty()) {
             @Override
             public void pushTx(String txHex) throws Exception {
@@ -73,47 +68,47 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
             }
         };
 
-        File fileIndex = File.createTempFile("test-state", "test");
-        File fileUtxo = File.createTempFile("test-utxos", "test");
-        WhirlpoolWalletPersistHandler persistHandler =
-                new FileWhirlpoolWalletPersistHandler(fileIndex, fileUtxo);
-
         // instanciate WhirlpoolWallet
         bip84w = computeBip84w(SEED_WORDS, SEED_PASSPHRASE);
-        config = whirlpoolWalletService.computeWhirlpoolWalletConfig(torManager, persistHandler, testnet, onion, mixsTarget, scode, httpClient, backendApi);
-        config.setTx0Service(new AndroidTx0Service(config){
+        config = whirlpoolWalletService.computeWhirlpoolWalletConfig(torManager, testnet, onion, mixsTarget, scode, httpClientService, backendApi);
+
+        /*
             @Override
             protected Tx0Data fetchTx0Data(String poolId) throws HttpException, NotifiableException {
                 Tx0Data tx0Data = super.fetchTx0Data(poolId);
                 // mock fee address for deterministic tests
                 return new Tx0Data(tx0Data.getFeePaymentCode(), tx0Data.getFeeValue(), tx0Data.getFeeChange(), 0, tx0Data.getFeePayload(), "tb1qgyppvv58rv83eas60trmdgqc06yx9q53qs6skx", 123);
             }
-        });
-        APIFactory apiFactory = APIFactory.getInstance(context);
-        WhirlpoolDataService dataService = whirlpoolWalletService.newDataService(config, apiFactory);
-        whirlpoolWallet = whirlpoolWalletService.openWallet(config, dataService, bip84w);
+        */
+        WhirlpoolDataService dataService = new WhirlpoolDataService(config);
+
+        File fileIndex = File.createTempFile("test-state", "test");
+        File fileUtxo = File.createTempFile("test-utxos", "test");
+
+        whirlpoolWallet = whirlpoolWalletService.openWallet(dataService, bip84w, fileIndex.getAbsolutePath(), fileUtxo.getAbsolutePath());
     }
 
     @Test
+    @Ignore
     public void testStart() throws Exception {
         // start whirlpool wallet
         whirlpoolWallet.start();
 
         // list pools
-        Collection<Pool> pools = whirlpoolWallet.getPools();
+        Collection<Pool> pools = whirlpoolWallet.getPoolSupplier().getPools();
         Assert.assertTrue(!pools.isEmpty());
 
         // find pool by poolId
-        Pool pool = whirlpoolWallet.findPoolById("0.01btc");
+        Pool pool = whirlpoolWallet.getPoolSupplier().findPoolById("0.01btc");
         Assert.assertNotNull(pool);
 
         // list premix utxos
-        Collection<WhirlpoolUtxo> utxosPremix = whirlpoolWallet.getUtxosPremix();
+        Collection<WhirlpoolUtxo> utxosPremix = whirlpoolWallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.PREMIX);
         log.info(utxosPremix.size()+" PREMIX utxos:");
         ClientUtils.logWhirlpoolUtxos(utxosPremix, whirlpoolWallet.getConfig().getMixsTarget());
 
         // list postmix utxos
-        Collection<WhirlpoolUtxo> utxosPostmix = whirlpoolWallet.getUtxosPremix();
+        Collection<WhirlpoolUtxo> utxosPostmix = whirlpoolWallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.POSTMIX);
         log.info(utxosPostmix.size()+" POSTMIX utxos:");
         ClientUtils.logWhirlpoolUtxos(utxosPostmix, whirlpoolWallet.getConfig().getMixsTarget());
 
@@ -138,8 +133,8 @@ public class WhirlpoolWalletTest extends AbstractWhirlpoolTest {
         unspentOutput.addr = new SegwitAddress(ecKey, networkParameters).getBech32AsString();
         spendFroms.add(new UnspentOutputWithKey(unspentOutput, ecKey.getPrivKeyBytes()));
 
-        Pool pool = whirlpoolWallet.findPoolById("0.01btc");
-        Tx0Config tx0Config = whirlpoolWallet.getTx0Config(pool).setMaxOutputs(1);
+        Pool pool = whirlpoolWallet.getPoolSupplier().findPoolById("0.01btc");
+        Tx0Config tx0Config = whirlpoolWallet.getTx0Config();
         Tx0Preview tx0Preview = whirlpoolWallet.tx0Preview(pool, spendFroms, tx0Config, Tx0FeeTarget.BLOCKS_2);
         Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, Tx0FeeTarget.BLOCKS_2);
 

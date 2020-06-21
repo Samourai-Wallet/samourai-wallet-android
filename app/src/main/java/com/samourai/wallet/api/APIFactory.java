@@ -1897,12 +1897,9 @@ public class APIFactory	{
             }
 
             // refresh Whirlpool utxos
-            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
-            if (whirlpoolWalletOpt.isPresent()) {
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.DEPOSIT);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.PREMIX);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.POSTMIX);
-                whirlpoolWalletOpt.get().clearCache(WhirlpoolAccount.BADBANK);
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(context).getWhirlpoolWalletOrNull();
+            if (whirlpoolWallet != null) {
+                whirlpoolWallet.getUtxoSupplier().expire();
             }
         }
         catch (IndexOutOfBoundsException ioobe) {
@@ -2141,8 +2138,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxos.keySet())   {
+                UTXO item = utxos.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                         u.setPath(utxos.get(key).getPath());
@@ -2176,8 +2175,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxos.keySet())   {
+                UTXO item = utxos.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxos.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().contains(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2200,8 +2201,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosPostMix.keySet())   {
+                UTXO item = utxosPostMix.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosPostMix.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2223,8 +2226,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosPreMix.keySet())   {
+                UTXO item = utxosPreMix.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosPreMix.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsPostMix(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }
@@ -2247,8 +2252,10 @@ public class APIFactory	{
 
         if(filter)    {
             for(String key : utxosBadBank.keySet())   {
+                UTXO item = utxosBadBank.get(key);
                 UTXO u = new UTXO();
-                for(MyTransactionOutPoint out : utxosBadBank.get(key).getOutpoints())    {
+                u.setPath(item.getPath());
+                for(MyTransactionOutPoint out : item.getOutpoints())    {
                     if(!BlockedUTXO.getInstance().containsBadBank(out.getTxHash().toString(), out.getTxOutputN()))    {
                         u.getOutpoints().add(out);
                     }

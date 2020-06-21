@@ -112,7 +112,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'org.hibernate:hibernate-validator:5.4.3.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation ('com.github.Samourai-Wallet:whirlpool-client:0.23.17') {
+    implementation ('io.samourai.code.whirlpool:whirlpool-client:0.23.19') {
         exclude group:'org.hibernate', module:'hibernate-validator'
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
@@ -122,7 +122,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('com.github.Samourai-Wallet:extlibj:0.0.11') {
+    implementation ('io.samourai.code.wallet:extlibj:0.0.12') {
         exclude group:'com.google.code.findbugs', module:'jsr305'
         exclude group:'com.google.protobuf', module:'protobuf-java'
         exclude group:'net.jcip', module:'jcip-annotations'
@@ -131,7 +131,7 @@ dependencies {
         exclude group:'org.apache.commons', module:'commons-lang3'
         exclude group:'org.json', module:'json'
     }
-    implementation ('io.samourai.code.whirlpool:boltzmann-java:1.0.1') {
+    implementation ('io.samourai.code.wallet:boltzmann-java:1.0.1') {
         exclude group: 'it.unimi.dsi', module: 'fastutil'
     }
     // temporary fix for building boltzmann-java dependency
