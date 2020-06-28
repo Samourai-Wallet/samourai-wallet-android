@@ -21,6 +21,7 @@ import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
 
 import java.io.File;
 import java.security.Security;
@@ -87,6 +88,9 @@ public class AppUtil {
 
     public void wipeApp() {
 
+        WhirlpoolMeta.getInstance(context).setSCODE(null);
+        WhirlpoolNotificationService.stopService(context.getApplicationContext());
+
         try {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             String[] s = hdw.getXPUBs();
@@ -123,7 +127,6 @@ public class AppUtil {
         SentToFromBIP47Util.getInstance().reset();
         BatchSendUtil.getInstance().clear();
         AccessFactory.getInstance(context).setIsLoggedIn(false);
-        WhirlpoolMeta.getInstance(context).setSCODE(null);
 	}
 
 	public void restartApp() {
