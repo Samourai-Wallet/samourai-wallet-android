@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.samourai.wallet.MainActivity2;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
@@ -19,9 +20,11 @@ import com.samourai.wallet.prng.PRNGFixes;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 import com.samourai.wallet.whirlpool.service.WhirlpoolNotificationService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 
 import java.io.File;
 import java.security.Security;
@@ -91,6 +94,18 @@ public class AppUtil {
         WhirlpoolMeta.getInstance(context).setSCODE(null);
         WhirlpoolNotificationService.stopService(context.getApplicationContext());
 
+        try  {
+            HD_Wallet bip84w = BIP84Util.getInstance(context).getWallet();
+            String strIdentifier84 = WhirlpoolUtils.getInstance().computeWalletIdentifier(bip84w);
+            File whirlpoolUtxos = WhirlpoolUtils.getInstance().computeUtxosFile(strIdentifier84, context);
+            whirlpoolUtxos.delete();
+            File whirlpoolIndexes = WhirlpoolUtils.getInstance().computeIndexFile(strIdentifier84, context);
+            whirlpoolIndexes.delete();
+        }
+        catch(Exception e) {
+            ;
+        }
+
         try {
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             String[] s = hdw.getXPUBs();
@@ -104,6 +119,10 @@ public class AppUtil {
         catch(Exception e) {
             e.printStackTrace();
         }
+
+        BIP49Util.getInstance(context).reset();
+        BIP84Util.getInstance(context).reset();
+        BIP47Util.getInstance(context).reset();
 
         deleteBackup();
         deleteQR();
