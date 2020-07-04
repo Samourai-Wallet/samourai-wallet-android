@@ -55,6 +55,7 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.crypto.MnemonicException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.DecoderException;
@@ -65,6 +66,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TxAnimUIActivity extends AppCompatActivity {
 
@@ -144,6 +147,16 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 rbf = null;
             }
 
+            final List<Integer> strictModeVouts = new ArrayList<Integer>();
+            if(SendParams.getInstance().getDestAddress() != null && SendParams.getInstance().getDestAddress().compareTo("") != 0) {
+                List<Integer> idxs = SendParams.getInstance().getSpendOutputIndex(tx);
+                if(idxs.size() > 0) {
+                    for(Integer i : idxs)   {
+                        strictModeVouts.add(i);
+                    }
+                }
+            }
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -192,14 +205,30 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                     Looper.prepare();
 
                                     boolean isOK = false;
-                                    String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx);
+                                    boolean hasReuse = false;
+                                    final List<Integer> reuseIndexes = new ArrayList<Integer>();
+                                    String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, strictModeVouts.size() > 0 ? strictModeVouts : null);
+//                                    String response = "{\"status\":\"error\",\"error\":{ \"code\"=\"VIOLATION_STRICT_MODE_VOUTS\" }}";
+                                    Log.d("TxAnimUIActivity", response);
                                     try {
                                         if (response != null) {
                                             JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if (jsonObject.has("status")) {
-                                                if (jsonObject.getString("status").equals("ok")) {
-                                                    isOK = true;
+                                            if (jsonObject.has("status") && jsonObject.getString("status").equals("ok")) {
+                                                isOK = true;
+                                            }
+                                            else if(jsonObject.has("status") && jsonObject.getString("status").equals("error") &&
+                                                    jsonObject.has("error") && jsonObject.getJSONObject("error").has("code") &&
+                                                    jsonObject.getJSONObject("error").getString("code").equals("VIOLATION_STRICT_MODE_VOUTS")) {
+                                                hasReuse = true;
+                                                if(jsonObject.getJSONObject("error").has("message")){
+                                                    JSONArray array = jsonObject.getJSONObject("error").getJSONArray("message");
+                                                    for(int i = 0; i < array.length(); i++)   {
+                                                        reuseIndexes.add(array.getInt(i));
+                                                    }
                                                 }
+                                            }
+                                            else {
+                                                ;
                                             }
                                         } else {
                                             Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
@@ -210,6 +239,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                     }
 
                                     final boolean _isOK = isOK;
+                                    final boolean _hasReuse = hasReuse;
 
                                     resultHandler.postDelayed(new Runnable() {
                                         @Override
@@ -217,11 +247,60 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                             if (_isOK) {
                                                 progressView.showCheck();
                                                 progressView.setTxStatusMessage(R.string.tx_sent_ok);
-                                            } else {
+
+                                                handleResult(true, rbf, strTxHash, hexTx, _tx);
+                                            }
+                                            else if(_hasReuse) {
+
+                                                AlertDialog.Builder dlg = new AlertDialog.Builder(TxAnimUIActivity.this)
+                                                        .setTitle(R.string.app_name)
+                                                        .setMessage(R.string.strict_mode_address)
+                                                        .setCancelable(false)
+                                                        .setPositiveButton(R.string.broadcast, new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                                dialog.dismiss();
+
+                                                                new Thread() {
+                                                                    public void run() {
+                                                                        try {
+                                                                            String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, null);
+                                                                            Log.d("TxAnimUIActivity", response);
+                                                                            if (response != null) {
+                                                                                JSONObject jsonObject = new org.json.JSONObject(response);
+                                                                                if (jsonObject.has("status") && jsonObject.getString("status").equals("ok")) {
+                                                                                    handleResult(true, rbf, strTxHash, hexTx, _tx);
+                                                                                }
+                                                                                else {
+                                                                                    handleResult(false, rbf, strTxHash, hexTx, _tx);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        catch (Exception e) {
+                                                                            ;
+                                                                        }
+                                                                    }
+                                                                }.start();
+
+                                                                }
+                                                        })
+                                                        .setNegativeButton(R.string.strict_reformulate, new DialogInterface.OnClickListener() {
+                                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                                dialog.dismiss();
+
+                                                                // return to SendActivity
+                                                                TxAnimUIActivity.this.finish();
+                                                            }
+                                                        });
+                                                if(!isFinishing())    {
+                                                    dlg.show();
+                                                }
+
+                                            }
+                                            else {
                                                 failTx(R.string.tx_sent_ko);
+                                                handleResult(false, rbf, strTxHash, hexTx, _tx);
                                             }
 
-                                            handleResult(_isOK, rbf, strTxHash, hexTx, _tx);
 
                                         }
 
@@ -251,8 +330,6 @@ public class TxAnimUIActivity extends AppCompatActivity {
             progressView.offlineMode(1200);
             progressView.setTxStatusMessage(R.string.tx_failed);
             progressView.setTxSubText(id);
-//        progressView.setTxSubText(R.string.tx_connectivity_failure_msg);
-//        progressView.toggleOfflineButton();
         });
     }
 
@@ -306,7 +383,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
     private void handleResult(boolean isOK, RBFSpend rbf, String strTxHash, String hexTx, Transaction _tx) {
 
         try {
-            if (isOK) {
+            if(isOK) {
                 Toast.makeText(TxAnimUIActivity.this, R.string.tx_sent, Toast.LENGTH_SHORT).show();
 
                 if (SendParams.getInstance().getChangeAmount() > 0L && SendParams.getInstance().getSpendType() == SendActivity.SPEND_SIMPLE) {
@@ -422,7 +499,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                 }, 1000L);
 
-            } else {
+            }
+            else {
                 Toast.makeText(TxAnimUIActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                 // reset change index upon tx fail
                 if(SendParams.getInstance().getAccount() != 0)    {

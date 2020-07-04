@@ -1799,6 +1799,7 @@ public class SendActivity extends SamouraiActivity {
                         amount,
                         change_index
                 );
+
                 Intent _intent = new Intent(SendActivity.this, TxAnimUIActivity.class);
                 startActivity(_intent);
 

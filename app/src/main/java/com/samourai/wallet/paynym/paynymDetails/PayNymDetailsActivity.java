@@ -859,7 +859,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
                         boolean isOK = false;
                         String response = null;
                         try {
-                            response = PushTx.getInstance(PayNymDetailsActivity.this).samourai(hexTx);
+                            response = PushTx.getInstance(PayNymDetailsActivity.this).samourai(hexTx, null);
                             Log.d("SendActivity", "pushTx:" + response);
 
                             if (response != null) {
