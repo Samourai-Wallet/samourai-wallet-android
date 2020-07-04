@@ -148,7 +148,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
             }
 
             final List<Integer> strictModeVouts = new ArrayList<Integer>();
-            if(SendParams.getInstance().getDestAddress() != null && SendParams.getInstance().getDestAddress().compareTo("") != 0) {
+            if(SendParams.getInstance().getDestAddress() != null && SendParams.getInstance().getDestAddress().compareTo("") != 0 &&
+                    PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.STRICT_OUTPUTS, true) == true) {
                 List<Integer> idxs = SendParams.getInstance().getSpendOutputIndex(tx);
                 if(idxs.size() > 0) {
                     for(Integer i : idxs)   {
