@@ -797,4 +797,7 @@
     <string name="psbt_error">Error parsing PSBT</string>
     <string name="psbt_sign_error">Error signing transaction via PSBT</string>
 
+    <string name="strict_mode_address">Strict mode has detected possible address reuse for this transaction. Reformulate the transaction or broadcast as-is?</string>
+    <string name="strict_reformulate">Reformulate transaction</string>
+
 </resources>

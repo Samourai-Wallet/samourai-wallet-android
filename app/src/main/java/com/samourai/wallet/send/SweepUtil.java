@@ -165,7 +165,7 @@ public class SweepUtil  {
 
                                 String response = null;
                                 try {
-                                    response = PushTx.getInstance(context).samourai(hexTx);
+                                    response = PushTx.getInstance(context).samourai(hexTx, null);
 
                                     if(response != null)    {
                                         JSONObject jsonObject = new org.json.JSONObject(response);
