@@ -1,18 +1,22 @@
 package com.samourai.wallet.ricochet;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 //import android.util.Log;
 
 import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
+import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
@@ -23,6 +27,7 @@ import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
@@ -687,6 +692,70 @@ public class RicochetMeta {
         tx.verify();
 
         return tx;
+    }
+
+    public void doRicochetSync()    {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                try {
+                    int idx = index;
+                    boolean loop = true;
+
+                    while(loop) {
+                        JSONObject jsonObject = APIFactory.getInstance(context).getAddressInfo(getDestinationAddress(idx));
+
+                        if(jsonObject != null && jsonObject.has("addresses"))  {
+
+                            JSONArray addressArray = (JSONArray)jsonObject.get("addresses");
+                            JSONObject addrObj = null;
+                            for(int i = 0; i < addressArray.length(); i++)  {
+                                addrObj = (JSONObject)addressArray.get(i);
+                                int nbTx = 0;
+
+                                if(addrObj.has("n_tx"))  {
+                                    nbTx = addrObj.getInt("n_tx");
+                                    if(nbTx > 0)    {
+                                        idx += 5;
+                                    }
+                                    else    {
+                                        loop = false;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    index = idx;
+                    PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+
+                }
+                catch (IOException ioe) {
+                    ;
+                }
+                catch (JSONException je) {
+                    ;
+                }
+                catch (DecryptionException de) {
+                    ;
+                }
+                catch (MnemonicException.MnemonicLengthException mle) {
+                    ;
+                }
+
+                Looper.loop();
+
+            }
+
+        }).start();
+
     }
 
 }

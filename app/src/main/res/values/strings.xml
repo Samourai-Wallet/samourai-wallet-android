@@ -110,6 +110,8 @@
     <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
     <string name="options_postmix">Spend from post-mix Whirlpool</string>
+    <string name="options_ricochet_sync">Sync Ricochet</string>
+    <string name="options_ricochet_sync2">Synchronize Ricochet index.</string>
 
     <string name="prompt_send_backup_to_support">Send wallet backup to tech support? Does not include any private key, seed, or passphrase info.</string>
 

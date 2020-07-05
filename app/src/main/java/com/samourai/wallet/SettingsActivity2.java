@@ -805,6 +805,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference ricochetSyncPref = (Preference) findPreference("ricochet_sync");
+                ricochetSyncPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doRicochetSync();
+                        return true;
+                    }
+                });
+
                 Preference wpStatePref = (Preference) findPreference("wpstate");
                 wpStatePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -1269,6 +1277,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
     private void doPayNymCalc()    {
         Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
         startActivity(intent);
+    }
+
+    private void doRicochetSync()    {
+        RicochetMeta.getInstance(SettingsActivity2.this).doRicochetSync();
     }
 
     private String utxoToString(WhirlpoolUtxo whirlpoolUtxo) {
