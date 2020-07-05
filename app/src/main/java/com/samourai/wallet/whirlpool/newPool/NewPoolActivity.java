@@ -50,7 +50,7 @@ import com.samourai.whirlpool.client.tx0.UnspentOutputWithKey;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
 import com.samourai.whirlpool.client.wallet.beans.Tx0FeeTarget;
-import com.samourai.whirlpool.client.wallet.beans.WhirlpoolWalletAccount;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
 
 import org.bitcoinj.core.ECKey;
 import org.bouncycastle.util.encoders.Hex;
@@ -255,7 +255,7 @@ public class NewPoolActivity extends AppCompatActivity {
     private void processWhirlPool() {
 
         try {
-            if (AndroidWhirlpoolWalletService.getInstance().listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
+            if (AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).listenConnectionStatus().getValue() != AndroidWhirlpoolWalletService.ConnectionStates.CONNECTED) {
                 WhirlpoolNotificationService.startService(getApplicationContext());
             } else {
                 tx0Progress.setVisibility(View.VISIBLE);
@@ -288,11 +288,10 @@ public class NewPoolActivity extends AppCompatActivity {
 
     private Completable beginTx0(List<UTXOCoin> coins) {
         return Completable.fromCallable(() -> {
-            Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
-            if (!whirlpoolWalletOpt.isPresent()) {
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+            if (whirlpoolWallet == null) {
                 return true;
             }
-            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             Collection<UnspentOutputWithKey> spendFroms = new ArrayList<UnspentOutputWithKey>();
 
             for (UTXOCoin coin : coins) {
@@ -320,16 +319,15 @@ public class NewPoolActivity extends AppCompatActivity {
                 tx0FeeTarget = Tx0FeeTarget.BLOCKS_24;
             }
 
-            com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.findPoolById(selectedPoolViewModel.getPoolId());
-            Tx0Config tx0Config = whirlpoolWallet.getTx0Config(pool);
+            Tx0Config tx0Config = whirlpoolWallet.getTx0Config();
             if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
-                tx0Config.setChangeWallet(WhirlpoolWalletAccount.POSTMIX);
+                tx0Config.setChangeWallet(WhirlpoolAccount.POSTMIX);
             } else {
-                tx0Config.setChangeWallet(WhirlpoolWalletAccount.DEPOSIT);
+                tx0Config.setChangeWallet(WhirlpoolAccount.DEPOSIT);
             }
-            Tx0 tx0 = null;
             try {
-                tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, tx0FeeTarget);
+                com.samourai.whirlpool.client.whirlpool.beans.Pool pool = whirlpoolWallet.getPoolSupplier().findPoolById(selectedPoolViewModel.getPoolId());
+                Tx0 tx0 = whirlpoolWallet.tx0(spendFroms, pool, tx0Config, tx0FeeTarget);
                 final String txHash = tx0.getTx().getHashAsString();
                 // tx0 success
                 if (tx0.getChangeOutput() != null) {

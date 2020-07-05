@@ -105,6 +105,8 @@
     <string name="options_paynym_calc2">Calculate addresses shared with other PayNyms.</string>
     <string name="options_indexes">Wallet indexes</string>
     <string name="options_indexes2">Current index values for this wallet.</string>
+    <string name="options_whirlpool_state">Whirlpool info</string>
+    <string name="options_whirlpool_state2">Show technical mixing data.</string>
     <string name="options_whirlpool_gui">Pair to Whirlpool GUI</string>
     <string name="options_whirlpool_gui2">Pair to Whirlpool GUI for continuous mixing.</string>
     <string name="options_postmix">Spend from post-mix Whirlpool</string>

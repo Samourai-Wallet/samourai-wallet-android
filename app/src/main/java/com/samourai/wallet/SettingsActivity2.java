@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -29,14 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
-
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.crypto.MnemonicException;
-
-import org.bouncycastle.util.encoders.Hex;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -44,9 +35,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
-
 import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.api.backend.beans.UnspentResponse;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -56,7 +46,6 @@ import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
-import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.send.PushTx;
 import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
@@ -67,9 +56,20 @@ import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.ReceiversUtil;
 import com.samourai.wallet.util.SIMUtil;
 import com.samourai.wallet.util.SendAddressUtil;
-
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.MixProgress;
+import com.samourai.whirlpool.client.wallet.beans.MixingState;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.yanzhenjie.zbar.Symbol;
+
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.crypto.MnemonicException;
+import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,7 +77,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.MessageDigest;
+import java.util.Collection;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
@@ -805,6 +805,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference wpStatePref = (Preference) findPreference("wpstate");
+                wpStatePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doWhirlpoolState();
+                        return true;
+                    }
+                });
+
             }
             else if(strBranch.equals("other"))   {
                 addPreferencesFromResource(R.xml.settings_other);
@@ -1261,6 +1269,75 @@ public class SettingsActivity2 extends PreferenceActivity	{
     private void doPayNymCalc()    {
         Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
         startActivity(intent);
+    }
+
+    private String utxoToString(WhirlpoolUtxo whirlpoolUtxo) {
+        final StringBuilder builder = new StringBuilder();
+        UnspentResponse.UnspentOutput utxo = whirlpoolUtxo.getUtxo();
+        builder.append("[").append(utxo.tx_hash).append(":").append(utxo.tx_output_n).append("] ").append(utxo.value+"sats").append(", ").append(utxo.confirmations).append("confs");
+        builder.append(", ").append(whirlpoolUtxo.getPoolId()!=null?whirlpoolUtxo.getPoolId():"no pool");
+        builder.append(", ").append(whirlpoolUtxo.getMixsDone()+"/"+whirlpoolUtxo.getMixsTargetOrDefault(AndroidWhirlpoolWalletService.MIXS_TARGET_DEFAULT)).append(" mixed");
+        builder.append(", ").append(whirlpoolUtxo.getAccount()).append(", ").append(whirlpoolUtxo.getUtxo().getPath());
+        builder.append(", ").append(whirlpoolUtxo.getUtxoState());
+        return builder.toString();
+    }
+
+    private void doWhirlpoolState()	{
+        AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance(getApplicationContext());
+        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletService.getWhirlpoolWalletOrNull();
+
+        final StringBuilder builder = new StringBuilder();
+
+        // whirlpool wallet status
+        if (whirlpoolWallet == null) {
+            builder.append("WHIRLPOOL IS CLOSED\n");
+        } else {
+            String SEPARATOR = "---------------------------\n";
+            MixingState mixingState = whirlpoolWallet.getMixingState();
+            builder.append("WHIRLPOOL IS "+(mixingState.isStarted()?"RUNNING":"STOPPED")+"\n\n");
+            builder.append(mixingState.getNbQueued()+" QUEUED ("+mixingState.getNbQueuedMustMix()+"+"+mixingState.getNbQueuedLiquidity()+")\n");
+
+            // mixing threads
+            builder.append("\n");
+            builder.append(mixingState.getNbMixing()+" MIXING ("+mixingState.getNbMixingMustMix()+"+"+mixingState.getNbMixingLiquidity()+")\n");
+            builder.append(SEPARATOR);
+            for (WhirlpoolUtxo whirlpoolUtxo : mixingState.getUtxosMixing()) {
+                MixProgress mixProgress = whirlpoolUtxo.getUtxoState().getMixProgress();
+                if (mixProgress != null) {
+                    builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
+                }
+            }
+
+            // premix
+            builder.append("\n");
+            Collection<WhirlpoolUtxo> premixs = whirlpoolWallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.PREMIX);
+            builder.append(premixs.size()+" PREMIXS\n");
+            builder.append(SEPARATOR);
+            for (WhirlpoolUtxo whirlpoolUtxo : premixs) {
+                builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
+            }
+
+            // postmix
+            builder.append("\n");
+            Collection<WhirlpoolUtxo> postmixs = whirlpoolWallet.getUtxoSupplier().findUtxos(WhirlpoolAccount.POSTMIX);
+            builder.append(postmixs.size()+" POSTMIXS\n");
+            builder.append(SEPARATOR);
+            for (WhirlpoolUtxo whirlpoolUtxo : postmixs) {
+                builder.append("* ").append(utxoToString(whirlpoolUtxo)+"\n");
+            }
+        }
+
+        new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(builder.toString())
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
     }
 
     private void doBroadcastHex()    {

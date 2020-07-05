@@ -111,7 +111,11 @@ public class Stowaway extends Cahoots {
             psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
 
-        this.psbt = psbt;
+        //
+        //
+        //
+//        this.psbt = psbt;
+        this.psbt = new PSBT(transaction);
 
         Log.d("Stowaway", "input value:" + psbt.getTransaction().getInputs().get(0).getValue().longValue());
 
@@ -185,9 +189,11 @@ public class Stowaway extends Cahoots {
             psbt.addOutput(PSBT.PSBT_OUT_BIP32_DERIVATION, (byte[])triple.getLeft(), PSBT.writeBIP32Derivation((byte[])triple.getMiddle(), 84, params instanceof TestNet3Params ? 1 : 0, account, Integer.valueOf(s[1]), Integer.valueOf(s[2])));
         }
 
-        psbt.setTransaction(transaction);
-
-//        this.setPSBT(new PSBT(psbt.serialize(), transaction.getParams()));
+        //
+        //
+        //
+//        psbt.setTransaction(transaction);
+        psbt = new PSBT(transaction);
 
         this.setStep(2);
 
@@ -215,7 +221,11 @@ public class Stowaway extends Cahoots {
             transaction.addOutput(output);
         }
 
-        psbt.setTransaction(transaction);
+        //
+        //
+        //
+//        psbt.setTransaction(transaction);
+        psbt = new PSBT(transaction);
 
         signTx(keyBag);
 

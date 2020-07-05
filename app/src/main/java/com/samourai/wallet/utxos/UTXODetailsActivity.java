@@ -5,12 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
@@ -30,7 +27,6 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
-import com.samourai.wallet.bip47.BIP47Add;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.paynym.WebUtil;
 import com.samourai.wallet.crypto.DecryptionException;
@@ -49,6 +45,11 @@ import com.samourai.wallet.util.MessageSignUtil;
 import com.samourai.wallet.utxos.models.UTXOCoin;
 import com.samourai.wallet.whirlpool.WhirlpoolMain;
 import com.samourai.wallet.whirlpool.WhirlpoolMeta;
+import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
+import com.samourai.whirlpool.client.wallet.WhirlpoolWallet;
+import com.samourai.whirlpool.client.wallet.beans.MixableStatus;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolAccount;
+import com.samourai.whirlpool.client.wallet.beans.WhirlpoolUtxo;
 import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.Address;
@@ -65,8 +66,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -404,34 +406,45 @@ public class UTXODetailsActivity extends AppCompatActivity {
     }
 
     private void sendUTXOtoWhirlpool() {
+        // get mixable WhirlpoolUtxo when available
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        final WhirlpoolUtxo mixableUtxo = (whirlpoolWallet != null ? getWhirlpoolUtxoWhenMixable(whirlpoolWallet) : null);
 
         new AlertDialog.Builder(this)
-                .setMessage("Send utxo to whirlpool")
+                .setMessage(mixableUtxo!=null ? "Mix now?" : "Send utxo to Whirlpool?")
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, whichButton) -> {
-                    ArrayList<UTXOCoin> list = new ArrayList<>();
-                    list.add(utxoCoin);
+                    if (mixableUtxo != null) {
+                        // premix/postmix ready to mix => start mixing
+                        new Thread(() -> {
+                            try {
+                                whirlpoolWallet.mix(mixableUtxo);
+                                runOnUiThread(() -> Toast.makeText(UTXODetailsActivity.this, "Mixing...", Toast.LENGTH_SHORT).show());
+                            } catch(Exception e) {
+                                runOnUiThread(() -> Toast.makeText(UTXODetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }
+                        }).start();
+                    } else {
+                        // new TX0 from this UTXO
+                        ArrayList<UTXOCoin> list = new ArrayList<>();
+                        list.add(utxoCoin);
 
-                    String id = UUID.randomUUID().toString();
-                    PreSelectUtil.getInstance().clear();
-                    PreSelectUtil.getInstance().add(id, list);
-                    if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
-                        if (!utxoCoin.path.startsWith("M/1/")) {
-                            Snackbar.make(paynymLayout.getRootView(), R.string.only_change_utxos_allowed, Snackbar.LENGTH_LONG).show();
-                            return;
+                        String id = UUID.randomUUID().toString();
+                        PreSelectUtil.getInstance().clear();
+                        PreSelectUtil.getInstance().add(id, list);
+                        if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                            if (!utxoCoin.path.startsWith("M/1/")) {
+                                Snackbar.make(paynymLayout.getRootView(), R.string.only_change_utxos_allowed, Snackbar.LENGTH_LONG).show();
+                                return;
+                            }
                         }
-                    }
 
-                    if (utxoCoin.doNotSpend) {
-                        Snackbar.make(paynymLayout.getRootView(), R.string.selection_contains_blocked_utxo, Snackbar.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    if (id != null) {
-                        Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
-                        intent.putExtra("preselected", id);
-                        intent.putExtra("_account", account);
-                        startActivity(intent);
+                        if (id != null) {
+                            Intent intent = new Intent(getApplicationContext(), WhirlpoolMain.class);
+                            intent.putExtra("preselected", id);
+                            intent.putExtra("_account", account);
+                            startActivity(intent);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
@@ -440,6 +453,21 @@ public class UTXODetailsActivity extends AppCompatActivity {
                 .show();
 
 
+    }
+
+    private WhirlpoolUtxo getWhirlpoolUtxoWhenMixable(WhirlpoolWallet whirlpoolWallet){
+        WhirlpoolUtxo whirlpoolUtxo = whirlpoolWallet.getUtxoSupplier().findUtxo(hash, idx);
+        if (whirlpoolUtxo != null) {
+            // premix/postmix?
+            if (WhirlpoolAccount.PREMIX.equals(whirlpoolUtxo.getAccount()) || WhirlpoolAccount.POSTMIX.equals(whirlpoolUtxo.getAccount())) {
+                // ready to mix?
+                if (MixableStatus.MIXABLE.equals(whirlpoolUtxo.getUtxoState().getMixableStatus())) {
+                    return whirlpoolUtxo;
+                }
+            }
+        }
+        // not mixable
+        return null;
     }
 
     private void showMoreOptions() {

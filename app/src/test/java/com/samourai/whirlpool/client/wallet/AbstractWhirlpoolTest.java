@@ -30,6 +30,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import util.MockTorManager;
 
 public abstract class AbstractWhirlpoolTest {
     private Logger log = LoggerFactory.getLogger(AndroidStompClient.class.getSimpleName());
@@ -39,26 +40,9 @@ public abstract class AbstractWhirlpoolTest {
     protected HD_WalletFactory hdWalletFactory = HD_WalletFactory.getInstance(context);
     protected HD_WalletFactoryGeneric hdWalletFactoryGeneric;
     protected NetworkParameters networkParameters;
-    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService(){
-        // mock fee for deterministic tests
-        @Override
-        protected WhirlpoolDataService newDataService(WhirlpoolWalletConfig config, APIFactory apiFactory) {
-            return new AndroidWhirlpoolDataService(config, this, apiFactory){
-                @Override
-                public int getFeeSatPerByte(MinerFeeTarget feeTarget) {
-                    switch(feeTarget) {
-                        case BLOCKS_2: return 1;
-                        case BLOCKS_4: return 4;
-                        case BLOCKS_6: return 6;
-                        case BLOCKS_12: return 12;
-                        case BLOCKS_24: return 24;
-                        default: throw new RuntimeException("feeTarket not mocked");
-                    }
-                }
-            };
-        }
-    };
+    protected AndroidWhirlpoolWalletService whirlpoolWalletService = new AndroidWhirlpoolWalletService(context);
     protected WhirlpoolUtils whirlpoolUtils = WhirlpoolUtils.getInstance();
+    protected MockTorManager torManager = new MockTorManager();
 
     public void setUp(NetworkParameters networkParameters) throws Exception {
         this.networkParameters = networkParameters;

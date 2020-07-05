@@ -7,21 +7,20 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.samourai.wallet.BuildConfig;
 import com.samourai.wallet.R;
 import com.samourai.wallet.network.dojo.DojoUtil;
-import com.samourai.wallet.util.LogUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.whirlpool.client.wallet.AndroidWhirlpoolWalletService;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -110,10 +109,9 @@ public class TorService extends Service {
                     });
             compositeDisposable.add(disposable);
 
-            AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
-            if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+            if (AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWallet().isPresent()) {
                 // restart WhirlpoolWallet with new Tor config
-                whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+                AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).restart().subscribeOn(Schedulers.io()).subscribe();
             }
             return super.onStartCommand(intent,flags,startId);
 
@@ -207,10 +205,9 @@ public class TorService extends Service {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
                     if (state == TorManager.CONNECTION_STATES.CONNECTED) {
-                        AndroidWhirlpoolWalletService whirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
-                        if (whirlpoolWalletService.getWhirlpoolWallet().isPresent()) {
+                        if (AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWallet().isPresent()) {
                             // restart WhirlpoolWallet with new Tor config once Tor is connected
-                            whirlpoolWalletService.restart(this).subscribeOn(Schedulers.io()).subscribe();
+                            AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).restart().subscribeOn(Schedulers.io()).subscribe();
                         }
                     }
                 });

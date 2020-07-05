@@ -112,15 +112,14 @@ public class SelectPoolFragment extends Fragment {
 
         poolViewModels.clear();
         this.tx0Amount = NewPoolActivity.getCycleTotalAmount(coins);
-        Optional<WhirlpoolWallet> whirlpoolWalletOpt = AndroidWhirlpoolWalletService.getInstance().getWhirlpoolWallet();
-        if (!whirlpoolWalletOpt.isPresent()) {
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getContext()).getWhirlpoolWalletOrNull();
+        if (whirlpoolWallet == null) {
             return;
         }
         if (poolsAdapter == null) {
             poolsAdapter = new PoolsAdapter(getContext(), poolViewModels);
         }
-        WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
-        Disposable disposable = Single.fromCallable(whirlpoolWallet::getPools)
+        Disposable disposable = Single.fromCallable(whirlpoolWallet.getPoolSupplier()::getPools)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((whirlpoolPools) -> {

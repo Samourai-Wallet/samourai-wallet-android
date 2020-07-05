@@ -41,7 +41,6 @@ public class WhirlpoolNotificationService extends Service {
     public static int WHIRLPOOL_SERVICE_NOTIFICATION_ID = 15;
     public static String ACTION_START = "WHRL_START";
     public static String ACTION_STOP = "WHRL_STOP";
-    private AndroidWhirlpoolWalletService androidWhirlpoolWalletService = AndroidWhirlpoolWalletService.getInstance();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private List<String> notifiedUtxos = new ArrayList<>();
 
@@ -67,14 +66,13 @@ public class WhirlpoolNotificationService extends Service {
 
     private void listenService() {
         try {
-            Optional<WhirlpoolWallet> whirlpoolWalletOpt = androidWhirlpoolWalletService.getWhirlpoolWallet();
-            if (!whirlpoolWalletOpt.isPresent()) {
+            WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+            if (whirlpoolWallet == null) {
                 // whirlpool wallet not opened yet
                 return;
             }
 
             // whirlpool wallet is opened
-            WhirlpoolWallet whirlpoolWallet = whirlpoolWalletOpt.get();
             updateNotification();
             Disposable stateDisposable = whirlpoolWallet.getMixingState().getObservable()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -132,8 +130,8 @@ public class WhirlpoolNotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (Objects.requireNonNull(intent.getAction()).equals(WhirlpoolNotificationService.ACTION_START)) {
-            Disposable startDisposable = androidWhirlpoolWalletService
-                    .startService(getApplicationContext())
+            Disposable startDisposable = AndroidWhirlpoolWalletService.getInstance(getApplicationContext())
+                    .startService()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(this::listenService, er -> {
@@ -152,7 +150,7 @@ public class WhirlpoolNotificationService extends Service {
     private void stopWhirlPoolService() {
         compositeDisposable.clear();
 
-        androidWhirlpoolWalletService.stop();
+        AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).stop();
         this.stopSelf();
     }
 
@@ -178,16 +176,16 @@ public class WhirlpoolNotificationService extends Service {
     }
 
     private void setMixState(NotificationCompat.Builder builder) {
-        Optional<WhirlpoolWallet> whirlpoolWalletOpt = androidWhirlpoolWalletService.getWhirlpoolWallet();
-        if (whirlpoolWalletOpt.isPresent()) {
-            MixingState mixingState = whirlpoolWalletOpt.get().getMixingState();
+        WhirlpoolWallet whirlpoolWallet = AndroidWhirlpoolWalletService.getInstance(getApplicationContext()).getWhirlpoolWalletOrNull();
+        if (whirlpoolWallet != null) {
+            MixingState mixingState = whirlpoolWallet.getMixingState();
             builder.setContentTitle("Whirlpool online: ".concat(String.valueOf(mixingState.getNbMixing()))
                     .concat(" MIXING :")
                     .concat(String.valueOf(mixingState.getNbQueued())).concat(" QUEUED"));
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
             for (WhirlpoolUtxo whirlpoolUtxo : mixingState.getUtxosMixing()) {
-                if (whirlpoolUtxo.getUtxoState().getMessage() != null && whirlpoolUtxo.getUtxoConfig().getPoolId() != null)
-                    inboxStyle.addLine(whirlpoolUtxo.getUtxoConfig().getPoolId().concat(" : ").concat(whirlpoolUtxo.getUtxoState().getMessage()));
+                if (whirlpoolUtxo.getUtxoState().getMessage() != null && whirlpoolUtxo.getPoolId() != null)
+                    inboxStyle.addLine(whirlpoolUtxo.getPoolId().concat(" : ").concat(whirlpoolUtxo.getUtxoState().getMessage()));
             }
             builder.setStyle(inboxStyle);
         } else {
