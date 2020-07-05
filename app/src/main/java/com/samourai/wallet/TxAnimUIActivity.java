@@ -276,6 +276,12 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        disposables.dispose();
+        super.onDestroy();
+    }
+
     private Single<JSONObject> pushTx(String hexTx, List<Integer> strictModeVouts) {
         return Single.fromCallable(() -> {
 
