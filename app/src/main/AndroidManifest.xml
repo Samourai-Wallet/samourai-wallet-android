@@ -227,7 +227,7 @@
         -->
         <activity
             android:name=".TxAnimUIActivity"
-            android:theme="@style/AppThemeLanding" />
+            android:theme="@style/SamouraiAppTheme" />
         <activity
             android:name=".send.SendActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
