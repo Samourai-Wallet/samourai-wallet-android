@@ -458,6 +458,7 @@ public class PayloadUtil	{
             meta.put("use_trusted", PrefsUtil.getInstance(context).getValue(PrefsUtil.TRUSTED_LOCK, false));
             meta.put("check_sim", PrefsUtil.getInstance(context).getValue(PrefsUtil.CHECK_SIM, false));
             meta.put("broadcast_tx", PrefsUtil.getInstance(context).getValue(PrefsUtil.BROADCAST_TX, true));
+            meta.put("strict_outputs", PrefsUtil.getInstance(context).getValue(PrefsUtil.STRICT_OUTPUTS, true));
             meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
             meta.put("xpubreg84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false));
@@ -731,6 +732,9 @@ public class PayloadUtil	{
                 }
                 if(meta.has("broadcast_tx")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.BROADCAST_TX, meta.getBoolean("broadcast_tx"));
+                }
+                if(meta.has("strict_outputs")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.STRICT_OUTPUTS, meta.getBoolean("strict_outputs"));
                 }
                 if(meta.has("xpubreg44")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44REG, meta.getBoolean("xpubreg44"));

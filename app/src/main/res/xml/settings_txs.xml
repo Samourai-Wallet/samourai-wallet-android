@@ -35,6 +35,13 @@
         android:key="broadcastHex"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_strictoutputs"
+        android:summary="@string/options_strictoutputs2"
+        android:defaultValue="true"
+        android:key="strictOutputs"
+        />
+
     <PreferenceCategory
         android:key="@string/experimental"
         android:title="@string/experimental">

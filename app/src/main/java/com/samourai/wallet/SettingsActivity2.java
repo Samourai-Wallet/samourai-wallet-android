@@ -165,6 +165,22 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                final CheckBoxPreference cbPref11 = (CheckBoxPreference) findPreference("strictOutputs");
+                cbPref11.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        if (cbPref11.isChecked()) {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.STRICT_OUTPUTS, false);
+                        }
+                        else    {
+                            PrefsUtil.getInstance(SettingsActivity2.this).setValue(PrefsUtil.STRICT_OUTPUTS, true);
+                        }
+
+                        return true;
+                    }
+                });
+
+
                 Preference psbtPref = (Preference) findPreference("psbt");
                 psbtPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {

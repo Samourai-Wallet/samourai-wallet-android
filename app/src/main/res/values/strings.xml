@@ -89,6 +89,8 @@
     <string name="options_fee_provider2">Select your preferred transaction fee estimation provider.</string>
     <string name="options_broadcast_on">Broadcast transactions</string>
     <string name="options_broadcast_on2">Uncheck (broadcasting OFF) to copy raw signed transaction to the clipboard.</string>
+    <string name="options_strictoutputs">Strict mode</string>
+    <string name="options_strictoutputs2">Strict control of transaction outputs and address reuse.</string>
     <string name="options_segwit">Receive to segwit addresses</string>
     <string name="options_segwit_2">Generate segwit addresses for incoming transactions.</string>
     <string name="options_broadcast_hex">Broadcast transaction hex</string>
@@ -796,5 +798,8 @@
     <string name="display_psbt">Display PSBT</string>
     <string name="psbt_error">Error parsing PSBT</string>
     <string name="psbt_sign_error">Error signing transaction via PSBT</string>
+
+    <string name="strict_mode_address">Strict mode has detected possible address reuse for this transaction. Reformulate the transaction or broadcast as-is?</string>
+    <string name="strict_reformulate">Reformulate transaction</string>
 
 </resources>
