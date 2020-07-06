@@ -26,6 +26,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +80,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity2 extends PreferenceActivity	{
 
@@ -821,6 +827,14 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
+                Preference ricochetSyncPref = (Preference) findPreference("ricochet_sync");
+                ricochetSyncPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                    public boolean onPreferenceClick(Preference preference) {
+                        doRicochetSync();
+                        return true;
+                    }
+                });
+
                 Preference wpStatePref = (Preference) findPreference("wpstate");
                 wpStatePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
@@ -1285,6 +1299,34 @@ public class SettingsActivity2 extends PreferenceActivity	{
     private void doPayNymCalc()    {
         Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
         startActivity(intent);
+    }
+
+    private void doRicochetSync()    {
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.options_ricochet_sync2)
+                .setPositiveButton(R.string.ok,(dialogInterface, i) -> {
+                    ProgressDialog dialog = ProgressDialog.show( this, "",
+                            "Synchronizing...", true);
+                    dialog.show();
+                    Disposable disposable = RicochetMeta.getInstance(SettingsActivity2.this).doRicochetSync()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                dialog.dismiss();
+                                Toast.makeText(getApplicationContext(),"Successfully synchronized",Toast.LENGTH_SHORT).show();
+                            },throwable -> {
+                                dialog.dismiss();
+                                Toast.makeText(getApplicationContext(),"Error: ".concat(throwable.getMessage()),Toast.LENGTH_SHORT).show();
+                            });
+
+                })
+                .setNegativeButton(R.string.cancel,(dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                })
+                .show();
+
     }
 
     private String utxoToString(WhirlpoolUtxo whirlpoolUtxo) {
