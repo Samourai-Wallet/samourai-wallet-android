@@ -163,8 +163,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
             if (SendParams.getInstance().getDestAddress() != null && SendParams.getInstance().getDestAddress().compareTo("") != 0 &&
                     PrefsUtil.getInstance(TxAnimUIActivity.this).getValue(PrefsUtil.STRICT_OUTPUTS, true) == true) {
                 List<Integer> idxs = SendParams.getInstance().getSpendOutputIndex(tx);
-                if (idxs.size() > 0) {
-                    for (Integer i : idxs) {
+                for(int i = 0; i < tx.getOutputs().size(); i++)   {
+                    if(!idxs.contains(i))   {
                         strictModeVouts.add(i);
                     }
                 }
@@ -292,6 +292,10 @@ public class TxAnimUIActivity extends AppCompatActivity {
             results.put("hasReuse", false);
             results.put("reuseIndexes", new JSONArray());
 
+            for(Integer i :  strictModeVouts) {
+                debug("TxAnimUIActivity", "strict mode output index:" + i);
+            }
+
             String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, (strictModeVouts != null && strictModeVouts.size() > 0) ? strictModeVouts : null);
 /*
             String response = null;
@@ -304,6 +308,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 debug("TxAnimUIActivity", "stub rebroadcast:" + response);
             }
 */
+            debug("TxAnimUIActivity", "response:" + response);
 
             if (response != null) {
                 JSONObject jsonObject = new JSONObject(response);

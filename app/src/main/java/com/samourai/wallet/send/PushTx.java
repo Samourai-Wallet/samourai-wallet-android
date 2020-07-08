@@ -17,6 +17,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.samourai.wallet.util.LogUtil.debug;
+
 public class PushTx {
 
     private static boolean DO_SPEND = true;
@@ -57,6 +59,7 @@ public class PushTx {
 
             if(!TorManager.getInstance(context).isRequired())    {
                 String _base = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+                debug("PushTx", strStrictVouts);
                 response = WebUtil.getInstance(context).postURL(_base + _url + "?at=" + APIFactory.getInstance(context).getAccessToken(), "tx=" + hexString + strStrictVouts);
             }
             else    {
