@@ -174,11 +174,11 @@ public class CPFPTask extends AsyncTask<String, Void, String> {
                     }
                     final String ownReceiveAddr;
                     if (FormatsUtil.getInstance().isValidBech32(addr)) {
-                        ownReceiveAddr = AddressFactory.getInstance(activity).getBIP84(AddressFactory.RECEIVE_CHAIN).getBech32AsString();
+                        ownReceiveAddr = AddressFactory.getInstance(activity).getBIP84Receive().getRight().getBech32AsString();
                     } else if (Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addr).isP2SHAddress()) {
-                        ownReceiveAddr = AddressFactory.getInstance(activity).getBIP49(AddressFactory.RECEIVE_CHAIN).getAddressAsString();
+                        ownReceiveAddr = AddressFactory.getInstance(activity).getBIP49Receive().getRight().getAddressAsString();
                     } else {
-                        ownReceiveAddr = AddressFactory.getInstance(activity).get(AddressFactory.RECEIVE_CHAIN).getAddressString();
+                        ownReceiveAddr = AddressFactory.getInstance(activity).getReceive().getRight().getAddressString();
                     }
                     Log.d("activity", "receive address:" + ownReceiveAddr);
 
