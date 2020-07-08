@@ -183,7 +183,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 //                    Toast.makeText(TxAnimUIActivity.this, "tx signed OK", Toast.LENGTH_SHORT).show();
                 }
                 final String hexTx = new String(Hex.encode(_tx.bitcoinSerialize()));
-                LogUtil.debug(("TxAnimUIActivity", "hex tx:" + hexTx);
+                LogUtil.debug("TxAnimUIActivity", "hex tx:" + hexTx);
                 final String strTxHash = _tx.getHashAsString();
 
                 resultHandler = new Handler();
@@ -210,7 +210,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((jsonObject) -> {
-                                LogUtil.debug((TAG, jsonObject.toString());
+                                LogUtil.debug(TAG, jsonObject.toString());
                                 if (jsonObject.getBoolean("isOk")) {
                                     progressView.showCheck();
                                     progressView.setTxStatusMessage(R.string.tx_sent_ok);
@@ -290,7 +290,15 @@ public class TxAnimUIActivity extends AppCompatActivity {
             results.put("hasReuse", false);
             results.put("reuseIndexes", new JSONArray());
 
-            String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, strictModeVouts.size() > 0 ? strictModeVouts : null);
+//            String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, (strictModeVouts != null && strictModeVouts.size() > 0) ? strictModeVouts : null);
+//            String response = "{\"status\"=\"error\", \"error\"={\"code\"=\"VIOLATION_STRICT_MODE_VOUTS\"}}";
+            String response = null;
+            if(strictModeVouts != null && strictModeVouts.size() > 0) {
+                response = "{\"status\"=\"error\", \"error\"={\"code\"=\"VIOLATION_STRICT_MODE_VOUTS\"}}";
+            }
+            else {
+                response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, null);
+            }
 
             if (response != null) {
                 JSONObject jsonObject = new JSONObject(response);

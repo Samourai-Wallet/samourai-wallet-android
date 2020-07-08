@@ -157,7 +157,7 @@ public class SendParams	{
             Address _p2pkh = output.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams());
             try {
                 if(Bech32Util.getInstance().isBech32Script(scriptPubKey)) {
-                    if(Bech32Util.getInstance().getAddressFromScript(scriptPubKey).compareTo(getDestAddress()) == 0) {
+                    if(Bech32Util.getInstance().getAddressFromScript(scriptPubKey).compareToIgnoreCase(getDestAddress()) == 0) {
                         debug("SendParams", "send address identified:" + Bech32Util.getInstance().getAddressFromScript(scriptPubKey));
                         debug("SendParams", "send address output index:" + i);
                         ret.add(i);
