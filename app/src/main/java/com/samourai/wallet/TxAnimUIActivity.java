@@ -77,6 +77,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.samourai.wallet.util.LogUtil.debug;
+
 public class TxAnimUIActivity extends AppCompatActivity {
 
     private TransactionProgressView progressView = null;
@@ -183,7 +185,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 //                    Toast.makeText(TxAnimUIActivity.this, "tx signed OK", Toast.LENGTH_SHORT).show();
                 }
                 final String hexTx = new String(Hex.encode(_tx.bitcoinSerialize()));
-                LogUtil.debug("TxAnimUIActivity", "hex tx:" + hexTx);
+                debug("TxAnimUIActivity", "hex tx:" + hexTx);
                 final String strTxHash = _tx.getHashAsString();
 
                 resultHandler = new Handler();
@@ -210,7 +212,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((jsonObject) -> {
-                                LogUtil.debug(TAG, jsonObject.toString());
+                                debug(TAG, jsonObject.toString());
                                 if (jsonObject.getBoolean("isOk")) {
                                     progressView.showCheck();
                                     progressView.setTxStatusMessage(R.string.tx_sent_ok);
@@ -290,15 +292,18 @@ public class TxAnimUIActivity extends AppCompatActivity {
             results.put("hasReuse", false);
             results.put("reuseIndexes", new JSONArray());
 
-//            String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, (strictModeVouts != null && strictModeVouts.size() > 0) ? strictModeVouts : null);
-//            String response = "{\"status\"=\"error\", \"error\"={\"code\"=\"VIOLATION_STRICT_MODE_VOUTS\"}}";
+            String response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, (strictModeVouts != null && strictModeVouts.size() > 0) ? strictModeVouts : null);
+/*
             String response = null;
             if(strictModeVouts != null && strictModeVouts.size() > 0) {
                 response = "{\"status\"=\"error\", \"error\"={\"code\"=\"VIOLATION_STRICT_MODE_VOUTS\"}}";
+                debug("TxAnimUIActivity", "stub fail:" + response);
             }
             else {
                 response = PushTx.getInstance(TxAnimUIActivity.this).samourai(hexTx, null);
+                debug("TxAnimUIActivity", "stub rebroadcast:" + response);
             }
+*/
 
             if (response != null) {
                 JSONObject jsonObject = new JSONObject(response);
@@ -412,13 +417,13 @@ public class TxAnimUIActivity extends AppCompatActivity {
                         try {
                             if (Bech32Util.getInstance().isBech32Script(Hex.toHexString(out.getScriptBytes())) && !SendParams.getInstance().getDestAddress().equals(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())))) {
                                 rbf.addChangeAddr(Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
-                                LogUtil.debug("SendActivity", "added change output:" + Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
+                                debug("SendActivity", "added change output:" + Bech32Util.getInstance().getAddressFromScript(Hex.toHexString(out.getScriptBytes())));
                             } else if (SendParams.getInstance().getChangeType() == 44 && !SendParams.getInstance().getDestAddress().equals(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString())) {
                                 rbf.addChangeAddr(out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                LogUtil.debug("SendActivity", "added change output:" + out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                debug("SendActivity", "added change output:" + out.getAddressFromP2PKHScript(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                             } else if (SendParams.getInstance().getChangeType() != 44 && !SendParams.getInstance().getDestAddress().equals(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString())) {
                                 rbf.addChangeAddr(out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
-                                LogUtil.debug("SendActivity", "added change output:" + out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                                debug("SendActivity", "added change output:" + out.getAddressFromP2SH(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                             } else {
                                 ;
                             }
