@@ -18,6 +18,7 @@ import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.util.AddressFactory;
@@ -181,6 +182,11 @@ public class JobRefreshService extends JobIntentService {
             if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBBADBANKLOCK, false)) {
                 String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(this.getApplicationContext()).getWhirlpoolBadBank()).zpubstr();
                 APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBBADBANKLOCK);
+            }
+
+            if (!PrefsUtil.getInstance(this.getApplicationContext()).getValue(PrefsUtil.XPUBRICOCHETLOCK, false)) {
+                String zpub = BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccountAt(RicochetMeta.getInstance(JobRefreshService.this).getRicochetAccount()).zpubstr();
+                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(zpub, 84, PrefsUtil.XPUBRICOCHETLOCK);
             }
 
         } else {

@@ -462,11 +462,16 @@ public class PayloadUtil	{
             meta.put("xpubreg44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44REG, false));
             meta.put("xpubreg49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49REG, false));
             meta.put("xpubreg84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84REG, false));
+            meta.put("xpubprereg", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPREREG, false));
+            meta.put("xpubpostreg", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTREG, false));
+            meta.put("xpubricochetreg", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBRICOCHETREG, false));
             meta.put("xpublock44", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB44LOCK, false));
             meta.put("xpublock49", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB49LOCK, false));
             meta.put("xpublock84", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUB84LOCK, false));
             meta.put("xpubprelock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPRELOCK, false));
             meta.put("xpubpostlock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBPOSTLOCK, false));
+            meta.put("xpubbadbanklock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBBADBANKLOCK, false));
+            meta.put("xpubricochetlock", PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBRICOCHETLOCK, false));
             meta.put("paynym_claimed", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_CLAIMED, false));
             meta.put("paynym_refused", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_REFUSED, false));
             meta.put("paynym_featured_v1", PrefsUtil.getInstance(context).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false));
@@ -745,6 +750,18 @@ public class PayloadUtil	{
                 if(meta.has("xpubreg84")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB84REG, meta.getBoolean("xpubreg84"));
                 }
+                if(meta.has("xpubprereg")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPREREG, meta.getBoolean("xpubprereg"));
+                }
+                if(meta.has("xpubpostreg")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTREG, meta.getBoolean("xpubpostreg"));
+                }
+                if(meta.has("xpubbadbankreg")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBBADBANKREG, meta.getBoolean("xpubbadbankreg"));
+                }
+                if(meta.has("xpubricochetreg")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBRICOCHETREG, meta.getBoolean("xpubricochetreg"));
+                }
                 if(meta.has("xpublock44")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUB44LOCK, meta.getBoolean("xpublock44"));
                 }
@@ -759,6 +776,12 @@ public class PayloadUtil	{
                 }
                 if(meta.has("xpubpostlock")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBPOSTLOCK, meta.getBoolean("xpubpostlock"));
+                }
+                if(meta.has("xpubbadbanklock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBBADBANKLOCK, meta.getBoolean("xpubbadbanklock"));
+                }
+                if(meta.has("xpubricochetlock")) {
+                    PrefsUtil.getInstance(context).setValue(PrefsUtil.XPUBRICOCHETLOCK, meta.getBoolean("xpubricochetlock"));
                 }
                 if(meta.has("paynym_claimed")) {
                     PrefsUtil.getInstance(context).setValue(PrefsUtil.PAYNYM_CLAIMED, meta.getBoolean("paynym_claimed"));

@@ -23,6 +23,7 @@ import com.samourai.wallet.hd.HD_Wallet;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.network.dojo.DojoUtil;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.ricochet.RicochetMeta;
 import com.samourai.wallet.segwit.BIP49Util;
 import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.segwit.SegwitAddress;
@@ -1719,7 +1720,10 @@ public class APIFactory	{
                 registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).xpubstr(), 84, PrefsUtil.XPUBPOSTREG);
             }
             if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBBADBANKREG, false) == false)    {
-                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr(), 84, PrefsUtil.XPUBPOSTREG);
+                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).xpubstr(), 84, PrefsUtil.XPUBBADBANKLOCK);
+            }
+            if(PrefsUtil.getInstance(context).getValue(PrefsUtil.XPUBRICOCHETREG, false) == false)    {
+                registerXPUB(BIP84Util.getInstance(context).getWallet().getAccountAt(RicochetMeta.getInstance(context).getRicochetAccount()).zpubstr(), 84, PrefsUtil.XPUBRICOCHETREG);
             }
 
             xpub_txs.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), new ArrayList<Tx>());
