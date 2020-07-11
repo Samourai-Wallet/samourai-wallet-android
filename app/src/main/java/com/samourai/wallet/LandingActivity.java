@@ -442,11 +442,15 @@ public class LandingActivity extends AppCompatActivity  {
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB84REG, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPREREG, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPOSTREG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBBADBANKREG, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBRICOCHETREG, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB44LOCK, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB49LOCK, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUB84LOCK, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPRELOCK, false);
                 PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBPOSTLOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBBADBANKLOCK, false);
+                PrefsUtil.getInstance(LandingActivity.this).setValue(PrefsUtil.XPUBRICOCHETLOCK, false);
 
                 DojoUtil.getInstance(LandingActivity.this).clear();
                 APIFactory.getInstance(LandingActivity.this).setAccessToken(null);

@@ -459,11 +459,15 @@ public class NetworkDashboard extends AppCompatActivity {
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84REG, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPREREG, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTREG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBBADBANKREG, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBRICOCHETREG, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB44LOCK, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB49LOCK, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUB84LOCK, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPRELOCK, false);
                 PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBPOSTLOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBBADBANKLOCK, false);
+                PrefsUtil.getInstance(NetworkDashboard.this).setValue(PrefsUtil.XPUBRICOCHETLOCK, false);
 
                 DojoUtil.getInstance(NetworkDashboard.this).clear();
                 APIFactory.getInstance(NetworkDashboard.this).setAccessToken(null);
