@@ -2884,4 +2884,46 @@ public class APIFactory	{
 
     }
 
+    public synchronized boolean parseRicochetXPUB() throws JSONException  {
+
+        String[] s = new String[] { BIP84Util.getInstance(context).getWallet().getAccountAt(RicochetMeta.getInstance(context).getRicochetAccount()).zpubstr() };
+        JSONObject jsonObject = getRawXPUB(s);
+
+        if(jsonObject != null)  {
+
+            if(!jsonObject.has("wallet"))  {
+                return false;
+            }
+
+            if(jsonObject.has("addresses"))  {
+
+                JSONArray addressesArray = (JSONArray)jsonObject.get("addresses");
+                JSONObject addrObj = null;
+                for(int i = 0; i < addressesArray.length(); i++)  {
+                    addrObj = (JSONObject)addressesArray.get(i);
+                    if(addrObj != null && addrObj.has("address"))  {
+                        if(FormatsUtil.getInstance().isValidXpub((String)addrObj.get("address")))    {
+
+                            if(addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(RicochetMeta.getInstance(context).getRicochetAccount()).xpubstr()) ||
+                                    addrObj.getString("address").equals(BIP84Util.getInstance(context).getWallet().getAccountAt(RicochetMeta.getInstance(context).getRicochetAccount()).zpubstr()))    {
+
+                                if(addrObj.has("account_index"))    {
+                                    RicochetMeta.getInstance(context).setIndex(addrObj.getInt("account_index"));
+                                }
+
+                            }
+                            else    {
+                                ;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return true;
+
+    }
+
 }
