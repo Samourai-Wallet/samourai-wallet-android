@@ -316,6 +316,9 @@ public class PayloadUtil	{
             AddressFactory.getInstance().setHighestBadBankReceiveIdx(0);
             AddressFactory.getInstance().setHighestBadBankChangeIdx(0);
 
+            RicochetMeta.getInstance(context).empty();
+            RicochetMeta.getInstance(context).setIndex(0);
+
             HD_WalletFactory.getInstance(context).set(null);
         }
         catch(MnemonicException.MnemonicLengthException mle)	{
