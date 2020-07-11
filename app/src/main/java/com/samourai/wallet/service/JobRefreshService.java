@@ -190,7 +190,11 @@ public class JobRefreshService extends JobIntentService {
             }
 
             try {
+                int prevIdx = RicochetMeta.getInstance(JobRefreshService.this).getIndex();
                 APIFactory.getInstance(JobRefreshService.this).parseRicochetXPUB();
+                if(prevIdx > RicochetMeta.getInstance(JobRefreshService.this).getIndex())    {
+                    RicochetMeta.getInstance(JobRefreshService.this).setIndex(prevIdx);
+                }
             } catch (JSONException je) {
                 ;
             }
