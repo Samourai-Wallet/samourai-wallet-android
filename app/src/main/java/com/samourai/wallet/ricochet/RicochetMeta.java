@@ -672,39 +672,4 @@ public class RicochetMeta {
         return tx;
     }
 
-    public Completable doRicochetSync() {
-        return Completable.fromCallable(() -> {
-            int idx = index;
-            boolean loop = true;
-            while (loop) {
-                JSONObject jsonObject = APIFactory.getInstance(context).getAddressInfo(getDestinationAddress(idx));
-
-                if (jsonObject != null && jsonObject.has("addresses")) {
-
-                    JSONArray addressArray = (JSONArray) jsonObject.get("addresses");
-                    JSONObject addrObj = null;
-                    for (int i = 0; i < addressArray.length(); i++) {
-                        addrObj = (JSONObject) addressArray.get(i);
-                        int nbTx = 0;
-
-                        if (addrObj.has("n_tx")) {
-                            nbTx = addrObj.getInt("n_tx");
-                            if (nbTx > 0) {
-                                idx += 5;
-                            } else {
-                                loop = false;
-                            }
-                        }
-
-                    }
-
-                }
-
-            }
-            index = idx;
-            PayloadUtil.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-            return null;
-        });
-    }
-
 }
