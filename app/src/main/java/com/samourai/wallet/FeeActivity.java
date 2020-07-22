@@ -228,7 +228,12 @@ public class FeeActivity extends Activity {
         decFormat.setMaximumFractionDigits(3);
         decFormat.setMinimumFractionDigits(0);
         double customValue = 0.0;
-
+        try {
+            customValue = (double) fee;
+        } catch (Exception e) {
+            Toast.makeText(this, R.string.custom_fee_too_low, Toast.LENGTH_SHORT).show();
+            return;
+        }
         SuggestedFee suggestedFee = new SuggestedFee();
         suggestedFee.setStressed(false);
         suggestedFee.setOK(true);
