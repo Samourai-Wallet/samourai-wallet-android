@@ -114,6 +114,9 @@ public class APIFactory	{
 
     private static HashMap<String, Long> bip47_amounts = null;
     public boolean walletInit = false;
+    
+    //Broadcast balance changes to the application, this will be a timestamp,
+    //Balance will be recalculated when the change is broadcasted
     public BehaviorSubject<Long> walletBalanceObserver = BehaviorSubject.create();
     private static long latest_block_height = -1L;
     private static String latest_block_hash = null;
@@ -131,7 +134,7 @@ public class APIFactory	{
     private static AlertDialog alertDialog = null;
 
     private APIFactory()	{
-        walletBalanceObserver.onNext(0L);
+        walletBalanceObserver.onNext(System.currentTimeMillis());
     }
 
     public static APIFactory getInstance(Context ctx) {
@@ -419,7 +422,7 @@ public class APIFactory	{
                 xpub_txs.put(xpubs[0], new ArrayList<Tx>());
                 parseXPUB(jsonObject);
                 xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
-                walletBalanceObserver.onNext( xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
+                walletBalanceObserver.onNext( System.currentTimeMillis());
             }
             catch(JSONException je) {
                 je.printStackTrace();
@@ -1960,7 +1963,7 @@ public class APIFactory	{
 
     public void setXpubBalance(long value)  {
         xpub_balance = value;
-        walletBalanceObserver.onNext(value);
+        walletBalanceObserver.onNext(System.currentTimeMillis());
     }
 
     public long getXpubPreMixBalance()  {
@@ -2627,7 +2630,7 @@ public class APIFactory	{
 
     }
 
-    private synchronized boolean parseMixUnspentOutputs(String unspents)   {
+    public  synchronized boolean parseMixUnspentOutputs(String unspents)   {
 
         int account_type = 0;
 
