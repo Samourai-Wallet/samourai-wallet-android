@@ -1229,6 +1229,10 @@ public class SendActivity extends SamouraiActivity {
 
         org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
         if (SPEND_TYPE == SPEND_RICOCHET) {
+            if(AppUtil.getInstance(getApplicationContext()).isOfflineMode()){
+                Toast.makeText(getApplicationContext(),"You won't able to compose ricochet when you're on offline mode",Toast.LENGTH_SHORT).show();
+                return false;
+            }
 
             boolean samouraiFeeViaBIP47 = false;
             if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM) {
