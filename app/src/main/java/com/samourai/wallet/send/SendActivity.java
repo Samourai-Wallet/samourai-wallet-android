@@ -790,18 +790,20 @@ public class SendActivity extends SamouraiActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
-        if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
-            //some time, user may navigate to this activity even before wallet initialization completes
-            //so we will set a delay to reload balance info
-            Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                    .subscribe(this::setBalance);
-            compositeDisposables.add(disposable);
-            if (!shownWalletLoadingMessage) {
-                Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
-                shownWalletLoadingMessage = true;
-            }
 
-        }
+        if(!AppUtil.getInstance(getApplication()).isOfflineMode())
+            if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
+                //some time, user may navigate to this activity even before wallet initialization completes
+                //so we will set a delay to reload balance info
+                Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                        .subscribe(this::setBalance);
+                compositeDisposables.add(disposable);
+                if (!shownWalletLoadingMessage) {
+                    Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
+                    shownWalletLoadingMessage = true;
+                }
+
+            }
     }
 
     private void checkDeepLinks() {

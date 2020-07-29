@@ -50,6 +50,7 @@ public class JobRefreshService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
 
+
         boolean dragged = intent.getBooleanExtra("dragged", false);
         boolean launch = intent.getBooleanExtra("launch", false);
         boolean notifTx = intent.getBooleanExtra("notifTx", false);
@@ -58,7 +59,13 @@ public class JobRefreshService extends JobIntentService {
 
         APIFactory.getInstance(this.getApplicationContext()).stayingAlive();
 
-        APIFactory.getInstance(this.getApplicationContext()).initWallet();
+        if(!AppUtil.getInstance(getApplication()).isOfflineMode()){
+            APIFactory.getInstance(this.getApplicationContext()).initWallet();
+        }else {
+            Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
+            LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(_intent);
+            return;
+        }
 
         try {
             int acc = 0;

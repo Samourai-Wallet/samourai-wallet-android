@@ -62,7 +62,7 @@ public class BalanceViewModel extends AndroidViewModel {
     public BalanceViewModel(@NonNull Application application) {
         super(application);
         toggleSat.setValue(false);
-
+        lazyLoadPostMix();
     }
 
     public LiveData<List<Tx>> getTxs() {
@@ -84,7 +84,7 @@ public class BalanceViewModel extends AndroidViewModel {
 
             if (response != null) {
 
-                Observable<Boolean> parser = account == 0 ? parseXPUB(new JSONObject(response.toString())) : parseMixXPUB(new JSONObject(response.toString()));
+                Observable<Boolean> parser = account == 0 ? parseXPUB(new JSONObject(response.toString())) : parseMixXPUB(new JSONObject(response.toString()),account);
 
                 Disposable disposable = parser
                         .subscribeOn(Schedulers.computation())
@@ -101,10 +101,10 @@ public class BalanceViewModel extends AndroidViewModel {
                             if (account == 0) {
                                 balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
                             }
-                            if(account==WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()){
+                            if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
                                 balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValuePostMix());
                             }
-                            if(account==WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()){
+                            if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()) {
                                 balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBadBank());
                             }
 
@@ -131,7 +131,7 @@ public class BalanceViewModel extends AndroidViewModel {
                 e.printStackTrace();
             }
             try {
-                JSONObject postUnspentObjPost =  PayloadUtil.getInstance(context).deserializeUTXOPost();
+                JSONObject postUnspentObjPost = PayloadUtil.getInstance(context).deserializeUTXOPost();
                 if (postUnspentObjPost != null)
                     APIFactory.getInstance(context).parseMixUnspentOutputs(postUnspentObjPost.getJSONObject("unspent_outputs").toString());
             } catch (Exception e) {
@@ -145,6 +145,36 @@ public class BalanceViewModel extends AndroidViewModel {
             balance.setValue(0L);
         }
     }
+
+    /**
+     * offline data is only loaded based on the users activity
+     * so postmix data wont be loaded unless the user lands on postmix balance activity (account== WHIRPOOL)
+     * but user can go to other activity like sendActivity With whirlpool account
+     * so in order to show data for those screens we will load offline data here
+     * this will be called when the user lands on balance activity
+     */
+    private void lazyLoadPostMix() {
+        try {
+            JSONObject response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddrPost();
+            if (response != null) {
+                try {
+                    /*NO_OP*/
+                    Disposable disposable = parseMixXPUB(response,WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix())
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe(bool -> {
+                                /*NO_OP*/
+                            }, Throwable::printStackTrace);
+                    compositeDisposables.add(disposable);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     @Override
     protected void onCleared() {
@@ -408,9 +438,9 @@ public class BalanceViewModel extends AndroidViewModel {
 
     }
 
-    private synchronized Observable<Boolean> parseMixXPUB(JSONObject jsonObject) throws JSONException {
+    private synchronized Observable<Boolean> parseMixXPUB(JSONObject jsonObject,int account) throws JSONException {
 
-        return  Observable.fromCallable(() -> {
+        return Observable.fromCallable(() -> {
             final int PRE_MIX = 0;
             final int POST_MIX = 1;
             final int BAD_BANK = 2;
