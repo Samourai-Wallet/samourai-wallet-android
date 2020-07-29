@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 
@@ -146,9 +147,9 @@ public class SendActivity extends SamouraiActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
     private Button btnReview, btnSend;
-    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
+    private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
-    private Switch cahootsSwitch;
+    private SwitchCompat cahootsSwitch;
     private SeekBar feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
@@ -301,12 +302,7 @@ public class SendActivity extends SamouraiActivity {
                     .walletBalanceObserver
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aLong -> {
-                        if (balance == aLong) {
-                            return;
-                        }
-                        setBalance();
-                    }, Throwable::printStackTrace);
+                    .subscribe(aLong -> setBalance(), Throwable::printStackTrace);
             compositeDisposables.add(disposable);
 
 

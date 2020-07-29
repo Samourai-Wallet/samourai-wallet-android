@@ -40,7 +40,7 @@
                 android:animateLayoutChanges="true">
 
 
-                <Switch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/ricochet_hops_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/ricochet_desc" />
 
-                <Switch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/ricochet_staggered_option"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
                 android:layout_height="match_parent">
 
 
-                <Switch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/cahoots_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -220,6 +220,12 @@
                     app:layout_constraintStart_toStartOf="@+id/textView74"
                     app:layout_constraintTop_toBottomOf="@+id/cahoot_status_text"
                     tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
