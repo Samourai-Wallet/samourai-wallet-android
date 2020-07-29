@@ -300,6 +300,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
+        balanceViewModel.setAccount(account);
 
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -430,16 +431,15 @@ public class BalanceActivity extends SamouraiActivity {
 
             getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
 
-            balanceViewModel.loadOfflineData();
         }
         else {
             getSupportActionBar().setIcon(R.drawable.ic_whirlpool);
-
             receiveFab.setVisibility(View.GONE);
             whirlpoolFab.setVisibility(View.GONE);
             paynymFab.setVisibility(View.GONE);
             new Handler().postDelayed(() -> updateDisplay(true), 600L);
         }
+        balanceViewModel.loadOfflineData();
 
         boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
