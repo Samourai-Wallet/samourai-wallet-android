@@ -1,9 +1,11 @@
 package com.samourai.wallet.home;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.samourai.wallet.send.RBFUtil;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.SentToFromBIP47Util;
+import com.samourai.wallet.whirlpool.WhirlpoolMeta;
 
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONArray;
@@ -49,6 +52,7 @@ public class BalanceViewModel extends AndroidViewModel {
     private HashMap<String, Long> xpub_amounts = new HashMap<>();
     private String latest_block_hash = null;
     private HashMap<String, Long> bip47_amounts = null;
+    private int account = 0;
     private HashMap<String, List<Tx>> xpub_txs = new HashMap<>();
 
     private MutableLiveData<Boolean> toggleSat = new MutableLiveData<>();
@@ -57,7 +61,6 @@ public class BalanceViewModel extends AndroidViewModel {
     public BalanceViewModel(@NonNull Application application) {
         super(application);
         toggleSat.setValue(false);
-
 
     }
 
@@ -68,9 +71,21 @@ public class BalanceViewModel extends AndroidViewModel {
 
     void loadOfflineData() {
         try {
-            JSONObject response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddr();
+            JSONObject response = new JSONObject("{}");
+
+            if (account == 0) {
+                response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddr();
+
+            }
+            if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddrPost();
+            }
+
             if (response != null) {
-                Disposable disposable = parseXPUB(new JSONObject(response.toString()))
+
+                Observable<Boolean> parser = account == 0 ? parseXPUB(new JSONObject(response.toString())) : parseMixXPUB(new JSONObject(response.toString()));
+
+                Disposable disposable = parser
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread()).subscribe(boo -> {
                             List<Tx> txes = new ArrayList<Tx>();
@@ -82,7 +97,16 @@ public class BalanceViewModel extends AndroidViewModel {
                             Collections.sort(txes, new APIFactory.TxMostRecentDateComparator());
                             txs.postValue(txes);
                             toggleSat.setValue(false);
-                            balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
+                            if (account == 0) {
+                                balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBlocked0());
+                            }
+                            if(account==WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()){
+                                balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValuePostMix());
+                            }
+                            if(account==WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()){
+                                balance.postValue(xpub_balance - BlockedUTXO.getInstance().getTotalValueBadBank());
+                            }
+
 
                         }, error -> {
                             txs.postValue(new ArrayList<>());
@@ -183,15 +207,13 @@ public class BalanceViewModel extends AndroidViewModel {
                                     AddressFactory.getInstance().setHighestBIP84ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP84Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                }
-                                else if (addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
+                                } else if (addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).xpubstr()) ||
                                         addrObj.getString("address").equals(BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).ypubstr())) {
                                     AddressFactory.getInstance().setHighestBIP49ReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestBIP49ChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                                     BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     BIP49Util.getInstance(getApplication()).getWallet().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                }
-                                else if (AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null) {
+                                } else if (AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")) != null) {
                                     AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                     AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
 
@@ -366,5 +388,235 @@ public class BalanceViewModel extends AndroidViewModel {
             return false;
         });
 
+    }
+
+    private synchronized Observable<Boolean> parseMixXPUB(JSONObject jsonObject) throws JSONException {
+
+        return  Observable.fromCallable(() -> {
+            final int PRE_MIX = 0;
+            final int POST_MIX = 1;
+            final int BAD_BANK = 2;
+
+            int account_type = 0;
+
+            if (jsonObject != null) {
+
+                long xpub_mix_balance = 0;
+
+                if (jsonObject.has("wallet")) {
+                    JSONObject walletObj = (JSONObject) jsonObject.get("wallet");
+                    if (walletObj.has("final_balance")) {
+                        xpub_mix_balance = walletObj.getLong("final_balance");
+                    }
+                }
+
+                if (jsonObject.has("info")) {
+                    JSONObject infoObj = (JSONObject) jsonObject.get("info");
+                    if (infoObj.has("latest_block")) {
+                        JSONObject blockObj = (JSONObject) infoObj.get("latest_block");
+                        if (blockObj.has("height")) {
+                            latest_block_height = blockObj.getLong("height");
+                        }
+                        if (blockObj.has("hash")) {
+                            latest_block_hash = blockObj.getString("hash");
+                        }
+                    }
+                }
+
+                if (jsonObject.has("addresses")) {
+
+                    JSONArray addressesArray = (JSONArray) jsonObject.get("addresses");
+                    JSONObject addrObj = null;
+                    for (int i = 0; i < addressesArray.length(); i++) {
+                        addrObj = (JSONObject) addressesArray.get(i);
+                        if (addrObj != null && addrObj.has("final_balance") && addrObj.has("address")) {
+                            if (FormatsUtil.getInstance().isValidXpub((String) addrObj.get("address"))) {
+//                            xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
+                                if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).xpubstr()) ||
+                                        addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).zpubstr())) {
+
+                                    if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+                                        xpub_balance = xpub_mix_balance;
+                                        APIFactory.getInstance(getApplication()).setXpubPostMixBalance(xpub_mix_balance);
+                                    }
+                                    account_type = POST_MIX;
+
+                                    AddressFactory.getInstance().setHighestPostReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    AddressFactory.getInstance().setHighestPostChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                } else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                        addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).zpubstr())) {
+
+                                    if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()) {
+                                        xpub_balance = xpub_mix_balance;
+                                    }
+                                    account_type = PRE_MIX;
+
+                                    AddressFactory.getInstance().setHighestPreReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    AddressFactory.getInstance().setHighestPreChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                } else if (addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
+                                        addrObj.getString("address").equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).zpubstr())) {
+
+                                    if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()) {
+                                        xpub_balance = xpub_mix_balance;
+                                    }
+                                    account_type = BAD_BANK;
+
+                                    AddressFactory.getInstance().setHighestBadBankReceiveIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    AddressFactory.getInstance().setHighestBadBankChangeIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                    BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
+                                } else {
+                                    ;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (jsonObject.has("txs")) {
+
+                    JSONArray txArray = (JSONArray) jsonObject.get("txs");
+                    JSONObject txObj = null;
+                    for (int i = 0; i < txArray.length(); i++) {
+
+                        txObj = (JSONObject) txArray.get(i);
+                        long height = 0L;
+                        long amount = 0L;
+                        long ts = 0L;
+                        String hash = null;
+                        String addr = null;
+                        String _addr = null;
+
+                        if (txObj.has("block_height")) {
+                            height = txObj.getLong("block_height");
+                        } else {
+                            height = -1L;  // 0 confirmations
+                        }
+                        if (txObj.has("hash")) {
+                            hash = (String) txObj.get("hash");
+                        }
+                        if (txObj.has("result")) {
+                            amount = txObj.getLong("result");
+                        }
+                        if (txObj.has("time")) {
+                            ts = txObj.getLong("time");
+                        }
+                        if (txObj.has("inputs")) {
+                            JSONArray inputArray = (JSONArray) txObj.get("inputs");
+                            JSONObject inputObj = null;
+                            for (int j = 0; j < inputArray.length(); j++) {
+                                inputObj = (JSONObject) inputArray.get(j);
+                                if (inputObj.has("prev_out")) {
+                                    JSONObject prevOutObj = (JSONObject) inputObj.get("prev_out");
+                                    if (prevOutObj.has("xpub")) {
+                                        JSONObject xpubObj = (JSONObject) prevOutObj.get("xpub");
+                                        addr = (String) xpubObj.get("m");
+                                    } else if (prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr((String) prevOutObj.get("addr")) != null) {
+                                        _addr = (String) prevOutObj.get("addr");
+                                    } else {
+                                        _addr = (String) prevOutObj.get("addr");
+                                    }
+                                }
+                            }
+                        }
+
+                        if (txObj.has("out")) {
+                            JSONArray outArray = (JSONArray) txObj.get("out");
+                            JSONObject outObj = null;
+                            for (int j = 0; j < outArray.length(); j++) {
+                                outObj = (JSONObject) outArray.get(j);
+                                if (outObj.has("xpub")) {
+                                    JSONObject xpubObj = (JSONObject) outObj.get("xpub");
+                                    addr = (String) xpubObj.get("m");
+                                } else {
+                                    _addr = (String) outObj.get("addr");
+                                }
+                            }
+                        }
+
+                        if (addr != null || _addr != null) {
+                            Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
+
+                            if (addr == null) {
+                                addr = _addr;
+                            }
+                            if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).xpubstr()) ||
+                                    addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()).zpubstr())) {
+
+
+                                if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix()) {
+
+                                    if (!xpub_txs.containsKey(addr)) {
+                                        xpub_txs.put(addr, new ArrayList<Tx>());
+                                    }
+                                    if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                        xpub_txs.get(addr).add(tx);
+                                    } else {
+                                        xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                                    }
+                                }
+
+                            } else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).xpubstr()) ||
+                                    addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()).zpubstr())) {
+
+                                if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPremixAccount()) {
+
+                                    if (!xpub_txs.containsKey(addr)) {
+                                        xpub_txs.put(addr, new ArrayList<Tx>());
+                                    }
+                                    if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                        xpub_txs.get(addr).add(tx);
+                                    } else {
+                                        xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                                    }
+                                }
+                            } else if (addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).xpubstr()) ||
+                                    addr.equals(BIP84Util.getInstance(getApplication()).getWallet().getAccountAt(WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()).zpubstr())) {
+
+                                if (account == WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolBadBank()) {
+
+                                    if (!xpub_txs.containsKey(addr)) {
+                                        xpub_txs.put(addr, new ArrayList<>());
+                                    }
+                                    if (FormatsUtil.getInstance().isValidXpub(addr)) {
+                                        xpub_txs.get(addr).add(tx);
+                                    } else {
+                                        xpub_txs.get(AddressFactory.getInstance().account2xpub().get(0)).add(tx);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                try {
+                    if (account_type == POST_MIX) {
+                        PayloadUtil.getInstance(getApplication()).serializeMultiAddrPost(jsonObject);
+                    } else if (account_type == PRE_MIX) {
+                        PayloadUtil.getInstance(getApplication()).serializeMultiAddrPre(jsonObject);
+                    } else {
+                        PayloadUtil.getInstance(getApplication()).serializeMultiAddrBadBank(jsonObject);
+                    }
+                } catch (IOException | DecryptionException e) {
+                    ;
+                }
+
+                return true;
+
+            }
+
+            return false;
+        });
+
+
+    }
+
+    public void setAccount(int account) {
+        this.account = account;
     }
 }
