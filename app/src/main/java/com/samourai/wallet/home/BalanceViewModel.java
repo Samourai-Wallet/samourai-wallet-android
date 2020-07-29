@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -119,6 +120,23 @@ public class BalanceViewModel extends AndroidViewModel {
             }
 //            Log.i(TAG, "BalanceViewModel: ".concat(response));
 
+            Context context = getApplication();
+
+            //Load local utxo cache
+            try {
+                JSONObject badBankUnspentObjBad = PayloadUtil.getInstance(context).deserializeUTXOBadBank();
+                if (badBankUnspentObjBad != null)
+                    APIFactory.getInstance(context).parseMixUnspentOutputs(badBankUnspentObjBad.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                JSONObject postUnspentObjPost =  PayloadUtil.getInstance(context).deserializeUTXOPost();
+                if (postUnspentObjPost != null)
+                    APIFactory.getInstance(context).parseMixUnspentOutputs(postUnspentObjPost.getJSONObject("unspent_outputs").toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();

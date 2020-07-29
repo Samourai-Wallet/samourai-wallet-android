@@ -162,29 +162,6 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
             }
 
         }
-        loadUTXOPayload();
-
-
-    }
-
-    private void loadUTXOPayload() {
-        Context context = getApplication();
-
-        try {
-            JSONObject badBankUnspentObjBad = PayloadUtil.getInstance(context).deserializeUTXOBadBank();
-            if (badBankUnspentObjBad != null)
-                APIFactory.getInstance(context).parseMixUnspentOutputs(badBankUnspentObjBad.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            JSONObject postUnspentObjPost =  PayloadUtil.getInstance(context).deserializeUTXOPost();
-            if (postUnspentObjPost != null)
-                APIFactory.getInstance(context).parseMixUnspentOutputs(postUnspentObjPost.getJSONObject("unspent_outputs").toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        loadUTXOs(false);
 
     }
 

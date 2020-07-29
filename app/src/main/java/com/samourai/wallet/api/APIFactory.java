@@ -114,7 +114,7 @@ public class APIFactory	{
 
     private static HashMap<String, Long> bip47_amounts = null;
     public boolean walletInit = false;
-    
+
     //Broadcast balance changes to the application, this will be a timestamp,
     //Balance will be recalculated when the change is broadcasted
     public BehaviorSubject<Long> walletBalanceObserver = BehaviorSubject.create();

@@ -336,7 +336,14 @@ public class BalanceActivity extends SamouraiActivity {
             menuFab.toggle(true);
         });
 
-        JSONObject payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        JSONObject payload = null;
+        try {
+            payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        } catch (Exception e) {
+            AppUtil.getInstance(getApplicationContext()).restartApp();
+            e.printStackTrace();
+            return;
+        }
         if(account == 0 && payload != null && payload.has("prev_balance"))    {
             try    {
                 setBalance(payload.getLong("prev_balance"), false);
