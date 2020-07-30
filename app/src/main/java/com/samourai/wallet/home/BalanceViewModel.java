@@ -62,7 +62,6 @@ public class BalanceViewModel extends AndroidViewModel {
     public BalanceViewModel(@NonNull Application application) {
         super(application);
         toggleSat.setValue(false);
-        lazyLoadPostMix();
     }
 
     public LiveData<List<Tx>> getTxs() {
@@ -118,25 +117,6 @@ public class BalanceViewModel extends AndroidViewModel {
                 compositeDisposables.add(disposable);
 
             }
-//            Log.i(TAG, "BalanceViewModel: ".concat(response));
-
-            Context context = getApplication();
-
-            //Load local utxo cache
-            try {
-                JSONObject badBankUnspentObjBad = PayloadUtil.getInstance(context).deserializeUTXOBadBank();
-                if (badBankUnspentObjBad != null)
-                    APIFactory.getInstance(context).parseMixUnspentOutputs(badBankUnspentObjBad.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                JSONObject postUnspentObjPost = PayloadUtil.getInstance(context).deserializeUTXOPost();
-                if (postUnspentObjPost != null)
-                    APIFactory.getInstance(context).parseMixUnspentOutputs(postUnspentObjPost.getJSONObject("unspent_outputs").toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -144,35 +124,6 @@ public class BalanceViewModel extends AndroidViewModel {
             toggleSat.setValue(false);
             balance.setValue(0L);
         }
-    }
-
-    /**
-     * offline data is only loaded based on the users activity
-     * so postmix data wont be loaded unless the user lands on postmix balance activity (account== WHIRPOOL)
-     * but user can go to other activity like sendActivity With whirlpool account
-     * so in order to show data for those screens we will load offline data here
-     * this will be called when the user lands on balance activity
-     */
-    private void lazyLoadPostMix() {
-        try {
-            JSONObject response = PayloadUtil.getInstance(getApplication()).deserializeMultiAddrPost();
-            if (response != null) {
-                try {
-                    /*NO_OP*/
-                    Disposable disposable = parseMixXPUB(response,WhirlpoolMeta.getInstance(getApplication()).getWhirlpoolPostmix())
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe(bool -> {
-                                /*NO_OP*/
-                            }, Throwable::printStackTrace);
-                    compositeDisposables.add(disposable);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
 

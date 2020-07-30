@@ -1655,7 +1655,6 @@ public class APIFactory	{
                 utxoObj0 = getUnspentOutputs(s);
             }
 
-            debug("APIFactory", "addresses:" + addressStrings.toString());
 
             HD_Wallet hdw = HD_WalletFactory.getInstance(context).get();
             if(hdw != null && hdw.getXPUBs() != null)    {

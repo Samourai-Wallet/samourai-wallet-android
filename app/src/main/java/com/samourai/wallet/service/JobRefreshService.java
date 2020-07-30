@@ -37,6 +37,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+
 
 public class JobRefreshService extends JobIntentService {
 
@@ -58,14 +61,7 @@ public class JobRefreshService extends JobIntentService {
         Log.d("JobRefreshService", "doInBackground()");
 
         APIFactory.getInstance(this.getApplicationContext()).stayingAlive();
-
-        if(!AppUtil.getInstance(getApplication()).isOfflineMode()){
-            APIFactory.getInstance(this.getApplicationContext()).initWallet();
-        }else {
-            Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
-            LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(_intent);
-            return;
-        }
+        APIFactory.getInstance(this.getApplicationContext()).initWallet();
 
         try {
             int acc = 0;

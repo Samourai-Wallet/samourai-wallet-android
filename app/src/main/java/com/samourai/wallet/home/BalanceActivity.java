@@ -872,7 +872,8 @@ public class BalanceActivity extends SamouraiActivity {
                 }
 
                 // disconnect Whirlpool on app back key exit
-                WhirlpoolNotificationService.stopService(getApplicationContext());
+                if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
+                    WhirlpoolNotificationService.stopService(getApplicationContext());
 
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);

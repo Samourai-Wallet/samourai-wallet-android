@@ -486,7 +486,15 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
                     }
 
-                    items.add(displayData);
+                    boolean exist = false;
+                    for (int i = 0; i < items.size(); i++) {
+                        if(items.get(i).hash.equals(displayData.hash) && items.get(i).idx == displayData.idx && items.get(i).path.equals(displayData.path)){
+                            exist = true;
+                        }
+                    }
+                    if(!exist){
+                        items.add(displayData);
+                    }
 
                 }
 
