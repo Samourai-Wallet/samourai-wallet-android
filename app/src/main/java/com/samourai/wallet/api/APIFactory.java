@@ -1727,28 +1727,21 @@ public class APIFactory	{
 
             JSONObject preMultiAddrObj = getRawXPUB(new String[] { strPreMix }, XPUB_PREMIX);
             JSONObject preUnspentObj = getRawUnspentOutputs(new String[] { strPreMix }, XPUB_PREMIX);
-            debug("APIFactory", "pre-mix multi:" + preMultiAddrObj.toString(2));
-            debug("APIFactory", "pre-mix unspent:" + preUnspentObj.toString());
-            boolean parsedPreMultiAddr = parseMixXPUB(preMultiAddrObj);
-            boolean parsedPreUnspent = parseMixUnspentOutputs(preUnspentObj.toString());
+            if (preMultiAddrObj != null)
+                 parseMixXPUB(preMultiAddrObj);
+            if (preUnspentObj != null)
+                 parseMixUnspentOutputs(preUnspentObj.toString());
 
             JSONObject postMultiAddrObj = getRawXPUB(new String[] { strPostMix }, XPUB_POSTMIX);
             JSONObject postUnspentObj = getRawUnspentOutputs(new String[] { strPostMix }, XPUB_POSTMIX);
-            debug("APIFactory", "post-mix multi:" + postMultiAddrObj.toString());
-            debug("APIFactory", "post-mix unspent:" + postUnspentObj.toString());
-            boolean parsedPostMultiAddr = parseMixXPUB(postMultiAddrObj);
-            boolean parsedPostUnspent = parseMixUnspentOutputs(postUnspentObj.toString());
-//            debug("APIFactory", "post-mix multi:" + parsedPostMultiAddr);
-//            debug("APIFactory", "post-mix unspent:" + parsedPostUnspent);
-//            debug("APIFactory", "post-mix multi:" + getXpubPostMixBalance());
-//            debug("APIFactory", "post-mix unspent:" + getUtxosPostMix().size());
+            parseMixXPUB(postMultiAddrObj);
+            if (postUnspentObj != null)
+                parseMixUnspentOutputs(postUnspentObj.toString());
 
             JSONObject badbankMultiAddrObj = getRawXPUB(new String[] { strBadBank }, XPUB_BADBANK);
             JSONObject badbankUnspentObj = getRawUnspentOutputs(new String[] { strBadBank }, XPUB_BADBANK);
-            debug("APIFactory", "bad bank multi:" + badbankMultiAddrObj.toString());
-            debug("APIFactory", "bad bank unspent:" + badbankUnspentObj.toString());
-            boolean parsedBadBankMultiAddr = parseMixXPUB(badbankMultiAddrObj);
-            boolean parsedBadBanktUnspent = parseMixUnspentOutputs(badbankUnspentObj.toString());
+            parseMixXPUB(badbankMultiAddrObj);
+            parseMixUnspentOutputs(badbankUnspentObj.toString());
 
             //
             //
@@ -2372,14 +2365,19 @@ public class APIFactory	{
         try {
 
             if(AppUtil.getInstance(context).isOfflineMode())    {
-                if(type == XPUB_PREMIX)    {
-                    response = PayloadUtil.getInstance(context).deserializeUTXOPre().toString();
-                }
-                else if(type == XPUB_POSTMIX)    {
-                    response = PayloadUtil.getInstance(context).deserializeUTXOPost().toString();
-                }
-                else    {
-                    response = PayloadUtil.getInstance(context).deserializeUTXOBadBank().toString();
+                try {
+                    if(type == XPUB_PREMIX)    {
+                        response = PayloadUtil.getInstance(context).deserializeUTXOPre().toString();
+                    }
+                    else if(type == XPUB_POSTMIX)    {
+                        response = PayloadUtil.getInstance(context).deserializeUTXOPost().toString();
+                    }
+                    else    {
+                        response = PayloadUtil.getInstance(context).deserializeUTXOBadBank().toString();
+                    }
+                } catch (IOException | JSONException | NullPointerException e ) {
+//                    e.printStackTrace();
+                    return  new JSONObject("{}");
                 }
             }
             else if(!TorManager.getInstance(context).isRequired())    {
@@ -2405,15 +2403,12 @@ public class APIFactory	{
             e.printStackTrace();
         }
 
-        if(!AppUtil.getInstance(context).isOfflineMode())    {
-            try {
-                jsonObject = new JSONObject(response);
-            }
-            catch(JSONException je) {
-                ;
-            }
+        try {
+            jsonObject = new JSONObject(response);
         }
-
+        catch(JSONException je) {
+            ;
+        }
         return jsonObject;
     }
 
