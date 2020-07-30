@@ -118,6 +118,20 @@ public class APIFactory	{
     private static long latest_block_height = -1L;
     private static String latest_block_hash = null;
 
+    private int last44ReceiveIdx = 0;
+    private int last44ChangeIdx = 0;
+    private int last49ReceiveIdx = 0;
+    private int last49ChangeIdx = 0;
+    private int last84ReceiveIdx = 0;
+    private int last84ChangeIdx = 0;
+    private int lastPreMixReceiveIdx = 0;
+    private int lastPreMixChangeIdx = 0;
+    private int lastPostMixReceiveIdx = 0;
+    private int lastPostMixChangeIdx = 0;
+    private int lastBadBankReceiveIdx = 0;
+    private int lastBadBankChangeIdx = 0;
+    private int lastRicochetReceiveIdx = 0;
+
     private static int XPUB_ACCOUNT0 = 0;
     private static int XPUB_PREMIX = 1;
     private static int XPUB_POSTMIX = 2;
@@ -535,6 +549,84 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    private void setMainWalletIndexes()   {
+
+        if(last84ReceiveIdx > AddressFactory.getInstance(context).getHighestBIP84ReceiveIdx())   {
+            AddressFactory.getInstance().setHighestBIP84ReceiveIdx(last84ReceiveIdx);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(0).setAddrIdx(last84ReceiveIdx);
+        }
+
+        if(last84ChangeIdx > AddressFactory.getInstance(context).getHighestBIP84ChangeIdx())   {
+            AddressFactory.getInstance().setHighestBIP84ChangeIdx(last84ChangeIdx);
+            BIP84Util.getInstance(context).getWallet().getAccount(0).getChain(1).setAddrIdx(last84ChangeIdx);
+        }
+
+        if(last49ReceiveIdx > AddressFactory.getInstance(context).getHighestBIP49ReceiveIdx())   {
+            AddressFactory.getInstance().setHighestBIP49ReceiveIdx(last49ReceiveIdx);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(0).setAddrIdx(last49ReceiveIdx);
+        }
+
+        if(last49ChangeIdx > AddressFactory.getInstance(context).getHighestBIP49ChangeIdx())   {
+            AddressFactory.getInstance().setHighestBIP49ChangeIdx(last49ChangeIdx);
+            BIP49Util.getInstance(context).getWallet().getAccount(0).getChain(1).setAddrIdx(last49ChangeIdx);
+        }
+
+        if(last44ReceiveIdx > AddressFactory.getInstance(context).getHighestTxReceiveIdx(0))   {
+            AddressFactory.getInstance().setHighestTxReceiveIdx(0, last44ReceiveIdx);
+            try {
+                HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(0).setAddrIdx(last44ReceiveIdx);
+            }
+            catch(IOException | MnemonicException.MnemonicLengthException e) {
+                ;
+            }
+        }
+
+        if(last44ChangeIdx > AddressFactory.getInstance(context).getHighestTxChangeIdx(0))   {
+            AddressFactory.getInstance().setHighestTxReceiveIdx(0, last44ChangeIdx);
+            try {
+                HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(1).setAddrIdx(last44ChangeIdx);
+            }
+            catch(IOException | MnemonicException.MnemonicLengthException e) {
+                ;
+            }
+        }
+
+    }
+
+    private void setPreMixWalletIndexes()   {
+        if(lastPreMixReceiveIdx > AddressFactory.getInstance(context).getHighestPreReceiveIdx())   {
+            AddressFactory.getInstance().setHighestPreReceiveIdx(lastPreMixReceiveIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(lastPreMixReceiveIdx);
+        }
+        if(lastPreMixChangeIdx > AddressFactory.getInstance(context).getHighestPreChangeIdx())   {
+            AddressFactory.getInstance().setHighestPreChangeIdx(lastPreMixChangeIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(1).setAddrIdx(lastPreMixChangeIdx);
+        }
+    }
+
+    private void setPostMixWalletIndexes()   {
+        if(lastPostMixReceiveIdx > AddressFactory.getInstance(context).getHighestPostReceiveIdx())   {
+            AddressFactory.getInstance().setHighestPostReceiveIdx(lastPostMixReceiveIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(lastPostMixReceiveIdx);
+        }
+        if(lastPostMixChangeIdx > AddressFactory.getInstance(context).getHighestPostChangeIdx())   {
+            AddressFactory.getInstance().setHighestPostChangeIdx(lastPostMixChangeIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(1).setAddrIdx(lastPostMixChangeIdx);
+        }
+    }
+
+    private void setBadBankWalletIndexes()   {
+        if(lastBadBankReceiveIdx > AddressFactory.getInstance(context).getHighestBadBankReceiveIdx())   {
+            AddressFactory.getInstance().setHighestBadBankReceiveIdx(lastBadBankReceiveIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).getChain(0).setAddrIdx(lastBadBankReceiveIdx);
+        }
+        if(lastBadBankChangeIdx > AddressFactory.getInstance(context).getHighestBadBankChangeIdx())   {
+            AddressFactory.getInstance().setHighestBadBankChangeIdx(lastBadBankChangeIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolBadBank()).getChain(1).setAddrIdx(lastBadBankChangeIdx);
+        }
+    }
+
+
     private synchronized boolean parseXPUB(JSONObject jsonObject) throws JSONException  {
 
         if(jsonObject != null)  {
@@ -651,6 +743,9 @@ public class APIFactory	{
                     }
                 }
             }
+            else    {
+                setMainWalletIndexes();
+            }
 
             if(jsonObject.has("txs"))  {
 
@@ -765,15 +860,20 @@ public class APIFactory	{
 
             }
 
-            try {
-                PayloadUtil.getInstance(context).serializeMultiAddr(jsonObject);
-            }
-            catch(IOException | DecryptionException e) {
-                ;
+            if(isWellFormedMultiAddr(jsonObject))    {
+                try {
+                    PayloadUtil.getInstance(context).serializeMultiAddr(jsonObject);
+                }
+                catch(IOException | DecryptionException e) {
+                    ;
+                }
             }
 
             return true;
 
+        }
+        else    {
+            setMainWalletIndexes();
         }
 
         return false;
@@ -1594,6 +1694,20 @@ public class APIFactory	{
 
     private synchronized void initWalletAmounts() {
 
+        last44ReceiveIdx = AddressFactory.getInstance(context).getHighestTxReceiveIdx(0) + 1;
+        last44ChangeIdx =  AddressFactory.getInstance(context).getHighestTxChangeIdx(0) + 1;
+        last49ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP49ReceiveIdx() + 1;
+        last49ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP49ChangeIdx() + 1;
+        last84ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP84ReceiveIdx() + 1;
+        last84ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP84ChangeIdx() + 1;
+        lastPreMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPreReceiveIdx() + 1;
+        lastPreMixChangeIdx =  AddressFactory.getInstance(context).getHighestPreChangeIdx() + 1;
+        lastPostMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPostReceiveIdx() + 1;
+        lastPostMixChangeIdx =  AddressFactory.getInstance(context).getHighestPostChangeIdx() + 1;
+        lastBadBankReceiveIdx =  AddressFactory.getInstance(context).getHighestBadBankReceiveIdx() + 1;
+        lastBadBankChangeIdx =  AddressFactory.getInstance(context).getHighestBadBankChangeIdx() + 1;
+        lastRicochetReceiveIdx =  RicochetMeta.getInstance(context).getIndex() + 1;
+
         APIFactory.getInstance(context).reset();
 
         List<String> addressStrings = new ArrayList<String>();
@@ -1793,12 +1907,14 @@ public class APIFactory	{
                 whirlpoolWallet.getUtxoSupplier().expire();
             }
         }
-        catch (IndexOutOfBoundsException ioobe) {
-            ioobe.printStackTrace();
-
-        }
         catch (Exception e) {
             e.printStackTrace();
+
+            setMainWalletIndexes();
+            setPreMixWalletIndexes();
+            setPostMixWalletIndexes();
+            setBadBankWalletIndexes();
+            RicochetMeta.getInstance(context).setIndex(lastRicochetReceiveIdx);
         }
         walletInit = true;
 
@@ -2049,6 +2165,7 @@ public class APIFactory	{
 
         return unspents;
     }
+
     public List<UTXO> getUtxosWithLocalCache(boolean filter,boolean useLocalCache) {
 
         List<UTXO> unspents = new ArrayList<UTXO>();
@@ -2192,7 +2309,6 @@ public class APIFactory	{
         return ret;
     }
 
-
     public synchronized UTXO getUnspentOutputsForSweep(String address) {
 
         String _url =  WebUtil.getAPIUrl(context);
@@ -2298,9 +2414,6 @@ public class APIFactory	{
 
     }
 
-    //
-    // use for post-mix
-    //
     private synchronized JSONObject getRawXPUB(String[] xpubs, int type) {
 
         String _url = WebUtil.getAPIUrl(context);
@@ -2491,6 +2604,11 @@ public class APIFactory	{
                     }
                 }
             }
+            else    {
+                setPreMixWalletIndexes();
+                setPostMixWalletIndexes();
+                setBadBankWalletIndexes();
+            }
 
             if(jsonObject.has("txs"))  {
 
@@ -2601,26 +2719,33 @@ public class APIFactory	{
 
             }
 
-            try {
-                if(account_type == XPUB_POSTMIX)    {
-                    PayloadUtil.getInstance(context).serializeMultiAddrPost(jsonObject);
+            if(isWellFormedMultiAddr(jsonObject))    {
+                try {
+                    if(account_type == XPUB_POSTMIX)    {
+                        PayloadUtil.getInstance(context).serializeMultiAddrPost(jsonObject);
+                    }
+                    else if(account_type == XPUB_PREMIX)    {
+                        PayloadUtil.getInstance(context).serializeMultiAddrPre(jsonObject);
+                    }
+                    else if(account_type == XPUB_BADBANK)    {
+                        PayloadUtil.getInstance(context).serializeMultiAddrBadBank(jsonObject);
+                    }
+                    else    {
+                        ;
+                    }
                 }
-                else if(account_type == XPUB_PREMIX)    {
-                    PayloadUtil.getInstance(context).serializeMultiAddrPre(jsonObject);
-                }
-                else if(account_type == XPUB_BADBANK)    {
-                    PayloadUtil.getInstance(context).serializeMultiAddrBadBank(jsonObject);
-                }
-                else    {
+                catch(IOException | DecryptionException e) {
                     ;
                 }
-            }
-            catch(IOException | DecryptionException e) {
-                ;
             }
 
             return true;
 
+        }
+        else    {
+            setPreMixWalletIndexes();
+            setPostMixWalletIndexes();
+            setBadBankWalletIndexes();
         }
 
         return false;
@@ -2758,6 +2883,15 @@ public class APIFactory	{
 
         return false;
 
+    }
+
+    private boolean isWellFormedMultiAddr(JSONObject jsonObject) {
+        if(jsonObject.has("wallet") && jsonObject.has("info") && jsonObject.has("addresses") && jsonObject.has("txs"))    {
+            return true;
+        }
+        else    {
+            return false;
+        }
     }
 
     public synchronized boolean parseRicochetXPUB() throws JSONException  {
