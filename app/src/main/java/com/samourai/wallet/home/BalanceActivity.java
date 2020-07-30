@@ -300,6 +300,7 @@ public class BalanceActivity extends SamouraiActivity {
 
         setContentView(R.layout.activity_balance);
         balanceViewModel = ViewModelProviders.of(this).get(BalanceViewModel.class);
+        balanceViewModel.setAccount(account);
 
         makePaynymAvatarcache();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -335,7 +336,14 @@ public class BalanceActivity extends SamouraiActivity {
             menuFab.toggle(true);
         });
 
-        JSONObject payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        JSONObject payload = null;
+        try {
+            payload = PayloadUtil.getInstance(BalanceActivity.this).getPayload();
+        } catch (Exception e) {
+            AppUtil.getInstance(getApplicationContext()).restartApp();
+            e.printStackTrace();
+            return;
+        }
         if(account == 0 && payload != null && payload.has("prev_balance"))    {
             try    {
                 setBalance(payload.getLong("prev_balance"), false);
@@ -430,16 +438,15 @@ public class BalanceActivity extends SamouraiActivity {
 
             getSupportActionBar().setIcon(R.drawable.ic_samourai_logo_toolbar);
 
-            balanceViewModel.loadOfflineData();
         }
         else {
             getSupportActionBar().setIcon(R.drawable.ic_whirlpool);
-
             receiveFab.setVisibility(View.GONE);
             whirlpoolFab.setVisibility(View.GONE);
             paynymFab.setVisibility(View.GONE);
             new Handler().postDelayed(() -> updateDisplay(true), 600L);
         }
+        balanceViewModel.loadOfflineData();
 
         boolean hadContentDescription = android.text.TextUtils.isEmpty(toolbar.getLogoDescription());
         String contentDescription = String.valueOf(!hadContentDescription ? toolbar.getLogoDescription() : "logoContentDescription");
@@ -865,7 +872,8 @@ public class BalanceActivity extends SamouraiActivity {
                 }
 
                 // disconnect Whirlpool on app back key exit
-                WhirlpoolNotificationService.stopService(getApplicationContext());
+                if (WhirlpoolNotificationService.isRunning(getApplicationContext()))
+                    WhirlpoolNotificationService.stopService(getApplicationContext());
 
                 if (TorManager.getInstance(getApplicationContext()).isRequired()) {
                     Intent startIntent = new Intent(getApplicationContext(), TorService.class);

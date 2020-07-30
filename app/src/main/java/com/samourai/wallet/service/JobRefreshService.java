@@ -37,6 +37,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+
 
 public class JobRefreshService extends JobIntentService {
 
@@ -50,6 +53,7 @@ public class JobRefreshService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
 
+
         boolean dragged = intent.getBooleanExtra("dragged", false);
         boolean launch = intent.getBooleanExtra("launch", false);
         boolean notifTx = intent.getBooleanExtra("notifTx", false);
@@ -57,7 +61,6 @@ public class JobRefreshService extends JobIntentService {
         Log.d("JobRefreshService", "doInBackground()");
 
         APIFactory.getInstance(this.getApplicationContext()).stayingAlive();
-
         APIFactory.getInstance(this.getApplicationContext()).initWallet();
 
         try {

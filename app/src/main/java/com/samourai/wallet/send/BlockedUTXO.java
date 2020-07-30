@@ -80,6 +80,22 @@ public class BlockedUTXO {
         return ret;
     }
 
+    public long getTotalValuePostMix()  {
+        long ret = 0L;
+        for(String id : blockedUTXOPostMix.keySet())   {
+            ret += blockedUTXOPostMix.get(id);
+        }
+        return ret;
+    }
+
+    public long getTotalValueBadBank()  {
+        long ret = 0L;
+        for(String id : blockedUTXOBadBank.keySet())   {
+            ret += blockedUTXOBadBank.get(id);
+        }
+        return ret;
+    }
+
     public void addNotDusted(String hash, int idx)    {
         if(!notDustedUTXO.contains(hash + "-" + Integer.toString(idx)))    {
             notDustedUTXO.add(hash + "-" + Integer.toString(idx));

@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +32,7 @@ import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.crypto.DecryptionException;
 import com.samourai.wallet.payload.PayloadUtil;
+import com.samourai.wallet.segwit.BIP84Util;
 import com.samourai.wallet.send.BlockedUTXO;
 import com.samourai.wallet.send.MyTransactionOutPoint;
 import com.samourai.wallet.send.SendActivity;
@@ -50,6 +52,7 @@ import com.samourai.whirlpool.client.wallet.WhirlpoolUtils;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -70,6 +73,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -98,8 +102,8 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
     private long totalP2SH_P2WPKH = 0L;
     private long totalP2WPKH = 0L;
     private long totalBlocked = 0L;
-    private TreeMap<String,Long> noteAmounts = null;
-    private TreeMap<String,Long> tagAmounts = null;
+    private TreeMap<String, Long> noteAmounts = null;
+    private TreeMap<String, Long> tagAmounts = null;
     final DecimalFormat df = new DecimalFormat("#");
     private RecyclerView utxoList;
     private SwipeRefreshLayout utxoSwipeRefresh;
@@ -125,12 +129,12 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if ( account  ==  WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
+        if (account == WhirlpoolMeta.getInstance(getApplicationContext()).getWhirlpoolPostmix()) {
             getSupportActionBar().setTitle(getText(R.string.unspent_outputs_post_mix));
         }
 
-        noteAmounts = new TreeMap<String,Long>();
-        tagAmounts = new TreeMap<String,Long>();
+        noteAmounts = new TreeMap<String, Long>();
+        tagAmounts = new TreeMap<String, Long>();
 
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(8);
@@ -158,7 +162,6 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
             }
 
         }
-
 
     }
 
@@ -456,36 +459,42 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
                         }
                     }
 
-                    if(UTXOUtil.getInstance().get(outpoint.getTxHash().toString(), outpoint.getTxOutputN()) != null) {
+                    if (UTXOUtil.getInstance().get(outpoint.getTxHash().toString(), outpoint.getTxOutputN()) != null) {
                         List<String> tags = UTXOUtil.getInstance().get(outpoint.getTxHash().toString(), outpoint.getTxOutputN());
 
-                        for(String tag : tags) {
-                            if(tagAmounts.containsKey(tag.toLowerCase())) {
+                        for (String tag : tags) {
+                            if (tagAmounts.containsKey(tag.toLowerCase())) {
                                 long val = tagAmounts.get(tag.toLowerCase());
                                 val += displayData.amount;
                                 tagAmounts.put(tag.toLowerCase(), val);
-                            }
-                            else {
+                            } else {
                                 tagAmounts.put(tag.toLowerCase(), displayData.amount);
                             }
                         }
 
                     }
-                    if(UTXOUtil.getInstance().getNote(outpoint.getTxHash().toString()) != null) {
+                    if (UTXOUtil.getInstance().getNote(outpoint.getTxHash().toString()) != null) {
                         String note = UTXOUtil.getInstance().getNote(outpoint.getTxHash().toString());
 
-                        if(noteAmounts.containsKey(note.toLowerCase())) {
+                        if (noteAmounts.containsKey(note.toLowerCase())) {
                             long val = noteAmounts.get(note.toLowerCase());
                             val += displayData.amount;
                             noteAmounts.put(note.toLowerCase(), val);
-                        }
-                        else {
+                        } else {
                             noteAmounts.put(note.toLowerCase(), displayData.amount);
                         }
 
                     }
 
-                    items.add(displayData);
+                    boolean exist = false;
+                    for (int i = 0; i < items.size(); i++) {
+                        if(items.get(i).hash.equals(displayData.hash) && items.get(i).idx == displayData.idx && items.get(i).path.equals(displayData.path)){
+                            exist = true;
+                        }
+                    }
+                    if(!exist){
+                        items.add(displayData);
+                    }
 
                 }
 
@@ -534,12 +543,12 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         message += getText(R.string.total_blocked) + " " + df.format(((double) (totalBlocked) / 1e8)) + " BTC";
         message += "\n\n";
 
-        for(String key : noteAmounts.keySet()) {
+        for (String key : noteAmounts.keySet()) {
             message += key + ": " + df.format(((double) (noteAmounts.get(key)) / 1e8)) + " BTC";
             message += "\n";
         }
 
-        for(String key : tagAmounts.keySet()) {
+        for (String key : tagAmounts.keySet()) {
             message += key + ": " + df.format(((double) (tagAmounts.get(key)) / 1e8)) + " BTC";
             message += "\n";
         }
@@ -810,7 +819,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
         super.onDestroy();
     }
 
-    private void saveWalletState(){
+    private void saveWalletState() {
         Disposable disposable = Completable.fromCallable(() -> {
             try {
                 PayloadUtil.getInstance(getApplicationContext()).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(getApplicationContext()).getGUID() + AccessFactory.getInstance().getPIN()));
@@ -954,7 +963,7 @@ public class UTXOSActivity extends SamouraiActivity implements ActionMode.Callba
 
             if (UTXOUtil.getInstance().get(utxoIdxHash) != null) {
                 holder.tagsLayout.setVisibility(View.VISIBLE);
-                for (String tagString: UTXOUtil.getInstance().get(utxoIdxHash)) {
+                for (String tagString : UTXOUtil.getInstance().get(utxoIdxHash)) {
                     View tag = createTag(getBaseContext(), tagString);
                     holder.tagsLayout.addView(tag);
                 }

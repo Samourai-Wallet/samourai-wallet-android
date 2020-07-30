@@ -40,8 +40,14 @@
         <item name="android:actionModeBackground">@color/whirlpoolBlue</item>
         <item name="actionModeBackground">@color/whirlpoolBlue</item>
         <item name="android:colorControlActivated">@color/white</item>
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="android:switchStyle">@style/SamouraiAppWhirlpoolTheme.Switch</item>
     </style>
 
+    <style name="SamouraiAppWhirlpoolTheme.Switch" parent="@style/Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:colorControlActivated">@color/blue</item>
+    </style>
 
     <style name="SamouraiAppDarkStatusTheme" parent="SamouraiAppTheme">
         <item name="android:navigationBarColor">@color/windowDark</item>
