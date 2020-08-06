@@ -1077,7 +1077,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsNonSpendable(hexTx,0);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -1093,7 +1093,7 @@ public class BatchSendActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if(cbMarkInputsUnspent.isChecked())    {
-                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(BatchSendActivity.this).markUTXOAsNonSpendable(hexTx,0);
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);

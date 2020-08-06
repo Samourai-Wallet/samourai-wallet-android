@@ -561,7 +561,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if (cbMarkInputsUnspent.isChecked()) {
-                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsNonSpendable(hexTx,SendParams.getInstance().getAccount());
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
@@ -588,7 +588,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if (cbMarkInputsUnspent.isChecked()) {
-                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsUnspendable(hexTx);
+                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsNonSpendable(hexTx,SendParams.getInstance().getAccount());
                             Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                             intent.putExtra("notifTx", false);
                             intent.putExtra("fetch", true);
