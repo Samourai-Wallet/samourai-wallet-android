@@ -63,7 +63,6 @@ import com.samourai.wallet.bip47.SendNotifTxFactory;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsUtil;
 import com.samourai.wallet.cahoots.psbt.PSBTUtil;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.fragments.PaynymSelectModalFragment;
@@ -129,7 +128,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -756,10 +754,6 @@ public class SendActivity extends SamouraiActivity {
                     selectableBalance = balance;
                 }
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
         }
@@ -1766,16 +1760,8 @@ public class SendActivity extends SamouraiActivity {
                             String change_address = BIP49Util.getInstance(SendActivity.this).getAddressAt(AddressFactory.CHANGE_CHAIN, BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx()).getAddressAsString();
                             receivers.put(change_address, BigInteger.valueOf(_change));
                         } else {
-                            try {
-                                String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
-                                receivers.put(change_address, BigInteger.valueOf(_change));
-                            } catch (IOException ioe) {
-                                Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
-                                return;
-                            } catch (MnemonicException.MnemonicLengthException mle) {
-                                Toast.makeText(SendActivity.this, R.string.error_change_output, Toast.LENGTH_SHORT).show();
-                                return;
-                            }
+                            String change_address = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddressAt(HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx()).getAddressString();
+                            receivers.put(change_address, BigInteger.valueOf(_change));
                         }
 
                     } else if (SPEND_TYPE == SPEND_BOLTZMANN) {
@@ -2356,11 +2342,7 @@ public class SendActivity extends SamouraiActivity {
         idxBIP84PostMixInternal = AddressFactory.getInstance(SendActivity.this).getHighestPostChangeIdx();
         idxBIP84Internal = BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
         idxBIP49Internal = BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().getAddrIdx();
-        try {
-            idxBIP44Internal = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
-        } catch (IOException | MnemonicException.MnemonicLengthException e) {
-            ;
-        }
+        idxBIP44Internal = HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().getAddrIdx();
 
     }
 
@@ -2369,11 +2351,7 @@ public class SendActivity extends SamouraiActivity {
         AddressFactory.getInstance(SendActivity.this).setHighestPostChangeIdx(idxBIP84PostMixInternal);
         BIP84Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP84Internal);
         BIP49Util.getInstance(SendActivity.this).getWallet().getAccount(0).getChange().setAddrIdx(idxBIP49Internal);
-        try {
-            HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(idxBIP44Internal);
-        } catch (IOException | MnemonicException.MnemonicLengthException e) {
-            ;
-        }
+        HD_WalletFactory.getInstance(SendActivity.this).get().getAccount(0).getChange().setAddrIdx(idxBIP44Internal);
 
     }
 

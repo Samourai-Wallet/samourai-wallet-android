@@ -200,15 +200,7 @@ public class RicochetActivity extends Activity {
                                         //
                                         // increment change address
                                         //
-                                        try {
-                                            HD_WalletFactory.getInstance(RicochetActivity.this).get().getAccount(0).getChange().incAddrIdx();
-                                        }
-                                        catch(IOException ioe) {
-                                            ;
-                                        }
-                                        catch(MnemonicException.MnemonicLengthException mle) {
-                                            ;
-                                        }
+                                        HD_WalletFactory.getInstance(RicochetActivity.this).get().getAccount(0).getChange().incAddrIdx();
 
                                         //
                                         // increment BIP47 receive if send to BIP47

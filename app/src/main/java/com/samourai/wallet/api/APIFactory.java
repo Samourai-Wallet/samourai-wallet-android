@@ -584,13 +584,8 @@ public class APIFactory	{
                                 AddressFactory.getInstance().setHighestTxReceiveIdx(AddressFactory.getInstance().xpub2account().get((String) addrObj.get("address")), addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
                                 AddressFactory.getInstance().setHighestTxChangeIdx(AddressFactory.getInstance().xpub2account().get((String)addrObj.get("address")), addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
 
-                                try {
-                                    HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
-                                    HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
-                                }
-                                catch(IOException | MnemonicException.MnemonicLengthException e) {
-                                    ;
-                                }
+                                HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(0).setAddrIdx(addrObj.has("account_index") ? addrObj.getInt("account_index") : 0);
+                                HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(1).setAddrIdx(addrObj.has("change_index") ? addrObj.getInt("change_index") : 0);
                             }
                             else    {
                                 ;
@@ -1414,7 +1409,7 @@ public class APIFactory	{
                         }
 
                         // Construct the output
-                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), txHash, txOutputN, value, scriptBytes, address);
                         outPoint.setConfirmations(confirmations);
 
                         if(utxos.containsKey(script))    {
@@ -2386,7 +2381,7 @@ public class APIFactory	{
                         }
 
                         // Construct the output
-                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), txHash, txOutputN, value, scriptBytes, address);
                         outPoint.setConfirmations(confirmations);
                         if(utxo == null)    {
                             utxo = new UTXO();
@@ -2813,7 +2808,7 @@ public class APIFactory	{
                         }
 
                         // Construct the output
-                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(SamouraiWallet.getInstance().getCurrentNetworkParams(), txHash, txOutputN, value, scriptBytes, address);
                         outPoint.setConfirmations(confirmations);
 
                         if(account_type == POST_MIX)    {

@@ -11,11 +11,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
@@ -53,6 +48,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import androidx.appcompat.app.AppCompatDialog;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 public class ManualCahootsActivity extends SamouraiActivity {
 

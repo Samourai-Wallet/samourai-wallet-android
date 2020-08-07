@@ -478,14 +478,7 @@ public class PinEntryActivity extends AppCompatActivity {
                         //
                         if (create) {
 
-                            String seed = null;
-                            try {
-                                seed = HD_WalletFactory.getInstance(PinEntryActivity.this).get().getMnemonic();
-                            } catch (IOException ioe) {
-                                ioe.printStackTrace();
-                            } catch (MnemonicException.MnemonicLengthException mle) {
-                                mle.printStackTrace();
-                            }
+                            String seed = HD_WalletFactory.getInstance(PinEntryActivity.this).get().getMnemonic();
 
                             Intent intent = new Intent(PinEntryActivity.this, RecoveryWordsActivity.class);
                             intent.putExtra("BIP39_WORD_LIST", seed);
@@ -509,12 +502,8 @@ public class PinEntryActivity extends AppCompatActivity {
 
                     Toast.makeText(PinEntryActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
                 } catch (MnemonicException.MnemonicLengthException mle) {
                     mle.printStackTrace();
-                } finally {
-                    ;
                 }
 
                 progressBar.setVisibility(View.INVISIBLE);

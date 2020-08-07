@@ -915,21 +915,11 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void getHDSeed(boolean mnemonic)	{
         String seed = null;
-        try {
-            if(mnemonic)	{
-                seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
-            }
-            else	{
-                seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getSeedHex();
-            }
+        if(mnemonic)	{
+            seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getMnemonic();
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch(MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+        else	{
+            seed = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getSeedHex();
         }
 
         TextView showText = new TextView(SettingsActivity2.this);
@@ -961,17 +951,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 xpub = BIP84Util.getInstance(SettingsActivity2.this).getWallet().getAccountAt(account).zpubstr();
                 break;
             default:
-                try {
-                    xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(account).xpubstr();
-                }
-                catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                }
-                catch (MnemonicException.MnemonicLengthException mle) {
-                    mle.printStackTrace();
-                    Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-                }
+                xpub = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(account).xpubstr();
                 break;
         }
 
@@ -1023,111 +1003,100 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
     private void doTroubleshoot()   {
 
-        try {
-            final String strExpected = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase();
+        final String strExpected = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getPassphrase();
 
-            final EditText passphrase = new EditText(SettingsActivity2.this);
-            passphrase.setSingleLine(true);
-            passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        final EditText passphrase = new EditText(SettingsActivity2.this);
+        passphrase.setSingleLine(true);
+        passphrase.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-            AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.wallet_passphrase)
-                    .setView(passphrase)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
+        AlertDialog.Builder dlg = new AlertDialog.Builder(SettingsActivity2.this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.wallet_passphrase)
+                .setView(passphrase)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
 
-                            final String _passphrase39 = passphrase.getText().toString();
+                        final String _passphrase39 = passphrase.getText().toString();
 
-                            if(_passphrase39.equals(strExpected))    {
+                        if(_passphrase39.equals(strExpected))    {
 
-                                Toast.makeText(SettingsActivity2.this, R.string.bip39_match, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SettingsActivity2.this, R.string.bip39_match, Toast.LENGTH_SHORT).show();
 
-                                final File file = PayloadUtil.getInstance(SettingsActivity2.this).getBackupFile();
-                                if(file != null && file.exists())    {
+                            final File file = PayloadUtil.getInstance(SettingsActivity2.this).getBackupFile();
+                            if(file != null && file.exists())    {
 
-                                    new AlertDialog.Builder(SettingsActivity2.this)
-                                            .setTitle(R.string.app_name)
-                                            .setMessage(R.string.bip39_decrypt_test)
-                                            .setCancelable(false)
-                                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                new AlertDialog.Builder(SettingsActivity2.this)
+                                        .setTitle(R.string.app_name)
+                                        .setMessage(R.string.bip39_decrypt_test)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
 
-                                                    new Thread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
 
-                                                            Looper.prepare();
+                                                        Looper.prepare();
 
-                                                            StringBuilder sb = new StringBuilder();
-                                                            try {
-                                                                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-                                                                String str = null;
-                                                                while((str = in.readLine()) != null) {
-                                                                    sb.append(str);
-                                                                }
-                                                                in.close();
-                                                                String data = sb.toString();
-
-                                                                String decrypted = PayloadUtil.getInstance(SettingsActivity2.this).getDecryptedBackupPayload(data, new CharSequenceX(_passphrase39));
-                                                                if(decrypted == null || decrypted.length() < 1)    {
-                                                                    Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
-                                                                }
-                                                                else    {
-                                                                    Toast.makeText(SettingsActivity2.this, R.string.backup_read_ok, Toast.LENGTH_SHORT).show();
-                                                                }
-
+                                                        StringBuilder sb = new StringBuilder();
+                                                        try {
+                                                            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+                                                            String str = null;
+                                                            while((str = in.readLine()) != null) {
+                                                                sb.append(str);
                                                             }
-                                                            catch(FileNotFoundException fnfe) {
+                                                            in.close();
+                                                            String data = sb.toString();
+
+                                                            String decrypted = PayloadUtil.getInstance(SettingsActivity2.this).getDecryptedBackupPayload(data, new CharSequenceX(_passphrase39));
+                                                            if(decrypted == null || decrypted.length() < 1)    {
                                                                 Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
                                                             }
-                                                            catch(IOException ioe) {
-                                                                Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
+                                                            else    {
+                                                                Toast.makeText(SettingsActivity2.this, R.string.backup_read_ok, Toast.LENGTH_SHORT).show();
                                                             }
-
-                                                            Looper.loop();
 
                                                         }
-                                                    }).start();
+                                                        catch(FileNotFoundException fnfe) {
+                                                            Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        catch(IOException ioe) {
+                                                            Toast.makeText(SettingsActivity2.this, R.string.backup_read_error, Toast.LENGTH_SHORT).show();
+                                                        }
 
-                                                }
-                                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            ;
-                                        }
-                                    }).show();
+                                                        Looper.loop();
 
-                                }
+                                                    }
+                                                }).start();
 
-                            }
-                            else {
-
-                                Toast.makeText(SettingsActivity2.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        ;
+                                    }
+                                }).show();
 
                             }
 
                         }
+                        else {
 
-                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            ;
+                            Toast.makeText(SettingsActivity2.this, R.string.invalid_passphrase, Toast.LENGTH_SHORT).show();
 
                         }
-                    });
-            if(!isFinishing())    {
-                dlg.show();
-            }
 
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
+                    }
+
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        ;
+
+                    }
+                });
+        if(!isFinishing())    {
+            dlg.show();
         }
 
     }
@@ -1245,18 +1214,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
         idxPostmixExternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostReceiveIdx();
         idxPostmixInternal = AddressFactory.getInstance(SettingsActivity2.this).getHighestPostChangeIdx();
 
-        try {
-            idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
-            idxBIP44Internal = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getChange().getAddrIdx();
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
-        catch (MnemonicException.MnemonicLengthException mle) {
-            mle.printStackTrace();
-            Toast.makeText(SettingsActivity2.this, "HD wallet error", Toast.LENGTH_SHORT).show();
-        }
+        idxBIP44External = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getReceive().getAddrIdx();
+        idxBIP44Internal = HD_WalletFactory.getInstance(SettingsActivity2.this).get().getAccount(0).getChange().getAddrIdx();
 
         builder.append("44 receive: " + idxBIP44External + "\n");
         builder.append("44 change: " + idxBIP44Internal + "\n");

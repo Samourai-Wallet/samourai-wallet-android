@@ -339,13 +339,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         Disposable disposable = Observable.fromCallable(() -> {
             List<Tx> txesListSelected = new ArrayList<>();
             List<Tx> txs = APIFactory.getInstance(this).getAllXpubTxs();
-            try {
-                APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (MnemonicException.MnemonicLengthException e) {
-                e.printStackTrace();
-            }
+            APIFactory.getInstance(getApplicationContext()).getXpubAmounts().get(HD_WalletFactory.getInstance(getApplicationContext()).get().getAccount(0).xpubstr());
 
             if (txs != null)
                 for (Tx tx : txs) {
@@ -554,10 +548,6 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         long balance = 0L;
         try {
             balance = APIFactory.getInstance(PayNymDetailsActivity.this).getXpubAmounts().get(HD_WalletFactory.getInstance(PayNymDetailsActivity.this).get().getAccount(0).xpubstr());
-        } catch (IOException ioe) {
-            balance = 0L;
-        } catch (MnemonicException.MnemonicLengthException mle) {
-            balance = 0L;
         } catch (java.lang.NullPointerException npe) {
             balance = 0L;
         }

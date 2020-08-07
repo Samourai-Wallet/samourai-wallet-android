@@ -83,7 +83,7 @@ public class JobRefreshService extends JobIntentService {
                 BIP84Util.getInstance(this.getApplicationContext()).getWallet().getAccount(0).getChange().setAddrIdx(AddressFactory.getInstance().getHighestBIP84ChangeIdx());
             }
 
-        } catch (IOException | MnemonicException.MnemonicLengthException | NullPointerException ioe) {
+        } catch (NullPointerException ioe) {
             ioe.printStackTrace();
         } finally {
             Intent _intent = new Intent("com.samourai.wallet.BalanceFragment.DISPLAY");
@@ -150,12 +150,8 @@ public class JobRefreshService extends JobIntentService {
 
             if (!PrefsUtil.getInstance(this.getApplicationContext().getApplicationContext()).getValue(PrefsUtil.XPUB44LOCK, false)) {
 
-                try {
-                    String[] s = HD_WalletFactory.getInstance(this.getApplicationContext()).get().getXPUBs();
-                    APIFactory.getInstance(this.getApplicationContext()).lockXPUB(s[0], 44, null);
-                } catch (IOException | MnemonicException.MnemonicLengthException e) {
-                    ;
-                }
+                String[] s = HD_WalletFactory.getInstance(this.getApplicationContext()).get().getXPUBs();
+                APIFactory.getInstance(this.getApplicationContext()).lockXPUB(s[0], 44, null);
 
             }
 
