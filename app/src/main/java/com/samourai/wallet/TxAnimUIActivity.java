@@ -576,6 +576,15 @@ public class TxAnimUIActivity extends AppCompatActivity {
                 .setNeutralButton(R.string.copy_to_clipboard, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                        if (cbMarkInputsUnspent.isChecked()) {
+                            UTXOFactory.getInstance(TxAnimUIActivity.this).markUTXOAsNonSpendable(hexTx,SendParams.getInstance().getAccount());
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
+                        }
+
+                        
                         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) TxAnimUIActivity.this.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                         android.content.ClipData clip = null;
                         clip = android.content.ClipData.newPlainText("TX", hexTx);
