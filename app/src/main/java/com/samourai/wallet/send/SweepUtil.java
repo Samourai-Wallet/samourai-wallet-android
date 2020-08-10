@@ -118,7 +118,7 @@ public class SweepUtil  {
 
                         final BigInteger fee;
                         if(type == TYPE_P2SH_P2WPKH)    {
-                            fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 1);
+                            fee = FeeUtil.getInstance().estimatedFeeSegwit(0, outpoints.size(), 0, 1);
                         }
                         else if(type == TYPE_P2WPKH)    {
                             fee = FeeUtil.getInstance().estimatedFeeSegwit(0, 0, outpoints.size(), 1);

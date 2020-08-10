@@ -102,7 +102,7 @@ public class WhirlpoolTx0 {
 
         }
 
-        return FeeUtil.getInstance().estimatedSizeSegwit(nbP2PKH, nbP2SH, nbP2WPKH) + 80;
+        return FeeUtil.getInstance().estimatedSizeSegwit(nbP2PKH, nbP2SH, nbP2WPKH, 0, 1);
     }
 
     public long getChange() {

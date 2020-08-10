@@ -1153,7 +1153,7 @@ public class SendActivity extends SamouraiActivity {
             neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(0, UTXOFactory.getInstance().getCountP2SH_P2WPKH(), 0, 4).longValue();
 //                    Log.d("SendActivity", "segwit:" + neededAmount);
         } else {
-            neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 4).longValue();
+            neededAmount += FeeUtil.getInstance().estimatedFeeSegwit(UTXOFactory.getInstance().getCountP2PKH(), 0, 0, 4).longValue();
 //                    Log.d("SendActivity", "p2pkh:" + neededAmount);
         }
         neededAmount += amount;

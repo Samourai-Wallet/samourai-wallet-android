@@ -570,7 +570,7 @@ public class PayNymDetailsActivity extends AppCompatActivity {
         // get unspents
         //
         List<UTXO> utxos = null;
-        if (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0, 1, 4).longValue()) {
+        if (UTXOFactory.getInstance().getTotalP2SH_P2WPKH() > amount + FeeUtil.getInstance().estimatedFeeSegwit(0, 1, 0, 4).longValue()) {
             utxos = new ArrayList<UTXO>();
             utxos.addAll(UTXOFactory.getInstance().getAllP2SH_P2WPKH().values());
         } else {
