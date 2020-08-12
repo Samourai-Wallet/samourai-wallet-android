@@ -585,7 +585,7 @@ public class APIFactory	{
         }
 
         if(last44ChangeIdx > AddressFactory.getInstance(context).getHighestTxChangeIdx(0))   {
-            AddressFactory.getInstance().setHighestTxReceiveIdx(0, last44ChangeIdx);
+            AddressFactory.getInstance().setHighestTxChangeIdx(0, last44ChangeIdx);
             try {
                 HD_WalletFactory.getInstance(context).get().getAccount(0).getChain(1).setAddrIdx(last44ChangeIdx);
             }
@@ -610,7 +610,7 @@ public class APIFactory	{
     private void setPostMixWalletIndexes()   {
         if(lastPostMixReceiveIdx > AddressFactory.getInstance(context).getHighestPostReceiveIdx())   {
             AddressFactory.getInstance().setHighestPostReceiveIdx(lastPostMixReceiveIdx);
-            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPremixAccount()).getChain(0).setAddrIdx(lastPostMixReceiveIdx);
+            BIP84Util.getInstance(context).getWallet().getAccountAt(WhirlpoolMeta.getInstance(context).getWhirlpoolPostmix()).getChain(0).setAddrIdx(lastPostMixReceiveIdx);
         }
         if(lastPostMixChangeIdx > AddressFactory.getInstance(context).getHighestPostChangeIdx())   {
             AddressFactory.getInstance().setHighestPostChangeIdx(lastPostMixChangeIdx);
