@@ -206,7 +206,7 @@ public class SweepUtil  {
                         sweep(privKeyReader, TYPE_P2SH_P2WPKH);
                     }
                     else if(type == TYPE_P2WPKH)    {
-                        ;
+                        Toast.makeText(context, R.string.sweep_no_amount, Toast.LENGTH_SHORT).show();
                     }
                     else    {
                         ;

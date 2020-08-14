@@ -3,6 +3,7 @@ package com.samourai.wallet.widgets;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.transition.Fade;
 import androidx.transition.Slide;
 import androidx.transition.TransitionManager;
@@ -32,7 +33,7 @@ public class SendTransactionDetailsView extends FrameLayout {
     private boolean reviewActive = false;
     private ViewGroup stowawayLayout, stoneWallX2Layout, stoneWallLayout;
     private EntropyBar entropyBarStoneWallX2, entropyBarStoneWallX1;
-    private Switch stoneWallx1Switch;
+    private SwitchCompat stoneWallx1Switch;
     private TextView stowawayMixingParticipant, entropyValueX1,entropyValueX2, stowawayMethod, stoneWallx2Fee, stoneWallx2mixingParticipant;
 
 
@@ -124,7 +125,7 @@ public class SendTransactionDetailsView extends FrameLayout {
     }
 
 
-    public Switch getStoneWallSwitch() {
+    public SwitchCompat getStoneWallSwitch() {
         return stoneWallx1Switch;
     }
 

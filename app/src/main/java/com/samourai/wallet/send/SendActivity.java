@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 
@@ -146,9 +147,9 @@ public class SendActivity extends SamouraiActivity {
     private EditText toAddressEditText, btcEditText, satEditText;
     private TextView tvMaxAmount, tvReviewSpendAmount, tvReviewSpendAmountInSats, tvTotalFee, tvToAddress, tvEstimatedBlockWait, tvSelectedFeeRate, tvSelectedFeeRateLayman, ricochetTitle, ricochetDesc, cahootsStatusText, cahootsNotice;
     private Button btnReview, btnSend;
-    private Switch ricochetHopsSwitch, ricochetStaggeredDelivery;
+    private SwitchCompat ricochetHopsSwitch, ricochetStaggeredDelivery;
     private ViewGroup totalMinerFeeLayout;
-    private Switch cahootsSwitch;
+    private SwitchCompat cahootsSwitch;
     private SeekBar feeSeekBar;
     private Group ricochetStaggeredOptionGroup;
     private boolean shownWalletLoadingMessage = false;
@@ -301,12 +302,7 @@ public class SendActivity extends SamouraiActivity {
                     .walletBalanceObserver
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aLong -> {
-                        if (balance == aLong) {
-                            return;
-                        }
-                        setBalance();
-                    }, Throwable::printStackTrace);
+                    .subscribe(aLong -> setBalance(), Throwable::printStackTrace);
             compositeDisposables.add(disposable);
 
 
@@ -794,18 +790,20 @@ public class SendActivity extends SamouraiActivity {
         });
 
         tvMaxAmount.setText(strAmount + " " + getDisplayUnits());
-        if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
-            //some time, user may navigate to this activity even before wallet initialization completes
-            //so we will set a delay to reload balance info
-            Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                    .subscribe(this::setBalance);
-            compositeDisposables.add(disposable);
-            if (!shownWalletLoadingMessage) {
-                Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
-                shownWalletLoadingMessage = true;
-            }
 
-        }
+        if(!AppUtil.getInstance(getApplication()).isOfflineMode())
+            if (balance == 0L && !APIFactory.getInstance(getApplicationContext()).walletInit) {
+                //some time, user may navigate to this activity even before wallet initialization completes
+                //so we will set a delay to reload balance info
+                Disposable disposable = Completable.timer(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                        .subscribe(this::setBalance);
+                compositeDisposables.add(disposable);
+                if (!shownWalletLoadingMessage) {
+                    Snackbar.make(tvMaxAmount.getRootView(), "Please wait... your wallet is still loading ", Snackbar.LENGTH_LONG).show();
+                    shownWalletLoadingMessage = true;
+                }
+
+            }
     }
 
     private void checkDeepLinks() {
@@ -1233,6 +1231,10 @@ public class SendActivity extends SamouraiActivity {
 
         org.apache.commons.lang3.tuple.Pair<ArrayList<MyTransactionOutPoint>, ArrayList<TransactionOutput>> pair = null;
         if (SPEND_TYPE == SPEND_RICOCHET) {
+            if(AppUtil.getInstance(getApplicationContext()).isOfflineMode()){
+                Toast.makeText(getApplicationContext(),"You won't able to compose ricochet when you're on offline mode",Toast.LENGTH_SHORT).show();
+                return false;
+            }
 
             boolean samouraiFeeViaBIP47 = false;
             if (BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM) {

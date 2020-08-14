@@ -804,4 +804,6 @@
     <string name="strict_mode_address">Strict mode has detected possible address reuse for this transaction. Reformulate the transaction or broadcast as-is?</string>
     <string name="strict_reformulate">Reformulate transaction</string>
 
+    <string name="sweep_no_amount">No utxos found for this private key.</string>
+
 </resources>

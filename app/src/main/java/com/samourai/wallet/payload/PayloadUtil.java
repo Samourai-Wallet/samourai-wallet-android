@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -202,9 +203,7 @@ public class PayloadUtil	{
         if(!AppUtil.getInstance(context).isOfflineMode())    {
 
             if(obj != null) {
-                JSONObject utxoObj = new JSONObject();
-                utxoObj.put("unspent_outputs", obj);
-                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPreFilename);
+                serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPreFilename);
             }
         }
     }
@@ -214,9 +213,7 @@ public class PayloadUtil	{
         if(!AppUtil.getInstance(context).isOfflineMode())    {
 
             if(obj != null) {
-                JSONObject utxoObj = new JSONObject();
-                utxoObj.put("unspent_outputs", obj);
-                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
+                serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPostFilename);
             }
         }
     }
@@ -226,9 +223,7 @@ public class PayloadUtil	{
         if(!AppUtil.getInstance(context).isOfflineMode())    {
 
             if(obj != null) {
-                JSONObject utxoObj = new JSONObject();
-                utxoObj.put("unspent_outputs", obj);
-                serializeAux(utxoObj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
+                serializeAux(obj, new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOBadBankFilename);
             }
         }
     }
@@ -253,12 +248,20 @@ public class PayloadUtil	{
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOFilename);
     }
 
+    public JSONObject deserializeMultiAddrPre()  throws IOException, JSONException {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPreFilename);
+    }
+
     public JSONObject deserializeMultiAddrPost()  throws IOException, JSONException {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrPostFilename);
     }
 
     public JSONObject deserializeMultiAddrBadBank()  throws IOException, JSONException {
         return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strMultiAddrBadBankFilename);
+    }
+
+    public JSONObject deserializeUTXOPre()  throws IOException, JSONException  {
+        return deserializeAux(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance().getPIN()), strUTXOPreFilename);
     }
 
     public JSONObject deserializeUTXOPost()  throws IOException, JSONException  {
