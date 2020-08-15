@@ -154,6 +154,10 @@ public class FeeUtil extends com.samourai.wallet.util.FeeUtil {
         return feePerB;
     }
 
+    public long getSuggestedFeeDefaultPerB() {
+        return toFeePerB(getSuggestedFee().getDefaultPerKB());
+    }
+
     public Triple<Integer, Integer, Integer> getOutpointCount(Vector<MyTransactionOutPoint> outpoints) {
         NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
         return super.getOutpointCount(outpoints, params);

@@ -1,7 +1,12 @@
 package com.samourai.wallet.cahoots;
 
+import android.content.Context;
+
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.hd.HD_Wallet;
+import com.samourai.wallet.segwit.BIP84Util;
+import com.samourai.wallet.segwit.BIP84Wallet;
 import com.samourai.wallet.send.SendFactory;
 import com.samourai.wallet.send.UTXO;
 import com.samourai.wallet.util.AddressFactory;
@@ -14,30 +19,31 @@ import org.bouncycastle.util.encoders.Hex;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AndroidSTONEWALLx2Service extends STONEWALLx2Service {
+public class AndroidCahootsWallet extends CahootsWallet {
     private APIFactory apiFactory;
     private AddressFactory addressFactory;
+    private BIP84Util bip84Util;
 
-    public AndroidSTONEWALLx2Service(HD_Wallet hdWallet, NetworkParameters params, APIFactory apiFactory, AddressFactory addressFactory) {
-        super(hdWallet, params);
-        this.apiFactory = apiFactory;
-        this.addressFactory = addressFactory;
+    public AndroidCahootsWallet(Context ctx) {
+        this.apiFactory = APIFactory.getInstance(ctx);
+        this.addressFactory = AddressFactory.getInstance(ctx);
+        this.bip84Util = BIP84Util.getInstance(ctx);
     }
 
     @Override
-    ECKey getPrivKey(String address, int account) {
+    public ECKey getPrivKey(String address, int account) {
         ECKey ecKey = SendFactory.getPrivKey(address, account);
         return ecKey;
     }
 
     @Override
-    String getUnspentPath(String address) {
+    public String getUnspentPath(String address) {
         String unspentPath = apiFactory.getUnspentPaths().get(address);
         return unspentPath;
     }
 
     @Override
-    List<UTXO> getCahootsUTXO(int account) {
+    public List<UTXO> getCahootsUTXO(int account) {
         List<UTXO> ret = new ArrayList<UTXO>();
         List<UTXO> _utxos;
         if(account == WhirlpoolAccount.POSTMIX.getAccountIndex())    {
@@ -56,12 +62,20 @@ public class AndroidSTONEWALLx2Service extends STONEWALLx2Service {
     }
 
     @Override
-    long getFeePerB() {
-        return 0;
+    public int getHighestPostChangeIdx() {
+        return addressFactory.getHighestPostChangeIdx();
     }
 
     @Override
-    int getHighestPostChangeIdx() {
-        return addressFactory.getHighestPostChangeIdx();
+    public BIP84Wallet getBip84Wallet() {
+        try {
+            HD_Wallet bip84w = bip84Util.getWallet();
+            NetworkParameters params = SamouraiWallet.getInstance().getCurrentNetworkParams();
+            BIP84Wallet bip84Wallet = new BIP84Wallet(bip84w, params);
+            return bip84Wallet;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

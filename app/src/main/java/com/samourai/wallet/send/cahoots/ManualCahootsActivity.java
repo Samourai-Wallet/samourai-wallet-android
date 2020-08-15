@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -30,18 +29,17 @@ import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
 import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiActivity;
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.cahoots.AndroidCahootsWallet;
 import com.samourai.wallet.cahoots.Cahoots;
-import com.samourai.wallet.cahoots.CahootsUtil;
+import com.samourai.wallet.cahoots.CahootsService;
+import com.samourai.wallet.cahoots.CahootsWallet;
 import com.samourai.wallet.cahoots.STONEWALLx2;
-import com.samourai.wallet.cahoots.Stowaway;
 import com.samourai.wallet.cahoots.psbt.PSBT;
-import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.send.FeeUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.widgets.HorizontalStepsViewIndicator;
 import com.samourai.wallet.widgets.ViewPager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,6 +66,7 @@ public class ManualCahootsActivity extends SamouraiActivity {
     private static final String TAG = "ManualCahootsActivity";
     private Cahoots payload;
     private int type;
+    private CahootsService cahootsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,9 @@ public class ManualCahootsActivity extends SamouraiActivity {
         steps.add(cahootReviewFragment);
         viewPager.setAdapter(new StepAdapter(getSupportFragmentManager()));
 
+        CahootsWallet cahootsWallet = new AndroidCahootsWallet(getApplicationContext());
+        cahootsService = new CahootsService(SamouraiWallet.getInstance().getCurrentNetworkParams(), cahootsWallet);
+
         if (getIntent().hasExtra("amount")) {
             amount = getIntent().getLongExtra("amount", 0);
         }
@@ -96,46 +98,27 @@ public class ManualCahootsActivity extends SamouraiActivity {
             address = getIntent().getStringExtra("address");
         }
         if (getIntent().hasExtra("payload")) {
-
+            // continue cahoots
             String cahootsPayload = getIntent().getStringExtra("payload");
-
-            if (Cahoots.isCahoots(cahootsPayload.trim())) {
-                try {
-                    JSONObject obj = new JSONObject(cahootsPayload);
-                    if (obj.has("cahoots") && obj.getJSONObject("cahoots").has("type")) {
-                        int type = obj.getJSONObject("cahoots").getInt("type");
-                        if (type == Cahoots.CAHOOTS_STOWAWAY) {
-                            payload = new Stowaway(obj);
-                            onScanCahootsPayload(payload.toJSON().toString());
-                        }
-                        if (type == Cahoots.CAHOOTS_STONEWALLx2) {
-                            payload = new STONEWALLx2(obj);
-                            onScanCahootsPayload(payload.toJSON().toString());
-                        }
-                    }
-                } catch (JSONException e) {
-                    finish();
-                    e.printStackTrace();
-                }
-
+            try {
+                onScanCahootsPayload(cahootsPayload);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
             }
         } else if (amount != 0L) {
-            if (type == Cahoots.CAHOOTS_STOWAWAY) {
+            // start cahoots
+            try {
+                payload = cahootsService.startInitiator(type, amount, address, account);
                 stepsViewGroup.post(() -> stepsViewGroup.setStep(1));
-                payload = CahootsUtil.getInstance(ManualCahootsActivity.this).doStowaway0(amount, account);
-                return;
-
-            }
-            if (type == Cahoots.CAHOOTS_STONEWALLx2) {
-                stepsViewGroup.post(() -> stepsViewGroup.setStep(1));
-                payload = CahootsUtil.getInstance(ManualCahootsActivity.this).doSTONEWALLx2_0(amount, address, account);
-
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
             finish();
         }
-
-
     }
 
     @Override
@@ -207,132 +190,26 @@ public class ManualCahootsActivity extends SamouraiActivity {
 
     private void onScanCahootsPayload(String qrData) {
 
-        Stowaway stowaway = null;
-        STONEWALLx2 stonewall = null;
-
         try {
-            JSONObject obj = new JSONObject(qrData);
-            Log.d("CahootsUtil", "incoming st:" + qrData);
-            Log.d("CahootsUtil", "object json:" + obj.toString());
-            if (obj.has("cahoots") && obj.getJSONObject("cahoots").has("type")) {
+            // continue cahoots
+            long feePerB = FeeUtil.getInstance().getSuggestedFeeDefaultPerB();
+            payload = cahootsService.resume(qrData, feePerB, account);
 
-                int type = obj.getJSONObject("cahoots").getInt("type");
-
-                if (type == Cahoots.CAHOOTS_STOWAWAY) {
-                    stowaway = new Stowaway(obj);
-                } else if (type == Cahoots.CAHOOTS_STONEWALLx2) {
-                    stonewall = new STONEWALLx2(obj);
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.unrecognized_cahoots, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.not_cahoots, Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } catch (JSONException je) {
-            Toast.makeText(getApplicationContext(), R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (stowaway != null) {
-            int step = stowaway.getStep();
+            int step = payload.getStep();
             viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
             stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
             stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
 
-            try {
-                switch (step) {
-                    case 0:
-                        stowaway.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway1(stowaway);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 1:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway2(stowaway);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 2:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway3(stowaway);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 3:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doStowaway4(stowaway);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            cahootReviewFragment.setCahoots(payload);
-                        }
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(), R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            } catch (Exception e) {
-                Toast.makeText(this, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                Log.d("CahootsUtil", e.getMessage());
+            if (payload.getType() == Cahoots.CAHOOTS_STONEWALLx2 && step == 3) {
+                ((CahootsStepFragment) steps.get(step + 1)).setStowaway((STONEWALLx2) payload);
             }
+            if (step == 4) {
+                cahootReviewFragment.setCahoots(payload);
+            }
+        } catch(Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        if (stonewall != null) {
-            int step = stonewall.getStep();
-            viewPager.post(() -> viewPager.setCurrentItem(step + 1, true));
-            stepsViewGroup.post(() -> stepsViewGroup.setStep(step + 2));
-            stepCounts.setText(String.valueOf((step + 2)).concat("/5"));
-            if (step == 2) {
-                ((CahootsStepFragment) steps.get(step + 1)).setStowaway(stonewall);
-            }
-            try {
-                switch (step) {
-                    case 0:
-                        stonewall.setCounterpartyAccount(account);  // set counterparty account
-                        stonewall.setFingerprintCollab(HD_WalletFactory.getInstance(getApplicationContext()).getFingerprint());
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_1(stonewall);
-
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 1:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_2(stonewall);
-
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 2:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_3(stonewall);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 3:
-                        payload = CahootsUtil.getInstance(getApplicationContext()).doSTONEWALLx2_4(stonewall);
-                        if (payload == null) {
-                            Toast.makeText(this, R.string.cannot_compose_cahoots, Toast.LENGTH_SHORT).show();
-                        } else {
-                            cahootReviewFragment.setCahoots(payload);
-                        }
-                        break;
-                    default:
-                        Toast.makeText(this, R.string.unrecognized_step, Toast.LENGTH_SHORT).show();
-                        break;
-                }
-            } catch (Exception e) {
-                Toast.makeText(this, R.string.cannot_process_cahoots, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                Log.d("CahootsUtil", e.getMessage());
-            }
-        }
-
     }
 
     private class StepAdapter extends FragmentPagerAdapter {
