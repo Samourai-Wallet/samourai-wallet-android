@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.auth0.android.jwt.JWT;
+import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -142,11 +143,11 @@ public class MainActivity2 extends Activity {
             loaderTxView.setText(getText(R.string.initializing_tor));
             ((SamouraiApplication) getApplication()).startService();
             Disposable disposable = TorManager.getInstance(this)
-                    .torStatus
+                    .getTorStatus()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(connection_states -> {
-                        if (connection_states == TorManager.CONNECTION_STATES.CONNECTED) {
+                        if (connection_states == TorProxyManager.ConnectionStatus.CONNECTED) {
                             initAppOnCreate();
                         }
                     });
@@ -200,11 +201,11 @@ public class MainActivity2 extends Activity {
             ((SamouraiApplication) getApplication()).startService();
 
             Disposable disposable = TorManager.getInstance(getApplicationContext())
-                    .torStatus
+                    .getTorStatus()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(connection_states -> {
-                        if (connection_states == TorManager.CONNECTION_STATES.CONNECTED) {
+                        if (connection_states == TorProxyManager.ConnectionStatus.CONNECTED) {
                             initAppOnResume();
                             compositeDisposables.dispose();
                         }

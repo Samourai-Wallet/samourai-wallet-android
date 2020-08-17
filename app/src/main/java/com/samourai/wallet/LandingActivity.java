@@ -27,6 +27,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
 import com.samourai.wallet.crypto.AESUtil;
@@ -137,15 +138,15 @@ public class LandingActivity extends AppCompatActivity  {
 
     private void startTor() {
         Disposable disposable = TorManager.getInstance(this)
-                .torStatus
+                .getTorStatus()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-                    if (state == TorManager.CONNECTION_STATES.CONNECTING) {
+                    if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
                         progressBarTor.setVisibility(View.VISIBLE);
                         torStatus.setVisibility(View.VISIBLE);
                         torStatus.setText("Tor service connecting...");
-                    } else if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                    } else if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
                         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
                         torStatus.setVisibility(View.VISIBLE);
                         torStatusCheck.setVisibility(View.VISIBLE);
