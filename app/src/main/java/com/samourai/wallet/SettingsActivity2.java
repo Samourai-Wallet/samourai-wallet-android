@@ -23,6 +23,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -937,6 +938,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
         showText.setTextIsSelectable(true);
         showText.setPadding(40, 10, 40, 10);
         showText.setTextSize(18.0f);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.app_name)
                 .setView(showText)
