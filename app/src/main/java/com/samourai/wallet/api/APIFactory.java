@@ -1697,19 +1697,19 @@ public class APIFactory	{
 
     private synchronized void initWalletAmounts() {
 
-        last44ReceiveIdx = AddressFactory.getInstance(context).getHighestTxReceiveIdx(0) + 1;
-        last44ChangeIdx =  AddressFactory.getInstance(context).getHighestTxChangeIdx(0) + 1;
-        last49ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP49ReceiveIdx() + 1;
-        last49ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP49ChangeIdx() + 1;
-        last84ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP84ReceiveIdx() + 1;
-        last84ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP84ChangeIdx() + 1;
-        lastPreMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPreReceiveIdx() + 1;
-        lastPreMixChangeIdx =  AddressFactory.getInstance(context).getHighestPreChangeIdx() + 1;
-        lastPostMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPostReceiveIdx() + 1;
-        lastPostMixChangeIdx =  AddressFactory.getInstance(context).getHighestPostChangeIdx() + 1;
-        lastBadBankReceiveIdx =  AddressFactory.getInstance(context).getHighestBadBankReceiveIdx() + 1;
-        lastBadBankChangeIdx =  AddressFactory.getInstance(context).getHighestBadBankChangeIdx() + 1;
-        lastRicochetReceiveIdx =  RicochetMeta.getInstance(context).getIndex() + 1;
+        last44ReceiveIdx = AddressFactory.getInstance(context).getHighestTxReceiveIdx(0);
+        last44ChangeIdx =  AddressFactory.getInstance(context).getHighestTxChangeIdx(0);
+        last49ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP49ReceiveIdx();
+        last49ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP49ChangeIdx();
+        last84ReceiveIdx =  AddressFactory.getInstance(context).getHighestBIP84ReceiveIdx();
+        last84ChangeIdx =  AddressFactory.getInstance(context).getHighestBIP84ChangeIdx();
+        lastPreMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPreReceiveIdx();
+        lastPreMixChangeIdx =  AddressFactory.getInstance(context).getHighestPreChangeIdx();
+        lastPostMixReceiveIdx =  AddressFactory.getInstance(context).getHighestPostReceiveIdx();
+        lastPostMixChangeIdx =  AddressFactory.getInstance(context).getHighestPostChangeIdx();
+        lastBadBankReceiveIdx =  AddressFactory.getInstance(context).getHighestBadBankReceiveIdx();
+        lastBadBankChangeIdx =  AddressFactory.getInstance(context).getHighestBadBankChangeIdx();
+        lastRicochetReceiveIdx =  RicochetMeta.getInstance(context).getIndex();
 
         APIFactory.getInstance(context).reset();
 
