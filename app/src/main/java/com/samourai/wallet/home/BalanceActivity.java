@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.zbar.android.scanner.ZBarConstants;
+import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.ReceiveActivity;
 import com.samourai.wallet.SamouraiActivity;
@@ -767,18 +768,18 @@ public class BalanceActivity extends SamouraiActivity {
 
     private void setUpTor() {
         Disposable disposable = TorManager.getInstance(this)
-                .torStatus
+                .getTorStatus()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
-                    if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                    if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
                         PrefsUtil.getInstance(this).setValue(PrefsUtil.ENABLE_TOR, true);
                         if (this.progressBarMenu != null) {
                             this.progressBarMenu.setVisibility(View.INVISIBLE);
                             this.menuTorIcon.setImageResource(R.drawable.tor_on);
                         }
 
-                    } else if (state == TorManager.CONNECTION_STATES.CONNECTING) {
+                    } else if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
                         if (this.progressBarMenu != null) {
                             this.progressBarMenu.setVisibility(View.VISIBLE);
                             this.menuTorIcon.setImageResource(R.drawable.tor_on);

@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.invertedx.torservice.TorProxyManager;
 import com.samourai.wallet.R;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 import com.samourai.wallet.tor.TorManager;
@@ -144,13 +145,13 @@ public class DojoConfigureBottomSheet extends BottomSheetDialogFragment {
             startIntent.setAction(TorService.START_SERVICE);
             getActivity().startService(startIntent);
             Disposable disposable = TorManager.getInstance(getActivity().getApplicationContext())
-                    .torStatus
+                    .getTorStatus()
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(state -> {
-                        if (state == TorManager.CONNECTION_STATES.CONNECTING) {
+                        if (state == TorProxyManager.ConnectionStatus.CONNECTING) {
                             progressStates.setText("Waiting for Tor...");
-                        } else if (state == TorManager.CONNECTION_STATES.CONNECTED) {
+                        } else if (state == TorProxyManager.ConnectionStatus.CONNECTED) {
                             PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.ENABLE_TOR, true);
                             dojoConnectProgress.setProgress(60);
                             progressStates.setText("Tor Connected, Connecting to Dojo Node...");
