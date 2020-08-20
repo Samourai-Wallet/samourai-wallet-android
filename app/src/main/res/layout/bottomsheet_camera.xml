@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
-<com.samourai.codescanner.CodeScannerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<com.budiyev.android.codescanner.CodeScannerView
     android:id="@+id/scanner_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,11 +13,12 @@
     app:autoFocusButtonVisible="false"
     app:flashButtonColor="@android:color/white"
     app:flashButtonVisible="true"
-    app:frameAspectRatioHeight="1"
-    app:frameAspectRatioWidth="1"
     app:frameColor="@android:color/white"
-    app:frameCornersRadius="0dp"
     app:frameCornersSize="50dp"
+    app:frameCornersRadius="0dp"
+    app:frameAspectRatioWidth="1"
+    app:frameAspectRatioHeight="1"
     app:frameSize="0.75"
     app:frameThickness="2dp"
-    app:maskColor="#25000000" />
+    app:maskColor="#77000000"/>
+</FrameLayout>
