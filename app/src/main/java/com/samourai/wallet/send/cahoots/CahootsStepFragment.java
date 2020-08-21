@@ -1,10 +1,6 @@
 package com.samourai.wallet.send.cahoots;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +8,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.cahoots.CahootsMessage;
+import com.samourai.wallet.cahoots.CahootsType;
 import com.samourai.wallet.cahoots.STONEWALLx2;
 import com.samourai.wallet.fragments.CameraFragmentBottomSheet;
 
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class CahootsStepFragment extends Fragment {
 
@@ -26,7 +28,7 @@ public class CahootsStepFragment extends Fragment {
     private static final String TAG = "CahootsStepView";
 
     private CahootsFragmentListener cahootsFragmentListener;
-    private STONEWALLx2 stowaway;
+    private CahootsMessage cahootsMessage;
 
     public static CahootsStepFragment newInstance(int position) {
         Bundle args = new Bundle();
@@ -64,15 +66,15 @@ public class CahootsStepFragment extends Fragment {
         });
         feeSplitUpContainer.setVisibility(View.GONE);
 
-        if (this.stowaway != null) {
-            if (stowaway.getStep() == 2) {
-                feeSplitUpContainer.post(() -> {
-                    feeSplitUpContainer.setVisibility(View.VISIBLE);
-                });
+        // show stonewallx2 split fees to counterparty
+        if (this.cahootsMessage != null && cahootsMessage.getType() == CahootsType.STONEWALLX2 && cahootsMessage.getStep() == 3) {
+            STONEWALLx2 stonewallx2 = (STONEWALLx2)cahootsMessage.getCahoots();
+            feeSplitUpContainer.post(() -> {
+                feeSplitUpContainer.setVisibility(View.VISIBLE);
+            });
 
-                stoneWallx2TotalFee.setText(formatForBtc(this.stowaway.getFeeAmount()));
-                stoneWallx2SplitFee.setText(formatForBtc(this.stowaway.getFeeAmount() / 2));
-            }
+            stoneWallx2TotalFee.setText(formatForBtc(stonewallx2.getFeeAmount()));
+            stoneWallx2SplitFee.setText(formatForBtc(stonewallx2.getFeeAmount() / 2));
         }
     }
 
@@ -86,8 +88,8 @@ public class CahootsStepFragment extends Fragment {
         this.cahootsFragmentListener = cahootsFragmentListener;
     }
 
-    public void setStowaway(STONEWALLx2 stonewalLx2) {
-        this.stowaway = stonewalLx2;
+    public void setCahootsMessage(CahootsMessage cahootsMessage) {
+        this.cahootsMessage = cahootsMessage;
     }
 
     interface CahootsFragmentListener {
@@ -104,6 +106,4 @@ public class CahootsStepFragment extends Fragment {
     private Double getBtcValue(Double sats) {
         return (sats / 1e8);
     }
-
-
 }

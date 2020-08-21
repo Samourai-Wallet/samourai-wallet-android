@@ -18,11 +18,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samourai.wallet.R;
+import com.samourai.wallet.cahoots.CahootsType;
 
 public class SelectCahootsType extends BottomSheetDialogFragment {
 
 
-    public enum type {STONEWALLX2_MANUAL,STONEWALLX2_SAMOURAI, STOWAWAY, NONE}
+    public enum type {
+        STONEWALLX2_MANUAL(CahootsType.STONEWALLX2),
+        STONEWALLX2_SAMOURAI(CahootsType.STONEWALLX2),
+        STOWAWAY(CahootsType.STOWAWAY),
+        NONE(null);
+        private CahootsType cahootsType;
+
+        type(CahootsType cahootsType) {
+            this.cahootsType = cahootsType;
+        }
+        public CahootsType getCahootsType() {
+            return cahootsType;
+        }
+    }
 
     private OnSelectListener onSelectListener;
     private ViewGroup stowaway, stonewallx2;

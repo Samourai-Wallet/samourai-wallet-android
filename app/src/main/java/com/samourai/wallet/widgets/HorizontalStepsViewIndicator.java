@@ -147,7 +147,7 @@ public class HorizontalStepsViewIndicator extends View {
         invalidate();
     }
 
-    public void setStep(int i) {
+    public void setStep(int i) { // starts at 1
         if (i == 1) {
             animateItem((int) circleRadius);
             return;

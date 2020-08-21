@@ -1706,7 +1706,7 @@ public class SendActivity extends SamouraiActivity {
             intent.putExtra("amount", amount);
             intent.putExtra("_account", account);
             intent.putExtra("address", address);
-            intent.putExtra("type", selectedCahootsType == SelectCahootsType.type.STOWAWAY ? Cahoots.CAHOOTS_STOWAWAY : Cahoots.CAHOOTS_STONEWALLx2);
+            intent.putExtra("type", selectedCahootsType.getCahootsType().getValue());
             startActivity(intent);
             return;
         }
